@@ -32,24 +32,23 @@ export async function load({ locals }) {
 	return await getModeration(user.id)
 }
 
-export const actions = {
-	default: async ({ locals }) => {
-		const { user } = await authorise(locals)
-		const userModeration = await getModeration(user.id)
+export const actions: import("./$types").Actions = {}
+actions.default = async ({ locals }) => {
+	const { user } = await authorise(locals)
+	const userModeration = await getModeration(user.id)
 
-		if (new Date(userModeration.timeEnds).getTime() > Date.now())
-			error(400, "Your moderation action has not yet ended")
+	if (new Date(userModeration.timeEnds).getTime() > Date.now())
+		error(400, "Your moderation action has not yet ended")
 
-		if (["AccountDeleted", "Termination"].includes(userModeration.type))
-			error(400, "You cannot reactivate your account")
+	if (["AccountDeleted", "Termination"].includes(userModeration.type))
+		error(400, "You cannot reactivate your account")
 
-		await query(
-			surql`
-				UPDATE moderation SET active = false
-				WHERE out = $user`,
-			{ user: `user:${user.id}` }
-		)
+	await query(
+		surql`
+			UPDATE moderation SET active = false
+			WHERE out = $user`,
+		{ user: `user:${user.id}` }
+	)
 
-		redirect(302, "/home")
-	},
+	redirect(302, "/home")
 }

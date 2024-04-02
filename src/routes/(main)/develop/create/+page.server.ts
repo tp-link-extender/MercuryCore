@@ -15,7 +15,7 @@ import fs from "node:fs"
 import { superValidate } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
-import requestRender from "$lib/server/requestRender"
+import requestRender, { RenderType } from "$lib/server/requestRender"
 
 const schema = z.object({
 	// Object.keys(assets) doesn't work
@@ -37,135 +37,134 @@ export const load = async ({ request }) => ({
 	assettype: new URL(request.url).searchParams.get("asset"),
 })
 
-export const actions = {
-	default: async ({ request, locals, getClientAddress }) => {
-		const { user } = await authorise(locals)
-		const formData = await request.formData()
-		const form = await superValidate(formData, zod(schema))
-		if (!form.valid) return formError(form)
+export const actions: import("./$types").Actions = {}
+actions.default = async ({ request, locals, getClientAddress }) => {
+	const { user } = await authorise(locals)
+	const formData = await request.formData()
+	const form = await superValidate(formData, zod(schema))
+	if (!form.valid) return formError(form)
 
-		const { type, name, description, price } = form.data
-		const assetType = +type as keyof typeof assets
-		const asset = formData.get("asset") as File
+	const { type, name, description, price } = form.data
+	const assetType = +type as keyof typeof assets
+	const asset = formData.get("asset") as File
 
-		if (!asset || asset.size < 1)
-			return formError(form, ["asset"], ["You must upload an asset"])
+	if (!asset || asset.size < 1)
+		return formError(form, ["asset"], ["You must upload an asset"])
 
-		if (asset.size > 20e6)
-			return formError(
-				form,
-				["asset"],
-				["Asset must be less than 20MB in size"]
-			)
-
-		const limit = ratelimit(form, "assetCreation", getClientAddress, 30)
-		if (limit) return limit
-
-		if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
-		if (!fs.existsSync("data/thumbnails")) fs.mkdirSync("data/thumbnails")
-
-		let saveImages: ((id: number) => void | Promise<void>)[] = []
-
-		try {
-			switch (assetType) {
-				case 2: // T-Shirt
-					saveImages = await Promise.all([
-						tShirt(asset),
-						tShirtThumbnail(asset),
-					])
-					break
-
-				case 11: // Shirt
-				case 12: // Pants
-					saveImages[0] = await clothingAsset(asset)
-					saveImages[1] = (id: number) =>
-						requestRender("Clothing", id)
-
-					break
-
-				case 13: // Decal
-					saveImages = await Promise.all([
-						imageAsset(asset),
-						thumbnail(asset),
-					])
-					break
-
-				case 18: // Face
-					if (user.permissionLevel < 3)
-						return formError(
-							form,
-							["type"],
-							[
-								"You do not have permission to upload this type of asset",
-							]
-						)
-					saveImages = await Promise.all([
-						imageAsset(asset),
-						thumbnail(asset),
-					])
-			}
-		} catch (e) {
-			console.log(e)
-			return formError(form, ["asset"], ["Asset failed to upload"])
-		}
-
-		const res = await mquery<number[]>(
-			surql`
-				LET $id = (UPDATE ONLY stuff:increment SET asset += 1).asset;
-				LET $imageAsset = CREATE asset CONTENT {
-					id: $id,
-					name: $name,
-					type: 1,
-					price: 0,
-					description: [],
-					created: time::now(),
-					updated: time::now(),
-					visibility: "Pending",
-				};
-				RELATE $user->owns->$imageAsset;
-				RELATE $user->created->$imageAsset;
-
-				LET $id2 = (UPDATE ONLY stuff:increment SET asset += 1).asset;
-				LET $asset = CREATE asset CONTENT {
-					id: $id2,
-					name: $name,
-					type: $assetType,
-					price: $price,
-					description: [{
-						text: $description,
-						updated: time::now(),
-					}],
-					created: time::now(),
-					updated: time::now(),
-					visibility: "Pending",
-				};
-				RELATE $user->owns->$asset;
-				RELATE $user->created->$asset;
-				RELATE $asset->imageAsset->$imageAsset;
-				$id; # return the idz
-				$id2`,
-			{
-				name,
-				assetType,
-				price,
-				description,
-				user: `user:${user.id}`,
-			}
+	if (asset.size > 20e6)
+		return formError(
+			form,
+			["asset"],
+			["Asset must be less than 20MB in size"]
 		)
 
-		const imageAssetId = res[9]
-		const id = res[10] // concurrency issues fixed hopefully
+	const limit = ratelimit(form, "assetCreation", getClientAddress, 30)
+	if (limit) return limit
 
-		graphicAsset(assets[assetType], imageAssetId, id)
+	if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
+	if (!fs.existsSync("data/thumbnails")) fs.mkdirSync("data/thumbnails")
 
-		try {
-			await saveImages[0](imageAssetId)
-			await saveImages[1](id)
-		} catch (e) {
-			console.log("Rendering images failed!")
-			console.error(e)
+	let saveImages: ((id: number) => void | Promise<void>)[] = []
+
+	try {
+		switch (assetType) {
+			case 2: // T-Shirt
+				saveImages = await Promise.all([
+					tShirt(asset),
+					tShirtThumbnail(asset),
+				])
+				break
+
+			case 11: // Shirt
+			case 12: // Pants
+				saveImages[0] = await clothingAsset(asset)
+				saveImages[1] = (id: number) =>
+					requestRender(RenderType.Clothing, id)
+
+				break
+
+			case 13: // Decal
+				saveImages = await Promise.all([
+					imageAsset(asset),
+					thumbnail(asset),
+				])
+				break
+
+			case 18: // Face
+				if (user.permissionLevel < 3)
+					return formError(
+						form,
+						["type"],
+						[
+							"You do not have permission to upload this type of asset",
+						]
+					)
+				saveImages = await Promise.all([
+					imageAsset(asset),
+					thumbnail(asset),
+				])
 		}
+	} catch (e) {
+		console.log(e)
+		return formError(form, ["asset"], ["Asset failed to upload"])
+	}
 
-		redirect(302, `/avatarshop/${id}/${name}`)
-	},
+	const res = await mquery<number[]>(
+		surql`
+			LET $id = (UPDATE ONLY stuff:increment SET asset += 1).asset;
+			LET $imageAsset = CREATE asset CONTENT {
+				id: $id,
+				name: $name,
+				type: 1,
+				price: 0,
+				description: [],
+				created: time::now(),
+				updated: time::now(),
+				visibility: "Pending",
+			};
+			RELATE $user->owns->$imageAsset;
+			RELATE $user->created->$imageAsset;
+
+			LET $id2 = (UPDATE ONLY stuff:increment SET asset += 1).asset;
+			LET $asset = CREATE asset CONTENT {
+				id: $id2,
+				name: $name,
+				type: $assetType,
+				price: $price,
+				description: [{
+					text: $description,
+					updated: time::now(),
+				}],
+				created: time::now(),
+				updated: time::now(),
+				visibility: "Pending",
+			};
+			RELATE $user->owns->$asset;
+			RELATE $user->created->$asset;
+			RELATE $asset->imageAsset->$imageAsset;
+			$id; # return the idz
+			$id2`,
+		{
+			name,
+			assetType,
+			price,
+			description,
+			user: `user:${user.id}`,
+		}
+	)
+
+	const imageAssetId = res[9]
+	const id = res[10] // concurrency issues fixed hopefully
+
+	graphicAsset(assets[assetType], imageAssetId, id)
+
+	try {
+		await saveImages[0](imageAssetId)
+		await saveImages[1](id)
+	} catch (e) {
+		console.log("Rendering images failed!")
+		console.error(e)
+	}
+
+	redirect(302, `/avatarshop/${id}/${name}`)
 }

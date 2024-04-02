@@ -2,12 +2,6 @@ import { query, squery, surql } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error, redirect } from "@sveltejs/kit"
 
-type User = {
-	number: number
-	status: "Playing" | "Online" | "Offline"
-	username: string
-}
-
 type Place = {
 	id: number
 	name: string
@@ -54,7 +48,7 @@ export const load = async ({ url }) => {
 		category,
 		users:
 			category === "users" &&
-			(await query<User>(
+			(await query<BasicUser>(
 				surql`
 					SELECT number, status, username
 					FROM user
@@ -105,14 +99,13 @@ export const load = async ({ url }) => {
 	}
 }
 
-export const actions = {
-	default: async ({ url, request }) => {
-		const data = await formData(request)
-		const { query } = data
-		const category = url.searchParams.get("c") || ""
+export const actions: import("./$types").Actions = {}
+actions.default = async ({ url, request }) => {
+	const data = await formData(request)
+	const { query } = data
+	const category = url.searchParams.get("c") || ""
 
-		console.log(`searching for ${query} in ${category}`)
+	console.log(`searching for ${query} in ${category}`)
 
-		redirect(302, `/search?q=${query}${category ? `&c=${category}` : ""}`)
-	},
+	redirect(302, `/search?q=${query}${category ? `&c=${category}` : ""}`)
 }

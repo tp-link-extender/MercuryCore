@@ -4,34 +4,35 @@
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
 import { query, squery, surql } from "$lib/server/surreal"
-import { dev } from "$app/environment"
 import { auth } from "$lib/server/lucia"
+import { dev } from "$app/environment"
 import { redirect } from "@sveltejs/kit"
 import pc from "picocolors"
 import type { Cookie } from "lucia"
 
 const { magenta, red, yellow, green, blue, gray: grey, cyan } = pc
-const methodColours: { [k: string]: string } = {
+const methodColours = {
 	GET: green("GET"),
 	POST: yellow("POST"),
 }
-const pathnameColour = (pathname: string) =>
-	pathname.startsWith("/api")
-		? green(pathname)
-		: pathname.startsWith("/download") ||
-			  pathname.startsWith("/moderation") ||
-			  pathname.startsWith("/report") ||
-			  pathname.startsWith("/statistics")
-		  ? yellow(pathname)
-		  : pathname.startsWith("/register") || pathname.startsWith("/login")
-			  ? blue(pathname)
-			  : pathname.match(/^\/place\/\d+\/.*\/icon$/)
-				  ? magenta(pathname)
-				  : pathname.startsWith("/admin")
-					  ? red(pathname)
-					  : pathname.startsWith("/studio")
-						  ? cyan(pathname)
-						  : pathname
+const pathnameColours = {
+	"/api": green,
+	"/download": yellow,
+	"/moderation": yellow,
+	"/report": yellow,
+	"/statistics": yellow,
+	"/register": blue,
+	"/login": blue,
+	"/place": magenta,
+	"/admin": red,
+	"/studio": cyan,
+}
+
+const pathnameColour = (pathname: string) => {
+	for (const [prefix, colour] of Object.entries(pathnameColours))
+		if (pathname.startsWith(prefix)) return colour(pathname)
+	return pathname
+}
 
 // Ran every time a dynamic request is made.
 // Requests for prerendered pages do not trigger this hook.

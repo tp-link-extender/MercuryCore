@@ -31,43 +31,39 @@ export const load = async () => ({
 	users: (await squery<number>(surql`[count(SELECT 1 FROM user)]`)) > 0,
 })
 
-export const actions = {
-	default: async ({ request, cookies }) => {
-		const form = await superValidate(request, zod(schema))
-		if (!form.valid) return formError(form)
+export const actions: import("./$types").Actions = {}
+actions.default = async ({ request, cookies }) => {
+	const form = await superValidate(request, zod(schema))
+	if (!form.valid) return formError(form)
 
-		const { username, password } = form.data
+	const { username, password } = form.data
 
-		const user = await squery<{
-			id: string
-			username: string
-			hashedPassword: string
-		}>(
-			surql`
-				SELECT meta::id(id) AS id, username, hashedPassword FROM user
-				WHERE string::lowercase(username) = string::lowercase($username)`,
-			{ username }
+	const user = await squery<{
+		id: string
+		username: string
+		hashedPassword: string
+	}>(
+		surql`
+			SELECT meta::id(id) AS id, username, hashedPassword FROM user
+			WHERE string::lowercase(username) = string::lowercase($username)`,
+		{ username }
+	)
+
+	// remove this statement and we'll end up like Mercury 1 💀
+	if (!user || !(await new Scrypt().verify(user.hashedPassword, password)))
+		return formError(
+			form,
+			["username", "password"],
+			[" ", "Incorrect username or password"]
 		)
 
-		// remove this statement and we'll end up like Mercury 1 💀
-		if (
-			!user ||
-			!(await new Scrypt().verify(user.hashedPassword, password))
-		)
-			return formError(
-				form,
-				["username", "password"],
-				[" ", "Incorrect username or password"]
-			)
+	const session = await auth.createSession(user.id, {})
+	const sessionCookie = auth.createSessionCookie(session.id)
 
-		const session = await auth.createSession(user.id, {})
-		const sessionCookie = auth.createSessionCookie(session.id)
+	cookies.set(sessionCookie.name, sessionCookie.value, {
+		path: ".",
+		...sessionCookie.attributes,
+	})
 
-		cookies.set(sessionCookie.name, sessionCookie.value, {
-			path: ".",
-			...sessionCookie.attributes,
-		})
-
-		redirect(302, "/home")
-	},
+	redirect(302, "/home")
 }

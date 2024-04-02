@@ -51,44 +51,43 @@ export async function load({ locals, url }) {
 	}
 }
 
-export const actions = {
-	default: async ({ request, locals, url, getClientAddress }) => {
-		const form = await superValidate(request, zod(schema))
-		if (!form.valid) return formError(form)
-		const limit = ratelimit(form, "report", getClientAddress, 120)
-		if (limit) return limit
+export const actions: import("./$types").Actions = {}
+actions.default = async ({ request, locals, url, getClientAddress }) => {
+	const form = await superValidate(request, zod(schema))
+	if (!form.valid) return formError(form)
+	const limit = ratelimit(form, "report", getClientAddress, 120)
+	if (limit) return limit
 
-		const { user } = await authorise(locals)
-		const { category, note } = form.data
-		const username = url.searchParams.get("user")
-		const reportUrl = url.searchParams.get("url")
+	const { user } = await authorise(locals)
+	const { category, note } = form.data
+	const username = url.searchParams.get("user")
+	const reportUrl = url.searchParams.get("url")
 
-		if (!username || !reportUrl) error(400, "Missing fields")
+	if (!username || !reportUrl) error(400, "Missing fields")
 
-		const reportee = await getReportee(username)
+	const reportee = await getReportee(username)
 
-		if (!reportee)
-			return message(form, "Invalid user", {
-				status: 400,
-			})
+	if (!reportee)
+		return message(form, "Invalid user", {
+			status: 400,
+		})
 
-		await query(
-			surql`
-				RELATE $reporter->report->$reportee CONTENT {
-					time: time::now(),
-					note: $note,
-					url: $reportUrl,
-					category: $category,
-				}`,
-			{
-				reporter: `user:${user.id}`,
-				reportee: reportee.id,
-				note,
-				reportUrl,
-				category,
-			}
-		)
+	await query(
+		surql`
+			RELATE $reporter->report->$reportee CONTENT {
+				time: time::now(),
+				note: $note,
+				url: $reportUrl,
+				category: $category,
+			}`,
+		{
+			reporter: `user:${user.id}`,
+			reportee: reportee.id,
+			note,
+			reportUrl,
+			category,
+		}
+	)
 
-		return message(form, "Report sent successfully.")
-	},
+	return message(form, "Report sent successfully.")
 }

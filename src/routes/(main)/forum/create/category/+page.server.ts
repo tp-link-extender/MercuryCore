@@ -19,32 +19,31 @@ export async function load({ locals }) {
 	}
 }
 
-export const actions = {
-	default: async ({ request, locals, getClientAddress }) => {
-		await authorise(locals, 5)
+export const actions: import("./$types").Actions = {}
+actions.default = async ({ request, locals, getClientAddress }) => {
+	await authorise(locals, 5)
 
-		const form = await superValidate(request, zod(schema))
-		if (!form.valid) return formError(form)
+	const form = await superValidate(request, zod(schema))
+	if (!form.valid) return formError(form)
 
-		const { name, description } = form.data
+	const { name, description } = form.data
 
-		// Conflicts with /forum/create
-		if (name.toLowerCase() === "create")
-			return formError(form, ["name"], ["Can't park there mate"])
+	// Conflicts with /forum/create
+	if (name.toLowerCase() === "create")
+		return formError(form, ["name"], ["Can't park there mate"])
 
-		const limit = ratelimit(form, "forumCategory", getClientAddress, 30)
-		if (limit) return limit
+	const limit = ratelimit(form, "forumCategory", getClientAddress, 30)
+	if (limit) return limit
 
-		await query(
-			surql`
-				CREATE type::thing("forumCategory", $name) CONTENT {
-					name: $name,
-					description: $description,
-					created: time::now(),
-				}`,
-			{ name, description }
-		)
+	await query(
+		surql`
+			CREATE type::thing("forumCategory", $name) CONTENT {
+				name: $name,
+				description: $description,
+				created: time::now(),
+			}`,
+		{ name, description }
+	)
 
-		redirect(302, `/forum/${name}`)
-	},
+	redirect(302, `/forum/${name}`)
 }

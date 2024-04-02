@@ -20,7 +20,7 @@
 			<Moon
 				item={{
 					name: "wrench",
-					camPos: [100, 20, 100],
+					camPos: [100, 20, 100]
 				}} />
 		</Canvas>
 	</div>

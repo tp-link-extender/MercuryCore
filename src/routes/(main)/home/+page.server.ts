@@ -77,17 +77,9 @@ export async function load({ locals }) {
 			likeCount: number
 			dislikeCount: number
 		}[],
-		friends: results[1] as {
-			number: number
-			status: "Playing" | "Online" | "Offline"
-			username: string
-		}[],
+		friends: results[1] as BasicUser[],
 		feed: results[2] as {
-			authorUser: {
-				number: number
-				status: "Playing" | "Online" | "Offline"
-				username: string
-			}
+			authorUser: BasicUser
 			content: {
 				id: string
 				text: string
@@ -100,34 +92,32 @@ export async function load({ locals }) {
 	}
 }
 
-export const actions = {
-	default: async ({ request, locals, getClientAddress }) => {
-		const form = await superValidate(request, zod(schema))
-		if (!form.valid) return formError(form)
-		const limit = ratelimit(form, "statusPost", getClientAddress, 30)
-		if (limit) return limit
+export const actions: import("./$types").Actions = {}
+actions.default = async ({ request, locals, getClientAddress }) => {
+	const form = await superValidate(request, zod(schema))
+	if (!form.valid) return formError(form)
+	const limit = ratelimit(form, "statusPost", getClientAddress, 30)
+	if (limit) return limit
 
-		const { user } = await authorise(locals)
+	const { user } = await authorise(locals)
 
-		const content = form.data.status.trim()
-		if (!content)
-			return formError(form, ["status"], ["Status cannot be empty"])
+	const content = form.data.status.trim()
+	if (!content) return formError(form, ["status"], ["Status cannot be empty"])
 
-		await query(
-			surql`
-				LET $status = CREATE statusPost CONTENT {
-					posted: time::now(),
-					visibility: "Visible",
-					content: [{
-						text: $content,
-						updated: time::now(),
-					}],
-				};
-				RELATE $user->posted->$status`,
-			{
-				content,
-				user: `user:${user.id}`,
-			}
-		)
-	},
+	await query(
+		surql`
+			LET $status = CREATE statusPost CONTENT {
+				posted: time::now(),
+				visibility: "Visible",
+				content: [{
+					text: $content,
+					updated: time::now(),
+				}],
+			};
+			RELATE $user->posted->$status`,
+		{
+			content,
+			user: `user:${user.id}`,
+		}
+	)
 }

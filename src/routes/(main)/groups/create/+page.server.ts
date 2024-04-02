@@ -14,73 +14,72 @@ export const load = async () => ({
 	form: await superValidate(zod(schema)),
 })
 
-export const actions = {
-	default: async ({ request, locals }) => {
-		const { user } = await authorise(locals)
-		const form = await superValidate(request, zod(schema))
-		if (!form.valid) return formError(form)
+export const actions: import("./$types").Actions = {}
+actions.default = async ({ request, locals }) => {
+	const { user } = await authorise(locals)
+	const form = await superValidate(request, zod(schema))
+	if (!form.valid) return formError(form)
 
-		const { name } = form.data
+	const { name } = form.data
 
-		if (name.toLowerCase() === "create")
-			return formError(
-				form,
-				["name"],
-				[
-					Buffer.from(
-						"RXJyb3IgMTY6IGR1bWIgbmlnZ2EgZGV0ZWN0ZWQ",
-						"base64"
-					).toString("ascii"),
-				]
-			)
-
-		if (name.toLowerCase() === "changed")
-			return formError(form, ["name"], ["Dickhead"])
-
-		if (name.toLowerCase() === "wisely")
-			return formError(
-				form,
-				["name"],
-				["GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!"]
-			)
-
-		if (
-			await findWhere(
-				"group",
-				surql`string::lowercase(name) = string::lowercase($name)`,
-				{ name }
-			)
+	if (name.toLowerCase() === "create")
+		return formError(
+			form,
+			["name"],
+			[
+				Buffer.from(
+					"RXJyb3IgMTY6IGR1bWIgbmlnZ2EgZGV0ZWN0ZWQ",
+					"base64"
+				).toString("ascii"),
+			]
 		)
-			return formError(
-				form,
-				["name"],
-				["A group with this name already exists"]
-			)
 
-		try {
-			await transaction(user, { number: 1 }, 10, {
-				note: `Created group ${name}`,
-				link: `/groups/${name}`,
-			})
-		} catch (err) {
-			const e = err as Error
-			return formError(form, ["other"], [e.message])
+	if (name.toLowerCase() === "changed")
+		return formError(form, ["name"], ["Dickhead"])
+
+	if (name.toLowerCase() === "wisely")
+		return formError(
+			form,
+			["name"],
+			["GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!"]
+		)
+
+	if (
+		await findWhere(
+			"group",
+			surql`string::lowercase(name) = string::lowercase($name)`,
+			{ name }
+		)
+	)
+		return formError(
+			form,
+			["name"],
+			["A group with this name already exists"]
+		)
+
+	try {
+		await transaction(user, { number: 1 }, 10, {
+			note: `Created group ${name}`,
+			link: `/groups/${name}`,
+		})
+	} catch (err) {
+		const e = err as Error
+		return formError(form, ["other"], [e.message])
+	}
+
+	await query(
+		surql`
+			LET $group = CREATE group CONTENT {
+				name: $name,
+				created: time::now(),
+			};
+			RELATE $user->owns->$group SET time = time::now();
+			RELATE $user->member->$group SET time = time::now()`,
+		{
+			name,
+			user: `user:${user.id}`,
 		}
+	)
 
-		await query(
-			surql`
-				LET $group = CREATE group CONTENT {
-					name: $name,
-					created: time::now(),
-				};
-				RELATE $user->owns->$group SET time = time::now();
-				RELATE $user->member->$group SET time = time::now()`,
-			{
-				name,
-				user: `user:${user.id}`,
-			}
-		)
-
-		redirect(302, `/groups/${name}`)
-	},
+	redirect(302, `/groups/${name}`)
 }

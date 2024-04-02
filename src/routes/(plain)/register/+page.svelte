@@ -55,7 +55,7 @@
 				name="email"
 				label="Email Address"
 				type="email"
-				placeholder="mercury@banland.xyz" />
+				placeholder="Mercury@banland.xyz" />
 			<Input
 				{formData}
 				column

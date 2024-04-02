@@ -2,7 +2,8 @@ import { authorise } from "$lib/server/lucia"
 import { mquery, squery, surql, find, findWhere } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { likeActions } from "$lib/server/like"
-import { error } from "@sveltejs/kit"
+import { encode, couldMatch } from "$lib/urlName"
+import { error, redirect } from "@sveltejs/kit"
 
 type Place = {
 	created: string
@@ -17,11 +18,7 @@ type Place = {
 	likes: boolean
 	maxPlayers: number
 	name: string
-	ownerUser: {
-		number: number
-		status: "Playing" | "Online" | "Offline"
-		username: string
-	}
+	ownerUser: BasicUser
 	players: {
 		number: number
 		status: "Playing"
@@ -80,82 +77,83 @@ export async function load({ url, locals, params }) {
 	)
 		error(404, "Place not found")
 
-	return getPlace
+	const slug = encode(getPlace.name)
+
+	if (!couldMatch(getPlace.name, params.name))
+		redirect(302, `/place/${id}/${slug}`)
+
+	return { ...getPlace, slug }
 }
 
-export const actions = {
-	like: async ({ url, request, locals, params }) => {
-		const id = +params.id
-		const { user } = await authorise(locals)
-		const data = await formData(request)
-		const action = data.action as keyof typeof likeActions
-		const privateTicket = url.searchParams.get("privateTicket")
+export const actions: import("./$types").Actions = {}
+actions.like = async ({ url, request, locals, params }) => {
+	const id = +params.id
+	const { user } = await authorise(locals)
+	const data = await formData(request)
+	const action = data.action as keyof typeof likeActions
+	const privateTicket = url.searchParams.get("privateTicket")
 
-		const likePlace = await squery<{
-			privateServer: boolean
-			privateTicket: string
-		}>(surql`SELECT privateServer, privateTicket FROM $place`, {
-			place: `place:${id}`,
+	const likePlace = await squery<{
+		privateServer: boolean
+		privateTicket: string
+	}>(surql`SELECT privateServer, privateTicket FROM $place`, {
+		place: `place:${id}`,
+	})
+
+	if (
+		!likePlace ||
+		(likePlace.privateServer && privateTicket !== likePlace.privateTicket)
+	)
+		error(404, "Place not found")
+
+	await likeActions[action](user.id, `place:${id}`)
+}
+actions.join = async ({ request, locals }) => {
+	const { user } = await authorise(locals)
+	const data = await formData(request)
+	const requestType = data.request
+	const serverId = +data.serverId
+
+	if (!requestType || !serverId) error(400, "Invalid Request")
+	if (requestType !== "RequestGame")
+		error(400, "Invalid Request (request type invalid)")
+
+	if (!(await find(`place:${serverId}`))) error(404, "Place not found")
+
+	if (
+		await findWhere("moderation", surql`out = $user AND active = true`, {
+			user: `user:${user.id}`,
 		})
+	)
+		error(403, "You cannot currently play games")
 
-		if (
-			!likePlace ||
-			(likePlace.privateServer &&
-				privateTicket !== likePlace.privateTicket)
+	// Invalidate all game sessions and create valid session
+	const session = (
+		await mquery<
+			{
+				id: string
+				in: string
+				out: string
+				ping: number
+				valid: boolean
+			}[][]
+		>(
+			surql`
+				UPDATE (SELECT * FROM $user->playing) SET valid = false;
+				RELATE $user->playing->$place CONTENT {
+					ping: 0,
+					valid: true,
+				}`,
+			{
+				user: `user:${user.id}`,
+				place: `place:${serverId}`,
+			}
 		)
-			error(404, "Place not found")
+	)[1][0]
 
-		await likeActions[action](user.id, `place:${id}`)
-	},
-	join: async ({ request, locals }) => {
-		const { user } = await authorise(locals)
-		const data = await formData(request)
-		const requestType = data.request
-		const serverId = +data.serverId
-
-		if (!requestType || !serverId) error(400, "Invalid Request")
-		if (requestType !== "RequestGame")
-			error(400, "Invalid Request (request type invalid)")
-
-		if (!(await find(`place:${serverId}`))) error(404, "Place not found")
-
-		if (
-			await findWhere(
-				"moderation",
-				surql`out = $user AND active = true`,
-				{ user: `user:${user.id}` }
-			)
-		)
-			error(403, "You cannot currently play games")
-
-		// Invalidate all game sessions and create valid session
-		const session = (
-			await mquery<
-				{
-					id: string
-					in: string
-					out: string
-					ping: number
-					valid: boolean
-				}[][]
-			>(
-				surql`
-					UPDATE (SELECT * FROM $user->playing) SET valid = false;
-					RELATE $user->playing->$place CONTENT {
-						ping: 0,
-						valid: true,
-					}`,
-				{
-					user: `user:${user.id}`,
-					place: `place:${serverId}`,
-				}
-			)
-		)[1][0]
-
-		return {
-			joinScriptUrl: `https://banland.xyz/game/join?ticket=${
-				session.id.split(":")[1]
-			}`,
-		}
-	},
+	return {
+		joinScriptUrl: `https://banland.xyz/game/join?ticket=${
+			session.id.split(":")[1]
+		}`,
+	}
 }

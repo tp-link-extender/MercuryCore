@@ -23,11 +23,7 @@ export async function load({ locals }) {
 		created: string
 		usesLeft: number
 		expiry: string
-		creator?: {
-			number: number
-			status: "Playing" | "Online" | "Offline"
-			username: string
-		}
+		creator?: BasicUser
 	}>(
 		surql`
 			SELECT
@@ -55,105 +51,101 @@ async function getData(e: RequestEvent) {
 	}
 }
 
-export const actions = {
-	create: async e => {
-		const { user, form, error } = await getData(e)
+export const actions: import("./$types").Actions = {}
+actions.create = async e => {
+	const { user, form, error } = await getData(e)
 
-		console.log(error)
-		if (error) return error
-		const { getClientAddress } = e
+	console.log(error)
+	if (error) return error
+	const { getClientAddress } = e
 
-		const limit = ratelimit(form, "createInvite", getClientAddress, 30)
-		if (limit) return limit
+	const limit = ratelimit(form, "createInvite", getClientAddress, 30)
+	if (limit) return limit
 
-		const {
-			enableInviteCustom,
-			inviteCustom,
-			enableInviteExpiry,
-			inviteExpiry,
+	const {
+		enableInviteCustom,
+		inviteCustom,
+		enableInviteExpiry,
+		inviteExpiry,
+		inviteUses,
+	} = form.data
+
+	if (
+		!inviteUses ||
+		(!!enableInviteCustom && !inviteCustom) ||
+		(!!enableInviteExpiry && !inviteExpiry)
+	)
+		return message(form, "Missing fields", {
+			status: 400,
+		})
+
+	const expiry = inviteExpiry ? new Date(inviteExpiry) : null
+
+	if (!!enableInviteExpiry && (expiry?.getTime() || 0) < new Date().getTime())
+		return formError(form, ["inviteExpiry"], ["Invalid date"])
+
+	const log = await query(
+		surql`
+			BEGIN TRANSACTION;
+			LET $key = CREATE ${enableInviteCustom ? "$" : ""}regKey CONTENT {
+				usesLeft: $inviteUses,
+				expiry: $expiry,
+				created: time::now()
+			};
+			RELATE $user->created->$key;
+			CREATE auditLog CONTENT {
+				action: "Administration",
+				note: string::concat("Created invite key ", meta::id($key[0].id)),
+				user: $user,
+				time: time::now()
+			};
+			COMMIT TRANSACTION`,
+		{
+			user: `user:${user.id}`,
 			inviteUses,
-		} = form.data
+			expiry,
+			regKey: `regKey:⟨${inviteCustom}⟩`,
+		}
+	)
 
-		if (
-			!inviteUses ||
-			(!!enableInviteCustom && !inviteCustom) ||
-			(!!enableInviteExpiry && !inviteExpiry)
-		)
-			return message(form, "Missing fields", {
-				status: 400,
-			})
+	return typeof log === "string"
+		? message(form, "This invite key already exists", { status: 400 })
+		: message(
+				form,
+				"Invite created successfully! Check the Invites tab for your new key."
+			)
+}
+actions.disable = async e => {
+	const { user, form, error } = await getData(e)
+	if (error) return error
+	const id = e.url.searchParams.get("id")
 
-		const expiry = inviteExpiry ? new Date(inviteExpiry) : null
+	if (!id) return message(form, "Missing fields", { status: 400 })
 
-		if (
-			!!enableInviteExpiry &&
-			(expiry?.getTime() || 0) < new Date().getTime()
-		)
-			return formError(form, ["inviteExpiry"], ["Invalid date"])
+	const key = await squery<{
+		usesLeft: number
+	}>(surql`SELECT usesLeft FROM $id`, { id: `regKey:⟨${id}⟩` })
 
-		const log = await query(
-			surql`
-				BEGIN TRANSACTION;
-				LET $key = CREATE ${enableInviteCustom ? "$" : ""}regKey CONTENT {
-					usesLeft: $inviteUses,
-					expiry: $expiry,
-					created: time::now()
-				};
-				RELATE $user->created->$key;
-				CREATE auditLog CONTENT {
-					action: "Administration",
-					note: string::concat("Created invite key ", meta::id($key[0].id)),
-					user: $user,
-					time: time::now()
-				};
-				COMMIT TRANSACTION`,
-			{
-				user: `user:${user.id}`,
-				inviteUses,
-				expiry,
-				regKey: `regKey:⟨${inviteCustom}⟩`,
-			}
-		)
+	if (key && key.usesLeft === 0)
+		return message(form, "Invite key is already disabled", {
+			status: 400,
+		})
 
-		return typeof log === "string"
-			? message(form, "This invite key already exists", { status: 400 })
-			: message(
-					form,
-					"Invite created successfully! Check the Invites tab for your new key."
-			  )
-	},
-	disable: async e => {
-		const { user, form, error } = await getData(e)
-		if (error) return error
-		const id = e.url.searchParams.get("id")
+	await query(
+		surql`
+			UPDATE $key SET usesLeft = 0;
+			CREATE auditLog CONTENT {
+				action: "Administration",
+				note: $note,
+				user: $user,
+				time: time::now()
+			}`,
+		{
+			note: `Disable invite key ${id}`,
+			user: `user:${user.id}`,
+			key: `regKey:⟨${id}⟩`,
+		}
+	)
 
-		if (!id) return message(form, "Missing fields", { status: 400 })
-
-		const key = await squery<{
-			usesLeft: number
-		}>(surql`SELECT usesLeft FROM $id`, { id: `regKey:⟨${id}⟩` })
-
-		if (key && key.usesLeft === 0)
-			return message(form, "Invite key is already disabled", {
-				status: 400,
-			})
-
-		await query(
-			surql`
-				UPDATE $key SET usesLeft = 0;
-				CREATE auditLog CONTENT {
-					action: "Administration",
-					note: $note,
-					user: $user,
-					time: time::now()
-				}`,
-			{
-				note: `Disable invite key ${id}`,
-				user: `user:${user.id}`,
-				key: `regKey:⟨${id}⟩`,
-			}
-		)
-
-		return message(form, "Invite key disabled successfully")
-	},
+	return message(form, "Invite key disabled successfully")
 }

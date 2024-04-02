@@ -13,11 +13,10 @@ export async function load({ locals }) {
 	}
 }
 
-export const actions = {
-	default: async ({ locals }) => {
-		await authorise(locals, 3)
-		// This function takes like 700ms to run, and streaming promises still takes a good while
-		const { free, size } = await checkDiskSpace(os.homedir())
-		return { free, size }
-	},
+export const actions: import("./$types").Actions = {}
+actions.default = async ({ locals }) => {
+	await authorise(locals, 3)
+	// This function takes like 700ms to run, and streaming promises still takes a good while
+	const { free, size } = await checkDiskSpace(os.homedir())
+	return { free, size }
 }

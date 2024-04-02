@@ -11,12 +11,11 @@ export const load = async () => ({
 	groups: await query<Group>(select),
 })
 
-export const actions = {
-	default: async ({ request }) => ({
-		groups: await query<Group>(
-			surql`${select}
-				WHERE string::lowercase($query) INSIDE string::lowercase(name)`,
-			{ query: (await request.formData()).get("q") as string }
-		),
-	}),
-}
+export const actions: import("./$types").Actions = {}
+actions.default = async ({ request }) => ({
+	groups: await query<Group>(
+		surql`${select}
+			WHERE string::lowercase($query) INSIDE string::lowercase(name)`,
+		{ query: (await request.formData()).get("q") as string }
+	),
+})

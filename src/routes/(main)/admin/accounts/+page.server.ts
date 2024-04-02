@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { query, surql, auditLog } from "$lib/server/surreal"
+import { query, surql, auditLog, Action } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -24,35 +24,38 @@ export async function load({ locals }) {
 	}
 }
 
-export const actions = {
-	changePassword: async ({ request, locals, getClientAddress }) => {
-		const { user } = await authorise(locals, 5)
-		const form = await superValidate(request, zod(schema))
-		if (!form.valid) return formError(form)
+export const actions: import("./$types").Actions = {}
+actions.changePassword = async ({ request, locals, getClientAddress }) => {
+	const { user } = await authorise(locals, 5)
+	const form = await superValidate(request, zod(schema))
+	if (!form.valid) return formError(form)
 
-		const limit = ratelimit(form, "resetPassword", getClientAddress, 30)
-		if (limit) return limit
+	const limit = ratelimit(form, "resetPassword", getClientAddress, 30)
+	if (limit) return limit
 
-		const { username, password } = form.data
+	const { username, password } = form.data
 
-		try {
-			await query(
-				surql`
-					UPDATE user SET hashedPassword = $npassword
-					WHERE string::lowercase(username) = string::lowercase($username)`,
-				{
-					username,
-					npassword: await new Scrypt().hash(password),
-				}
-			)
-		} catch {
-			return message(form, "Invalid credentials", {
-				status: 400,
-			})
-		}
+	try {
+		await query(
+			surql`
+				UPDATE user SET hashedPassword = $npassword
+				WHERE string::lowercase(username) = string::lowercase($username)`,
+			{
+				username,
+				npassword: await new Scrypt().hash(password),
+			}
+		)
+	} catch {
+		return message(form, "Invalid credentials", {
+			status: 400,
+		})
+	}
 
-		await auditLog("Account", `Change account password for ${username}`, user.id)
+	await auditLog(
+		Action.Account,
+		`Change account password for ${username}`,
+		user.id
+	)
 
-		return message(form, "Password changed successfully!")
-	},
+	return message(form, "Password changed successfully!")
 }

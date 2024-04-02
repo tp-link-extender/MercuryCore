@@ -7,11 +7,7 @@ type Group = {
 	in: boolean
 	memberCount: number
 	name: string
-	owner: {
-		number: number
-		status: "Playing" | "Online" | "Offline"
-		username: string
-	}
+	owner: BasicUser
 }
 
 export async function load({ locals, params }) {
@@ -58,17 +54,16 @@ async function getData({ locals, params }: RequestEvent) {
 	}
 }
 
-export const actions = {
-	join: async e => {
-		await query(
-			surql`RELATE $user->member->$group SET time = time::now()`,
-			await getData(e)
-		)
-	},
-	leave: async e => {
-		await query(
-			surql`DELETE $user->member WHERE out = $group`,
-			await getData(e)
-		)
-	},
+export const actions: import("./$types").Actions = {}
+actions.join = async e => {
+	await query(
+		surql`RELATE $user->member->$group SET time = time::now()`,
+		await getData(e)
+	)
+}
+actions.leave = async e => {
+	await query(
+		surql`DELETE $user->member WHERE out = $group`,
+		await getData(e)
+	)
 }

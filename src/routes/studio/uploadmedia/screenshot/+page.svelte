@@ -8,7 +8,7 @@
 	}
 </script>
 
-<div class="ctnr app py-6 light-text">
+<main class="ctnr app py-6 light-text">
 	<img
 		width="100"
 		height="100"
@@ -32,4 +32,4 @@
 		Not interested
 	</button>
 	<p class="text-white">Hey Kakarot, I think they found us</p>
-</div>
+</main>

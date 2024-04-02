@@ -127,7 +127,7 @@ async def sendApplicationToAdmin(interaction, q1, q2, q3):
     embedV.title = f"New Applicant - @{interaction.user}"
     embedV.add_field(name="User ID", value=str(interaction.user.id))
     embedV.add_field(
-        name="1. Why would you like to join Mercury 2",
+        name="1. What will you contribute to Mercury 2?",
         value=f"`{str(q1)}`",
         inline=False,
     )
@@ -261,7 +261,7 @@ async def fetchApplication(url, userID, interaction):
         )
     embedV.add_field(name="Status", value=f"**{status}**", inline=False)
     embedV.add_field(
-        name="Why would you like to join Mercury 2?",
+        name="What will you contribute to Mercury 2?",
         value=f"`{response[0]}`",
         inline=False,
     )
@@ -462,7 +462,7 @@ class keyApplication(ui.Modal):
         super().__init__(title="Application")
 
     q1 = ui.TextInput(
-        label="Why would you like to join Mercury 2?",
+        label="What will you contribute to Mercury 2?",
         style=discord.TextStyle.paragraph,
         required=True,
         min_length=100,
@@ -510,7 +510,7 @@ class keyApplication(ui.Modal):
             )
             embedV.title = ":white_check_mark: Application sent"
             embedV.add_field(
-                name="Why would you like to join Mercury 2?",
+                name="What will you contribute to Mercury 2?",
                 value=f"`{str(self.q1)}`",
                 inline=False,
             )
@@ -940,7 +940,7 @@ async def fetch(interaction: discord.Interaction):
         embedV.title = f"New Applicant - @{user}"
         embedV.add_field(name="User ID", value=str(applications[i]["discordId"]))
         embedV.add_field(
-            name="1. Why would you like to join Mercury 2",
+            name="What will you contribute to Mercury 2?",
             value=f"`{str(applications[i]['response'][0])}`",
             inline=False,
         )

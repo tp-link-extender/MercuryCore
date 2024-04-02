@@ -1,6 +1,9 @@
 <script lang="ts">
+	import { encode } from "$lib/urlName"
+
 	export let place: import("./$types").PageData["places"][0]
 
+	const slug = encode(place.name)
 	const ratio = Math.floor(
 		(place.likeCount / (place.likeCount + place.dislikeCount)) * 100
 	)
@@ -8,12 +11,12 @@
 
 <a
 	class="card bg-darker light-text text-center no-underline w-full rounded-0 rounded-b-2"
-	href="/place/{place.id}/{place.name}">
+	href="/place/{place.id}/{slug}">
 	<div class="flex">
 		<div class="w-1/2">
 			<div class="shadow overflow-hidden bg-black relative rounded-bl-2">
 				<img
-					src="/place/{place.id}/{place.name}/icon"
+					src="/place/{place.id}/{slug}/icon"
 					alt={place.name}
 					class="w-full" />
 			</div>

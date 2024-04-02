@@ -5551,8 +5551,6 @@ globals:
     args:
       - type: number
       - type: function
-  dofile:
-    removed: true
   elapsedTime:
     args: []
   error:

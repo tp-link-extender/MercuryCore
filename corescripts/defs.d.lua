@@ -8585,8 +8585,6 @@ declare _MAP_LOCATION: any
 declare _SERVER_PORT: number
 declare _SERVER_PRESENCE_URL: string
 
-declare _GUEST_NUMBER: number
-
 declare _SERVER: boolean
 declare _CLIENT: boolean
 

@@ -1,13 +1,8 @@
 import { authorise } from "$lib/server/lucia"
 import { query, surql } from "$lib/server/surreal"
 
-type Users = {
-	number: number
-	status: "Playing" | "Online" | "Offline"
-	username: string
-}
 export const load = async ({ locals }) => ({
-	users: await query<Users>(
+	users: await query<BasicUser>(
 		surql`
 			SELECT number, status, username
 			FROM user WHERE $user INSIDE ->request->user`,

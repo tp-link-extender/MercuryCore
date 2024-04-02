@@ -22,148 +22,103 @@ export async function load({ locals }) {
 	}
 }
 
-export const actions = {
-	default: async ({ request, locals, getClientAddress }) => {
-		const { user } = await authorise(locals, 4)
-		const form = await superValidate(request, zod(schema))
-		if (!form.valid) return formError(form)
+export const actions: import("./$types").Actions = {}
+actions.default = async ({ request, locals, getClientAddress }) => {
+	const { user } = await authorise(locals, 4)
+	const form = await superValidate(request, zod(schema))
+	if (!form.valid) return formError(form)
 
-		const { username, action, banDate, reason } = form.data
-		const date = banDate ? new Date(banDate) : null
-		const intAction = +action
+	const { username, action, banDate, reason } = form.data
+	const date = banDate ? new Date(banDate) : null
+	const intAction = +action
 
-		if (intAction === 2 && (date?.getTime() || 0) < new Date().getTime())
-			return formError(form, ["banDate"], ["Invalid date"])
+	if (intAction === 2 && (date?.getTime() || 0) < new Date().getTime())
+		return formError(form, ["banDate"], ["Invalid date"])
 
-		const getModeratee = await squery<{
-			id: string
-			number: number
-			permissionLevel: number
-		}>(
-			surql`
-				SELECT
-					meta::id(id) AS id,
-					number,
-					permissionLevel
-				FROM user
-				WHERE username = $username`,
-			{ username }
+	const getModeratee = await squery<{
+		id: string
+		number: number
+		permissionLevel: number
+	}>(
+		surql`
+			SELECT
+				meta::id(id) AS id,
+				number,
+				permissionLevel
+			FROM user
+			WHERE username = $username`,
+		{ username }
+	)
+
+	if (!getModeratee)
+		return formError(form, ["username"], ["User does not exist"])
+
+	if (getModeratee.permissionLevel > 2)
+		return formError(
+			form,
+			["username"],
+			["You cannot moderate staff members"]
 		)
 
-		if (!getModeratee)
-			return formError(form, ["username"], ["User does not exist"])
+	if (getModeratee.id === user.id)
+		return formError(form, ["username"], ["You cannot moderate yourself"])
 
-		if (getModeratee.permissionLevel > 2)
+	const limit = ratelimit(form, "moderateUser", getClientAddress, 30)
+	if (limit) return limit
+
+	const moderationMessage = [
+		"warned",
+		`banned until ${date?.toLocaleDateString()}`,
+		"terminated",
+		"deleted",
+	]
+	const moderationActions = [
+		"Warning",
+		"Ban",
+		"Termination",
+		"AccountDeleted",
+	]
+	const qParams = {
+		moderator: `user:${user.id}`,
+		moderatee: `user:${getModeratee.id}`,
+	}
+
+	if (intAction === 5) {
+		// Unban
+		if (
+			!(await findWhere(
+				"moderation",
+				surql`in = $moderator
+					AND out = $moderatee
+					AND active = true`,
+				qParams
+			))
+		)
 			return formError(
 				form,
-				["username"],
-				["You cannot moderate staff members"]
+				["action"],
+				["You cannot unban a user that has not been moderated yet"]
 			)
-
-		if (getModeratee.id === user.id)
-			return formError(
-				form,
-				["username"],
-				["You cannot moderate yourself"]
-			)
-
-		const limit = ratelimit(form, "moderateUser", getClientAddress, 30)
-		if (limit) return limit
-
-		const moderationMessage = [
-			"warned",
-			`banned until ${date?.toLocaleDateString()}`,
-			"terminated",
-			"deleted",
-		]
-		const moderationActions = [
-			"Warning",
-			"Ban",
-			"Termination",
-			"AccountDeleted",
-		]
-		const qParams = {
-			moderator: `user:${user.id}`,
-			moderatee: `user:${getModeratee.id}`,
-		}
-
-		if (intAction === 5) {
-			// Unban
-			if (
-				!(await findWhere(
-					"moderation",
-					surql`in = $moderator
-						AND out = $moderatee
-						AND active = true`,
-					qParams
-				))
-			)
-				return formError(
-					form,
-					["action"],
-					["You cannot unban a user that has not been moderated yet"]
-				)
-
-			if (
-				await findWhere(
-					"moderation",
-					surql`in = $moderator
-						AND out = $moderatee
-						AND active = true
-						AND type = "AccountDeleted"`,
-					qParams
-				)
-			)
-				return formError(
-					form,
-					["action"],
-					["You cannot unban a deleted user"]
-				)
-
-			await query(
-				surql`
-					UPDATE moderation SET active = false
-					WHERE out = $moderatee;
-					CREATE auditLog CONTENT {
-						action: "Moderation",
-						note: $note,
-						user: $moderator,
-						time: time::now(),
-					}`,
-				{
-					note: `Unban ${username}`,
-					...qParams,
-				}
-			)
-
-			return message(form, `${username} has been unbanned`)
-		}
-
-		const moderationAction = moderationActions[intAction - 1]
 
 		if (
 			await findWhere(
 				"moderation",
-				surql`out = $moderatee
-					AND active = true`,
+				surql`in = $moderator
+					AND out = $moderatee
+					AND active = true
+					AND type = "AccountDeleted"`,
 				qParams
 			)
 		)
 			return formError(
 				form,
-				["username"],
-				["User has already been moderated"]
+				["action"],
+				["You cannot unban a deleted user"]
 			)
 
 		await query(
 			surql`
-				RELATE $moderator->moderation->$moderatee CONTENT {
-					note: $reason,
-					type: $moderationAction,
-					time: time::now(),
-					timeEnds: $timeEnds,
-					active: true,
-				};
+				UPDATE moderation SET active = false WHERE out = $moderatee;
 				CREATE auditLog CONTENT {
 					action: "Moderation",
 					note: $note,
@@ -171,24 +126,63 @@ export const actions = {
 					time: time::now(),
 				}`,
 			{
-				note: `${
-					[
-						`Warn ${username}`,
-						`Ban ${username}`,
-						`Terminate ${username}`,
-						`Delete ${username}'s account`,
-					][intAction - 1]
-				}: ${reason}`,
-				reason,
-				moderationAction,
-				timeEnds: date || new Date(),
+				note: `Unban ${username}`,
 				...qParams,
 			}
 		)
 
-		return message(
-			form,
-			`${username} has been ${moderationMessage[intAction - 1]}`
+		return message(form, `${username} has been unbanned`)
+	}
+
+	const moderationAction = moderationActions[intAction - 1]
+
+	if (
+		await findWhere(
+			"moderation",
+			surql`out = $moderatee
+					AND active = true`,
+			qParams
 		)
-	},
+	)
+		return formError(
+			form,
+			["username"],
+			["User has already been moderated"]
+		)
+
+	const notes = [
+		`Warn ${username}`,
+		`Ban ${username}`,
+		`Terminate ${username}`,
+		`Delete ${username}'s account`,
+	]
+
+	await query(
+		surql`
+			RELATE $moderator->moderation->$moderatee CONTENT {
+				note: $reason,
+				type: $moderationAction,
+				time: time::now(),
+				timeEnds: $timeEnds,
+				active: true,
+			};
+			CREATE auditLog CONTENT {
+				action: "Moderation",
+				note: $note,
+				user: $moderator,
+				time: time::now(),
+			}`,
+		{
+			note: `${notes[intAction - 1]}: ${reason}`,
+			reason,
+			moderationAction,
+			timeEnds: date || new Date(),
+			...qParams,
+		}
+	)
+
+	return message(
+		form,
+		`${username} has been ${moderationMessage[intAction - 1]}`
+	)
 }

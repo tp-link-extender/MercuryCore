@@ -27,11 +27,7 @@ const SELECTREPLIES = recurse(
 )
 
 type ForumPost = {
-	author: {
-		number: number
-		status: "Playing" | "Online" | "Offline"
-		username: string
-	}
+	author: BasicUser
 	categoryName: string
 	content: {
 		text: string
@@ -130,121 +126,114 @@ const pinPost = (pinned: boolean) => async (e: RequestEvent) => {
 	await pinThing(pinned, `forumPost:${id}`)
 }
 
-export const actions = {
-	reply: async ({ url, request, locals, params, getClientAddress }) => {
-		const { user } = await authorise(locals)
-		const form = await superValidate(request, zod(schema))
-		if (!form.valid) return formError(form)
+export const actions: import("./$types").Actions = {}
+actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
+	const { user } = await authorise(locals)
+	const form = await superValidate(request, zod(schema))
+	if (!form.valid) return formError(form)
 
-		const replyId = url.searchParams.get("rid")
-		// If there is a replyId, it is a reply to another reply
+	const replyId = url.searchParams.get("rid")
+	// If there is a replyId, it is a reply to another reply
 
-		const content = form.data.content.trim()
-		if (!content)
-			return formError(form, ["content"], ["Reply cannot be empty"])
+	const content = form.data.content.trim()
+	if (!content) return formError(form, ["content"], ["Reply cannot be empty"])
 
-		if (replyId && !/^[0-9a-z]+$/.test(replyId))
-			error(400, "Invalid reply id")
+	if (replyId && !/^[0-9a-z]+$/.test(replyId)) error(400, "Invalid reply id")
 
-		const limit = ratelimit(form, "forumReply", getClientAddress, 5)
-		if (limit) return limit
+	const limit = ratelimit(form, "forumReply", getClientAddress, 5)
+	if (limit) return limit
 
-		const replypost = await squery<{ authorId: string }>(
-			surql`
-				SELECT meta::id(<-posted[0]<-user[0].id) AS authorId
-				FROM $replypostId
-				WHERE visibility = "Visible"`,
-			{
-				replypostId: replyId
-					? `forumReply:${replyId}`
-					: `forumPost:${params.post}`,
-			}
-		)
+	const replypost = await squery<{ authorId: string }>(
+		surql`
+			SELECT meta::id(<-posted[0]<-user[0].id) AS authorId
+			FROM $replypostId
+			WHERE visibility = "Visible"`,
+		{
+			replypostId: replyId
+				? `forumReply:${replyId}`
+				: `forumPost:${params.post}`,
+		}
+	)
 
-		if (!replypost) error(404, `${replyId ? "Reply" : "Post"} not found`)
+	if (!replypost) error(404, `${replyId ? "Reply" : "Post"} not found`)
 
-		const newReplyId = await squery<string>(surql`[fn::id()]`)
+	const newReplyId = await squery<string>(surql`[fn::id()]`)
 
+	await query(
+		surql`
+			LET $reply = CREATE $forumReply CONTENT {
+				posted: time::now(),
+				visibility: "Visible",
+				pinned: false,
+				content: [{
+					text: $content,
+					updated: time::now(),
+				}],
+			};
+			RELATE $reply->replyToPost->$post;
+			IF $replyId {
+				RELATE $reply->replyToReply->$replyId;
+			};
+			RELATE $user->posted->$reply`,
+		{
+			content,
+			user: `user:${user.id}`,
+			forumReply: `forumReply:${newReplyId}`,
+			post: `forumPost:${params.post}`,
+			replyId: replyId ? `forumReply:${replyId}` : undefined,
+		}
+	)
+
+	if (user.id !== replypost.authorId)
 		await query(
 			surql`
-				LET $reply = CREATE $forumReply CONTENT {
-					posted: time::now(),
-					visibility: "Visible",
-					pinned: false,
-					content: [{
-						text: $content,
-						updated: time::now(),
-					}],
-				};
-				RELATE $reply->replyToPost->$post;
-				IF $replyId {
-					RELATE $reply->replyToReply->$replyId;
-				};
-				RELATE $user->posted->$reply`,
+				RELATE $sender->notification->$receiver CONTENT {
+					type: $type,
+					time: time::now(),
+					note: $note,
+					relativeId: $relativeId,
+					read: false,
+				}`,
 			{
-				content,
-				user: `user:${user.id}`,
-				forumReply: `forumReply:${newReplyId}`,
-				post: `forumPost:${params.post}`,
-				replyId: replyId ? `forumReply:${replyId}` : undefined,
+				type: replyId ? "ForumReplyReply" : "ForumPostReply",
+				sender: `user:${user.id}`,
+				receiver: `user:${replypost.authorId}`,
+				note: `${user.username} replied to your ${
+					replyId ? "reply" : "post"
+				}: ${content}`,
+				relativeId: newReplyId,
 			}
 		)
 
-		if (user.id !== replypost.authorId)
-			await query(
-				surql`
-					RELATE $sender->notification->$receiver CONTENT {
-						type: $type,
-						time: time::now(),
-						note: $note,
-						relativeId: $relativeId,
-						read: false,
-					}`,
-				{
-					type: replyId ? "ForumReplyReply" : "ForumPostReply",
-					sender: `user:${user.id}`,
-					receiver: `user:${replypost.authorId}`,
-					note: `${user.username} replied to your ${
-						replyId ? "reply" : "post"
-					}: ${content}`,
-					relativeId: newReplyId,
-				}
-			)
-
-		await like(user.id, `forumReply:${newReplyId}`)
-	},
-	delete: async e => {
-		const { user, reply, id } = await findReply<{
-			authorId: string
-			visibility: string
-		}>(
-			e,
-			undefined,
-			surql`
-				SELECT
-					meta::id((<-posted<-user.id)[0]) AS authorId,
-					visibility
-				FROM $forumReply`
-		)
-
-		if (reply.authorId !== user.id)
-			error(403, "You cannot delete someone else's reply")
-
-		if (reply.visibility !== "Visible") error(400, "Reply already deleted")
-
-		await updateVisibility("Deleted", "[deleted]", id)
-	},
-	moderate: async e => {
-		await updateVisibility(
-			"Moderated",
-			"[removed]",
-			(await findReply(e, 4)).id
-		)
-	},
-	pin: pinReply(true),
-	unpin: pinReply(false),
-	pinpost: pinPost(true),
-	unpinpost: pinPost(false),
-	like: e =>
-		categoryActions.like(e as unknown as import("../$types").RequestEvent),
+	await like(user.id, `forumReply:${newReplyId}`)
 }
+actions.delete = async e => {
+	const { user, reply, id } = await findReply<{
+		authorId: string
+		visibility: string
+	}>(
+		e,
+		undefined,
+		surql`
+			SELECT
+				meta::id((<-posted<-user.id)[0]) AS authorId,
+				visibility
+			FROM $forumReply`
+	)
+
+	if (reply.authorId !== user.id)
+		error(403, "You cannot delete someone else's reply")
+
+	if (reply.visibility !== "Visible") error(400, "Reply already deleted")
+
+	await updateVisibility("Deleted", "[deleted]", id)
+}
+actions.moderate = async e => {
+	await updateVisibility("Moderated", "[removed]", (await findReply(e, 4)).id)
+}
+actions.pin = pinReply(true)
+actions.unpin = pinReply(false)
+actions.pinpost = pinPost(true)
+actions.unpinpost = pinPost(false)
+actions.like = e =>
+	categoryActions.like(e as unknown as import("../$types").RequestEvent)

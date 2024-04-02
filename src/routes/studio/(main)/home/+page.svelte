@@ -8,7 +8,7 @@
 
 	export const snapshot = formData
 
-	$: sortedFeed = data.feed.sort(
+	const sortedFeed = data.feed.sort(
 		(a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()
 	)
 </script>

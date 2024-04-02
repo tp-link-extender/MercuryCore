@@ -51,7 +51,8 @@
 
 <div bind:this={top} id="top" class="absolute top-0" />
 
-<Pagepart class="cubes {cubePercentage < 20 ? 'pb-60' : 'pb-[calc(15rem+70vh)]'}">
+<Pagepart
+	class="cubes {cubePercentage < 20 ? 'pb-60' : 'pb-[calc(15rem+70vh)]'}">
 	{#if cubePercentage < 20}
 		<div
 			out:fade

@@ -18,7 +18,7 @@ banland.xyz {
 	rewrite /Asset/GetScriptState.ashx /asset/getscriptstate
 	rewrite /Game/Tools/InsertAsset.ashx /game/tools/insertasset
 	rewrite /Game/Tools/ThumbnailAsset.ashx /game/tools/thumbnailasset
-	rewrite /UploadMedia/PostImage.aspx /game/uploadmedia/screenshot
+	rewrite /UploadMedia/PostImage.aspx /studio/uploadmedia/screenshot
 
 	redir /download https://setup.banland.xyz/MercuryPlayerLauncher.exe
 

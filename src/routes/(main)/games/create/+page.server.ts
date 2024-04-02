@@ -1,7 +1,8 @@
 import { authorise } from "$lib/server/lucia"
 import { query, squery, transaction, surql } from "$lib/server/surreal"
-import { redirect } from "@sveltejs/kit"
 import formError from "$lib/server/formError"
+import { encode } from "$lib/urlName"
+import { redirect } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
@@ -34,77 +35,78 @@ export const load = async ({ locals }) => ({
 	placeCount: await placeCount((await authorise(locals)).user.id),
 })
 
-export const actions = {
-	default: async ({ request, locals }) => {
-		const { user } = await authorise(locals)
-		const form = await superValidate(request, zod(schema))
-		if (!form.valid) return formError(form)
+export const actions: import("./$types").Actions = {}
+actions.default = async ({ request, locals }) => {
+	const { user } = await authorise(locals)
+	const form = await superValidate(request, zod(schema))
+	if (!form.valid) return formError(form)
 
-		const { serverIP, serverPort, maxPlayers, privateServer } = form.data
+	const { serverIP, serverPort, maxPlayers, privateServer } = form.data
 
-		const name = form.data.name.trim()
-		if (!name) return formError(form, ["name"], ["Place must have a name"])
-		const description = form.data.description.trim()
-		if (!description)
-			return formError(
-				form,
-				["description"],
-				["Place must have a description"]
-			)
-
-		if ((await placeCount(user.id)) >= 2)
-			return formError(
-				form,
-				["other"],
-				["You can't have more than two places"]
-			)
-
-		const id = await squery<number>(surql`[stuff:increment.place]`)
-
-		try {
-			await transaction(user, { number: 1 }, 0, {
-				note: `Created place ${name}`,
-				link: `/place/${id + 1}`,
-			})
-		} catch (err) {
-			const e = err as Error
-			console.log("error caught", e.message)
-			return formError(form, ["other"], [e.message])
-		}
-
-		await query(
-			surql`
-				LET $id = (UPDATE ONLY stuff:increment SET place += 1).place;
-				LET $place = CREATE place CONTENT {
-					id: $id,
-					name: $name,
-					description: [{
-						text: $description,
-						updated: time::now(),
-					}],
-					serverIP: $serverIP,
-					serverPort: $serverPort,
-					privateServer: $privateServer,
-					serverTicket: rand::guid(),
-					privateTicket: rand::guid(),
-					serverPing: 0,
-					maxPlayers: $maxPlayers,
-					created: time::now(),
-					updated: time::now(),
-					deleted: false,
-				};
-				RELATE $user->owns->$place`,
-			{
-				user: `user:${user.id}`,
-				name,
-				description,
-				serverIP,
-				serverPort,
-				privateServer,
-				maxPlayers,
-			}
+	const name = form.data.name.trim()
+	if (!name) return formError(form, ["name"], ["Place must have a name"])
+	const description = form.data.description.trim()
+	if (!description)
+		return formError(
+			form,
+			["description"],
+			["Place must have a description"]
 		)
 
-		redirect(302, `/place/${id + 1}/${name}`)
-	},
+	if ((await placeCount(user.id)) >= 2)
+		return formError(
+			form,
+			["other"],
+			["You can't have more than two places"]
+		)
+
+	const id = await squery<number>(surql`[stuff:increment.place]`)
+
+	const slug = encode(name)
+
+	try {
+		await transaction(user, { number: 1 }, 0, {
+			note: `Created place ${name}`,
+			link: `/place/${id + 1}/${slug}`,
+		})
+	} catch (err) {
+		const e = err as Error
+		console.log("error caught", e.message)
+		return formError(form, ["other"], [e.message])
+	}
+
+	await query(
+		surql`
+			LET $id = (UPDATE ONLY stuff:increment SET place += 1).place;
+			LET $place = CREATE place CONTENT {
+				id: $id,
+				name: $name,
+				description: [{
+					text: $description,
+					updated: time::now(),
+				}],
+				serverIP: $serverIP,
+				serverPort: $serverPort,
+				privateServer: $privateServer,
+				serverTicket: rand::guid(),
+				privateTicket: rand::guid(),
+				serverPing: 0,
+				maxPlayers: $maxPlayers,
+				created: time::now(),
+				updated: time::now(),
+				deleted: false,
+			};
+			RELATE $user->owns->$place`,
+		{
+			user: `user:${user.id}`,
+			name,
+			description,
+			serverIP,
+			serverPort,
+			privateServer,
+			maxPlayers,
+		}
+	)
+
+	redirect(302, `/place/${id + 1}/${slug}`)
 }

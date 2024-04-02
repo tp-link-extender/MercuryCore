@@ -1,18 +1,15 @@
 import { query, squery, surql } from "$lib/server/surreal"
 import { authorise } from "$lib/server/lucia"
+import type { RenderType, Status } from "$lib/server/requestRender"
 
 type Render = {
 	id: number
-	type: "Clothing" | "Avatar"
-	status: "Pending" | "Rendering" | "Completed" | "Error"
+	type: RenderType
+	status: Status
 	created: string
 	completed: string | null
 	relativeId: number
-	user?: {
-		number: number
-		status: "Playing" | "Online" | "Offline"
-		username: string
-	}
+	user?: BasicUser
 	asset?: {
 		id: number
 		name: string

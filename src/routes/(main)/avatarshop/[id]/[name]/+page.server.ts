@@ -9,7 +9,7 @@ import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import { like, likeActions } from "$lib/server/like"
 import { recurse, type Replies } from "$lib/server/nestedReplies"
-import requestRender from "$lib/server/requestRender"
+import requestRender, { RenderType } from "$lib/server/requestRender"
 import type { RequestEvent } from "./$types"
 
 const schema = z.object({
@@ -28,11 +28,7 @@ const SELECTCOMMENTS = recurse(
 )
 
 type Asset = {
-	creator: {
-		number: number
-		status: "Playing" | "Online" | "Offline"
-		username: string
-	}
+	creator: BasicUser
 	description: {
 		text: string
 		updated: string
@@ -151,251 +147,247 @@ const pinComment = (pinned: boolean) => async (e: RequestEvent) => {
 	})
 }
 
-export const actions = {
-	reply: async ({ url, request, locals, params, getClientAddress }) => {
-		const { user } = await authorise(locals)
-		const form = await superValidate(request, zod(schema))
-		if (!form.valid) return formError(form)
+export const actions: import("./$types").Actions = {}
+actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
+	const { user } = await authorise(locals)
+	const form = await superValidate(request, zod(schema))
+	if (!form.valid) return formError(form)
 
-		const limit = ratelimit(form, "assetComment", getClientAddress, 5)
-		if (limit) return limit
+	const limit = ratelimit(form, "assetComment", getClientAddress, 5)
+	if (limit) return limit
 
-		const replyId = url.searchParams.get("rid")
-		// If there is a replyId, it is a reply to another comment
+	const replyId = url.searchParams.get("rid")
+	// If there is a replyId, it is a reply to another comment
 
-		const content = form.data.content.trim()
-		if (!content)
-			return formError(form, ["content"], ["Comment cannot be empty"])
+	const content = form.data.content.trim()
+	if (!content)
+		return formError(form, ["content"], ["Comment cannot be empty"])
 
-		if (replyId && !/^[0-9a-z]+$/.test(replyId))
-			error(400, "Invalid reply id")
+	if (replyId && !/^[0-9a-z]+$/.test(replyId)) error(400, "Invalid reply id")
 
-		const commentAuthor = await squery<{ id: string }>(
-			surql`SELECT meta::id(id) AS id FROM ` +
-				(replyId
-					? surql`$comment<-posted<-user`
-					: surql`$asset<-created<-user`),
-			{
-				comment: `assetComment:${replyId}`,
-				asset: `asset:${params.id}`,
-			}
-		)
-
-		if (replyId && !commentAuthor) error(404)
-
-		const receiverId = commentAuthor?.id || ""
-		const newReplyId = await query<string>(surql`[fn::id()]`)
-
-		await query(
-			surql`
-				LET $reply = CREATE $assetComment CONTENT {
-					posted: time::now(),
-					visibility: "Visible",
-					pinned: false,
-					content: [{
-						text: $content,
-						updated: time::now(),
-					}],
-				};
-				RELATE $reply->replyToAsset->$asset;
-				IF $replyId {
-					RELATE $reply->replyToComment->$replyId;
-				};
-				RELATE $user->posted->$reply`,
-			{
-				content,
-				user: `user:${user.id}`,
-				assetComment: `assetComment:${newReplyId}`,
-				asset: `asset:${params.id}`,
-				replyId: replyId ? `assetComment:${replyId}` : undefined,
-			}
-		)
-
-		await Promise.all([
-			user.id !== receiverId &&
-				query(
-					surql`
-						RELATE $sender->notification->$receiver CONTENT {
-							type: $type,
-							time: time::now(),
-							note: $note,
-							relativeId: $relativeId,
-							read: false,
-						}`,
-					{
-						type: replyId ? "AssetCommentReply" : "AssetComment",
-						sender: `user:${user.id}`,
-						receiver: `user:${receiverId}`,
-						note: `${user.username} ${
-							replyId
-								? "replied to your comment"
-								: "commented on your asset"
-						}: ${content}`,
-						relativeId: newReplyId,
-					}
-				),
-
-			like(user.id, `assetComment:${newReplyId}`),
-		])
-	},
-	like: async ({ request, locals, url }) => {
-		const { user } = await authorise(locals)
-		const data = await formData(request)
-		const action = data.action as keyof typeof likeActions
-		const id = url.searchParams.get("id")
-		const replyId = url.searchParams.get("rid")
-
-		if (replyId && !/^[0-9a-z]+$/.test(replyId))
-			error(400, "Invalid reply id")
-
-		if (
-			(id && !(await find(`asset:${id}`))) ||
-			(replyId && !(await find(`assetComment:${replyId}`)))
-		)
-			error(404)
-
-		await likeActions[action](
-			user.id,
-			`asset${replyId ? "Comment" : ""}:${id || replyId}`
-		)
-	},
-	buy: async e => {
-		const { user, id } = await getBuyData(e)
-
-		const asset = await squery<{
-			creator: {
-				id: string
-				username: string
-			}
-			name: string
-			owned: boolean
-			price: number
-			visibility: string
-		}>(
-			surql`
-				SELECT
-					*,
-					(SELECT meta::id(id) AS id, username
-					FROM <-created<-user)[0] AS creator,
-					$user INSIDE <-owns<-user.id AS owned
-				FROM $asset`,
-			{
-				asset: `asset:${id}`,
-				user: `user:${user.id}`,
-			}
-		)
-		if (!asset) error(404, "Not found")
-		if (asset.owned) error(400, "You already own this item")
-		if (asset.visibility !== "Visible")
-			error(400, "This item hasn't been approved yet")
-
-		try {
-			await transaction(user, asset.creator, asset.price, {
-				note: `Purchased asset ${asset.name}`,
-				link: `/avatarshop/${e.params.id}/${asset.name}`,
-			})
-		} catch (err) {
-			const e = err as Error
-			console.log(e.message)
-			error(400, e.message)
+	const commentAuthor = await squery<{ id: string }>(
+		surql`SELECT meta::id(id) AS id FROM ` +
+			(replyId
+				? surql`$comment<-posted<-user`
+				: surql`$asset<-created<-user`),
+		{
+			comment: `assetComment:${replyId}`,
+			asset: `asset:${params.id}`,
 		}
+	)
 
-		await Promise.all([
-			query(surql`RELATE $user->owns->$asset`, {
-				user: `user:${user.id}`,
-				asset: `asset:${id}`,
-			}),
-			user.id === asset.creator.id ||
-				query(
-					surql`
-						RELATE $sender->notification->$receiver CONTENT {
-							type: $type,
-							time: time::now(),
-							note: $note,
-							relativeId: $relativeId,
-							read: false,
-						}`,
-					{
-						type: "ItemPurchase",
-						sender: `user:${user.id}`,
-						receiver: `user:${asset.creator.id}`,
-						note: `${user.username} just purchased your item: ${asset.name}`,
-						relativeId: e.params.id,
-					}
-				),
-		])
-	},
-	delete: async e => {
-		const { user, comment, id } = await findComment<{
-			authorId: string
-			visibility: string
-		}>(
-			e,
-			undefined,
-			surql`
-				SELECT
-					meta::id((<-posted<-user.id)[0]) AS authorId,
-					visibility
-				FROM $assetComment`
-		)
+	if (replyId && !commentAuthor) error(404)
 
-		if (comment.authorId !== user.id)
-			error(403, "You cannot delete someone else's comment")
+	const receiverId = commentAuthor?.id || ""
+	const newReplyId = await query<string>(surql`[fn::id()]`)
 
-		if (comment.visibility !== "Visible")
-			error(400, "Comment already deleted")
+	await query(
+		surql`
+			LET $reply = CREATE $assetComment CONTENT {
+				posted: time::now(),
+				visibility: "Visible",
+				pinned: false,
+				content: [{
+					text: $content,
+					updated: time::now(),
+				}],
+			};
+			RELATE $reply->replyToAsset->$asset;
+			IF $replyId {
+				RELATE $reply->replyToComment->$replyId;
+			};
+			RELATE $user->posted->$reply`,
+		{
+			content,
+			user: `user:${user.id}`,
+			assetComment: `assetComment:${newReplyId}`,
+			asset: `asset:${params.id}`,
+			replyId: replyId ? `assetComment:${replyId}` : undefined,
+		}
+	)
 
-		await updateVisibility("Deleted", "[deleted]", id)
-	},
-	moderate: async e => {
-		await updateVisibility(
-			"Moderated",
-			"[removed]",
-			(await findComment(e, 4)).id
-		)
-	},
-	pin: pinComment(true),
-	unpin: pinComment(false),
-	rerender: async ({ locals, params }) => {
-		await authorise(locals, 5)
+	await Promise.all([
+		user.id !== receiverId &&
+			query(
+				surql`
+					RELATE $sender->notification->$receiver CONTENT {
+						type: $type,
+						time: time::now(),
+						note: $note,
+						relativeId: $relativeId,
+						read: false,
+					}`,
+				{
+					type: replyId ? "AssetCommentReply" : "AssetComment",
+					sender: `user:${user.id}`,
+					receiver: `user:${receiverId}`,
+					note: `${user.username} ${
+						replyId
+							? "replied to your comment"
+							: "commented on your asset"
+					}: ${content}`,
+					relativeId: newReplyId,
+				}
+			),
 
-		const asset = await squery<{
-			name: string
+		like(user.id, `assetComment:${newReplyId}`),
+	])
+}
+actions.like = async ({ request, locals, url }) => {
+	const { user } = await authorise(locals)
+	const data = await formData(request)
+	const action = data.action as keyof typeof likeActions
+	const id = url.searchParams.get("id")
+	const replyId = url.searchParams.get("rid")
+
+	if (replyId && !/^[0-9a-z]+$/.test(replyId)) error(400, "Invalid reply id")
+
+	if (
+		(id && !(await find(`asset:${id}`))) ||
+		(replyId && !(await find(`assetComment:${replyId}`)))
+	)
+		error(404)
+
+	await likeActions[action](
+		user.id,
+		`asset${replyId ? "Comment" : ""}:${id || replyId}`
+	)
+}
+actions.buy = async e => {
+	const { user, id } = await getBuyData(e)
+
+	const asset = await squery<{
+		creator: {
 			id: string
-			type: number
-			visibility: string
-		}>(
-			surql`
-				SELECT
-					name,
-					meta::id(id) AS id, 
-					type,
-					visibility
-				FROM $asset`,
-			{ asset: `asset:${params.id}` }
-		)
-
-		if (!asset) error(404, "Not found")
-
-		if (![11, 12, 8].includes(asset.type))
-			error(400, "Can't rerender this type of asset")
-
-		if (asset.visibility === "Moderated")
-			error(400, "Can't rerender a moderated asset")
-
-		try {
-			await requestRender(
-				asset.type === 8 ? "Model" : "Clothing",
-				+params.id
-			)
-			return {
-				icon: `/avatarshop/${asset.id}/${
-					asset.name
-				}/icon?r=${Math.random()}`,
-			}
-		} catch (e) {
-			console.error(e)
-			return fail(500, { msg: "Failed to request render" })
+			username: string
 		}
-	},
+		name: string
+		owned: boolean
+		price: number
+		visibility: string
+	}>(
+		surql`
+			SELECT
+				*,
+				(SELECT meta::id(id) AS id, username
+				FROM <-created<-user)[0] AS creator,
+				$user INSIDE <-owns<-user.id AS owned
+			FROM $asset`,
+		{
+			asset: `asset:${id}`,
+			user: `user:${user.id}`,
+		}
+	)
+	if (!asset) error(404, "Not found")
+	if (asset.owned) error(400, "You already own this item")
+	if (asset.visibility !== "Visible")
+		error(400, "This item hasn't been approved yet")
+
+	try {
+		await transaction(user, asset.creator, asset.price, {
+			note: `Purchased asset ${asset.name}`,
+			link: `/avatarshop/${e.params.id}/${asset.name}`,
+		})
+	} catch (err) {
+		const e = err as Error
+		console.log(e.message)
+		error(400, e.message)
+	}
+
+	await Promise.all([
+		query(surql`RELATE $user->owns->$asset`, {
+			user: `user:${user.id}`,
+			asset: `asset:${id}`,
+		}),
+		user.id === asset.creator.id ||
+			query(
+				surql`
+					RELATE $sender->notification->$receiver CONTENT {
+						type: $type,
+						time: time::now(),
+						note: $note,
+						relativeId: $relativeId,
+						read: false,
+					}`,
+				{
+					type: "ItemPurchase",
+					sender: `user:${user.id}`,
+					receiver: `user:${asset.creator.id}`,
+					note: `${user.username} just purchased your item: ${asset.name}`,
+					relativeId: e.params.id,
+				}
+			),
+	])
+}
+actions.delete = async e => {
+	const { user, comment, id } = await findComment<{
+		authorId: string
+		visibility: string
+	}>(
+		e,
+		undefined,
+		surql`
+			SELECT
+				meta::id((<-posted<-user.id)[0]) AS authorId,
+				visibility
+			FROM $assetComment`
+	)
+
+	if (comment.authorId !== user.id)
+		error(403, "You cannot delete someone else's comment")
+
+	if (comment.visibility !== "Visible") error(400, "Comment already deleted")
+
+	await updateVisibility("Deleted", "[deleted]", id)
+}
+actions.moderate = async e => {
+	await updateVisibility(
+		"Moderated",
+		"[removed]",
+		(await findComment(e, 4)).id
+	)
+}
+actions.pin = pinComment(true)
+actions.unpin = pinComment(false)
+actions.rerender = async ({ locals, params }) => {
+	await authorise(locals, 5)
+
+	const asset = await squery<{
+		name: string
+		id: string
+		type: number
+		visibility: string
+	}>(
+		surql`
+			SELECT
+				name,
+				meta::id(id) AS id, 
+				type,
+				visibility
+			FROM $asset`,
+		{ asset: `asset:${params.id}` }
+	)
+
+	if (!asset) error(404, "Not found")
+
+	if (![11, 12, 8].includes(asset.type))
+		error(400, "Can't rerender this type of asset")
+
+	if (asset.visibility === "Moderated")
+		error(400, "Can't rerender a moderated asset")
+
+	try {
+		await requestRender(
+			asset.type === 8 ? RenderType.Model : RenderType.Clothing,
+			+params.id
+		)
+		return {
+			icon: `/avatarshop/${asset.id}/${
+				asset.name
+			}/icon?r=${Math.random()}`,
+		}
+	} catch (e) {
+		console.error(e)
+		fail(500, { msg: "Failed to request render" })
+	}
 }

@@ -2,8 +2,22 @@ import { mquery, surql } from "./surreal"
 import fs from "node:fs"
 import "dotenv/config"
 
+export enum Status {
+	Pending = "Pending",
+	Rendering = "Rendering",
+	Completed = "Completed",
+	Error = "Error",
+}
+
+export enum RenderType {
+	Clothing = "Clothing",
+	Avatar = "Avatar",
+	Model = "Model",
+	Mesh = "Mesh",
+}
+
 type Render = {
-	status: "Pending" | "Rendering" | "Completed" | "Error"
+	status: Status
 }
 
 const selectRender = surql`
@@ -19,7 +33,7 @@ const selectRender = surql`
  * @param wait Whether to wait for the render to be completed before resolving.
  */
 export default async function (
-	renderType: "Clothing" | "Avatar" | "Model" | "Mesh",
+	renderType: RenderType,
 	relativeId: number,
 	wait = false
 ) {
@@ -63,8 +77,8 @@ export default async function (
 	// Send the script to the RCCService proxy
 
 	const path = `data/${
-		renderType === "Avatar" ? "avatars" : "thumbnails"
-	}/${relativeId}${renderType === "Avatar" ? ".png" : ""}`
+		renderType === RenderType.Avatar ? "avatars" : "thumbnails"
+	}/${relativeId}${renderType === RenderType.Avatar ? ".png" : ""}`
 
 	// If the file doesn't exist, wait for it to be created
 	// if it does exist, wait for it to be modified

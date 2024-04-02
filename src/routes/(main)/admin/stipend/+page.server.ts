@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { query, squery, surql, auditLog } from "$lib/server/surreal"
+import { query, squery, surql, auditLog, Action } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -32,40 +32,39 @@ export async function load({ locals }) {
 	}
 }
 
-export const actions = {
-	updateStipend: async ({ request, locals, getClientAddress }) => {
-		const { user } = await authorise(locals, 5)
-		const form = await superValidate(request, zod(schema))
-		if (!form.valid) return formError(form)
+export const actions: import("./$types").Actions = {}
+actions.updateStipend = async ({ request, locals, getClientAddress }) => {
+	const { user } = await authorise(locals, 5)
+	const form = await superValidate(request, zod(schema))
+	if (!form.valid) return formError(form)
 
-		const limit = ratelimit(form, "economy", getClientAddress, 30)
-		if (limit) return limit
+	const limit = ratelimit(form, "economy", getClientAddress, 30)
+	if (limit) return limit
 
-		const current = await getEconomy()
-		const { dailyStipend, stipendTime } = form.data
+	const current = await getEconomy()
+	const { dailyStipend, stipendTime } = form.data
 
-		if (
-			current.dailyStipend === dailyStipend &&
-			current.stipendTime === stipendTime
-		)
-			return message(form, "No changes were made")
+	if (
+		current.dailyStipend === dailyStipend &&
+		current.stipendTime === stipendTime
+	)
+		return message(form, "No changes were made")
 
-		await query(surql`UPDATE stuff:economy MERGE $data`, {
-			data: { dailyStipend, stipendTime },
-		})
+	await query(surql`UPDATE stuff:economy MERGE $data`, {
+		data: { dailyStipend, stipendTime },
+	})
 
-		let auditText = ""
+	let auditText = ""
 
-		if (current.dailyStipend !== dailyStipend)
-			auditText += `Change daily stipend from ${current.dailyStipend} to ${dailyStipend}`
+	if (current.dailyStipend !== dailyStipend)
+		auditText += `Change daily stipend from ${current.dailyStipend} to ${dailyStipend}`
 
-		if (current.stipendTime !== stipendTime) {
-			if (auditText) auditText += ", "
-			auditText += `Change stipend time from ${current.stipendTime} to ${stipendTime}`
-		}
+	if (current.stipendTime !== stipendTime) {
+		if (auditText) auditText += ", "
+		auditText += `Change stipend time from ${current.stipendTime} to ${stipendTime}`
+	}
 
-		await auditLog("Economy", auditText, user.id)
+	await auditLog(Action.Economy, auditText, user.id)
 
-		return message(form, "Economy updated successfully!")
-	},
+	return message(form, "Economy updated successfully!")
 }

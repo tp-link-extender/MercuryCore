@@ -5,7 +5,7 @@ import { redirect } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
-import requestRender from "$lib/server/requestRender"
+import requestRender, { RenderType } from "$lib/server/requestRender"
 import { Scrypt } from "oslo/password"
 
 const schemaInitial = z.object({
@@ -99,127 +99,126 @@ export const load = async () => ({
 	users: (await squery<number>(surql`[count(SELECT 1 FROM user)]`)) > 0,
 })
 
-export const actions = {
-	register: async ({ request, cookies }) => {
-		const form = await superValidate(request, zod(schema))
-		if (!form.valid) return formError(form)
+export const actions: import("./$types").Actions = {}
+actions.register = async ({ request, cookies }) => {
+	const form = await superValidate(request, zod(schema))
+	if (!form.valid) return formError(form)
 
-		let { username, email, password, cpassword, regkey } = form.data
+	let { username, email, password, cpassword, regkey } = form.data
 
-		email = email.toLowerCase()
-		regkey = regkey.split("-")[1]
+	email = email.toLowerCase()
+	regkey = regkey.split("-")[1]
 
-		if (cpassword !== password)
-			return formError(
-				form,
-				["password", "cpassword"],
-				[" ", "The specified passwords do not match"]
-			)
-
-		const userCheck = await findWhere("user", surql`username = $username`, {
-			username,
-		})
-
-		if (userCheck)
-			return formError(
-				form,
-				["username"],
-				["This username is already in use"]
-			)
-
-		const emailCheck = await findWhere("user", surql`email = $email`, {
-			email,
-		})
-
-		if (emailCheck)
-			return formError(form, ["email"], ["This email is already in use"])
-
-		const regkeyCheck = await squery<{
-			usesLeft: number
-		}>(surql`SELECT usesLeft FROM $regkey`, {
-			regkey: `regKey:⟨${regkey}⟩`,
-		})
-
-		if (!regkeyCheck)
-			return formError(form, ["regkey"], ["Registration key is invalid"])
-		if (regkeyCheck.usesLeft < 1)
-			return formError(
-				form,
-				["regkey"],
-				["This registration key has ran out of uses"]
-			)
-
-		const user = await createUser(
-			{
-				username,
-				email,
-				hashedPassword: await new Scrypt().hash(password),
-				permissionLevel: 1,
-				currency: 0,
-			},
-			regkey
+	if (cpassword !== password)
+		return formError(
+			form,
+			["password", "cpassword"],
+			[" ", "The specified passwords do not match"]
 		)
 
-		try {
-			await requestRender("Avatar", user.number)
-		} catch {}
+	const userCheck = await findWhere("user", surql`username = $username`, {
+		username,
+	})
 
-		const session = await auth.createSession(user.id, {})
-		const sessionCookie = auth.createSessionCookie(session.id)
+	if (userCheck)
+		return formError(
+			form,
+			["username"],
+			["This username is already in use"]
+		)
 
-		cookies.set(sessionCookie.name, sessionCookie.value, {
-			path: ".",
-			...sessionCookie.attributes,
-		})
+	const emailCheck = await findWhere("user", surql`email = $email`, {
+		email,
+	})
 
-		redirect(302, "/home")
-	},
-	initialAccount: async ({ request, cookies }) => {
-		// This is the initial account creation, which is only allowed if there are no existing users.
+	if (emailCheck)
+		return formError(form, ["email"], ["This email is already in use"])
 
-		const form = await superValidate(request, zod(schemaInitial))
-		if (!form.valid) return formError(form)
+	const regkeyCheck = await squery<{
+		usesLeft: number
+	}>(surql`SELECT usesLeft FROM $regkey`, {
+		regkey: `regKey:⟨${regkey}⟩`,
+	})
 
-		const { username, password, cpassword } = form.data
+	if (!regkeyCheck)
+		return formError(form, ["regkey"], ["Registration key is invalid"])
+	if (regkeyCheck.usesLeft < 1)
+		return formError(
+			form,
+			["regkey"],
+			["This registration key has ran out of uses"]
+		)
 
-		if (cpassword !== password)
-			return formError(
-				form,
-				["password", "cpassword"],
-				[" ", "The specified passwords do not match"]
-			)
-
-		if ((await squery<number>(surql`[count(SELECT * FROM user)]`)) > 0)
-			return formError(
-				form,
-				["username"],
-				["There's already an account registered"]
-			)
-
-		await query(surql`UPDATE ONLY stuff:increment SET user = 0`)
-
-		// This is the kind of stuff that always breaks due to never getting tested
-		// Remember: untested === unworking
-		const user = await createUser({
+	const user = await createUser(
+		{
 			username,
-			email: "",
+			email,
 			hashedPassword: await new Scrypt().hash(password),
-			permissionLevel: 5,
+			permissionLevel: 1,
 			currency: 0,
-		})
+		},
+		regkey
+	)
 
-		try {
-			await requestRender("Avatar", user.number)
-		} catch {}
+	try {
+		await requestRender(RenderType.Avatar, user.number)
+	} catch {}
 
-		const session = await auth.createSession(user.id, {})
-		const sessionCookie = auth.createSessionCookie(session.id)
+	const session = await auth.createSession(user.id, {})
+	const sessionCookie = auth.createSessionCookie(session.id)
 
-		cookies.set(sessionCookie.name, sessionCookie.value, {
-			path: ".",
-			...sessionCookie.attributes,
-		})
+	cookies.set(sessionCookie.name, sessionCookie.value, {
+		path: ".",
+		...sessionCookie.attributes,
+	})
 
-		redirect(302, "/home")
-	},
+	redirect(302, "/home")
+}
+actions.initialAccount = async ({ request, cookies }) => {
+	// This is the initial account creation, which is only allowed if there are no existing users.
+
+	const form = await superValidate(request, zod(schemaInitial))
+	if (!form.valid) return formError(form)
+
+	const { username, password, cpassword } = form.data
+
+	if (cpassword !== password)
+		return formError(
+			form,
+			["password", "cpassword"],
+			[" ", "The specified passwords do not match"]
+		)
+
+	if ((await squery<number>(surql`[count(SELECT * FROM user)]`)) > 0)
+		return formError(
+			form,
+			["username"],
+			["There's already an account registered"]
+		)
+
+	await query(surql`UPDATE ONLY stuff:increment SET user = 0`)
+
+	// This is the kind of stuff that always breaks due to never getting tested
+	// Remember: untested === unworking
+	const user = await createUser({
+		username,
+		email: "",
+		hashedPassword: await new Scrypt().hash(password),
+		permissionLevel: 5,
+		currency: 0,
+	})
+
+	try {
+		await requestRender(RenderType.Avatar, user.number)
+	} catch {}
+
+	const session = await auth.createSession(user.id, {})
+	const sessionCookie = auth.createSessionCookie(session.id)
+
+	cookies.set(sessionCookie.name, sessionCookie.value, {
+		path: ".",
+		...sessionCookie.attributes,
+	})
+
+	redirect(302, "/home")
 }

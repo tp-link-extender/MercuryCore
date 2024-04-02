@@ -7,7 +7,7 @@
 		Warning: "Warning",
 		Ban: "Ban",
 		Termination: "Termination",
-		AccountDeleted: "Account Deleted",
+		AccountDeleted: "Account Deleted"
 	}
 
 	function formatDateDifference(date1: number, date2: number) {

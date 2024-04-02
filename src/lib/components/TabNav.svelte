@@ -13,7 +13,7 @@
 	export let justify: boolean = false
 	export let vertical: boolean = false
 
-	let colour = tweened("#fff", {
+	let colour = tweened("white", {
 		duration: 200,
 		interpolate: interpolateLab
 	})
@@ -50,7 +50,7 @@
 						interpolate: interpolateLab
 					})
 					tabData.currentTab = tab
-					$colour = "#fff"
+					$colour = "white"
 				}}>
 				{#if tabData.icons}
 					<i class="{tabData.icons[pos]} pr-2" />

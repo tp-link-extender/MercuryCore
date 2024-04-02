@@ -25,7 +25,9 @@
 
 	<div
 		id="light"
-		class="lg:w-1/2 py-8vh px-8vw pt-5vh {pad ? 'lg:pt-20vh' : 'lg:pt-11vh'} z-1">
+		class="lg:w-1/2 py-8vh px-8vw pt-5vh {pad
+			? 'lg:pt-20vh'
+			: 'lg:pt-11vh'} z-1">
 		<div class="max-w-120 mx-auto">
 			<slot />
 		</div>

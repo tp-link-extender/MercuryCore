@@ -274,26 +274,30 @@ export async function transaction(
 	if (e) throw new Error(e)
 }
 
+export enum Action {
+	Account = "Account",
+	Administration = "Administration",
+	Moderation = "Moderation",
+	Economy = "Economy",
+}
+
 /**
  * Creates a new audit log in the database.
  * @param action The category of the action that was taken
  * @param note The note to be added to the audit log
  * @param userId The id of the user who took the action
  */
-export async function auditLog(
-	action: "Account" | "Administration" | "Moderation" | "Economy",
-	note: string,
-	userId: string
-) {
+export async function auditLog(action: Action, note: string, userId: string) {
 	await query(
 		surql`
 			CREATE auditLog CONTENT {
-				action: "Account",
+				action: $action,
 				note: $note,
 				user: $user,
 				time: time::now()
 			}`,
 		{
+			action,
 			note,
 			user: `user:${userId}`,
 		}
