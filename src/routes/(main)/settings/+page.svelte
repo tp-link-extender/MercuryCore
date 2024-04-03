@@ -2,14 +2,15 @@
 	import ProfileForm from "./Profile.svelte"
 	import AccountInfo from "./Account.svelte"
 	import PasswordForm from "./Password.svelte"
+	import StylingForm from "./Styling.svelte"
 
 	export let data
 	const { user } = data
 
 	let tabData = TabData(
 		data.url,
-		["Profile", "Account", "Security"],
-		["fa fa-id-card", "fa fa-user", "far fa-lock"]
+		["Profile", "Account", "Security", "Styling"],
+		["fa fa-id-card", "fa fa-user", "far fa-lock", "fa fa-paint-brush"]
 	)
 </script>
 
@@ -23,6 +24,7 @@
 			View profile
 		</a>
 	</div>
+
 	<TabNav bind:tabData />
 	<Tab {tabData}>
 		<h2 class="text-xl">User Profile</h2>
@@ -42,5 +44,10 @@
 	<Tab {tabData}>
 		<h2 class="text-xl pb-4">Change Password</h2>
 		<PasswordForm {data} />
+	</Tab>
+
+	<Tab {tabData}>
+		<h2 class="text-xl pb-4">Styling</h2>
+		<StylingForm {data} />
 	</Tab>
 </div>

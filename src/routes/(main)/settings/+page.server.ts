@@ -16,11 +16,15 @@ const schemas = {
 		npassword: z.string().min(1),
 		cnpassword: z.string().min(1),
 	}),
+	styling: z.object({
+		css: z.string().max(10000).optional(),
+	}),
 }
 
 export const load = async () => ({
 	profileForm: await superValidate(zod(schemas.profile)),
 	passwordForm: await superValidate(zod(schemas.password)),
+	stylingForm: await superValidate(zod(schemas.styling)),
 })
 
 export const actions: import("./$types").Actions = {}
@@ -91,4 +95,19 @@ actions.password = async ({ request, locals }) => {
 	form.data.cnpassword = ""
 
 	return message(form, "Password updated successfully!")
+}
+actions.styling = async ({ request, locals }) => {
+	const { user } = await authorise(locals)
+
+	const form = await superValidate(request, zod(schemas.styling))
+	if (!form.valid) return formError(form)
+
+	const { css } = form.data
+
+	await query(surql`UPDATE $user SET css = $css`, {
+		user: `user:${user.id}`,
+		css,
+	})
+
+	return message(form, "Styling updated successfully!")
 }

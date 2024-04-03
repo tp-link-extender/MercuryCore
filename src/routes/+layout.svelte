@@ -15,7 +15,7 @@
 	// at the top of the page when navigating
 	nprogress.configure({ showSpinner: false })
 
-	let timeout: NodeJS.Timeout | null
+	let timeout: Timer | null
 	// 100ms is the minimum time the loading bar will be shown
 	$: if ($navigating && !timeout) timeout = setTimeout(nprogress.start, 100)
 	else if (timeout) {
@@ -73,6 +73,8 @@
 			data-domain="banland.xyz"
 			src="https://analytics.banland.xyz/js/script.js"></script>
 	{/if}
+
+	<link rel="stylesheet" href="/api/style" />
 </svelte:head>
 
 <!-- Toast notifications -->

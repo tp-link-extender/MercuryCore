@@ -33,6 +33,7 @@ declare module "lucia" {
 			hashedPassword: string
 			lastOnline: string
 			permissionLevel: number
+			css: string
 			// theme: "standard" | "darken" | "storm" | "solar"
 		} & BasicUser
 	}
@@ -86,6 +87,7 @@ declare global {
 	declare const UserCard: typeof import("$lib/components/UserCard.svelte").default
 	declare const YesScript: typeof import("$lib/components/YesScript.svelte").default
 
+	declare const Codearea: typeof import("$lib/components/forms/Codearea.svelte").default
 	declare const Form: typeof import("$lib/components/forms/Form.svelte").default
 	declare const Input: typeof import("$lib/components/forms/Input.svelte").default
 	declare const Select: typeof import("$lib/components/forms/Select.svelte").default
