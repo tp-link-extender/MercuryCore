@@ -8,6 +8,8 @@
 @import "./daisyui/modal.styl"
 @import "./daisyui/tooltip.styl"
 
+hue = 260
+
 @font-face
 	font-family "SF UI Display Regular"
 	font-style normal
@@ -45,7 +47,9 @@ html
 body
 main
 	background var(--background)
-	--mainaccent hsl(260 100% 60%)
+	--hue 260
+	--mainaccent hsl(hue 100% 60%)
+	--rounding 0.375rem
 
 *
 	font-family Inter, -apple-system, BlinkMacSystemFont,
@@ -109,7 +113,7 @@ code
 	word-wrap break-word
 	background-color var(--accent)
 	background-clip border-box
-	border-radius 0.375rem
+	border-radius var(--rounding)
 	// border 1px solid var(--accent)
 
 .card-body
@@ -149,13 +153,13 @@ input
 // .dark-text
 // 	color var(--dark-text) !important
 .accent-text
-	color hsl(260 100% 66%)
+	color hsl(hue 100% 66%)
 a
-	color hsl(260 100% 66%)
+	color hsl(hue 100% 66%)
 	transition 0.2s color
 	&:hover
 		&:not(.btn):not(.light-text)
-			color hsl(260 100% 60%)
+			color hsl(hue 100% 60%)
 		&.light-text
 			color var(--grey-text)
 
@@ -222,7 +226,7 @@ img[src^="/api/avatar"]
 	padding-left 1rem
 	padding-right 1rem
 	font-size 0.9rem
-	border-radius 0.375rem
+	border-radius var(--rounding)
 	cursor pointer
 
 .btn-sm
@@ -250,42 +254,42 @@ span
 	background-position right 1rem center
 
 .btn-primary
-	background hsl(260 85% 54%)
-	--un-ring-color hsl(260 75% 55% 50%)
+	background hsl(hue, 85%, 54%)
+	--un-ring-color hsl(hue 75% 55% 50%)
 	&:hover:not(:disabled)
 	&:focus:not(:active):not(:disabled)
-		background hsl(260 100% 60%)
+		background hsl(hue 100% 60%)
 
 .btn-secondary
-	background hsl(260 65% 14%)
-	border-color hsl(260 100% 60% 80%)
-	--un-ring-color hsl(260 75% 55% 50%)
+	background hsl(hue 65% 14%)
+	border-color hsl(hue 100% 60% 80%)
+	--un-ring-color hsl(hue 75% 55% 50%)
 	&:hover:not(:disabled)
 	&:focus:not(:active):not(:disabled)
-		background hsl(260 65% 22%)
-		border-color hsl(260 100% 60%)
+		background hsl(hue 65% 22%)
+		border-color hsl(hue 100% 60%)
 
 .input-group > .btn-secondary
 	@apply border-l-0
 
 .btn-tertiary
-	background hsl(260 0% 12%)
-	color hsl(260 100% 66%)
-	--un-ring-color hsl(260 75% 55% 50%)
+	background hsl(hue 0% 12%)
+	color hsl(hue 100% 66%)
+	--un-ring-color hsl(hue 75% 55% 50%)
 	&:hover:not(:disabled)
 	&:focus:not(:active):not(:disabled)
-		background hsl(260 55% 18%)
+		background hsl(hue 55% 18%)
 		color white
 
 .btn-quatenary
-	color hsl(260 100% 66%)
-	--un-ring-color hsl(260 55% 35% 50%)
+	color hsl(hue 100% 66%)
+	--un-ring-color hsl(hue 55% 35% 50%)
 	&:hover:not(:disabled)
 	&:focus:not(:active):not(:disabled)
-		background hsl(260 0% 10%)
-		color hsl(260 100% 70%)
+		background hsl(hue 0% 10%)
+		color hsl(hue 100% 70%)
 	&:active:not(:disabled)
-		background hsl(260 65% 15%)
+		background hsl(hue 65% 15%)
 
 .btn-red-secondary
 	@apply bg-red-950/60 border-red-7/80
@@ -295,7 +299,7 @@ span
 		@apply bg-red-950 border-red-6
 
 .btn-red-tertiary
-	background hsl(260 0% 12%)
+	background hsl(hue 0% 12%)
 	@apply text-red-5
 	@apply ring-red-8/50
 	&:hover:not(:disabled)
@@ -440,9 +444,9 @@ textarea
 
 	appearance none
 	outline none
-	border-radius 0.375rem
+	border-radius var(--rounding)
 	font-size 0.875rem
-	--un-ring-color:hsl(260, 65%, 46%)
+	--un-ring-color:hsl(hue, 65%, 46%)
 	@apply ring-offset-neutral-9
 	@media (prefers-reduced-motion no-preference)
 		transition box-shadow 0.15s ease-in-out
@@ -512,7 +516,7 @@ input[type=file]
 		padding 0.7rem 1rem
 		margin-right 0.7rem
 		background-color var(--background)
-		border-radius 0.375rem 0 0 0.375rem
+		border-radius var(--rounding) 0 0 var(--rounding)
 
 .input-group
 	position relative
@@ -550,5 +554,5 @@ details[open] summary
 	@apply p-4 px-6 rounded-2 
 
 	&.alert-primary
-		background hsl(260 65% 22%)
-		border 1px solid hsl(260 100% 60%)
+		background hsl(hue 65% 22%)
+		border 1px solid hsl(hue 100% 60%)

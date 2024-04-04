@@ -103,6 +103,8 @@ actions.styling = async ({ request, locals }) => {
 	if (!form.valid) return formError(form)
 
 	const { css } = form.data
+	if (css === "undefined")
+		return message(form, "Styling already saved!")
 
 	await query(surql`UPDATE $user SET css = $css`, {
 		user: `user:${user.id}`,

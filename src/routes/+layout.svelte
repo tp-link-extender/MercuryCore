@@ -73,8 +73,6 @@
 			data-domain="banland.xyz"
 			src="https://analytics.banland.xyz/js/script.js"></script>
 	{/if}
-
-	<link rel="stylesheet" href="/api/style" />
 </svelte:head>
 
 <!-- Toast notifications -->

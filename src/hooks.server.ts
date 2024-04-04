@@ -39,8 +39,8 @@ const pathnameColour = (pathname: string) => {
 export async function handle({ event, resolve }) {
 	const { pathname, search } = event.url
 
-	function finish() {
-		const { method } = event.request
+	async function finish() {
+		const method = event.request.method as keyof typeof methodColours
 		const { user } = event.locals // is this needed here?
 
 		// Fancy logging: time, user, method, and path
@@ -70,7 +70,30 @@ export async function handle({ event, resolve }) {
 		// if (!isStudio && pathname.startsWith("/studio"))
 		// 	redirect(302, /studio(.*)/.exec(pathname)?.[1] || "/")
 
-		return resolve(event)
+		const res = await resolve(event)
+
+		// if it's html, add the user's custom css before the </body> tag
+		if (
+			res.headers.get("content-type")?.includes("text/html") &&
+			user?.css
+		) {
+			// duplicate the response to avoid modifying the original
+			const text = await res.clone().text()
+
+			return new Response(
+				text.replace(
+					"</body>",
+					`<style id="custom-css">${user.css}</style></body>`
+				),
+				{
+					status: res.status,
+					statusText: res.statusText,
+					headers: res.headers,
+				}
+			)
+		}
+
+		return res
 	}
 
 	const sessionId = event.cookies.get(auth.sessionCookieName)

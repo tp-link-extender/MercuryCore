@@ -204,7 +204,7 @@
 <style lang="stylus">
 	input[type=color]
 		height 2.5rem
-		border-radius 0.375rem
+		border-radius var(--rounding)
 
 	td
 		height: 4.8rem

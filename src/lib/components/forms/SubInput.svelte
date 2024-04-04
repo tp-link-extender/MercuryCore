@@ -28,7 +28,7 @@
 		style={type === "number"
 			? "width: 9rem"
 			: type === "color"
-				? "height: 2.5rem; border-radius: 0.375rem"
+				? "height: 2.5rem; border-radius: var(--rounding)"
 				: type === "date"
 					? "width: 11rem"
 					: null} />

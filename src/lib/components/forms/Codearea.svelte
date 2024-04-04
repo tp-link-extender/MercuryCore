@@ -13,8 +13,6 @@
 	export let formData: SuperForm<any>
 	const { form, errors, constraints } = formData
 
-	console.log($form)
-
 	function createEditor() {
 		new EditorView({
 			doc: $form.css,
@@ -99,7 +97,7 @@
 	:global(.cm-gutters)
 		background var(--darker) !important
 		border-right 1px solid var(--accent3) !important
-		border-radius 0.375rem 0 0 0.375rem
+		border-radius var(--rounding) 0 0 var(--rounding)
 	:global(.cm-activeLineGutter)
 		background var(--accent) !important
 	:global(.cm-activeLine)
@@ -115,17 +113,20 @@
 	// bad syntax highlighting fixes
 	:global(.ͼb)
 		// var(), %
-		color #9CDCFE
+		color hsl(hue - 60 100% 70%)
 	:global(.ͼc)
 		// id (#test)
-		color #d7ba7d
+		color hsl(hue + 20 100% 70%)
 	:global(.ͼd)
 		// number (123)
-		color #b5cea8
+		color hsl(hue - 20 100% 70%)
+	:global(.ͼe)
+		// string ("test")
+		color hsl(hue + 60 100% 60%)
 	:global(.ͼi)
 		// element name (div)
-		color hsl(260 100% 80%)
+		color hsl(hue 100% 80%)
 	:global(.ͼj)
 		// property (.test)
-		color white
+		color hsl(hue - 40 100% 80%)
 </style>
