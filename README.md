@@ -4,13 +4,14 @@
 
 Contents:
 
-- [Mercury monorepo](#mercury-monorepo)
-- [Recommended development setup](#recommended-development-setup)
-- [Editing the website](#editing-the-website)
-- [Hosting the website](#hosting-the-website)
-- [Mercury's stack](#mercurys-stack)
-	- [Route structure](#route-structure)
-- [Deploying new client versions](#deploying-new-client-versions)
+-   [Mercury monorepo](#mercury-monorepo)
+-   [Recommended development setup](#recommended-development-setup)
+-   [Editing the website](#editing-the-website)
+-   [Hosting the website](#hosting-the-website)
+-   [Mercury's stack](#mercurys-stack)
+    -   [Route structure](#route-structure)
+-   [Deploying new client versions](#deploying-new-client-versions)
+-   [Running RCCService](#running-rccservice)
 
 # Recommended development setup
 
@@ -33,8 +34,7 @@ The following extensions are recommended:
 
 You will need:
 
--   Latest version of NodeJS installed
--   Latest version of npm installed
+-   Latest version of Bun installed
 -   Latest version of Docker installed
 -   A terminal
 -   A modern web browser
@@ -43,13 +43,11 @@ Instructions:
 
 -   Clone the repository to your local machine
 -   Open a terminal and navigate to the directory of the repository
--   Run `npm i -g pnpm` to install pnpm
--   Run `pnpm i` to install all dependencies
--   Run `pnpm build avatar` to build the avatar renderer, so that user images will work correctly
+-   Run `bun i` to install all dependencies
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
--   Run `docker-compose up -d` to start the database
+-   Run `docker compose up -d` to start the database
 
-To start a local dev server, run `pnpm dev` and navigate to the link shown in the terminal (remember not to use HTTPS!). Upon saving a file, your changes will be shown in the web browser.
+To start a local dev server, run `bun --bun dev` and navigate to the link shown in the terminal (remember not to use HTTPS!). Upon saving a file, your changes will be shown in the web browser.
 
 -   If you are using WSL2, the server may not correctly reflect the changes you make if the repository is stored on the Windows drive. To fix this, move the repository into a folder managed by WSL, or alternatively add the following to the default export of vite.config.ts:
 
@@ -61,19 +59,21 @@ server: {
 },
 ```
 
-After starting a local web server, navigate to /register and make an account. Set the registration key to mercurkey-<your key\>.
+After starting a local web server, navigate to /register and make an account.
 
 -   While in the browser, you can press ctrl-i to open the inspector, allowing you to select any element and show it in your editor.
 
-To build for production, run `pnpm build`, then `pnpm preview` (or `pnpm buildview`) to preview the final site.
+To build for production, run `bun run build`, then `bun preview` (or `bun buildview`) to preview the final site.
 
-Upon shutting down the databases, their contents will be dumped to the /data/redis and /data/postgres directories.
+Data from the database is stored in the /data/surreal directory.
 
 # Hosting the website
 
 You will need:
 
--   Everything above including pnpm
+-   Latest version of Bun installed
+-   Latest version of Docker installed
+-   A terminal
 -   Latest version of Caddy server installed
 
 Instructions:
@@ -81,12 +81,13 @@ Instructions:
 -   Clone the repository to your server, and navigate to its directory
 -   Run `caddy start` to start the Caddy reverse proxy server
     -   You can also run `caddy reload` to reload the configuration file without restarting the server.
--   Run `docker-compose up -d` to start the database
+    -   If you're using Caddy with multiple configuration files, import the Caddyfile in the repository's root directory into a Caddyfile somewhere else, and run `caddy start` and `caddy reload` from there.
+-   Run `docker compose up -d` to start the database
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
 -   Open a terminal and navigate to the directory of the repository
--   Run `npm i -g pm2` to install pm2, the node process manager
--   Run `pnpm i` and `pnpm build` to install dependencies and build the website
--   Run `pm2 start pm2.config.cjs` to start the website as a process named Mercury.
+-   Run `bun i -g pm2` to install pm2, the node process manager
+-   Run `bun prod` to install dependencies and build the website
+-   Run `pm2 start --interpreter ~/.bun/bin/bun build` to start the website as a background process.
 
 You can run other commands to manage the process, see `pm2 --help` for more information.
 
@@ -94,7 +95,7 @@ You can run other commands to manage the process, see `pm2 --help` for more info
 
 Mercury's frontent is built with [Svelte](https://svelte.dev), a UI framework that compiles to vanilla JS, and [SvelteKit](https://kit.svelte.dev), a powerful full-stack framework for building transitional apps.
 
-The site uses [TypeScript](https://typescriptlang.org) throughout, a language that adds type extensions ontop of Javascript. An IDE that supports intellisense is recommended to make development easier.
+The site uses [Typescript](https://typescripts.org) throughout, a language that adds type extensions ontop of Javascript. An IDE that supports intellisense is recommended to make development easier.
 
 Styling is done in [Stylus](https://stylus-lang.com), which removes lots of unnecessary syntax from CSS and adds many helpful features.
 
@@ -116,6 +117,12 @@ Take a look at the [Svelte docs](https://svelte.dev/docs), or the incredibly hel
 
 # Deploying new client versions
 
-To deploy a new version of the client, you'll need Go.
+To deploy a new version of the client, you will need Go.
 
 Edit files in the /Client deployer/staging directory. Navigate to /Client deployer and run `go run .` to start the deployer.
+
+# Running RCCService
+
+You will also need Go to run RCC.
+
+Navigate to /RCCService and run `go run .` to start the RCCService proxy and wrapper. It should start within 20 seconds or so.

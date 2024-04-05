@@ -5,12 +5,11 @@ let lines = "0"
 
 // extract the line count from the stupid file that scc outputs
 try {
-	lines =
-		(await Bun.file("data/lines").text())
-			.split("\n")
-			.filter(l => l.startsWith("  n_lines"))[0]
-			.split(" ")
-			.pop() || "0"
+	const codes = (await Bun.file("data/lines").text()) // 月 moment
+		.split("\n")
+		.filter(l => l.startsWith("  code"))
+
+	lines = codes[codes.length - 1].split(" ").pop() || "Unknown"
 } catch (e) {
 	console.error(e)
 }
