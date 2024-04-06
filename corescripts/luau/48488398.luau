@@ -1,6 +1,7 @@
 -- CoreGui.RobloxGui.CoreScripts/NotificationScript
 print "[Mercury]: Loaded corescript 48488398"
 
+local GuiService = game:GetService "GuiService"
 local TeleportService = game:GetService "TeleportService"
 
 local function waitForProperty(instance, property)
@@ -129,7 +130,7 @@ game.Players.FriendRequestEvent:connect(function(fromPlayer, toPlayer, event)
 
 	if fromPlayer == localPlayer then
 		if event == Enum.FriendRequestEvent.Accept then
-			game:GetService("GuiService"):SendNotification(
+			GuiService:SendNotification(
 				"You are Friends",
 				`With {toPlayer.Name}!`,
 				`http://banland.xyz/thumbs/avatar.ashx?userId={toPlayer.userId}&x=48&y=48`,
@@ -142,7 +143,7 @@ game.Players.FriendRequestEvent:connect(function(fromPlayer, toPlayer, event)
 			if friendRequestBlacklist[fromPlayer] then
 				return
 			end -- previously cancelled friend request, we don't want it!
-			game:GetService("GuiService"):SendNotification(
+			GuiService:SendNotification(
 				"Friend Request",
 				`From {fromPlayer.Name}`,
 				`http://banland.xyz/thumbs/avatar.ashx?userId={fromPlayer.userId}&x=48&y=48`,
@@ -152,7 +153,7 @@ game.Players.FriendRequestEvent:connect(function(fromPlayer, toPlayer, event)
 				end
 			)
 		elseif event == Enum.FriendRequestEvent.Accept then
-			game:GetService("GuiService"):SendNotification(
+			GuiService:SendNotification(
 				"You are Friends",
 				`With {fromPlayer.Name}!`,
 				`http://banland.xyz/thumbs/avatar.ashx?userId={fromPlayer.userId}&x=48&y=48`,
@@ -276,10 +277,10 @@ if teleportEnabled then
 
 		yesCon = popup.AcceptButton.MouseButton1Click:connect(function()
 			killCons()
-			local success, err = pcall(function()
+			local ok, err = pcall(function()
 				TeleportService:TeleportImpl(placeId, spawnName)
 			end)
-			if not success then
+			if not ok then
 				showOneButton()
 				popup.PopupText.Text = err
 				local clickCon

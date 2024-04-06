@@ -1,6 +1,8 @@
 -- CoreGui.RobloxGui.Backpack.CoreScripts/BackpackScripts/Back (1?)
 print "[Mercury]: Loaded corescript 89449008"
 
+local UserInputService = game:GetService "UserInputService"
+
 local News = require "../Modules/New"
 local New = News.New
 local Hydrate = News.Hydrate
@@ -22,7 +24,7 @@ end
 local function IsTouchDevice()
 	local touchEnabled = false
 	pcall(function()
-		touchEnabled = Game:GetService("UserInputService").TouchEnabled
+		touchEnabled = UserInputService.TouchEnabled
 	end)
 	return touchEnabled
 end
@@ -87,14 +89,15 @@ scrollFrame.Position = UDim2.new(0, 0, 0, 30)
 scrollFrame.Size = UDim2.new(1, 0, 1, -30)
 scrollFrame.Parent = backpack.Gear.GearGrid
 
-local scrollBar = Instance.new "Frame"
-scrollBar.Name = "ScrollBar"
-scrollBar.BackgroundTransparency = 0.9
-scrollBar.BackgroundColor3 = Color3.new(1, 1, 1)
-scrollBar.BorderSizePixel = 0
-scrollBar.Size = UDim2.new(0, 17, 1, -36)
-scrollBar.Position = UDim2.new(0, 0, 0, 18)
-scrollBar.Parent = scroller
+New "Frame" {
+	Name = "ScrollBar",
+	BackgroundTransparency = 0.9,
+	BackgroundColor3 = Color3.new(1, 1, 1),
+	BorderSizePixel = 0,
+	Size = UDim2.new(0, 17, 1, -36),
+	Position = UDim2.new(0, 0, 0, 18),
+	Parent = scroller,
+}
 
 scrollDown.Position = UDim2.new(0, 0, 1, -17)
 
@@ -104,9 +107,11 @@ scrollDown.Parent = scroller
 local scrollFrameLoadout, scrollUpLoadout, scrollDownLoadout, recalculateScrollLoadout =
 	RbxGui.CreateScrollingFrame()
 
-scrollFrameLoadout.Position = UDim2.new(0, 0, 0, 0)
-scrollFrameLoadout.Size = UDim2.new(1, 0, 1, 0)
-scrollFrameLoadout.Parent = backpack.Gear.GearLoadouts.LoadoutsList
+Hydrate(scrollFrameLoadout) {
+	Position = UDim2.new(0, 0, 0, 0),
+	Size = UDim2.new(1, 0, 1, 0),
+	Parent = backpack.Gear.GearLoadouts.LoadoutsList,
+}
 
 for i = 1, 4 do
 	New "TextButton" {

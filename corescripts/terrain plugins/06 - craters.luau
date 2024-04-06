@@ -15,9 +15,7 @@ local On, Off
 
 local this = PluginManager():CreatePlugin()
 local mouse = this:GetMouse()
-mouse.Button1Down:connect(function()
-	onClicked(mouse)
-end)
+
 local toolbar = this:CreateToolbar "Terrain"
 local toolbarbutton = toolbar:CreateButton("Crater", "Crater", "craters.png")
 toolbarbutton.Click:connect(function()
@@ -119,24 +117,27 @@ function dist(x1, y1, x2, y2)
 end
 
 local debounce = false
-function onClicked(mouseC)
-	if on and not debounce then
-		debounce = true
 
-		local cellPos = WorldToCellPreferSolid(
-			c,
-			Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z)
-		)
-		local x = cellPos.x
-		local y = cellPos.y
-		local z = cellPos.z
-
-		makeCrater(x, y, z, r, d)
-
-		debounce = false
-		ChangeHistoryService:SetWaypoint "Crater"
+mouse.Button1Down:connect(function()
+	if not on or debounce then
+		return
 	end
-end
+
+	debounce = true
+
+	local cellPos = WorldToCellPreferSolid(
+		c,
+		Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z)
+	)
+	local x = cellPos.x
+	local y = cellPos.y
+	local z = cellPos.z
+
+	makeCrater(x, y, z, r, d)
+
+	debounce = false
+	ChangeHistoryService:SetWaypoint "Crater"
+end)
 
 On = function()
 	if not c then

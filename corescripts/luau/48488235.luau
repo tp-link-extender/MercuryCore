@@ -1,9 +1,12 @@
+--!strict
 -- CoreGui.RobloxGui.CoreScripts/PlayerListScript
 print "[Mercury]: Loaded corescript 48488235"
 
 local RunService = game:GetService "RunService"
 
-local New = (require "../Modules/New").New
+local News = require "../Modules/New"
+local New = News.New
+local Hydrate = News.Hydrate
 local log = require "../Modules/Logger"
 
 --------------------
@@ -19,24 +22,24 @@ local ADMINS = {
 }
 
 local Images = {
-	bottomDark = "94691904",
-	bottomLight = "94691940",
-	midDark = "94691980",
-	midLight = "94692025",
-	LargeDark = "96098866",
-	LargeLight = "96098920",
-	LargeHeader = "96097470",
-	NormalHeader = "94692054",
-	LargeBottom = "96397271",
-	NormalBottom = "94754966",
-	DarkBluePopupMid = "97114905",
-	LightBluePopupMid = "97114905",
-	DarkPopupMid = "97112126",
-	LightPopupMid = "97109338",
-	DarkBluePopupTop = "97114838",
-	DarkBluePopupBottom = "97114758",
-	DarkPopupBottom = "100869219",
-	LightPopupBottom = "97109175",
+	bottomDark = 94691904,
+	bottomLight = 94691940,
+	midDark = 94691980,
+	midLight = 94692025,
+	LargeDark = 96098866,
+	LargeLight = 96098920,
+	LargeHeader = 96097470,
+	NormalHeader = 94692054,
+	LargeBottom = 96397271,
+	NormalBottom = 94754966,
+	DarkBluePopupMid = 97114905,
+	LightBluePopupMid = 97114905,
+	DarkPopupMid = 97112126,
+	LightPopupMid = 97109338,
+	DarkBluePopupTop = 97114838,
+	DarkBluePopupBottom = 97114758,
+	DarkPopupBottom = 100869219,
+	LightPopupBottom = 97109175,
 }
 
 local BASE_TWEEN = 0.25
@@ -667,7 +670,16 @@ local AddId = 0
 -- Score
 -- ID
 -- MyTeam (team ENRTY(not actual team) I am currently on)
-local PlayerFrames = {}
+local PlayerFrames: {
+	{
+		Frame: Frame,
+		Player: Player,
+		Score: number,
+		ID: number,
+		MyTeam: nil,
+	}
+} =
+	{}
 -- intermediate ordered frame array, composed of Entrys of
 -- Frame
 -- MyTeam (my team object)
@@ -686,9 +698,9 @@ local MiddleFrameBackgrounds = {}
 local LastClick = 0
 local ButtonCooldown = 0.25
 
-local OnIos = false
+-- local OnIos = false
 -- pcall(function()
--- 	OnIos = Game:GetService("UserInputService").TouchEnabled
+-- 	OnIos = UserInputService.TouchEnabled
 -- end)
 
 -- you get 200 of x screen space per stat added, start width 16%
@@ -720,10 +732,10 @@ local NeutralTeamLock = false
 
 local ScrollWheelConnections: { RBXScriptConnection }? = {}
 
-local DefaultListSize = 8
-if not OnIos then
-	DefaultListSize = 12
-end
+-- local DefaultListSize = 8
+-- if not OnIos then
+-- 	DefaultListSize = 12
+-- end
 local DidMinimizeDrag = false
 
 --local PlaceCreatorId=game.CreatorId
@@ -881,7 +893,7 @@ end
 	player		player to change rank of
 	nrank		new integer rank to give player
 --]]
-local function SetPrivilegeRank(player, nrank)
+local function SetPrivilegeRank(player, nrank: number)
 	while player.PersonalServerRank < nrank do
 		PersonalServerService:Promote(player)
 	end
@@ -1068,14 +1080,14 @@ end
 	player	player object to check if friends with
 	@Return: enum of friend status
 --]]
-local function GetFriendStatus(player)
+local function GetFriendStatus(player: Player)
 	if player == game.Players.LocalPlayer then
 		return Enum.FriendStatus.NotFriend
 	end
-	local success, result = pcall(function()
+	local ok, result = pcall(function()
 		return game.Players.LocalPlayer:GetFriendStatus(player)
 	end)
-	if success then
+	if ok then
 		return result
 	end
 	return Enum.FriendStatus.NotFriend
@@ -1116,18 +1128,22 @@ end
 ------------------------------------
 -- Player Entry Handling
 ------------------------------------
+
+type Plr = {
+	Score: number,
+	Player: Player,
+}
+
 --[[
 	used by lua's table.sort to sort player entries
 --]]
-local function PlayerSortFunction(a, b)
+local function PlayerSortFunction(a: Plr, b: Plr)
 	-- prevents flipping out leaderboard
 	if a.Score == b.Score then
 		return a.Player.Name:upper() < b.Player.Name:upper()
-	end
-	if not a.Score then
+	elseif not a.Score then
 		return false
-	end
-	if not b.Score then
+	elseif not b.Score then
 		return true
 	end
 	return a.Score < b.Score
@@ -1822,7 +1838,7 @@ end
 
 local function ToggleMaximize()
 	IsMaximized.Value = not IsMaximized.Value
-	RecreateScoreColumns(PlayerFrames) --done to re-position stat names NOTE: optimize-able
+	RecreateScoreColumns(PlayerFrames) -- done to re-position stat names NOTE: optimize-able
 end
 
 --[[
@@ -2176,7 +2192,7 @@ end)
 	last		is this the last element of the popup menu
 	@Return:	a popup menu button
 --]]
-local function MakePopupButton(nparent, ntext, index, last)
+local function MakePopupButton(nparent, ntext, index, last: boolean?)
 	local tobj = New "ImageButton" {
 		Name = "ReportButton",
 		BackgroundTransparency = 1,
@@ -2202,19 +2218,12 @@ local function MakePopupButton(nparent, ntext, index, last)
 	if index == 0 then
 		tobj.Image = "http://banland.xyz/asset?id=97108784"
 	elseif last then
-		if index % 2 == 1 then
-			tobj.Image = "http://banland.xyz/asset?id="
-				.. Images.LightPopupBottom
-		else
-			tobj.Image = "http://banland.xyz/asset?id="
-				.. Images.DarkPopupBottom
-		end
+		tobj.Image = index % 2 == 1
+				and "http://banland.xyz/asset?id=" .. Images.LightPopupBottom
+			or "http://banland.xyz/asset?id=" .. Images.DarkPopupBottom
 	else
-		if index % 2 == 1 then
-			tobj.Image = "http://banland.xyz/asset?id=97112126"
-		else
-			tobj.Image = "http://banland.xyz/asset?id=97109338"
-		end
+		tobj.Image = index % 2 == 1 and "http://banland.xyz/asset?id=97112126"
+			or "http://banland.xyz/asset?id=97109338"
 	end
 	return tobj
 end
@@ -2229,8 +2238,9 @@ local function InitMovingPanel(entry, player)
 	if PopUpPanel then
 		PopUpPanel:Destroy()
 	end
-	PopUpPanel = PopUpPanelTemplate:Clone()
-	PopUpPanel.Parent = PopUpClipFrame
+	PopUpPanel = Hydrate(PopUpPanelTemplate:Clone()) {
+		Parent = PopUpClipFrame,
+	}
 
 	local nextIndex = 2
 	local friendStatus = GetFriendStatus(player)
@@ -2563,7 +2573,11 @@ local function AddMiddleBGFrame()
 	nBGFrame.Parent = ListFrame
 	table.insert(MiddleFrameBackgrounds, nBGFrame)
 
-	if #MiddleFrameBackgrounds < DefaultListSize and not DidMinimizeDrag then
+	if
+		#MiddleFrameBackgrounds --[[DefaultListSize]]
+			< 12
+		and not DidMinimizeDrag
+	then
 		-- print "readjusting bottom clip"
 		DefaultBottomClipPos = -1
 			+ (#MiddleFrameBackgrounds * MiddleBGTemplate.Size.Y.Scale)
@@ -2725,13 +2739,15 @@ local function AddNeutralTeam()
 	end
 	NeutralTeamLock = true
 
-	local defaultTeam = Instance.new "Team"
-	defaultTeam.TeamColor = BrickColor.new "White"
-	defaultTeam.Name = "Neutral"
-	local nentry = {}
-	nentry.MyTeam = defaultTeam
-	nentry.MyPlayers = {}
-	nentry.Frame = MiddleTemplate:Clone()
+	local defaultTeam = New "Team" {
+		TeamColor = BrickColor.new "White",
+		Name = "Neutral",
+	}
+	local nentry = {
+		MyTeam = defaultTeam,
+		MyPlayers = {},
+		Frame = MiddleTemplate:Clone(),
+	}
 	WaitForChild(WaitForChild(nentry.Frame, "TitleFrame"), "Title").Text =
 		defaultTeam.Name
 	nentry.Frame.TitleFrame.Position = UDim2.new(
@@ -2921,10 +2937,11 @@ local function InsertPlayerFrame(nplayer)
 		true
 	)
 	UpdateMinimize()
-	local nentry = {}
-	nentry.Frame = nFrame
-	nentry.Player = nplayer
-	nentry.ID = AddId
+	local nentry = {
+		Frame = nFrame,
+		Player = nplayer,
+		ID = AddId,
+	}
 	AddId += 1
 	table.insert(PlayerFrames, nentry)
 	if #TeamFrames ~= 0 then

@@ -1,3 +1,4 @@
+--!strict
 -- CoreGui.RobloxGui.CoreScripts/Settings
 print "[Mercury]: Loaded corescript 46295863"
 
@@ -50,10 +51,10 @@ local mainShield
 local inStudioMode = UserSettings().GameSettings:InStudioMode()
 
 local macClient = false
-local success, isMac = pcall(function()
+local ok, isMac = pcall(function()
 	return not game.GuiService.IsWindows
 end)
-macClient = success and isMac
+macClient = ok and isMac
 
 local function Color3I(r, g, b)
 	return Color3.new(r / 255, g / 255, b / 255)
@@ -183,31 +184,30 @@ end
 
 local function resetLocalCharacter()
 	local player = game.Players.LocalPlayer
-	if
-		player
-		and player.Character
-		and player.Character:FindFirstChild "Humanoid"
-	then
-		player.Character.Humanoid.Health = 0
+	if player and player.Character then
+		local humanoid = (player.Character:FindFirstChild "Humanoid") :: Humanoid
+		if humanoid then
+			humanoid.Health = 0
+		end
 	end
 end
 
 local function createTextButton(
-	text,
-	style,
-	fontSize,
-	buttonSize,
-	buttonPosition
+	text: string,
+	style: EnumItem,
+	fontSize: EnumItem,
+	buttonSize: UDim2,
+	buttonPosition: UDim2
 )
-	local newTextButton = Instance.new "TextButton"
-	newTextButton.Font = Enum.Font.Arial
-	newTextButton.FontSize = fontSize
-	newTextButton.Size = buttonSize
-	newTextButton.Position = buttonPosition
-	newTextButton.Style = style
-	newTextButton.TextColor3 = Color3.new(1, 1, 1)
-	newTextButton.Text = text
-	return newTextButton
+	return New "TextButton" {
+		Font = Enum.Font.Arial,
+		FontSize = fontSize,
+		Size = buttonSize,
+		Position = buttonPosition,
+		Style = style,
+		TextColor3 = Color3.new(1, 1, 1),
+		Text = text,
+	}
 end
 
 local function CreateTextButtons(frame, buttons, yPos, ySize)

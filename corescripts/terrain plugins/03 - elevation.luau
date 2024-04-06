@@ -16,9 +16,7 @@ local On, Off
 
 local plugin = PluginManager():CreatePlugin()
 local mouse = plugin:GetMouse()
-mouse.Button1Down:connect(function()
-	onClicked(mouse)
-end)
+
 local toolbar = plugin:CreateToolbar "Terrain"
 local toolbarbutton = toolbar:CreateButton(
 	"Elevation Adjuster",
@@ -557,18 +555,18 @@ end
 local mousedown = false
 
 -- Run when the mouse gets clicked.  If the click is on terrain, then it will be used as the starting point of the elevation area.
-function onClicked(mouse2)
+local function onClicked()
 	if on then
 		oldheightmap = {}
 		heightmap = {}
 		local cellPos = WorldToCellPreferEmpty(
 			c,
-			Vector3.new(mouse2.Hit.x, mouse2.Hit.y, mouse2.Hit.z)
+			Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z)
 		)
 
 		local solidCell = WorldToCellPreferSolid(
 			c,
-			Vector3.new(mouse2.Hit.x, mouse2.Hit.y, mouse2.Hit.z)
+			Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z)
 		)
 		local success = false
 
@@ -576,7 +574,7 @@ function onClicked(mouse2)
 		if 0 == GetCell(c, solidCell.X, solidCell.Y, solidCell.Z).Value then
 			--print('Plane Intersection happens')
 			success, cellPos = PlaneIntersection(
-				Vector3.new(mouse2.Hit.x, mouse2.Hit.y, mouse2.Hit.z)
+				Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z)
 			)
 			if not success then
 				cellPos = solidCell
@@ -604,25 +602,25 @@ function onClicked(mouse2)
 		mouseHighlighter:DisablePreview()
 
 		mousedown = true
-		local originalY = mouse2.Y
+		local originalY = mouse.Y
 		local prevY = originalY
 		local d = 0
 		local range = 0
 		while mousedown == true do
-			if math.abs(mouse2.Y - prevY) >= 5 then
-				prevY = mouse2.Y
+			if math.abs(mouse.Y - prevY) >= 5 then
+				prevY = mouse.Y
 				local r2 = elevationOptions.r
 					+ math.floor(
 						50
 							* 1
 							/ elevationOptions.s
 							* math.abs(originalY - prevY)
-							/ mouse2.ViewSizeY
+							/ mouse.ViewSizeY
 					)
 				if r2 > range then
 					range = r2
 				end
-				d = math.floor(50 * (originalY - prevY) / mouse2.ViewSizeY)
+				d = math.floor(50 * (originalY - prevY) / mouse.ViewSizeY)
 				elevate(x, y, z, elevationOptions.r, r2, d, range)
 			end
 			wait()
@@ -630,6 +628,8 @@ function onClicked(mouse2)
 		ChangeHistoryService:SetWaypoint "Elevation"
 	end
 end
+
+mouse.Button1Down:connect(onClicked)
 
 mouseHighlighter.OnClicked = onClicked
 mouse = plugin:GetMouse()

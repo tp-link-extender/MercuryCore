@@ -14,9 +14,6 @@ local On, Off
 
 local this = PluginManager():CreatePlugin()
 local mouse = this:GetMouse()
-mouse.Button1Down:connect(function()
-	onClicked(mouse)
-end)
 local toolbar = this:CreateToolbar "Terrain"
 local toolbarbutton = toolbar:CreateButton("Roads", "Roads", "roads.png")
 toolbarbutton.Click:connect(function()
@@ -222,56 +219,58 @@ function PlaneIntersection(vectorPos)
 	return success, cellPos
 end
 
-function onClicked(mouseC)
-	if on then
-		local cellPos = WorldToCellPreferEmpty(
-			c,
-			Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z)
+mouse.Button1Down:connect(function()
+	if not on then
+		return
+	end
+
+	local cellPos = WorldToCellPreferEmpty(
+		c,
+		Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z)
+	)
+	local solidCell = WorldToCellPreferSolid(
+		c,
+		Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z)
+	)
+	local success = false
+
+	-- If nothing was hit, do the plane intersection.
+	if 0 == GetCell(c, solidCell.X, solidCell.Y, solidCell.Z).Value then
+		--print('Plane Intersection happens')
+		success, cellPos = PlaneIntersection(
+			Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z)
 		)
-		local solidCell = WorldToCellPreferSolid(
-			c,
-			Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z)
-		)
-		local success = false
-
-		-- If nothing was hit, do the plane intersection.
-		if 0 == GetCell(c, solidCell.X, solidCell.Y, solidCell.Z).Value then
-			--print('Plane Intersection happens')
-			success, cellPos = PlaneIntersection(
-				Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z)
-			)
-			if not success then
-				cellPos = solidCell
-			end
-		end
-
-		local x = cellPos.x
-		local y = cellPos.y
-		local z = cellPos.z
-
-		if mode == 0 then
-			x1 = x
-			y1 = z
-			h = y
-			mode = 1
-
-			-- first click determines default material
-			local celMat = GetCell(c, x, y, z)
-			if celMat.Value > 0 then
-				DefaultTerrainMaterial = celMat.Value
-			else
-				if 0 == DefaultTerrainMaterial then
-					DefaultTerrainMaterial = 1
-				end
-			end
-		elseif mode == 1 then
-			x2 = x
-			y2 = z
-			makePath(x1, y1, x2, y2, h, true)
-			mode = 0
+		if not success then
+			cellPos = solidCell
 		end
 	end
-end
+
+	local x = cellPos.x
+	local y = cellPos.y
+	local z = cellPos.z
+
+	if mode == 0 then
+		x1 = x
+		y1 = z
+		h = y
+		mode = 1
+
+		-- first click determines default material
+		local celMat = GetCell(c, x, y, z)
+		if celMat.Value > 0 then
+			DefaultTerrainMaterial = celMat.Value
+		else
+			if 0 == DefaultTerrainMaterial then
+				DefaultTerrainMaterial = 1
+			end
+		end
+	elseif mode == 1 then
+		x2 = x
+		y2 = z
+		makePath(x1, y1, x2, y2, h, true)
+		mode = 0
+	end
+end)
 
 On = function()
 	if not c then

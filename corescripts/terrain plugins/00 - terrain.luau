@@ -3,6 +3,9 @@ while game == nil do
 	wait()
 end
 
+local ChangeHistoryService = game:GetService "ChangeHistoryService"
+local CoreGui = game:GetService "CoreGui"
+
 ---------------
 --PLUGIN SETUP-
 ---------------
@@ -123,7 +126,7 @@ local hideGenerateConformation = false
 --screengui
 local g = Instance.new "ScreenGui"
 g.Name = "TerrainCreatorGui"
-g.Parent = game:GetService "CoreGui"
+g.Parent = CoreGui
 
 -- UI gui load.  Required for sliders.
 local RbxGui = LoadLibrary "RbxGui"
@@ -856,8 +859,7 @@ function GenerateTerrain()
 		for x = 1 + xpos2, generateOptions.width - 2 + xpos2 do
 			-- End on cancel.
 			if cancelValues.cancelActions then
-				game:GetService("ChangeHistoryService")
-					:SetWaypoint "CancelGenerate"
+				ChangeHistoryService:SetWaypoint "CancelGenerate"
 				UnloadProgressBar()
 				return
 			end
@@ -914,8 +916,7 @@ function GenerateTerrain()
 		for x = 1 + xpos2, generateOptions.width - 2 + xpos2 do
 			-- End on cancel.
 			if cancelValues.cancelActions then
-				game:GetService("ChangeHistoryService")
-					:SetWaypoint "GenerateGenerate"
+				ChangeHistoryService:SetWaypoint "GenerateGenerate"
 				UnloadProgressBar()
 				return
 			end

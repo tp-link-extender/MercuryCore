@@ -3242,7 +3242,7 @@ export type SharedTable = any
 export type OpenCloudModel = any
 
 export type RBXScriptSignal<T... = ...any> = {
-    wait: (self: RBXScriptSignal<T...>) -> T...,
+    wait: (self: RBXScriptSignal<T...>, time: number?) -> T...,
     connect: (self: RBXScriptSignal<T...>, callback: (T...) -> ()) -> RBXScriptConnection,
     connectParallel: (self: RBXScriptSignal<T...>, callback: (T...) -> ()) -> RBXScriptConnection,
     once: (self: RBXScriptSignal<T...>, callback: (T...) -> ()) -> RBXScriptConnection,
@@ -5384,6 +5384,7 @@ declare class GuiService extends Instance
 	function ToggleGuiIsVisibleIfAllowed(self, guiType: EnumGuiType): nil
 
 	function OpenBrowserWindow(self, url: string): nil
+	function SetGlobalSizeOffsetPixel(self, x: number, y: number): nil
 end
 
 declare class GuidRegistryService extends Instance
@@ -5542,6 +5543,7 @@ declare class InsertService extends Instance
 	function SetAssetVersionUrl(self, assetVersionUrl: string): nil
 	function SetBaseSetsUrl(self, baseSetsUrl: string): nil
 	function SetCollectionUrl(self, collectionUrl: string): nil
+	function SetUserSetsUrl(self, userSetsUrl: string): nil
 end
 
 declare class JointInstance extends Instance
@@ -5969,7 +5971,11 @@ end
 
 declare class NetworkClient extends NetworkPeer
 	ConnectionAccepted: RBXScriptSignal<string, Instance>
+	ConnectionRejected: RBXScriptSignal<string>
 	ConnectionFailed: RBXScriptSignal<string, number, string>
+	function Connect(self, serverAddress: string, serverPort: number, id: number, threadSleepTime: number): nil
+	function Disconnect(self, blockDuration: number?): nil
+	function PlayerConnect(self, userId: number, server: string, serverPort: number, clientPort: number?, threadSleepTime: number?, userName: string?): Player
 end
 
 declare class NetworkServer extends NetworkPeer
@@ -6619,6 +6625,8 @@ declare class Player extends Instance
 	function SetModerationAccessKey(self, moderationAccessKey: string): nil
 	function SetSuperSafeChat(self, value: boolean): nil
 	function UpdatePlayerBlocked(self, userId: number, blocked: boolean): nil
+	
+	function SetUnder13(self, value: boolean): nil
 end
 
 declare class PlayerEmulatorService extends Instance
@@ -8358,7 +8366,8 @@ declare class VisibilityService extends Instance
 end
 
 declare class Visit extends Instance
-	function SetPing(self, url: string, interval: number): nil
+	function SetPing(self, pingUrl: string, interval: number): nil
+	function SetUploadUrl(self, url: string): nil
 end
 
 declare class Wire extends Instance
@@ -8569,7 +8578,7 @@ declare _IS_STUDIO_JOIN: string
 declare _SERVER_ADDRESS: any
 declare _SERVER_PORT: string
 declare _CREATOR_ID: number
-declare _USER_ID: string
+declare _USER_ID: number
 declare _USER_NAME: any
 declare _MEMBERSHIP_TYPE: any
 declare _CHAR_APPEARANCE: string

@@ -2,6 +2,7 @@
 print "[Mercury]: Loaded corescript 73157242"
 
 local ChangeHistoryService = game:GetService "ChangeHistoryService"
+local InsertService = game:GetService "InsertService"
 
 local RbxStamper = {}
 
@@ -522,11 +523,11 @@ local function findConfigAtMouseTarget(Mouse: Mouse, stampData: Instance)
 
 	local hitPlane = false
 	local targetPart
-	local success = pcall(function()
+	local ok = pcall(function()
 		targetPart = Mouse.Target
 	end)
 
-	if not success then -- or targetPart == nil then
+	if not ok then -- or targetPart == nil then
 		return admissibleConfig, targetConfig
 	end
 
@@ -872,13 +873,13 @@ RbxStamper.GetStampModel = function(assetId, terrainShape, useAssetVersionId)
 	local loading = true
 	if useAssetVersionId then
 		loader = coroutine.create(function()
-			root = game:GetService("InsertService"):LoadAssetVersion(assetId)
+			root = InsertService:LoadAssetVersion(assetId)
 			loading = false
 		end)
 		coroutine.resume(loader)
 	else
 		loader = coroutine.create(function()
-			root = game:GetService("InsertService"):LoadAsset(assetId)
+			root = InsertService:LoadAsset(assetId)
 			loading = false
 		end)
 		coroutine.resume(loader)

@@ -16,9 +16,7 @@ local On, Off
 
 local plugin = PluginManager():CreatePlugin()
 local mouse = plugin:GetMouse()
-mouse.Button1Down:connect(function()
-	onClicked(mouse)
-end)
+
 local toolbar = plugin:CreateToolbar "Terrain"
 local toolbarbutton = toolbar:CreateButton("Builder", "Builder", "builder.png")
 toolbarbutton.Click:connect(function()
@@ -296,77 +294,80 @@ CreateStandardLabel(
 -- Function to connect to the mouse button 1 down event.  This is what will run when the user clicks.
 -- Adding and autowedging done here.
 -- mouse 	- Mouse data.
-function onClicked(mouseC)
-	if on then
-		local cellPos = WorldToCellPreferEmpty(
-			c,
-			Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z)
-		)
-		local x = cellPos.x
-		local y = cellPos.y
-		local z = cellPos.z
-
-		local solidCellPos = WorldToCellPreferSolid(
-			c,
-			Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z)
-		)
-
-		local celMat =
-			GetCell(c, solidCellPos.x, solidCellPos.y, solidCellPos.z)
-		local success = false
-
-		if celMat.Value > 0 then
-			selectionProps.terrainMaterial = celMat.Value
-			selectionProps.isWater, selectionProps.waterForce, selectionProps.waterDirection =
-				GetWaterCell(c, solidCellPos.X, solidCellPos.Y, solidCellPos.Z)
-		else
-			if 0 == selectionProps.terrainMaterial then
-				-- It was nothing, give it a default type and the plane intersection.
-				selectionProps.isWater = false
-				selectionProps.terrainMaterial = 1
-			end
-
-			success, cellPos = PlaneIntersection(
-				Vector3.new(mouseC.Hit.x, mouseC.Hit.y, mouseC.Hit.z)
-			)
-			if not success then
-				cellPos = solidCellPos
-			end
-
-			x = cellPos.x
-			y = cellPos.y
-			z = cellPos.z
-		end
-
-		if selectionProps.isWater and 17 == selectionProps.terrainMaterial then
-			SetWaterCell(
-				c,
-				x,
-				y,
-				z,
-				selectionProps.waterForce,
-				selectionProps.waterDirection
-			)
-		else
-			SetCell(c, x, y, z, selectionProps.terrainMaterial, 0, 0)
-		end
-
-		if properties.autoWedgeEnabled then
-			AutoWedge(
-				c,
-				Region3int16.new(
-					Vector3int16.new(x - 1, y - 1, z - 1),
-					Vector3int16.new(x + 1, y + 1, z + 1)
-				)
-			)
-		end
-
-		-- Mark undo point.
-		ChangeHistoryService:SetWaypoint "Builder"
-
-		UpdatePosition(mouseC.Hit)
+local function onClicked()
+	if not on then
+		return
 	end
+
+	local cellPos = WorldToCellPreferEmpty(
+		c,
+		Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z)
+	)
+	local x = cellPos.x
+	local y = cellPos.y
+	local z = cellPos.z
+
+	local solidCellPos = WorldToCellPreferSolid(
+		c,
+		Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z)
+	)
+
+	local celMat = GetCell(c, solidCellPos.x, solidCellPos.y, solidCellPos.z)
+	local success = false
+
+	if celMat.Value > 0 then
+		selectionProps.terrainMaterial = celMat.Value
+		selectionProps.isWater, selectionProps.waterForce, selectionProps.waterDirection =
+			GetWaterCell(c, solidCellPos.X, solidCellPos.Y, solidCellPos.Z)
+	else
+		if 0 == selectionProps.terrainMaterial then
+			-- It was nothing, give it a default type and the plane intersection.
+			selectionProps.isWater = false
+			selectionProps.terrainMaterial = 1
+		end
+
+		success, cellPos = PlaneIntersection(
+			Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z)
+		)
+		if not success then
+			cellPos = solidCellPos
+		end
+
+		x = cellPos.x
+		y = cellPos.y
+		z = cellPos.z
+	end
+
+	if selectionProps.isWater and 17 == selectionProps.terrainMaterial then
+		SetWaterCell(
+			c,
+			x,
+			y,
+			z,
+			selectionProps.waterForce,
+			selectionProps.waterDirection
+		)
+	else
+		SetCell(c, x, y, z, selectionProps.terrainMaterial, 0, 0)
+	end
+
+	if properties.autoWedgeEnabled then
+		AutoWedge(
+			c,
+			Region3int16.new(
+				Vector3int16.new(x - 1, y - 1, z - 1),
+				Vector3int16.new(x + 1, y + 1, z + 1)
+			)
+		)
+	end
+
+	-- Mark undo point.
+	ChangeHistoryService:SetWaypoint "Builder"
+
+	UpdatePosition(mouse.Hit)
 end
+
+mouse.Button1Down:connect(onClicked)
 
 mouseHighlighter.OnClicked = onClicked
 

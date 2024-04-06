@@ -10,7 +10,7 @@ local New = (require "../Modules/New").New
 local forceChatGUI = false
 
 -- Utility functions + Globals
-local function WaitForChild(parent, childName)
+local function WaitForChild(parent: Instance, childName)
 	while parent:FindFirstChild(childName) == nil do
 		parent.ChildAdded:wait(0.03)
 	end
@@ -629,11 +629,11 @@ function Chat:CreateChatBar()
 		}
 
 		-- Engine has code to offset the entire world, so if we do it by -20 pixels nothing gets in our chat's way
-		--GuiService:SetGlobalSizeOffsetPixel(0, -20)
-		local success = pcall(function()
+		-- GuiService:SetGlobalSizeOffsetPixel(0, -20)
+		local ok = pcall(function()
 			GuiService:SetGlobalGuiInset(0, 0, 0, 20)
 		end)
-		if not success then
+		if not ok then
 			GuiService:SetGlobalSizeOffsetPixel(0, -20)
 		end
 		-- ChatHotKey is '/'

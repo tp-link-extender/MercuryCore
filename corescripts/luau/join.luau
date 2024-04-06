@@ -145,12 +145,12 @@ local function requestCharacter(replicator)
 
 	setLoadingMessage "Requesting character"
 
-	local success, err = pcall(function()
+	local ok, err = pcall(function()
 		replicator:RequestCharacter()
 		setLoadingMessage "Waiting for character"
 	end)
 
-	if not success then
+	if not ok then
 		reportError(err)
 		return
 	end
@@ -160,7 +160,7 @@ end
 local function onConnectionAccepted(_, replicator)
 	local waitingForMarker = true
 
-	local success, err = pcall(function()
+	local ok, err = pcall(function()
 		Visit:SetPing(_PING_URL, 30)
 
 		loadingState += 1
@@ -177,7 +177,7 @@ local function onConnectionAccepted(_, replicator)
 		end)
 	end)
 
-	if not success then
+	if not ok then
 		reportError(err)
 		return
 	end
@@ -209,7 +209,7 @@ local function onPlayerIdled(idleTime)
 				idleTime / 60
 			)
 		)
-		Client:disconnect()
+		Client:Disconnect()
 	end
 end
 
@@ -218,7 +218,7 @@ end
 pcall(function()
 	settings().Diagnostics:LegacyScriptMode()
 end)
-local success, err = pcall(function()
+local ok, err = pcall(function()
 	game:SetRemoteBuildMode(true)
 
 	setLoadingMessage "Connecting to server"
@@ -238,7 +238,7 @@ local success, err = pcall(function()
 		)
 	end)
 	if not playerConnectSuccess then
-		--Old player connection scheme
+		-- Old player connection scheme
 		player = Players:CreateLocalPlayer(_USER_ID)
 		Client:Connect("_SERVER_ADDRESS", _SERVER_PORT, 0, threadSleepTime)
 	end
@@ -262,12 +262,9 @@ local success, err = pcall(function()
 	Visit:SetUploadUrl ""
 end)
 
-if not success then
+if not ok then
 	reportError(err)
 end
-
--- TODO: Async get?
--- loadfile ""("", -1, 0) -- wtf
 
 pcall(function()
 	game:SetScreenshotInfo ""

@@ -17,8 +17,8 @@ local function ScopedConnect(
 	instance,
 	event,
 	signalFunc,
-	syncFunc,
-	removeFunc
+	syncFunc: (() -> ())?,
+	removeFunc: (() -> ())?
 )
 	local eventConnection
 
@@ -252,7 +252,11 @@ function RbxGui.CreateStyledMessageDialog(title, message, style, buttons)
 end
 
 local scrollMouseCount
-function RbxGui.CreateDropDownMenu(items, onSelect, forRoblox: boolean?)
+function RbxGui.CreateDropDownMenu(
+	items,
+	onSelect,
+	forRoblox: boolean?
+): (Frame, (string) -> ())
 	local width = UDim.new(0, 100)
 	local height = UDim.new(0, 32)
 
@@ -1560,7 +1564,7 @@ function RbxGui.CreateTrueScrollingFrame()
 	return scrollingFrame, controlFrame
 end
 
-function RbxGui.CreateScrollingFrame(orderList, scrollStyle)
+function RbxGui.CreateScrollingFrame(orderList: { GuiObject }?, scrollStyle)
 	local frame = New "Frame" {
 		Name = "ScrollingFrame",
 		BackgroundTransparency = 1,
@@ -1954,17 +1958,17 @@ function RbxGui.CreateScrollingFrame(orderList, scrollStyle)
 		end
 		reentrancyGuard = true
 		RunService.Heartbeat:wait()
-		local success, err
+		local ok, err
 		if style == "grid" then
-			success, err = pcall(function()
+			ok, err = pcall(function()
 				layoutGridScrollBar()
 			end)
 		elseif style == "simple" then
-			success, err = pcall(function()
+			ok, err = pcall(function()
 				layoutSimpleScrollBar()
 			end)
 		end
-		if not success then
+		if not ok then
 			print(err)
 		end
 		moveDragger()
@@ -2055,13 +2059,13 @@ function RbxGui.CreateScrollingFrame(orderList, scrollStyle)
 	end
 
 	-- local y = 0
-	scrollDrag.MouseButton1Down:connect(function(_, y)
+	scrollDrag.MouseButton1Down:connect(function(_, y: number)
 		if scrollDrag.Active then
 			scrollStamp = tick()
 			local mouseOffset = y - scrollDrag.AbsolutePosition.y
 			local dragCon
 			local upCon
-			dragCon = mouseDrag.MouseMoved:connect(function(_, y2)
+			dragCon = mouseDrag.MouseMoved:connect(function(_, y2: number)
 				local barAbsPos = scrollbar.AbsolutePosition.y
 				local barAbsSize = scrollbar.AbsoluteSize.y
 
@@ -2705,7 +2709,15 @@ type TutorialPage = GuiObject & {
 	PrevButton: TextButton,
 }
 
-RbxGui.AddTutorialPage = function(tutorial, tutorialPage: TutorialPage)
+function RbxGui.AddTutorialPage(
+	tutorial: {
+		TransitionFrame: Frame,
+		CurrentTutorialPage: ObjectValue,
+		Buttons: BoolValue,
+		Pages: Frame,
+	},
+	tutorialPage: TutorialPage
+)
 	local transitionFrame = tutorial.TransitionFrame
 	local currentPageValue = tutorial.CurrentTutorialPage
 
@@ -2714,7 +2726,7 @@ RbxGui.AddTutorialPage = function(tutorial, tutorialPage: TutorialPage)
 		tutorialPage.PrevButton.Parent = nil
 	end
 
-	local children = tutorial.Pages:GetChildren()
+	local children = tutorial.Pages:GetChildren() :: { TutorialPage }
 	if children and #children > 0 then
 		tutorialPage.Name = "TutorialPage" .. (#children + 1)
 		local previousPage: TutorialPage = children[#children]
@@ -2751,13 +2763,11 @@ RbxGui.AddTutorialPage = function(tutorial, tutorialPage: TutorialPage)
 			tutorialPage.PrevButton.Active = true
 			tutorialPage.PrevButton.Visible = true
 		end
-
-		tutorialPage.Parent = tutorial.Pages
 	else
-		--First child
+		-- First child
 		tutorialPage.Name = "TutorialPage1"
-		tutorialPage.Parent = tutorial.Pages
 	end
+	tutorialPage.Parent = tutorial.Pages
 end
 
 RbxGui.CreateSetPanel = function(
@@ -2806,7 +2816,7 @@ RbxGui.CreateSetPanel = function(
 
 	local arrayPosition = 1
 	local insertButtons = {}
-	local insertButtonCons = {}
+	local insertButtonCons: { RBXScriptConnection } = {}
 	local contents
 	local setGui
 
@@ -3289,9 +3299,10 @@ RbxGui.CreateSetPanel = function(
 	end
 
 	local function buildInsertButton()
-		local insertButton = makeInsertAssetButton()
-		insertButton.Name = "InsertAssetButton"
-		insertButton.Visible = true
+		local insertButton = Hydrate(makeInsertAssetButton()) {
+			Name = "InsertAssetButton",
+			Visible = true,
+		}
 
 		if
 			Data.Category[Data.CurrentCategory].SetName == "High Scalability"
@@ -3365,7 +3376,7 @@ RbxGui.CreateSetPanel = function(
 		end
 	end
 
-	local function loadSectionOfItems(setGui, rows, columns)
+	local function loadSectionOfItems(setGui, rows: number, columns: number)
 		local pageSize = rows * columns
 
 		if arrayPosition > #contents then
@@ -3675,6 +3686,7 @@ RbxGui.CreateSetPanel = function(
 		waterTypeChangedEvent
 end
 
+-- We all know enums are just numbers in a trench coat
 local cm = Enum.CellMaterial
 local EnumMaterialNames = {
 	[cm.Grass] = "Grass",
@@ -3723,14 +3735,6 @@ for k, v in pairs(EnumMaterialNames) do
 	StringChoices[v] = k
 end
 
-local function getEnumFromName(choice)
-	return StringChoices[choice]
-end
-
-local function getNameFromEnum(choice)
-	return EnumMaterialNames[choice] or MaterialNames[choice]
-end
-
 RbxGui.CreateTerrainMaterialSelector = function(size, position)
 	local terrainMaterialSelectionChanged = Instance.new "BindableEvent"
 	terrainMaterialSelectionChanged.Name = "TerrainMaterialSelectionChanged"
@@ -3751,10 +3755,10 @@ RbxGui.CreateTerrainMaterialSelector = function(size, position)
 
 	local materialToImageMap = {}
 
-	local currentMaterial = 1
+	local currentMaterial: number = 1
 
 	local function updateMaterialChoice(choice)
-		currentMaterial = getEnumFromName(choice)
+		currentMaterial = (StringChoices[choice] :: unknown) :: number
 		terrainMaterialSelectionChanged:Fire(currentMaterial)
 	end
 
@@ -3866,7 +3870,8 @@ RbxGui.CreateTerrainMaterialSelector = function(size, position)
 			return
 		end
 
-		local matName = getNameFromEnum(newMaterialType)
+		local matName = EnumMaterialNames[newMaterialType]
+			or MaterialNames[newMaterialType]
 		local buttons = scrollFrame:GetChildren()
 		for i = 1, #buttons do
 			if
@@ -4032,7 +4037,13 @@ RbxGui.CreateLoadingFrame = function(name, size, position)
 	return loadingFrame, updateLoadingGuiPercent, cancelButtonClicked
 end
 
-function RbxGui.CreatePluginFrame(name: string, size, position, scrollable, parent)
+function RbxGui.CreatePluginFrame(
+	name: string,
+	size,
+	position,
+	scrollable,
+	parent
+)
 	local function createMenuButton(
 		size,
 		position,

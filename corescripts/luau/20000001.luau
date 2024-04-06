@@ -392,8 +392,8 @@ input.FocusLost:connect(function(enterPressed)
 			end
 			setfenv(fn, env)
 
-			local success, output = ypcall(fn)
-			if success then
+			local ok, output = ypcall(fn)
+			if ok then
 				logEvent:Fire("= " .. tostring(output), Color3.new(0.5, 1, 0.5))
 			else
 				logEvent:Fire("! " .. tostring(output), Color3.new(1, 0.5, 0.5))

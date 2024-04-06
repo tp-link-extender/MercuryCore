@@ -19,9 +19,7 @@ local On, Off
 ---------------
 local plugin = PluginManager():CreatePlugin()
 local mouse = plugin:GetMouse()
-mouse.Button1Down:connect(function()
-	onClicked(mouse)
-end)
+
 local toolbar = plugin:CreateToolbar "Terrain"
 local toolbarbutton =
 	toolbar:CreateButton("Remover", "Remover", "destroyer.png")
@@ -251,11 +249,11 @@ CreateStandardLabel(
 
 -- Function to connect to the mouse button 1 down event.  This is what will run when the user clicks.
 -- mouse 	- Mouse data.
-function onClicked(mouse2)
+function onClicked()
 	if on then
 		local cellPos = WorldToCellPreferSolid(
 			c,
-			Vector3.new(mouse2.Hit.x, mouse2.Hit.y, mouse2.Hit.z)
+			Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z)
 		)
 		local x = cellPos.x
 		local y = cellPos.y
@@ -266,7 +264,7 @@ function onClicked(mouse2)
 		-- Mark undo point.
 		ChangeHistoryService:SetWaypoint "Remover"
 
-		UpdatePosition(mouse2.Hit)
+		UpdatePosition(mouse.Hit)
 
 		if properties.autoWedgeEnabled then
 			AutoWedge(
@@ -279,6 +277,8 @@ function onClicked(mouse2)
 		end
 	end
 end
+
+mouse.Button1Down:connect(onClicked)
 
 mouseHighlighter.OnClicked = onClicked
 

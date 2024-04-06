@@ -4,10 +4,11 @@ print "[Mercury]: Loaded corescript 107893730"
 
 -- this script creates the gui and sends the web requests for in game purchase prompts
 
-local MarketplaceService = game:GetService "MarketplaceService"
-local GuiService = game:GetService "GuiService"
 local ContentProvider = game:GetService "ContentProvider"
+local GuiService = game:GetService "GuiService"
 local HttpService = game:GetService "HttpService"
+local InsertService = game:GetService "InsertService"
+local MarketplaceService = game:GetService "MarketplaceService"
 local RunService = game:GetService "RunService"
 
 -- wait for important items to appear
@@ -27,7 +28,7 @@ end
 
 -------------------------------- Global Variables ----------------------------------------
 -- utility variables
-local baseUrl = string.lower(ContentProvider.BaseUrl)
+local baseUrl = ContentProvider.BaseUrl
 
 -- data variables
 local currentProductInfo, currentAssetId, currentCurrencyType, currentCurrencyAmount, currentEquipOnPurchase, currentProductId, currentServerResponseTable
@@ -390,12 +391,12 @@ local function updateAfterBalanceText(playerBalance, notRightBc)
 	end
 
 	if not keyWord then
-		return false
+		return false, false
 	end
 
 	local playerBalanceNumber = tonumber(playerBalance[keyWord])
 	if not playerBalanceNumber then
-		return false
+		return false, false
 	end
 
 	local afterBalanceNumber = playerBalanceNumber - currentCurrencyAmount
@@ -434,11 +435,11 @@ end
 -- will get the player's balance of robux and tix, return in a table
 local function getPlayerBalance()
 	local playerBalance
-	local success, errorCode = ypcall(function()
+	local ok, errorCode = ypcall(function()
 		playerBalance =
 			game:HttpGetAsync(`{getSecureApiBaseUrl()}currency/balance`)
 	end)
-	if not success then
+	if not ok then
 		print("Get player balance failed because", errorCode)
 		return
 	elseif playerBalance == "" then
@@ -486,26 +487,26 @@ local function canPurchaseItem()
 	local playerOwnsAsset = false
 	local notRightBc = false
 	local descText
-	local success = false
+	local ok = false
 
 	if purchasingConsumable then
 		local currentProductInfoRaw
-		success = ypcall(function()
+		ok = ypcall(function()
 			currentProductInfoRaw = Game:HttpGetAsync(
 				`{getSecureApiBaseUrl()}marketplace/productDetails?productid={currentProductId}`
 			)
 		end)
-		if success then
+		if ok then
 			currentProductInfo = HttpService:JSONDecode(currentProductInfoRaw)
 		end
 	else
-		success = ypcall(function()
+		ok = ypcall(function()
 			currentProductInfo =
 				MarketplaceService:GetProductInfo(currentAssetId)
 		end)
 	end
 
-	if currentProductInfo == nil or not success then
+	if currentProductInfo == nil or not ok then
 		return true,
 			nil,
 			nil,
@@ -755,7 +756,7 @@ end
 
 -- given an asset id, this function will grab that asset from the website, and return the first "Tool" object found inside it
 local function getToolAssetID(assetID)
-	local newTool = game:GetService("InsertService"):LoadAsset(assetID)
+	local newTool = InsertService:LoadAsset(assetID)
 	if not newTool then
 		return nil
 	end
@@ -853,14 +854,14 @@ local function acceptPurchase()
 		url ..= `purchase?productId={currentProductId}{currencyData}&purchasePrice={currentCurrencyAmount}&locationType=Game&locationId={Game.PlaceId}`
 	end
 
-	local success, reason = ypcall(function()
+	local ok, reason = ypcall(function()
 		response = game:HttpPostAsync(url, "RobloxPurchaseRequest")
 	end)
 
 	-- debug output for us (found in the logs from local)
 	print(
 		"acceptPurchase success from ypcall is ",
-		success,
+		ok,
 		"reason is",
 		reason
 	)
@@ -905,7 +906,7 @@ local function acceptPurchase()
 	-- check to see if this item was bought, and if we want to equip it (also need to make sure the asset type was gear)
 	if
 		currentEquipOnPurchase
-		and success
+		and ok
 		and currentAssetId
 		and tonumber(currentProductInfo.AssetTypeId) == 19
 	then
@@ -930,7 +931,7 @@ local function acceptPurchase()
 			currentProductId
 		)
 	else
-		userPurchaseActionsEnded(success)
+		userPurchaseActionsEnded(ok)
 	end
 end
 

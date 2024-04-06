@@ -84,7 +84,7 @@ end)
 
 workspace:SetPhysicsThrottleEnabled(true)
 
-local function doVisit()
+local ok, err = pcall(function()
 	message.Text = "Loading Game"
 
 	pcall(function()
@@ -96,7 +96,7 @@ local function doVisit()
 
 	message.Text = "Creating Player"
 
-	player = game:GetService("Players"):CreateLocalPlayer(0)
+	player = Players:CreateLocalPlayer(0)
 
 	player.CharacterAppearance = ""
 	local propExists, canAutoLoadChar = false, false
@@ -116,11 +116,9 @@ local function doVisit()
 	pcall(function()
 		player:SetAccountAge(0)
 	end)
-end
+end)
 
-local success, err = pcall(doVisit)
-
-if success then
+if ok then
 	message.Parent = nil
 else
 	print(err)

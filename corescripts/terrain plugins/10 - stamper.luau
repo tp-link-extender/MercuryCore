@@ -2,6 +2,9 @@ while game == nil do
 	wait()
 end
 
+local ContentProvider = game:GetService "ContentProvider"
+local CoreGui = game:GetService "CoreGui"
+
 ---------------
 --PLUGIN SETUP-
 ---------------
@@ -66,7 +69,7 @@ Spawn(function()
 	RbxStamper = LoadLibrary "RbxStamper"
 end)
 
-local BaseUrl = game:GetService("ContentProvider").BaseUrl:lower()
+local BaseUrl = ContentProvider.BaseUrl:lower()
 
 -----------------------
 --FUNCTION DEFINITIONS-
@@ -354,7 +357,7 @@ function createGui()
 		)
 	setPanelVisibility(false)
 
-	currStampGui.Parent = game:GetService "CoreGui"
+	currStampGui.Parent = CoreGui
 
 	waterTypeChangedEvent.Event:connect(function(waterTable)
 		waterForceAndDirection = waterTable
