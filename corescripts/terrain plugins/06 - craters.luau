@@ -1,4 +1,5 @@
-while game == nil do
+--!strict
+while not game do
 	wait()
 end
 
@@ -47,9 +48,13 @@ local craterDragBar, craterFrame, craterHelpFrame, craterCloseEvent = nil
 --FUNCTION DEFINITIONS-
 -----------------------
 
---makes a crater at point (x, y, z) in cluster c
---cd is the depth factor, a percent of the depth of a perfect sphere
-function makeCrater(x, y, z, cr, cd)
+local function dist(x1, y1, x2, y2)
+	return math.sqrt(math.pow(x2 - x1, 2) + math.pow(y2 - y1, 2))
+end
+
+-- makes a crater at point (x, y, z) in cluster c
+-- cd is the depth factor, a percent of the depth of a perfect sphere
+local function makeCrater(x, y, z, cr, cd)
 	local heightmap = {}
 	for i = x - (cr + 1), x + (cr + 1) do
 		heightmap[i] = {}
@@ -112,10 +117,6 @@ function makeCrater(x, y, z, cr, cd)
 	end
 end
 
-function dist(x1, y1, x2, y2)
-	return math.sqrt(math.pow(x2 - x1, 2) + math.pow(y2 - y1, 2))
-end
-
 local debounce = false
 
 mouse.Button1Down:connect(function()
@@ -139,11 +140,10 @@ mouse.Button1Down:connect(function()
 	ChangeHistoryService:SetWaypoint "Crater"
 end)
 
-On = function()
+function On()
 	if not c then
 		return
-	end
-	if this then
+	elseif this then
 		this:Activate(true)
 	end
 	if toolbarbutton then
@@ -155,7 +155,7 @@ On = function()
 	on = true
 end
 
-Off = function()
+function Off()
 	if toolbarbutton then
 		toolbarbutton:SetActive(false)
 	end

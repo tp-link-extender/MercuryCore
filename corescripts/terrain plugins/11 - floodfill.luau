@@ -1,10 +1,16 @@
-while game == nil do
+while not game do
 	wait()
 end
 
 local ChangeHistoryService = game:GetService "ChangeHistoryService"
 local ContentProvider = game:GetService "ContentProvider"
 local CoreGui = game:GetService "CoreGui"
+
+local CreateStandardButton = require "../Modules/Terrain/CreateStandardButton"
+local CreateStandardLabel = require "../Modules/Terrain/CreateStandardLabel"
+local News = require "../Modules/New"
+local New = News.New
+local Hydrate = News.Hydrate
 
 ---------------
 --PLUGIN SETUP-
@@ -13,6 +19,7 @@ local loaded = false
 local on = false
 
 local On, Off
+local mouseDown, mouseUp
 
 local this = PluginManager():CreatePlugin()
 local mouse = this:GetMouse()
@@ -139,9 +146,6 @@ function MouseHighlighter.Create(mouseUse)
 	highlighter.selectionPart = nil
 
 	-- Hook the mouse up to check for movement.
-	mouseH.Move:connect(function()
-		MouseMoved()
-	end)
 
 	mouseH.Button1Down:connect(function()
 		highlighter.mouseDown = true
@@ -239,9 +243,7 @@ function MouseHighlighter.Create(mouseUse)
 	local function UpdatePosition(position)
 		if not position then
 			return
-		end
-
-		if not mouseH.Target then
+		elseif not mouseH.Target then
 			stopTween()
 			highlighter.selectionPart.Parent = nil
 			return
@@ -297,12 +299,12 @@ function MouseHighlighter.Create(mouseUse)
 		end
 	end
 
-	-- Function to call when the mouse has moved.  Updates where to display the highlighter.
-	function MouseMoved()
+	-- Function to call when the mouse has moved. Updates where to display the highlighter.
+	mouseH.Move:connect(function()
 		if on and not processing then
 			UpdatePosition(mouseH.Hit)
 		end
-	end
+	end)
 
 	return highlighter
 end
@@ -338,68 +340,6 @@ mouseHighlighter:DisablePreview()
 local ConfirmationPopup = {}
 ConfirmationPopup.__index = ConfirmationPopup
 
--- Create a standard text label.  Use this for all lables in the popup so it is easy to standardize.
--- labelName - What to set the text label name as.
--- pos    	 - Where to position the label.  Should be of type UDim2.
--- size   	 - How large to make the label.	 Should be of type UDim2.
--- text   	 - Text to display.
--- parent 	 - What to set the text parent as.
--- Return:
--- Value is the created label.
-function CreateStandardLabel(labelName, pos, size, text, parent)
-	local label = Instance.new "TextLabel"
-	label.Name = labelName
-	label.Position = pos
-	label.Size = size
-	label.Text = text
-	label.TextColor3 = Color3.new(0.95, 0.95, 0.95)
-	label.Font = Enum.Font.ArialBold
-	label.FontSize = Enum.FontSize.Size14
-	label.TextXAlignment = Enum.TextXAlignment.Left
-	label.BackgroundTransparency = 1
-	label.Parent = parent
-
-	return label
-end
-
--- Keep common button properties here to make it easer to change them all at once.
--- These are the default properties to use for a button.
-local buttonTextColor = Color3.new(1, 1, 1)
-local buttonFont = Enum.Font.ArialBold
-local buttonFontSize = Enum.FontSize.Size18
-
--- Create a standard dropdown.  Use this for all dropdowns in the popup so it is easy to standardize.
--- name - What to use.
--- pos    	 	- Where to position the button.  Should be of type UDim2.
--- text         - Text to show in the button.
--- funcOnPress  - Function to run when the button is pressed.
--- parent 	 	- What to set the parent as.
--- Return:
--- button 	   - The button gui.
-function CreateStandardButton(name, pos, text, funcOnPress, parent, size)
-	local button = Instance.new "TextButton"
-	button.Name = name
-	button.Position = pos
-
-	button.Size = UDim2.new(0, 120, 0, 40)
-	button.Text = text
-
-	if size then
-		button.Size = size
-	end
-
-	button.Style = Enum.ButtonStyle.RobloxButton
-
-	button.TextColor3 = buttonTextColor
-	button.Font = buttonFont
-	button.FontSize = buttonFontSize
-	button.Parent = parent
-
-	button.MouseButton1Click:connect(funcOnPress)
-
-	return button
-end
-
 -- Create a confirmation popup.
 --
 -- confirmText      - What to display in the popup.
@@ -417,46 +357,54 @@ function ConfirmationPopup.Create(
 	confirmFunction,
 	declineFunction
 )
-	local popup = {}
-	popup.confirmButton = nil -- Hold the button to confirm a choice.
-	popup.declineButton = nil -- Hold the button to decline a choice.
-	popup.confirmationFrame = nil -- Hold the conformation frame.
-	popup.confirmationText = nil -- Hold the text label to display the conformation message.
-	popup.confirmationHelpText = nil -- Hold the text label to display the conformation message help.
+	local popup = {
+		confirmButton = nil, -- Hold the button to confirm a choice.
+		declineButton = nil, -- Hold the button to decline a choice.
+		confirmationFrame = nil, -- Hold the conformation frame.
+		confirmationText = nil, -- Hold the text label to display the conformation message.
+		confirmationHelpText = nil, -- Hold the text label to display the conformation message help.
+	}
 
-	popup.confirmationFrame = Instance.new "Frame"
-	popup.confirmationFrame.Name = "ConfirmationFrame"
-	popup.confirmationFrame.Size = UDim2.new(0, 280, 0, 160)
-	popup.confirmationFrame.Position = UDim2.new(
-		0.5,
-		-popup.confirmationFrame.Size.X.Offset / 2,
-		0.5,
-		-popup.confirmationFrame.Size.Y.Offset / 2
-	)
-	popup.confirmationFrame.Style = Enum.FrameStyle.RobloxRound
-	popup.confirmationFrame.Parent = screenGui
+	popup.confirmationFrame = New "Frame" {
+		Name = "ConfirmationFrame",
+		Size = UDim2.new(0, 280, 0, 160),
+		Position = UDim2.new(
+			0.5,
+			-popup.confirmationFrame.Size.X.Offset / 2,
+			0.5,
+			-popup.confirmationFrame.Size.Y.Offset / 2
+		),
+		Style = Enum.FrameStyle.RobloxRound,
+		Parent = screenGui,
+	}
 
-	popup.confirmLabel = CreateStandardLabel(
-		"ConfirmLabel",
-		UDim2.new(0, 0, 0, 15),
-		UDim2.new(1, 0, 0, 24),
-		confirmText,
-		popup.confirmationFrame
-	)
-	popup.confirmLabel.FontSize = Enum.FontSize.Size18
-	popup.confirmLabel.TextXAlignment = Enum.TextXAlignment.Center
+	popup.confirmLabel = Hydrate(
+		CreateStandardLabel(
+			"ConfirmLabel",
+			UDim2.new(0, 0, 0, 15),
+			UDim2.new(1, 0, 0, 24),
+			confirmText,
+			popup.confirmationFrame
+		)
+	) {
+		FontSize = Enum.FontSize.Size18,
+		TextXAlignment = Enum.TextXAlignment.Center,
+	}
 
-	popup.confirmationHelpText = CreateStandardLabel(
-		"ConfirmSmallLabel",
-		UDim2.new(0, 0, 0, 40),
-		UDim2.new(1, 0, 0, 28),
-		confirmSmallText,
-		popup.confirmationFrame
-	)
-	popup.confirmationHelpText.FontSize = Enum.FontSize.Size14
-	popup.confirmationHelpText.TextWrap = true
-	popup.confirmationHelpText.Font = Enum.Font.Arial
-	popup.confirmationHelpText.TextXAlignment = Enum.TextXAlignment.Center
+	popup.confirmationHelpText = Hydrate(
+		CreateStandardLabel(
+			"ConfirmSmallLabel",
+			UDim2.new(0, 0, 0, 40),
+			UDim2.new(1, 0, 0, 28),
+			confirmSmallText,
+			popup.confirmationFrame
+		)
+	) {
+		FontSize = Enum.FontSize.Size14,
+		TextWrap = true,
+		Font = Enum.Font.Arial,
+		TextXAlignment = Enum.TextXAlignment.Center,
+	}
 
 	-- Confirm
 	popup.confirmButton = CreateStandardButton(
@@ -509,68 +457,11 @@ end
 --FUNCTION DEFINITIONS-
 -----------------------
 
-local floodFill = function(x, y, z)
-	LoadProgressBar "Processing"
-	breadthFill(x, y, z)
-	UnloadProgressBar()
-	ChangeHistoryService:SetWaypoint "FloodFill"
-end
-
--- Function used when we try and flood fill.  Prompts the user first.
--- Will not show if disabled or terrain is being processed.
-function ConfirmFloodFill(x, y, z)
-	-- Only do if something isn't already being processed.
-	if not processing then
-		processing = true
-		if nil == ConfirmationPopupObject then
-			ConfirmationPopupObject = ConfirmationPopup.Create(
-				"Flood Fill At Selected Location?",
-				"This operation may take some time.",
-				"Fill",
-				"Cancel",
-				function()
-					ConfirmationPopupObject:Clear()
-					ConfirmationPopupObject = nil
-					floodFill(x, y, z)
-					ConfirmationPopupObject = nil
-				end,
-				function()
-					ConfirmationPopupObject:Clear()
-					ConfirmationPopupObject = nil
-					processing = false
-				end
-			)
-		end
-	end
-end
-
-function mouseDown(mouseD)
-	if on and mouseD.Target == game.Workspace.Terrain then
-		startCell = mouseHighlighter:GetPosition()
-	end
-end
-
-function mouseUp(_)
-	if processing then
-		return
-	end
-
-	local upCell = mouseHighlighter:GetPosition()
-	if startCell == upCell then
-		ConfirmFloodFill(upCell.x, upCell.y, upCell.z)
-	end
-end
-
-function getMaterial(x, y, z)
-	local material = GetCell(c, x, y, z)
-	return material
-end
-
 -- function startLoadingFrame() end
 
 -- Load the progress bar to display when drawing a river.
 -- text - Text to display.
-function LoadProgressBar(text)
+local function LoadProgressBar(text)
 	processing = true
 
 	-- Start the progress bar.
@@ -597,31 +488,33 @@ function LoadProgressBar(text)
 		-- spin = false
 	end)
 
-	local spinnerFrame = Instance.new "Frame"
-	spinnerFrame.Name = "Spinner"
-	spinnerFrame.Size = UDim2.new(0, 80, 0, 80)
-	spinnerFrame.Position = UDim2.new(0.5, -40, 0.5, -55)
-	spinnerFrame.BackgroundTransparency = 1
-	spinnerFrame.Parent = progressBar
+	local spinnerFrame = New "Frame" {
+		Name = "Spinner",
+		Size = UDim2.new(0, 80, 0, 80),
+		Position = UDim2.new(0.5, -40, 0.5, -55),
+		BackgroundTransparency = 1,
+		Parent = progressBar,
+	}
 
 	local spinnerIcons = {}
 	local spinnerNum = 1
 	while spinnerNum <= 8 do
-		local spinnerImage = Instance.new "ImageLabel"
-		spinnerImage.Name = "Spinner" .. spinnerNum
-		spinnerImage.Size = UDim2.new(0, 16, 0, 16)
-		spinnerImage.Position = UDim2.new(
-			0.5 + 0.3 * math.cos(math.rad(45 * spinnerNum)),
-			-8,
-			0.5 + 0.3 * math.sin(math.rad(45 * spinnerNum)),
-			-8
-		)
-		spinnerImage.BackgroundTransparency = 1
-		spinnerImage.Image = "http://banland.xyz/asset?id=45880710"
-		spinnerImage.Parent = spinnerFrame
+		local spinnerImage = New "ImageLabel" {
+			Name = "Spinner" .. spinnerNum,
+			Size = UDim2.new(0, 16, 0, 16),
+			Position = UDim2.new(
+				0.5 + 0.3 * math.cos(math.rad(45 * spinnerNum)),
+				-8,
+				0.5 + 0.3 * math.sin(math.rad(45 * spinnerNum)),
+				-8
+			),
+			BackgroundTransparency = 1,
+			Image = "http://banland.xyz/asset?id=45880710",
+			Parent = spinnerFrame,
+		}
 
 		spinnerIcons[spinnerNum] = spinnerImage
-		spinnerNum = spinnerNum + 1
+		spinnerNum += 1
 	end
 
 	--Make it spin
@@ -648,7 +541,7 @@ function LoadProgressBar(text)
 end
 
 -- Unload the progress bar.
-function UnloadProgressBar()
+local function UnloadProgressBar()
 	processing = false
 
 	if progressBar then
@@ -663,36 +556,68 @@ function UnloadProgressBar()
 	end
 end
 
-function breadthFill(x, y, z)
-	local yDepthChecks = doBreadthFill(x, y, z)
-	while yDepthChecks and #yDepthChecks > 0 do
-		local newYChecks = {}
-		for i = 1, #yDepthChecks do
-			local currYDepthChecks = doBreadthFill(
-				yDepthChecks[i].xPos,
-				yDepthChecks[i].yPos,
-				yDepthChecks[i].zPos
-			)
+local function floodFill(x, y, z)
+	LoadProgressBar "Processing"
+	breadthFill(x, y, z)
+	UnloadProgressBar()
+	ChangeHistoryService:SetWaypoint "FloodFill"
+end
 
-			if not processing then
-				return
-			end
+-- Function used when we try and flood fill.  Prompts the user first.
+-- Will not show if disabled or terrain is being processed.
+local function ConfirmFloodFill(x, y, z)
+	-- Only do if something isn't already being processed.
+	if processing then
+		return
+	end
 
-			if currYDepthChecks and #currYDepthChecks > 0 then
-				for j = 1, #currYDepthChecks do
-					table.insert(newYChecks, {
-						xPos = currYDepthChecks[j].xPos,
-						yPos = currYDepthChecks[j].yPos,
-						zPos = currYDepthChecks[j].zPos,
-					})
-				end
-			end
+	processing = true
+	if ConfirmationPopupObject then
+		return
+	end
+
+	ConfirmationPopupObject = ConfirmationPopup.Create(
+		"Flood Fill At Selected Location?",
+		"This operation may take some time.",
+		"Fill",
+		"Cancel",
+		function()
+			ConfirmationPopupObject:Clear()
+			ConfirmationPopupObject = nil
+			floodFill(x, y, z)
+			ConfirmationPopupObject = nil
+		end,
+		function()
+			ConfirmationPopupObject:Clear()
+			ConfirmationPopupObject = nil
+			processing = false
 		end
-		yDepthChecks = newYChecks
+	)
+end
+
+function mouseDown(mouseD)
+	if on and mouseD.Target == game.Workspace.Terrain then
+		startCell = mouseHighlighter:GetPosition()
 	end
 end
 
-function doBreadthFill(x, y, z)
+function mouseUp(_)
+	if processing then
+		return
+	end
+
+	local upCell = mouseHighlighter:GetPosition()
+	if startCell == upCell then
+		ConfirmFloodFill(upCell.x, upCell.y, upCell.z)
+	end
+end
+
+local function getMaterial(x, y, z)
+	local material = GetCell(c, x, y, z)
+	return material
+end
+
+local function doBreadthFill(x, y, z)
 	if getMaterial(x, y, z) ~= emptyMaterial then
 		return
 	end
@@ -735,7 +660,36 @@ function doBreadthFill(x, y, z)
 	return yDepthChecks
 end
 
-function cellInTerrain(x, y, z)
+function breadthFill(x, y, z)
+	local yDepthChecks = doBreadthFill(x, y, z)
+	while yDepthChecks and #yDepthChecks > 0 do
+		local newYChecks = {}
+		for i = 1, #yDepthChecks do
+			local currYDepthChecks = doBreadthFill(
+				yDepthChecks[i].xPos,
+				yDepthChecks[i].yPos,
+				yDepthChecks[i].zPos
+			)
+
+			if
+				not (processing and currYDepthChecks and #currYDepthChecks > 0)
+			then
+				return
+			end
+
+			for j = 1, #currYDepthChecks do
+				table.insert(newYChecks, {
+					xPos = currYDepthChecks[j].xPos,
+					yPos = currYDepthChecks[j].yPos,
+					zPos = currYDepthChecks[j].zPos,
+				})
+			end
+		end
+		yDepthChecks = newYChecks
+	end
+end
+
+local function cellInTerrain(x, y, z)
 	if x < c.MaxExtents.Min.X or x >= c.MaxExtents.Max.X then
 		return false
 	end
@@ -811,8 +765,7 @@ end
 On = function()
 	if not c then
 		return
-	end
-	if this then
+	elseif this then
 		this:Activate(true)
 	end
 	if toolbarbutton then
@@ -858,25 +811,27 @@ dragBar, containerFrame, helpFrame, closeEvent = RbxGui.CreatePluginFrame(
 )
 dragBar.Visible = false
 
-helpFrame.Size = UDim2.new(0, 200, 0, 190)
-
-local textHelp = Instance.new "TextLabel"
-textHelp.Name = "TextHelp"
-textHelp.Font = Enum.Font.ArialBold
-textHelp.FontSize = Enum.FontSize.Size12
-textHelp.TextColor3 = Color3.new(1, 1, 1)
-textHelp.Size = UDim2.new(1, -6, 1, -6)
-textHelp.Position = UDim2.new(0, 3, 0, 3)
-textHelp.TextXAlignment = Enum.TextXAlignment.Left
-textHelp.TextYAlignment = Enum.TextYAlignment.Top
-textHelp.BackgroundTransparency = 1
-textHelp.TextWrap = true
-textHelp.Text = [[
+Hydrate(helpFrame) {
+	Size = UDim2.new(0, 200, 0, 190),
+	-- "This will be pdfs in 2024" - Heliodex
+	New "TextLabel" {
+		Name = "TextHelp",
+		Font = Enum.Font.ArialBold,
+		FontSize = Enum.FontSize.Size12,
+		TextColor3 = Color3.new(1, 1, 1),
+		Size = UDim2.new(1, -6, 1, -6),
+		Position = UDim2.new(0, 3, 0, 3),
+		TextXAlignment = Enum.TextXAlignment.Left,
+		TextYAlignment = Enum.TextYAlignment.Top,
+		BackgroundTransparency = 1,
+		TextWrap = true,
+		Text = [[
 Quickly replace empty terrain cells with a selected material.  Clicking the mouse will cause any empty terrain cells around the point clicked to be filled with the current material, and will also spread to surrounding empty cells (including any empty cells below, but not above).
 
 Simply click on a different material to fill with that material.  The floating paint bucket and cube indicate where filling will start.
-]]
-textHelp.Parent = helpFrame
+]],
+	},
+}
 
 closeEvent.Event:connect(function()
 	Off()

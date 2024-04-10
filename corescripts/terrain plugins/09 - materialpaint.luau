@@ -1,4 +1,4 @@
-while game == nil do
+while not game do
 	wait()
 end
 
@@ -12,6 +12,7 @@ local loaded = false
 local on = false
 
 local On, Off
+local mouseDown, mouseUp, mouseMove
 
 local this = PluginManager():CreatePlugin()
 local mouse = this:GetMouse()
@@ -82,29 +83,173 @@ local RbxUtil = LoadLibrary "RbxUtility"
 --FUNCTION DEFINITIONS-
 -----------------------
 function paintWaterfall(setCells)
-	if setCells then
-		for i = 1, #setCells do
-			SetWaterCell(
-				c,
-				setCells[i].xPos,
-				setCells[i].yPos,
-				setCells[i].zPos,
-				mediumWaterForce,
-				Enum.WaterDirection.NegY
-			)
-		end
-	end
-end
-
-function setWaterDirection(mouseCellPos, setCells)
 	if not setCells then
 		return
 	end
-	if #setCells <= 0 then
-		return
+	for i = 1, #setCells do
+		SetWaterCell(
+			c,
+			setCells[i].xPos,
+			setCells[i].yPos,
+			setCells[i].zPos,
+			mediumWaterForce,
+			Enum.WaterDirection.NegY
+		)
+	end
+end
+
+-- Factored out this stuff because I didn't like the mutability of the setCells arrays. - Heliodex
+
+local function getSquareCell(x: number, y: number, z: number)
+	-- local tempCellPos = Vector3.new(x, y, z)
+	local oldMaterial, oldType, oldOrientation = GetCell(c, x, y, z)
+	if oldMaterial.Value <= 0 then
+		return nil
+	end
+	return {
+		xPos = x,
+		yPos = y,
+		zPos = z,
+		theType = oldType,
+		orientation = oldOrientation,
+	}
+end
+
+local function getSquare(cellPos)
+	local setCells = {}
+	local finalX = cellPos.x + radius - 1
+	local finalZ = cellPos.z + radius - 1
+	local finalY = cellPos.y + radius - 1
+
+	for x = cellPos.x - radius + 1, finalX do
+		for z = cellPos.z - radius + 1, finalZ do
+			for y = cellPos.y - radius + 1, finalY do
+				table.insert(setCells, getSquareCell(x, y, z))
+			end
+		end
 	end
 
-	if directionIsDown(lastCell, mouseCellPos) then
+	return setCells
+end
+
+local function getCircularCell(
+	x: number,
+	y: number,
+	z: number,
+	cellPos,
+	radiusSquared
+)
+	local tempCellPos = Vector3.new(x, y, z)
+	local holdDist = tempCellPos - cellPos
+	local distSq = (holdDist):Dot(holdDist)
+	if distSq >= radiusSquared then
+		return nil
+	end
+	local oldMaterial, oldType, oldOrientation = GetCell(c, x, y, z)
+	if oldMaterial.Value <= 0 then
+		return nil
+	end
+	return {
+		xPos = x,
+		yPos = y,
+		zPos = z,
+		theType = oldType,
+		orientation = oldOrientation,
+	}
+end
+
+local function getCircular(cellPos)
+	local setCells = {}
+	local finalX = cellPos.x + radius
+	local finalZ = cellPos.z + radius
+	local finalY = cellPos.y + radius
+
+	for x = cellPos.x - radius, finalX do
+		for z = cellPos.z - radius, finalZ do
+			for y = cellPos.y - radius, finalY do
+				table.insert(
+					setCells,
+					getCircularCell(x, y, z, cellPos, radius * radius)
+				)
+			end
+		end
+	end
+
+	return setCells
+end
+
+local function getAffectedCells(startPos)
+	if startPos and c then
+		if brushType == "Circular" then
+			return getCircular(startPos)
+		elseif brushType == "Square" then
+			return getSquare(startPos)
+		end
+	end
+
+	return {}
+end
+
+local function directionIsDown(fromCell, toCell)
+	if not toCell then
+		return false
+	end
+
+	if toCell and fromCell then
+		local direction = (toCell - fromCell).unit
+		local absX, absY, absZ =
+			math.abs(direction.X), math.abs(direction.Y), math.abs(direction.Z)
+		if absY > absX and absY > absZ then
+			return true
+		end
+	end
+
+	local viableCells = getAffectedCells(toCell)
+	if not viableCells or #viableCells < 2 then
+		return false
+	end
+
+	local lowX, lowY, lowZ =
+		viableCells[1].xPos, viableCells[1].yPos, viableCells[1].zPos
+	local highX, highY, highZ = lowX, lowY, lowZ
+
+	for i = 2, #viableCells do
+		if viableCells[i].xPos < lowX then
+			lowX = viableCells[i].xPos
+		end
+		if viableCells[i].xPos > highX then
+			highX = viableCells[i].xPos
+		end
+
+		if viableCells[i].yPos < lowY then
+			lowY = viableCells[i].yPos
+		end
+		if viableCells[i].yPos > highY then
+			highY = viableCells[i].yPos
+		end
+
+		if viableCells[i].zPos < lowZ then
+			lowZ = viableCells[i].zPos
+		end
+		if viableCells[i].zPos > highZ then
+			highZ = viableCells[i].zPos
+		end
+	end
+
+	local xRange, yRange, zRange =
+		math.abs(highX - lowX), math.abs(highY - lowY), math.abs(highZ - lowZ)
+
+	local xzPlaneArea = xRange * zRange
+	local xyPlaneArea = xRange * yRange
+	local yzPlaneArea = yRange * zRange
+
+	return xyPlaneArea > xzPlaneArea or yzPlaneArea > xzPlaneArea
+end
+
+local function setWaterDirection(mouseCellPos, setCells)
+	if not setCells or #setCells <= 0 then
+		return
+	elseif directionIsDown(lastCell, mouseCellPos) then
 		paintWaterfall(setCells)
 		return
 	end
@@ -209,197 +354,122 @@ function setWaterDirection(mouseCellPos, setCells)
 				)
 			end
 		end
-	else
-		for i = 1, #setCells do
-			if setCells[i].xPos == initX then
+		return
+	end
+
+	for i = 1, #setCells do
+		if setCells[i].xPos == initX then
+			SetWaterCell(
+				c,
+				setCells[i].xPos,
+				setCells[i].yPos,
+				setCells[i].zPos,
+				mediumWaterForce,
+				down
+			)
+		elseif setCells[i].xPos == endX then
+			SetWaterCell(
+				c,
+				setCells[i].xPos,
+				setCells[i].yPos,
+				setCells[i].zPos,
+				mediumWaterForce,
+				up
+			)
+		else
+			if setCells[i].zPos < zMiddle then
 				SetWaterCell(
 					c,
 					setCells[i].xPos,
 					setCells[i].yPos,
 					setCells[i].zPos,
 					mediumWaterForce,
-					down
+					right
 				)
-			elseif setCells[i].xPos == endX then
+			elseif setCells[i].zPos > zMiddle then
 				SetWaterCell(
 					c,
 					setCells[i].xPos,
 					setCells[i].yPos,
 					setCells[i].zPos,
 					mediumWaterForce,
-					up
+					left
 				)
 			else
-				if setCells[i].zPos < zMiddle then
+				if setCells[i].xPos < xMiddle then
 					SetWaterCell(
 						c,
 						setCells[i].xPos,
 						setCells[i].yPos,
 						setCells[i].zPos,
 						mediumWaterForce,
-						right
+						down
 					)
-				elseif setCells[i].zPos > zMiddle then
+				elseif setCells[i].xPos > xMiddle then
 					SetWaterCell(
 						c,
 						setCells[i].xPos,
 						setCells[i].yPos,
 						setCells[i].zPos,
 						mediumWaterForce,
-						left
+						up
 					)
-				else
-					if setCells[i].xPos < xMiddle then
-						SetWaterCell(
-							c,
-							setCells[i].xPos,
-							setCells[i].yPos,
-							setCells[i].zPos,
-							mediumWaterForce,
-							down
-						)
-					elseif setCells[i].xPos > xMiddle then
-						SetWaterCell(
-							c,
-							setCells[i].xPos,
-							setCells[i].yPos,
-							setCells[i].zPos,
-							mediumWaterForce,
-							up
-						)
-					end
 				end
 			end
-		end
-	end
-end
-
-function getSquare(cellPos, setCells)
-	local finalX = cellPos.x + radius - 1
-	local finalZ = cellPos.z + radius - 1
-	local finalY = cellPos.y + radius - 1
-
-	for x = cellPos.x - radius + 1, finalX do
-		for z = cellPos.z - radius + 1, finalZ do
-			for y = cellPos.y - radius + 1, finalY do
-				-- local tempCellPos = Vector3.new(x, y, z)
-				local oldMaterial, oldType, oldOrientation = GetCell(c, x, y, z)
-				if oldMaterial.Value > 0 then
-					table.insert(setCells, {
-						xPos = x,
-						yPos = y,
-						zPos = z,
-						theType = oldType,
-						orientation = oldOrientation,
-					})
-				end
-			end
-		end
-	end
-end
-
-function getCircular(cellPos, setCells)
-	local radiusSquared = radius * radius
-
-	local finalX = cellPos.x + radius
-	local finalZ = cellPos.z + radius
-	local finalY = cellPos.y + radius
-
-	for x = cellPos.x - radius, finalX do
-		for z = cellPos.z - radius, finalZ do
-			for y = cellPos.y - radius, finalY do
-				local tempCellPos = Vector3.new(x, y, z)
-				local holdDist = tempCellPos - cellPos
-				local distSq = (holdDist):Dot(holdDist)
-				if distSq < radiusSquared then
-					local oldMaterial, oldType, oldOrientation =
-						GetCell(c, x, y, z)
-					if oldMaterial.Value > 0 then
-						table.insert(setCells, {
-							xPos = x,
-							yPos = y,
-							zPos = z,
-							theType = oldType,
-							orientation = oldOrientation,
-						})
-					end
-				end
-			end
-		end
-	end
-end
-
-function paintCircular(cellPos, setCells)
-	getCircular(cellPos, setCells)
-
-	if currentMaterial ~= waterMaterial then
-		for i = 1, #setCells do
-			SetCell(
-				c,
-				setCells[i].xPos,
-				setCells[i].yPos,
-				setCells[i].zPos,
-				currentMaterial,
-				setCells[i].theType,
-				setCells[i].orientation
-			)
-		end
-	end
-end
-
-function paintSquare(cellPos, setCells)
-	getSquare(cellPos, setCells)
-
-	if currentMaterial ~= waterMaterial then
-		for i = 1, #setCells do
-			SetCell(
-				c,
-				setCells[i].xPos,
-				setCells[i].yPos,
-				setCells[i].zPos,
-				currentMaterial,
-				setCells[i].theType,
-				setCells[i].orientation
-			)
-		end
-	end
-end
-
-function paint(startPos)
-	if startPos and c then
-		local cellPos = startPos
-		local setCells = {}
-
-		if brushType == "Circular" then
-			paintCircular(cellPos, setCells)
-		elseif brushType == "Square" then
-			paintSquare(cellPos, setCells)
-		end
-
-		if currentMaterial == waterMaterial then
-			setWaterDirection(cellPos, setCells)
-		end
-
-		return setCells
-	end
-	return
-end
-
-function getAffectedCells(startPos)
-	local setCells = {}
-
-	if startPos and c then
-		if brushType == "Circular" then
-			getCircular(startPos, setCells)
-		elseif brushType == "Square" then
-			getSquare(startPos, setCells)
 		end
 	end
 
 	return setCells
 end
 
-function calculateRegion(mouseR)
+local function paintWith(
+	fn: (
+		Vector3
+	) -> { xPos: number, yPos: number, zPos: number },
+	cellPos: Vector3
+)
+	local setCells = fn(cellPos)
+
+	if currentMaterial == waterMaterial then
+		return
+	end
+	for i = 1, #setCells do
+		SetCell(
+			c,
+			setCells[i].xPos,
+			setCells[i].yPos,
+			setCells[i].zPos,
+			currentMaterial,
+			setCells[i].theType,
+			setCells[i].orientation
+		)
+	end
+
+	return setCells
+end
+
+local function paint(startPos)
+	if not (startPos and c) then
+		return
+	end
+
+	local cellPos = startPos
+	local setCells
+
+	if brushType == "Circular" then
+		setCells = paintWith(getCircular, cellPos)
+	elseif brushType == "Square" then
+		setCells = paintWith(getSquare, cellPos)
+	end
+
+	if currentMaterial == waterMaterial then
+		return setWaterDirection(cellPos, setCells)
+	end
+
+	return setCells
+end
+
+local function calculateRegion(mouseR)
 	local cellPos = WorldToCellPreferSolid(c, mouseR.Hit.p)
 
 	local lowVec =
@@ -415,7 +485,7 @@ function calculateRegion(mouseR)
 	)
 end
 
-function createSelection(mouseS, massSelection)
+local function createSelection(mouseS, massSelection)
 	currSelectionUpdate, currSelectionDestroy = RbxUtil.SelectTerrainRegion(
 		calculateRegion(mouseS),
 		BrickColor.new "Lime green",
@@ -424,24 +494,19 @@ function createSelection(mouseS, massSelection)
 	)
 end
 
-function updateSelection(mouseS)
+local function updateSelection(mouseS)
 	if not currSelectionUpdate then
 		createSelection(mouseS, radius > 4)
-	else
-		currSelectionUpdate(
-			calculateRegion(mouseS),
-			BrickColor.new "Lime green"
-		)
-	end
-end
-
-function setPositionDirectionality()
-	if nil == lastCell then
 		return
 	end
+	currSelectionUpdate(calculateRegion(mouseS), BrickColor.new "Lime green")
+end
 
-	-- no dragging occured, lets set our water to be stagnant or be a waterfall
-	if lastCell and not lastLastCell then
+local function setPositionDirectionality()
+	if nil == lastCell then
+		return
+	elseif lastCell and not lastLastCell then
+		-- no dragging occured, lets set our water to be stagnant or be a waterfall
 		local cellsToSet = paint(lastCell)
 		if directionIsDown(nil, lastCell) then
 			paintWaterfall(cellsToSet)
@@ -476,23 +541,14 @@ function setPositionDirectionality()
 	local direction
 
 	if absX > absY and absX > absZ then
-		if overallDirection.X > 0 then
-			direction = Enum.WaterDirection.X
-		else
-			direction = Enum.WaterDirection.NegX
-		end
+		direction = overallDirection.X > 0 and Enum.WaterDirection.X
+			or Enum.WaterDirection.NegX
 	elseif absY > absX and absY > absZ then
-		if overallDirection.Y > 0 then
-			direction = Enum.WaterDirection.Y
-		else
-			direction = Enum.WaterDirection.NegY
-		end
+		direction = overallDirection.Y > 0 and Enum.WaterDirection.Y
+			or Enum.WaterDirection.NegY
 	elseif absZ > absX and absZ > absY then
-		if overallDirection.Z > 0 then
-			direction = Enum.WaterDirection.Z
-		else
-			direction = Enum.WaterDirection.NegZ
-		end
+		direction = overallDirection.Z > 0 and Enum.WaterDirection.Z
+			or Enum.WaterDirection.NegZ
 	end
 
 	if not direction then -- this should never be hit, but just in case
@@ -512,24 +568,27 @@ function setPositionDirectionality()
 end
 
 function mouseDown(mouseD)
-	if on and mouseD.Target == game.Workspace.Terrain then
-		dragging = true
-		if mouseD and mouseD.Hit then
-			if mouseD.Target == game.Workspace.Terrain then
-				local newCell = WorldToCellPreferSolid(c, mouseD.Hit.p)
-				if newCell then
-					local setCells = paint(newCell)
-					if
-						currentMaterial == waterMaterial
-						and directionIsDown(lastCell, newCell)
-					then
-						paintWaterfall(setCells)
-					end
-					lastCell = newCell
-				end
-			end
-		end
+	if not (on and mouseD.Target == game.Workspace.Terrain) then
+		return
 	end
+
+	dragging = true
+	if
+		not (mouseD and mouseD.Hit and mouseD.Target == game.Workspace.Terrain)
+	then
+		return
+	end
+
+	local newCell = WorldToCellPreferSolid(c, mouseD.Hit.p)
+	if not newCell then
+		return
+	elseif
+		currentMaterial == waterMaterial
+		and directionIsDown(lastCell, newCell)
+	then
+		paintWaterfall(paint(newCell))
+	end
+	lastCell = newCell
 end
 
 function mouseUp(_)
@@ -547,96 +606,29 @@ function mouseUp(_)
 end
 
 function mouseMove(mouseM)
-	if on then
-		if mouseM.Target == game.Workspace.Terrain then
-			if lastCell ~= WorldToCellPreferSolid(c, mouseM.Hit.p) then
-				updateSelection(mouseM)
-				local newCell = WorldToCellPreferSolid(c, mouseM.Hit.p)
-
-				if dragging then
-					-- local painting = true
-					paint(newCell)
-					if lastCell and newCell then
-						if (lastCell - newCell).magnitude > 1 then
-							paintBetweenPoints(lastCell, newCell)
-						end
-					end
-					lastLastCell = lastCell
-					lastCell = newCell
-					-- painting = false
-				end
-			end
-		else
-			destroySelection()
+	if not on then
+		return
+	elseif mouseM.Target == game.Workspace.Terrain then
+		if lastCell == WorldToCellPreferSolid(c, mouseM.Hit.p) then
+			return
 		end
-	end
-end
+		updateSelection(mouseM)
+		local newCell = WorldToCellPreferSolid(c, mouseM.Hit.p)
 
-function directionIsDown(fromCell, toCell)
-	if not toCell then
-		return false
-	end
-
-	if toCell and fromCell then
-		local direction = (toCell - fromCell).unit
-		local absX, absY, absZ =
-			math.abs(direction.X), math.abs(direction.Y), math.abs(direction.Z)
-		if absY > absX and absY > absZ then
-			return true
+		if not dragging then
+			return
 		end
-	end
-
-	local viableCells = getAffectedCells(toCell)
-	if not viableCells then
-		return false
-	end
-	if #viableCells < 2 then
-		return false
-	end
-
-	local lowX, lowY, lowZ =
-		viableCells[1].xPos, viableCells[1].yPos, viableCells[1].zPos
-	local highX, highY, highZ = lowX, lowY, lowZ
-
-	for i = 2, #viableCells do
-		if viableCells[i].xPos < lowX then
-			lowX = viableCells[i].xPos
+		-- local painting = true
+		paint(newCell)
+		if lastCell and newCell and (lastCell - newCell).magnitude > 1 then
+			paintBetweenPoints(lastCell, newCell)
 		end
-		if viableCells[i].xPos > highX then
-			highX = viableCells[i].xPos
-		end
-
-		if viableCells[i].yPos < lowY then
-			lowY = viableCells[i].yPos
-		end
-		if viableCells[i].yPos > highY then
-			highY = viableCells[i].yPos
-		end
-
-		if viableCells[i].zPos < lowZ then
-			lowZ = viableCells[i].zPos
-		end
-		if viableCells[i].zPos > highZ then
-			highZ = viableCells[i].zPos
-		end
+		lastLastCell = lastCell
+		lastCell = newCell
+		-- painting = false
+	else
+		destroySelection()
 	end
-
-	local xRange, yRange, zRange =
-		math.abs(highX - lowX), math.abs(highY - lowY), math.abs(highZ - lowZ)
-
-	local xzPlaneArea = xRange * zRange
-	local xyPlaneArea = xRange * yRange
-	local yzPlaneArea = yRange * zRange
-
-	if xyPlaneArea > xzPlaneArea then
-		return true
-	end
-
-	if yzPlaneArea > xzPlaneArea then
-		return true
-	end
-
-	return false
 end
 
 function destroySelection()
@@ -649,31 +641,33 @@ function destroySelection()
 	end
 end
 
-function moveTowardsGoal(direction, currPos, goalPos, currCell)
-	if currPos ~= goalPos then
-		if currPos < goalPos then
-			if direction == "X" then
-				currCell = Vector3.new(currCell.X + 1, currCell.Y, currCell.Z)
-			elseif direction == "Y" then
-				currCell = Vector3.new(currCell.X, currCell.Y + 1, currCell.Z)
-			elseif direction == "Z" then
-				currCell = Vector3.new(currCell.X, currCell.Y, currCell.Z + 1)
-			end
-		elseif currPos > goalPos then
-			if direction == "X" then
-				currCell = Vector3.new(currCell.X - 1, currCell.Y, currCell.Z)
-			elseif direction == "Y" then
-				currCell = Vector3.new(currCell.X, currCell.Y - 1, currCell.Z)
-			elseif direction == "Z" then
-				currCell = Vector3.new(currCell.X, currCell.Y, currCell.Z - 1)
-			end
+local function moveTowardsGoal(direction: string, currPos, goalPos, currCell)
+	if currPos == goalPos then
+		return currCell
+	end
+
+	if currPos < goalPos then
+		if direction == "X" then
+			currCell = Vector3.new(currCell.X + 1, currCell.Y, currCell.Z)
+		elseif direction == "Y" then
+			currCell = Vector3.new(currCell.X, currCell.Y + 1, currCell.Z)
+		elseif direction == "Z" then
+			currCell = Vector3.new(currCell.X, currCell.Y, currCell.Z + 1)
+		end
+	elseif currPos > goalPos then
+		if direction == "X" then
+			currCell = Vector3.new(currCell.X - 1, currCell.Y, currCell.Z)
+		elseif direction == "Y" then
+			currCell = Vector3.new(currCell.X, currCell.Y - 1, currCell.Z)
+		elseif direction == "Z" then
+			currCell = Vector3.new(currCell.X, currCell.Y, currCell.Z - 1)
 		end
 	end
 
 	return currCell
 end
 
-function interpolateOneDim(direction, currPos, goalPos, currCell)
+local function interpolateOneDim(direction, currPos, goalPos, currCell)
 	if currPos ~= goalPos then
 		currCell = moveTowardsGoal(direction, currPos, goalPos, currCell)
 		paint(currCell)
@@ -696,7 +690,7 @@ function paintBetweenPoints(lastCellP, newCell)
 	end
 end
 
-On = function()
+function On()
 	if not c then
 		return
 	end
@@ -707,7 +701,7 @@ On = function()
 	on = true
 end
 
-Off = function()
+function Off()
 	toolbarbutton:SetActive(false)
 
 	destroySelection()
@@ -724,6 +718,7 @@ local g = Instance.new "ScreenGui"
 g.Name = "MaterialPainterGui"
 g.Parent = CoreGui
 
+local containerFrame
 dragBar, containerFrame, helpFrame, closeEvent = RbxGui.CreatePluginFrame(
 	"Material Brush",
 	UDim2.new(0, 163, 0, 285),

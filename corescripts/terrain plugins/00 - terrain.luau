@@ -1,10 +1,16 @@
--- Local function definitions
-while game == nil do
+--!strict
+while not game do
 	wait()
 end
 
 local ChangeHistoryService = game:GetService "ChangeHistoryService"
 local CoreGui = game:GetService "CoreGui"
+
+local CreateStandardButton = require "../Modules/Terrain/CreateStandardButton"
+local CreateStandardLabel = require "../Modules/Terrain/CreateStandardLabel"
+local News = require "../Modules/New"
+local New = News.New
+local Hydrate = News.Hydrate
 
 ---------------
 --PLUGIN SETUP-
@@ -147,18 +153,20 @@ end)
 
 terrainHelpFrame.Size = UDim2.new(0, 300, 0, 350)
 
-local terrainHelpText = Instance.new "TextLabel"
-terrainHelpText.Name = "HelpText"
-terrainHelpText.Font = Enum.Font.ArialBold
-terrainHelpText.FontSize = Enum.FontSize.Size12
-terrainHelpText.TextColor3 = Color3.new(227 / 255, 227 / 255, 227 / 255)
-terrainHelpText.TextXAlignment = Enum.TextXAlignment.Left
-terrainHelpText.TextYAlignment = Enum.TextYAlignment.Top
-terrainHelpText.Position = UDim2.new(0, 4, 0, 4)
-terrainHelpText.Size = UDim2.new(1, -8, 0, 157)
-terrainHelpText.BackgroundTransparency = 1
-terrainHelpText.TextWrap = true
-terrainHelpText.Text = [[Create terrain with hills, water.
+local function helpText()
+	return New "TextLabel" {
+		Font = Enum.Font.ArialBold,
+		FontSize = Enum.FontSize.Size12,
+		TextColor3 = Color3.new(227 / 255, 227 / 255, 227 / 255),
+		TextXAlignment = Enum.TextXAlignment.Left,
+		TextYAlignment = Enum.TextYAlignment.Top,
+		BackgroundTransparency = 1,
+		TextWrap = true,
+		Parent = terrainHelpFrame,
+	}
+end
+
+local helpText1 = [[Create terrain with hills, water.
 X-Offset and Z-Offset:
 Center point of terrain that will be created.
 Terrain must be in a specific region.  If part of the terrain is outside that region, it won't be created.
@@ -170,13 +178,7 @@ Length: Terrain size in the Z direction
 Amplitude:
 Maximum height of hills.
 ]]
-terrainHelpText.Parent = terrainHelpFrame
-
-local helpSecondText = terrainHelpText:clone()
-helpSecondText.Name = "HelpSecondText"
-helpSecondText.Position = UDim2.new(0, 0, 1, 0)
-helpSecondText.Size = UDim2.new(1, 0, 0, 180)
-helpSecondText.Text = [[Frequency:
+local helpText2 = [[Frequency:
 How often hills are made.
 
 Base Height:
@@ -185,21 +187,34 @@ How high the base of terrain should be.
 Water Height:
 How high water should be.  Terrain will overwrite water.
 ]]
-helpSecondText.Parent = terrainHelpText
-
-local helpThirdText = helpSecondText:clone()
-helpThirdText.Name = "HelpThirdText"
-helpThirdText.Position = UDim2.new(0, 0, 0.6, 0)
-helpThirdText.Size = UDim2.new(1, 0, 0, 180)
-helpThirdText.Text = [[
-
+local helpText3 = [[
+			
 Generate Button:
 Create the terrain.
 
 Clear Button:
 Remove all terrain.
 ]]
-helpThirdText.Parent = helpSecondText
+
+Hydrate(helpText()) {
+	Name = "HelpText",
+	Position = UDim2.new(0, 4, 0, 4),
+	Size = UDim2.new(1, -8, 0, 157),
+	Text = helpText1,
+	Parent = terrainHelpFrame,
+	Hydrate(helpText()) {
+		Name = "HelpSecondText",
+		Position = UDim2.new(0, 0, 1, 0),
+		Size = UDim2.new(1, 0, 0, 180),
+		Text = helpText2,
+		Hydrate(helpText()) {
+			Name = "HelpThirdText",
+			Position = UDim2.new(0, 0, 0.6, 0),
+			Size = UDim2.new(1, 0, 0, 180),
+			Text = helpText3,
+		},
+	},
+}
 
 -- Used to create a highlighter.
 -- A highlighter is a open, rectuangular area displayed in 3D.
@@ -225,21 +240,22 @@ function Highlighter.Create(_, ID, color)
 	highlighter.z = 0
 
 	-- Create the part that the highlighter will be attached to.
-	highlighter.selectionPart = Instance.new "Part"
-	highlighter.selectionPart.Name = "SelectionPart"
-	highlighter.selectionPart.Archivable = false
-	highlighter.selectionPart.Transparency = 1
-	highlighter.selectionPart.Anchored = true
-	highlighter.selectionPart.Locked = true
-	highlighter.selectionPart.CanCollide = false
-	highlighter.selectionPart.FormFactor = Enum.FormFactor.Custom
+	highlighter.selectionPart = New "Part" {
+		Name = "SelectionPart",
+		Archivable = false,
+		Transparency = 1,
+		Anchored = true,
+		Locked = true,
+		CanCollide = false,
+		FormFactor = Enum.FormFactor.Custom,
+	}
 
-	highlighter.selectionBox = Instance.new "SelectionBox"
-	highlighter.selectionBox.Name = "box" .. ID
-
-	highlighter.selectionBox.Archivable = false
-	highlighter.selectionBox.Color = color
-	highlighter.selectionBox.Adornee = highlighter.selectionPart
+	highlighter.selectionBox = New "SelectionBox" {
+		Name = "box" .. ID,
+		Archivable = false,
+		Color = color,
+		Adornee = highlighter.selectionPart,
+	}
 	setmetatable(highlighter, Highlighter)
 
 	return highlighter
@@ -257,7 +273,7 @@ end
 
 -- Update where the highlighter is displayed.
 -- cellPos - Where to display the highlighter, in cells.
-function Highlighter:UpdatePosition(cellPos)
+function Highlighter:UpdatePosition(cellPos: Vector3)
 	if not cellPos then
 		self:DisablePreview()
 		return
@@ -269,17 +285,20 @@ function Highlighter:UpdatePosition(cellPos)
 	self.y = cellPos.y
 	self.z = cellPos.z
 
+	local width, length, height =
+		self.width :: number, self.length :: number, self.height :: number
+
 	local lowVec = CellCenterToWorld(
 		c,
-		cellPos.x - self.width / 2,
+		cellPos.x - width / 2,
 		cellPos.y - 1,
-		cellPos.z - self.length / 2
+		cellPos.z - length / 2
 	)
 	local highVec = CellCenterToWorld(
 		c,
-		cellPos.x + self.width / 2,
-		cellPos.y + self.height,
-		cellPos.z + self.length / 2
+		cellPos.x + width / 2,
+		cellPos.y + height,
+		cellPos.z + length / 2
 	)
 	regionToSelect = Region3.new(lowVec, highVec)
 
@@ -292,35 +311,15 @@ end
 -- length - Length of the area (z direction)
 -- width  - Width of the area (x direction)
 -- height - Height of the area (y direction)
-function Highlighter:UpdateDimensions(length, width, height)
+function Highlighter:UpdateDimensions(
+	length: number,
+	width: number,
+	height: number
+)
 	self.length = length
 	self.width = width
 	self.height = height
 	self:UpdatePosition(Vector3.new(self.x, self.y, self.z))
-end
-
--- Create a standard text label.  Use this for all lables in the popup so it is easy to standardize.
--- labelName - What to set the text label name as.
--- pos    	 - Where to position the label.  Should be of type UDim2.
--- size   	 - How large to make the label.	 Should be of type UDim2.
--- text   	 - Text to display.
--- parent 	 - What to set the text parent as.
--- Return:
--- Value is the created label.
-function CreateStandardLabel(labelName, pos, size, text, parent)
-	local label = Instance.new "TextLabel"
-	label.Name = labelName
-	label.Position = pos
-	label.Size = size
-	label.Text = text
-	label.TextColor3 = Color3.new(0.95, 0.95, 0.95)
-	label.Font = Enum.Font.ArialBold
-	label.FontSize = Enum.FontSize.Size14
-	label.TextXAlignment = Enum.TextXAlignment.Left
-	label.BackgroundTransparency = 1
-	label.Parent = parent
-
-	return label
 end
 
 -- Create a standardized slider.
@@ -333,7 +332,7 @@ end
 -- Return:
 -- sliderGui      - Slider gui object.
 -- sliderPosition - Object that can set the slider value.
-function CreateStandardSlider(
+local function CreateStandardSlider(
 	name,
 	pos,
 	lengthBarPos,
@@ -345,21 +344,24 @@ function CreateStandardSlider(
 	local sliderGui, sliderPosition =
 		RbxGui.CreateSlider(steps, 0, UDim2.new(0, 0, 0, 0))
 
-	sliderGui.Name = name
-	sliderGui.Parent = parent
-	sliderGui.Position = pos
-	sliderGui.Size = UDim2.new(1, 0, 0, 20)
-	local lengthBar = sliderGui:FindFirstChild "Bar"
-	lengthBar.Size = UDim2.new(1, -21, 0, 5)
-	lengthBar.Position = lengthBarPos
+	Hydrate(sliderGui) {
+		Name = name,
+		Parent = parent,
+		Position = pos,
+		Size = UDim2.new(1, 0, 0, 20),
+	}
+	Hydrate(sliderGui.Bar) {
+		Size = UDim2.new(1, -21, 0, 5),
+		Position = lengthBarPos,
+	}
 
-	if nil ~= funcOnChange then
+	if funcOnChange then
 		sliderPosition.Changed:connect(function()
 			funcOnChange(sliderPosition)
 		end)
 	end
 
-	if nil ~= initValue then
+	if initValue then
 		sliderPosition.Value = initValue
 	end
 
@@ -390,44 +392,6 @@ end
 -- 	return dropdown, updateSelection
 -- end
 
--- Keep common button properties here to make it easer to change them all at once.
--- These are the default properties to use for a button.
-local buttonTextColor = Color3.new(1, 1, 1)
-local buttonFont = Enum.Font.ArialBold
-local buttonFontSize = Enum.FontSize.Size18
-
--- Create a standard dropdown.  Use this for all dropdowns in the popup so it is easy to standardize.
--- name - What to use.
--- pos    	 	- Where to position the button.  Should be of type UDim2.
--- text         - Text to show in the button.
--- funcOnPress  - Function to run when the button is pressed.
--- parent 	 	- What to set the parent as.
--- Return:
--- button 	   - The button gui.
-function CreateStandardButton(name, pos, text, funcOnPress, parent, size)
-	local button = Instance.new "TextButton"
-	button.Name = name
-	button.Position = pos
-
-	button.Size = UDim2.new(0, 120, 0, 40)
-	button.Text = text
-
-	if size then
-		button.Size = size
-	end
-
-	button.Style = Enum.ButtonStyle.RobloxButton
-
-	button.TextColor3 = buttonTextColor
-	button.Font = buttonFont
-	button.FontSize = buttonFontSize
-
-	button.MouseButton1Click:connect(funcOnPress)
-	button.Parent = parent
-
-	return button
-end
-
 local cancelValues = {
 	cancelAction = false, -- Used to cancel currently occuring actions.  If set to true then terrain generation will stop.
 	progressBar = nil, -- Will store the progress bar when needed.
@@ -437,30 +401,31 @@ local cancelValues = {
 
 -- Load the progress bar to display when drawing a river.
 -- text - Text to display.
-function LoadProgressBar(text)
-	if cancelValues.progressBar == nil then
-		cancelValues.isDrawing = true
-
-		-- Start the progress bar.
-		cancelValues.progressBar, cancelValues.setAmountFunc, cancelValues.bindForCancel =
-			RbxGui.CreateLoadingFrame(text)
-
-		cancelValues.progressBar.Position =
-			UDim2.new(0.5, -cancelValues.progressBar.Size.X.Offset / 2, 0, 15)
-		cancelValues.progressBar.Parent = g
-
-		cancelValues.bindForCancel.Event:connect(function(_)
-			cancelValues.cancelActions = true -- Set the flag that everything should stop.
-
-			coroutine.yield()
-		end)
-	else
+local function LoadProgressBar(text)
+	if cancelValues.progressBar then
 		print "Tried to start the progress bar when it was already running."
+		return
 	end
+
+	cancelValues.isDrawing = true
+
+	-- Start the progress bar.
+	cancelValues.progressBar, cancelValues.setAmountFunc, cancelValues.bindForCancel =
+		RbxGui.CreateLoadingFrame(text)
+
+	cancelValues.progressBar.Position =
+		UDim2.new(0.5, -cancelValues.progressBar.Size.X.Offset / 2, 0, 15)
+	cancelValues.progressBar.Parent = g
+
+	cancelValues.bindForCancel.Event:connect(function(_)
+		cancelValues.cancelActions = true -- Set the flag that everything should stop.
+
+		coroutine.yield()
+	end)
 end
 
 -- Unload the progress bar.
-function UnloadProgressBar()
+local function UnloadProgressBar()
 	cancelValues.isDrawing = false
 	cancelValues.cancelActions = false
 
@@ -520,8 +485,8 @@ offsetZSliderPosition.Value = (terrainOptions.zpos + 252) / 4 + 1
 --FUNCTION DEFINITIONS-
 -----------------------
 
---makes a column of blocks from 1 up to height at location (x,z) in cluster c
-function coordHeight(x, z, height)
+-- makes a column of blocks from 1 up to height at location (x,z) in cluster c
+local function coordHeight(x, z, height)
 	SetCells(
 		c,
 		Region3int16.new(
@@ -534,10 +499,10 @@ function coordHeight(x, z, height)
 	)
 end
 
---makes a heightmap for a layer of mountains (width x depth)
---with a width frequency wf and depthfrequency df (width should be divisible by wf, depth should be divisible by df) (for unsquished results, width/wf = depth/df)
---with a range of amplitudes between 0 and a
-function mountLayer(width, depth, wf, df, a)
+-- makes a heightmap for a layer of mountains (width x depth)
+-- with a width frequency wf and depthfrequency df (width should be divisible by wf, depth should be divisible by df) (for unsquished results, width/wf = depth/df)
+-- with a range of amplitudes between 0 and a
+local function mountLayer(width, depth, wf, df, a)
 	local heightmap = {}
 	for i = 0, width - 1 do
 		heightmap[i] = {}
@@ -599,8 +564,8 @@ function mountLayer(width, depth, wf, df, a)
 	return heightmap
 end
 
---makes a shell around block at coordinate x, z using heightmap
-function makeShell(x, z, heightmap, shellheightmap)
+-- makes a shell around block at coordinate x, z using heightmap
+local function makeShell(x, z, heightmap, shellheightmap)
 	local originalheight = heightmap[x][z]
 	for i = x - 1, x + 1 do
 		for k = z - 1, z + 1 do
@@ -628,13 +593,13 @@ end
 -- Set the camera to look at the terrain from a distance so that all terrain will be in view.
 -- centerX, centerZ - Center coordinate of land.  This doesn't take into account clipping.
 -- length, width    - Land dimensions.
-function SetCamera(centerX, centerZ, length, width, height)
+local function SetCamera(centerX, centerZ, length, width, height)
 	local currCamera = game.Workspace.CurrentCamera
 	local cameraPos = Vector3.new(0, 400, 1600)
 	local cameraFocus = Vector3.new(0, height * 4, 0)
 
 	-- Nothing set so use the default.
-	if nil ~= centerX then
+	if centerX then
 		local scale = 0
 		local lengthScale = 0
 		local widthScale = 0
@@ -657,11 +622,7 @@ function SetCamera(centerX, centerZ, length, width, height)
 			widthScale = 0.7
 		end
 
-		if widthScale > lengthScale then
-			scale = widthScale
-		else
-			scale = lengthScale
-		end
+		scale = widthScale > lengthScale and widthScale or lengthScale
 
 		local distance = Vector3.new(0, (200 * scale) + 200, (1100 * scale))
 		cameraPos =
@@ -675,12 +636,11 @@ function SetCamera(centerX, centerZ, length, width, height)
 end
 
 -- Create terrain based on the current properties.
-function GenerateTerrain()
+local function GenerateTerrain()
 	toolbarbutton:SetActive(false)
 
 	generateOptions = terrainOptions:Clone()
 
-	-- Turn off the plugin
 	Off()
 
 	-- Create the progress bar that will track terrain creation completion.
@@ -977,37 +937,45 @@ end
 
 local ConfirmationPopup
 
+-- Unload the conformation popup if it exists.
+-- Does nothing if the popup isn't set.
+local function ClearConformation()
+	if ConfirmationPopupObject then
+		ConfirmationPopupObject:Clear()
+		ConfirmationPopupObject = nil
+	end
+end
+
 -- Function used by the generate button.  Prompts the user first.
 -- Will not show if disabled or terrain is being processed.
-function ConfirmGenerateTerrain()
+local function ConfirmGenerateTerrain()
 	-- Only do if something isn't already being processed.
-	if nil == cancelValues.progressBar then
-		if nil == ConfirmationPopupObject then
-			if not hideGenerateConformation then
-				ConfirmationPopupObject = ConfirmationPopup.Create(
-					"Generate Terrain?",
-					"Generate",
-					"Cancel",
-					function()
-						ClearConformation()
-						GenerateTerrain()
-					end,
-					ClearConformation,
-					function()
-						hideGenerateConformation = not hideGenerateConformation
-						return not hideGenerateConformation
-					end
-				)
-			else
-				GenerateTerrain()
-			end
-		end
+	if cancelValues.progressBar or ConfirmationPopupObject then
+		return
+	elseif hideGenerateConformation then
+		GenerateTerrain()
+		return
 	end
+
+	ConfirmationPopupObject = ConfirmationPopup.Create(
+		"Generate Terrain?",
+		"Generate",
+		"Cancel",
+		function()
+			ClearConformation()
+			GenerateTerrain()
+		end,
+		ClearConformation,
+		function()
+			hideGenerateConformation = not hideGenerateConformation
+			return not hideGenerateConformation
+		end
+	)
 end
 
 -- Clears all terrain.
 -- Clearing is immediate.
-function ClearTerrain()
+local function ClearTerrain()
 	toolbarbutton:SetActive(false)
 	Off()
 
@@ -1024,30 +992,29 @@ end
 
 -- Function used by the clear button.  Prompts the user first.
 -- Will not show if disabled or terrain is being processed.
-function ConfirmClearTerrain()
+local function ConfirmClearTerrain()
 	-- Only do if something isn't already being processed.
-	if nil == cancelValues.progressBar then
-		if nil == ConfirmationPopupObject then
-			if not hideClearConformation then
-				ConfirmationPopupObject = ConfirmationPopup.Create(
-					"Clear Terrain?",
-					"Clear",
-					"Cancel",
-					function()
-						ClearConformation()
-						ClearTerrain()
-					end,
-					ClearConformation,
-					function()
-						hideClearConformation = not hideClearConformation
-						return not hideClearConformation
-					end
-				)
-			else
-				ClearTerrain()
-			end
-		end
+	if cancelValues.progressBar or ConfirmationPopupObject then
+		return
+	elseif hideClearConformation then
+		ClearTerrain()
+		return
 	end
+
+	ConfirmationPopupObject = ConfirmationPopup.Create(
+		"Clear Terrain?",
+		"Clear",
+		"Cancel",
+		function()
+			ClearConformation()
+			ClearTerrain()
+		end,
+		ClearConformation,
+		function()
+			hideClearConformation = not hideClearConformation
+			return not hideClearConformation
+		end
+	)
 end
 
 -- Used to create a highlighter.
@@ -1072,34 +1039,39 @@ function ConfirmationPopup.Create(
 	confirmFunction,
 	declineFunction
 )
-	local popup = {}
-	popup.confirmButton = nil -- Hold the button to confirm a choice.
-	popup.declineButton = nil -- Hold the button to decline a choice.
-	popup.confirmationFrame = nil -- Hold the conformation frame.
-	popup.confirmationText = nil -- Hold the text label to display the conformation message.
-	popup.confirmationHelpText = nil -- Hold the text label to display the conformation message help.
+	local popup = {
+		confirmButton = nil, -- Hold the button to confirm a choice.
+		declineButton = nil, -- Hold the button to decline a choice.
+		confirmationFrame = nil, -- Hold the conformation frame.
+		confirmationText = nil, -- Hold the text label to display the conformation message.
+		confirmationHelpText = nil, -- Hold the text label to display the conformation message help.
+	}
 
-	popup.confirmationFrame = Instance.new "Frame"
-	popup.confirmationFrame.Name = "ConfirmationFrame"
-	popup.confirmationFrame.Size = UDim2.new(0, 280, 0, 140)
-	popup.confirmationFrame.Position = UDim2.new(
-		0.5,
-		-popup.confirmationFrame.Size.X.Offset / 2,
-		0.5,
-		-popup.confirmationFrame.Size.Y.Offset / 2
-	)
-	popup.confirmationFrame.Style = Enum.FrameStyle.RobloxRound
-	popup.confirmationFrame.Parent = g
+	popup.confirmationFrame = New "Frame" {
+		Name = "ConfirmationFrame",
+		Size = UDim2.new(0, 280, 0, 140),
+		Position = UDim2.new(
+			0.5,
+			-popup.confirmationFrame.Size.X.Offset / 2,
+			0.5,
+			-popup.confirmationFrame.Size.Y.Offset / 2
+		),
+		Style = Enum.FrameStyle.RobloxRound,
+		Parent = g,
+	}
 
-	popup.confirmLabel = CreateStandardLabel(
-		"ConfirmLabel",
-		UDim2.new(0, 0, 0, 15),
-		UDim2.new(1, 0, 0, 24),
-		confirmText,
-		popup.confirmationFrame
-	)
-	popup.confirmLabel.FontSize = Enum.FontSize.Size18
-	popup.confirmLabel.TextXAlignment = Enum.TextXAlignment.Center
+	popup.confirmLabel = Hydrate(
+		CreateStandardLabel(
+			"ConfirmLabel",
+			UDim2.new(0, 0, 0, 15),
+			UDim2.new(1, 0, 0, 24),
+			confirmText,
+			popup.confirmationFrame
+		)
+	) {
+		FontSize = Enum.FontSize.Size18,
+		TextXAlignment = Enum.TextXAlignment.Center,
+	}
 
 	-- Confirm
 	popup.confirmButton = CreateStandardButton(
@@ -1126,19 +1098,19 @@ end
 
 -- Clear the popup, free up assets.
 function ConfirmationPopup:Clear()
-	if nil ~= self.confirmButton then
+	if self.confirmButton then
 		self.confirmButton.Parent = nil
 	end
 
-	if nil ~= self.declineButton then
+	if self.declineButton then
 		self.declineButton.Parent = nil
 	end
 
-	if nil ~= self.confirmationFrame then
+	if self.confirmationFrame then
 		self.confirmationFrame.Parent = nil
 	end
 
-	if nil ~= self.confirmLabel then
+	if self.confirmLabel then
 		self.confirmLabel.Parent = nil
 	end
 
@@ -1163,7 +1135,8 @@ local widthLabel = CreateStandardLabel(
 	"",
 	terrainFrame
 )
-local _, _ --[[widthSliderGui, widthSliderPosition]] = CreateStandardSlider(
+-- local _, _ widthSliderGui, widthSliderPosition =
+CreateStandardSlider(
 	"WidthSliderGui",
 	UDim2.new(0, 1, 0, 108),
 	UDim2.new(0, 10, 0.5, -2),
@@ -1184,7 +1157,8 @@ local lengthLabel = CreateStandardLabel(
 	"",
 	terrainFrame
 )
-local _, _ --[[lengthSliderGui, lengthSliderPosition]] = CreateStandardSlider(
+-- local _, _ lengthSliderGui, lengthSliderPosition =
+CreateStandardSlider(
 	"LengthSliderGui",
 	UDim2.new(0, 1, 0, 149),
 	UDim2.new(0, 10, 0.5, -2),
@@ -1305,17 +1279,8 @@ CreateStandardButton(
 	UDim2.new(0, 150, 0, 40)
 )
 
--- Unload the conformation popup if it exists.
--- Does nothing if the popup isn't set.
-function ClearConformation()
-	if nil ~= ConfirmationPopupObject then
-		ConfirmationPopupObject:Clear()
-		ConfirmationPopupObject = nil
-	end
-end
-
 -- Run when the popup is activated.
-On = function()
+function On()
 	if not c then
 		return
 	end
@@ -1326,7 +1291,7 @@ On = function()
 end
 
 -- Run when the popup is deactivated.
-Off = function()
+function Off()
 	toolbarbutton:SetActive(false)
 	ClearConformation()
 	on = false

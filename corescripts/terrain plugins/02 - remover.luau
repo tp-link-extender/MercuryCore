@@ -1,9 +1,11 @@
-while game == nil do
+while not game do
 	wait()
 end
 
 local ChangeHistoryService = game:GetService "ChangeHistoryService"
 local CoreGui = game:GetService "CoreGui"
+
+local CreateStandardLabel = require "../Modules/Terrain/CreateStandardLabel"
 
 -----------------
 --DEFAULT VALUES-
@@ -170,30 +172,6 @@ end
 -- Create the mouse movement highlighter.
 local mouseHighlighter = MouseHighlighter.Create(mouse)
 
--- Create a standard text label.  Use this for all lables in the popup so it is easy to standardize.
--- labelName - What to set the text label name as.
--- pos    	 - Where to position the label.  Should be of type UDim2.
--- size   	 - How large to make the label.	 Should be of type UDim2.
--- text   	 - Text to display.
--- parent 	 - What to set the text parent as.
--- Return:
--- Value is the created label.
-function CreateStandardLabel(labelName, pos, size, text, parent)
-	local label = Instance.new "TextLabel"
-	label.Name = labelName
-	label.Position = pos
-	label.Size = size
-	label.Text = text
-	label.TextColor3 = Color3.new(0.95, 0.95, 0.95)
-	label.Font = Enum.Font.ArialBold
-	label.FontSize = Enum.FontSize.Size14
-	label.TextXAlignment = Enum.TextXAlignment.Left
-	label.BackgroundTransparency = 1
-	label.Parent = parent
-
-	return label
-end
-
 ------
 --GUI-
 ------
@@ -283,11 +261,10 @@ mouse.Button1Down:connect(onClicked)
 mouseHighlighter.OnClicked = onClicked
 
 -- Run when the popup is activated.
-On = function()
+function On()
 	if not c then
 		return
-	end
-	if plugin then
+	elseif plugin then
 		plugin:Activate(true)
 	end
 	if toolbarbutton then
@@ -300,7 +277,7 @@ On = function()
 end
 
 -- Run when the popup is deactivated.
-Off = function()
+function Off()
 	on = false
 
 	if toolbarbutton then

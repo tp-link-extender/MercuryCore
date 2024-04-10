@@ -1,9 +1,12 @@
-while game == nil do
+while not game do
 	wait()
 end
 
 local ChangeHistoryService = game:GetService "ChangeHistoryService"
 local CoreGui = game:GetService "CoreGui"
+
+local CreateStandardLabel = require "../Modules/Terrain/CreateStandardLabel"
+local New = require("../Modules/New").New
 
 ---------------
 --PLUGIN SETUP-
@@ -96,19 +99,21 @@ function MouseHighlighter.Create(mouseUse)
 	end)
 
 	-- Create the part that the highlighter will be attached to.
-	highlighter.selectionPart = Instance.new "Part"
-	highlighter.selectionPart.Name = "SelectionPart"
-	highlighter.selectionPart.Archivable = false
-	highlighter.selectionPart.Transparency = 1
-	highlighter.selectionPart.Anchored = true
-	highlighter.selectionPart.Locked = true
-	highlighter.selectionPart.CanCollide = false
-	highlighter.selectionPart.FormFactor = Enum.FormFactor.Custom
+	highlighter.selectionPart = New "Part" {
+		Name = "SelectionPart",
+		Archivable = false,
+		Transparency = 1,
+		Anchored = true,
+		Locked = true,
+		CanCollide = false,
+		FormFactor = Enum.FormFactor.Custom,
+	}
+	highlighter.selectionBox = New "SelectionBox" {
+		Archivable = false,
+		Color = mouseHighlightColor,
+		Adornee = highlighter.selectionPart,
+	}
 
-	highlighter.selectionBox = Instance.new "SelectionBox"
-	highlighter.selectionBox.Archivable = false
-	highlighter.selectionBox.Color = mouseHighlightColor
-	highlighter.selectionBox.Adornee = highlighter.selectionPart
 	mouseH.TargetFilter = highlighter.selectionPart
 	setmetatable(highlighter, MouseHighlighter)
 
@@ -119,7 +124,7 @@ function MouseHighlighter.Create(mouseUse)
 	-- Return:
 	-- success - Value is true if there was a plane intersection, false if not.
 	-- cellPos - Value is the terrain cell intersection point if there is one, vectorPos if there isn't.
-	PlaneIntersection = function(vectorPos)
+	function PlaneIntersection(vectorPos)
 		local currCamera = game.Workspace.CurrentCamera
 		local startPos = Vector3.new(
 			currCamera.CoordinateFrame.p.X,
@@ -147,7 +152,7 @@ function MouseHighlighter.Create(mouseUse)
 
 	-- Update where the highlighter is displayed.
 	-- position - Where to display the highlighter, in world space.
-	UpdatePosition = function(position)
+	function UpdatePosition(position)
 		if not position then
 			return
 		end
@@ -213,30 +218,6 @@ end
 -- Create the mouse movement highlighter.
 local mouseHighlighter = MouseHighlighter.Create(mouse)
 mouseHighlighter:DisablePreview()
-
--- Create a standard text label.  Use this for all lables in the popup so it is easy to standardize.
--- labelName - What to set the text label name as.
--- pos    	 - Where to position the label.  Should be of type UDim2.
--- size   	 - How large to make the label.	 Should be of type UDim2.
--- text   	 - Text to display.
--- parent 	 - What to set the text parent as.
--- Return:
--- Value is the created label.
-function CreateStandardLabel(labelName, pos, size, text, parent)
-	local label = Instance.new "TextLabel"
-	label.Name = labelName
-	label.Position = pos
-	label.Size = size
-	label.Text = text
-	label.TextColor3 = Color3.new(0.95, 0.95, 0.95)
-	label.Font = Enum.Font.ArialBold
-	label.FontSize = Enum.FontSize.Size14
-	label.TextXAlignment = Enum.TextXAlignment.Left
-	label.BackgroundTransparency = 1
-	label.Parent = parent
-
-	return label
-end
 
 ------
 --GUI-
@@ -372,7 +353,7 @@ mouse.Button1Down:connect(onClicked)
 mouseHighlighter.OnClicked = onClicked
 
 -- Run when the popup is activated.
-On = function()
+function On()
 	if not c then
 		return
 	end
@@ -383,7 +364,7 @@ On = function()
 end
 
 -- Run when the popup is deactivated.
-Off = function()
+function Off()
 	toolbarbutton:SetActive(false)
 	on = false
 

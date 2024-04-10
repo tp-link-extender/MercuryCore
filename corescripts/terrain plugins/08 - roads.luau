@@ -1,4 +1,5 @@
-while game == nil do
+--!strict
+while not game do
 	wait()
 end
 
@@ -272,11 +273,10 @@ mouse.Button1Down:connect(function()
 	end
 end)
 
-On = function()
+function On()
 	if not c then
 		return
-	end
-	if this then
+	elseif this then
 		this:Activate(true)
 	end
 	if toolbarbutton then
@@ -290,7 +290,7 @@ On = function()
 	on = true
 end
 
-Off = function()
+function Off()
 	if toolbarbutton then
 		toolbarbutton:SetActive(false)
 	end
@@ -311,6 +311,7 @@ local g = Instance.new "ScreenGui"
 g.Name = "RoadGui"
 g.Parent = game:GetService "CoreGui"
 
+local roadHelpFrame
 roadDragBar, roadFrame, roadHelpFrame, roadCloseEvent =
 	RbxGui.CreatePluginFrame(
 		"Roads",

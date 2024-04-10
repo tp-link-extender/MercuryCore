@@ -1,9 +1,12 @@
-while game == nil do
+while not game do
 	wait()
 end
 
 local ContentProvider = game:GetService "ContentProvider"
 local CoreGui = game:GetService "CoreGui"
+local News = require "../Modules/New"
+local New = News.New
+local Hydrate = News.Hydrate
 
 ---------------
 --PLUGIN SETUP-
@@ -113,11 +116,10 @@ function hideLoadingDialog()
 	currStampGui.LoadingFrame.Visible = false
 end
 
-local partSelected = function(name, id, terrainShape)
-	if not id then
-		return
-	end
-	if not name then
+local stampCon
+
+local function partSelected(name, id, terrainShape)
+	if not (id and name) then
 		return
 	end
 
@@ -146,21 +148,23 @@ local partSelected = function(name, id, terrainShape)
 			and clusterTag:isA "Vector3Value"
 			and clusterTag.Value.X == 17
 		then
-			local waterForceTag = Instance.new("StringValue", lastStampModel)
-			waterForceTag.Name = "WaterForceTag"
-			waterForceTag.Value = waterForceAndDirection[1]
-
-			local waterForceDirectionTag =
-				Instance.new("StringValue", lastStampModel)
-			waterForceDirectionTag.Name = "WaterForceDirectionTag"
-			waterForceDirectionTag.Value = waterForceAndDirection[2]
+			New "StringValue" {
+				Name = "WaterForceTag",
+				Value = waterForceAndDirection[1],
+				Parent = lastStampModel,
+			}
+			New "StringValue" {
+				Name = "WaterForceDirectionTag",
+				Value = waterForceAndDirection[2],
+				Parent = lastStampModel,
+			}
 		end
 	end
 
-	setupStamper(lastStampModel, mouse)
+	setupStamper(lastStampModel)
 end
 
-function updateWaterInfo()
+local function updateWaterInfo()
 	if stampControl then
 		stampControl.Destroy()
 	end
@@ -177,70 +181,203 @@ function updateWaterInfo()
 		local clusterTag = lastStampModel:FindFirstChild "ClusterMaterial"
 		-- we are going to stamp water, send info to stamper about this
 		if clusterTag and clusterTag.Value.X == 17 then
-			local waterForceTag = Instance.new("StringValue", lastStampModel)
-			waterForceTag.Name = "WaterForceTag"
-			waterForceTag.Value = waterForceAndDirection[1]
-
-			local waterForceDirectionTag =
-				Instance.new("StringValue", lastStampModel)
-			waterForceDirectionTag.Name = "WaterForceDirectionTag"
-			waterForceDirectionTag.Value = waterForceAndDirection[2]
+			New "StringValue" {
+				Name = "WaterForceTag",
+				Value = waterForceAndDirection[1],
+				Parent = lastStampModel,
+			}
+			New "StringValue" {
+				Name = "WaterForceDirectionTag",
+				Value = waterForceAndDirection[2],
+				Parent = lastStampModel,
+			}
 		end
 	end
 
-	setupStamper(lastStampModel, mouse)
+	setupStamper(lastStampModel)
 end
 
-local dialogClosed = function()
-	if lastStampModel then
-		if stampControl then
-			stampControl.Destroy()
-		end
-		setupStamper(lastStampModel, mouse)
+local function dialogClosed()
+	if not lastStampModel then
+		return
+	elseif stampControl then
+		stampControl.Destroy()
 	end
+	setupStamper(lastStampModel)
 end
 
-function pickPart()
+local function pickPart()
 	if stampControl then
 		stampControl.Destroy()
 	end
 	setPanelVisibility(true)
 end
 
-function keyHandler(key)
-	if key == "f" then
-		handlePartShow()
-	end
-end
-
-function partOn()
-	pickPart()
-end
-
-function partOff()
-	setPanelVisibility(false)
-	if lastStampModel then
-		if stampControl then
-			stampControl.Destroy()
+local function keyHandler(key)
+	if key ~= "f" then
+		return
+	elseif getPanelVisibility() then
+		-- handlePartShow
+		setPanelVisibility(false)
+		if lastStampModel then
+			if stampControl then
+				stampControl.Destroy()
+			end
+			setupStamper(lastStampModel)
 		end
-		setupStamper(lastStampModel, mouse)
-	end
-end
-
-function handlePartShow()
-	if getPanelVisibility() then
-		partOff()
 	else
-		partOn()
+		pickPart()
 	end
 end
 
-On = function()
-	if not game.Workspace.Terrain then
+function setupStamper(model)
+	if not model then
+		return
+	end
+	stampControl = getRbxStamper().SetupStamperDragger(model, mouse)
+	if not stampControl then
+		return
+	end
+	stampCon = stampControl.Stamped.Changed:connect(function()
+		if stampControl.Stamped.Value then
+			stampControl.ReloadModel()
+		end
+	end)
+end
+
+function updateRecentParts(newName, newId, newTerrainShape)
+	if not newId then
 		return
 	end
 
-	if this then
+	for i = 1, #recentButtonStack do
+		if recentButtonStack[i].Id == newId then -- already have item, nothing to do
+			return
+		end
+	end
+	for i = #recentButtonStack - 1, 1, -1 do
+		recentButtonStack[i + 1].Id = recentButtonStack[i].Id
+		recentButtonStack[i + 1].Name = recentButtonStack[i].Name
+		recentButtonStack[i + 1].TerrainShape =
+			recentButtonStack[i].TerrainShape
+
+		recentButtonStack[i + 1].Button.Image =
+			recentButtonStack[i].Button.Image
+	end
+
+	recentButtonStack[1].Id = newId
+	recentButtonStack[1].Name = newName
+	recentButtonStack[1].TerrainShape = newTerrainShape
+	recentButtonStack[1].Button.Image = BaseUrl
+		.. "Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=75&ht=75&aid="
+		.. tostring(newId)
+end
+
+------
+--GUI-
+------
+
+function createGui()
+	--Insert Panel
+	currStampGui, setPanelVisibility, getPanelVisibility, waterTypeChangedEvent =
+		getRbxGui().CreateSetPanel(
+			userSetIds,
+			partSelected,
+			dialogClosed,
+			UDim2.new(0.8, 0, 0.9, 0),
+			UDim2.new(0.1, 0, 0.05, 0),
+			true
+		)
+	setPanelVisibility(false)
+
+	currStampGui.Parent = CoreGui
+
+	waterTypeChangedEvent.Event:connect(function(waterTable)
+		waterForceAndDirection = waterTable
+		updateWaterInfo()
+	end)
+
+	-- Loading Gui
+	New "Frame" {
+		Name = "LoadingFrame",
+		Style = Enum.FrameStyle.RobloxRound,
+		Size = UDim2.new(0, 350, 0, 60),
+		Visible = false,
+		Position = UDim2.new(0.5, -175, 0.5, -30),
+		Parent = currStampGui,
+		New "TextLabel" {
+			Name = "LoadingText",
+			BackgroundTransparency = 1,
+			Size = UDim2.new(0, 155, 1, 0),
+			Font = Enum.Font.ArialBold,
+			FontSize = Enum.FontSize.Size36,
+			Text = "Loading...",
+			TextColor3 = Color3.new(1, 1, 1),
+			TextStrokeTransparency = 0,
+		},
+	}
+
+	-- Recents Stack Gui
+	recentsFrame = New "Frame" {
+		BackgroundTransparency = 0.5,
+		Name = "RecentsFrame",
+		BackgroundColor3 = Color3.new(0, 0, 0),
+		Size = UDim2.new(0, 50, 0, 150),
+		Visible = false,
+		Parent = currStampGui,
+	}
+
+	local function recentButton()
+		return New "ImageButton" {
+			Style = Enum.ButtonStyle.RobloxButton,
+		}
+	end
+
+	for i = 1, 3 do
+		recentButtonStack[i] = {}
+		recentButtonStack[i].Name = nil
+		recentButtonStack[i].Id = nil
+		recentButtonStack[i].TerrainShape = nil
+	end
+
+	recentButtonStack[1].Button = Hydrate(recentButton()) {
+		Name = "RecentButtonOne",
+		Size = UDim2.new(0, 50, 0, 50),
+		Parent = recentsFrame,
+	}
+	recentButtonStack[2].Button = Hydrate(recentButton()) {
+		Name = "RecentButtonTwo",
+		Position = UDim2.new(0, 0, 0, 50),
+		Parent = recentsFrame,
+	}
+	recentButtonStack[3].Button = Hydrate(recentButton()) {
+		Name = "RecentButtonThree",
+		Position = UDim2.new(0, 0, 0, 100),
+		Parent = recentsFrame,
+	}
+
+	local buttonClicked = false
+
+	for i = 1, #recentButtonStack do
+		recentButtonStack[i].Button.MouseButton1Click:connect(function()
+			if buttonClicked then
+				return
+			end
+			buttonClicked = true
+			partSelected(
+				recentButtonStack[i].Name,
+				recentButtonStack[i].Id,
+				recentButtonStack[i].TerrainShape
+			)
+			buttonClicked = false
+		end)
+	end
+end
+
+function On()
+	if not game.Workspace.Terrain then
+		return
+	elseif this then
 		this:Activate(true)
 		mouse = this:GetMouse()
 	end
@@ -268,7 +405,7 @@ On = function()
 	on = true
 end
 
-Off = function()
+function Off()
 	if toolbarbutton then
 		toolbarbutton:SetActive(false)
 	end
@@ -299,144 +436,6 @@ Off = function()
 	end
 
 	on = false
-end
-
-function setupStamper(model, mouse)
-	if model then
-		stampControl = getRbxStamper().SetupStamperDragger(model, mouse)
-		if stampControl then
-			stampCon = stampControl.Stamped.Changed:connect(function()
-				if stampControl.Stamped.Value then
-					stampControl.ReloadModel()
-				end
-			end)
-		end
-	end
-end
-
-function updateRecentParts(newName, newId, newTerrainShape)
-	if newId then
-		for i = 1, #recentButtonStack do
-			if recentButtonStack[i].Id == newId then -- already have item, nothing to do
-				return
-			end
-		end
-		for i = #recentButtonStack - 1, 1, -1 do
-			recentButtonStack[i + 1].Id = recentButtonStack[i].Id
-			recentButtonStack[i + 1].Name = recentButtonStack[i].Name
-			recentButtonStack[i + 1].TerrainShape =
-				recentButtonStack[i].TerrainShape
-
-			recentButtonStack[i + 1].Button.Image =
-				recentButtonStack[i].Button.Image
-		end
-
-		recentButtonStack[1].Id = newId
-		recentButtonStack[1].Name = newName
-		recentButtonStack[1].TerrainShape = newTerrainShape
-		recentButtonStack[1].Button.Image = BaseUrl
-			.. "Game/Tools/ThumbnailAsset.ashx?fmt=png&wd=75&ht=75&aid="
-			.. tostring(newId)
-	end
-end
-
-------
---GUI-
-------
-
-function createGui()
-	--Insert Panel
-	currStampGui, setPanelVisibility, getPanelVisibility, waterTypeChangedEvent =
-		getRbxGui().CreateSetPanel(
-			userSetIds,
-			partSelected,
-			dialogClosed,
-			UDim2.new(0.8, 0, 0.9, 0),
-			UDim2.new(0.1, 0, 0.05, 0),
-			true
-		)
-	setPanelVisibility(false)
-
-	currStampGui.Parent = CoreGui
-
-	waterTypeChangedEvent.Event:connect(function(waterTable)
-		waterForceAndDirection = waterTable
-		updateWaterInfo()
-	end)
-
-	-- Loading Gui
-	local loadingFrame = Instance.new "Frame"
-	loadingFrame.Name = "LoadingFrame"
-	loadingFrame.Style = Enum.FrameStyle.RobloxRound
-	loadingFrame.Size = UDim2.new(0, 350, 0, 60)
-	loadingFrame.Visible = false
-	loadingFrame.Position = UDim2.new(0.5, -175, 0.5, -30)
-
-	local loadingText = Instance.new "TextLabel"
-	loadingText.Name = "LoadingText"
-	loadingText.BackgroundTransparency = 1
-	loadingText.Size = UDim2.new(0, 155, 1, 0)
-	loadingText.Font = Enum.Font.ArialBold
-	loadingText.FontSize = Enum.FontSize.Size36
-	loadingText.Text = "Loading..."
-	loadingText.TextColor3 = Color3.new(1, 1, 1)
-	loadingText.TextStrokeTransparency = 0
-	loadingText.Parent = loadingFrame
-
-	loadingFrame.Parent = currStampGui
-
-	-- Recents Stack Gui
-	recentsFrame = Instance.new "Frame"
-	recentsFrame.BackgroundTransparency = 0.5
-	recentsFrame.Name = "RecentsFrame"
-	recentsFrame.BackgroundColor3 = Color3.new(0, 0, 0)
-	recentsFrame.Size = UDim2.new(0, 50, 0, 150)
-	recentsFrame.Visible = false
-	recentsFrame.Parent = currStampGui
-
-	local recentButtonOne = Instance.new "ImageButton"
-	recentButtonOne.Style = Enum.ButtonStyle.RobloxButton
-	recentButtonOne.Name = "RecentButtonOne"
-	recentButtonOne.Size = UDim2.new(0, 50, 0, 50)
-	recentButtonOne.Parent = recentsFrame
-
-	local recentButtonTwo = recentButtonOne:clone()
-	recentButtonTwo.Name = "RecentButtonTwo"
-	recentButtonTwo.Position = UDim2.new(0, 0, 0, 50)
-	recentButtonTwo.Parent = recentsFrame
-
-	local recentButtonThree = recentButtonOne:clone()
-	recentButtonThree.Name = "RecentButtonThree"
-	recentButtonThree.Position = UDim2.new(0, 0, 0, 100)
-	recentButtonThree.Parent = recentsFrame
-
-	for i = 1, 3 do
-		recentButtonStack[i] = {}
-		recentButtonStack[i].Name = nil
-		recentButtonStack[i].Id = nil
-		recentButtonStack[i].TerrainShape = nil
-	end
-
-	recentButtonStack[1].Button = recentButtonOne
-	recentButtonStack[2].Button = recentButtonTwo
-	recentButtonStack[3].Button = recentButtonThree
-
-	local buttonClicked = false
-
-	for i = 1, #recentButtonStack do
-		recentButtonStack[i].Button.MouseButton1Click:connect(function()
-			if buttonClicked then
-				return
-			end
-			buttonClicked = true
-			partSelected(
-				recentButtonStack[i].Name,
-				recentButtonStack[i].Id,
-				recentButtonStack[i].TerrainShape
-			)
-			buttonClicked = false
-		end)
-	end
 end
 
 --------------------------

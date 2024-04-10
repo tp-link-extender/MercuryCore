@@ -1,9 +1,11 @@
-while game == nil do
+while not game do
 	wait()
 end
 
 local ChangeHistoryService = game:GetService "ChangeHistoryService"
 local CoreGui = game:GetService "CoreGui"
+
+-- local CreateStandardLabel = require "../Modules/Terrain/CreateStandardLabel"
 
 ---------------
 --PLUGIN SETUP-
@@ -133,9 +135,7 @@ end
 function brush(x, y, z)
 	if depth == 0 then
 		return
-	end
-
-	if depth > 0 then
+	elseif depth > 0 then
 		local findY = findLowPoint(x, y + depth, z)
 		local yWithDepth = y + depth
 
@@ -171,9 +171,7 @@ end
 function updatePreviewSelection(position)
 	if not position then
 		return
-	end
-	--if not mouse.Target then disablePreview() return end
-	if depth == 0 then
+	elseif depth == 0 then -- or not mouse.Target
 		disablePreview()
 		return
 	end
@@ -307,21 +305,21 @@ function doFillCells(position, mouseDrag, needsCellPos)
 end
 
 function mouseMoved()
-	if on then
-		if mousedown == true then
-			if mousemoving then
-				return
-			end
-
-			mousemoving = true
-			local currMousePos = Vector2.new(mouse.X, mouse.Y)
-			local mouseDrag = currMousePos - lastMousePos
-			doFillCells(mouse.Hit, mouseDrag, true)
-			lastMousePos = currMousePos
-			mousemoving = false
+	if not on then
+		return
+	elseif mousedown == true then
+		if mousemoving then
+			return
 		end
-		updatePreviewSelection(mouse.Hit)
+
+		mousemoving = true
+		local currMousePos = Vector2.new(mouse.X, mouse.Y)
+		local mouseDrag = currMousePos - lastMousePos
+		doFillCells(mouse.Hit, mouseDrag, true)
+		lastMousePos = currMousePos
+		mousemoving = false
 	end
+	updatePreviewSelection(mouse.Hit)
 end
 
 -- Do a line/plane intersection.  The line starts at the camera.  The plane is at y == 0, normal(0, 1, 0)
@@ -403,11 +401,10 @@ end
 
 local brushDragBar
 
-On = function()
+function On()
 	if not c then
 		return
-	end
-	if this then
+	elseif this then
 		this:Activate(true)
 	end
 	if toolbarbutton then
@@ -422,7 +419,7 @@ On = function()
 	on = true
 end
 
-Off = function()
+function Off()
 	if toolbarbutton then
 		toolbarbutton:SetActive(false)
 	end
@@ -474,30 +471,6 @@ function CreateStandardDropdown(
 	return dropdown, updateSelection
 end
 
--- Create a standard text label.  Use this for all lables in the popup so it is easy to standardize.
--- labelName - What to set the text label name as.
--- pos    	 - Where to position the label.  Should be of type UDim2.
--- size   	 - How large to make the label.	 Should be of type UDim2.
--- text   	 - Text to display.
--- parent 	 - What to set the text parent as.
--- Return:
--- Value is the created label.
--- local function CreateStandardLabel(labelName, pos, size, text, parent)
--- 	local label = Instance.new "TextLabel"
--- 	label.Name = labelName
--- 	label.Position = pos
--- 	label.Size = size
--- 	label.Text = text
--- 	label.TextColor3 = Color3.new(0.95, 0.95, 0.95)
--- 	label.Font = Enum.Font.ArialBold
--- 	label.FontSize = Enum.FontSize.Size14
--- 	label.TextXAlignment = Enum.TextXAlignment.Left
--- 	label.BackgroundTransparency = 1
--- 	label.Parent = parent
-
--- 	return label
--- end
-
 -- Create a standardized slider.
 -- name  - Name to use for the slider.
 -- pos   - Position to display the slider at.
@@ -546,6 +519,7 @@ local g = Instance.new "ScreenGui"
 g.Name = "TerrainBrushGui"
 g.Parent = CoreGui
 
+local elevationFrame, elevationHelpFrame, elevationCloseEvent
 brushDragBar, elevationFrame, elevationHelpFrame, elevationCloseEvent =
 	RbxGui.CreatePluginFrame(
 		"Terrain Brush",

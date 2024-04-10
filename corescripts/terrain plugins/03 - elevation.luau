@@ -1,9 +1,11 @@
-while game == nil do
+while not game do
 	wait()
 end
 
 local ChangeHistoryService = game:GetService "ChangeHistoryService"
 local CoreGui = game:GetService "CoreGui"
+
+local CreateStandardLabel = require "../Modules/Terrain/CreateStandardLabel"
 
 ---------------
 --PLUGIN SETUP-
@@ -116,45 +118,9 @@ function MouseHighlighter.Create(mouseUse)
 	-- Will hold a part the highlighter will be attached to.  This will be moved where the mouse is.
 	highlighter.selectionPart = nil
 
-	-- Function to call when the mouse has moved.  Updates where to display the highlighter.
-	local function MouseMoved()
-		if on then
-			UpdatePosition(mouseH.Hit)
-		end
-	end
-
-	-- Hook the mouse up to check for movement.
-	mouseH.Move:connect(function()
-		MouseMoved()
-	end)
-
-	mouseH.Button1Down:connect(function()
-		highlighter.mouseDown = true
-	end)
-	mouseH.Button1Up:connect(function()
-		highlighter.mouseDown = false
-	end)
-
-	-- Create the part that the highlighter will be attached to.
-	highlighter.selectionPart = Instance.new "Part"
-	highlighter.selectionPart.Name = "SelectionPart"
-	highlighter.selectionPart.Archivable = false
-	highlighter.selectionPart.Transparency = 1
-	highlighter.selectionPart.Anchored = true
-	highlighter.selectionPart.Locked = true
-	highlighter.selectionPart.CanCollide = false
-	highlighter.selectionPart.FormFactor = Enum.FormFactor.Custom
-
-	highlighter.selectionBox = Instance.new "SelectionBox"
-	highlighter.selectionBox.Archivable = false
-	highlighter.selectionBox.Color = mouseHighlightColor
-	highlighter.selectionBox.Adornee = highlighter.selectionPart
-	mouseH.TargetFilter = highlighter.selectionPart
-	setmetatable(highlighter, MouseHighlighter)
-
 	-- Update where the highlighter is displayed.
 	-- position - Where to display the highlighter, in world space.
-	function UpdatePosition(position)
+	local function UpdatePosition(position)
 		if not position then
 			return
 		end
@@ -204,6 +170,42 @@ function MouseHighlighter.Create(mouseUse)
 		end
 	end
 
+	-- Function to call when the mouse has moved.  Updates where to display the highlighter.
+	local function MouseMoved()
+		if on then
+			UpdatePosition(mouseH.Hit)
+		end
+	end
+
+	-- Hook the mouse up to check for movement.
+	mouseH.Move:connect(function()
+		MouseMoved()
+	end)
+
+	mouseH.Button1Down:connect(function()
+		highlighter.mouseDown = true
+	end)
+	mouseH.Button1Up:connect(function()
+		highlighter.mouseDown = false
+	end)
+
+	-- Create the part that the highlighter will be attached to.
+	highlighter.selectionPart = Instance.new "Part"
+	highlighter.selectionPart.Name = "SelectionPart"
+	highlighter.selectionPart.Archivable = false
+	highlighter.selectionPart.Transparency = 1
+	highlighter.selectionPart.Anchored = true
+	highlighter.selectionPart.Locked = true
+	highlighter.selectionPart.CanCollide = false
+	highlighter.selectionPart.FormFactor = Enum.FormFactor.Custom
+
+	highlighter.selectionBox = Instance.new "SelectionBox"
+	highlighter.selectionBox.Archivable = false
+	highlighter.selectionBox.Color = mouseHighlightColor
+	highlighter.selectionBox.Adornee = highlighter.selectionPart
+	mouseH.TargetFilter = highlighter.selectionPart
+	setmetatable(highlighter, MouseHighlighter)
+
 	return highlighter
 end
 
@@ -230,30 +232,6 @@ g.Parent = CoreGui
 
 -- UI gui load.  Required for sliders.
 local RbxGui = LoadLibrary "RbxGui"
-
--- Create a standard text label.  Use this for all lables in the popup so it is easy to standardize.
--- labelName - What to set the text label name as.
--- pos    	 - Where to position the label.  Should be of type UDim2.
--- size   	 - How large to make the label.	 Should be of type UDim2.
--- text   	 - Text to display.
--- parent 	 - What to set the text parent as.
--- Return:
--- Value is the created label.
-function CreateStandardLabel(labelName, pos, size, text, parent)
-	local label = Instance.new "TextLabel"
-	label.Name = labelName
-	label.Position = pos
-	label.Size = size
-	label.Text = text
-	label.TextColor3 = Color3.new(0.95, 0.95, 0.95)
-	label.Font = Enum.Font.ArialBold
-	label.FontSize = Enum.FontSize.Size14
-	label.TextXAlignment = Enum.TextXAlignment.Left
-	label.BackgroundTransparency = 1
-	label.Parent = parent
-
-	return label
-end
 
 -- Create a standardized slider.
 -- name  - Name to use for the slider.
@@ -639,7 +617,7 @@ mouse.Button1Up:connect(function()
 end)
 
 -- Run when the popup is activated.
-On = function()
+function On()
 	if not c then
 		return
 	end
@@ -651,7 +629,7 @@ On = function()
 end
 
 -- Run when the popup is deactivated.
-Off = function()
+function Off()
 	toolbarbutton:SetActive(false)
 	on = false
 
