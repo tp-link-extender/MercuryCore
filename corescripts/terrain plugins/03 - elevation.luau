@@ -6,6 +6,7 @@ local ChangeHistoryService = game:GetService "ChangeHistoryService"
 local CoreGui = game:GetService "CoreGui"
 
 local CreateStandardLabel = require "../Modules/Terrain/CreateStandardLabel"
+local New = require("../Modules/New").New
 
 ---------------
 --PLUGIN SETUP-
@@ -34,9 +35,9 @@ toolbarbutton.Click:connect(function()
 end)
 
 game:WaitForChild "Workspace"
-game.Workspace:WaitForChild "Terrain"
+workspace:WaitForChild "Terrain"
 
-local c = game.Workspace.Terrain
+local c = workspace.Terrain
 local SetCell = c.SetCell
 local SetWaterCell = c.SetWaterCell
 local GetCell = c.GetCell
@@ -73,7 +74,7 @@ local mouseHighlightColor = BrickColor.new "Lime green"
 -- success - Value is true if there was a plane intersection, false if not.
 -- cellPos - Value is the terrain cell intersection point if there is one, vectorPos if there isn't.
 local function PlaneIntersection(vectorPos)
-	local currCamera = game.Workspace.CurrentCamera
+	local currCamera = workspace.CurrentCamera
 	local startPos = Vector3.new(
 		currCamera.CoordinateFrame.p.X,
 		currCamera.CoordinateFrame.p.Y,
@@ -190,19 +191,20 @@ function MouseHighlighter.Create(mouseUse)
 	end)
 
 	-- Create the part that the highlighter will be attached to.
-	highlighter.selectionPart = Instance.new "Part"
-	highlighter.selectionPart.Name = "SelectionPart"
-	highlighter.selectionPart.Archivable = false
-	highlighter.selectionPart.Transparency = 1
-	highlighter.selectionPart.Anchored = true
-	highlighter.selectionPart.Locked = true
-	highlighter.selectionPart.CanCollide = false
-	highlighter.selectionPart.FormFactor = Enum.FormFactor.Custom
-
-	highlighter.selectionBox = Instance.new "SelectionBox"
-	highlighter.selectionBox.Archivable = false
-	highlighter.selectionBox.Color = mouseHighlightColor
-	highlighter.selectionBox.Adornee = highlighter.selectionPart
+	highlighter.selectionPart = New "Part" {
+		Name = "SelectionPart",
+		Archivable = false,
+		Transparency = 1,
+		Anchored = true,
+		Locked = true,
+		CanCollide = false,
+		FormFactor = Enum.FormFactor.Custom,
+	}
+	highlighter.selectionBox = New "SelectionBox" {
+		Archivable = false,
+		Color = mouseHighlightColor,
+		Adornee = highlighter.selectionPart,
+	}
 	mouseH.TargetFilter = highlighter.selectionPart
 	setmetatable(highlighter, MouseHighlighter)
 
@@ -292,18 +294,7 @@ end)
 
 elevationHelpFrame.Size = UDim2.new(0, 300, 0, 130)
 
-local elevationHelpText = Instance.new "TextLabel"
-elevationHelpText.Name = "HelpText"
-elevationHelpText.Font = Enum.Font.ArialBold
-elevationHelpText.FontSize = Enum.FontSize.Size12
-elevationHelpText.TextColor3 = Color3.new(227 / 255, 227 / 255, 227 / 255)
-elevationHelpText.TextXAlignment = Enum.TextXAlignment.Left
-elevationHelpText.TextYAlignment = Enum.TextYAlignment.Top
-elevationHelpText.Position = UDim2.new(0, 4, 0, 4)
-elevationHelpText.Size = UDim2.new(1, -8, 0, 177)
-elevationHelpText.BackgroundTransparency = 1
-elevationHelpText.TextWrap = true
-elevationHelpText.Text = [[
+local helpText = [[
 Use to drag terrain up or down.  Hold the left mouse button down and drag the mouse up or down to create a mountain or valley.
 
 Radius:
@@ -311,7 +302,21 @@ The larger it is, the wider the top of the elevation will be.
 
 Slope:
 The larger it is, the steeper the slope.]]
-elevationHelpText.Parent = elevationHelpFrame
+
+New "TextLabel" {
+	Name = "HelpText",
+	Font = Enum.Font.ArialBold,
+	FontSize = Enum.FontSize.Size12,
+	TextColor3 = Color3.new(227 / 255, 227 / 255, 227 / 255),
+	TextXAlignment = Enum.TextXAlignment.Left,
+	TextYAlignment = Enum.TextYAlignment.Top,
+	Position = UDim2.new(0, 4, 0, 4),
+	Size = UDim2.new(1, -8, 0, 177),
+	BackgroundTransparency = 1,
+	TextWrapped = true,
+	Text = helpText,
+	Parent = elevationHelpFrame,
+}
 
 -- Slider for controlling radius.
 local radiusLabel = CreateStandardLabel(
@@ -418,10 +423,14 @@ local height
 local oldheightmap = {}
 local heightmap = {}
 
---elevates terrain at point (x, y, z) in cluster c
---within radius r1 from x, z the elevation should become y + d
---from radius r1 to r2 the elevation should be a gradient
-function elevate(x, y, z, r1, r2, d, range)
+local function dist(x1, y1, x2, y2)
+	return math.sqrt(math.pow(x2 - x1, 2) + math.pow(y2 - y1, 2))
+end
+
+-- elevates terrain at point (x, y, z) in cluster c
+-- within radius r1 from x, z the elevation should become y + d
+-- from radius r1 to r2 the elevation should be a gradient
+local function elevate(x, y, z, r1, r2, d, range)
 	for i = x - (range + 2), x + (range + 2) do
 		if oldheightmap[i] == nil then
 			oldheightmap[i] = {}
@@ -520,10 +529,6 @@ function elevate(x, y, z, r1, r2, d, range)
 			end
 		end
 	end
-end
-
-function dist(x1, y1, x2, y2)
-	return math.sqrt(math.pow(x2 - x1, 2) + math.pow(y2 - y1, 2))
 end
 
 -- function dist3d(x1, y1, z1, x2, y2, z2)

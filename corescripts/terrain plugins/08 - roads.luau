@@ -26,10 +26,10 @@ toolbarbutton.Click:connect(function()
 end)
 
 game:WaitForChild "Workspace"
-game.Workspace:WaitForChild "Terrain"
+workspace:WaitForChild "Terrain"
 
 -- Local function definitions
-local c = game.Workspace.Terrain
+local c = workspace.Terrain
 local GetCell = c.GetCell
 local WorldToCellPreferSolid = c.WorldToCellPreferSolid
 local WorldToCellPreferEmpty = c.WorldToCellPreferEmpty
@@ -195,7 +195,7 @@ end
 -- success - Value is true if there was a plane intersection, false if not.
 -- cellPos - Value is the terrain cell intersection point if there is one, vectorPos if there isn't.
 function PlaneIntersection(vectorPos)
-	local currCamera = game.Workspace.CurrentCamera
+	local currCamera = workspace.CurrentCamera
 	local startPos = Vector3.new(
 		currCamera.CoordinateFrame.p.X,
 		currCamera.CoordinateFrame.p.Y,
@@ -260,10 +260,8 @@ mouse.Button1Down:connect(function()
 		local celMat = GetCell(c, x, y, z)
 		if celMat.Value > 0 then
 			DefaultTerrainMaterial = celMat.Value
-		else
-			if 0 == DefaultTerrainMaterial then
-				DefaultTerrainMaterial = 1
-			end
+		elseif 0 == DefaultTerrainMaterial then
+			DefaultTerrainMaterial = 1
 		end
 	elseif mode == 1 then
 		x2 = x
@@ -336,7 +334,7 @@ roadTextHelper.Size = UDim2.new(1, -8, 1, -8)
 roadTextHelper.Position = UDim2.new(0, 4, 0, 4)
 roadTextHelper.TextXAlignment = Enum.TextXAlignment.Left
 roadTextHelper.TextYAlignment = Enum.TextYAlignment.Top
-roadTextHelper.TextWrap = true
+roadTextHelper.TextWrapped = true
 roadTextHelper.Parent = roadFrame
 
 roadHelpFrame.Size = UDim2.new(0, 200, 0, 150)
@@ -345,7 +343,7 @@ helpText.Font = Enum.Font.ArialBold
 helpText.FontSize = Enum.FontSize.Size12
 helpText.TextColor3 = Color3.new(1, 1, 1)
 helpText.BackgroundTransparency = 1
-helpText.TextWrap = true
+helpText.TextWrapped = true
 helpText.Size = UDim2.new(1, -10, 1, -10)
 helpText.Position = UDim2.new(0, 5, 0, 5)
 helpText.TextXAlignment = Enum.TextXAlignment.Left

@@ -38,6 +38,9 @@ globals:
   _ASSET_ID:
     args: []
 
+  PluginManager:
+    args: []
+
   assert:
     args:
       - type: any

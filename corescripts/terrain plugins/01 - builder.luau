@@ -31,9 +31,9 @@ toolbarbutton.Click:connect(function()
 end)
 
 game:WaitForChild "Workspace"
-game.Workspace:WaitForChild "Terrain"
+workspace:WaitForChild "Terrain"
 
-local c = game.Workspace.Terrain
+local c = workspace.Terrain
 local SetCell = c.SetCell
 local GetCell = c.GetCell
 local WorldToCellPreferSolid = c.WorldToCellPreferSolid
@@ -48,11 +48,12 @@ local SetWaterCell = c.SetWaterCell
 -----------------
 
 -- Stores selection properties.
-local selectionProps = {}
-selectionProps.isWater = nil -- True if what will be built is water.
-selectionProps.waterForce = nil -- Water force.
-selectionProps.waterDirection = nil -- Water direction.
-selectionProps.terrainMaterial = 0 -- Terrain material to use
+local selectionProps = {
+	isWater = nil, -- True if what will be built is water.
+	waterForce = nil, -- Water force.
+	waterDirection = nil, -- Water direction.
+	terrainMaterial = 0, -- Terrain material to use
+}
 
 -- What color to use for the mouse highlighter.
 local mouseHighlightColor = BrickColor.new "Lime green"
@@ -125,7 +126,7 @@ function MouseHighlighter.Create(mouseUse)
 	-- success - Value is true if there was a plane intersection, false if not.
 	-- cellPos - Value is the terrain cell intersection point if there is one, vectorPos if there isn't.
 	function PlaneIntersection(vectorPos)
-		local currCamera = game.Workspace.CurrentCamera
+		local currCamera = workspace.CurrentCamera
 		local startPos = Vector3.new(
 			currCamera.CoordinateFrame.p.X,
 			currCamera.CoordinateFrame.p.Y,
@@ -249,20 +250,23 @@ end)
 
 builderHelpFrame.Size = UDim2.new(0, 160, 0, 85)
 
-local builderHelpText = Instance.new "TextLabel"
-builderHelpText.Name = "HelpText"
-builderHelpText.Font = Enum.Font.ArialBold
-builderHelpText.FontSize = Enum.FontSize.Size12
-builderHelpText.TextColor3 = Color3.new(227 / 255, 227 / 255, 227 / 255)
-builderHelpText.TextXAlignment = Enum.TextXAlignment.Left
-builderHelpText.TextYAlignment = Enum.TextYAlignment.Top
-builderHelpText.Position = UDim2.new(0, 4, 0, 4)
-builderHelpText.Size = UDim2.new(1, -8, 0, 177)
-builderHelpText.BackgroundTransparency = 1
-builderHelpText.TextWrap = true
-builderHelpText.Text = [[
+local helpText = [[
 Clicking terrain adds a single block into the selection box shown. The terrain material and type will be the same as the cell that was clicked on.]]
-builderHelpText.Parent = builderHelpFrame
+
+New "TextLabel" {
+	Name = "HelpText",
+	Font = Enum.Font.ArialBold,
+	FontSize = Enum.FontSize.Size12,
+	TextColor3 = Color3.new(227 / 255, 227 / 255, 227 / 255),
+	TextXAlignment = Enum.TextXAlignment.Left,
+	TextYAlignment = Enum.TextYAlignment.Top,
+	Position = UDim2.new(0, 4, 0, 4),
+	Size = UDim2.new(1, -8, 0, 177),
+	BackgroundTransparency = 1,
+	TextWrapped = true,
+	Text = helpText,
+	Parent = builderHelpFrame,
+}
 
 CreateStandardLabel(
 	"AddText",

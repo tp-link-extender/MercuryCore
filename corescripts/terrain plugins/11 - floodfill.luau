@@ -42,12 +42,12 @@ toolbarbutton.Click:connect(function()
 end)
 
 game:WaitForChild "Workspace"
-game.Workspace:WaitForChild "Terrain"
+workspace:WaitForChild "Terrain"
 
 -----------------------------
 --LOCAL FUNCTION DEFINITIONS-
 -----------------------------
-local c = game.Workspace.Terrain
+local c = workspace.Terrain
 -- local WorldToCellPreferSolid = c.WorldToCellPreferSolid
 local WorldToCellPreferEmpty = c.WorldToCellPreferEmpty
 local CellCenterToWorld = c.CellCenterToWorld
@@ -83,44 +83,32 @@ ContentProvider:Preload "http://banland.xyz/asset?id=82741829"
 ------------------------- OBJECT DEFINITIONS ---------------------
 
 -- helper function for objects
+local colours = {
+	"Bright green",
+	"Bright yellow",
+	"Bright red",
+	"Sand red",
+	"Black",
+	"Dark stone grey",
+	"Sand blue",
+	"Deep orange",
+	"Dark orange",
+	"Reddish brown",
+	"Light orange",
+	"Light stone grey",
+	"Sand green",
+	"Medium stone grey",
+	"Really red",
+	"Really blue",
+	"Bright blue",
+}
+
 local function getClosestColorToTerrainMaterial(terrainValue)
-	if terrainValue == 1 then
-		return BrickColor.new "Bright green"
-	elseif terrainValue == 2 then
-		return BrickColor.new "Bright yellow"
-	elseif terrainValue == 3 then
-		return BrickColor.new "Bright red"
-	elseif terrainValue == 4 then
-		return BrickColor.new "Sand red"
-	elseif terrainValue == 5 then
-		return BrickColor.new "Black"
-	elseif terrainValue == 6 then
-		return BrickColor.new "Dark stone grey"
-	elseif terrainValue == 7 then
-		return BrickColor.new "Sand blue"
-	elseif terrainValue == 8 then
-		return BrickColor.new "Deep orange"
-	elseif terrainValue == 9 then
-		return BrickColor.new "Dark orange"
-	elseif terrainValue == 10 then
-		return BrickColor.new "Reddish brown"
-	elseif terrainValue == 11 then
-		return BrickColor.new "Light orange"
-	elseif terrainValue == 12 then
-		return BrickColor.new "Light stone grey"
-	elseif terrainValue == 13 then
-		return BrickColor.new "Sand green"
-	elseif terrainValue == 14 then
-		return BrickColor.new "Medium stone grey"
-	elseif terrainValue == 15 then
-		return BrickColor.new "Really red"
-	elseif terrainValue == 16 then
-		return BrickColor.new "Really blue"
-	elseif terrainValue == 17 then
-		return BrickColor.new "Bright blue"
-	else
-		return BrickColor.new "Bright green"
+	local val = BrickColor.new(colours[terrainValue])
+	if val then
+		return val
 	end
+	return BrickColor.new "Bright green"
 end
 
 -- Used to create a highlighter that follows the mouse.
@@ -155,32 +143,34 @@ function MouseHighlighter.Create(mouseUse)
 	end)
 
 	-- Create the part that the highlighter will be attached to.
-	highlighter.selectionPart = Instance.new "Part"
-	highlighter.selectionPart.Name = "SelectionPart"
-	highlighter.selectionPart.Archivable = false
-	highlighter.selectionPart.Transparency = 0.5
-	highlighter.selectionPart.Anchored = true
-	highlighter.selectionPart.Locked = true
-	highlighter.selectionPart.CanCollide = false
-	highlighter.selectionPart.FormFactor = Enum.FormFactor.Custom
-	highlighter.selectionPart.Size = Vector3.new(4, 4, 4)
-	highlighter.selectionPart.BottomSurface = 0
-	highlighter.selectionPart.TopSurface = 0
-	highlighter.selectionPart.BrickColor =
-		getClosestColorToTerrainMaterial(currentMaterial)
-	highlighter.selectionPart.Parent = game.Workspace
+	highlighter.selectionPart = New "Part" {
+		Name = "SelectionPart",
+		Archivable = false,
+		Transparency = 0.5,
+		Anchored = true,
+		Locked = true,
+		CanCollide = false,
+		FormFactor = Enum.FormFactor.Custom,
+		Size = Vector3.new(4, 4, 4),
+		BottomSurface = 0,
+		TopSurface = 0,
+		BrickColor = getClosestColorToTerrainMaterial(currentMaterial),
+		Parent = workspace,
+	}
 
-	local billboardGui = Instance.new "BillboardGui"
-	billboardGui.Size = UDim2.new(5, 0, 5, 0)
-	billboardGui.StudsOffset = Vector3.new(0, 2.5, 0)
-	billboardGui.Parent = highlighter.selectionPart
+	local billboardGui = New "BillboardGui" {
+		Size = UDim2.new(5, 0, 5, 0),
+		StudsOffset = Vector3.new(0, 2.5, 0),
+		Parent = highlighter.selectionPart,
+	}
 
-	local imageLabel = Instance.new "ImageLabel"
-	imageLabel.BackgroundTransparency = 1
-	imageLabel.Size = UDim2.new(1, 0, 1, 0)
-	imageLabel.Position = UDim2.new(-0.35, 0, -0.5, 0)
-	imageLabel.Image = "http://banland.xyz/asset?id=82741829"
-	imageLabel.Parent = billboardGui
+	local imageLabel = New "ImageLabel" {
+		BackgroundTransparency = 1,
+		Size = UDim2.new(1, 0, 1, 0),
+		Position = UDim2.new(-0.35, 0, -0.5, 0),
+		Image = "http://banland.xyz/asset?id=82741829",
+		Parent = billboardGui,
+	}
 
 	local lastTweenChange
 
@@ -197,7 +187,7 @@ function MouseHighlighter.Create(mouseUse)
 			tweenDown = function()
 				if
 					imageLabel
-					and imageLabel:IsDescendantOf(game.Workspace)
+					and imageLabel:IsDescendantOf(workspace)
 					and thisTweenStamp == lastTweenChange
 				then
 					imageLabel:TweenPosition(
@@ -213,7 +203,7 @@ function MouseHighlighter.Create(mouseUse)
 			tweenUp = function()
 				if
 					imageLabel
-					and imageLabel:IsDescendantOf(game.Workspace)
+					and imageLabel:IsDescendantOf(workspace)
 					and thisTweenStamp == lastTweenChange
 				then
 					imageLabel:TweenPosition(
@@ -249,8 +239,8 @@ function MouseHighlighter.Create(mouseUse)
 			return
 		end
 
-		if highlighter.selectionPart.Parent ~= game.Workspace then
-			highlighter.selectionPart.Parent = game.Workspace
+		if highlighter.selectionPart.Parent ~= workspace then
+			highlighter.selectionPart.Parent = workspace
 			startTween()
 		end
 
@@ -327,7 +317,7 @@ end
 
 -- Show the highlighter.
 function MouseHighlighter:EnablePreview()
-	self.selectionPart.Parent = game.Workspace
+	self.selectionPart.Parent = workspace
 	startTween()
 end
 
@@ -401,7 +391,7 @@ function ConfirmationPopup.Create(
 		)
 	) {
 		FontSize = Enum.FontSize.Size14,
-		TextWrap = true,
+		TextWrapped = true,
 		Font = Enum.Font.Arial,
 		TextXAlignment = Enum.TextXAlignment.Center,
 	}
@@ -596,7 +586,7 @@ local function ConfirmFloodFill(x, y, z)
 end
 
 function mouseDown(mouseD)
-	if on and mouseD.Target == game.Workspace.Terrain then
+	if on and mouseD.Target == workspace.Terrain then
 		startCell = mouseHighlighter:GetPosition()
 	end
 end
@@ -824,7 +814,7 @@ Hydrate(helpFrame) {
 		TextXAlignment = Enum.TextXAlignment.Left,
 		TextYAlignment = Enum.TextYAlignment.Top,
 		BackgroundTransparency = 1,
-		TextWrap = true,
+		TextWrapped = true,
 		Text = [[
 Quickly replace empty terrain cells with a selected material.  Clicking the mouse will cause any empty terrain cells around the point clicked to be filled with the current material, and will also spread to surrounding empty cells (including any empty cells below, but not above).
 

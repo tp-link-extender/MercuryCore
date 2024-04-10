@@ -5,6 +5,10 @@ end
 local ChangeHistoryService = game:GetService "ChangeHistoryService"
 local CoreGui = game:GetService "CoreGui"
 
+local News = require "../Modules/New"
+local New = News.New
+local Hydrate = News.Hydrate
+
 ---------------
 --PLUGIN SETUP-
 ---------------
@@ -41,12 +45,12 @@ toolbarbutton.Click:connect(function()
 end)
 
 game:WaitForChild "Workspace"
-game.Workspace:WaitForChild "Terrain"
+workspace:WaitForChild "Terrain"
 
 -----------------------------
 --LOCAL FUNCTION DEFINITIONS-
 -----------------------------
-local c = game.Workspace.Terrain
+local c = workspace.Terrain
 local SetCell = c.SetCell
 local SetWaterCell = c.SetWaterCell
 -- local GetWaterCell = c.GetWaterCell
@@ -568,14 +572,12 @@ local function setPositionDirectionality()
 end
 
 function mouseDown(mouseD)
-	if not (on and mouseD.Target == game.Workspace.Terrain) then
+	if not (on and mouseD.Target == workspace.Terrain) then
 		return
 	end
 
 	dragging = true
-	if
-		not (mouseD and mouseD.Hit and mouseD.Target == game.Workspace.Terrain)
-	then
+	if not (mouseD and mouseD.Hit and mouseD.Target == workspace.Terrain) then
 		return
 	end
 
@@ -603,42 +605,6 @@ function mouseUp(_)
 
 	lastLastCell = nil
 	lastCell = nil
-end
-
-function mouseMove(mouseM)
-	if not on then
-		return
-	elseif mouseM.Target == game.Workspace.Terrain then
-		if lastCell == WorldToCellPreferSolid(c, mouseM.Hit.p) then
-			return
-		end
-		updateSelection(mouseM)
-		local newCell = WorldToCellPreferSolid(c, mouseM.Hit.p)
-
-		if not dragging then
-			return
-		end
-		-- local painting = true
-		paint(newCell)
-		if lastCell and newCell and (lastCell - newCell).magnitude > 1 then
-			paintBetweenPoints(lastCell, newCell)
-		end
-		lastLastCell = lastCell
-		lastCell = newCell
-		-- painting = false
-	else
-		destroySelection()
-	end
-end
-
-function destroySelection()
-	if currSelectionUpdate then
-		currSelectionUpdate = nil
-	end
-	if currSelectionDestroy then
-		currSelectionDestroy()
-		currSelectionDestroy = nil
-	end
 end
 
 local function moveTowardsGoal(direction: string, currPos, goalPos, currCell)
@@ -676,7 +642,7 @@ local function interpolateOneDim(direction, currPos, goalPos, currCell)
 	return currCell
 end
 
-function paintBetweenPoints(lastCellP, newCell)
+local function paintBetweenPoints(lastCellP, newCell)
 	local currCell = lastCellP
 
 	while
@@ -687,6 +653,42 @@ function paintBetweenPoints(lastCellP, newCell)
 		currCell = interpolateOneDim("X", currCell.X, newCell.X, currCell)
 		currCell = interpolateOneDim("Z", currCell.Z, newCell.Z, currCell)
 		currCell = interpolateOneDim("Y", currCell.Y, newCell.Y, currCell)
+	end
+end
+
+local function destroySelection()
+	if currSelectionUpdate then
+		currSelectionUpdate = nil
+	end
+	if currSelectionDestroy then
+		currSelectionDestroy()
+		currSelectionDestroy = nil
+	end
+end
+
+function mouseMove(mouseM)
+	if not on then
+		return
+	elseif mouseM.Target == workspace.Terrain then
+		if lastCell == WorldToCellPreferSolid(c, mouseM.Hit.p) then
+			return
+		end
+		updateSelection(mouseM)
+		local newCell = WorldToCellPreferSolid(c, mouseM.Hit.p)
+
+		if not dragging then
+			return
+		end
+		-- local painting = true
+		paint(newCell)
+		if lastCell and newCell and (lastCell - newCell).magnitude > 1 then
+			paintBetweenPoints(lastCell, newCell)
+		end
+		lastLastCell = lastCell
+		lastCell = newCell
+		-- painting = false
+	else
+		destroySelection()
 	end
 end
 
@@ -714,9 +716,10 @@ end
 ------
 
 --screengui
-local g = Instance.new "ScreenGui"
-g.Name = "MaterialPainterGui"
-g.Parent = CoreGui
+local g = New "ScreenGui" {
+	Name = "MaterialPainterGui",
+	Parent = CoreGui,
+}
 
 local containerFrame
 dragBar, containerFrame, helpFrame, closeEvent = RbxGui.CreatePluginFrame(
@@ -738,20 +741,8 @@ end)
 
 helpFrame.Size = UDim2.new(0, 200, 0, 250)
 helpFrame.ZIndex = 3
-local textHelp = Instance.new "TextLabel"
-textHelp.Name = "TextHelp"
-textHelp.Font = Enum.Font.ArialBold
-textHelp.FontSize = Enum.FontSize.Size12
-textHelp.TextColor3 = Color3.new(1, 1, 1)
-textHelp.Size = UDim2.new(1, -6, 1, -6)
-textHelp.Position = UDim2.new(0, 3, 0, 3)
-textHelp.TextXAlignment = Enum.TextXAlignment.Left
-textHelp.TextYAlignment = Enum.TextYAlignment.Top
-textHelp.Position = UDim2.new(0, 4, 0, 4)
-textHelp.BackgroundTransparency = 1
-textHelp.TextWrap = true
-textHelp.ZIndex = 4
-textHelp.Text =
+
+local helpText =
 	[[Changes existing terrain blocks to the specified material.  Simply hold the mouse down and drag to 'paint' the terrain (only cells inside the selection box will be affected).
 
 Size: 
@@ -762,53 +753,80 @@ The shape we paint terrain with inside of our selection box.
 
 Material Selection: 
 The terrain material we will paint.]]
-textHelp.Parent = helpFrame
+
+New "TextLabel" {
+	Name = "TextHelp",
+	Font = Enum.Font.ArialBold,
+	FontSize = Enum.FontSize.Size12,
+	TextColor3 = Color3.new(1, 1, 1),
+	Size = UDim2.new(1, -6, 1, -6),
+	-- Position = UDim2.new(0, 3, 0, 3), -- lellel new supremacy - Heliodex
+	TextXAlignment = Enum.TextXAlignment.Left,
+	TextYAlignment = Enum.TextYAlignment.Top,
+	Position = UDim2.new(0, 4, 0, 4),
+	BackgroundTransparency = 1,
+	TextWrapped = true,
+	ZIndex = 4,
+	Text = helpText,
+	Parent = helpFrame,
+}
 
 closeEvent.Event:connect(function()
 	Off()
 end)
 
-terrainSelectorGui, terrainSelected, forceTerrainSelection =
-	RbxGui.CreateTerrainMaterialSelector(
-		UDim2.new(1, -10, 0, 184),
-		UDim2.new(0, 5, 1, -190)
-	)
-terrainSelectorGui.Parent = containerFrame
-terrainSelectorGui.BackgroundTransparency = 1
-terrainSelectorGui.BorderSizePixel = 0
+terrainSelectorGui, terrainSelected = RbxGui.CreateTerrainMaterialSelector(
+	UDim2.new(1, -10, 0, 184),
+	UDim2.new(0, 5, 1, -190)
+)
+Hydrate(terrainSelectorGui) {
+	BackgroundTransparency = 1,
+	BorderSizePixel = 0,
+	Parent = containerFrame,
+}
 terrainSelected.Event:connect(function(newMaterial)
 	currentMaterial = newMaterial
 end)
 
 -- Purpose:
 -- Retrive the size text to display for a given radius, where 1 == 1 block and 2 == 3 blocks, etc.
-function SizeText(radiusT)
+local function SizeText(radiusT: number)
 	return "Size: " .. (((radiusT - 1) * 2) + 1)
 end
 
+local function makeRadiusLabel()
+	return New "TextLabel" {
+		Size = UDim2.new(1, -3, 0, 14),
+		TextColor3 = Color3.new(0.95, 0.95, 0.95),
+		Font = Enum.Font.ArialBold,
+		FontSize = Enum.FontSize.Size14,
+		BorderColor3 = Color3.new(0, 0, 0),
+		BackgroundTransparency = 1,
+		TextXAlignment = Enum.TextXAlignment.Left,
+	}
+end
+
 --current radius display label
-radiusLabel = Instance.new "TextLabel"
-radiusLabel.Name = "RadiusLabel"
-radiusLabel.Position = UDim2.new(0, 10, 0, 5)
-radiusLabel.Size = UDim2.new(1, -3, 0, 14)
-radiusLabel.Text = SizeText(radius)
-radiusLabel.TextColor3 = Color3.new(0.95, 0.95, 0.95)
-radiusLabel.Font = Enum.Font.ArialBold
-radiusLabel.FontSize = Enum.FontSize.Size14
-radiusLabel.BorderColor3 = Color3.new(0, 0, 0)
-radiusLabel.BackgroundTransparency = 1
-radiusLabel.TextXAlignment = Enum.TextXAlignment.Left
-radiusLabel.Parent = containerFrame
+radiusLabel = Hydrate(makeRadiusLabel()) {
+	Name = "RadiusLabel",
+	Text = SizeText(radius),
+	Position = UDim2.new(0, 10, 0, 5),
+	Parent = containerFrame,
+}
 
 --radius slider
 local radSliderGui, radSliderPosition =
 	RbxGui.CreateSlider(6, 0, UDim2.new(0, 0, 0, 18))
-radSliderGui.Size = UDim2.new(1, -2, 0, 20)
-radSliderGui.Position = UDim2.new(0, 0, 0, 24)
-radSliderGui.Parent = containerFrame
-local radBar = radSliderGui:FindFirstChild "Bar"
-radBar.Size = UDim2.new(1, -20, 0, 5)
-radBar.Position = UDim2.new(0, 10, 0.5, -3)
+Hydrate(radSliderGui) {
+	Size = UDim2.new(1, -2, 0, 20),
+	Position = UDim2.new(0, 0, 0, 24),
+	Parent = containerFrame,
+}
+Hydrate(radSliderGui.Bar) {
+	Size = UDim2.new(1, -20, 0, 5),
+	Position = UDim2.new(0, 10, 0.5, -3),
+}
+
 radSliderPosition.Value = radius
 radSliderPosition.Changed:connect(function()
 	radius = radSliderPosition.Value
@@ -823,15 +841,18 @@ end
 local brushDropDown, forceSelection =
 	RbxGui.CreateDropDownMenu(brushTypes, brushTypeChanged)
 forceSelection "Square"
-brushDropDown.Size = UDim2.new(1, -10, 0.01, 25)
-brushDropDown.Position = UDim2.new(0, 5, 0, 65)
-brushDropDown.Parent = containerFrame
 
-local brushLabel = radiusLabel:Clone()
-brushLabel.Name = "BrushLabel"
-brushLabel.Text = "Brush Type"
-brushLabel.Position = UDim2.new(0, 10, 0, 50)
-brushLabel.Parent = containerFrame
+Hydrate(brushDropDown) {
+	Size = UDim2.new(1, -10, 0.01, 25),
+	Position = UDim2.new(0, 5, 0, 65),
+	Parent = containerFrame,
+}
+Hydrate(makeRadiusLabel()) {
+	Name = "BrushLabel",
+	Text = "Brush Type",
+	Position = UDim2.new(0, 10, 0, 50),
+	Parent = containerFrame,
+}
 
 this.Deactivation:connect(function()
 	Off()

@@ -36,7 +36,7 @@ toolbarbutton.Click:connect(function()
 end)
 
 game:WaitForChild "Workspace"
-game.Workspace:WaitForChild "Terrain"
+workspace:WaitForChild "Terrain"
 
 -----------------
 --DEFAULT VALUES-
@@ -375,7 +375,7 @@ function createGui()
 end
 
 function On()
-	if not game.Workspace.Terrain then
+	if not workspace.Terrain then
 		return
 	elseif this then
 		this:Activate(true)

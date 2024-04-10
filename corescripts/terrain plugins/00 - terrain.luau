@@ -33,9 +33,9 @@ toolbarbutton.Click:connect(function()
 end)
 
 game:WaitForChild "Workspace"
-game.Workspace:WaitForChild "Terrain"
+workspace:WaitForChild "Terrain"
 
-local c = game.Workspace.Terrain
+local c = workspace.Terrain
 local SetCell = c.SetCell
 local SetCells = c.SetCells
 local AutoWedge = c.AutowedgeCells
@@ -130,9 +130,10 @@ local hideGenerateConformation = false
 --GUI-
 ------
 --screengui
-local g = Instance.new "ScreenGui"
-g.Name = "TerrainCreatorGui"
-g.Parent = CoreGui
+local g = New "ScreenGui" {
+	Name = "TerrainCreatorGui",
+	Parent = CoreGui,
+}
 
 -- UI gui load.  Required for sliders.
 local RbxGui = LoadLibrary "RbxGui"
@@ -161,7 +162,7 @@ local function helpText()
 		TextXAlignment = Enum.TextXAlignment.Left,
 		TextYAlignment = Enum.TextYAlignment.Top,
 		BackgroundTransparency = 1,
-		TextWrap = true,
+		TextWrapped = true,
 		Parent = terrainHelpFrame,
 	}
 end
@@ -368,30 +369,6 @@ local function CreateStandardSlider(
 	return sliderGui, sliderPosition
 end
 
--- Create a standard dropdown.  Use this for all dropdowns in the popup so it is easy to standardize.
--- name - What to set the text label name as.
--- pos    	 	 - Where to position the label.  Should be of type UDim2.
--- values    	 - A table of the values that will be in the dropbox, in the order they are to be shown.
--- initValue	 - Initial value the dropdown should be set to.
--- funcOnChange  - Function to run when a dropdown selection is made.
--- parent 	 	 - What to set the parent as.
--- Return:
--- dropdown 	   - The dropdown gui.
--- updateSelection - Object to use to change the current dropdown.
--- function CreateStandardDropdown(name, pos, values, initValue, funcOnChange, parent)
--- 	-- Create a dropdown selection for the modes to fill in a river
--- 	local dropdown, updateSelection = RbxGui.CreateDropDownMenu(values, funcOnChange)
--- 	dropdown.Name = name
--- 	dropdown.Position = pos
--- 	dropdown.Active = true
--- 	dropdown.Size = UDim2.new(0, 150, 0, 32)
--- 	dropdown.Parent = parent
-
--- 	updateSelection(initValue)
-
--- 	return dropdown, updateSelection
--- end
-
 local cancelValues = {
 	cancelAction = false, -- Used to cancel currently occuring actions.  If set to true then terrain generation will stop.
 	progressBar = nil, -- Will store the progress bar when needed.
@@ -594,7 +571,7 @@ end
 -- centerX, centerZ - Center coordinate of land.  This doesn't take into account clipping.
 -- length, width    - Land dimensions.
 local function SetCamera(centerX, centerZ, length, width, height)
-	local currCamera = game.Workspace.CurrentCamera
+	local currCamera = workspace.CurrentCamera
 	local cameraPos = Vector3.new(0, 400, 1600)
 	local cameraFocus = Vector3.new(0, height * 4, 0)
 
@@ -648,8 +625,8 @@ local function GenerateTerrain()
 
 	--Generate Terrain
 	-- offset terrain additionally by whatever the smallest cell is
-	--xpos2 = generateOptions.xpos + game.Workspace.Terrain.MaxExtents.Min.X
-	--zpos2 = generateOptions.zpos + game.Workspace.Terrain.MaxExtents.Min.Z
+	--xpos2 = generateOptions.xpos + workspace.Terrain.MaxExtents.Min.X
+	--zpos2 = generateOptions.zpos + workspace.Terrain.MaxExtents.Min.Z
 	local xpos2 = generateOptions.xpos - generateOptions.width / 2
 	local zpos2 = generateOptions.zpos - generateOptions.length / 2
 

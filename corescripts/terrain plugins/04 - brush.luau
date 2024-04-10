@@ -4,6 +4,7 @@ end
 
 local ChangeHistoryService = game:GetService "ChangeHistoryService"
 local CoreGui = game:GetService "CoreGui"
+local New = require("../Modules/New").New
 
 -- local CreateStandardLabel = require "../Modules/Terrain/CreateStandardLabel"
 
@@ -28,10 +29,10 @@ toolbarbutton.Click:connect(function()
 end)
 
 game:WaitForChild "Workspace"
-game.Workspace:WaitForChild "Terrain"
+workspace:WaitForChild "Terrain"
 
 -- Local function definitions
-local c = game.Workspace.Terrain
+local c = workspace.Terrain
 local GetCell = c.GetCell
 local SetCells = c.SetCells
 local AutowedgeCells = c.AutowedgeCells
@@ -75,20 +76,30 @@ end)
 mouse.Move:connect(function()
 	mouseMoved()
 end)
-local selectionPart = Instance.new "Part"
-selectionPart.Name = "SelectionPart"
-selectionPart.Archivable = false
-selectionPart.Transparency = 1
-selectionPart.Anchored = true
-selectionPart.Locked = true
-selectionPart.CanCollide = false
-selectionPart.FormFactor = Enum.FormFactor.Custom
+local selectionPart = New "Part" {
+	Name = "SelectionPart",
+	Archivable = false,
+	Transparency = 1,
+	Anchored = true,
+	Locked = true,
+	CanCollide = false,
+	FormFactor = Enum.FormFactor.Custom,
+}
 
-local selectionBox = Instance.new "SelectionBox"
-selectionBox.Archivable = false
-selectionBox.Color = BrickColor.new "Lime green"
-selectionBox.Adornee = selectionPart
+local selectionBox = New "SelectionBox" {
+	Archivable = false,
+	Color = BrickColor.new "Lime green",
+	Adornee = selectionPart,
+}
 mouse.TargetFilter = selectionPart
+
+function disablePreview()
+	selectionBox.Parent = nil
+end
+
+function enablePreview()
+	selectionBox.Parent = workspace
+end
 
 -----------------------
 --FUNCTION DEFINITIONS-
@@ -113,7 +124,7 @@ function findLowestEmptyCell(x, y, z)
 end
 
 -- finds the lowest cell that is not filled in the radius that is currently specified
-function findLowPoint(x, y, z)
+local function findLowPoint(x, y, z)
 	local lowestPoint = maxYExtents + 1
 	for i = -radius, radius do
 		local zPos = z + i
@@ -131,8 +142,40 @@ function findLowPoint(x, y, z)
 	return lowestPoint
 end
 
---brushes terrain at point (x, y, z) in cluster c
-function brush(x, y, z)
+-- Do a line/plane intersection.  The line starts at the camera.  The plane is at y == 0, normal(0, 1, 0)
+--
+-- vectorPos - End point of the line.
+--
+-- Return:
+-- success      - Value is true if there was a plane intersection, false if not.
+-- intersection - Value is the terrain cell intersection point if there is one, vectorPos if there isn't.
+local function PlaneIntersection(vectorPos)
+	local currCamera = workspace.CurrentCamera
+	local startPos = Vector3.new(
+		currCamera.CoordinateFrame.p.X,
+		currCamera.CoordinateFrame.p.Y,
+		currCamera.CoordinateFrame.p.Z
+	)
+	local endPos = Vector3.new(vectorPos.X, vectorPos.Y, vectorPos.Z)
+	local normal = Vector3.new(0, 1, 0)
+	local p3 = Vector3.new(0, 0, 0)
+	local startEndDot = normal:Dot(endPos - startPos)
+	local cellPos = vectorPos
+	local success = false
+	if startEndDot ~= 0 then
+		local t = normal:Dot(p3 - startPos) / startEndDot
+		if t >= 0 and t <= 1 then
+			local intersection = ((endPos - startPos) * t) + startPos
+			cellPos = c:WorldToCell(intersection)
+			success = true
+		end
+	end
+
+	return success, cellPos
+end
+
+-- brushes terrain at point (x, y, z) in cluster c
+local function brush(x, y, z)
 	if depth == 0 then
 		return
 	elseif depth > 0 then
@@ -158,14 +201,6 @@ function brush(x, y, z)
 		local regionToEmpty = Region3int16.new(lowVec, highVec)
 		SetCells(c, regionToEmpty, Enum.CellMaterial.Empty, 0, 0)
 	end
-end
-
-function disablePreview()
-	selectionBox.Parent = nil
-end
-
-function enablePreview()
-	selectionBox.Parent = game.Workspace
 end
 
 function updatePreviewSelection(position)
@@ -257,7 +292,7 @@ function doFillCells(position, mouseDrag, needsCellPos)
 		local timeBetweenFills = tick() - lastCellFillTime
 		local totalDragPixels = math.abs(mouseDrag.x) + math.abs(mouseDrag.y)
 		local editDistance = (
-			game.Workspace.CurrentCamera.CoordinateFrame.p
+			workspace.CurrentCamera.CoordinateFrame.p
 			- Vector3.new(position.x, position.y, position.z)
 		).magnitude
 
@@ -322,38 +357,6 @@ function mouseMoved()
 	updatePreviewSelection(mouse.Hit)
 end
 
--- Do a line/plane intersection.  The line starts at the camera.  The plane is at y == 0, normal(0, 1, 0)
---
--- vectorPos - End point of the line.
---
--- Return:
--- success      - Value is true if there was a plane intersection, false if not.
--- intersection - Value is the terrain cell intersection point if there is one, vectorPos if there isn't.
-function PlaneIntersection(vectorPos)
-	local currCamera = game.Workspace.CurrentCamera
-	local startPos = Vector3.new(
-		currCamera.CoordinateFrame.p.X,
-		currCamera.CoordinateFrame.p.Y,
-		currCamera.CoordinateFrame.p.Z
-	)
-	local endPos = Vector3.new(vectorPos.X, vectorPos.Y, vectorPos.Z)
-	local normal = Vector3.new(0, 1, 0)
-	local p3 = Vector3.new(0, 0, 0)
-	local startEndDot = normal:Dot(endPos - startPos)
-	local cellPos = vectorPos
-	local success = false
-	if startEndDot ~= 0 then
-		local t = normal:Dot(p3 - startPos) / startEndDot
-		if t >= 0 and t <= 1 then
-			local intersection = ((endPos - startPos) * t) + startPos
-			cellPos = c:WorldToCell(intersection)
-			success = true
-		end
-	end
-
-	return success, cellPos
-end
-
 function buttonDown()
 	if on then
 		local firstCellPos = WorldToCellPreferSolid(
@@ -372,11 +375,10 @@ function buttonDown()
 				Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z)
 			)
 			if not success then
-				if mouse.Target then
-					firstCellPos = solidCell
-				else
+				if not mouse.Target then
 					return
 				end
+				firstCellPos = solidCell
 			end
 		end
 
@@ -515,9 +517,10 @@ end
 -- end
 
 --screengui
-local g = Instance.new "ScreenGui"
-g.Name = "TerrainBrushGui"
-g.Parent = CoreGui
+local g = New "ScreenGui" {
+	Name = "TerrainBrushGui",
+	Parent = CoreGui,
+}
 
 local elevationFrame, elevationHelpFrame, elevationCloseEvent
 brushDragBar, elevationFrame, elevationHelpFrame, elevationCloseEvent =
@@ -534,16 +537,8 @@ elevationCloseEvent.Event:connect(function()
 end)
 
 elevationHelpFrame.Size = UDim2.new(0, 200, 0, 210)
-local helpText = Instance.new "TextLabel"
-helpText.Font = Enum.Font.ArialBold
-helpText.FontSize = Enum.FontSize.Size12
-helpText.TextColor3 = Color3.new(1, 1, 1)
-helpText.BackgroundTransparency = 1
-helpText.TextWrap = true
-helpText.Size = UDim2.new(1, -10, 1, -10)
-helpText.Position = UDim2.new(0, 5, 0, 5)
-helpText.TextXAlignment = Enum.TextXAlignment.Left
-helpText.Text =
+
+local helpText =
 	[[Drag the mouse by holding the left mouse button to either create or destroy terrain defined by the selection box.
 
 Radius:
@@ -552,21 +547,34 @@ Half of the width of the selection box to be used.
 Height:
 How tall to make terrain from the mouse location.  If this value is negative, the brush will remove terrain instead of creating terrain (indicated by the red selection box).
 ]]
-helpText.Parent = elevationHelpFrame
 
---current radius display label
-local radl = Instance.new "TextLabel"
-radl.Position = UDim2.new(0, 0, 0, 70)
-radl.Size = UDim2.new(1, 0, 0, 14)
-radl.Text = ""
-radl.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
-radl.TextColor3 = Color3.new(0.95, 0.95, 0.95)
-radl.Font = Enum.Font.ArialBold
-radl.FontSize = Enum.FontSize.Size14
-radl.TextXAlignment = Enum.TextXAlignment.Left
-radl.BorderColor3 = Color3.new(0, 0, 0)
-radl.BackgroundTransparency = 1
-radl.Parent = elevationFrame
+New "TextLabel" {
+	Font = Enum.Font.ArialBold,
+	FontSize = Enum.FontSize.Size12,
+	TextColor3 = Color3.new(1, 1, 1),
+	BackgroundTransparency = 1,
+	TextWrapped = true,
+	Size = UDim2.new(1, -10, 1, -10),
+	Position = UDim2.new(0, 5, 0, 5),
+	TextXAlignment = Enum.TextXAlignment.Left,
+	Text = helpText,
+	Parent = elevationHelpFrame,
+}
+
+-- current radius display label
+local radl = New "TextLabel" {
+	Position = UDim2.new(0, 0, 0, 70),
+	Size = UDim2.new(1, 0, 0, 14),
+	Text = "",
+	BackgroundColor3 = Color3.new(0.4, 0.4, 0.4),
+	TextColor3 = Color3.new(0.95, 0.95, 0.95),
+	Font = Enum.Font.ArialBold,
+	FontSize = Enum.FontSize.Size14,
+	TextXAlignment = Enum.TextXAlignment.Left,
+	BorderColor3 = Color3.new(0, 0, 0),
+	BackgroundTransparency = 1,
+	Parent = elevationFrame,
+}
 
 --radius slider
 local radSliderGui, radSliderPosition =
@@ -581,18 +589,19 @@ end)
 radSliderPosition.Value = radius - 1
 
 --current depth factor display label
-local dfl = Instance.new "TextLabel"
-dfl.Position = UDim2.new(0, 0, 0, 110)
-dfl.Size = UDim2.new(1, 0, 0, 14)
-dfl.Text = ""
-dfl.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
-dfl.TextColor3 = Color3.new(0.95, 0.95, 0.95)
-dfl.Font = Enum.Font.ArialBold
-dfl.FontSize = Enum.FontSize.Size14
-dfl.BorderColor3 = Color3.new(0, 0, 0)
-dfl.TextXAlignment = Enum.TextXAlignment.Left
-dfl.BackgroundTransparency = 1
-dfl.Parent = elevationFrame
+local dfl = New "TextLabel" {
+	Position = UDim2.new(0, 0, 0, 110),
+	Size = UDim2.new(1, 0, 0, 14),
+	Text = "",
+	BackgroundColor3 = Color3.new(0.4, 0.4, 0.4),
+	TextColor3 = Color3.new(0.95, 0.95, 0.95),
+	Font = Enum.Font.ArialBold,
+	FontSize = Enum.FontSize.Size14,
+	BorderColor3 = Color3.new(0, 0, 0),
+	TextXAlignment = Enum.TextXAlignment.Left,
+	BackgroundTransparency = 1,
+	Parent = elevationFrame,
+}
 
 --depth factor slider
 local addSliderGui, addSliderPosition =

@@ -28,10 +28,10 @@ toolbarbutton.Click:connect(function()
 end)
 
 game:WaitForChild "Workspace"
-game.Workspace:WaitForChild "Terrain"
+workspace:WaitForChild "Terrain"
 
 -- Local function definitions
-local c = game.Workspace.Terrain
+local c = workspace.Terrain
 local SetCell = c.SetCell
 local GetCell = c.GetCell
 local WorldToCellPreferSolid = c.WorldToCellPreferSolid
@@ -196,7 +196,7 @@ helpText.Font = Enum.Font.ArialBold
 helpText.FontSize = Enum.FontSize.Size12
 helpText.TextColor3 = Color3.new(1, 1, 1)
 helpText.BackgroundTransparency = 1
-helpText.TextWrap = true
+helpText.TextWrapped = true
 helpText.Size = UDim2.new(1, -10, 1, -10)
 helpText.Position = UDim2.new(0, 5, 0, 5)
 helpText.TextXAlignment = Enum.TextXAlignment.Left
