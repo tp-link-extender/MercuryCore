@@ -1,5 +1,5 @@
 --!strict
--- CoreGui.RobloxGui.CoreScripts/ToolTip
+-- CoreGui.MercuryGui.CoreScripts/ToolTip
 print "[Mercury]: Loaded corescript 36868950"
 
 local News = require "../Modules/New"
@@ -8,8 +8,8 @@ local Hydrate = News.Hydrate
 
 local RunService = game:GetService "RunService"
 
-local RobloxGui = script.Parent
-local controlFrame = RobloxGui:FindFirstChild "ControlFrame"
+local MercuryGui = script.Parent :: ScreenGui
+local controlFrame = MercuryGui:FindFirstChild "ControlFrame"
 
 if not controlFrame then
 	return

@@ -1,5 +1,5 @@
 --!strict
--- CoreGui.RobloxGui.CoreScripts/PurchasePromptScript
+-- CoreGui.MercuryGui.CoreScripts/PurchasePromptScript
 print "[Mercury]: Loaded corescript 107893730"
 
 -- this script creates the gui and sends the web requests for in game purchase prompts
@@ -12,9 +12,6 @@ local MarketplaceService = game:GetService "MarketplaceService"
 local RunService = game:GetService "RunService"
 
 -- wait for important items to appear
-while not Game do
-	RunService.Heartbeat:wait()
-end
 while not MarketplaceService do
 	RunService.Heartbeat:wait()
 	MarketplaceService = game:GetService "MarketplaceService"
@@ -22,7 +19,7 @@ end
 while not game:FindFirstChild "CoreGui" do
 	RunService.Heartbeat:wait()
 end
-while not game.CoreGui:FindFirstChild "RobloxGui" do
+while not game.CoreGui:FindFirstChild "MercuryGui" do
 	RunService.Heartbeat:wait()
 end
 
@@ -73,7 +70,7 @@ local takeHeaderText = "Take"
 local buyFailedHeaderText = "An Error Occurred"
 
 local errorPurchasesDisabledText = "in-game purchases are disabled"
-local errorPurchasesUnknownText = "Roblox is performing maintenance"
+local errorPurchasesUnknownText = "Mercury is performing maintenance"
 
 local purchaseSucceededText = "Your purchase of itemName succeeded!"
 local purchaseFailedText =
@@ -492,7 +489,7 @@ local function canPurchaseItem()
 	if purchasingConsumable then
 		local currentProductInfoRaw
 		ok = ypcall(function()
-			currentProductInfoRaw = Game:HttpGetAsync(
+			currentProductInfoRaw = game:HttpGetAsync(
 				`{getSecureApiBaseUrl()}marketplace/productDetails?productid={currentProductId}`
 			)
 		end)
@@ -849,9 +846,9 @@ local function acceptPurchase()
 
 	-- consumables need to use a different url
 	if purchasingConsumable then
-		url ..= `submitpurchase?productId={currentProductId}{currencyData}&expectedUnitPrice={currentCurrencyAmount}&placeId={Game.PlaceId}`
+		url ..= `submitpurchase?productId={currentProductId}{currencyData}&expectedUnitPrice={currentCurrencyAmount}&placeId={game.PlaceId}`
 	else
-		url ..= `purchase?productId={currentProductId}{currencyData}&purchasePrice={currentCurrencyAmount}&locationType=Game&locationId={Game.PlaceId}`
+		url ..= `purchase?productId={currentProductId}{currencyData}&purchasePrice={currentCurrencyAmount}&locationType=Game&locationId={game.PlaceId}`
 	end
 
 	local ok, reason = ypcall(function()
@@ -859,12 +856,7 @@ local function acceptPurchase()
 	end)
 
 	-- debug output for us (found in the logs from local)
-	print(
-		"acceptPurchase success from ypcall is ",
-		ok,
-		"reason is",
-		reason
-	)
+	print("acceptPurchase success from ypcall is ", ok, "reason is", reason)
 
 	if tick() - startTime < 1 then
 		wait(1) -- allow the purchasing waiting dialog to at least be readable (otherwise it might flash, looks bad)...
@@ -877,7 +869,7 @@ local function acceptPurchase()
 			currentAssetId,
 			currentProductId
 		)
-		purchaseFailed()
+		purchaseFailed(false)
 		return
 	end
 
@@ -891,7 +883,7 @@ local function acceptPurchase()
 				currentAssetId,
 				currentProductId
 			)
-			purchaseFailed((response.status == "EconomyDisabled"))
+			purchaseFailed(response.status == "EconomyDisabled")
 			return
 		end
 	else
@@ -899,7 +891,7 @@ local function acceptPurchase()
 			"web return response of non parsable JSON on purchase of",
 			currentAssetId
 		)
-		purchaseFailed()
+		purchaseFailed(false)
 		return
 	end
 
@@ -922,7 +914,7 @@ local function acceptPurchase()
 				"tried to buy productId, but no receipt returned. productId was",
 				currentProductId
 			)
-			purchaseFailed()
+			purchaseFailed(false)
 			return
 		end
 		MarketplaceService:SignalClientPurchaseSuccess(
@@ -1038,7 +1030,7 @@ local function createPurchasePromptGui()
 	purchaseDialog.BackgroundColor3 =
 		Color3.new(141 / 255, 141 / 255, 141 / 255)
 	purchaseDialog.BorderColor3 = Color3.new(204 / 255, 204 / 255, 204 / 255)
-	purchaseDialog.Parent = game.CoreGui.RobloxGui
+	purchaseDialog.Parent = game.CoreGui.MercuryGui
 
 	local bodyFrame = Instance.new "Frame"
 	bodyFrame.Name = "BodyFrame"
@@ -1248,7 +1240,7 @@ local function createPurchasePromptGui()
 end
 
 local function doPurchasePrompt(
-	player,
+	player: Player,
 	assetId,
 	equipIfPurchased,
 	currencyType,
@@ -1279,7 +1271,7 @@ end
 local function doProcessServerPurchaseResponse(serverResponseTable)
 	if not serverResponseTable then
 		print "Server response table was nil, cancelling purchase"
-		purchaseFailed()
+		purchaseFailed(false)
 		return
 	end
 

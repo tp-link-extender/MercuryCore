@@ -24,13 +24,11 @@ local function ScopedConnect(
 
 	--Connection on parentInstance is scoped by parentInstance (when destroyed, it goes away)
 	local function tryConnect()
-		if game:IsAncestorOf(parentInstance) then
+		if game:IsAncestorOf(parentInstance) and not eventConnection then
 			--Entering the world, make sure we are connected/synced
-			if not eventConnection then
-				eventConnection = instance[event]:connect(signalFunc)
-				if syncFunc then
-					syncFunc()
-				end
+			eventConnection = instance[event]:connect(signalFunc)
+			if syncFunc then
+				syncFunc()
 			end
 		else
 			--Probably leaving the world, so disconnect for now
@@ -375,7 +373,7 @@ function RbxGui.CreateDropDownMenu(
 	end
 
 	local scrollBarPosition = 1
-	local updateScroll = function()
+	local function updateScroll()
 		if scrollUpButton then
 			scrollUpButton.Active = scrollBarPosition > 1
 		end
@@ -414,7 +412,7 @@ function RbxGui.CreateDropDownMenu(
 			end
 		end
 	end
-	local toggleVisibility = function()
+	local function toggleVisibility()
 		dropDownSelected = not dropDownSelected
 
 		areaSoak.Visible = not areaSoak.Visible
@@ -431,7 +429,7 @@ function RbxGui.CreateDropDownMenu(
 	end
 	droppedDownMenu.MouseButton1Click:connect(toggleVisibility)
 
-	local updateSelection = function(text)
+	local function updateSelection(text)
 		local foundItem = false
 		local children = droppedDownMenu:GetChildren()
 		local childNum = 1
@@ -819,7 +817,7 @@ function RbxGui.LayoutGuiObjects(frame, guiObjects, settingsTable)
 		child.Parent = wrapperFrame
 	end
 
-	local recalculate = function()
+	local function recalculate()
 		RunService.Heartbeat:wait()
 		layoutGuiObjectsHelper(wrapperFrame, guiObjects, settingsTable)
 	end
@@ -1167,22 +1165,18 @@ function RbxGui.CreateTrueScrollingFrame()
 	end
 
 	local function drillDownSetHighLow(instance: GuiObject)
-		if not instance or not instance:IsA "GuiObject" then
+		if
+			not instance
+			or not instance:IsA "GuiObject"
+			or instance == controlFrame
+			or instance:IsDescendantOf(controlFrame)
+			or not instance.Visible
+		then
 			return
-		end
-		if instance == controlFrame then
-			return
-		end
-		if instance:IsDescendantOf(controlFrame) then
-			return
-		end
-		if not instance.Visible then
-			return
-		end
-
-		if (lowY and lowY > instance.AbsolutePosition.Y) or not lowY then
+		elseif (lowY and lowY > instance.AbsolutePosition.Y) or not lowY then
 			lowY = instance.AbsolutePosition.Y
 		end
+
 		if
 			(
 				highY
@@ -1508,14 +1502,11 @@ function RbxGui.CreateTrueScrollingFrame()
 	end
 
 	local function descendantChanged(this, prop)
-		if internalChange then
-			return
-		end
-		if not this.Visible then
-			return
-		end
-
-		if prop == "Size" or prop == "Position" then
+		if
+			not internalChange
+			and this.Visible
+			and (prop == "Size" or prop == "Position")
+		then
 			RunService.Heartbeat:wait()
 			highLowRecheck()
 		end
@@ -1524,9 +1515,7 @@ function RbxGui.CreateTrueScrollingFrame()
 	scrollingFrame.DescendantAdded:connect(function(instance)
 		if not instance:IsA "GuiObject" then
 			return
-		end
-
-		if instance.Visible then
+		elseif instance.Visible then
 			RunService.Heartbeat:wait() -- wait a heartbeat for sizes to reconfig
 			highLowRecheck()
 		end
@@ -1541,8 +1530,7 @@ function RbxGui.CreateTrueScrollingFrame()
 	scrollingFrame.DescendantRemoving:connect(function(instance)
 		if not instance:IsA "GuiObject" then
 			return
-		end
-		if descendantsChangeConMap[instance] then
+		elseif descendantsChangeConMap[instance] then
 			descendantsChangeConMap[instance]:disconnect()
 			descendantsChangeConMap[instance] = nil
 		end
@@ -1551,11 +1539,7 @@ function RbxGui.CreateTrueScrollingFrame()
 	end)
 
 	scrollingFrame.Changed:connect(function(prop)
-		if prop == "AbsoluteSize" then
-			if not highY or not lowY then
-				return
-			end
-
+		if prop == "AbsoluteSize" and not (highY and lowY) then
 			highLowRecheck()
 			setSliderSizeAndPosition()
 		end
@@ -1622,7 +1606,7 @@ function RbxGui.CreateScrollingFrame(orderList: { GuiObject }?, scrollStyle)
 	local rowSize = 0
 	local howManyDisplayed = 0
 
-	local layoutGridScrollBar = function()
+	local function layoutGridScrollBar()
 		howManyDisplayed = 0
 		local guiObjects = {}
 		if orderList then
@@ -1805,7 +1789,7 @@ function RbxGui.CreateScrollingFrame(orderList: { GuiObject }?, scrollStyle)
 		scrollDrag.Visible = scrollDrag.Active
 	end
 
-	local layoutSimpleScrollBar = function()
+	local function layoutSimpleScrollBar()
 		local guiObjects = {}
 		howManyDisplayed = 0
 
@@ -1902,7 +1886,7 @@ function RbxGui.CreateScrollingFrame(orderList: { GuiObject }?, scrollStyle)
 		scrollDrag.Visible = scrollDrag.Active
 	end
 
-	local moveDragger = function()
+	local function moveDragger()
 		local guiObjects = 0
 		local children = frame:GetChildren()
 		if children then
@@ -1952,7 +1936,7 @@ function RbxGui.CreateScrollingFrame(orderList: { GuiObject }?, scrollStyle)
 	end
 
 	local reentrancyGuard = false
-	local recalculate = function()
+	local function recalculate()
 		if reentrancyGuard then
 			return
 		end
@@ -1975,7 +1959,7 @@ function RbxGui.CreateScrollingFrame(orderList: { GuiObject }?, scrollStyle)
 		reentrancyGuard = false
 	end
 
-	local doScrollUp = function()
+	local function doScrollUp()
 		scrollPosition -= rowSize
 		if scrollPosition < 1 then
 			scrollPosition = 1
@@ -1983,7 +1967,7 @@ function RbxGui.CreateScrollingFrame(orderList: { GuiObject }?, scrollStyle)
 		recalculate()
 	end
 
-	local doScrollDown = function()
+	local function doScrollDown()
 		scrollPosition += rowSize
 		recalculate()
 	end
@@ -2260,7 +2244,7 @@ function RbxGui.AutoTruncateTextObject(textLabel: TextLabel)
 			end
 		else
 			local len = string.len(text)
-			textLabel.Text = `{text}~`
+			textLabel.Text = text .. "~"
 
 			--Shrink the text
 			local textSize = binaryGrow(0, len, function(pos)
@@ -2268,7 +2252,7 @@ function RbxGui.AutoTruncateTextObject(textLabel: TextLabel)
 					or string.sub(text, 1, pos) .. "~"
 				return textLabel.TextFits
 			end)
-			shortText = `{string.sub(text, 1, textSize)}~`
+			shortText = string.sub(text, 1, textSize) .. "~"
 			textLabel.Text = shortText
 
 			--Make sure the fullLabel fits
@@ -2423,7 +2407,7 @@ function RbxGui.CreateTutorial(name, tutorialKey, createButtons: boolean)
 		return visiblePage
 	end
 
-	local showTutorial = function(alwaysShow)
+	local function showTutorial(alwaysShow)
 		if
 			alwaysShow
 			or UserSettings().GameSettings:GetTutorialState(tutorialKey)
@@ -2446,7 +2430,7 @@ function RbxGui.CreateTutorial(name, tutorialKey, createButtons: boolean)
 		end
 	end
 
-	local dismissTutorial = function()
+	local function dismissTutorial()
 		local currentTutorialPage = getVisiblePageAndHideOthers()
 
 		if currentTutorialPage then
@@ -2461,7 +2445,7 @@ function RbxGui.CreateTutorial(name, tutorialKey, createButtons: boolean)
 		UserSettings().GameSettings:SetTutorialState(tutorialKey, true)
 	end
 
-	local gotoPage = function(pageNum)
+	local function gotoPage(pageNum)
 		local page = pages:FindFirstChild("TutorialPage" .. pageNum)
 		local currentTutorialPage = getVisiblePageAndHideOthers()
 		TransitionTutorialPages(
@@ -2647,7 +2631,7 @@ function RbxGui.CreateTextTutorialPage(name, text, skipTutorial)
 	return frame
 end
 
-RbxGui.CreateImageTutorialPage = function(
+function RbxGui.CreateImageTutorialPage(
 	name,
 	imageAsset,
 	x: number,
@@ -2770,7 +2754,7 @@ function RbxGui.AddTutorialPage(
 	tutorialPage.Parent = tutorial.Pages
 end
 
-RbxGui.CreateSetPanel = function(
+function RbxGui.CreateSetPanel(
 	userIdsForSets,
 	objectSelected,
 	dialogClosed,
@@ -3662,7 +3646,7 @@ RbxGui.CreateSetPanel = function(
 		end
 	end)
 
-	local setVisibilityFunction = function(visible)
+	local function setVisibilityFunction(visible)
 		if visible then
 			setGui.SetPanel.Visible = true
 		else
@@ -3670,7 +3654,7 @@ RbxGui.CreateSetPanel = function(
 		end
 	end
 
-	local getVisibilityFunction = function()
+	local function getVisibilityFunction()
 		if setGui then
 			if setGui:FindFirstChild "SetPanel" then
 				return setGui.SetPanel.Visible
@@ -3735,7 +3719,7 @@ for k, v in pairs(EnumMaterialNames) do
 	StringChoices[v] = k
 end
 
-RbxGui.CreateTerrainMaterialSelector = function(size, position)
+function RbxGui.CreateTerrainMaterialSelector(size, position)
 	local terrainMaterialSelectionChanged = Instance.new "BindableEvent"
 	terrainMaterialSelectionChanged.Name = "TerrainMaterialSelectionChanged"
 
@@ -3898,7 +3882,7 @@ RbxGui.CreateTerrainMaterialSelector = function(size, position)
 	return frame, terrainMaterialSelectionChanged, forceTerrainMaterialSelection
 end
 
-RbxGui.CreateLoadingFrame = function(name, size, position)
+function RbxGui.CreateLoadingFrame(name, size, position)
 	ContentProvider:Preload "http://banland.xyz/asset?id=35238053"
 
 	local loadingFrame = New "Frame" {
@@ -4285,11 +4269,8 @@ function RbxGui.CreatePluginFrame(
 				Position = UDim2.new(1, 0, 0, 0),
 			},
 		}
-		if size then
-			control.Size = UDim2.new(0, 21, size.Y.Scale, size.Y.Offset)
-		else
-			control.Size = UDim2.new(0, 21, 0, 400)
-		end
+		control.Size = size and UDim2.new(0, 21, size.Y.Scale, size.Y.Offset)
+			or UDim2.new(0, 21, 0, 400)
 		control:FindFirstChild("ScrollDownButton").Position =
 			UDim2.new(0, 0, 1, -20)
 
@@ -4419,85 +4400,85 @@ function RbxGui.CreatePluginFrame(
 	return dragBar, widgetContainer, helpFrame, closeEvent
 end
 
-function RbxGui.Help(funcNameOrFunc)
-	--input argument can be a string or a function. Should return a description (of arguments and expected side effects)
+function RbxGui.Help(funcNameOrFunc: string | (any) -> any)
+	-- input argument can be a string or a function. Should return a description (of arguments and expected side effects)
 	if
 		funcNameOrFunc == "CreatePropertyDropDownMenu"
 		or funcNameOrFunc == RbxGui.CreatePropertyDropDownMenu
 	then
-		return "Function CreatePropertyDropDownMenu. "
-			.. "Arguments: (instance, propertyName, enumType). "
-			.. "Side effect: returns a container with a drop-down-box that is linked to the 'property' field of 'instance' which is of type 'enumType'"
+		return [[Function CreatePropertyDropDownMenu.
+Arguments: (instance, propertyName, enumType).
+Side effect: returns a container with a drop-down-box that is linked to the 'property' field of 'instance' which is of type 'enumType']]
 	elseif
 		funcNameOrFunc == "CreateDropDownMenu"
 		or funcNameOrFunc == RbxGui.CreateDropDownMenu
 	then
-		return "Function CreateDropDownMenu. "
-			.. "Arguments: (items, onItemSelected). "
-			.. "Side effect: Returns 2 results, a container to the gui object and a 'updateSelection' function for external updating. The container is a drop-down-box created around a list of items"
+		return [[Function CreateDropDownMenu.
+Arguments: (items, onItemSelected).
+Side effect: Returns 2 results, a container to the gui object and a 'updateSelection' function for external updating. The container is a drop-down-box created around a list of items]]
 	elseif
 		funcNameOrFunc == "CreateMessageDialog"
 		or funcNameOrFunc == RbxGui.CreateMessageDialog
 	then
-		return "Function CreateMessageDialog. "
-			.. "Arguments: (title, message, buttons). "
-			.. "Side effect: Returns a gui object of a message box with 'title' and 'message' as passed in. 'buttons' input is an array of Tables contains a 'Text' and 'Function' field for the text/callback of each button"
+		return [[Function CreateMessageDialog.
+Arguments: (title, message, buttons).
+Side effect: Returns a gui object of a message box with 'title' and 'message' as passed in. 'buttons' input is an array of Tables contains a 'Text' and 'Function' field for the text/callback of each button]]
 	elseif
 		funcNameOrFunc == "CreateStyledMessageDialog"
 		or funcNameOrFunc == RbxGui.CreateStyledMessageDialog
 	then
-		return "Function CreateStyledMessageDialog. "
-			.. "Arguments: (title, message, style, buttons). "
-			.. "Side effect: Returns a gui object of a message box with 'title' and 'message' as passed in. 'buttons' input is an array of Tables contains a 'Text' and 'Function' field for the text/callback of each button, 'style' is a string, either Error, Notify or Confirm"
+		return [[Function CreateStyledMessageDialog.
+Arguments: (title, message, style, buttons).
+Side effect: Returns a gui object of a message box with 'title' and 'message' as passed in. 'buttons' input is an array of Tables contains a 'Text' and 'Function' field for the text/callback of each button, 'style' is a string, either Error, Notify or Confirm]]
 	elseif
 		funcNameOrFunc == "GetFontHeight"
 		or funcNameOrFunc == RbxGui.GetFontHeight
 	then
-		return "Function GetFontHeight. "
-			.. "Arguments: (font, fontSize). "
-			.. "Side effect: returns the size in pixels of the given font + fontSize"
+		return [[Function GetFontHeight.
+Arguments: (font, fontSize).
+Side effect: returns the size in pixels of the given font + fontSize]]
 	elseif
 		funcNameOrFunc == "CreateScrollingFrame"
 		or funcNameOrFunc == RbxGui.CreateScrollingFrame
 	then
-		return "Function CreateScrollingFrame. "
-			.. "Arguments: (orderList, style) "
-			.. "Side effect: returns 4 objects, (scrollFrame, scrollUpButton, scrollDownButton, recalculateFunction). 'scrollFrame' can be filled with GuiObjects. It will lay them out and allow scrollUpButton/scrollDownButton to interact with them. Orderlist is optional (and specifies the order to layout the children. Without orderlist, it uses the children order. style is also optional, and allows for a 'grid' styling if style is passed 'grid' as a string. recalculateFunction can be called when a relayout is needed (when orderList changes)"
+		return [[Function CreateScrollingFrame.
+Arguments: (orderList, style)
+Side effect: returns 4 objects, (scrollFrame, scrollUpButton, scrollDownButton, recalculateFunction). 'scrollFrame' can be filled with GuiObjects. It will lay them out and allow scrollUpButton/scrollDownButton to interact with them. Orderlist is optional (and specifies the order to layout the children. Without orderlist, it uses the children order. style is also optional, and allows for a 'grid' styling if style is passed 'grid' as a string. recalculateFunction can be called when a relayout is needed (when orderList changes)]]
 	elseif
 		funcNameOrFunc == "CreateTrueScrollingFrame"
 		or funcNameOrFunc == RbxGui.CreateTrueScrollingFrame
 	then
-		return "Function CreateTrueScrollingFrame. "
-			.. "Arguments: (nil) "
-			.. "Side effect: returns 2 objects, (scrollFrame, controlFrame). 'scrollFrame' can be filled with GuiObjects, and they will be clipped if not inside the frame's bounds. controlFrame has children scrollup and scrolldown, as well as a slider. controlFrame can be parented to any guiobject and it will readjust itself to fit."
+		return [[Function CreateTrueScrollingFrame.
+Arguments: (nil)
+Side effect: returns 2 objects, (scrollFrame, controlFrame). 'scrollFrame' can be filled with GuiObjects, and they will be clipped if not inside the frame's bounds. controlFrame has children scrollup and scrolldown, as well as a slider. controlFrame can be parented to any guiobject and it will readjust itself to fit.]]
 	elseif
 		funcNameOrFunc == "AutoTruncateTextObject"
 		or funcNameOrFunc == RbxGui.AutoTruncateTextObject
 	then
-		return "Function AutoTruncateTextObject. "
-			.. "Arguments: (textLabel) "
-			.. "Side effect: returns 2 objects, (textLabel, changeText). The 'textLabel' input is modified to automatically truncate text (with ellipsis), if it gets too small to fit. 'changeText' is a function that can be used to change the text, it takes 1 string as an argument"
+		return [[Function AutoTruncateTextObject.
+Arguments: (textLabel)
+Side effect: returns 2 objects, (textLabel, changeText). The 'textLabel' input is modified to automatically truncate text (with ellipsis), if it gets too small to fit. 'changeText' is a function that can be used to change the text, it takes 1 string as an argument]]
 	elseif
 		funcNameOrFunc == "CreateSlider"
 		or funcNameOrFunc == RbxGui.CreateSlider
 	then
-		return "Function CreateSlider. "
-			.. "Arguments: (steps, width, position) "
-			.. "Side effect: returns 2 objects, (sliderGui, sliderPosition). The 'steps' argument specifies how many different positions the slider can hold along the bar. 'width' specifies in pixels how wide the bar should be (modifiable afterwards if desired). 'position' argument should be a UDim2 for slider positioning. 'sliderPosition' is an IntValue whose current .Value specifies the specific step the slider is currently on."
+		return [[Function CreateSlider.
+Arguments: (steps, width, position)
+Side effect: returns 2 objects, (sliderGui, sliderPosition). The 'steps' argument specifies how many different positions the slider can hold along the bar. 'width' specifies in pixels how wide the bar should be (modifiable afterwards if desired). 'position' argument should be a UDim2 for slider positioning. 'sliderPosition' is an IntValue whose current .Value specifies the specific step the slider is currently on.]]
 	elseif
 		funcNameOrFunc == "CreateLoadingFrame"
 		or funcNameOrFunc == RbxGui.CreateLoadingFrame
 	then
-		return "Function CreateLoadingFrame. "
-			.. "Arguments: (name, size, position) "
-			.. "Side effect: Creates a gui that can be manipulated to show progress for a particular action. Name appears above the loading bar, and size and position are udim2 values (both size and position are optional arguments). Returns 3 arguments, the first being the gui created. The second being updateLoadingGuiPercent, which is a bindable function. This function takes one argument (two optionally), which should be a number between 0 and 1, representing the percentage the loading gui should be at. The second argument to this function is a boolean value that if set to true will tween the current percentage value to the new percentage value, therefore our third argument is how long this tween should take. Our third returned argument is a BindableEvent, that when fired means that someone clicked the cancel button on the dialog."
+		return [[Function CreateLoadingFrame.
+Arguments: (name, size, position)
+Side effect: Creates a gui that can be manipulated to show progress for a particular action. Name appears above the loading bar, and size and position are udim2 values (both size and position are optional arguments). Returns 3 arguments, the first being the gui created. The second being updateLoadingGuiPercent, which is a bindable function. This function takes one argument (two optionally), which should be a number between 0 and 1, representing the percentage the loading gui should be at. The second argument to this function is a boolean value that if set to true will tween the current percentage value to the new percentage value, therefore our third argument is how long this tween should take. Our third returned argument is a BindableEvent, that when fired means that someone clicked the cancel button on the dialog.]]
 	elseif
 		funcNameOrFunc == "CreateTerrainMaterialSelector"
 		or funcNameOrFunc == RbxGui.CreateTerrainMaterialSelector
 	then
-		return "Function CreateTerrainMaterialSelector. "
-			.. "Arguments: (size, position) "
-			.. "Side effect: Size and position are UDim2 values that specifies the selector's size and position. Both size and position are optional arguments. This method returns 3 objects (terrainSelectorGui, terrainSelected, forceTerrainSelection). terrainSelectorGui is just the gui object that we generate with this function, parent it as you like. TerrainSelected is a BindableEvent that is fired whenever a new terrain type is selected in the gui. ForceTerrainSelection is a function that takes an argument of Enum.CellMaterial and will force the gui to show that material as currently selected."
+		return [[Function CreateTerrainMaterialSelector.
+Arguments: (size, position)
+Side effect: Size and position are UDim2 values that specifies the selector's size and position. Both size and position are optional arguments. This method returns 3 objects (terrainSelectorGui, terrainSelected, forceTerrainSelection). terrainSelectorGui is just the gui object that we generate with this function, parent it as you like. TerrainSelected is a BindableEvent that is fired whenever a new terrain type is selected in the gui. ForceTerrainSelection is a function that takes an argument of Enum.CellMaterial and will force the gui to show that material as currently selected.]]
 	end
 	return "No help available for this function"
 end

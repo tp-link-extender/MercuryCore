@@ -60,9 +60,9 @@ local function springCoefficients(
 		-- factored out of the solutions to the characteristic equation:
 		-- α = Sqrt[1 - ζ^2]
 		-- x[t] -> x0(e^-tζω)(α Cos[tα] + ζω Sin[tα])/α
-		--       + v0(e^-tζω)(Sin[tα])/α
+		--		+ v0(e^-tζω)(Sin[tα])/α
 		-- v[t] -> x0(-e^-tζω)(α^2 + ζ^2 ω^2)(Sin[tα])/α
-		--       + v0(e^-tζω)(α Cos[tα] - ζω Sin[tα])/α
+		--		+ v0(e^-tζω)(α Cos[tα] - ζω Sin[tα])/α
 
 		local scaledTime = time * speed
 		local alpha = math.sqrt(1 - damping ^ 2)

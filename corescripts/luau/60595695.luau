@@ -9,7 +9,7 @@ local RunService = game:GetService "RunService"
 
 local ScriptContext
 
-for i = 1, 4 do
+for _ = 1, 4 do
 	ScriptContext = game:GetService "ScriptContext"
 	if ScriptContext then
 		break

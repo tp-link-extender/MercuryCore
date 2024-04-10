@@ -29,7 +29,7 @@ return function(IsServer: boolean)
 				function(SingleFire, MultipleFire, IncomingCall)
 					-- debug.profilebegin "Red.Listen.Incoming"
 
-					--  replace nil symbols with nil
+					-- replace nil symbols with nil
 					if SingleFire.__nil then
 						SingleFire = nil
 					end
@@ -166,7 +166,7 @@ return function(IsServer: boolean)
 				function(Player, SingleFire, MultipleFire, IncomingCall)
 					-- debug.profilebegin "Red.Listen.Incoming"
 
-					--  replace nil symbols with nil
+					-- replace nil symbols with nil
 					if SingleFire.__nil then
 						SingleFire = nil
 					end

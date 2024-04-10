@@ -1,4 +1,4 @@
--- CoreGui.RobloxGui.Backpack.CoreScripts/BackpackScripts/Back (2?)
+-- CoreGui.MercuryGui.Backpack.CoreScripts/BackpackScripts/Back (2?)
 print "[Mercury]: Loaded corescript 89449093"
 
 local News = require "../Modules/New"
@@ -53,8 +53,8 @@ local searchBox = waitForChild(backpack.SearchFrame.SearchBoxFrame, "SearchBox")
 local searchButton = waitForChild(backpack.SearchFrame, "SearchButton")
 local resetButton = waitForChild(backpack.SearchFrame, "ResetButton")
 
-local robloxGui = waitForChild(Game.CoreGui, "RobloxGui")
-local currentLoadout = waitForChild(robloxGui, "CurrentLoadout")
+local mercuryGui = waitForChild(game.CoreGui, "MercuryGui")
+local currentLoadout = waitForChild(mercuryGui, "CurrentLoadout")
 local loadoutBackground = waitForChild(currentLoadout, "Background")
 
 local canToggle = true
@@ -72,10 +72,6 @@ local tilde = "~"
 local backtick = "`"
 
 local backpackSize = UDim2.new(0, 600, 0, 400)
-
-if robloxGui.AbsoluteSize.Y <= 320 then
-	backpackSize = UDim2.new(0, 200, 0, 140)
-end
 
 ------------------------ End Locals ---------------------------
 
@@ -357,9 +353,9 @@ publicFunction("BackpackReady", backpackReady)
 pcall(function()
 	coreGuiChanged(
 		Enum.CoreGuiType.Backpack,
-		Game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
+		game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
 	)
-	Game.StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
+	game.StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
 end)
 
 inventoryButton.MouseButton1Click:connect(newTabClicked)
@@ -419,8 +415,3 @@ searchBox.FocusLost:connect(function(enterPressed)
 end)
 searchButton.MouseButton1Click:connect(doSearch)
 resetButton.MouseButton1Click:connect(resetSearch)
-
-if searchFrame and robloxGui.AbsoluteSize.Y <= 320 then
-	searchFrame.RobloxLocked = false
-	searchFrame:Destroy()
-end

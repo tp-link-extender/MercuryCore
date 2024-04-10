@@ -1,5 +1,5 @@
 --!strict
--- CoreGui.RobloxGui.CoreScripts/MainBotChatScript
+-- CoreGui.MercuryGui.CoreScripts/MainBotChatScript
 print "[Mercury]: Loaded corescript 39250920"
 
 local News = require "../Modules/New"
@@ -42,11 +42,11 @@ local dialogConnections = {}
 
 local gui
 waitForChild(game, "CoreGui")
-waitForChild(game.CoreGui, "RobloxGui")
-if game.CoreGui.RobloxGui:FindFirstChild "ControlFrame" then
-	gui = game.CoreGui.RobloxGui.ControlFrame
+waitForChild(game.CoreGui, "MercuryGui")
+if game.CoreGui.MercuryGui:FindFirstChild "ControlFrame" then
+	gui = game.CoreGui.MercuryGui.ControlFrame
 else
-	gui = game.CoreGui.RobloxGui
+	gui = game.CoreGui.MercuryGui
 end
 
 local function currentTone()
@@ -302,7 +302,7 @@ local function presentDialogChoices(talkingPart, dialogChoices)
 	end
 
 	lastChoice.Position = UDim2.new(0, 0, 0, yPosition)
-	lastChoice.Number.Text = `{pos})`
+	lastChoice.Number.Text = pos .. ")"
 
 	mainFrame.Size = UDim2.new(0, 350, 0, yPosition + 24 + 32)
 	mainFrame.Position = UDim2.new(0, 20, 0, -mainFrame.Size.Y.Offset - 20)

@@ -11,12 +11,12 @@ local RbxUtility = {}
 
 -- Fuq json
 
-RbxUtility.DecodeJSON = function()
-	error 'RbxUtility.DecodeJSON has been removed, please use Game:GetService("HttpService"):JSONDecode() instead.'
+function RbxUtility.DecodeJSON()
+	error 'RbxUtility.DecodeJSON has been removed, please use game:GetService("HttpService"):JSONDecode() instead.'
 end
 
-RbxUtility.EncodeJSON = function()
-	error 'RbxUtility.EncodeJSON has been removed, please use Game:GetService("HttpService"):JSONEncode() instead.'
+function RbxUtility.EncodeJSON()
+	error 'RbxUtility.EncodeJSON has been removed, please use game:GetService("HttpService"):JSONEncode() instead.'
 end
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -26,14 +26,14 @@ end
 ------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------
---makes a wedge at location x, y, z
---sets cell x, y, z to default material if parameter is provided, if not sets cell x, y, z to be whatever material it previously w
---returns true if made a wedge, false if the cell remains a block
-RbxUtility.MakeWedge = function(x, y, z, _)
+-- makes a wedge at location x, y, z
+-- sets cell x, y, z to default material if parameter is provided, if not sets cell x, y, z to be whatever material it previously w
+-- returns true if made a wedge, false if the cell remains a block
+function RbxUtility.MakeWedge(x, y, z, _)
 	return Terrain:AutoWedgeCell(x, y, z)
 end
 
-RbxUtility.SelectTerrainRegion = function(
+function RbxUtility.SelectTerrainRegion(
 	regionToSelect: Region3,
 	colour: BrickColor,
 	selectEmptyCells: boolean,
@@ -210,7 +210,7 @@ RbxUtility.SelectTerrainRegion = function(
 		adornments.SelectionPart = selectionPart
 		adornments.SelectionBox = selectionBox
 
-		updateSelection = function(newRegion: Region3, newColour)
+		function updateSelection(newRegion: Region3, newColour)
 			if newRegion and newRegion ~= lastRegion then
 				lastRegion = newRegion
 				selectionPart.Size = newRegion.Size
@@ -222,7 +222,7 @@ RbxUtility.SelectTerrainRegion = function(
 		end
 	else -- use individual cell adorns to represent the area selected
 		adornFullCellsInRegion(regionToSelect, colour)
-		updateSelection = function(newRegion, newColour)
+		function updateSelection(newRegion, newColour)
 			if newRegion and newRegion ~= lastRegion then
 				lastRegion = newRegion
 				adornFullCellsInRegion(newRegion, newColour)
@@ -230,7 +230,7 @@ RbxUtility.SelectTerrainRegion = function(
 		end
 	end
 
-	local destroyFunc = function()
+	local function destroyFunc()
 		updateSelection = nil
 		if selectionContainer then
 			selectionContainer:Destroy()
@@ -350,7 +350,7 @@ end
 ------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------
 --[[
-A "Create" function for easy creation of Roblox instances. The function accepts a string which is the classname of
+A "Create" function for easy creation of Mercury instances. The function accepts a string which is the classname of
 the object to be created. The function then returns another function which either accepts accepts no arguments, in
 which case it simply creates an object of the given type, or a table argument that may contain several types of data,
 in which case it mutates the object in varying ways depending on the nature of the aggregate data. These are the
@@ -527,7 +527,7 @@ RbxUtility.Create = setmetatable({}, {
 
 --and create the "Event.E" syntax stub. Really it's just a stub to construct a table which our Create
 --function can recognize as special.
-RbxUtility.Create.E = function(eventName)
+function RbxUtility.Create.E(eventName)
 	return { __eventname = eventName }
 end
 
@@ -541,99 +541,69 @@ end
 ------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------
 
-RbxUtility.Help = function(funcNameOrFunc)
+function RbxUtility.Help(funcNameOrFunc)
 	--input argument can be a string or a function.  Should return a description (of arguments and expected side effects)
 	if
 		funcNameOrFunc == "DecodeJSON"
 		or funcNameOrFunc == RbxUtility.DecodeJSON
 	then
-		return "Function DecodeJSON.  "
-			.. "Arguments: (string).  "
-			.. "Side effect: returns a table with all parsed JSON values"
-	end
-	if
+		return [[Function DecodeJSON.
+Arguments: (string).
+Side effect: returns a table with all parsed JSON values]]
+	elseif
 		funcNameOrFunc == "EncodeJSON"
 		or funcNameOrFunc == RbxUtility.EncodeJSON
 	then
-		return "Function EncodeJSON.  "
-			.. "Arguments: (table).  "
-			.. "Side effect: returns a string composed of argument table in JSON data format"
-	end
-	if
+		return [[Function EncodeJSON.
+Arguments: (table).
+Side effect: returns a string composed of argument table in JSON data format]]
+	elseif
 		funcNameOrFunc == "MakeWedge"
 		or funcNameOrFunc == RbxUtility.MakeWedge
 	then
-		return "Function MakeWedge. "
-			.. "Arguments: (x, y, z, [default material]). "
-			.. "Description: Makes a wedge at location x, y, z. Sets cell x, y, z to default material if "
-			.. "parameter is provided, if not sets cell x, y, z to be whatever material it previously was. "
-			.. "Returns true if made a wedge, false if the cell remains a block "
-	end
-	if
+		return [[Function MakeWedge.
+Arguments: (x, y, z, [default material]).
+Description: Makes a wedge at location x, y, z. Sets cell x, y, z to default material if parameter is provided, if not sets cell x, y, z to be whatever material it previously was. Returns true if made a wedge, false if the cell remains a block]]
+	elseif
 		funcNameOrFunc == "SelectTerrainRegion"
 		or funcNameOrFunc == RbxUtility.SelectTerrainRegion
 	then
-		return "Function SelectTerrainRegion. "
-			.. "Arguments: (regionToSelect, color, selectEmptyCells, selectionParent). "
-			.. "Description: Selects all terrain via a series of selection boxes within the regionToSelect "
-			.. "(this should be a region3 value). The selection box color is detemined by the color argument "
-			.. "(should be a brickcolor value). SelectionParent is the parent that the selection model gets placed to (optional)."
-			.. "SelectEmptyCells is bool, when true will select all cells in the "
-			.. "region, otherwise we only select non-empty cells. Returns a function that can update the selection,"
-			.. "arguments to said function are a new region3 to select, and the adornment color (color arg is optional). "
-			.. "Also returns a second function that takes no arguments and destroys the selection"
-	end
-	if
+		return [[Function SelectTerrainRegion.
+Arguments: (regionToSelect, color, selectEmptyCells, selectionParent).
+Description: Selects all terrain via a series of selection boxes within the regionToSelect (this should be a region3 value). The selection box color is detemined by the color argument (should be a brickcolor value). SelectionParent is the parent that the selection model gets placed to (optional).SelectEmptyCells is bool, when true will select all cells in the region, otherwise we only select non-empty cells. Returns a function that can update the selection, arguments to said function are a new region3 to select, and the adornment color (color arg is optional). Also returns a second function that takes no arguments and destroys the selection]]
+	elseif
 		funcNameOrFunc == "CreateSignal"
 		or funcNameOrFunc == RbxUtility.CreateSignal
 	then
-		return "Function CreateSignal. "
-			.. "Arguments: None. "
-			.. "Returns: The newly created Signal object. This object is identical to the RBXScriptSignal class "
-			.. "used for events in Objects, but is a Lua-side object so it can be used to create custom events in"
-			.. "Lua code. "
-			.. "Methods of the Signal object: :connect, :wait, :fire, :disconnect. "
-			.. "For more info you can pass the method name to the Help function, or view the wiki page "
-			.. 'for this library. EG: Help "Signal:connect".'
-	end
-	if funcNameOrFunc == "Signal:connect" then
-		return "Method Signal:connect. "
-			.. "Arguments: (function handler). "
-			.. "Return: A connection object which can be used to disconnect the connection to this handler. "
-			.. "Description: Connectes a handler function to this Signal, so that when |fire| is called the "
-			.. "handler function will be called with the arguments passed to |fire|."
+		return [[Function CreateSignal.
+Arguments: None.
+Returns: The newly created Signal object. This object is identical to the RBXScriptSignal class used for events in Objects, but is a Lua-side object so it can be used to create custom events in Lua code. Methods of the Signal object: :connect, :wait, :fire, :disconnect. For more info you can pass the method name to the Help function, or view the wiki page 'for this library. EG: Help "Signal:connect".]]
+	elseif funcNameOrFunc == "Signal:connect" then
+		return [[Method Signal:connect.
+Arguments: (function handler).
+Return: A connection object which can be used to disconnect the connection to this handler.
+Description: Connectes a handler function to this Signal, so that when |fire| is called the handler function will be called with the arguments passed to |fire|.]]
 	end
 	if funcNameOrFunc == "Signal:wait" then
-		return "Method Signal:wait. "
-			.. "Arguments: None. "
-			.. "Returns: The arguments passed to the next call to |fire|. "
-			.. "Description: This call does not return until the next call to |fire| is made, at which point it "
-			.. "will return the values which were passed as arguments to that |fire| call."
-	end
-	if funcNameOrFunc == "Signal:fire" then
-		return "Method Signal:fire. "
-			.. "Arguments: Any number of arguments of any type. "
-			.. "Returns: None. "
-			.. "Description: This call will invoke any connected handler functions, and notify any waiting code "
-			.. "attached to this Signal to continue, with the arguments passed to this function. Note: The calls "
-			.. "to handlers are made asynchronously, so this call will return immediately regardless of how long "
-			.. "it takes the connected handler functions to complete."
-	end
-	if funcNameOrFunc == "Signal:disconnect" then
-		return "Method Signal:disconnect. "
-			.. "Arguments: None. "
-			.. "Returns: None. "
-			.. "Description: This call disconnects all handlers attacched to this function, note however, it "
-			.. "does NOT make waiting code continue, as is the behavior of normal Roblox events. This method "
-			.. "can also be called on the connection object which is returned from Signal:connect to only "
-			.. "disconnect a single handler, as opposed to this method, which will disconnect all handlers."
-	end
-	if funcNameOrFunc == "Create" then
-		return "Function Create. "
-			.. "Arguments: A table containing information about how to construct a collection of objects. "
-			.. "Returns: The constructed objects. "
-			.. "Descrition: Create is a very powerful function, whose description is too long to fit here, and "
-			.. "is best described via example, please see the wiki page for a description of how to use it."
+		return [[Method Signal:wait.
+Arguments: None.
+Returns: The arguments passed to the next call to |fire|.
+Description: This call does not return until the next call to |fire| is made, at which point it will return the values which were passed as arguments to that |fire| call.]]
+	elseif funcNameOrFunc == "Signal:fire" then
+		return [[Method Signal:fire.
+Arguments: Any number of arguments of any type.
+Returns: None.
+Description: This call will invoke any connected handler functions, and notify any waiting code attached to this Signal to continue, with the arguments passed to this function. Note: The calls to handlers are made asynchronously, so this call will return immediately regardless of how long it takes the connected handler functions to complete.]]
+	elseif funcNameOrFunc == "Signal:disconnect" then
+		return [[Method Signal:disconnect.
+Arguments: None.
+Returns: None.
+Description: This call disconnects all handlers attacched to this function, note however, it does NOT make waiting code continue, as is the behavior of normal Mercury events. This method can also be called on the connection object which is returned from Signal:connect to only disconnect a single handler, as opposed to this method, which will disconnect all handlers.]]
+	elseif funcNameOrFunc == "Create" then
+		return [[Function Create.
+Arguments: A table containing information about how to construct a collection of objects.
+Returns: The constructed objects.
+Descrition: Create is a very powerful function, whose description is too long to fit here, and is best described via example, please see the wiki page for a description of how to use it.]]
 	end
 	return "No help available for this function"
 end

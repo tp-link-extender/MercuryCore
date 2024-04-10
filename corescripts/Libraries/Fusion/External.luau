@@ -1,7 +1,7 @@
 --!strict
 --[[
-    Abstraction layer between Fusion internals and external environments,
-    allowing for flexible integration with schedulers and test mocks.
+	Abstraction layer between Fusion internals and external environments,
+	allowing for flexible integration with schedulers and test mocks.
 ]]
 
 local logError = require "./Logging/logError"
@@ -20,8 +20,8 @@ local currentScheduler: Scheduler? = nil
 local lastUpdateStep = 0
 
 --[[
-    Sets the external scheduler that Fusion will use for queuing async tasks.
-    Returns the previous scheduler so it can be reset later.
+	Sets the external scheduler that Fusion will use for queuing async tasks.
+	Returns the previous scheduler so it can be reset later.
 ]]
 function External.setExternalScheduler(newScheduler: Scheduler?): Scheduler?
 	local oldScheduler = currentScheduler
@@ -36,7 +36,7 @@ function External.setExternalScheduler(newScheduler: Scheduler?): Scheduler?
 end
 
 --[[
-   Sends an immediate task to the external scheduler. Throws if none is set.
+	Sends an immediate task to the external scheduler. Throws if none is set.
 ]]
 function External.doTaskImmediate(resume: () -> ())
 	if currentScheduler == nil then
@@ -47,7 +47,7 @@ function External.doTaskImmediate(resume: () -> ())
 end
 
 --[[
-    Sends a deferred task to the external scheduler. Throws if none is set.
+	Sends a deferred task to the external scheduler. Throws if none is set.
 ]]
 function External.doTaskDeferred(resume: () -> ())
 	if currentScheduler == nil then
@@ -58,14 +58,14 @@ function External.doTaskDeferred(resume: () -> ())
 end
 
 --[[
-    Registers a callback to the update step of the external scheduler.
-    Returns a function that can be used to disconnect later.
+	Registers a callback to the update step of the external scheduler.
+	Returns a function that can be used to disconnect later.
 
-    Callbacks are given the current number of seconds since an arbitrary epoch.
-    
-    TODO: This epoch may change between schedulers. We could investigate ways
-    of allowing schedulers to co-operate to keep the epoch the same, so that
-    monotonicity can be better preserved.
+	Callbacks are given the current number of seconds since an arbitrary epoch.
+		
+	TODO: This epoch may change between schedulers. We could investigate ways
+	of allowing schedulers to co-operate to keep the epoch the same, so that
+	monotonicity can be better preserved.
 ]]
 function External.bindToUpdateStep(callback: (now: number) -> ()): () -> ()
 	local uniqueIdentifier = {}
@@ -76,9 +76,9 @@ function External.bindToUpdateStep(callback: (now: number) -> ()): () -> ()
 end
 
 --[[
-    Steps time-dependent systems with the current number of seconds since an
-    arbitrary epoch. This should be called as early as possible in the external
-    scheduler's update cycle.
+	Steps time-dependent systems with the current number of seconds since an
+	arbitrary epoch. This should be called as early as possible in the external
+	scheduler's update cycle.
 ]]
 function External.performUpdateStep(now: number)
 	lastUpdateStep = now
@@ -88,7 +88,7 @@ function External.performUpdateStep(now: number)
 end
 
 --[[
-    Returns the timestamp of the last update step.
+	Returns the timestamp of the last update step.
 ]]
 function External.lastUpdateStep()
 	return lastUpdateStep

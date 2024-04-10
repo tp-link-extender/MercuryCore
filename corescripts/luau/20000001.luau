@@ -6,7 +6,7 @@ local Players = game:GetService "Players"
 local RunService = game:GetService "RunService"
 local MaxLength = 35
 
-local New = (require "../Modules/New").New
+local New = require("../Modules/New").New
 
 local logEvent: BindableEvent
 
@@ -248,7 +248,7 @@ end
 function utility.exit()
 	logEvent:Fire("Goodbye!", Color3.new(1, 1, 0.3))
 
-	for i = 1, MaxLength do
+	for _ = 1, MaxLength do
 		logEvent:Fire()
 		RunService.RenderStepped:wait()
 	end

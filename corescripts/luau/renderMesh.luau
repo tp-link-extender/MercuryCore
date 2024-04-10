@@ -4,7 +4,7 @@
 local ThumbnailGenerator = game:GetService "ThumbnailGenerator"
 local RenderModule = require "../Modules/Render"
 local Render = RenderModule(_BASE_URL, _PING_URL, _THUMBNAIL_KEY) -- avoid ambiguous syntax after compilation
-local New = (require "../Modules/New").New
+local New = require("../Modules/New").New
 
 print(`[{game.JobId}] Starting new render for {_RENDER_TYPE} Id {_ASSET_ID}`)
 

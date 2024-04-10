@@ -1,7 +1,7 @@
 --!strict
 --[[
-    Returns true if A and B are 'similar' - ie. any user of A would not need
-    to recompute if it changed to B.
+	Returns true if A and B are 'similar' - ie. any user of A would not need
+	to recompute if it changed to B.
 ]]
 
 local function isSimilar(a: any, b: any): boolean

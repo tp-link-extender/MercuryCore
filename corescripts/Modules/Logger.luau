@@ -1,7 +1,7 @@
 local logEvent
 
 return function(...: string)
-	if game.Players.LocalPlayer.Name ~= "Heliodex" then
+	if game.Players.LocalPlayer.Name ~= "Heliodex" then -- hehuhuhuehuehe
 		return
 	end
 

@@ -36,9 +36,10 @@ local screenGui = CoreGui:FindFirstChild "RobloxGui" :: ScreenGui & {
 	Backpack: Frame,
 	CurrentLoadout: Frame,
 }
+screenGui.Name = "MercuryGui" -- lmao lel lol lmfao
 
 local scripts = {
-	[36868950] = "CoreScripts/ToolTip", -- ToolTipper  (creates tool tips for gui)
+	[36868950] = "CoreScripts/ToolTip", -- ToolTipper (creates tool tips for gui)
 	[46295863] = "CoreScripts/Settings", -- SettingsScript
 	[39250920] = "CoreScripts/MainBotChatScript", -- MainBotChatScript
 	[48488451] = "CoreScripts/PopupScript", -- Popup Script

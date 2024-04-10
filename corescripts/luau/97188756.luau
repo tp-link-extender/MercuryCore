@@ -1,11 +1,11 @@
 --!strict
--- CoreGui.RobloxGui.CoreScripts/ChatScript
+-- CoreGui.MercuryGui.CoreScripts/ChatScript
 print "[Mercury]: Loaded corescript 97188756"
 
 local RunService = game:GetService "RunService"
 
 local SafeChat = require "../Modules/Safechat.yml" -- THANK YOU DARKLUA
-local New = (require "../Modules/New").New
+local New = require("../Modules/New").New
 
 local forceChatGUI = false
 
@@ -17,20 +17,20 @@ local function WaitForChild(parent: Instance, childName)
 	return parent[childName]
 end
 
-while not Game.Players.LocalPlayer do
+while not game.Players.LocalPlayer do
 	RunService.Heartbeat:wait()
 end
 
-local Player = Game.Players.LocalPlayer
+local Player = game.Players.LocalPlayer
 while not Player.Character do
 	RunService.Heartbeat:wait()
 end
-local Camera = Game.Workspace.CurrentCamera
+local Camera = game.Workspace.CurrentCamera
 
 -- Services
-local CoreGui = Game:GetService "CoreGui"
-local Players = Game:GetService "Players"
-local GuiService = Game:GetService "GuiService"
+local CoreGui = game:GetService "CoreGui"
+local Players = game:GetService "Players"
+local GuiService = game:GetService "GuiService"
 
 -- Lua Enums
 local Enums = {}
@@ -653,7 +653,7 @@ end
 -- Create the initial Chat stuff
 -- Done only once
 function Chat:CreateGui()
-	self.Gui = WaitForChild(CoreGui, "RobloxGui")
+	self.Gui = WaitForChild(CoreGui, "MercuryGui")
 	self.Frame = New "Frame" {
 		Name = "ChatFrame",
 		--Size = self.Configuration.Size;
@@ -754,7 +754,7 @@ function Input:OnMouseScroll()
 					wait(0.25)
 				end
 			end
-			wait(0.03)
+			wait()
 		end
 	end)
 	if Chat:CheckIfInBounds(Input.Speed) then
@@ -883,9 +883,9 @@ function Chat:Initialize()
 	pcall(function()
 		Chat:CoreGuiChanged(
 			Enum.CoreGuiType.Chat,
-			Game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Chat)
+			game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Chat)
 		)
-		Game.StarterGui.CoreGuiChangedSignal:connect(
+		game.StarterGui.CoreGuiChangedSignal:connect(
 			function(coreGuiType, enabled)
 				Chat:CoreGuiChanged(coreGuiType, enabled)
 			end

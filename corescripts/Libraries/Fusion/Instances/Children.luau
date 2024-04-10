@@ -136,7 +136,7 @@ function Children:apply(
 		end
 	end
 
-	queueUpdate = function()
+	function queueUpdate()
 		if not updateQueued then
 			updateQueued = true
 			External.doTaskDeferred(updateChildren)

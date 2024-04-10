@@ -156,9 +156,7 @@ end
 local function findSeatsInModel(parent, seatTable)
 	if not parent then
 		return
-	end
-
-	if parent.className == "Seat" or parent.className == "VehicleSeat" then
+	elseif parent.className == "Seat" or parent.className == "VehicleSeat" then
 		table.insert(seatTable, parent)
 	end
 	local myChildren = parent:GetChildren()
@@ -488,12 +486,10 @@ local function findConfigAtMouseTarget(Mouse: Mouse, stampData: Instance)
 	-- This can happen sometimes, return if so
 	if not Mouse then
 		return
-	end
-	if not stampData then
+	elseif not stampData then
 		error "findConfigAtMouseTarget: stampData is nil"
 		return
-	end
-	if not stampData.CurrentParts then
+	elseif not stampData.CurrentParts then
 		return
 	end
 
@@ -513,12 +509,10 @@ local function findConfigAtMouseTarget(Mouse: Mouse, stampData: Instance)
 		insertCFrame = stampData.CurrentParts.CFrame
 	end
 
-	if Mouse then
-		if stampData.CurrentParts:IsA "Tool" then
-			Mouse.TargetFilter = stampData.CurrentParts.Handle
-		else
-			Mouse.TargetFilter = stampData.CurrentParts
-		end
+	if Mouse and stampData.CurrentParts:IsA "Tool" then
+		Mouse.TargetFilter = stampData.CurrentParts.Handle
+	else
+		Mouse.TargetFilter = stampData.CurrentParts
 	end
 
 	local hitPlane = false
@@ -739,7 +733,7 @@ local function restoreTheWelds(manualWeldTable, manualWeldParentTable)
 	end
 end
 
-RbxStamper.CanEditRegion = function(partOrModel, EditRegion) -- todo: use model and stamper metadata
+function RbxStamper.CanEditRegion(partOrModel, EditRegion) -- todo: use model and stamper metadata
 	if not EditRegion then
 		return true, false
 	end
@@ -763,11 +757,10 @@ RbxStamper.CanEditRegion = function(partOrModel, EditRegion) -- todo: use model 
 	return true, false
 end
 
-RbxStamper.GetStampModel = function(assetId, terrainShape, useAssetVersionId)
+function RbxStamper.GetStampModel(assetId, terrainShape, useAssetVersionId)
 	if assetId == 0 then
 		return nil, "No Asset"
-	end
-	if assetId < 0 then
+	elseif assetId < 0 then
 		return nil, "Negative Asset"
 	end
 
@@ -976,7 +969,7 @@ RbxStamper.GetStampModel = function(assetId, terrainShape, useAssetVersionId)
 	return root
 end
 
-RbxStamper.SetupStamperDragger = function(
+function RbxStamper.SetupStamperDragger(
 	modelToStamp,
 	Mouse,
 	StampInModel,
@@ -1258,7 +1251,7 @@ RbxStamper.SetupStamperDragger = function(
 		-- There wasn't a target (no part or terrain), so check for plane intersection.
 		if not mouse.Target then
 			local cellPos = GetTerrainForMouse(mouse)
-			if nil == cellPos then
+			if not cellPos then
 				return
 			end
 		end
@@ -1634,45 +1627,38 @@ RbxStamper.SetupStamperDragger = function(
 		if not mouse then
 			error "Error: RbxStamper.DoStamperMouseDown: Mouse is nil"
 			return
-		end
-		if not mouse:IsA "Mouse" then
+		elseif not mouse:IsA "Mouse" then
 			error(
 				`Error: RbxStamper.DoStamperMouseDown: Mouse is of type {mouse.className}, should be of type Mouse`
 			)
 			return
-		end
-		if not stampData then
+		elseif
+			not (
+				stampData
+				and isMegaClusterPart()
+				and mouse
+				and HighScalabilityLine
+			)
+		then
 			return
 		end
 
-		if isMegaClusterPart() then
-			if mouse and HighScalabilityLine then
-				local megaCube = stampData.CurrentParts:FindFirstChild(
-					"MegaClusterCube",
-					true
-				)
-				local terrain = game.Workspace.Terrain
-				if megaCube then
-					HighScalabilityLine.Dimensions = 1
-					local tempCell = terrain:WorldToCell(megaCube.CFrame.p)
-					HighScalabilityLine.Start = terrain:CellCenterToWorld(
-						tempCell.X,
-						tempCell.Y,
-						tempCell.Z
-					)
-					return
-				else
-					HighScalabilityLine.Dimensions = 1
-					local tempCell =
-						terrain:WorldToCell(stampData.CurrentParts.CFrame.p)
-					HighScalabilityLine.Start = terrain:CellCenterToWorld(
-						tempCell.X,
-						tempCell.Y,
-						tempCell.Z
-					)
-					return
-				end
-			end
+		local megaCube =
+			stampData.CurrentParts:FindFirstChild("MegaClusterCube", true)
+		local terrain = game.Workspace.Terrain
+		if megaCube then
+			HighScalabilityLine.Dimensions = 1
+			local tempCell = terrain:WorldToCell(megaCube.CFrame.p)
+			HighScalabilityLine.Start =
+				terrain:CellCenterToWorld(tempCell.X, tempCell.Y, tempCell.Z)
+			return
+		else
+			HighScalabilityLine.Dimensions = 1
+			local tempCell =
+				terrain:WorldToCell(stampData.CurrentParts.CFrame.p)
+			HighScalabilityLine.Start =
+				terrain:CellCenterToWorld(tempCell.X, tempCell.Y, tempCell.Z)
+			return
 		end
 	end
 
@@ -2902,7 +2888,7 @@ RbxStamper.SetupStamperDragger = function(
 	control.Stamped = stamped -- BoolValue that fires when user stamps
 	control.Paused = false
 
-	control.LoadNewModel = function(newStampModel) -- allows us to specify a new stamper model to be used with this stamper
+	function control.LoadNewModel(newStampModel) -- allows us to specify a new stamper model to be used with this stamper
 		if
 			newStampModel
 			and not newStampModel:IsA "Model"
@@ -2914,11 +2900,11 @@ RbxStamper.SetupStamperDragger = function(
 		resetStamperState(newStampModel)
 	end
 
-	control.ReloadModel = function() -- will automatically set stamper to get a new model of current model and start stamping with new model
+	function control.ReloadModel() -- will automatically set stamper to get a new model of current model and start stamping with new model
 		resetStamperState()
 	end
 
-	control.Pause = function() -- temporarily stops stamping, use resume to start up again
+	function control.Pause() -- temporarily stops stamping, use resume to start up again
 		if not control.Paused then
 			pauseStamper()
 			control.Paused = true
@@ -2927,7 +2913,7 @@ RbxStamper.SetupStamperDragger = function(
 		end
 	end
 
-	control.Resume = function() -- resumes stamping, if currently paused
+	function control.Resume() -- resumes stamping, if currently paused
 		if control.Paused then
 			resumeStamper()
 			control.Paused = false
@@ -2936,13 +2922,13 @@ RbxStamper.SetupStamperDragger = function(
 		end
 	end
 
-	control.ResetRotation = function() -- resets the model rotation so new models are at default orientation
+	function control.ResetRotation() -- resets the model rotation so new models are at default orientation
 		-- gInitial90DegreeRotations = 0
 		-- Note:  This function will not always work quite the way we want it to; we will have to build this out further so it works with
 		--        High-Scalability and with the new model orientation setting methods (model:ResetOrientationToIdentity())  [HotThoth]
 	end
 
-	control.Destroy = function() -- Stops current Stamp operation and destroys control construct
+	function control.Destroy() -- Stops current Stamp operation and destroys control construct
 		for i = 1, #mouseCons do
 			mouseCons[i]:disconnect()
 			mouseCons[i] = nil
@@ -2980,7 +2966,7 @@ RbxStamper.SetupStamperDragger = function(
 	return control
 end
 
-RbxStamper.Help = function(funcNameOrFunc)
+function RbxStamper.Help(funcNameOrFunc)
 	--input argument can be a string or a function.  Should return a description (of arguments and expected side effects)
 	if
 		funcNameOrFunc == "GetStampModel"

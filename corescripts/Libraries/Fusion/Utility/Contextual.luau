@@ -1,7 +1,7 @@
 --!strict
 
 --[[
-    Time-based contextual values, to allow for transparently passing values down
+	Time-based contextual values, to allow for transparently passing values down
 	the call stack.
 ]]
 

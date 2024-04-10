@@ -1,4 +1,4 @@
--- CoreGui.RobloxGui.CoreScripts/NotificationScript
+-- CoreGui.MercuryGui.CoreScripts/NotificationScript
 print "[Mercury]: Loaded corescript 48488398"
 
 local GuiService = game:GetService "GuiService"
@@ -53,15 +53,13 @@ end
 
 local function makeFriend(fromPlayer, toPlayer)
 	local popup = script.Parent:FindFirstChild "Popup"
-	if popup == nil then
+	if
+		popup == nil -- there is no popup!
+		or popup.Visible -- currently popping something, abort!
+		or friendRequestBlacklist[fromPlayer] -- previously cancelled friend request, we don't want it!
+	then
 		return
-	end -- there is no popup!
-	if popup.Visible then
-		return
-	end -- currently popping something, abort!
-	if friendRequestBlacklist[fromPlayer] then
-		return
-	end -- previously cancelled friend request, we don't want it!
+	end
 
 	popup.PopupText.Text = `Accept Friend Request from {fromPlayer.Name}?`
 	popup.PopupImage.Image =
@@ -126,9 +124,7 @@ game.Players.FriendRequestEvent:connect(function(fromPlayer, toPlayer, event)
 	-- if this doesn't involve me, then do nothing
 	if fromPlayer ~= localPlayer and toPlayer ~= localPlayer then
 		return
-	end
-
-	if fromPlayer == localPlayer then
+	elseif fromPlayer == localPlayer then
 		if event == Enum.FriendRequestEvent.Accept then
 			GuiService:SendNotification(
 				"You are Friends",
@@ -198,7 +194,7 @@ end
 if teleportEnabled then
 	localPlayer.OnTeleport:connect(onTeleport)
 
-	TeleportService.ErrorCallback = function(message)
+	function TeleportService.ErrorCallback(message)
 		local popup = script.Parent:FindFirstChild "Popup"
 		showOneButton()
 		popup.PopupText.Text = message
@@ -248,7 +244,7 @@ if teleportEnabled then
 			end
 		)
 	end
-	TeleportService.ConfirmationCallback = function(message, placeId, spawnName)
+	function TeleportService.ConfirmationCallback(message, placeId, spawnName)
 		local popup = script.Parent:FindFirstChild "Popup"
 		popup.PopupText.Text = message
 		popup.PopupImage.Image = ""

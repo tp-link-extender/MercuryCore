@@ -1,10 +1,10 @@
--- CoreGui.RobloxGui.CurrentLoadout.CoreScripts/BackpackScript
+-- CoreGui.MercuryGui.CurrentLoadout.CoreScripts/BackpackScript
 print "[Mercury]: Loaded corescript 53878057"
 
 local CoreGui = game:GetService "CoreGui"
 local GuiService = game:GetService "GuiService"
 local RunService = game:GetService "RunService"
-local UserInputService = Game:GetService "UserInputService"
+local UserInputService = game:GetService "UserInputService"
 
 -- A couple of necessary functions
 local function waitForChild(instance, name)
@@ -23,15 +23,15 @@ local currentLoadout = script.Parent
 local StaticTabName = "gear"
 local backpackEnabled = true
 
-local robloxGui = CoreGui:FindFirstChild "RobloxGui"
-assert(robloxGui)
+local mercuryGui = CoreGui:FindFirstChild "MercuryGui"
+assert(mercuryGui)
 
-local controlFrame = waitForChild(robloxGui, "ControlFrame")
+local controlFrame = waitForChild(mercuryGui, "ControlFrame")
 local backpackButton = waitForChild(controlFrame, "BackpackButton")
-local backpack = waitForChild(robloxGui, "Backpack")
-waitForChild(robloxGui, "CurrentLoadout")
-waitForChild(robloxGui.CurrentLoadout, "TempSlot")
-waitForChild(robloxGui.CurrentLoadout.TempSlot, "SlotNumber")
+local backpack = waitForChild(mercuryGui, "Backpack")
+waitForChild(mercuryGui, "CurrentLoadout")
+waitForChild(mercuryGui.CurrentLoadout, "TempSlot")
+waitForChild(mercuryGui.CurrentLoadout.TempSlot, "SlotNumber")
 
 waitForChild(currentLoadout, "Background")
 local clBackground = currentLoadout.Background
@@ -92,9 +92,6 @@ local tabClickedEvent = waitForChild(backpackManager, "TabClickedEvent")
 local inGearTab = true
 
 local maxNumLoadoutItems = 10
-if robloxGui.AbsoluteSize.Y <= 320 then
-	maxNumLoadoutItems = 4
-end
 
 local characterChildAddedCon, backpackChildCon
 
@@ -114,8 +111,6 @@ local gearSlots = {}
 for i = 1, maxNumLoadoutItems do
 	gearSlots[i] = "empty"
 end
-
-local backpackWasOpened = false
 
 local dragBeginPos
 --- End Locals
@@ -154,17 +149,11 @@ local function unregisterNumberKeys()
 end
 
 local function characterInWorkspace()
-	if game.Players.LocalPlayer then
-		if game.Players.LocalPlayer.Character then
-			if game.Players.LocalPlayer.Character ~= nil then
-				if game.Players.LocalPlayer.Character.Parent ~= nil then
-					return true
-				end
-			end
-		end
-	end
-
-	return false
+	local localPlayer = game.Players.LocalPlayer
+	return localPlayer
+		and localPlayer.Character
+		and localPlayer.Character ~= nil
+		and localPlayer.Character.Parent ~= nil
 end
 
 local function removeGear(gear)
@@ -288,7 +277,7 @@ local function insertGear(gear, addToSlot)
 	end)
 end
 
-reorganizeLoadout = function(gear, inserting, _, addToSlot)
+function reorganizeLoadout(gear, inserting, _, addToSlot)
 	if inserting then -- add in gear
 		insertGear(gear, addToSlot)
 	else
@@ -301,7 +290,7 @@ end
 
 local function checkToolAncestry(child, parent)
 	if
-		child:FindFirstChild "RobloxBuildTool" -- don't show roblox build tools
+		child:FindFirstChild "RobloxBuildTool" -- don't show mercury build tools
 		or not (child:IsA "Tool" or child:IsA "HopperBin")
 	then
 		return
@@ -350,16 +339,12 @@ local function removeAllEquippedGear(physGear)
 end
 
 local function normaliseButton(button, speed)
-	if not button then
-		return
-	end
-	if button.Size.Y.Scale <= 1 then
-		return
-	end
-	if button.Selected then
-		return
-	end
-	if not button.Parent then
+	if
+		not button
+		or button.Size.Y.Scale <= 1
+		or button.Selected
+		or not button.Parent
+	then
 		return
 	end
 
@@ -407,9 +392,7 @@ local function enlargeButton(button)
 
 	if not enlargeOverride then
 		return
-	end
-
-	if button:FindFirstChild "Highlight" then
+	elseif button:FindFirstChild "Highlight" then
 		button.Highlight.Visible = true
 	end
 
@@ -510,30 +493,21 @@ local function toolSwitcher(numKey)
 end
 
 local function activateGear(num)
-	local numKey
-	if num == "0" then
-		numKey = 10 -- why do lua indexes have to start at 1? :(
-	else
-		numKey = tonumber(num)
-	end
+	local numKey = num == "0" and 10 or tonumber(num)
 
-	if numKey == nil then
-		return
-	end
-
-	if gearSlots[numKey] ~= "empty" then
+	if numKey and gearSlots[numKey] ~= "empty" then
 		toolSwitcher(numKey)
 	end
 end
 
 local function pointInRectangle(point, rectTopLeft, rectSize)
-	if point.x > rectTopLeft.x and point.x < (rectTopLeft.x + rectSize.x) then
-		if
-			point.y > rectTopLeft.y
-			and point.y < (rectTopLeft.y + rectSize.y)
-		then
-			return true
-		end
+	if
+		point.x > rectTopLeft.x
+		and point.x < (rectTopLeft.x + rectSize.x)
+		and point.y > rectTopLeft.y
+		and point.y < (rectTopLeft.y + rectSize.y)
+	then
+		return true
 	end
 	return false
 end
@@ -716,7 +690,7 @@ local function addingPlayerChild(
 	if child:FindFirstChild "RobloxBuildTool" then
 		debounce = false
 		return
-	end -- don't show roblox build tools
+	end -- don't show mercury build tools
 	if not (child:IsA "Tool" or child:IsA "HopperBin") then
 		debounce = false
 		return -- we don't care about anything besides tools (sigh...)
@@ -783,7 +757,7 @@ local function addingPlayerChild(
 	end
 
 	local slotNum = slotToMod % 10
-	local parent = currentLoadout:FindFirstChild(`Slot{slotNum}`)
+	local parent = currentLoadout:FindFirstChild("Slot" .. slotNum)
 	gearClone.Parent = parent
 
 	if inventoryGearButton then
@@ -851,30 +825,23 @@ local function addingPlayerChild(
 		local children = gearClone:GetChildren()
 		for i = 1, #children do
 			if children[i]:IsA "TextLabel" then
-				if string.find(children[i].Name, "Shadow") then
-					children[i].ZIndex = 8
-				else
-					children[i].ZIndex = 9
-				end
+				children[i].ZIndex = string.find(children[i].Name, "Shadow")
+						and 8
+					or 9
 			elseif children[i]:IsA "Frame" or children[i]:IsA "ImageLabel" then
 				children[i].ZIndex = 7
 			end
 		end
 	end)
 	dragStop = gearClone.DragStopped:connect(function(x, y)
-		if gearClone.Selected then
-			gearClone.ZIndex = 4
-		else
-			gearClone.ZIndex = 3
-		end
+		gearClone.ZIndex = gearClone.Selected and 4 or 3
+
 		local children = gearClone:GetChildren()
 		for i = 1, #children do
 			if children[i]:IsA "TextLabel" then
-				if string.find(children[i].Name, "Shadow") then
-					children[i].ZIndex = 3
-				else
-					children[i].ZIndex = 4
-				end
+				children[i].ZIndex = string.find(children[i].Name, "Shadow")
+						and 3
+					or 4
 			elseif children[i]:IsA "Frame" or children[i]:IsA "ImageLabel" then
 				children[i].ZIndex = 2
 			end
@@ -887,8 +854,7 @@ local function addingPlayerChild(
 	buttonDeleteCon = gearClone.AncestryChanged:connect(function()
 		if gearClone.Parent and gearClone.Parent.Parent == currentLoadout then
 			return
-		end
-		if clickCon then
+		elseif clickCon then
 			clickCon:disconnect()
 		end
 		if buttonDeleteCon then
@@ -925,16 +891,12 @@ local function addingPlayerChild(
 	end)
 
 	childChangeCon = child.Changed:connect(function(prop)
-		if prop == "Name" then
-			if gearClone and gearClone.GearImage.Image == "" then
-				gearClone.GearText.Text = child.Name
-			end
+		if prop == "Name" and gearClone and gearClone.GearImage.Image == "" then
+			gearClone.GearText.Text = child.Name
 		elseif prop == "Active" then
-			if child and child:IsA "HopperBin" then
-				if not child.Active then
-					gearClone.Selected = false
-					normaliseButton(gearClone)
-				end
+			if child and child:IsA "HopperBin" and not child.Active then
+				gearClone.Selected = false
+				normaliseButton(gearClone)
 			end
 		elseif prop == "TextureId" then
 			gearClone.GearImage.Image = child.TextureId
@@ -945,7 +907,7 @@ local function addingPlayerChild(
 
 	Spawn(function()
 		while backpackIsOpen() do
-			wait(0.03)
+			wait()
 		end
 		for i = 1, #gearSlots do
 			if gearSlots[i] ~= "empty" then
@@ -968,11 +930,11 @@ local function addToInventory(child)
 	for i = 1, #inventory do
 		if inventory[i] and inventory[i] == child then
 			return
-		end
-		if not inventory[i] then
+		elseif not inventory[i] then
 			slot = i
 		end
 	end
+
 	if slot then
 		inventory[slot] = child
 	elseif #inventory < 1 then
@@ -982,7 +944,7 @@ local function addToInventory(child)
 	end
 end
 
-local spreadOutGear = function()
+local function spreadOutGear()
 	local loadoutChildren = currentLoadout:GetChildren()
 
 	for i = 1, #loadoutChildren do
@@ -992,28 +954,18 @@ local spreadOutGear = function()
 			if slot == 0 then
 				slot = 10
 			end
-			if robloxGui.AbsoluteSize.Y <= 320 then
-				loadoutChildren[i]:TweenPosition(
-					UDim2.new(0, (slot - 1) * 60, 0, 0),
-					Enum.EasingDirection.Out,
-					Enum.EasingStyle.Quad,
-					0.25,
-					true
-				)
-			else
-				loadoutChildren[i]:TweenPosition(
-					UDim2.new((slot - 1) / 10, 0, 0, 0),
-					Enum.EasingDirection.Out,
-					Enum.EasingStyle.Quad,
-					0.25,
-					true
-				)
-			end
+			loadoutChildren[i]:TweenPosition(
+				UDim2.new((slot - 1) / 10, 0, 0, 0),
+				Enum.EasingDirection.Out,
+				Enum.EasingStyle.Quad,
+				0.25,
+				true
+			)
 		end
 	end
 end
 
-local centerGear = function()
+local function centerGear()
 	local loadoutChildren = currentLoadout:GetChildren()
 	local gearButtons = {}
 	local lastSlotAdd
@@ -1036,29 +988,17 @@ local centerGear = function()
 
 	local startPos = (1 - (#gearButtons * 0.1)) / 2
 	for i = 1, #gearButtons do
-		if robloxGui.AbsoluteSize.Y <= 320 then
-			startPos = (0.5 - (#gearButtons * 0.333) / 2)
-			gearButtons[i]:TweenPosition(
-				UDim2.new(startPos + (i - 1) * 0.33, 0, 0, 0),
-				Enum.EasingDirection.Out,
-				Enum.EasingStyle.Quad,
-				0.25,
-				true
-			)
-		else
-			gearButtons[i]:TweenPosition(
-				UDim2.new(startPos + ((i - 1) * 0.1), 0, 0, 0),
-				Enum.EasingDirection.Out,
-				Enum.EasingStyle.Quad,
-				0.25,
-				true
-			)
-		end
+		gearButtons[i]:TweenPosition(
+			UDim2.new(startPos + ((i - 1) * 0.1), 0, 0, 0),
+			Enum.EasingDirection.Out,
+			Enum.EasingStyle.Quad,
+			0.25,
+			true
+		)
 	end
 end
 
 local function editLoadout()
-	backpackWasOpened = true
 	if inGearTab then
 		spreadOutGear()
 	end
@@ -1141,13 +1081,13 @@ registerNumberKeys()
 pcall(function()
 	coreGuiChanged(
 		Enum.CoreGuiType.Backpack,
-		Game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
+		game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
 	)
 	coreGuiChanged(
 		Enum.CoreGuiType.Health,
-		Game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Health)
+		game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Health)
 	)
-	Game.StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
+	game.StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
 end)
 
 RunService.Heartbeat:wait() -- let stuff initialize incase this is first heartbeat...
@@ -1155,7 +1095,7 @@ RunService.Heartbeat:wait() -- let stuff initialize incase this is first heartbe
 waitForChild(player, "Backpack")
 waitForProperty(player, "Character")
 
--- not sure why this had no delay but the player.CharacterAdded one had one...  this type of error would be easier to avoid with function reusage
+-- not sure why this had no delay but the player.CharacterAdded one had one... this type of error would be easier to avoid with function reusage
 delay(1, function()
 	local backpackChildren = player.Backpack:GetChildren()
 	local size = math.min(10, #backpackChildren)
@@ -1167,23 +1107,6 @@ delay(1, function()
 		addingPlayerChild(backpackChildren[i], false)
 	end
 	setupBackpackListener()
-end)
-
-delay(2, function()
-	-- while true do
-	if not backpackWasOpened and robloxGui.AbsoluteSize.Y <= 320 then
-		local cChildren = currentLoadout:GetChildren()
-		for i = 1, #cChildren do
-			local slotNum = tonumber(
-				string.sub(cChildren[i].Name, 5, string.len(cChildren[i].Name))
-			)
-			if type(slotNum) == "number" then
-				cChildren[i].Position = UDim2.new(0, (slotNum - 1) * 60, 0, 0)
-			end
-		end
-	end
-	wait(0.25)
-	-- end
 end)
 
 player.ChildAdded:connect(function(child)
@@ -1212,7 +1135,6 @@ humanoidDiedCon = player.Character.Humanoid.Died:connect(function()
 		backpackChildCon:disconnect()
 		backpackChildCon = nil
 	end
-	backpackWasOpened = false
 end)
 
 player.CharacterRemoving:connect(function()
@@ -1276,27 +1198,6 @@ player.CharacterAdded:connect(function()
 	end)
 	waitForChild(player, "PlayerGui")
 	moveHealthBar(player.PlayerGui)
-	delay(2, function()
-		-- while true do
-		if not backpackWasOpened and robloxGui.AbsoluteSize.Y <= 320 then
-			local cChildren = currentLoadout:GetChildren()
-			for i = 1, #cChildren do
-				local slotNum = tonumber(
-					string.sub(
-						cChildren[i].Name,
-						5,
-						string.len(cChildren[i].Name)
-					)
-				)
-				if type(slotNum) == "number" then
-					cChildren[i].Position =
-						UDim2.new(0, (slotNum - 1) * 60, 0, 0)
-				end
-			end
-		end
-		wait(0.25)
-		-- end
-	end)
 end)
 
 waitForChild(guiBackpack, "SwapSlot")

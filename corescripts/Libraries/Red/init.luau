@@ -28,8 +28,8 @@ local function Red(_, Script: LuaSourceContainer)
 end
 
 return {
+	Load = Red,
 	Help = function()
 		return "See https://redblox.dev/ for more information."
 	end,
-	Load = Red,
 }

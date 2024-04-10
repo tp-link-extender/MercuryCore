@@ -1,5 +1,5 @@
 --!strict
--- CoreGui.RobloxGui.CoreScripts/Settings
+-- CoreGui.MercuryGui.CoreScripts/Settings
 print "[Mercury]: Loaded corescript 46295863"
 
 local News = require "../Modules/New"
@@ -310,16 +310,14 @@ end
 local function setDisabledState(guiObject)
 	if not guiObject then
 		return
-	end
-
-	if guiObject:IsA "TextLabel" then
+	elseif guiObject:IsA "TextLabel" then
 		guiObject.TextTransparency = 0.9
 	elseif guiObject:IsA "TextButton" then
 		guiObject.TextTransparency = 0.9
 		guiObject.Active = false
 	elseif guiObject.ClassName then
 		print(
-			"setDisabledState() got object of unsupported type.  object type is ",
+			"setDisabledState() got object of unsupported type. object type is ",
 			guiObject.ClassName
 		)
 	end
@@ -1251,10 +1249,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 	end)
 
 	graphicsLevel.Changed:connect(function(_)
-		if isAutoGraphics then
-			return
-		end
-		if not listenToGraphicsLevelChange then
+		if isAutoGraphics or not listenToGraphicsLevelChange then
 			return
 		end
 
@@ -1287,9 +1282,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 	autoGraphicsButton.MouseButton1Click:connect(function()
 		if inStudioMode and not game.Players.LocalPlayer then
 			return
-		end
-
-		if not isAutoGraphics then
+		elseif not isAutoGraphics then
 			goToAutoGraphics()
 		else
 			goToManualGraphics(graphicsLevel.Value)
@@ -1297,11 +1290,9 @@ local function createGameSettingsMenu(baseZIndex, _)
 	end)
 
 	game.GraphicsQualityChangeRequest:connect(function(graphicsIncrease)
-		if isAutoGraphics then
+		if isAutoGraphics then -- only can set graphics in manual mode
 			return
-		end -- only can set graphics in manual mode
-
-		if graphicsIncrease then
+		elseif graphicsIncrease then
 			if (graphicsLevel.Value + 1) > GraphicsQualityLevels then
 				return
 			end
@@ -1398,9 +1389,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 		studioCheckbox.MouseButton1Click:connect(function()
 			if not studioCheckbox.Active then
 				return
-			end
-
-			if studioCheckbox.Text == "" then
+			elseif studioCheckbox.Text == "" then
 				studioCheckbox.Text = "X"
 			else
 				studioCheckbox.Text = ""
@@ -1514,7 +1503,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 		videoCaptureDropDown.DropDownMenuButton.ZIndex = baseZIndex + 4
 		videoCaptureDropDown.DropDownMenuButton.Icon.ZIndex = baseZIndex + 4
 
-		syncVideoCaptureSetting = function()
+		function syncVideoCaptureSetting()
 			if
 				UserSettings().GameSettings.VideoUploadPromptBehavior
 				== Enum.UploadSetting.Never
@@ -1547,7 +1536,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 		Parent = gameSettingsMenuFrame,
 	}
 
-	mouseLockLabel = CoreGui.RobloxGui:FindFirstChild("MouseLockLabel", true)
+	mouseLockLabel = CoreGui.MercuryGui:FindFirstChild("MouseLockLabel", true)
 
 	local enumItems = Enum.ControlMode:GetEnumItems()
 	local enumNames = {}
@@ -1595,7 +1584,7 @@ GuiService:AddKey "r"
 
 local baseZIndex = 0
 if UserSettings then
-	local createSettingsDialog = function()
+	local function createSettingsDialog()
 		waitForChild(gui, "BottomLeftControl")
 		settingsButton = gui.BottomLeftControl:FindFirstChild "SettingsButton"
 
@@ -1674,7 +1663,7 @@ if UserSettings then
 			end)
 		end
 
-		CoreGui.RobloxGui.Changed:connect(
+		CoreGui.MercuryGui.Changed:connect(
 			function(prop) -- We have stopped recording when we resize
 				if prop == "AbsoluteSize" and recordingVideo then
 					recordVideoClick(
@@ -1979,7 +1968,7 @@ if UserSettings then
 	end)
 end --UserSettings call
 
-local createSaveDialogs = function()
+local function createSaveDialogs()
 	local shield = New "TextButton" {
 		Text = "",
 		AutoButtonColor = false,
@@ -2109,7 +2098,7 @@ local createSaveDialogs = function()
 		)
 	end
 
-	save = function()
+	function save()
 		saveDialogMessageBox.Visible = false
 
 		--Show the spinner dialog
@@ -2160,25 +2149,25 @@ local createSaveDialogs = function()
 		end
 	end
 
-	saveLocal = function()
+	function saveLocal()
 		errorDialogMessageBox.Visible = false
 		game:FinishShutdown(true)
 		clearAndResetDialog()
 	end
 
-	dontSave = function()
+	function dontSave()
 		saveDialogMessageBox.Visible = false
 		errorDialogMessageBox.Visible = false
 		game:FinishShutdown(false)
 		clearAndResetDialog()
 	end
-	cancel = function()
+	function cancel()
 		saveDialogMessageBox.Visible = false
 		errorDialogMessageBox.Visible = false
 		clearAndResetDialog()
 	end
 
-	clearAndResetDialog = function()
+	function clearAndResetDialog()
 		saveDialogMessageBox.Visible = true
 		errorDialogMessageBox.Visible = false
 		spinnerDialog.Visible = false
@@ -2191,7 +2180,7 @@ local createSaveDialogs = function()
 	return shield
 end
 
-local createReportAbuseDialog = function()
+local function createReportAbuseDialog()
 	--Only show things if we are a NetworkClient
 	waitForChild(game, "NetworkClient")
 
@@ -2239,7 +2228,7 @@ local createReportAbuseDialog = function()
 	local calmingMessageBox = Hydrate(
 		RbxGui.CreateMessageDialog(
 			"Thanks for your report!",
-			"Our moderators will review the chat logs and determine what happened.  The other user is probably just trying to make you mad.\n\nIf anyone used swear words, inappropriate language, or threatened you in real life, please report them for Bad Words or Threats",
+			"Our moderators will review the chat logs and determine what happened. The other user is probably just trying to make you mad.\n\nIf anyone used swear words, inappropriate language, or threatened you in real life, please report them for Bad Words or Threats",
 			messageBoxButtons
 		)
 	) {
@@ -2322,7 +2311,7 @@ local createReportAbuseDialog = function()
 		},
 		New "TextLabel" {
 			Name = "Description",
-			Text = "This will send a complete report to a moderator.  The moderator will review the chat log and take appropriate action.",
+			Text = "This will send a complete report to a moderator. The moderator will review the chat log and take appropriate action.",
 			TextColor3 = Color3I(221, 221, 221),
 			Position = UDim2.new(0, 0, 0, 55),
 			Size = UDim2.new(1, 0, 0, 40),
@@ -2492,8 +2481,8 @@ local createReportAbuseDialog = function()
 		Parent = reportAbuseFrame,
 	}
 
-	closeAndResetDialog = function()
-		--Delete old player combo box
+	function closeAndResetDialog()
+		-- Delete old player combo box
 		local oldComboBox = reportAbuseFrame:FindFirstChild "PlayersComboBox"
 		if oldComboBox then
 			oldComboBox.Parent = nil
@@ -2549,7 +2538,7 @@ if isSaveDialogSupported then
 		local saveDialogs = createSaveDialogs()
 		saveDialogs.Parent = gui
 
-		game.RequestShutdown = function()
+		function game.RequestShutdown()
 			table.insert(centerDialogs, saveDialogs)
 			game.GuiService:AddCenterDialog(
 				saveDialogs,

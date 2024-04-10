@@ -1,4 +1,4 @@
--- CoreGui.RobloxGui.Backpack.CoreScripts/BackpackScripts/Back (1?)
+-- CoreGui.MercuryGui.Backpack.CoreScripts/BackpackScripts/Back (1?)
 print "[Mercury]: Loaded corescript 89449008"
 
 local UserInputService = game:GetService "UserInputService"
@@ -240,6 +240,214 @@ local function swapGearSlot(slot, newGearButton)
 	end
 end
 
+local function checkForSwap(button, x, y)
+	local loadoutChildren = currentLoadout:GetChildren()
+	for i = 1, #loadoutChildren do
+		if
+			loadoutChildren[i]:IsA "Frame"
+			and string.find(loadoutChildren[i].Name, "Slot")
+		then
+			if
+				x >= loadoutChildren[i].AbsolutePosition.x
+				and x
+					<= (loadoutChildren[i].AbsolutePosition.x + loadoutChildren[i].AbsoluteSize.x)
+			then
+				if
+					y >= loadoutChildren[i].AbsolutePosition.y
+					and y
+						<= (loadoutChildren[i].AbsolutePosition.y + loadoutChildren[i].AbsoluteSize.y)
+				then
+					local slot =
+						tonumber(string.sub(loadoutChildren[i].Name, 5))
+					swapGearSlot(slot, button)
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
+
+local function unequipGear(physGear)
+	physGear.Parent = playerBackpack
+	updateGridActive()
+end
+
+local function highlight(button)
+	button.TextColor3 = Color3.new(0, 0, 0)
+	button.BackgroundColor3 = Color3.new(0.8, 0.8, 0.8)
+end
+
+local function clearHighlight(button)
+	button.TextColor3 = Color3.new(1, 1, 1)
+	button.BackgroundColor3 = Color3.new(0, 0, 0)
+end
+
+local function UnequipGearMenuClick(element, menu)
+	if type(element.Action) ~= "number" then
+		return
+	end
+	local num = element.Action
+	if num == 1 then -- remove from loadout
+		unequipGear(menu.Parent.GearReference.Value)
+		local inventoryButton = menu.Parent
+		local gearToUnequip = inventoryButton.GearReference.Value
+		local loadoutChildren = currentLoadout:GetChildren()
+		local slot = -1
+		for i = 1, #loadoutChildren do
+			if loadoutChildren[i]:IsA "Frame" then
+				local button = loadoutChildren[i]:GetChildren()
+				if
+					button[1]
+					and button[1].GearReference.Value == gearToUnequip
+				then
+					slot = button[1].SlotNumber.Text
+					break
+				end
+			end
+		end
+		swapGearSlot(slot, nil)
+	end
+end
+
+local function clearPreview()
+	gearPreview.GearImage.Image = ""
+	gearPreview.GearStats.GearName.Text = ""
+end
+
+local function getGearContextMenu()
+	local gearContextMenu = New "Frame" {
+		Active = true,
+		Name = "UnequipContextMenu",
+		Size = UDim2.new(0, 115, 0, 70),
+		Position = UDim2.new(0, -16, 0, -16),
+		BackgroundTransparency = 1,
+		Visible = false,
+	}
+
+	local gearContextMenuButton = New "TextButton" {
+		Name = "UnequipContextMenuButton",
+		Text = "",
+		Style = Enum.ButtonStyle.RobloxButtonDefault,
+		ZIndex = 8,
+		Size = UDim2.new(1, 0, 1, -20),
+		Visible = true,
+		Parent = gearContextMenu,
+	}
+
+	local elementHeight = 12
+
+	local contextMenuElements = {}
+	local contextMenuElementsName = { "Remove Hotkey" }
+
+	for i = 1, #contextMenuElementsName do
+		local element = {}
+		element.Type = "Button"
+		element.Text = contextMenuElementsName[i]
+		element.Action = i
+		element.DoIt = UnequipGearMenuClick
+		table.insert(contextMenuElements, element)
+	end
+
+	for i, contextElement in ipairs(contextMenuElements) do
+		local element = contextElement
+		if element.Type == "Button" then
+			local button = New "TextButton" {
+				Name = "UnequipContextButton" .. i,
+				BackgroundColor3 = Color3.new(0, 0, 0),
+				BorderSizePixel = 0,
+				TextXAlignment = Enum.TextXAlignment.Left,
+				Text = " " .. contextElement.Text,
+				Font = Enum.Font.Arial,
+				FontSize = Enum.FontSize.Size14,
+				Size = UDim2.new(1, 8, 0, elementHeight),
+				Position = UDim2.new(0, 0, 0, elementHeight * i),
+				TextColor3 = Color3.new(1, 1, 1),
+				ZIndex = 9,
+				Parent = gearContextMenuButton,
+			}
+
+			if not IsTouchDevice() then
+				button.MouseButton1Click:connect(function()
+					if button.Active and not gearContextMenu.Parent.Active then
+						pcall(function()
+							element.DoIt(element, gearContextMenu)
+						end)
+						browsingMenu = false
+						gearContextMenu.Visible = false
+						clearHighlight(button)
+						clearPreview()
+					end
+				end)
+
+				button.MouseEnter:connect(function()
+					if button.Active and gearContextMenu.Parent.Active then
+						highlight(button)
+					end
+				end)
+				button.MouseLeave:connect(function()
+					if button.Active and gearContextMenu.Parent.Active then
+						clearHighlight(button)
+					end
+				end)
+			end
+
+			contextElement.Button = button
+			contextElement.Element = button
+		elseif element.Type == "Label" then
+			local frame = Instance.new "Frame"
+			frame.Name = "ContextLabel" .. i
+			frame.BackgroundTransparency = 1
+			frame.Size = UDim2.new(1, 8, 0, elementHeight)
+
+			element.Label1 = New "TextLabel" {
+				Name = "Text1",
+				BackgroundTransparency = 1,
+				BackgroundColor3 = Color3.new(1, 1, 1),
+				BorderSizePixel = 0,
+				TextXAlignment = Enum.TextXAlignment.Left,
+				Font = Enum.Font.ArialBold,
+				FontSize = Enum.FontSize.Size14,
+				Position = UDim2.new(0, 0, 0, 0),
+				Size = UDim2.new(0.5, 0, 1, 0),
+				TextColor3 = Color3.new(1, 1, 1),
+				ZIndex = 9,
+				Parent = frame,
+			}
+
+			if element.GetText2 then
+				element.Label2 = New "TextLabel" {
+					Name = "Text2",
+					BackgroundTransparency = 1,
+					BackgroundColor3 = Color3.new(1, 1, 1),
+					BorderSizePixel = 0,
+					TextXAlignment = Enum.TextXAlignment.Right,
+					Font = Enum.Font.Arial,
+					FontSize = Enum.FontSize.Size14,
+					Position = UDim2.new(0.5, 0, 0, 0),
+					Size = UDim2.new(0.5, 0, 1, 0),
+					TextColor3 = Color3.new(1, 1, 1),
+					ZIndex = 9,
+					Parent = frame,
+				}
+			end
+			frame.Parent = gearContextMenuButton
+			element.Label = frame
+			element.Element = frame
+		end
+	end
+
+	gearContextMenu.ZIndex = 4
+	gearContextMenu.MouseLeave:connect(function()
+		browsingMenu = false
+		gearContextMenu.Visible = false
+		clearPreview()
+	end)
+	robloxLock(gearContextMenu)
+
+	return gearContextMenu
+end
+
 local function resizeGrid()
 	for _, v in pairs(backpackItems) do
 		if not v:FindFirstChild "RobloxBuildTool" then
@@ -400,214 +608,6 @@ local function addToGrid(child: Tool | HopperBin)
 		updateGridActive()
 	end)
 	resizeGrid()
-end
-
-local function unequipGear(physGear)
-	physGear.Parent = playerBackpack
-	updateGridActive()
-end
-
-local function highlight(button)
-	button.TextColor3 = Color3.new(0, 0, 0)
-	button.BackgroundColor3 = Color3.new(0.8, 0.8, 0.8)
-end
-
-local function clearHighlight(button)
-	button.TextColor3 = Color3.new(1, 1, 1)
-	button.BackgroundColor3 = Color3.new(0, 0, 0)
-end
-
-function checkForSwap(button, x, y)
-	local loadoutChildren = currentLoadout:GetChildren()
-	for i = 1, #loadoutChildren do
-		if
-			loadoutChildren[i]:IsA "Frame"
-			and string.find(loadoutChildren[i].Name, "Slot")
-		then
-			if
-				x >= loadoutChildren[i].AbsolutePosition.x
-				and x
-					<= (loadoutChildren[i].AbsolutePosition.x + loadoutChildren[i].AbsoluteSize.x)
-			then
-				if
-					y >= loadoutChildren[i].AbsolutePosition.y
-					and y
-						<= (loadoutChildren[i].AbsolutePosition.y + loadoutChildren[i].AbsoluteSize.y)
-				then
-					local slot =
-						tonumber(string.sub(loadoutChildren[i].Name, 5))
-					swapGearSlot(slot, button)
-					return true
-				end
-			end
-		end
-	end
-	return false
-end
-
-local UnequipGearMenuClick = function(element, menu)
-	if type(element.Action) ~= "number" then
-		return
-	end
-	local num = element.Action
-	if num == 1 then -- remove from loadout
-		unequipGear(menu.Parent.GearReference.Value)
-		local inventoryButton = menu.Parent
-		local gearToUnequip = inventoryButton.GearReference.Value
-		local loadoutChildren = currentLoadout:GetChildren()
-		local slot = -1
-		for i = 1, #loadoutChildren do
-			if loadoutChildren[i]:IsA "Frame" then
-				local button = loadoutChildren[i]:GetChildren()
-				if
-					button[1]
-					and button[1].GearReference.Value == gearToUnequip
-				then
-					slot = button[1].SlotNumber.Text
-					break
-				end
-			end
-		end
-		swapGearSlot(slot, nil)
-	end
-end
-
-local function clearPreview()
-	gearPreview.GearImage.Image = ""
-	gearPreview.GearStats.GearName.Text = ""
-end
-
-function getGearContextMenu()
-	local gearContextMenu = New "Frame" {
-		Active = true,
-		Name = "UnequipContextMenu",
-		Size = UDim2.new(0, 115, 0, 70),
-		Position = UDim2.new(0, -16, 0, -16),
-		BackgroundTransparency = 1,
-		Visible = false,
-	}
-
-	local gearContextMenuButton = New "TextButton" {
-		Name = "UnequipContextMenuButton",
-		Text = "",
-		Style = Enum.ButtonStyle.RobloxButtonDefault,
-		ZIndex = 8,
-		Size = UDim2.new(1, 0, 1, -20),
-		Visible = true,
-		Parent = gearContextMenu,
-	}
-
-	local elementHeight = 12
-
-	local contextMenuElements = {}
-	local contextMenuElementsName = { "Remove Hotkey" }
-
-	for i = 1, #contextMenuElementsName do
-		local element = {}
-		element.Type = "Button"
-		element.Text = contextMenuElementsName[i]
-		element.Action = i
-		element.DoIt = UnequipGearMenuClick
-		table.insert(contextMenuElements, element)
-	end
-
-	for i, contextElement in ipairs(contextMenuElements) do
-		local element = contextElement
-		if element.Type == "Button" then
-			local button = New "TextButton" {
-				Name = "UnequipContextButton" .. i,
-				BackgroundColor3 = Color3.new(0, 0, 0),
-				BorderSizePixel = 0,
-				TextXAlignment = Enum.TextXAlignment.Left,
-				Text = ` {contextElement.Text}`,
-				Font = Enum.Font.Arial,
-				FontSize = Enum.FontSize.Size14,
-				Size = UDim2.new(1, 8, 0, elementHeight),
-				Position = UDim2.new(0, 0, 0, elementHeight * i),
-				TextColor3 = Color3.new(1, 1, 1),
-				ZIndex = 9,
-				Parent = gearContextMenuButton,
-			}
-
-			if not IsTouchDevice() then
-				button.MouseButton1Click:connect(function()
-					if button.Active and not gearContextMenu.Parent.Active then
-						pcall(function()
-							element.DoIt(element, gearContextMenu)
-						end)
-						browsingMenu = false
-						gearContextMenu.Visible = false
-						clearHighlight(button)
-						clearPreview()
-					end
-				end)
-
-				button.MouseEnter:connect(function()
-					if button.Active and gearContextMenu.Parent.Active then
-						highlight(button)
-					end
-				end)
-				button.MouseLeave:connect(function()
-					if button.Active and gearContextMenu.Parent.Active then
-						clearHighlight(button)
-					end
-				end)
-			end
-
-			contextElement.Button = button
-			contextElement.Element = button
-		elseif element.Type == "Label" then
-			local frame = Instance.new "Frame"
-			frame.Name = `ContextLabel{i}`
-			frame.BackgroundTransparency = 1
-			frame.Size = UDim2.new(1, 8, 0, elementHeight)
-
-			element.Label1 = New "TextLabel" {
-				Name = "Text1",
-				BackgroundTransparency = 1,
-				BackgroundColor3 = Color3.new(1, 1, 1),
-				BorderSizePixel = 0,
-				TextXAlignment = Enum.TextXAlignment.Left,
-				Font = Enum.Font.ArialBold,
-				FontSize = Enum.FontSize.Size14,
-				Position = UDim2.new(0, 0, 0, 0),
-				Size = UDim2.new(0.5, 0, 1, 0),
-				TextColor3 = Color3.new(1, 1, 1),
-				ZIndex = 9,
-				Parent = frame,
-			}
-
-			if element.GetText2 then
-				element.Label2 = New "TextLabel" {
-					Name = "Text2",
-					BackgroundTransparency = 1,
-					BackgroundColor3 = Color3.new(1, 1, 1),
-					BorderSizePixel = 0,
-					TextXAlignment = Enum.TextXAlignment.Right,
-					Font = Enum.Font.Arial,
-					FontSize = Enum.FontSize.Size14,
-					Position = UDim2.new(0.5, 0, 0, 0),
-					Size = UDim2.new(0.5, 0, 1, 0),
-					TextColor3 = Color3.new(1, 1, 1),
-					ZIndex = 9,
-					Parent = frame,
-				}
-			end
-			frame.Parent = gearContextMenuButton
-			element.Label = frame
-			element.Element = frame
-		end
-	end
-
-	gearContextMenu.ZIndex = 4
-	gearContextMenu.MouseLeave:connect(function()
-		browsingMenu = false
-		gearContextMenu.Visible = false
-		clearPreview()
-	end)
-	robloxLock(gearContextMenu)
-
-	return gearContextMenu
 end
 
 local function showPartialGrid(subset)
@@ -917,12 +917,8 @@ currentLoadout.DescendantRemoving:connect(function(descendant)
 	end
 end)
 
-grid.MouseEnter:connect(function()
-	clearPreview()
-end)
-grid.MouseLeave:connect(function()
-	clearPreview()
-end)
+grid.MouseEnter:connect(clearPreview)
+grid.MouseLeave:connect(clearPreview)
 
 player.CharacterRemoving:connect(function()
 	removeCharacterConnections()
@@ -971,9 +967,9 @@ end
 pcall(function()
 	coreGuiChanged(
 		Enum.CoreGuiType.Backpack,
-		Game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
+		game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
 	)
-	Game.StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
+	game.StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
 end)
 
 resize()

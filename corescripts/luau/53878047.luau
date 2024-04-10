@@ -1,4 +1,4 @@
--- CoreGui.RobloxGui.CoreScripts/BackpackScripts/BackpackBuild
+-- CoreGui.MercuryGui.CoreScripts/BackpackScripts/BackpackBuild
 print "[Mercury]: Loaded corescript 53878047"
 
 local News = require "../Modules/New"
@@ -207,19 +207,6 @@ for i = 0, 9 do
 	end
 
 	slotFrame.Parent = CurrentLoadout
-
-	if gui.AbsoluteSize.Y <= 320 then
-		slotFrame.Position = UDim2.new(0, (i - 1) * 60, 0, -50)
-		-- print(
-		-- 	"Well got here",
-		-- 	slotFrame,
-		-- 	slotFrame.Position.X.Scale,
-		-- 	slotFrame.Position.X.Offset
-		-- )
-	end
-	if gui.AbsoluteSize.Y <= 320 and i == 0 then
-		slotFrame:Destroy()
-	end
 end
 
 -- Great, now lets make the inventory!

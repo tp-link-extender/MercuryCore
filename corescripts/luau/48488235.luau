@@ -1,5 +1,5 @@
 --!strict
--- CoreGui.RobloxGui.CoreScripts/PlayerListScript
+-- CoreGui.MercuryGui.CoreScripts/PlayerListScript
 print "[Mercury]: Loaded corescript 48488235"
 
 local RunService = game:GetService "RunService"
@@ -87,7 +87,7 @@ local function getMembershipTypeIcon(membershipType, playerName)
 	elseif membershipType == Enum.MembershipType.OutrageousBuildersClub then
 		return "rbxasset://textures/ui/TinyObcIcon.png"
 	else
-		error(`Unknown membershipType {membershipType}`)
+		error("Unknown membershipType " .. membershipType)
 	end
 end
 
@@ -104,7 +104,7 @@ local function getFriendStatusIcon(friendStatus)
 	elseif friendStatus == Enum.FriendStatus.FriendRequestReceived then
 		return "http://banland.xyz/asset?id=99776838"
 	else
-		error(`Unknown FriendStatus {friendStatus}`)
+		error("Unknown FriendStatus " .. friendStatus)
 	end
 end
 
@@ -914,10 +914,11 @@ local function HighlightMyRank(
 	MemberButton,
 	AdminButton
 )
-	BanPlayerButton.Image = `http://banland.xyz/asset?id={Images.LightPopupMid}`
-	VisitorButton.Image = `http://banland.xyz/asset?id={Images.DarkPopupMid}`
-	MemberButton.Image = `http://banland.xyz/asset?id={Images.LightPopupMid}`
-	AdminButton.Image = `http://banland.xyz/asset?id={Images.DarkPopupBottom}`
+	BanPlayerButton.Image = "http://banland.xyz/asset?id="
+		.. Images.LightPopupMid
+	VisitorButton.Image = "http://banland.xyz/asset?id=" .. Images.DarkPopupMid
+	MemberButton.Image = "http://banland.xyz/asset?id=" .. Images.LightPopupMid
+	AdminButton.Image = "http://banland.xyz/asset?id=" .. Images.DarkPopupBottom
 
 	local rank = player.PersonalServerRank
 	if rank <= PrivilegeLevel.Banned then
@@ -1048,7 +1049,7 @@ end
 	creates dropdownbox, registers all listeners for abuse dialog
 --]]
 local function InitReportAbuse()
-	UpdateAbuseFunction = function(abuseText)
+	function UpdateAbuseFunction(abuseText)
 		AbuseName = abuseText
 		if AbuseName and SelectedPlayer then
 			SubmitReportButton.Active = true
@@ -1706,7 +1707,7 @@ local function BaseUpdate()
 	BaseUpdateLock = false
 end
 
-RecreateScoreColumns = function(ptable)
+function RecreateScoreColumns(ptable)
 	-- OUTLINE
 	local function MakeScoreEntry(entry, scoreval, panel)
 		if not panel:FindFirstChild "PlayerScore" then
@@ -1746,8 +1747,7 @@ RecreateScoreColumns = function(ptable)
 		thisScore.Changed:connect(function()
 			if not thisScore.Parent then
 				return
-			end
-			if scoreval.Name == ScoreNames[1]["Name"] then
+			elseif scoreval.Name == ScoreNames[1]["Name"] then
 				entry.Score = GetScoreValue(thisScore)
 				if entry.Player == LocalPlayer then
 					HeaderScore.Text = tostring(GetScoreValue(thisScore))
@@ -1846,7 +1846,7 @@ end
 	monitors positions of the clipping frames and bottom frames
 	called from EVERYWHERE, too much probably
 --]]
-UpdateMinimize = function()
+function UpdateMinimize()
 	if IsMinimized.Value then
 		if IsMaximized.Value then
 			ToggleMaximize()
@@ -2555,7 +2555,7 @@ local function AddMiddleBGFrame()
 		UDim2.new(0.5, 0, (#MiddleFrameBackgrounds * nBGFrame.Size.Y.Scale), 0)
 
 	local function applyImage(id: string)
-		nBGFrame.Background.Image = `http://banland.xyz/asset?id={id}`
+		nBGFrame.Background.Image = "http://banland.xyz/asset?id=" .. id
 	end
 
 	if (#MiddleFrameBackgrounds + 1) % 2 ~= 1 then
@@ -2828,18 +2828,18 @@ local function PlayerChanged(entry, property)
 	if property == "Neutral" then
 		-- if player changing to neutral
 		if entry.Player.Neutral and #(game.Teams:GetTeams()) > 0 then
-			log(`{entry.Player.Name} setting to neutral`)
+			log(entry.Player.Name .. " setting to neutral")
 			FindRemovePlayerFromTeam(entry)
 			entry.MyTeam = nil
 			if not NeutralTeam then
-				log(`{entry.Player.Name} creating neutral team`)
+				log(entry.Player.Name .. " creating neutral team")
 				AddNeutralTeam()
 			else
-				log(`{entry.Player.Name} adding to neutral team`)
+				log(entry.Player.Name .. " adding to neutral team")
 				AddPlayerToTeam(NeutralTeam, entry)
 			end
 		elseif #(game.Teams:GetTeams()) > 0 then -- else player switching to a team, or a weird edgecase
-			log(`{entry.Player.Name} has been set non-neutral`)
+			log(entry.Player.Name .. " has been set non-neutral")
 			SetPlayerToTeam(entry)
 		end
 		BaseUpdate()
@@ -2848,7 +2848,7 @@ local function PlayerChanged(entry, property)
 		and not entry.Player.Neutral
 		and entry.Player ~= entry.MyTeam
 	then
-		log(`{entry.Player.Name} setting to new team`)
+		log(entry.Player.Name .. " setting to new team")
 		SetPlayerToTeam(entry)
 		BaseUpdate()
 	elseif property == "Name" or property == "MembershipType" then
@@ -2879,7 +2879,7 @@ end
 --]]
 local function InsertPlayerFrame(nplayer)
 	while AddingFrameLock do
-		log(`waiting to insert {nplayer.Name}`)
+		log("waiting to insert " .. nplayer.Name)
 		RunService.Heartbeat:wait()
 	end
 	AddingFrameLock = true
@@ -3067,7 +3067,7 @@ local function OnFriendshipChanged(player, friendStatus)
 				elseif nicon ~= "" and entry.Frame.FriendLabel.Image == "" then
 					entry.Frame.TitleFrame.Title.Position = entry.Frame.TitleFrame.Title.Position
 						+ UDim2.new(0, 17, 0, 0)
-					log(`confirmed status {player.Name}`)
+					log("confirmed status " .. player.Name)
 				end
 				entry.Frame.FriendLabel.Image = nicon
 				return
@@ -3337,9 +3337,9 @@ end
 pcall(function()
 	coreGuiChanged(
 		Enum.CoreGuiType.PlayerList,
-		Game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList)
+		game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList)
 	)
-	Game.StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
+	game.StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
 end)
 
 while not game:GetService "Teams" do
