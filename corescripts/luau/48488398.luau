@@ -1,4 +1,4 @@
--- CoreGui.MercuryGui.CoreScripts/NotificationScript
+-- CoreGui.RobloxGui.CoreScripts/NotificationScript
 print "[Mercury]: Loaded corescript 48488398"
 
 local GuiService = game:GetService "GuiService"

@@ -36,7 +36,8 @@ local screenGui = CoreGui:FindFirstChild "RobloxGui" :: ScreenGui & {
 	Backpack: Frame,
 	CurrentLoadout: Frame,
 }
-screenGui.Name = "MercuryGui" -- lmao lel lol lmfao
+-- screenGui.Name = "MercuryGui" -- "it wasn't meant to be" - Heliodex
+-- renaming the RobloxGui seems to break the camera
 
 local scripts = {
 	[36868950] = "CoreScripts/ToolTip", -- ToolTipper (creates tool tips for gui)
@@ -45,7 +46,6 @@ local scripts = {
 	[48488451] = "CoreScripts/PopupScript", -- Popup Script
 	[48488398] = "CoreScripts/NotificationScript", -- Friend Notification Script (probably can use this script to expand out to other notifications)
 	[97188756] = "CoreScripts/ChatScript", -- Chat script
-	[107893730] = "CoreScripts/PurchasePromptScript", -- Purchase Prompt Script
 }
 
 for id, path in pairs(scripts) do

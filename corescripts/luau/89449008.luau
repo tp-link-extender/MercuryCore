@@ -1,4 +1,4 @@
--- CoreGui.MercuryGui.Backpack.CoreScripts/BackpackScripts/Back (1?)
+-- CoreGui.RobloxGui.Backpack.CoreScripts/BackpackScripts/Back (1?)
 print "[Mercury]: Loaded corescript 89449008"
 
 local UserInputService = game:GetService "UserInputService"

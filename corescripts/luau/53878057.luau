@@ -1,4 +1,4 @@
--- CoreGui.MercuryGui.CurrentLoadout.CoreScripts/BackpackScript
+-- CoreGui.RobloxGui.CurrentLoadout.CoreScripts/BackpackScript
 print "[Mercury]: Loaded corescript 53878057"
 
 local CoreGui = game:GetService "CoreGui"
@@ -23,7 +23,7 @@ local currentLoadout = script.Parent
 local StaticTabName = "gear"
 local backpackEnabled = true
 
-local mercuryGui = CoreGui:FindFirstChild "MercuryGui"
+local mercuryGui = CoreGui:FindFirstChild "RobloxGui"
 assert(mercuryGui)
 
 local controlFrame = waitForChild(mercuryGui, "ControlFrame")

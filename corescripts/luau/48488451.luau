@@ -1,4 +1,4 @@
--- CoreGui.MercuryGui.CoreScripts/PopupScript
+-- CoreGui.RobloxGui.CoreScripts/PopupScript
 print "[Mercury]: Loaded corescript 48488451"
 
 local News = require "../Modules/New"
@@ -37,7 +37,7 @@ local popupFrame = New "Frame" {
 		BackgroundTransparency = 1,
 		Text = "Hello I'm a popup",
 		TextColor3 = Color3.new(248 / 255, 248 / 255, 248 / 255),
-		TextWrap = true,
+		TextWrapped = true,
 		ZIndex = 5,
 	},
 }

@@ -1,13 +1,10 @@
 --!strict
 print "[Mercury]: Loaded Studio corescript"
 
--- local MarketplaceService = game:GetService "MarketplaceService"
 local InsertService = game:GetService "InsertService"
--- local SocialService = game:GetService "SocialService"
--- local GamePassService = game:GetService "GamePassService"
 local ScriptInformationProvider = game:GetService "ScriptInformationProvider"
 local ScriptContext = game:GetService "ScriptContext"
--- Setup studio cmd bar & load core scripts
+
 pcall(function()
 	InsertService:SetFreeModelUrl "http://banland.xyz/game/tools/insertasset?type=fm&q=%s&pg=%d&rs=%d"
 end)
@@ -23,38 +20,9 @@ InsertService:SetAssetUrl "http://banland.xyz/asset?id=%d"
 InsertService:SetAssetVersionUrl "http://banland.xyz/asset/?assetversionid=%d"
 InsertService:SetTrustLevel(0)
 
--- pcall(function()
--- 	SocialService:SetFriendUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsFriendsWith&playerid=%d&userid=%d"
--- end)
--- pcall(function()
--- 	SocialService:SetBestFriendUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsBestFriendsWith&playerid=%d&userid=%d"
--- end)
--- pcall(function()
--- 	SocialService:SetGroupUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsInGroup&playerid=%d&groupid=%d"
--- end)
--- pcall(function()
--- 	SocialService:SetGroupRankUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRank&playerid=%d&groupid=%d"
--- end)
--- pcall(function()
--- 	SocialService:SetGroupRoleUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRole&playerid=%d&groupid=%d"
--- end)
--- pcall(function()
--- 	GamePassService:SetPlayerHasPassUrl "http://banland.xyz/Game/GamePass/GamePassHandler.ashx?Action=HasPass&UserID=%d&PassID=%d"
--- end)
--- pcall(function()
--- 	MarketplaceService:SetProductInfoUrl "http://banland.xyz/marketplace/productinfo?assetId=%d"
--- end)
--- pcall(function()
--- 	MarketplaceService:SetDevProductInfoUrl "http://banland.xyz/marketplace/productDetails?productId=%d"
--- end)
--- pcall(function()
--- 	MarketplaceService:SetPlayerOwnsAssetUrl "http://banland.xyz/ownership/hasasset?userId=%d&assetId=%d"
--- end)
-
-local result, _ = pcall(function()
+if not pcall(function()
 	ScriptContext:AddStarterScript(37801172)
-end)
-if not result then
+end) then
 	pcall(function()
 		ScriptContext:AddCoreScript(37801172, ScriptContext, "StarterScript")
 	end)

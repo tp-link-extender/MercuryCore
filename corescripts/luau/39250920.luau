@@ -1,5 +1,5 @@
 --!strict
--- CoreGui.MercuryGui.CoreScripts/MainBotChatScript
+-- CoreGui.RobloxGui.CoreScripts/MainBotChatScript
 print "[Mercury]: Loaded corescript 39250920"
 
 local News = require "../Modules/New"
@@ -9,16 +9,18 @@ local Hydrate = News.Hydrate
 local InsertService = game:GetService "InsertService"
 local RunService = game:GetService "RunService"
 
-local function waitForProperty(instance, name)
+local function waitForProperty(instance, name: string)
 	while not instance[name] do
 		instance.Changed:wait()
 	end
 end
 
-local function waitForChild(instance, name)
+local function waitForChild(instance: Instance, name: string)
 	while not instance:FindFirstChild(name) do
 		instance.ChildAdded:wait()
+		return instance:FindFirstChild(name)
 	end
+	return nil
 end
 
 local mainFrame: Frame & {
@@ -42,11 +44,11 @@ local dialogConnections = {}
 
 local gui
 waitForChild(game, "CoreGui")
-waitForChild(game.CoreGui, "MercuryGui")
-if game.CoreGui.MercuryGui:FindFirstChild "ControlFrame" then
-	gui = game.CoreGui.MercuryGui.ControlFrame
+waitForChild(game.CoreGui, "RobloxGui")
+if game.CoreGui.RobloxGui:FindFirstChild "ControlFrame" then
+	gui = game.CoreGui.RobloxGui.ControlFrame
 else
-	gui = game.CoreGui.MercuryGui
+	gui = game.CoreGui.RobloxGui
 end
 
 local function currentTone()
@@ -393,7 +395,7 @@ local function newChoice(numberText)
 			Size = UDim2.new(1, -32, 1, -4),
 			TextXAlignment = Enum.TextXAlignment.Left,
 			TextYAlignment = Enum.TextYAlignment.Top,
-			TextWrap = true,
+			TextWrapped = true,
 			RobloxLocked = true,
 		},
 	}

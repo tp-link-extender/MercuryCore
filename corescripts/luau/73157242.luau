@@ -4,18 +4,22 @@ print "[Mercury]: Loaded corescript 73157242"
 local ChangeHistoryService = game:GetService "ChangeHistoryService"
 local InsertService = game:GetService "InsertService"
 
+local News = require "../Modules/New"
+local New = News.New
+local Hydrate = News.Hydrate
+
 local RbxStamper = {}
 
--- Do a line/plane intersection.  The line starts at the camera.  The plane is at y == 0, normal(0, 1, 0)
+-- Do a line/plane intersection. The line starts at the camera. The plane is at y == 0, normal(0, 1, 0)
 --
 -- vectorPos - End point of the line.
 --
 -- Return:
 -- cellPos - The terrain cell intersection point if there is one, vectorPos if there isn't.
--- hit - Whether there was a plane intersection.  Value is true if there was, false if not.
+-- hit - Whether there was a plane intersection. Value is true if there was, false if not.
 local function PlaneIntersection(vectorPos)
 	local hit = false
-	local currCamera = game.Workspace.CurrentCamera
+	local currCamera = workspace.CurrentCamera
 	local startPos = Vector3.new(
 		currCamera.CoordinateFrame.p.X,
 		currCamera.CoordinateFrame.p.Y,
@@ -30,7 +34,7 @@ local function PlaneIntersection(vectorPos)
 		local t = normal:Dot(p3 - startPos) / startEndDot
 		if t >= 0 and t <= 1 then
 			local intersection = ((endPos - startPos) * t) + startPos
-			cellPos = game.Workspace.Terrain:WorldToCell(intersection)
+			cellPos = workspace.Terrain:WorldToCell(intersection)
 			hit = true
 		end
 	end
@@ -45,15 +49,15 @@ end
 -- mouse - Mouse to check the .hit for.
 --
 -- Return:
--- cellPos - Cell position hit.  Nil if none.
+-- cellPos - Cell position hit. Nil if none.
 local function GetTerrainForMouse(mouse)
 	-- There was no target, so all it could be is a plane intersection.
-	-- Check for a plane intersection.  If there isn't one then nothing will get hit.
-	local cell = game.Workspace.Terrain:WorldToCellPreferSolid(
+	-- Check for a plane intersection. If there isn't one then nothing will get hit.
+	local cell = workspace.Terrain:WorldToCellPreferSolid(
 		Vector3.new(mouse.hit.x, mouse.hit.y, mouse.hit.z)
 	)
 	-- If nothing was hit, do the plane intersection.
-	if 0 == game.Workspace.Terrain:GetCell(cell.X, cell.Y, cell.Z).Value then
+	if 0 == workspace.Terrain:GetCell(cell.X, cell.Y, cell.Z).Value then
 		cell = nil
 		local planeLoc, hit = PlaneIntersection(
 			Vector3.new(mouse.hit.x, mouse.hit.y, mouse.hit.z)
@@ -107,7 +111,7 @@ end
 local cluster
 
 local function clusterPartsInRegion(startVector, endVector)
-	cluster = game.Workspace:FindFirstChild "Terrain"
+	cluster = workspace:FindFirstChild "Terrain"
 
 	local startCell = cluster:WorldToCell(startVector)
 	local endCell = cluster:WorldToCell(endVector)
@@ -180,7 +184,7 @@ local function setSeatEnabledStatus(model, isEnabled)
 		end
 	else
 		-- put a weld called "SeatWeld" in every seat
-		--   this tricks it into thinking there's already someone sitting there, and it won't make you sit XD
+		-- this tricks it into thinking there's already someone sitting there, and it won't make you sit XD
 		for i = 1, #seatList do
 			local fakeWeld = Instance.new "Weld"
 			fakeWeld.Name = "SeatWeld"
@@ -249,7 +253,7 @@ end
 local function calcRayHitTime(rayStart, raySlope, intersectionPlane)
 	if math.abs(raySlope) < 0.01 then
 		return 0
-	end -- 0 slope -->  we just say intersection time is 0, and sidestep this dimension
+	end -- 0 slope --> we just say intersection time is 0, and sidestep this dimension
 	return (intersectionPlane - rayStart) / raySlope
 end
 
@@ -409,20 +413,19 @@ local function getBoundingBoxInWorldCoordinates(partOrModel)
 end
 
 local function getTargetPartBoundingBox(targetPart)
-	if targetPart.Parent:FindFirstChild "RobloxModel" ~= nil then
+	if targetPart.Parent:FindFirstChild "RobloxModel" then
 		return getBoundingBox2(targetPart.Parent)
 	end
 	return getBoundingBox2(targetPart)
 end
 
 local function getMouseTargetCFrame(targetPart)
-	if targetPart.Parent:FindFirstChild "RobloxModel" ~= nil then
-		if targetPart.Parent:IsA "Tool" then
-			return targetPart.Parent.Handle.CFrame
-		end
-		return targetPart.Parent:GetModelCFrame()
+	if not targetPart.Parent:FindFirstChild "RobloxModel" then
+		return targetPart.CFrame
+	elseif targetPart.Parent:IsA "Tool" then
+		return targetPart.Parent.Handle.CFrame
 	end
-	return targetPart.CFrame
+	return targetPart.Parent:GetModelCFrame()
 end
 
 local function isBlocker(part: Instance) -- returns whether or not we want to cancel the stamp because we're blocked by this part
@@ -448,7 +451,7 @@ local function spaceAboveCharacter(
 	newTorsoY,
 	stampData: Instance
 )
-	local partsAboveChar = game.Workspace:FindPartsInRegion3(
+	local partsAboveChar = workspace:FindPartsInRegion3(
 		Region3.new(
 			Vector3.new(charTorso.Position.X, newTorsoY, charTorso.Position.Z)
 				- Vector3.new(0.75, 2.75, 0.75),
@@ -476,7 +479,12 @@ local function spaceAboveCharacter(
 	)
 end
 
-local function findConfigAtMouseTarget(Mouse: Mouse, stampData: Instance)
+local function findConfigAtMouseTarget(
+	Mouse: Mouse,
+	stampData: Instance & {
+		CurrentParts: Instance,
+	}
+)
 	-- *Critical Assumption* :
 	--				This function assumes the target CF axes are orthogonal with the target bounding box faces
 	--				And, it assumes the insert CF axes are orthongonal with the insert bounding box faces
@@ -539,15 +547,12 @@ local function findConfigAtMouseTarget(Mouse: Mouse, stampData: Instance)
 			hitPlane = false
 			return admissibleConfig, targetConfig
 		end
-		targetPart = game.Workspace.Terrain
+		targetPart = workspace.Terrain
 		hitPlane = true
 		-- Take into account error that will occur.
 		cellPos = Vector3.new(cellPos.X - 1, cellPos.Y, cellPos.Z)
-		mouseHitInWorld = game.Workspace.Terrain:CellCenterToWorld(
-			cellPos.x,
-			cellPos.y,
-			cellPos.z
-		)
+		mouseHitInWorld =
+			workspace.Terrain:CellCenterToWorld(cellPos.x, cellPos.y, cellPos.z)
 	end
 
 	-- test mouse hit location
@@ -557,7 +562,7 @@ local function findConfigAtMouseTarget(Mouse: Mouse, stampData: Instance)
 
 	if targetPart:IsA "Terrain" then
 		if not cluster then
-			cluster = game.Workspace:FindFirstChild "Terrain" :: Terrain
+			cluster = workspace:FindFirstChild "Terrain" :: Terrain
 		end
 		local cellID = cluster:WorldToCellPreferSolid(mouseHitInWorld)
 		if hitPlane then
@@ -565,19 +570,15 @@ local function findConfigAtMouseTarget(Mouse: Mouse, stampData: Instance)
 		end
 
 		targetCFrame = CFrame.new(
-			game.Workspace.Terrain:CellCenterToWorld(
-				cellID.x,
-				cellID.y,
-				cellID.z
-			)
+			workspace.Terrain:CellCenterToWorld(cellID.x, cellID.y, cellID.z)
 		)
 	end
 
 	local mouseHitInTarget = targetCFrame:pointToObjectSpace(mouseHitInWorld)
 	local targetVectorInWorld = Vector3.new(0, 0, 0)
 	if Mouse then
-		-- DON'T WANT THIS IN TERMS OF THE MODEL CFRAME!  (.TargetSurface is in terms of the part CFrame, so this would break, right?  [HotThoth])
-		--   (ideally, we would want to make the Mouse.TargetSurface a model-targetsurface instead, but for testing will be using the converse)
+		-- DON'T WANT THIS IN TERMS OF THE MODEL CFRAME! (.TargetSurface is in terms of the part CFrame, so this would break, right? [HotThoth])
+		-- (ideally, we would want to make the Mouse.TargetSurface a model-targetsurface instead, but for testing will be using the converse)
 		--targetVectorInWorld = targetCFrame:vectorToWorldSpace(Vector3.FromNormalId(Mouse.TargetSurface))
 		targetVectorInWorld = targetPart.CFrame:vectorToWorldSpace(
 			Vector3.FromNormalId(Mouse.TargetSurface)
@@ -587,7 +588,7 @@ local function findConfigAtMouseTarget(Mouse: Mouse, stampData: Instance)
 				local hitFace = modelTargetSurface(
 					targetPart.Parent,
 					Mouse.Hit.p,
-					game.Workspace.CurrentCamera.CoordinateFrame.p
+					workspace.CurrentCamera.CoordinateFrame.p
 				) -- best, if you get it right
 				local WORLD_AXES = {
 					Vector3.new(1, 0, 0),
@@ -757,106 +758,112 @@ function RbxStamper.CanEditRegion(partOrModel, EditRegion) -- todo: use model an
 	return true, false
 end
 
+local function UnlockInstances(object)
+	if object:IsA "BasePart" then
+		object.Locked = false
+	end
+	for _, child in pairs(object:GetChildren()) do
+		UnlockInstances(child)
+	end
+end
+
+local function closestTerrainMaterialColour(terrainValue)
+	if terrainValue == 1 then
+		return BrickColor.new "Bright green"
+	elseif terrainValue == 2 then
+		return BrickColor.new "Bright yellow"
+	elseif terrainValue == 3 then
+		return BrickColor.new "Bright red"
+	elseif terrainValue == 4 then
+		return BrickColor.new "Sand red"
+	elseif terrainValue == 5 then
+		return BrickColor.new "Black"
+	elseif terrainValue == 6 then
+		return BrickColor.new "Dark stone grey"
+	elseif terrainValue == 7 then
+		return BrickColor.new "Sand blue"
+	elseif terrainValue == 8 then
+		return BrickColor.new "Deep orange"
+	elseif terrainValue == 9 then
+		return BrickColor.new "Dark orange"
+	elseif terrainValue == 10 then
+		return BrickColor.new "Reddish brown"
+	elseif terrainValue == 11 then
+		return BrickColor.new "Light orange"
+	elseif terrainValue == 12 then
+		return BrickColor.new "Light stone grey"
+	elseif terrainValue == 13 then
+		return BrickColor.new "Sand green"
+	elseif terrainValue == 14 then
+		return BrickColor.new "Medium stone grey"
+	elseif terrainValue == 15 then
+		return BrickColor.new "Really red"
+	elseif terrainValue == 16 then
+		return BrickColor.new "Really blue"
+	elseif terrainValue == 17 then
+		return BrickColor.new "Bright blue"
+	end
+	return BrickColor.new "Bright green"
+end
+
+local function setupFakeTerrainPart(cellMat, cellType, cellOrient)
+	local newTerrainPiece
+	if cellType == 1 or cellType == 4 then
+		newTerrainPiece = New "WedgePart" {
+			formFactor = "Custom",
+		}
+	elseif cellType == 2 then
+		newTerrainPiece = Instance.new "CornerWedgePart"
+	else
+		newTerrainPiece = New "Part" {
+			formFactor = "Custom",
+		}
+	end
+
+	Hydrate(newTerrainPiece) {
+		Name = "MegaClusterCube",
+		Size = Vector3.new(4, 4, 4),
+		BottomSurface = "Smooth",
+		TopSurface = "Smooth",
+	}
+
+	-- can add decals or textures here if feeling particularly adventurous... for now, can make a table of look-up colors
+	newTerrainPiece.BrickColor = closestTerrainMaterialColour(cellMat)
+
+	local sideways = 0
+	local flipped = math.pi
+	if cellType == 4 then
+		sideways = -math.pi / 2
+	end
+	if cellType == 2 or cellType == 3 then
+		flipped = 0
+	end
+	newTerrainPiece.CFrame =
+		CFrame.Angles(0, math.pi / 2 * cellOrient + flipped, sideways)
+
+	if cellType == 3 then
+		New "SpecialMesh" {
+			MeshType = "FileMesh",
+			MeshId = "http://banland.xyz/asset?id=66832495",
+			Scale = Vector3.new(2, 2, 2),
+			Parent = newTerrainPiece,
+		}
+	end
+
+	New "Vector3Value" {
+		Value = Vector3.new(cellMat, cellType, cellOrient),
+		Name = "ClusterMaterial",
+		Parent = newTerrainPiece,
+	}
+
+	return newTerrainPiece
+end
+
 function RbxStamper.GetStampModel(assetId, terrainShape, useAssetVersionId)
 	if assetId == 0 then
 		return nil, "No Asset"
 	elseif assetId < 0 then
 		return nil, "Negative Asset"
-	end
-
-	local function UnlockInstances(object)
-		if object:IsA "BasePart" then
-			object.Locked = false
-		end
-		for _, child in pairs(object:GetChildren()) do
-			UnlockInstances(child)
-		end
-	end
-
-	local function getClosestColorToTerrainMaterial(terrainValue)
-		if terrainValue == 1 then
-			return BrickColor.new "Bright green"
-		elseif terrainValue == 2 then
-			return BrickColor.new "Bright yellow"
-		elseif terrainValue == 3 then
-			return BrickColor.new "Bright red"
-		elseif terrainValue == 4 then
-			return BrickColor.new "Sand red"
-		elseif terrainValue == 5 then
-			return BrickColor.new "Black"
-		elseif terrainValue == 6 then
-			return BrickColor.new "Dark stone grey"
-		elseif terrainValue == 7 then
-			return BrickColor.new "Sand blue"
-		elseif terrainValue == 8 then
-			return BrickColor.new "Deep orange"
-		elseif terrainValue == 9 then
-			return BrickColor.new "Dark orange"
-		elseif terrainValue == 10 then
-			return BrickColor.new "Reddish brown"
-		elseif terrainValue == 11 then
-			return BrickColor.new "Light orange"
-		elseif terrainValue == 12 then
-			return BrickColor.new "Light stone grey"
-		elseif terrainValue == 13 then
-			return BrickColor.new "Sand green"
-		elseif terrainValue == 14 then
-			return BrickColor.new "Medium stone grey"
-		elseif terrainValue == 15 then
-			return BrickColor.new "Really red"
-		elseif terrainValue == 16 then
-			return BrickColor.new "Really blue"
-		elseif terrainValue == 17 then
-			return BrickColor.new "Bright blue"
-		end
-		return BrickColor.new "Bright green"
-	end
-
-	local function setupFakeTerrainPart(cellMat, cellType, cellOrient)
-		local newTerrainPiece
-		if cellType == 1 or cellType == 4 then
-			newTerrainPiece = Instance.new "WedgePart"
-			newTerrainPiece.formFactor = "Custom"
-		elseif cellType == 2 then
-			newTerrainPiece = Instance.new "CornerWedgePart"
-		else
-			newTerrainPiece = Instance.new "Part"
-			newTerrainPiece.formFactor = "Custom"
-		end
-		newTerrainPiece.Name = "MegaClusterCube"
-		newTerrainPiece.Size = Vector3.new(4, 4, 4)
-		newTerrainPiece.BottomSurface = "Smooth"
-		newTerrainPiece.TopSurface = "Smooth"
-
-		-- can add decals or textures here if feeling particularly adventurous...  for now, can make a table of look-up colors
-		newTerrainPiece.BrickColor = getClosestColorToTerrainMaterial(cellMat)
-
-		local sideways = 0
-		local flipped = math.pi
-		if cellType == 4 then
-			sideways = -math.pi / 2
-		end
-		if cellType == 2 or cellType == 3 then
-			flipped = 0
-		end
-		newTerrainPiece.CFrame =
-			CFrame.Angles(0, math.pi / 2 * cellOrient + flipped, sideways)
-
-		if cellType == 3 then
-			local inverseCornerWedgeMesh = Instance.new "SpecialMesh"
-			inverseCornerWedgeMesh.MeshType = "FileMesh"
-			inverseCornerWedgeMesh.MeshId =
-				"http://banland.xyz/asset?id=66832495"
-			inverseCornerWedgeMesh.Scale = Vector3.new(2, 2, 2)
-			inverseCornerWedgeMesh.Parent = newTerrainPiece
-		end
-
-		local materialTag = Instance.new "Vector3Value"
-		materialTag.Value = Vector3.new(cellMat, cellType, cellOrient)
-		materialTag.Name = "ClusterMaterial"
-		materialTag.Parent = newTerrainPiece
-
-		return newTerrainPiece
 	end
 
 	-- This call will cause a "wait" until the data comes back
@@ -937,31 +944,26 @@ function RbxStamper.GetStampModel(assetId, terrainShape, useAssetVersionId)
 		end
 	end
 
-	if terrainShape then
-		if root.Name == "MegaClusterCube" then
-			if terrainShape == 6 then -- insert an autowedging tag
-				local autowedgeTag = Instance.new "BoolValue"
-				autowedgeTag.Name = "AutoWedge"
-				autowedgeTag.Parent = root
-			else
-				local clusterTag = root:FindFirstChild "ClusterMaterial"
-				if clusterTag then
-					if clusterTag:IsA "Vector3Value" then
-						root = setupFakeTerrainPart(
-							clusterTag.Value.X,
-							terrainShape,
-							clusterTag.Value.Z
-						)
-					else
-						root = setupFakeTerrainPart(
-							clusterTag.Value,
-							terrainShape,
-							0
-						)
-					end
+	if terrainShape and root.Name == "MegaClusterCube" then
+		if terrainShape == 6 then -- insert an autowedging tag
+			local autowedgeTag = Instance.new "BoolValue"
+			autowedgeTag.Name = "AutoWedge"
+			autowedgeTag.Parent = root
+		else
+			local clusterTag = root:FindFirstChild "ClusterMaterial"
+			if clusterTag then
+				if clusterTag:IsA "Vector3Value" then
+					root = setupFakeTerrainPart(
+						clusterTag.Value.X,
+						terrainShape,
+						clusterTag.Value.Z
+					)
 				else
-					root = setupFakeTerrainPart(1, terrainShape, 0)
+					root =
+						setupFakeTerrainPart(clusterTag.Value, terrainShape, 0)
 				end
+			else
+				root = setupFakeTerrainPart(1, terrainShape, 0)
 			end
 		end
 	end
@@ -969,26 +971,629 @@ function RbxStamper.GetStampModel(assetId, terrainShape, useAssetVersionId)
 	return root
 end
 
+local function isMegaClusterPart(stampData: {
+	CurrentParts: BasePart,
+})
+	if not (stampData and stampData.CurrentParts) then
+		return false
+	end
+
+	return (
+		stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
+		or (stampData.CurrentParts.Name == "MegaClusterCube")
+	)
+end
+
+type HighScalabilityLine = {
+	Adorn: Instance,
+	Start: Vector3,
+	End: Vector3,
+	Dimensions: number,
+	MoreLines: { Vector3 },
+	MorePoints: { Vector3 },
+	InternalLine: Vector3,
+	AdornPart: BasePart,
+}
+
+local function DoHighScalabilityRegionSelect(
+	stampData: {
+		CurrentParts: BasePart,
+	},
+	HighScalabilityLine: HighScalabilityLine
+)
+	local megaCube = stampData.CurrentParts:FindFirstChild "MegaClusterCube"
+	if not megaCube then
+		if stampData.CurrentParts.Name ~= "MegaClusterCube" then
+			return
+		end
+		megaCube = stampData.CurrentParts
+	end
+
+	HighScalabilityLine.End = megaCube.CFrame.p
+	local line
+	local line2 = Vector3.new(0, 0, 0)
+	local line3 = Vector3.new(0, 0, 0)
+
+	if HighScalabilityLine.Dimensions == 1 then
+		-- extract the line from these positions and limit to a 2D plane made from 2 of the world axes
+		-- then use dominating axis to limit line to be at 45-degree intervals
+		-- will use this internal representation of the line for the actual stamping
+		line = (HighScalabilityLine.End - HighScalabilityLine.Start)
+
+		if math.abs(line.X) < math.abs(line.Y) then
+			if math.abs(line.X) < math.abs(line.Z) then
+				-- limit to Y/Z plane, domination unknown
+				local newY, newZ
+				if math.abs(line.Y) > math.abs(line.Z) then
+					newY, newZ = truncateToCircleEighth(line.Y, line.Z)
+				else
+					newZ, newY = truncateToCircleEighth(line.Z, line.Y)
+				end
+				line = Vector3.new(0, newY, newZ)
+			else
+				-- limit to X/Y plane, with Y dominating
+				local newY, newX = truncateToCircleEighth(line.Y, line.X)
+				line = Vector3.new(newX, newY, 0)
+			end
+		else
+			if math.abs(line.Y) < math.abs(line.Z) then
+				-- limit to X/Z plane, domination unknown
+				local newX, newZ
+				if math.abs(line.X) > math.abs(line.Z) then
+					newX, newZ = truncateToCircleEighth(line.X, line.Z)
+				else
+					newZ, newX = truncateToCircleEighth(line.Z, line.X)
+				end
+				line = Vector3.new(newX, 0, newZ)
+			else
+				-- limit to X/Y plane, with X dominating
+				local newX, newY = truncateToCircleEighth(line.X, line.Y)
+				line = Vector3.new(newX, newY, 0)
+			end
+		end
+		HighScalabilityLine.InternalLine = line
+	elseif HighScalabilityLine.Dimensions == 2 then
+		line = HighScalabilityLine.MoreLines[1]
+		line2 = HighScalabilityLine.End - HighScalabilityLine.MorePoints[1]
+
+		-- take out any component of line2 along line1, so you get perpendicular to line1 component
+		line2 -= line.unit * line.unit:Dot(line2)
+
+		local tempCFrame = CFrame.new(
+			HighScalabilityLine.Start,
+			HighScalabilityLine.Start + line
+		)
+
+		-- then zero out whichever is the smaller component
+		local yAxis = tempCFrame:vectorToWorldSpace(Vector3.new(0, 1, 0))
+		local xAxis = tempCFrame:vectorToWorldSpace(Vector3.new(1, 0, 0))
+
+		local xComp = xAxis:Dot(line2)
+		local yComp = yAxis:Dot(line2)
+
+		if math.abs(yComp) > math.abs(xComp) then
+			line2 -= xAxis * xComp
+		else
+			line2 -= yAxis * yComp
+		end
+
+		HighScalabilityLine.InternalLine = line2
+	elseif HighScalabilityLine.Dimensions == 3 then
+		line = HighScalabilityLine.MoreLines[1]
+		line2 = HighScalabilityLine.MoreLines[2]
+		line3 = HighScalabilityLine.End - HighScalabilityLine.MorePoints[2]
+
+		-- zero out all components of previous lines
+		line3 -= line.unit * line.unit:Dot(line3)
+		line3 -= line2.unit * line2.unit:Dot(line3)
+
+		HighScalabilityLine.InternalLine = line3
+	end
+
+	-- resize the "line" graphic to be the correct size and orientation
+	local tempCFrame =
+		CFrame.new(HighScalabilityLine.Start, HighScalabilityLine.Start + line)
+
+	if HighScalabilityLine.Dimensions == 1 then -- faster calculation for line
+		HighScalabilityLine.AdornPart.Size =
+			Vector3.new(4, 4, line.magnitude + 4)
+		HighScalabilityLine.AdornPart.CFrame = tempCFrame
+			+ tempCFrame:vectorToWorldSpace(
+				Vector3.new(2, 2, 2) - HighScalabilityLine.AdornPart.Size / 2
+			)
+	else
+		local boxSize = tempCFrame:vectorToObjectSpace(line + line2 + line3)
+		HighScalabilityLine.AdornPart.Size = Vector3.new(4, 4, 4)
+			+ Vector3.new(
+				math.abs(boxSize.X),
+				math.abs(boxSize.Y),
+				math.abs(boxSize.Z)
+			)
+		HighScalabilityLine.AdornPart.CFrame = tempCFrame
+			+ tempCFrame:vectorToWorldSpace(boxSize / 2)
+	end
+
+	-- make player able to see this ish
+
+	local gui
+	if game.Players.LocalPlayer then
+		gui = game.Players.LocalPlayer:FindFirstChild "PlayerGui"
+		if
+			gui
+			and gui:IsA "PlayerGui"
+			and (
+				(HighScalabilityLine.Dimensions == 1 and line.magnitude > 3)
+				or HighScalabilityLine.Dimensions > 1
+			)
+		then -- don't show if mouse hasn't moved enough
+			HighScalabilityLine.Adorn.Parent = gui
+		end
+	end
+
+	if not gui then -- we are in studio
+		gui = game:GetService "CoreGui"
+		if
+			(HighScalabilityLine.Dimensions == 1 and line.magnitude > 3)
+			or HighScalabilityLine.Dimensions > 1
+		then -- don't show if mouse hasn't moved enough
+			HighScalabilityLine.Adorn.Parent = gui
+		end
+	end
+end
+
+local function flashRedBox(stampData: {
+	CurrentParts: BasePart,
+	ErrorBox: SelectionBox,
+})
+	local gui = game.CoreGui
+	if
+		game:FindFirstChild "Players"
+		and game.Players.LocalPlayer
+		and game.Players.LocalPlayer:FindFirstChild "PlayerGui"
+	then
+		gui = game.Players.LocalPlayer.PlayerGui
+	end
+	if not stampData.ErrorBox then
+		return
+	end
+
+	stampData.ErrorBox.Parent = gui
+	if stampData.CurrentParts:IsA "Tool" then
+		stampData.ErrorBox.Adornee = stampData.CurrentParts.Handle
+	else
+		stampData.ErrorBox.Adornee = stampData.CurrentParts
+	end
+
+	delay(0, function()
+		for _ = 1, 3 do
+			if stampData.ErrorBox then
+				stampData.ErrorBox.Visible = true
+			end
+			wait(0.13)
+			if stampData.ErrorBox then
+				stampData.ErrorBox.Visible = false
+			end
+			wait(0.13)
+		end
+		if stampData.ErrorBox then
+			stampData.ErrorBox.Adornee = nil
+			stampData.ErrorBox.Parent = Tool -- ?
+		end
+	end)
+end
+
+local function loadSurfaceTypes(part, surfaces)
+	part.TopSurface = surfaces[1]
+	part.BottomSurface = surfaces[2]
+	part.LeftSurface = surfaces[3]
+	part.RightSurface = surfaces[4]
+	part.FrontSurface = surfaces[5]
+	part.BackSurface = surfaces[6]
+end
+
+local function saveSurfaceTypes(part, myTable)
+	local tempTable = {}
+	tempTable[1] = part.TopSurface
+	tempTable[2] = part.BottomSurface
+	tempTable[3] = part.LeftSurface
+	tempTable[4] = part.RightSurface
+	tempTable[5] = part.FrontSurface
+	tempTable[6] = part.BackSurface
+
+	myTable[part] = tempTable
+end
+
+local function checkTerrainBlockCollisions(
+	stampData,
+	allowedStampRegion,
+	cellPos,
+	checkHighScalabilityStamp
+)
+	local cellCenterToWorld = workspace.Terrain.CellCenterToWorld
+	local cellCenter =
+		cellCenterToWorld(workspace.Terrain, cellPos.X, cellPos.Y, cellPos.Z)
+	local cellBlockingParts = workspace:FindPartsInRegion3(
+		Region3.new(
+			cellCenter - Vector3.new(2, 2, 2) + insertBoundingBoxOverlapVector,
+			cellCenter + Vector3.new(2, 2, 2) - insertBoundingBoxOverlapVector
+		),
+		stampData.CurrentParts,
+		100
+	)
+
+	local skipThisCell = false
+
+	for b = 1, #cellBlockingParts do
+		if isBlocker(cellBlockingParts[b]) then
+			skipThisCell = true
+			break
+		end
+	end
+
+	if not skipThisCell then
+		-- pop players up above any set cells
+		local alreadyPushedUp = {}
+		-- if no blocking model below, then see if stamping on top of a character
+		for b = 1, #cellBlockingParts do
+			if
+				cellBlockingParts[b].Parent
+				and not alreadyPushedUp[cellBlockingParts[b].Parent]
+				and cellBlockingParts[b].Parent:FindFirstChild "Humanoid"
+				and cellBlockingParts[b].Parent
+					:FindFirstChild("Humanoid")
+					:IsA "Humanoid"
+			then
+				-----------------------------------------------------------------------------------
+				local blockingPersonTorso =
+					cellBlockingParts[b].Parent:FindFirstChild "Torso"
+				alreadyPushedUp[cellBlockingParts[b].Parent] = true
+
+				if blockingPersonTorso then
+					-- if so, let's push the person upwards so they pop on top of the stamped model/part (but only if there's space above them)
+					local newY = cellCenter.Y + 5
+					if
+						spaceAboveCharacter(
+							blockingPersonTorso,
+							newY,
+							stampData
+						)
+					then
+						blockingPersonTorso.CFrame = blockingPersonTorso.CFrame
+							+ Vector3.new(
+								0,
+								newY - blockingPersonTorso.CFrame.p.Y,
+								0
+							)
+					else
+						-- if no space, we just skip this one
+						skipThisCell = true
+						break
+					end
+				end
+				-----------------------------------------------------------------------------------
+			end
+		end
+	end
+
+	if not skipThisCell then -- if we STILL aren't skipping...  then we're good to go!
+		local canSetCell = true
+
+		if checkHighScalabilityStamp then -- check to see if cell is in region, if not we'll skip set
+			if allowedStampRegion then
+				cellPos = cellCenterToWorld(
+					workspace.Terrain,
+					cellPos.X,
+					cellPos.Y,
+					cellPos.Z
+				)
+				if
+					(
+						cellPos.X + 2
+						> allowedStampRegion.CFrame.p.X
+							+ allowedStampRegion.Size.X / 2
+					)
+					or (cellPos.X - 2 < allowedStampRegion.CFrame.p.X - allowedStampRegion.Size.X / 2)
+					or (cellPos.Y + 2 > allowedStampRegion.CFrame.p.Y + allowedStampRegion.Size.Y / 2)
+					or (cellPos.Y - 2 < allowedStampRegion.CFrame.p.Y - allowedStampRegion.Size.Y / 2)
+					or (cellPos.Z + 2 > allowedStampRegion.CFrame.p.Z + allowedStampRegion.Size.Z / 2)
+					or (
+						cellPos.Z - 2
+						< allowedStampRegion.CFrame.p.Z
+							- allowedStampRegion.Size.Z / 2
+					)
+				then
+					canSetCell = false
+				end
+			end
+		end
+
+		return canSetCell
+	end
+	return false
+end
+
+local function ResolveMegaClusterStamp(
+	stampData: {
+		CurrentParts: BasePart,
+	},
+	HighScalabilityLine: HighScalabilityLine,
+	checkHighScalabilityStamp,
+	allowedStampRegion
+)
+	local cellSet = false
+
+	cluster = workspace.Terrain
+
+	local line = HighScalabilityLine.InternalLine
+	local cMax = workspace.Terrain.MaxExtents.Max
+	local cMin = workspace.Terrain.MaxExtents.Min
+
+	local clusterMaterial = 1 -- default is grass
+	local clusterType = 0 -- default is brick
+	local clusterOrientation = 0 -- default is 0 rotation
+
+	local autoWedgeClusterParts = false
+	if stampData.CurrentParts:FindFirstChild "AutoWedge" then
+		autoWedgeClusterParts = true
+	end
+
+	if stampData.CurrentParts:FindFirstChild("ClusterMaterial", true) then
+		clusterMaterial =
+			stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
+		if clusterMaterial:IsA "Vector3Value" then
+			clusterType = clusterMaterial.Value.Y
+			clusterOrientation = clusterMaterial.Value.Z
+			clusterMaterial = clusterMaterial.Value.X
+		elseif clusterMaterial:IsA "IntValue" then
+			clusterMaterial = clusterMaterial.Value
+		end
+	end
+
+	if
+		HighScalabilityLine.Adorn.Parent
+		and HighScalabilityLine.Start
+		and (
+			(HighScalabilityLine.Dimensions > 1)
+			or (line and line.magnitude > 0)
+		)
+	then
+		local startCell =
+			workspace.Terrain:WorldToCell(HighScalabilityLine.Start)
+		local xInc = { 0, 0, 0 }
+		local yInc = { 0, 0, 0 }
+		local zInc = { 0, 0, 0 }
+
+		local incrementVect = { nil, nil, nil }
+		local stepVect = {
+			Vector3.new(0, 0, 0),
+			Vector3.new(0, 0, 0),
+			Vector3.new(0, 0, 0),
+		}
+
+		local worldAxes = {
+			Vector3.new(1, 0, 0),
+			Vector3.new(0, 1, 0),
+			Vector3.new(0, 0, 1),
+		}
+
+		local lines = {}
+		if HighScalabilityLine.Dimensions > 1 then
+			table.insert(lines, HighScalabilityLine.MoreLines[1])
+		end
+		if line and line.magnitude > 0 then
+			table.insert(lines, line)
+		end
+		if HighScalabilityLine.Dimensions > 2 then
+			table.insert(lines, HighScalabilityLine.MoreLines[2])
+		end
+
+		for i = 1, #lines do
+			lines[i] = Vector3.new(
+				math.floor(lines[i].X + 0.5),
+				math.floor(lines[i].Y + 0.5),
+				math.floor(lines[i].Z + 0.5)
+			) -- round to integers
+
+			if lines[i].X > 0 then
+				xInc[i] = 1
+			elseif lines[i].X < 0 then
+				xInc[i] = -1
+			end
+			if lines[i].Y > 0 then
+				yInc[i] = 1
+			elseif lines[i].Y < 0 then
+				yInc[i] = -1
+			end
+			if lines[i].Z > 0 then
+				zInc[i] = 1
+			elseif lines[i].Z < 0 then
+				zInc[i] = -1
+			end
+
+			incrementVect[i] = Vector3.new(xInc[i], yInc[i], zInc[i])
+			if incrementVect[i].magnitude < 0.9 then
+				incrementVect[i] = nil
+			end
+		end
+
+		if not lines[2] then
+			lines[2] = Vector3.new(0, 0, 0)
+		end
+		if not lines[3] then
+			lines[3] = Vector3.new(0, 0, 0)
+		end
+
+		local waterForceTag =
+			stampData.CurrentParts:FindFirstChild("WaterForceTag", true)
+		local waterForceDirectionTag = stampData.CurrentParts:FindFirstChild(
+			"WaterForceDirectionTag",
+			true
+		)
+
+		while stepVect[3].magnitude * 4 <= lines[3].magnitude do
+			local outerStepVectIndex = 1
+			while outerStepVectIndex < 4 do
+				stepVect[2] = Vector3.new(0, 0, 0)
+				while stepVect[2].magnitude * 4 <= lines[2].magnitude do
+					local innerStepVectIndex = 1
+					while innerStepVectIndex < 4 do
+						stepVect[1] = Vector3.new(0, 0, 0)
+						while stepVect[1].magnitude * 4 <= lines[1].magnitude do
+							local stepVectSum = stepVect[1]
+								+ stepVect[2]
+								+ stepVect[3]
+							local cellPos = Vector3int16.new(
+								startCell.X + stepVectSum.X,
+								startCell.Y + stepVectSum.Y,
+								startCell.Z + stepVectSum.Z
+							)
+							if
+								cellPos.X >= cMin.X
+								and cellPos.Y >= cMin.Y
+								and cellPos.Z >= cMin.Z
+								and cellPos.X < cMax.X
+								and cellPos.Y < cMax.Y
+								and cellPos.Z < cMax.Z
+							then
+								-- check if overlaps player or part
+								local okToStampTerrainBlock =
+									checkTerrainBlockCollisions(
+										stampData,
+										allowedStampRegion,
+										cellPos,
+										checkHighScalabilityStamp
+									)
+
+								if okToStampTerrainBlock then
+									if waterForceTag then
+										cluster:SetWaterCell(
+											cellPos.X,
+											cellPos.Y,
+											cellPos.Z,
+											Enum.WaterForce[waterForceTag.Value],
+											Enum.WaterDirection[waterForceDirectionTag.Value]
+										)
+									else
+										cluster:SetCell(
+											cellPos.X,
+											cellPos.Y,
+											cellPos.Z,
+											clusterMaterial,
+											clusterType,
+											clusterOrientation
+										)
+									end
+									cellSet = true
+
+									-- auto-wedge it?
+									if autoWedgeClusterParts then
+										workspace.Terrain:AutowedgeCells(
+											Region3int16.new(
+												Vector3int16.new(
+													cellPos.x - 1,
+													cellPos.y - 1,
+													cellPos.z - 1
+												),
+												Vector3int16.new(
+													cellPos.x + 1,
+													cellPos.y + 1,
+													cellPos.z + 1
+												)
+											)
+										)
+									end
+								end
+							end
+							stepVect[1] += incrementVect[1]
+						end
+						if incrementVect[2] then
+							while
+								innerStepVectIndex < 4
+								and worldAxes[innerStepVectIndex]:Dot(
+										incrementVect[2]
+									)
+									== 0
+							do
+								innerStepVectIndex += 1
+							end
+							if innerStepVectIndex < 4 then
+								stepVect[2] = stepVect[2]
+									+ worldAxes[innerStepVectIndex]
+										* worldAxes[innerStepVectIndex]:Dot(
+											incrementVect[2]
+										)
+							end
+							innerStepVectIndex += 1
+						else
+							stepVect[2] = Vector3.new(1, 0, 0)
+							innerStepVectIndex = 4 -- skip all remaining loops
+						end
+						if stepVect[2].magnitude * 4 > lines[2].magnitude then
+							innerStepVectIndex = 4
+						end
+					end
+				end
+				if incrementVect[3] then
+					while
+						outerStepVectIndex < 4
+						and worldAxes[outerStepVectIndex]:Dot(
+								incrementVect[3]
+							)
+							== 0
+					do
+						outerStepVectIndex += 1
+					end
+					if outerStepVectIndex < 4 then
+						stepVect[3] = stepVect[3]
+							+ worldAxes[outerStepVectIndex]
+								* worldAxes[outerStepVectIndex]:Dot(
+									incrementVect[3]
+								)
+					end
+					outerStepVectIndex += 1
+				else -- skip all remaining loops
+					stepVect[3] = Vector3.new(1, 0, 0)
+					outerStepVectIndex = 4
+				end
+				if stepVect[3].magnitude * 4 > lines[3].magnitude then
+					outerStepVectIndex = 4
+				end
+			end
+		end
+	end
+
+	-- and also get rid of any HighScalabilityLine stuff if it's there
+	HighScalabilityLine.Start = nil
+	HighScalabilityLine.Adorn.Parent = nil
+
+	-- Mark for undo.
+	if cellSet then
+		stampData.CurrentParts.Parent = nil
+		pcall(function()
+			ChangeHistoryService:SetWaypoint "StamperMulti"
+		end)
+	end
+
+	return cellSet
+end
+
 function RbxStamper.SetupStamperDragger(
-	modelToStamp,
-	Mouse,
-	StampInModel,
+	modelToStamp: Model | BasePart,
+	Mouse: Mouse,
+	StampInModel: Model?,
 	AllowedStampRegion,
-	StampFailedFunc
+	StampFailedFunc: () -> ()?
 )
 	if not modelToStamp then
-		error "SetupStamperDragger: modelToStamp (first arg) is nil!  Should be a stamper model"
+		error "SetupStamperDragger: modelToStamp (first arg) is nil! Should be a stamper model"
 		return nil
-	end
-	if not modelToStamp:IsA "Model" and not modelToStamp:IsA "BasePart" then
+	elseif not modelToStamp:IsA "Model" and not modelToStamp:IsA "BasePart" then
 		error "SetupStamperDragger: modelToStamp (first arg) is neither a Model or Part!"
 		return nil
-	end
-	if not Mouse then
-		error "SetupStamperDragger: Mouse (second arg) is nil!  Should be a mouse object"
+	elseif not Mouse then
+		error "SetupStamperDragger: Mouse (second arg) is nil! Should be a mouse object"
 		return nil
-	end
-	if not Mouse:IsA "Mouse" then
+	elseif not Mouse:IsA "Mouse" then
 		error "SetupStamperDragger: Mouse (second arg) is not of type Mouse!"
 		return nil
 	end
@@ -1023,41 +1628,46 @@ function RbxStamper.SetupStamperDragger(
 		ArchivableTable: {}?,
 		DecalTransparencyTable: {}?,
 		SurfaceTypeTable: {}?,
+		CurrentParts: BasePart & {
+			ErrorBox: SelectionBox?,
+		},
 	}
 	local mouseTarget
 
-	local errorBox = Instance.new "SelectionBox"
-	errorBox.Color = BrickColor.new "Bright red"
-	errorBox.Transparency = 0
-	errorBox.Archivable = false
+	local errorBox = New "SelectionBox" {
+		Color = BrickColor.new "Bright red",
+		Transparency = 0,
+		Archivable = false,
+	}
 
 	-- for megacluster MEGA STAMPING
-	local adornPart = Instance.new "Part"
-	adornPart.Parent = nil
-	adornPart.formFactor = "Custom"
-	adornPart.Size = Vector3.new(4, 4, 4)
-	adornPart.CFrame = CFrame.new()
-	adornPart.Archivable = false
+	local adornPart = New "Part" {
+		formFactor = "Custom",
+		Size = Vector3.new(4, 4, 4),
+		CFrame = CFrame.new(),
+		Archivable = false,
+	}
 
-	local adorn = Instance.new "SelectionBox"
-	adorn.Color = BrickColor.new "Toothpaste"
-	adorn.Adornee = adornPart
-	adorn.Visible = true
-	adorn.Transparency = 0
-	adorn.Name = "HighScalabilityStamperLine"
-	adorn.Archivable = false
+	local adorn = New "SelectionBox" {
+		Color = BrickColor.new "Toothpaste",
+		Adornee = adornPart,
+		Visible = true,
+		Transparency = 0,
+		Name = "HighScalabilityStamperLine",
+		Archivable = false,
+	}
 
-	local HighScalabilityLine = {}
-	HighScalabilityLine.Start = nil
-	HighScalabilityLine.End = nil
-	HighScalabilityLine.Adorn = adorn
-	HighScalabilityLine.AdornPart = adornPart
-	HighScalabilityLine.InternalLine = nil
-	HighScalabilityLine.NewHint = true
-
-	HighScalabilityLine.MorePoints = { nil, nil }
-	HighScalabilityLine.MoreLines = { nil, nil }
-	HighScalabilityLine.Dimensions = 1
+	local HighScalabilityLine: HighScalabilityLine = {
+		Start = nil,
+		End = nil,
+		Adorn = adorn,
+		AdornPart = adornPart,
+		InternalLine = nil,
+		NewHint = true,
+		MorePoints = { nil, nil },
+		MoreLines = { nil, nil },
+		Dimensions = 1,
+	}
 
 	local control = {}
 	local movingLock = false
@@ -1066,182 +1676,27 @@ function RbxStamper.SetupStamperDragger(
 	local mouseCons = {}
 	local keyCon
 
-	local stamped = Instance.new "BoolValue"
-	stamped.Archivable = false
-	stamped.Value = false
+	local stamped = New "BoolValue" {
+		Archivable = false,
+		Value = false,
+	}
 
-	local lastTarget = {}
-	lastTarget.TerrainOrientation = 0
-	lastTarget.CFrame = 0
+	local lastTarget = {
+		TerrainOrientation = 0,
+		CFrame = 0,
+	}
 
-	local cellInfo = {}
-	cellInfo.Material = 1
-	cellInfo.clusterType = 0
-	cellInfo.clusterOrientation = 0
-
-	local function isMegaClusterPart()
-		if not stampData then
-			return false
-		end
-		if not stampData.CurrentParts then
-			return false
-		end
-
-		return (
-			stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
-			or (stampData.CurrentParts.Name == "MegaClusterCube")
-		)
-	end
-
-	local function DoHighScalabilityRegionSelect()
-		local megaCube = stampData.CurrentParts:FindFirstChild "MegaClusterCube"
-		if not megaCube then
-			if stampData.CurrentParts.Name ~= "MegaClusterCube" then
-				return
-			else
-				megaCube = stampData.CurrentParts
-			end
-		end
-
-		HighScalabilityLine.End = megaCube.CFrame.p
-		local line
-		local line2 = Vector3.new(0, 0, 0)
-		local line3 = Vector3.new(0, 0, 0)
-
-		if HighScalabilityLine.Dimensions == 1 then
-			-- extract the line from these positions and limit to a 2D plane made from 2 of the world axes
-			--   then use dominating axis to limit line to be at 45-degree intervals
-			--   will use this internal representation of the line for the actual stamping
-			line = (HighScalabilityLine.End - HighScalabilityLine.Start)
-
-			if math.abs(line.X) < math.abs(line.Y) then
-				if math.abs(line.X) < math.abs(line.Z) then
-					-- limit to Y/Z plane, domination unknown
-					local newY, newZ
-					if math.abs(line.Y) > math.abs(line.Z) then
-						newY, newZ = truncateToCircleEighth(line.Y, line.Z)
-					else
-						newZ, newY = truncateToCircleEighth(line.Z, line.Y)
-					end
-					line = Vector3.new(0, newY, newZ)
-				else
-					-- limit to X/Y plane, with Y dominating
-					local newY, newX = truncateToCircleEighth(line.Y, line.X)
-					line = Vector3.new(newX, newY, 0)
-				end
-			else
-				if math.abs(line.Y) < math.abs(line.Z) then
-					-- limit to X/Z plane, domination unknown
-					local newX, newZ
-					if math.abs(line.X) > math.abs(line.Z) then
-						newX, newZ = truncateToCircleEighth(line.X, line.Z)
-					else
-						newZ, newX = truncateToCircleEighth(line.Z, line.X)
-					end
-					line = Vector3.new(newX, 0, newZ)
-				else
-					-- limit to X/Y plane, with X dominating
-					local newX, newY = truncateToCircleEighth(line.X, line.Y)
-					line = Vector3.new(newX, newY, 0)
-				end
-			end
-			HighScalabilityLine.InternalLine = line
-		elseif HighScalabilityLine.Dimensions == 2 then
-			line = HighScalabilityLine.MoreLines[1]
-			line2 = HighScalabilityLine.End - HighScalabilityLine.MorePoints[1]
-
-			-- take out any component of line2 along line1, so you get perpendicular to line1 component
-			line2 -= line.unit * line.unit:Dot(line2)
-
-			local tempCFrame = CFrame.new(
-				HighScalabilityLine.Start,
-				HighScalabilityLine.Start + line
-			)
-
-			-- then zero out whichever is the smaller component
-			local yAxis = tempCFrame:vectorToWorldSpace(Vector3.new(0, 1, 0))
-			local xAxis = tempCFrame:vectorToWorldSpace(Vector3.new(1, 0, 0))
-
-			local xComp = xAxis:Dot(line2)
-			local yComp = yAxis:Dot(line2)
-
-			if math.abs(yComp) > math.abs(xComp) then
-				line2 -= xAxis * xComp
-			else
-				line2 -= yAxis * yComp
-			end
-
-			HighScalabilityLine.InternalLine = line2
-		elseif HighScalabilityLine.Dimensions == 3 then
-			line = HighScalabilityLine.MoreLines[1]
-			line2 = HighScalabilityLine.MoreLines[2]
-			line3 = HighScalabilityLine.End - HighScalabilityLine.MorePoints[2]
-
-			-- zero out all components of previous lines
-			line3 -= line.unit * line.unit:Dot(line3)
-			line3 -= line2.unit * line2.unit:Dot(line3)
-
-			HighScalabilityLine.InternalLine = line3
-		end
-
-		-- resize the "line" graphic to be the correct size and orientation
-		local tempCFrame = CFrame.new(
-			HighScalabilityLine.Start,
-			HighScalabilityLine.Start + line
-		)
-
-		if HighScalabilityLine.Dimensions == 1 then -- faster calculation for line
-			HighScalabilityLine.AdornPart.Size =
-				Vector3.new(4, 4, line.magnitude + 4)
-			HighScalabilityLine.AdornPart.CFrame = tempCFrame
-				+ tempCFrame:vectorToWorldSpace(
-					Vector3.new(2, 2, 2)
-						- HighScalabilityLine.AdornPart.Size / 2
-				)
-		else
-			local boxSize = tempCFrame:vectorToObjectSpace(line + line2 + line3)
-			HighScalabilityLine.AdornPart.Size = Vector3.new(4, 4, 4)
-				+ Vector3.new(
-					math.abs(boxSize.X),
-					math.abs(boxSize.Y),
-					math.abs(boxSize.Z)
-				)
-			HighScalabilityLine.AdornPart.CFrame = tempCFrame
-				+ tempCFrame:vectorToWorldSpace(boxSize / 2)
-		end
-
-		-- make player able to see this ish
-
-		local gui
-		if game.Players.LocalPlayer then
-			gui = game.Players.LocalPlayer:FindFirstChild "PlayerGui"
-			if gui and gui:IsA "PlayerGui" then
-				if
-					(HighScalabilityLine.Dimensions == 1 and line.magnitude > 3)
-					or HighScalabilityLine.Dimensions > 1
-				then -- don't show if mouse hasn't moved enough
-					HighScalabilityLine.Adorn.Parent = gui
-				end
-			end
-		end
-
-		if gui == nil then -- we are in studio
-			gui = game:GetService "CoreGui"
-			if
-				(HighScalabilityLine.Dimensions == 1 and line.magnitude > 3)
-				or HighScalabilityLine.Dimensions > 1
-			then -- don't show if mouse hasn't moved enough
-				HighScalabilityLine.Adorn.Parent = gui
-			end
-		end
-	end
+	local cellInfo = {
+		Material = 1,
+		clusterType = 0,
+		clusterOrientation = 0,
+	}
 
 	local function DoStamperMouseMove(mouse)
 		if not mouse then
 			error "Error: RbxStamper.DoStamperMouseMove: Mouse is nil"
 			return
-		end
-		if not mouse:IsA "Mouse" then
+		elseif not mouse:IsA "Mouse" then
 			error(
 				`Error: RbxStamper.DoStamperMouseMove: Mouse is of type {mouse.className} should be of type Mouse`
 			)
@@ -1249,14 +1704,7 @@ function RbxStamper.SetupStamperDragger(
 		end
 
 		-- There wasn't a target (no part or terrain), so check for plane intersection.
-		if not mouse.Target then
-			local cellPos = GetTerrainForMouse(mouse)
-			if not cellPos then
-				return
-			end
-		end
-
-		if not stampData then
+		if not (mouse.Target or GetTerrainForMouse(mouse)) or not stampData then
 			return
 		end
 
@@ -1334,27 +1782,26 @@ function RbxStamper.SetupStamperDragger(
 				maxBB - insertBoundingBoxOverlapVector
 			)
 		then
-			if lastTarget.CFrame then
-				if
+			if
+				lastTarget.CFrame
+				and stampData.CurrentParts:FindFirstChild(
+					"ClusterMaterial",
+					true
+				)
+			then
+				local theClusterMaterial =
 					stampData.CurrentParts:FindFirstChild(
 						"ClusterMaterial",
 						true
 					)
-				then
-					local theClusterMaterial =
+				if theClusterMaterial:IsA "Vector3Value" then
+					local stampClusterMaterial =
 						stampData.CurrentParts:FindFirstChild(
 							"ClusterMaterial",
 							true
 						)
-					if theClusterMaterial:IsA "Vector3Value" then
-						local stampClusterMaterial =
-							stampData.CurrentParts:FindFirstChild(
-								"ClusterMaterial",
-								true
-							)
-						if stampClusterMaterial then
-							stampClusterMaterial = clusterMat
-						end
+					if stampClusterMaterial then
+						stampClusterMaterial = clusterMat
 					end
 				end
 			end
@@ -1362,10 +1809,9 @@ function RbxStamper.SetupStamperDragger(
 		end
 
 		-- if we are stamping a terrain part, make sure it goes on the grid! Otherwise preview block could be placed off grid, but stamped on grid
-		if isMegaClusterPart() then
-			local cellToStamp =
-				game.Workspace.Terrain:WorldToCell(targetCFrame.p)
-			local newCFramePosition = game.Workspace.Terrain:CellCenterToWorld(
+		if isMegaClusterPart(stampData) then
+			local cellToStamp = workspace.Terrain:WorldToCell(targetCFrame.p)
+			local newCFramePosition = workspace.Terrain:CellCenterToWorld(
 				cellToStamp.X,
 				cellToStamp.Y,
 				cellToStamp.Z
@@ -1426,7 +1872,7 @@ function RbxStamper.SetupStamperDragger(
 				if modelInfo then
 					hitFace = modelTargetSurface(
 						modelInfo.Parent,
-						game.Workspace.CurrentCamera.CoordinateFrame.p,
+						workspace.CurrentCamera.CoordinateFrame.p,
 						mouse.Hit.p
 					)
 				end
@@ -1445,7 +1891,7 @@ function RbxStamper.SetupStamperDragger(
 				hitFace = modelTargetSurface(
 					stampData.CurrentParts,
 					mouse.Hit.p,
-					game.Workspace.CurrentCamera.CoordinateFrame.p
+					workspace.CurrentCamera.CoordinateFrame.p
 				)
 
 				-- are we stamping WITH an unstampable surface?
@@ -1467,20 +1913,12 @@ function RbxStamper.SetupStamperDragger(
 		game.JointsService:SetJoinAfterMoveInstance(stampData.CurrentParts)
 
 		-- most common mouse inactive error occurs here, so check mouse active one more time in a pcall
-		if
-			not pcall(function()
-				if
-					mouse
-					and mouse.Target
-					and mouse.Target.Parent:FindFirstChild "RobloxModel"
-						== nil
-				then
-					return
-				else
-					return
-				end
-			end)
-		then
+		local ok = pcall(function()
+			return mouse -- ? - Heliodex
+				and mouse.Target
+				and not mouse.Target.Parent:FindFirstChild "RobloxModel"
+		end)
+		if not ok then
 			game.JointsService:ClearJoinAfterMoveJoints()
 			mouse = nil
 			error "Error: RbxStamper.DoStamperMouseMove Mouse is nil on second check"
@@ -1500,11 +1938,11 @@ function RbxStamper.SetupStamperDragger(
 
 		-- here we allow for a line of high-scalability parts
 		if
-			isMegaClusterPart()
+			isMegaClusterPart(stampData)
 			and HighScalabilityLine
 			and HighScalabilityLine.Start
 		then
-			DoHighScalabilityRegionSelect()
+			DoHighScalabilityRegionSelect(stampData, HighScalabilityLine)
 		end
 	end
 
@@ -1553,20 +1991,18 @@ function RbxStamper.SetupStamperDragger(
 				-- update everything else in MouseMove
 				DoStamperMouseMove(mouse)
 			end
-		elseif key == "c" then -- try to expand our high scalability dragger dimension
-			if
+		elseif
+			key == "c"
+			and HighScalabilityLine.InternalLine
+			and HighScalabilityLine.InternalLine.magnitude > 0
+			and HighScalabilityLine.Dimensions < 3
+		then -- try to expand our high scalability dragger dimension
+			HighScalabilityLine.MorePoints[HighScalabilityLine.Dimensions] =
+				HighScalabilityLine.End
+			HighScalabilityLine.MoreLines[HighScalabilityLine.Dimensions] =
 				HighScalabilityLine.InternalLine
-				and HighScalabilityLine.InternalLine.magnitude > 0
-				and HighScalabilityLine.Dimensions < 3
-			then
-				HighScalabilityLine.MorePoints[HighScalabilityLine.Dimensions] =
-					HighScalabilityLine.End
-				HighScalabilityLine.MoreLines[HighScalabilityLine.Dimensions] =
-					HighScalabilityLine.InternalLine
-				HighScalabilityLine.Dimensions = HighScalabilityLine.Dimensions
-					+ 1
-				HighScalabilityLine.NewHint = true
-			end
+			HighScalabilityLine.Dimensions = HighScalabilityLine.Dimensions + 1
+			HighScalabilityLine.NewHint = true
 		end
 	end
 
@@ -1577,50 +2013,13 @@ function RbxStamper.SetupStamperDragger(
 	)
 
 	local function resetHighScalabilityLine()
-		if HighScalabilityLine then
-			HighScalabilityLine.Start = nil
-			HighScalabilityLine.End = nil
-			HighScalabilityLine.InternalLine = nil
-			HighScalabilityLine.NewHint = true
-		end
-	end
-
-	local function flashRedBox()
-		local gui = game.CoreGui
-		if
-			game:FindFirstChild "Players"
-			and game.Players.LocalPlayer
-			and game.Players.LocalPlayer:FindFirstChild "PlayerGui"
-		then
-			gui = game.Players.LocalPlayer.PlayerGui
-		end
-		if not stampData.ErrorBox then
+		if not HighScalabilityLine then
 			return
 		end
-
-		stampData.ErrorBox.Parent = gui
-		if stampData.CurrentParts:IsA "Tool" then
-			stampData.ErrorBox.Adornee = stampData.CurrentParts.Handle
-		else
-			stampData.ErrorBox.Adornee = stampData.CurrentParts
-		end
-
-		delay(0, function()
-			for _ = 1, 3 do
-				if stampData.ErrorBox then
-					stampData.ErrorBox.Visible = true
-				end
-				wait(0.13)
-				if stampData.ErrorBox then
-					stampData.ErrorBox.Visible = false
-				end
-				wait(0.13)
-			end
-			if stampData.ErrorBox then
-				stampData.ErrorBox.Adornee = nil
-				stampData.ErrorBox.Parent = Tool -- ?
-			end
-		end)
+		HighScalabilityLine.Start = nil
+		HighScalabilityLine.End = nil
+		HighScalabilityLine.InternalLine = nil
+		HighScalabilityLine.NewHint = true
 	end
 
 	local function DoStamperMouseDown(mouse)
@@ -1635,7 +2034,7 @@ function RbxStamper.SetupStamperDragger(
 		elseif
 			not (
 				stampData
-				and isMegaClusterPart()
+				and isMegaClusterPart(stampData)
 				and mouse
 				and HighScalabilityLine
 			)
@@ -1645,7 +2044,7 @@ function RbxStamper.SetupStamperDragger(
 
 		local megaCube =
 			stampData.CurrentParts:FindFirstChild("MegaClusterCube", true)
-		local terrain = game.Workspace.Terrain
+		local terrain = workspace.Terrain
 		if megaCube then
 			HighScalabilityLine.Dimensions = 1
 			local tempCell = terrain:WorldToCell(megaCube.CFrame.p)
@@ -1660,27 +2059,6 @@ function RbxStamper.SetupStamperDragger(
 				terrain:CellCenterToWorld(tempCell.X, tempCell.Y, tempCell.Z)
 			return
 		end
-	end
-
-	local function loadSurfaceTypes(part, surfaces)
-		part.TopSurface = surfaces[1]
-		part.BottomSurface = surfaces[2]
-		part.LeftSurface = surfaces[3]
-		part.RightSurface = surfaces[4]
-		part.FrontSurface = surfaces[5]
-		part.BackSurface = surfaces[6]
-	end
-
-	local function saveSurfaceTypes(part, myTable)
-		local tempTable = {}
-		tempTable[1] = part.TopSurface
-		tempTable[2] = part.BottomSurface
-		tempTable[3] = part.LeftSurface
-		tempTable[4] = part.RightSurface
-		tempTable[5] = part.FrontSurface
-		tempTable[6] = part.BackSurface
-
-		myTable[part] = tempTable
 	end
 
 	-- local function makeSurfaceUnjoinable(part, surface)
@@ -1768,15 +2146,15 @@ function RbxStamper.SetupStamperDragger(
 					wait(0.03)
 					currTime = tick()
 				end
-				if part and part:IsA "BasePart" then
-					if
-						stampData.TransparencyTable
-						and stampData.TransparencyTable[part]
-					then
-						part.Transparency = gDesiredTrans
-							+ (1 - gDesiredTrans)
-								* stampData.TransparencyTable[part]
-					end
+				if
+					part
+					and part:IsA "BasePart"
+					and stampData.TransparencyTable
+					and stampData.TransparencyTable[part]
+				then
+					part.Transparency = gDesiredTrans
+						+ (1 - gDesiredTrans)
+							* stampData.TransparencyTable[part]
 				end
 			end)
 		end
@@ -1841,382 +2219,6 @@ function RbxStamper.SetupStamperDragger(
 		return clone, parts
 	end
 
-	local function checkTerrainBlockCollisions(
-		cellPos,
-		checkHighScalabilityStamp
-	)
-		local cellCenterToWorld = game.Workspace.Terrain.CellCenterToWorld
-		local cellCenter = cellCenterToWorld(
-			game.Workspace.Terrain,
-			cellPos.X,
-			cellPos.Y,
-			cellPos.Z
-		)
-		local cellBlockingParts = game.Workspace:FindPartsInRegion3(
-			Region3.new(
-				cellCenter
-					- Vector3.new(2, 2, 2)
-					+ insertBoundingBoxOverlapVector,
-				cellCenter
-					+ Vector3.new(2, 2, 2)
-					- insertBoundingBoxOverlapVector
-			),
-			stampData.CurrentParts,
-			100
-		)
-
-		local skipThisCell = false
-
-		for b = 1, #cellBlockingParts do
-			if isBlocker(cellBlockingParts[b]) then
-				skipThisCell = true
-				break
-			end
-		end
-
-		if not skipThisCell then
-			-- pop players up above any set cells
-			local alreadyPushedUp = {}
-			-- if no blocking model below, then see if stamping on top of a character
-			for b = 1, #cellBlockingParts do
-				if
-					cellBlockingParts[b].Parent
-					and not alreadyPushedUp[cellBlockingParts[b].Parent]
-					and cellBlockingParts[b].Parent:FindFirstChild "Humanoid"
-					and cellBlockingParts[b].Parent
-						:FindFirstChild("Humanoid")
-						:IsA "Humanoid"
-				then
-					-----------------------------------------------------------------------------------
-					local blockingPersonTorso =
-						cellBlockingParts[b].Parent:FindFirstChild "Torso"
-					alreadyPushedUp[cellBlockingParts[b].Parent] = true
-
-					if blockingPersonTorso then
-						-- if so, let's push the person upwards so they pop on top of the stamped model/part (but only if there's space above them)
-						local newY = cellCenter.Y + 5
-						if
-							spaceAboveCharacter(
-								blockingPersonTorso,
-								newY,
-								stampData
-							)
-						then
-							blockingPersonTorso.CFrame = blockingPersonTorso.CFrame
-								+ Vector3.new(
-									0,
-									newY - blockingPersonTorso.CFrame.p.Y,
-									0
-								)
-						else
-							-- if no space, we just skip this one
-							skipThisCell = true
-							break
-						end
-					end
-					-----------------------------------------------------------------------------------
-				end
-			end
-		end
-
-		if not skipThisCell then -- if we STILL aren't skipping...  then we're good to go!
-			local canSetCell = true
-
-			if checkHighScalabilityStamp then -- check to see if cell is in region, if not we'll skip set
-				if allowedStampRegion then
-					cellPos = cellCenterToWorld(
-						game.Workspace.Terrain,
-						cellPos.X,
-						cellPos.Y,
-						cellPos.Z
-					)
-					if
-						(
-							cellPos.X + 2
-							> allowedStampRegion.CFrame.p.X
-								+ allowedStampRegion.Size.X / 2
-						)
-						or (cellPos.X - 2 < allowedStampRegion.CFrame.p.X - allowedStampRegion.Size.X / 2)
-						or (cellPos.Y + 2 > allowedStampRegion.CFrame.p.Y + allowedStampRegion.Size.Y / 2)
-						or (cellPos.Y - 2 < allowedStampRegion.CFrame.p.Y - allowedStampRegion.Size.Y / 2)
-						or (cellPos.Z + 2 > allowedStampRegion.CFrame.p.Z + allowedStampRegion.Size.Z / 2)
-						or (
-							cellPos.Z - 2
-							< allowedStampRegion.CFrame.p.Z
-								- allowedStampRegion.Size.Z / 2
-						)
-					then
-						canSetCell = false
-					end
-				end
-			end
-
-			return canSetCell
-		end
-		return false
-	end
-
-	local function ResolveMegaClusterStamp(checkHighScalabilityStamp)
-		local cellSet = false
-
-		cluster = game.Workspace.Terrain
-
-		local line = HighScalabilityLine.InternalLine
-		local cMax = game.Workspace.Terrain.MaxExtents.Max
-		local cMin = game.Workspace.Terrain.MaxExtents.Min
-
-		local clusterMaterial = 1 -- default is grass
-		local clusterType = 0 -- default is brick
-		local clusterOrientation = 0 -- default is 0 rotation
-
-		local autoWedgeClusterParts = false
-		if stampData.CurrentParts:FindFirstChild "AutoWedge" then
-			autoWedgeClusterParts = true
-		end
-
-		if stampData.CurrentParts:FindFirstChild("ClusterMaterial", true) then
-			clusterMaterial =
-				stampData.CurrentParts:FindFirstChild("ClusterMaterial", true)
-			if clusterMaterial:IsA "Vector3Value" then
-				clusterType = clusterMaterial.Value.Y
-				clusterOrientation = clusterMaterial.Value.Z
-				clusterMaterial = clusterMaterial.Value.X
-			elseif clusterMaterial:IsA "IntValue" then
-				clusterMaterial = clusterMaterial.Value
-			end
-		end
-
-		if
-			HighScalabilityLine.Adorn.Parent
-			and HighScalabilityLine.Start
-			and (
-				(HighScalabilityLine.Dimensions > 1)
-				or (line and line.magnitude > 0)
-			)
-		then
-			local startCell =
-				game.Workspace.Terrain:WorldToCell(HighScalabilityLine.Start)
-			local xInc = { 0, 0, 0 }
-			local yInc = { 0, 0, 0 }
-			local zInc = { 0, 0, 0 }
-
-			local incrementVect = { nil, nil, nil }
-			local stepVect = {
-				Vector3.new(0, 0, 0),
-				Vector3.new(0, 0, 0),
-				Vector3.new(0, 0, 0),
-			}
-
-			local worldAxes = {
-				Vector3.new(1, 0, 0),
-				Vector3.new(0, 1, 0),
-				Vector3.new(0, 0, 1),
-			}
-
-			local lines = {}
-			if HighScalabilityLine.Dimensions > 1 then
-				table.insert(lines, HighScalabilityLine.MoreLines[1])
-			end
-			if line and line.magnitude > 0 then
-				table.insert(lines, line)
-			end
-			if HighScalabilityLine.Dimensions > 2 then
-				table.insert(lines, HighScalabilityLine.MoreLines[2])
-			end
-
-			for i = 1, #lines do
-				lines[i] = Vector3.new(
-					math.floor(lines[i].X + 0.5),
-					math.floor(lines[i].Y + 0.5),
-					math.floor(lines[i].Z + 0.5)
-				) -- round to integers
-
-				if lines[i].X > 0 then
-					xInc[i] = 1
-				elseif lines[i].X < 0 then
-					xInc[i] = -1
-				end
-				if lines[i].Y > 0 then
-					yInc[i] = 1
-				elseif lines[i].Y < 0 then
-					yInc[i] = -1
-				end
-				if lines[i].Z > 0 then
-					zInc[i] = 1
-				elseif lines[i].Z < 0 then
-					zInc[i] = -1
-				end
-
-				incrementVect[i] = Vector3.new(xInc[i], yInc[i], zInc[i])
-				if incrementVect[i].magnitude < 0.9 then
-					incrementVect[i] = nil
-				end
-			end
-
-			if not lines[2] then
-				lines[2] = Vector3.new(0, 0, 0)
-			end
-			if not lines[3] then
-				lines[3] = Vector3.new(0, 0, 0)
-			end
-
-			local waterForceTag =
-				stampData.CurrentParts:FindFirstChild("WaterForceTag", true)
-			local waterForceDirectionTag =
-				stampData.CurrentParts:FindFirstChild(
-					"WaterForceDirectionTag",
-					true
-				)
-
-			while stepVect[3].magnitude * 4 <= lines[3].magnitude do
-				local outerStepVectIndex = 1
-				while outerStepVectIndex < 4 do
-					stepVect[2] = Vector3.new(0, 0, 0)
-					while stepVect[2].magnitude * 4 <= lines[2].magnitude do
-						local innerStepVectIndex = 1
-						while innerStepVectIndex < 4 do
-							stepVect[1] = Vector3.new(0, 0, 0)
-							while
-								stepVect[1].magnitude * 4 <= lines[1].magnitude
-							do
-								local stepVectSum = stepVect[1]
-									+ stepVect[2]
-									+ stepVect[3]
-								local cellPos = Vector3int16.new(
-									startCell.X + stepVectSum.X,
-									startCell.Y + stepVectSum.Y,
-									startCell.Z + stepVectSum.Z
-								)
-								if
-									cellPos.X >= cMin.X
-									and cellPos.Y >= cMin.Y
-									and cellPos.Z >= cMin.Z
-									and cellPos.X < cMax.X
-									and cellPos.Y < cMax.Y
-									and cellPos.Z < cMax.Z
-								then
-									-- check if overlaps player or part
-									local okToStampTerrainBlock =
-										checkTerrainBlockCollisions(
-											cellPos,
-											checkHighScalabilityStamp
-										)
-
-									if okToStampTerrainBlock then
-										if waterForceTag then
-											cluster:SetWaterCell(
-												cellPos.X,
-												cellPos.Y,
-												cellPos.Z,
-												Enum.WaterForce[waterForceTag.Value],
-												Enum.WaterDirection[waterForceDirectionTag.Value]
-											)
-										else
-											cluster:SetCell(
-												cellPos.X,
-												cellPos.Y,
-												cellPos.Z,
-												clusterMaterial,
-												clusterType,
-												clusterOrientation
-											)
-										end
-										cellSet = true
-
-										-- auto-wedge it?
-										if autoWedgeClusterParts then
-											game.Workspace.Terrain:AutowedgeCells(
-												Region3int16.new(
-													Vector3int16.new(
-														cellPos.x - 1,
-														cellPos.y - 1,
-														cellPos.z - 1
-													),
-													Vector3int16.new(
-														cellPos.x + 1,
-														cellPos.y + 1,
-														cellPos.z + 1
-													)
-												)
-											)
-										end
-									end
-								end
-								stepVect[1] += incrementVect[1]
-							end
-							if incrementVect[2] then
-								while
-									innerStepVectIndex < 4
-									and worldAxes[innerStepVectIndex]:Dot(
-											incrementVect[2]
-										)
-										== 0
-								do
-									innerStepVectIndex += 1
-								end
-								if innerStepVectIndex < 4 then
-									stepVect[2] = stepVect[2]
-										+ worldAxes[innerStepVectIndex]
-											* worldAxes[innerStepVectIndex]:Dot(
-												incrementVect[2]
-											)
-								end
-								innerStepVectIndex += 1
-							else
-								stepVect[2] = Vector3.new(1, 0, 0)
-								innerStepVectIndex = 4 -- skip all remaining loops
-							end
-							if
-								stepVect[2].magnitude * 4 > lines[2].magnitude
-							then
-								innerStepVectIndex = 4
-							end
-						end
-					end
-					if incrementVect[3] then
-						while
-							outerStepVectIndex < 4
-							and worldAxes[outerStepVectIndex]:Dot(
-									incrementVect[3]
-								)
-								== 0
-						do
-							outerStepVectIndex += 1
-						end
-						if outerStepVectIndex < 4 then
-							stepVect[3] = stepVect[3]
-								+ worldAxes[outerStepVectIndex]
-									* worldAxes[outerStepVectIndex]:Dot(
-										incrementVect[3]
-									)
-						end
-						outerStepVectIndex += 1
-					else -- skip all remaining loops
-						stepVect[3] = Vector3.new(1, 0, 0)
-						outerStepVectIndex = 4
-					end
-					if stepVect[3].magnitude * 4 > lines[3].magnitude then
-						outerStepVectIndex = 4
-					end
-				end
-			end
-		end
-
-		-- and also get rid of any HighScalabilityLine stuff if it's there
-		HighScalabilityLine.Start = nil
-		HighScalabilityLine.Adorn.Parent = nil
-
-		-- Mark for undo.
-		if cellSet then
-			stampData.CurrentParts.Parent = nil
-			pcall(function()
-				ChangeHistoryService:SetWaypoint "StamperMulti"
-			end)
-		end
-
-		return cellSet
-	end
-
 	local function DoStamperMouseUp(mouse)
 		if not mouse then
 			error "Error: RbxStamper.DoStamperMouseUp: Mouse is nil"
@@ -2241,7 +2243,7 @@ function RbxStamper.SetupStamperDragger(
 		local checkHighScalabilityStamp
 		if stampInModel then
 			local canStamp
-			local isHSLPart = isMegaClusterPart()
+			local isHSLPart = isMegaClusterPart(stampData)
 
 			if
 				isHSLPart
@@ -2269,7 +2271,7 @@ function RbxStamper.SetupStamperDragger(
 
 		-- if unstampable face, then don't let us stamp there!
 		if unstampableSurface then
-			flashRedBox()
+			flashRedBox(stampData)
 			return false
 		end
 
@@ -2301,11 +2303,11 @@ function RbxStamper.SetupStamperDragger(
 					maxBB - insertBoundingBoxOverlapVector
 				)
 			then
-				flashRedBox()
+				flashRedBox(stampData)
 				return false
 			end
 
-			local blockingParts = game.Workspace:FindPartsInRegion3(
+			local blockingParts = workspace:FindPartsInRegion3(
 				Region3.new(
 					minBB + insertBoundingBoxOverlapVector,
 					maxBB - insertBoundingBoxOverlapVector
@@ -2316,7 +2318,7 @@ function RbxStamper.SetupStamperDragger(
 
 			for b = 1, #blockingParts do
 				if isBlocker(blockingParts[b]) then
-					flashRedBox()
+					flashRedBox(stampData)
 					return false
 				end
 			end
@@ -2355,7 +2357,7 @@ function RbxStamper.SetupStamperDragger(
 								)
 						else
 							-- if no space, we just error
-							flashRedBox()
+							flashRedBox(stampData)
 							return false
 						end
 					end
@@ -2373,15 +2375,15 @@ function RbxStamper.SetupStamperDragger(
 		end
 
 		-- something will be stamped!  so set the "StampedSomething" toggle to true
-		if game:FindFirstChild "Players" then
-			if game.Players.LocalPlayer then
-				if game.Players.LocalPlayer.Character then
-					local localChar = game.Players.LocalPlayer.Character
-					local stampTracker = localChar:FindFirstChild "StampTracker"
-					if stampTracker and not stampTracker.Value then
-						stampTracker.Value = true
-					end
-				end
+		if
+			game:FindFirstChild "Players"
+			and game.Players.LocalPlayer
+			and game.Players.LocalPlayer.Character
+		then
+			local stampTracker =
+				game.Players.LocalPlayer.Character:FindFirstChild "StampTracker"
+			if stampTracker and not stampTracker.Value then
+				stampTracker.Value = true
 			end
 		end
 
@@ -2389,26 +2391,29 @@ function RbxStamper.SetupStamperDragger(
 		if
 			HighScalabilityLine.Start
 			and HighScalabilityLine.Adorn.Parent
-			and isMegaClusterPart()
+			and isMegaClusterPart(stampData)
+			and (
+				ResolveMegaClusterStamp(
+					stampData,
+					HighScalabilityLine,
+					checkHighScalabilityStamp,
+					allowedStampRegion
+				) or checkHighScalabilityStamp
+			)
 		then
-			if
-				ResolveMegaClusterStamp(checkHighScalabilityStamp)
-				or checkHighScalabilityStamp
-			then
-				-- kill the ghost part
-				stampData.CurrentParts.Parent = nil
-				return true
-			end
+			-- kill the ghost part
+			stampData.CurrentParts.Parent = nil
+			return true
 		end
 
 		-- not High-Scalability-Line-Based, so behave normally [and get rid of any HSL stuff]
 		HighScalabilityLine.Start = nil
 		HighScalabilityLine.Adorn.Parent = nil
 
-		cluster = game.Workspace.Terrain
+		cluster = workspace.Terrain
 
 		-- if target point is in cluster, just use cluster:SetCell
-		if isMegaClusterPart() then
+		if isMegaClusterPart(stampData) then
 			-- if targetCFrame is inside cluster, just set that cell to 1 and return
 			--local cellPos = cluster:WorldToCell(targetCFrame.p)
 
@@ -2421,10 +2426,17 @@ function RbxStamper.SetupStamperDragger(
 				cellPos = cluster:WorldToCell(stampData.CurrentParts.CFrame.p)
 			end
 
-			local cMax = game.Workspace.Terrain.MaxExtents.Max
-			local cMin = game.Workspace.Terrain.MaxExtents.Min
+			local cMax = workspace.Terrain.MaxExtents.Max
+			local cMin = workspace.Terrain.MaxExtents.Min
 
-			if checkTerrainBlockCollisions(cellPos, false) then
+			if
+				checkTerrainBlockCollisions(
+					stampData,
+					allowedStampRegion,
+					cellPos,
+					false
+				)
+			then
 				local clusterValues = stampData.CurrentParts:FindFirstChild(
 					"ClusterMaterial",
 					true
@@ -2489,7 +2501,7 @@ function RbxStamper.SetupStamperDragger(
 
 					-- auto-wedge it
 					if autoWedgeClusterParts then
-						game.Workspace.Terrain:AutowedgeCells(
+						workspace.Terrain:AutowedgeCells(
 							Region3int16.new(
 								Vector3int16.new(
 									cellPos.x - 1,
@@ -2516,16 +2528,14 @@ function RbxStamper.SetupStamperDragger(
 				end
 			else
 				-- you tried to stamp a HSL-single part where one does not belong!
-				flashRedBox()
+				flashRedBox(stampData)
 				return false
 			end
 		end
 
 		local function getPlayer()
-			if game:FindFirstChild "Players" then
-				if game.Players.LocalPlayer then
-					return game.Players.LocalPlayer
-				end
+			if game:FindFirstChild "Players" and game.Players.LocalPlayer then
+				return game.Players.LocalPlayer
 			end
 			return nil
 		end
@@ -2556,45 +2566,46 @@ function RbxStamper.SetupStamperDragger(
 				stampData.CurrentParts:FindFirstChild "PlayerNameTag"
 
 			local tempPlayerValue
-			if playerIdTag ~= nil then
+			if playerIdTag then
 				tempPlayerValue = getPlayer()
-				if tempPlayerValue ~= nil then
+				if tempPlayerValue then
 					playerIdTag.Value = tempPlayerValue.userId
 				end
 			end
-			if playerNameTag ~= nil then
-				if
-					game:FindFirstChild "Players"
-					and game.Players.LocalPlayer
-				then
-					tempPlayerValue = game.Players.LocalPlayer
-					if tempPlayerValue ~= nil then
-						playerNameTag.Value = tempPlayerValue.Name
-					end
+			if
+				playerNameTag
+				and game:FindFirstChild "Players"
+				and game.Players.LocalPlayer
+			then
+				tempPlayerValue = game.Players.LocalPlayer
+				if tempPlayerValue then
+					playerNameTag.Value = tempPlayerValue.Name
 				end
 			end
 			-- ...and tag all inserted models for subsequent origin identification
 			-- if no RobloxModel tag already exists, then add it.
-			if stampData.CurrentParts:FindFirstChild "RobloxModel" == nil then
-				local stringTag = Instance.new "BoolValue"
-				stringTag.Name = "RobloxModel"
-				stringTag.Parent = stampData.CurrentParts
+			if not stampData.CurrentParts:FindFirstChild "RobloxModel" then
+				New "BoolValue" {
+					Name = "RobloxModel",
+					Parent = stampData.CurrentParts,
+				}
 
 				if
-					stampData.CurrentParts:FindFirstChild "RobloxStamper"
-					== nil
+					not stampData.CurrentParts:FindFirstChild "RobloxStamper"
 				then
-					local stringTag2 = Instance.new "BoolValue"
-					stringTag2.Name = "RobloxStamper"
-					stringTag2.Parent = stampData.CurrentParts
+					New "BoolValue" {
+						Name = "RobloxStamper",
+						Parent = stampData.CurrentParts,
+					}
 				end
 			end
 		else
 			stampData.CurrentParts:BreakJoints()
 			if stampData.CurrentParts:FindFirstChild "RobloxStamper" == nil then
-				local stringTag2 = Instance.new "BoolValue"
-				stringTag2.Name = "RobloxStamper"
-				stringTag2.Parent = stampData.CurrentParts
+				New "BoolValue" {
+					Name = "RobloxStamper",
+					Parent = stampData.CurrentParts,
+				}
 			end
 		end
 
@@ -2627,7 +2638,7 @@ function RbxStamper.SetupStamperDragger(
 			loadSurfaceTypes(part, surfaces)
 		end
 
-		if isMegaClusterPart() then
+		if isMegaClusterPart(stampData) then
 			stampData.CurrentParts.Transparency = 0
 		end
 
@@ -2654,12 +2665,12 @@ function RbxStamper.SetupStamperDragger(
 		-- 	ghostRemovalScript.Parent = nil
 		-- end
 
-		--Re-enable the scripts
+		-- Re-enable the scripts
 		for _, script in pairs(stampData.DisabledScripts) do
 			script.Disabled = false
 		end
 
-		--Now that they are all marked enabled, reinsert them into the world so they start running
+		-- Now that they are all marked enabled, reinsert them into the world so they start running
 		for _, script in pairs(stampData.DisabledScripts) do
 			local oldParent = script.Parent
 			script.Parent = nil
@@ -2782,11 +2793,7 @@ function RbxStamper.SetupStamperDragger(
 		end
 
 		stampData.ErrorBox = errorBox
-		if stampInModel then
-			clone.Parent = stampInModel
-		else
-			clone.Parent = game.Workspace
-		end
+		clone.Parent = stampInModel or workspace
 
 		if clone:FindFirstChild("ClusterMaterial", true) then -- extract all info from vector
 			local clusterMaterial =
@@ -2972,13 +2979,15 @@ function RbxStamper.Help(funcNameOrFunc)
 		funcNameOrFunc == "GetStampModel"
 		or funcNameOrFunc == RbxStamper.GetStampModel
 	then
-		return "Function GetStampModel.  Arguments: assetId, useAssetVersionId.  assetId is the asset to load in, define useAssetVersionId as true if assetId is a version id instead of a relative assetId.  Side effect: returns a model of the assetId, or a string with error message if something fails"
-	end
-	if
+		return [[Function GetStampModel.
+Arguments: assetId, useAssetVersionId. assetId is the asset to load in, define useAssetVersionId as true if assetId is a version id instead of a relative assetId.  Side effect: returns a model of the assetId, or a string with error message if something fails]]
+	elseif
 		funcNameOrFunc == "SetupStamperDragger"
 		or funcNameOrFunc == RbxStamper.SetupStamperDragger
 	then
-		return "Function SetupStamperDragger. Side Effect: Creates 4x4 stamping mechanism for building out parts quickly. Arguments: ModelToStamp, Mouse, LegalStampCheckFunction. ModelToStamp should be a Model or Part, preferrably loaded from RbxStamper.GetStampModel and should have extents that are multiples of 4.  Mouse should be a mouse object (obtained from things such as Tool.OnEquipped), used to drag parts around 'stamp' them out. LegalStampCheckFunction is optional, used as a callback with a table argument (table is full of instances about to be stamped). Function should return either true or false, false stopping the stamp action."
+		return [[Function SetupStamperDragger.
+Side Effect: Creates 4x4 stamping mechanism for building out parts quickly.
+Arguments: ModelToStamp, Mouse, LegalStampCheckFunction. ModelToStamp should be a Model or Part, preferrably loaded from RbxStamper.GetStampModel and should have extents that are multiples of 4. Mouse should be a mouse object (obtained from things such as Tool.OnEquipped), used to drag parts around 'stamp' them out. LegalStampCheckFunction is optional, used as a callback with a table argument (table is full of instances about to be stamped). Function should return either true or false, false stopping the stamp action.]]
 	end
 	return "No help available for this function"
 end

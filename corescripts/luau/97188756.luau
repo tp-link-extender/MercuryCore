@@ -1,5 +1,5 @@
 --!strict
--- CoreGui.MercuryGui.CoreScripts/ChatScript
+-- CoreGui.RobloxGui.CoreScripts/ChatScript
 print "[Mercury]: Loaded corescript 97188756"
 
 local RunService = game:GetService "RunService"
@@ -25,7 +25,7 @@ local Player = game.Players.LocalPlayer
 while not Player.Character do
 	RunService.Heartbeat:wait()
 end
-local Camera = game.Workspace.CurrentCamera
+local Camera = workspace.CurrentCamera
 
 -- Services
 local CoreGui = game:GetService "CoreGui"
@@ -653,7 +653,7 @@ end
 -- Create the initial Chat stuff
 -- Done only once
 function Chat:CreateGui()
-	self.Gui = WaitForChild(CoreGui, "MercuryGui")
+	self.Gui = WaitForChild(CoreGui, "RobloxGui")
 	self.Frame = New "Frame" {
 		Name = "ChatFrame",
 		--Size = self.Configuration.Size;
@@ -706,35 +706,37 @@ function Chat:CreateGui()
 		end)
 	end
 
-	if forceChatGUI or Player.ChatMode == Enum.ChatMode.TextAndMenu then
-		Chat:CreateChatBar()
-
-		if self.ChatBar then
-			self.ChatBar.FocusLost:connect(function(enterPressed)
-				Chat.GotFocus = false
-				if enterPressed and self.ChatBar.Text ~= "" then
-					local cText = self.ChatBar.Text
-					if string.sub(self.ChatBar.Text, 1, 1) == "%" then
-						cText = "(TEAM) " .. string.sub(cText, 2, #cText)
-						pcall(Players.TeamChat, Players, cText)
-					else
-						pcall(Players.Chat, Players, cText)
-					end
-
-					if self.ClickToChatButton then
-						self.ClickToChatButton.Visible = true
-					end
-					self.ChatBar.Text = ""
-				end
-				Spawn(function()
-					wait(5)
-					if not Chat.GotFocus then
-						Chat.Frame.Background.Visible = false
-					end
-				end)
-			end)
-		end
+	if not (forceChatGUI or Player.ChatMode == Enum.ChatMode.TextAndMenu) then
+		return
 	end
+	Chat:CreateChatBar()
+	if not self.ChatBar then
+		return
+	end
+
+	self.ChatBar.FocusLost:connect(function(enterPressed)
+		Chat.GotFocus = false
+		if enterPressed and self.ChatBar.Text ~= "" then
+			local cText = self.ChatBar.Text
+			if string.sub(self.ChatBar.Text, 1, 1) == "%" then
+				cText = "(TEAM) " .. string.sub(cText, 2, #cText)
+				pcall(Players.TeamChat, Players, cText)
+			else
+				pcall(Players.Chat, Players, cText)
+			end
+
+			if self.ClickToChatButton then
+				self.ClickToChatButton.Visible = true
+			end
+			self.ChatBar.Text = ""
+		end
+		Spawn(function()
+			wait(5)
+			if not Chat.GotFocus then
+				Chat.Frame.Background.Visible = false
+			end
+		end)
+	end)
 end
 
 -- Scrolling function
@@ -754,7 +756,7 @@ function Input:OnMouseScroll()
 					wait(0.25)
 				end
 			end
-			wait()
+			wait(0.03)
 		end
 	end)
 	if Chat:CheckIfInBounds(Input.Speed) then

@@ -1,4 +1,4 @@
--- CoreGui.MercuryGui.CoreScripts/BackpackScripts/BackpackBuild
+-- CoreGui.RobloxGui.CoreScripts/BackpackScripts/BackpackBuild
 print "[Mercury]: Loaded corescript 53878047"
 
 local News = require "../Modules/New"
@@ -127,7 +127,7 @@ local CurrentLoadout = New "Frame" {
 			TextStrokeTransparency = 0,
 			Font = Enum.Font.ArialBold,
 			FontSize = Enum.FontSize.Size14,
-			-- TextWrap = true,
+			-- TextWrapped = true,
 			Size = UDim2.new(1, 60, 0, 20),
 			Position = UDim2.new(0, -30, 0, -30),
 		},
@@ -153,7 +153,7 @@ local CurrentLoadout = New "Frame" {
 			Size = UDim2.new(1, 16, 1, 16),
 			Text = "",
 			TextColor3 = Color3.new(1, 1, 1),
-			TextWrap = true,
+			TextWrapped = true,
 			ZIndex = 5.0,
 		},
 		Hydrate(SlotNumber()) {
@@ -311,7 +311,7 @@ New "Frame" {
 				TextColor3 = Color3.new(1, 1, 1),
 				TextXAlignment = Enum.TextXAlignment.Left,
 				ZIndex = 2,
-				TextWrap = true,
+				TextWrapped = true,
 				Text = "Search...",
 			},
 		},
@@ -418,7 +418,7 @@ New "Frame" {
 					Size = UDim2.new(1, 6, 1, 5),
 					Text = "",
 					TextColor3 = Color3.new(1, 1, 1),
-					TextWrap = true,
+					TextWrapped = true,
 					ZIndex = 9,
 				},
 			},
@@ -501,7 +501,7 @@ New "Frame" {
 					Text = "",
 					ZIndex = 2,
 					TextColor3 = Color3.new(1, 1, 1),
-					TextWrap = true,
+					TextWrapped = true,
 				},
 			},
 		},

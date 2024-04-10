@@ -30,13 +30,11 @@ local function ScopedConnect(
 			if syncFunc then
 				syncFunc()
 			end
-		else
+		elseif eventConnection then
 			--Probably leaving the world, so disconnect for now
-			if eventConnection then
-				eventConnection:disconnect()
-				if removeFunc then
-					removeFunc()
-				end
+			eventConnection:disconnect()
+			if removeFunc then
+				removeFunc()
 			end
 		end
 	end
@@ -177,7 +175,7 @@ function RbxGui.CreateMessageDialog(title, message, buttons)
 			BackgroundTransparency = 1,
 			Font = Enum.Font.Arial,
 			FontSize = Enum.FontSize.Size18,
-			TextWrap = true,
+			TextWrapped = true,
 			TextXAlignment = Enum.TextXAlignment.Left,
 			TextYAlignment = Enum.TextYAlignment.Top,
 		},
@@ -218,7 +216,7 @@ function RbxGui.CreateStyledMessageDialog(title, message, style, buttons)
 			BackgroundTransparency = 1,
 			Font = Enum.Font.Arial,
 			FontSize = Enum.FontSize.Size18,
-			TextWrap = true,
+			TextWrapped = true,
 			TextXAlignment = Enum.TextXAlignment.Left,
 			TextYAlignment = Enum.TextYAlignment.Top,
 		},
@@ -266,7 +264,7 @@ function RbxGui.CreateDropDownMenu(
 
 	local dropDownMenu = New "TextButton" {
 		Name = "DropDownMenuButton",
-		TextWrap = true,
+		TextWrapped = true,
 		TextColor3 = Color3.new(1, 1, 1),
 		Text = "Choose One",
 		Font = Enum.Font.ArialBold,
@@ -323,7 +321,7 @@ function RbxGui.CreateDropDownMenu(
 		BackgroundColor3 = Color3.new(1, 1, 1),
 		Font = Enum.Font.Arial,
 		FontSize = Enum.FontSize.Size18,
-		TextWrap = true,
+		TextWrapped = true,
 		ZIndex = 2,
 	}
 
@@ -361,13 +359,15 @@ function RbxGui.CreateDropDownMenu(
 		end
 
 		local children = droppedDownMenu:GetChildren()
-		if children then
-			for _, child in ipairs(children) do
-				if child.Name == "ChoiceButton" then
-					child.ZIndex = baseZIndex + 2
-				elseif child.Name == "ClickCaptureButton" then
-					child.ZIndex = baseZIndex
-				end
+		if not children then
+			return
+		end
+
+		for _, child in ipairs(children) do
+			if child.Name == "ChoiceButton" then
+				child.ZIndex = baseZIndex + 2
+			elseif child.Name == "ClickCaptureButton" then
+				child.ZIndex = baseZIndex
 			end
 		end
 	end
@@ -418,11 +418,7 @@ function RbxGui.CreateDropDownMenu(
 		areaSoak.Visible = not areaSoak.Visible
 		dropDownMenu.Visible = not dropDownSelected
 		droppedDownMenu.Visible = dropDownSelected
-		if dropDownSelected then
-			setZIndex(4)
-		else
-			setZIndex(2)
-		end
+		setZIndex(dropDownSelected and 4 or 2)
 		if useScrollButtons then
 			updateScroll()
 		end
@@ -2479,7 +2475,7 @@ local function CreateBasicTutorialPage(
 			Font = Enum.Font.ArialBold,
 			TextColor3 = Color3.new(1, 1, 1),
 			TextXAlignment = Enum.TextXAlignment.Center,
-			TextWrap = true,
+			TextWrapped = true,
 			Size = UDim2.new(1, -55, 0, 22),
 			Position = UDim2.new(0, 0, 0, 0),
 		},
@@ -2607,7 +2603,7 @@ function RbxGui.CreateTextTutorialPage(name, text, skipTutorial)
 		BackgroundTransparency = 1,
 		TextColor3 = Color3.new(1, 1, 1),
 		Text = text,
-		TextWrap = true,
+		TextWrapped = true,
 		TextXAlignment = Enum.TextXAlignment.Left,
 		TextYAlignment = Enum.TextYAlignment.Center,
 		Font = Enum.Font.Arial,
@@ -2959,7 +2955,7 @@ function RbxGui.CreateSetPanel(
 						FontSize = Enum.FontSize.Size24,
 						Text = "",
 						TextColor3 = Color3.new(1, 1, 1),
-						TextWrap = true,
+						TextWrapped = true,
 						TextXAlignment = Enum.TextXAlignment.Left,
 						TextYAlignment = Enum.TextYAlignment.Top,
 					},

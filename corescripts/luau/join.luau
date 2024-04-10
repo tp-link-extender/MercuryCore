@@ -4,9 +4,6 @@ print "[Mercury]: Loaded Join corescript"
 local InsertService = game:GetService "InsertService"
 local ChangeHistoryService = game:GetService "ChangeHistoryService"
 local ContentProvider = game:GetService "ContentProvider"
-local SocialService = game:GetService "SocialService"
-local GamePassService = game:GetService "GamePassService"
-local MarketplaceService = game:GetService "MarketplaceService"
 local Players = game:GetService "Players"
 local Client = game:GetService "NetworkClient"
 local Visit = game:GetService "Visit"
@@ -53,30 +50,6 @@ InsertService:SetCollectionUrl "http://banland.xyz/game/tools/insertasset?sid=%d
 InsertService:SetAssetUrl "http://banland.xyz/asset?id=%d"
 InsertService:SetAssetVersionUrl "http://banland.xyz/asset?assetversionid=%d"
 
-pcall(function()
-	SocialService:SetFriendUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsFriendsWith&playerid=%d&userid=%d"
-end)
-pcall(function()
-	SocialService:SetBestFriendUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsBestFriendsWith&playerid=%d&userid=%d"
-end)
-pcall(function()
-	SocialService:SetGroupUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsInGroup&playerid=%d&groupid=%d"
-end)
-pcall(function()
-	SocialService:SetGroupRankUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRank&playerid=%d&groupid=%d"
-end)
-pcall(function()
-	SocialService:SetGroupRoleUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRole&playerid=%d&groupid=%d"
-end)
-pcall(function()
-	GamePassService:SetPlayerHasPassUrl "http://banland.xyz/Game/GamePass/GamePassHandler.ashx?Action=HasPass&UserID=%d&PassID=%d"
-end)
-pcall(function()
-	MarketplaceService:SetProductInfoUrl "http://banland.xyz/marketplace/productinfo?assetId=%d"
-end)
-pcall(function()
-	MarketplaceService:SetPlayerOwnsAssetUrl "http://banland.xyz/ownership/hasasset?userId=%d&assetId=%d"
-end)
 pcall(function()
 	game:SetCreatorID(_CREATOR_ID, Enum.CreatorType.User)
 end)

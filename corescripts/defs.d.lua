@@ -968,11 +968,6 @@ declare class EnumFontSize_INTERNAL extends Enum
 	Size24: EnumFontSize
 	Size36: EnumFontSize
 	Size48: EnumFontSize
-	Size28: EnumFontSize
-	Size32: EnumFontSize
-	Size42: EnumFontSize
-	Size60: EnumFontSize
-	Size96: EnumFontSize
 end
 declare class EnumFontStyle extends EnumItem end
 declare class EnumFontStyle_INTERNAL extends Enum
@@ -2615,8 +2610,6 @@ declare class EnumPriorityMethod_INTERNAL extends Enum
 	AccumulatedError: EnumPriorityMethod
 end
 
-
-
 type ENUM_LIST = {
 	AccessModifierType: EnumAccessModifierType_INTERNAL,
 	ActionType: EnumActionType_INTERNAL,
@@ -3741,7 +3734,8 @@ declare class CoreGui extends BasePlayerGui
 	SelectionImageObject: GuiObject
 	UserGuiRenderingChanged: RBXScriptSignal<boolean, Instance, EnumNormalId, number>
 	Version: number
-	RobloxGui: any
+	RobloxGui: ScreenGui
+	MercuryGui: ScreenGui -- lmfaooo
 	function SetUserGuiRendering(self, enabled: boolean, guiAdornee: Instance, faceId: EnumNormalId, horizontalCurvature: number?): nil
 	function TakeScreenshot(self): nil
 	function ToggleRecording(self): nil
@@ -5022,6 +5016,8 @@ declare class TextLabel extends GuiLabel
 	TextWrapped: boolean
 	TextXAlignment: EnumTextXAlignment
 	TextYAlignment: EnumTextYAlignment
+
+	FontSize: EnumFontSize
 	function SetTextFromInput(self, text: string): nil
 end
 
@@ -5544,6 +5540,9 @@ declare class InsertService extends Instance
 	function SetBaseSetsUrl(self, baseSetsUrl: string): nil
 	function SetCollectionUrl(self, collectionUrl: string): nil
 	function SetUserSetsUrl(self, userSetsUrl: string): nil
+	function SetTrustLevel(self, trustLevel: number): nil
+	function SetFreeModelUrl(self, freeModelUrl: string): nil
+	function SetFreeDecalUrl(self, freeDecalUrl: string): nil
 end
 
 declare class JointInstance extends Instance
@@ -6205,6 +6204,7 @@ declare class Terrain extends BasePart
 	function AutoWedgeCell(self, x: number, y: number, z: number): boolean
 	function SetWaterCell(self, x: number, y: number, z: number, waterForce: EnumWaterForce, waterDirection: EnumWaterDirection): nil
 	function SetCell(self, x: number, y: number, z: number, material: EnumCellMaterial, orientation: EnumCellOrientation): nil
+	function GetCell(self, x: number, y: number, z: number): any -- "tuple" bruh
 end
 
 declare class TriangleMeshPart extends BasePart
@@ -6263,6 +6263,8 @@ declare class Model extends PVInstance
 	function RemovePersistentPlayer(self, playerInstance: Player?): nil
 	function ScaleTo(self, newScaleFactor: number): nil
 	function TranslateBy(self, delta: Vector3): nil
+
+	function GetModelCFrame(self): CFrame
 end
 
 declare class BackpackItem extends Model
@@ -7033,20 +7035,13 @@ end
 
 declare class ScriptContext extends Instance
 	Error: RBXScriptSignal<string, string, Instance>
-	ErrorDetailed: RBXScriptSignal<string, string, Instance, string, number>
 	ScriptsDisabled: boolean
-	function AddCoreScriptLocal(self, name: string, parent: Instance): nil
-	function ClearScriptProfilingData(self): nil
-	function DeserializeScriptProfilerString(self, jsonString: string): { [any]: any }
-	function GetCoverageStats(self): { any }
-	function SaveScriptProfilingData(self, filename: string): nil
 	function SetTimeout(self, seconds: number): nil
-	function StartScriptProfiling(self, frequency: number?): nil
-	function StopScriptProfiling(self): string
 
 	-- player or instance
-	function AddCoreScript(self, id: number, instance: Instance, name: string): nil
-	function RegisterLibrary(self, name: string, id: string): nil
+	function AddCoreScript(self, assetId: number, parent: Instance, name: string): nil
+	function AddStarterScript(self, assetId: number): nil
+	function RegisterLibrary(self, libraryName: string, assetId: string): nil
 	function LibraryRegistrationComplete(self): nil
 end
 

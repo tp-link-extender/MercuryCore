@@ -39,7 +39,7 @@ function RbxUtility.SelectTerrainRegion(
 	selectEmptyCells: boolean,
 	selectionParent: Instance
 )
-	local terrain = game.Workspace:FindFirstChild "Terrain" :: Terrain
+	local terrain = workspace:FindFirstChild "Terrain" :: Terrain
 	if not terrain then
 		return
 	end
@@ -73,7 +73,7 @@ function RbxUtility.SelectTerrainRegion(
 	local selectionContainer = New "Model" {
 		Name = "SelectionContainer",
 		Archivable = false,
-		Parent = selectionParent or game.Workspace,
+		Parent = selectionParent or workspace,
 	}
 
 	local updateSelection -- function we return to allow user to update selection
@@ -386,7 +386,7 @@ Some example usages:
 A simple example which uses the Create function to create a model object and assign two of it's properties.
 local model = Create'Model'{
     Name = 'A New model',
-    Parent = game.Workspace,
+    Parent = workspace,
 }
 
 

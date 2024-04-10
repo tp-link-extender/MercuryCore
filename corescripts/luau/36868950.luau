@@ -1,5 +1,5 @@
 --!strict
--- CoreGui.MercuryGui.CoreScripts/ToolTip
+-- CoreGui.RobloxGui.CoreScripts/ToolTip
 print "[Mercury]: Loaded corescript 36868950"
 
 local News = require "../Modules/New"
@@ -31,31 +31,39 @@ local frameTip = New "TextLabel" {
 	BackgroundColor3 = Color3.new(0, 0, 0),
 	BackgroundTransparency = 1,
 	TextTransparency = 1,
-	TextWrap = true,
+	TextWrapped = true,
 	New "BoolValue" {
 		Name = "inside",
 		Value = false,
 	},
 }
 
-local function setUpListeners(frameToListen)
+local function setUpListeners(
+	labelToListen: TextLabel & {
+		inside: BoolValue,
+		Parent: Frame, -- but has mousebutton1click? hmm... todo: investigate - Heliodex
+	}
+)
 	local fadeSpeed = 0.1
-	frameToListen.Parent.MouseEnter:connect(function()
-		if frameToListen:FindFirstChild "inside" then
-			frameToListen.inside.Value = true
-			wait(1.2)
-			if frameToListen.inside.Value then
-				while
-					frameToListen.inside.Value
-					and frameToListen.BackgroundTransparency > 0
-				do
-					frameToListen.BackgroundTransparency = frameToListen.BackgroundTransparency
-						- fadeSpeed
-					frameToListen.TextTransparency = frameToListen.TextTransparency
-						- fadeSpeed
-					RunService.Heartbeat:wait()
-				end
-			end
+	labelToListen.Parent.MouseEnter:connect(function()
+		if not labelToListen:FindFirstChild "inside" then
+			return
+		end
+		labelToListen.inside.Value = true
+		wait(1.2)
+		if not labelToListen.inside.Value then
+			return
+		end
+
+		while
+			labelToListen.inside.Value
+			and labelToListen.BackgroundTransparency > 0
+		do
+			labelToListen.BackgroundTransparency = labelToListen.BackgroundTransparency
+				- fadeSpeed
+			labelToListen.TextTransparency = labelToListen.TextTransparency
+				- fadeSpeed
+			RunService.Heartbeat:wait()
 		end
 	end)
 
@@ -65,11 +73,11 @@ local function setUpListeners(frameToListen)
 		killFrame.TextTransparency = 1
 	end
 
-	frameToListen.Parent.MouseLeave:connect(function()
-		killTip(frameToListen)
+	labelToListen.Parent.MouseLeave:connect(function()
+		killTip(labelToListen)
 	end)
-	frameToListen.Parent.MouseButton1Click:connect(function()
-		killTip(frameToListen)
+	labelToListen.Parent.MouseButton1Click:connect(function()
+		killTip(labelToListen)
 	end)
 end
 

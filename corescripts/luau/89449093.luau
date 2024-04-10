@@ -1,4 +1,4 @@
--- CoreGui.MercuryGui.Backpack.CoreScripts/BackpackScripts/Back (2?)
+-- CoreGui.RobloxGui.Backpack.CoreScripts/BackpackScripts/Back (2?)
 print "[Mercury]: Loaded corescript 89449093"
 
 local News = require "../Modules/New"
@@ -53,7 +53,7 @@ local searchBox = waitForChild(backpack.SearchFrame.SearchBoxFrame, "SearchBox")
 local searchButton = waitForChild(backpack.SearchFrame, "SearchButton")
 local resetButton = waitForChild(backpack.SearchFrame, "ResetButton")
 
-local mercuryGui = waitForChild(game.CoreGui, "MercuryGui")
+local mercuryGui = waitForChild(game.CoreGui, "RobloxGui")
 local currentLoadout = waitForChild(mercuryGui, "CurrentLoadout")
 local loadoutBackground = waitForChild(currentLoadout, "Background")
 

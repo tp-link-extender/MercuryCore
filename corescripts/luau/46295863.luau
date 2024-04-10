@@ -1,5 +1,5 @@
 --!strict
--- CoreGui.MercuryGui.CoreScripts/Settings
+-- CoreGui.RobloxGui.CoreScripts/Settings
 print "[Mercury]: Loaded corescript 46295863"
 
 local News = require "../Modules/New"
@@ -23,10 +23,9 @@ local function waitForProperty(instance, property)
 end
 
 -- A Few Script Globals
-local gui = script.Parent
-if gui:FindFirstChild "ControlFrame" then
-	gui = gui.ControlFrame
-end
+local mercuryGui = script.Parent :: ScreenGui & { ControlFrame: Frame }
+local gui = mercuryGui:FindFirstChild "ControlFrame" and mercuryGui.ControlFrame
+	or mercuryGui
 
 local RbxGui
 local helpButton, updateCameraDropDownSelection, updateVideoCaptureDropDownSelection
@@ -56,7 +55,7 @@ local ok, isMac = pcall(function()
 end)
 macClient = ok and isMac
 
-local function Color3I(r, g, b)
+local function Colour3(r: number, g: number, b: number)
 	return Color3.new(r / 255, g / 255, b / 255)
 end
 
@@ -343,8 +342,8 @@ local function createHelpDialog(baseZIndex)
 		Active = true,
 		Visible = false,
 		Size = UDim2.new(1, 0, 1, 0),
-		BackgroundColor3 = Color3I(51, 51, 51),
-		BorderColor3 = Color3I(27, 42, 53),
+		BackgroundColor3 = Colour3(51, 51, 51),
+		BorderColor3 = Colour3(27, 42, 53),
 		BackgroundTransparency = 0.4,
 		ZIndex = baseZIndex + 1,
 	}
@@ -500,7 +499,7 @@ local function createLeaveConfirmationMenu(baseZIndex, shield)
 			Name = "LeaveText",
 			Text = "Leave this game?",
 			Size = UDim2.new(1, 0, 0.8, 0),
-			TextWrap = true,
+			TextWrapped = true,
 			TextColor3 = Color3.new(1, 1, 1),
 			Font = Enum.Font.ArialBold,
 			FontSize = Enum.FontSize.Size36,
@@ -559,7 +558,7 @@ local function createResetConfirmationMenu(baseZIndex, shield)
 	local function resetCharacterText()
 		return New "TextLabel" {
 			Size = UDim2.new(1, 0, 0.8, 0),
-			TextWrap = true,
+			TextWrapped = true,
 			TextColor3 = Color3.new(1, 1, 1),
 			Font = Enum.Font.ArialBold,
 			BackgroundTransparency = 1,
@@ -999,7 +998,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 	local betterQualityText = Hydrate(qualityTextC()) {
 		Name = "BetterQualityText",
 		Text = "Better Quality",
-		TextWrap = true,
+		TextWrapped = true,
 		Size = UDim2.new(0, 41, 0, 28),
 		Position = UDim2.new(0, 390, 0, 269),
 		TextColor3 = Color3.new(95, 95, 95),
@@ -1049,7 +1048,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 		FontSize = Enum.FontSize.Size18,
 		Text = "Auto",
 		ZIndex = 1,
-		TextWrap = true,
+		TextWrapped = true,
 		Parent = gameSettingsMenuFrame,
 		Visible = not inStudioMode,
 	}
@@ -1471,7 +1470,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 			Position = UDim2.new(0, 32, 0, 100),
 			Size = UDim2.new(0, 164, 0, 18),
 			BackgroundTransparency = 1,
-			TextColor3 = Color3I(255, 255, 255),
+			TextColor3 = Colour3(255, 255, 255),
 			TextXAlignment = Enum.TextXAlignment.Left,
 			ZIndex = baseZIndex + 4,
 			Parent = gameSettingsMenuFrame,
@@ -1529,14 +1528,14 @@ local function createGameSettingsMenu(baseZIndex, _)
 		FontSize = Enum.FontSize.Size18,
 		Position = UDim2.new(0, 31, 0, 58),
 		Size = UDim2.new(0, 224, 0, 18),
-		TextColor3 = Color3I(255, 255, 255),
+		TextColor3 = Colour3(255, 255, 255),
 		TextXAlignment = Enum.TextXAlignment.Left,
 		BackgroundTransparency = 1,
 		ZIndex = baseZIndex + 4,
 		Parent = gameSettingsMenuFrame,
 	}
 
-	mouseLockLabel = CoreGui.MercuryGui:FindFirstChild("MouseLockLabel", true)
+	mouseLockLabel = CoreGui.RobloxGui:FindFirstChild("MouseLockLabel", true)
 
 	local enumItems = Enum.ControlMode:GetEnumItems()
 	local enumNames = {}
@@ -1607,8 +1606,8 @@ if UserSettings then
 			AutoButtonColor = false,
 			Visible = false,
 			Size = UDim2.new(1, 0, 1, 0),
-			BackgroundColor3 = Color3I(51, 51, 51),
-			BorderColor3 = Color3I(27, 42, 53),
+			BackgroundColor3 = Colour3(51, 51, 51),
+			BorderColor3 = Colour3(27, 42, 53),
 			BackgroundTransparency = 0.4,
 			ZIndex = baseZIndex + 2,
 		}
@@ -1663,7 +1662,7 @@ if UserSettings then
 			end)
 		end
 
-		CoreGui.MercuryGui.Changed:connect(
+		CoreGui.RobloxGui.Changed:connect(
 			function(prop) -- We have stopped recording when we resize
 				if prop == "AbsoluteSize" and recordingVideo then
 					recordVideoClick(
@@ -1976,8 +1975,8 @@ local function createSaveDialogs()
 		Active = true,
 		Visible = false,
 		Size = UDim2.new(1, 0, 1, 0),
-		BackgroundColor3 = Color3I(51, 51, 51),
-		BorderColor3 = Color3I(27, 42, 53),
+		BackgroundColor3 = Colour3(51, 51, 51),
+		BorderColor3 = Colour3(27, 42, 53),
 		BackgroundTransparency = 0.4,
 		ZIndex = baseZIndex + 1,
 	}
@@ -2207,8 +2206,8 @@ local function createReportAbuseDialog()
 		Active = true,
 		Visible = false,
 		Size = UDim2.new(1, 0, 1, 0),
-		BackgroundColor3 = Color3I(51, 51, 51),
-		BorderColor3 = Color3I(27, 42, 53),
+		BackgroundColor3 = Colour3(51, 51, 51),
+		BorderColor3 = Colour3(27, 42, 53),
 		BackgroundTransparency = 0.4,
 		ZIndex = baseZIndex + 1,
 	}
@@ -2303,7 +2302,7 @@ local function createReportAbuseDialog()
 		New "TextLabel" {
 			Name = "Title",
 			Text = "Report Abuse",
-			TextColor3 = Color3I(221, 221, 221),
+			TextColor3 = Colour3(221, 221, 221),
 			Position = UDim2.new(0.5, 0, 0, 30),
 			Font = Enum.Font.ArialBold,
 			FontSize = Enum.FontSize.Size36,
@@ -2312,13 +2311,13 @@ local function createReportAbuseDialog()
 		New "TextLabel" {
 			Name = "Description",
 			Text = "This will send a complete report to a moderator. The moderator will review the chat log and take appropriate action.",
-			TextColor3 = Color3I(221, 221, 221),
+			TextColor3 = Colour3(221, 221, 221),
 			Position = UDim2.new(0, 0, 0, 55),
 			Size = UDim2.new(1, 0, 0, 40),
 			BackgroundTransparency = 1,
 			Font = Enum.Font.Arial,
 			FontSize = Enum.FontSize.Size18,
-			TextWrap = true,
+			TextWrapped = true,
 			ZIndex = baseZIndex + 2,
 			TextXAlignment = Enum.TextXAlignment.Left,
 			TextYAlignment = Enum.TextYAlignment.Top,
@@ -2331,7 +2330,7 @@ local function createReportAbuseDialog()
 			FontSize = Enum.FontSize.Size18,
 			Position = UDim2.new(0.025, 0, 0, 100),
 			Size = UDim2.new(0.4, 0, 0, 36),
-			TextColor3 = Color3I(255, 255, 255),
+			TextColor3 = Colour3(255, 255, 255),
 			TextXAlignment = Enum.TextXAlignment.Left,
 			ZIndex = baseZIndex + 2,
 		},
@@ -2343,7 +2342,7 @@ local function createReportAbuseDialog()
 			FontSize = Enum.FontSize.Size18,
 			Position = UDim2.new(0.025, 0, 0, 140),
 			Size = UDim2.new(0.4, 0, 0, 36),
-			TextColor3 = Color3I(255, 255, 255),
+			TextColor3 = Colour3(255, 255, 255),
 			TextXAlignment = Enum.TextXAlignment.Left,
 			ZIndex = baseZIndex + 2,
 		},
@@ -2360,7 +2359,7 @@ local function createReportAbuseDialog()
 			FontSize = Enum.FontSize.Size18,
 			Position = UDim2.new(0.025, 0, 0, 180),
 			Size = UDim2.new(0.95, 0, 0, 36),
-			TextColor3 = Color3I(255, 255, 255),
+			TextColor3 = Colour3(255, 255, 255),
 			TextXAlignment = Enum.TextXAlignment.Left,
 			BackgroundTransparency = 1,
 			ZIndex = baseZIndex + 2,
@@ -2405,7 +2404,7 @@ local function createReportAbuseDialog()
 		Name = "ShortDescriptionWrapper",
 		Position = UDim2.new(0.025, 0, 0, 220),
 		Size = UDim2.new(0.95, 0, 1, -310),
-		BackgroundColor3 = Color3I(0, 0, 0),
+		BackgroundColor3 = Colour3(0, 0, 0),
 		BorderSizePixel = 0,
 		ZIndex = baseZIndex + 2,
 		Parent = reportAbuseFrame,
@@ -2419,11 +2418,11 @@ local function createReportAbuseDialog()
 		FontSize = Enum.FontSize.Size18,
 		Position = UDim2.new(0, 3, 0, 3),
 		Size = UDim2.new(1, -6, 1, -6),
-		TextColor3 = Color3I(255, 255, 255),
+		TextColor3 = Colour3(255, 255, 255),
 		TextXAlignment = Enum.TextXAlignment.Left,
 		TextYAlignment = Enum.TextYAlignment.Top,
-		TextWrap = true,
-		BackgroundColor3 = Color3I(0, 0, 0),
+		TextWrapped = true,
+		BackgroundColor3 = Colour3(0, 0, 0),
 		BorderSizePixel = 0,
 		ZIndex = baseZIndex + 2,
 		Parent = shortDescriptionWrapper,
@@ -2440,7 +2439,7 @@ local function createReportAbuseDialog()
 		AutoButtonColor = true,
 		Style = Enum.ButtonStyle.RobloxButtonDefault,
 		Text = "Submit Report",
-		TextColor3 = Color3I(255, 255, 255),
+		TextColor3 = Colour3(255, 255, 255),
 		ZIndex = baseZIndex + 2,
 		Parent = reportAbuseFrame,
 	}
@@ -2476,7 +2475,7 @@ local function createReportAbuseDialog()
 		AutoButtonColor = true,
 		Style = Enum.ButtonStyle.RobloxButtonDefault,
 		Text = "Cancel",
-		TextColor3 = Color3I(255, 255, 255),
+		TextColor3 = Colour3(255, 255, 255),
 		ZIndex = baseZIndex + 2,
 		Parent = reportAbuseFrame,
 	}

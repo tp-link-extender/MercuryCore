@@ -1,5 +1,5 @@
 --!strict
--- CoreGui.MercuryGui.CoreScripts/PlayerListScript
+-- CoreGui.RobloxGui.CoreScripts/PlayerListScript
 print "[Mercury]: Loaded corescript 48488235"
 
 local RunService = game:GetService "RunService"
@@ -435,7 +435,7 @@ local AbuseSettingsFrame = New "Frame" {
 		BackgroundTransparency = 1,
 		Font = Enum.Font.Arial,
 		FontSize = Enum.FontSize.Size18,
-		TextWrap = true,
+		TextWrapped = true,
 		TextXAlignment = Enum.TextXAlignment.Left,
 		TextYAlignment = Enum.TextYAlignment.Top,
 	},
@@ -532,7 +532,7 @@ local OriginalAbuseDescriptionBox = New "TextBox" {
 	TextColor3 = Colour3(255, 255, 255),
 	TextXAlignment = Enum.TextXAlignment.Left,
 	TextYAlignment = Enum.TextYAlignment.Top,
-	TextWrap = true,
+	TextWrapped = true,
 	BackgroundColor3 = Colour3(0, 0, 0),
 	BorderSizePixel = 0,
 }
@@ -761,9 +761,9 @@ local PrivilegeLevel = {
 	Banned = 0,
 }
 
--- local IsPersonalServer = not not game.Workspace:FindFirstChild "PSVariable"
+-- local IsPersonalServer = workspace:FindFirstChild "PSVariable"
 
--- game.Workspace.ChildAdded:connect(function(nchild)
+-- workspace.ChildAdded:connect(function(nchild)
 -- 	if nchild.Name == "PSVariable" and nchild:IsA "BoolValue" then
 -- 		IsPersonalServer = true
 -- 	end
@@ -3395,4 +3395,4 @@ BaseUpdate()
 
 -- UGGGLY, find a better way later
 -- wait(2)
--- IsPersonalServer = not not game.Workspace:FindFirstChild "PSVariable"
+-- IsPersonalServer = workspace:FindFirstChild "PSVariable"
