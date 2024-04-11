@@ -42,11 +42,6 @@ declare function Spawn<T...>(callback: (T...) -> (), ...: any)
 declare function version(): string
 declare function printidentity(prefix: string?)
 
-declare class EnumAccessModifierType extends EnumItem end
-declare class EnumAccessModifierType_INTERNAL extends Enum
-	Allow: EnumAccessModifierType
-	Deny: EnumAccessModifierType
-end
 declare class EnumActionType extends EnumItem end
 declare class EnumActionType_INTERNAL extends Enum
 	Nothing: EnumActionType
@@ -88,21 +83,10 @@ declare class EnumAdornCullingMode_INTERNAL extends Enum
 	Automatic: EnumAdornCullingMode
 	Never: EnumAdornCullingMode
 end
-declare class EnumAlignType extends EnumItem end
-declare class EnumAlignType_INTERNAL extends Enum
-	Parallel: EnumAlignType
-	Perpendicular: EnumAlignType
-end
 declare class EnumAlphaMode extends EnumItem end
 declare class EnumAlphaMode_INTERNAL extends Enum
 	Overlay: EnumAlphaMode
 	Transparency: EnumAlphaMode
-end
-declare class EnumAnalyticsEconomyAction extends EnumItem end
-declare class EnumAnalyticsEconomyAction_INTERNAL extends Enum
-	Default: EnumAnalyticsEconomyAction
-	Acquire: EnumAnalyticsEconomyAction
-	Spend: EnumAnalyticsEconomyAction
 end
 declare class EnumAnalyticsLogLevel extends EnumItem end
 declare class EnumAnalyticsLogLevel_INTERNAL extends Enum
@@ -205,97 +189,6 @@ declare class EnumAutomaticSize_INTERNAL extends Enum
 	X: EnumAutomaticSize
 	Y: EnumAutomaticSize
 	XY: EnumAutomaticSize
-end
-declare class EnumAvatarAssetType extends EnumItem end
-declare class EnumAvatarAssetType_INTERNAL extends Enum
-	TShirt: EnumAvatarAssetType
-	Hat: EnumAvatarAssetType
-	HairAccessory: EnumAvatarAssetType
-	FaceAccessory: EnumAvatarAssetType
-	NeckAccessory: EnumAvatarAssetType
-	ShoulderAccessory: EnumAvatarAssetType
-	FrontAccessory: EnumAvatarAssetType
-	BackAccessory: EnumAvatarAssetType
-	WaistAccessory: EnumAvatarAssetType
-	Shirt: EnumAvatarAssetType
-	Pants: EnumAvatarAssetType
-	Gear: EnumAvatarAssetType
-	Head: EnumAvatarAssetType
-	Face: EnumAvatarAssetType
-	Torso: EnumAvatarAssetType
-	RightArm: EnumAvatarAssetType
-	LeftArm: EnumAvatarAssetType
-	LeftLeg: EnumAvatarAssetType
-	RightLeg: EnumAvatarAssetType
-	ClimbAnimation: EnumAvatarAssetType
-	FallAnimation: EnumAvatarAssetType
-	IdleAnimation: EnumAvatarAssetType
-	JumpAnimation: EnumAvatarAssetType
-	RunAnimation: EnumAvatarAssetType
-	SwimAnimation: EnumAvatarAssetType
-	WalkAnimation: EnumAvatarAssetType
-	MoodAnimation: EnumAvatarAssetType
-	EmoteAnimation: EnumAvatarAssetType
-	TShirtAccessory: EnumAvatarAssetType
-	ShirtAccessory: EnumAvatarAssetType
-	PantsAccessory: EnumAvatarAssetType
-	JacketAccessory: EnumAvatarAssetType
-	SweaterAccessory: EnumAvatarAssetType
-	ShortsAccessory: EnumAvatarAssetType
-	LeftShoeAccessory: EnumAvatarAssetType
-	RightShoeAccessory: EnumAvatarAssetType
-	DressSkirtAccessory: EnumAvatarAssetType
-	EyebrowAccessory: EnumAvatarAssetType
-	EyelashAccessory: EnumAvatarAssetType
-	DynamicHead: EnumAvatarAssetType
-end
-declare class EnumAvatarChatServiceFeature extends EnumItem end
-declare class EnumAvatarChatServiceFeature_INTERNAL extends Enum
-	None: EnumAvatarChatServiceFeature
-	UniverseAudio: EnumAvatarChatServiceFeature
-	UniverseVideo: EnumAvatarChatServiceFeature
-	PlaceAudio: EnumAvatarChatServiceFeature
-	PlaceVideo: EnumAvatarChatServiceFeature
-	UserAudioEligible: EnumAvatarChatServiceFeature
-	UserAudio: EnumAvatarChatServiceFeature
-	UserVideoEligible: EnumAvatarChatServiceFeature
-	UserVideo: EnumAvatarChatServiceFeature
-	UserBanned: EnumAvatarChatServiceFeature
-end
-declare class EnumAvatarContextMenuOption extends EnumItem end
-declare class EnumAvatarContextMenuOption_INTERNAL extends Enum
-	Friend: EnumAvatarContextMenuOption
-	Chat: EnumAvatarContextMenuOption
-	Emote: EnumAvatarContextMenuOption
-	InspectMenu: EnumAvatarContextMenuOption
-end
-declare class EnumAvatarItemType extends EnumItem end
-declare class EnumAvatarItemType_INTERNAL extends Enum
-	Asset: EnumAvatarItemType
-	Bundle: EnumAvatarItemType
-end
-declare class EnumAvatarJointUpgrade extends EnumItem end
-declare class EnumAvatarJointUpgrade_INTERNAL extends Enum
-	Default: EnumAvatarJointUpgrade
-	Enabled: EnumAvatarJointUpgrade
-	Disabled: EnumAvatarJointUpgrade
-end
-declare class EnumAvatarPromptResult extends EnumItem end
-declare class EnumAvatarPromptResult_INTERNAL extends Enum
-	Success: EnumAvatarPromptResult
-	PermissionDenied: EnumAvatarPromptResult
-	Failed: EnumAvatarPromptResult
-end
-declare class EnumAvatarThumbnailCustomizationType extends EnumItem end
-declare class EnumAvatarThumbnailCustomizationType_INTERNAL extends Enum
-	Closeup: EnumAvatarThumbnailCustomizationType
-	FullBody: EnumAvatarThumbnailCustomizationType
-end
-declare class EnumAvatarUnificationMode extends EnumItem end
-declare class EnumAvatarUnificationMode_INTERNAL extends Enum
-	Default: EnumAvatarUnificationMode
-	Disabled: EnumAvatarUnificationMode
-	Enabled: EnumAvatarUnificationMode
 end
 declare class EnumAxis extends EnumItem end
 declare class EnumAxis_INTERNAL extends Enum
@@ -486,31 +379,10 @@ declare class EnumChatStyle_INTERNAL extends Enum
 	Bubble: EnumChatStyle
 	ClassicAndBubble: EnumChatStyle
 end
-declare class EnumClientAnimatorThrottlingMode extends EnumItem end
-declare class EnumClientAnimatorThrottlingMode_INTERNAL extends Enum
-	Default: EnumClientAnimatorThrottlingMode
-	Disabled: EnumClientAnimatorThrottlingMode
-	Enabled: EnumClientAnimatorThrottlingMode
-end
-declare class EnumCollisionFidelity extends EnumItem end
-declare class EnumCollisionFidelity_INTERNAL extends Enum
-	Default: EnumCollisionFidelity
-	Hull: EnumCollisionFidelity
-	Box: EnumCollisionFidelity
-	PreciseConvexDecomposition: EnumCollisionFidelity
-	DynamicPreciseConvexDecomposition: EnumCollisionFidelity
-end
 declare class EnumCommandPermission extends EnumItem end
 declare class EnumCommandPermission_INTERNAL extends Enum
 	Plugin: EnumCommandPermission
 	LocalUser: EnumCommandPermission
-end
-declare class EnumCompileTarget extends EnumItem end
-declare class EnumCompileTarget_INTERNAL extends Enum
-	Client: EnumCompileTarget
-	CoreScript: EnumCompileTarget
-	Studio: EnumCompileTarget
-	CoreScriptRaw: EnumCompileTarget
 end
 declare class EnumCompletionTriggerKind extends EnumItem end
 declare class EnumCompletionTriggerKind_INTERNAL extends Enum
@@ -564,12 +436,6 @@ declare class EnumCoreGuiType_INTERNAL extends Enum
 	EmotesMenu: EnumCoreGuiType
 	SelfView: EnumCoreGuiType
 end
-declare class EnumCreateOutfitFailure extends EnumItem end
-declare class EnumCreateOutfitFailure_INTERNAL extends Enum
-	InvalidName: EnumCreateOutfitFailure
-	OutfitLimitReached: EnumCreateOutfitFailure
-	Other: EnumCreateOutfitFailure
-end
 declare class EnumCreatorType extends EnumItem end
 declare class EnumCreatorType_INTERNAL extends Enum
 	User: EnumCreatorType
@@ -592,22 +458,6 @@ declare class EnumCustomCameraMode_INTERNAL extends Enum
 	Default: EnumCustomCameraMode
 	Follow: EnumCustomCameraMode
 	Classic: EnumCustomCameraMode
-end
-declare class EnumDataStoreRequestType extends EnumItem end
-declare class EnumDataStoreRequestType_INTERNAL extends Enum
-	GetAsync: EnumDataStoreRequestType
-	SetIncrementAsync: EnumDataStoreRequestType
-	UpdateAsync: EnumDataStoreRequestType
-	GetSortedAsync: EnumDataStoreRequestType
-	SetIncrementSortedAsync: EnumDataStoreRequestType
-	OnUpdate: EnumDataStoreRequestType
-end
-declare class EnumDeathStyle extends EnumItem end
-declare class EnumDeathStyle_INTERNAL extends Enum
-	Default: EnumDeathStyle
-	ClassicBreakApart: EnumDeathStyle
-	NonGraphic: EnumDeathStyle
-	Scriptable: EnumDeathStyle
 end
 declare class EnumDebuggerEndReason extends EnumItem end
 declare class EnumDebuggerEndReason_INTERNAL extends Enum
@@ -815,11 +665,6 @@ declare class EnumEnviromentalPhysicsThrottle_INTERNAL extends Enum
 	Skip8: EnumEnviromentalPhysicsThrottle
 	Skip16: EnumEnviromentalPhysicsThrottle
 end
-declare class EnumExperienceAuthScope extends EnumItem end
-declare class EnumExperienceAuthScope_INTERNAL extends Enum
-	DefaultScope: EnumExperienceAuthScope
-	CreatorAssetsCreate: EnumExperienceAuthScope
-end
 declare class EnumExplosionType extends EnumItem end
 declare class EnumExplosionType_INTERNAL extends Enum
 	NoCraters: EnumExplosionType
@@ -989,12 +834,6 @@ declare class EnumFunctionalTestResult_INTERNAL extends Enum
 	Warning: EnumFunctionalTestResult
 	Error: EnumFunctionalTestResult
 end
-declare class EnumGameAvatarType extends EnumItem end
-declare class EnumGameAvatarType_INTERNAL extends Enum
-	R6: EnumGameAvatarType
-	R15: EnumGameAvatarType
-	PlayerChoice: EnumGameAvatarType
-end
 declare class EnumGearGenreSetting extends EnumItem end
 declare class EnumGearGenreSetting_INTERNAL extends Enum
 	AllGenres: EnumGearGenreSetting
@@ -1108,16 +947,6 @@ declare class EnumHttpError_INTERNAL extends Enum
 	SslVerificationFail: EnumHttpError
 	Unknown: EnumHttpError
 end
-declare class EnumHttpRequestType extends EnumItem end
-declare class EnumHttpRequestType_INTERNAL extends Enum
-	Default: EnumHttpRequestType
-	MarketplaceService: EnumHttpRequestType
-	Players: EnumHttpRequestType
-	Chat: EnumHttpRequestType
-	Avatar: EnumHttpRequestType
-	Analytics: EnumHttpRequestType
-	Localization: EnumHttpRequestType
-end
 declare class EnumHumanoidCollisionType extends EnumItem end
 declare class EnumHumanoidCollisionType_INTERNAL extends Enum
 	OuterBox: EnumHumanoidCollisionType
@@ -1140,18 +969,6 @@ declare class EnumHumanoidOnlySetCollisionsOnStateChange_INTERNAL extends Enum
 	Default: EnumHumanoidOnlySetCollisionsOnStateChange
 	Disabled: EnumHumanoidOnlySetCollisionsOnStateChange
 	Enabled: EnumHumanoidOnlySetCollisionsOnStateChange
-end
-declare class EnumHumanoidRigType extends EnumItem end
-declare class EnumHumanoidRigType_INTERNAL extends Enum
-	R6: EnumHumanoidRigType
-	R15: EnumHumanoidRigType
-end
-declare class EnumHumanoidStateMachineMode extends EnumItem end
-declare class EnumHumanoidStateMachineMode_INTERNAL extends Enum
-	Default: EnumHumanoidStateMachineMode
-	Legacy: EnumHumanoidStateMachineMode
-	NoStateMachine: EnumHumanoidStateMachineMode
-	LuaStateMachine: EnumHumanoidStateMachineMode
 end
 declare class EnumHumanoidStateType extends EnumItem end
 declare class EnumHumanoidStateType_INTERNAL extends Enum
@@ -1575,12 +1392,6 @@ declare class EnumPrivilegeType_INTERNAL extends Enum
 	Visitor: EnumPrivilegeType
 	Banned: EnumPrivilegeType
 end
-declare class EnumProductLocationRestriction extends EnumItem end
-declare class EnumProductLocationRestriction_INTERNAL extends Enum
-	AvatarShop: EnumProductLocationRestriction
-	AllowedGames: EnumProductLocationRestriction
-	AllGames: EnumProductLocationRestriction
-end
 declare class EnumProductPurchaseDecision extends EnumItem end
 declare class EnumProductPurchaseDecision_INTERNAL extends Enum
 	NotProcessedYet: EnumProductPurchaseDecision
@@ -1635,21 +1446,10 @@ declare class EnumQualityLevel_INTERNAL extends Enum
 	Level20: EnumQualityLevel
 	Level21: EnumQualityLevel
 end
-declare class EnumR15CollisionType extends EnumItem end
-declare class EnumR15CollisionType_INTERNAL extends Enum
-	OuterBox: EnumR15CollisionType
-	InnerBox: EnumR15CollisionType
-end
 declare class EnumRaycastFilterType extends EnumItem end
 declare class EnumRaycastFilterType_INTERNAL extends Enum
 	Exclude: EnumRaycastFilterType
 	Include: EnumRaycastFilterType
-end
-declare class EnumRejectCharacterDeletions extends EnumItem end
-declare class EnumRejectCharacterDeletions_INTERNAL extends Enum
-	Default: EnumRejectCharacterDeletions
-	Disabled: EnumRejectCharacterDeletions
-	Enabled: EnumRejectCharacterDeletions
 end
 declare class EnumRenderFidelity extends EnumItem end
 declare class EnumRenderFidelity_INTERNAL extends Enum
@@ -1664,17 +1464,6 @@ declare class EnumRenderPriority_INTERNAL extends Enum
 	Camera: EnumRenderPriority
 	Character: EnumRenderPriority
 	Last: EnumRenderPriority
-end
-declare class EnumReplicateInstanceDestroySetting extends EnumItem end
-declare class EnumReplicateInstanceDestroySetting_INTERNAL extends Enum
-	Default: EnumReplicateInstanceDestroySetting
-	Disabled: EnumReplicateInstanceDestroySetting
-	Enabled: EnumReplicateInstanceDestroySetting
-end
-declare class EnumResamplerMode extends EnumItem end
-declare class EnumResamplerMode_INTERNAL extends Enum
-	Default: EnumResamplerMode
-	Pixelated: EnumResamplerMode
 end
 declare class EnumReservedHighlightId extends EnumItem end
 declare class EnumReservedHighlightId_INTERNAL extends Enum
@@ -1737,12 +1526,6 @@ declare class EnumRigScale_INTERNAL extends Enum
 	Default: EnumRigScale
 	Rthro: EnumRigScale
 	RthroNarrow: EnumRigScale
-end
-declare class EnumRigType extends EnumItem end
-declare class EnumRigType_INTERNAL extends Enum
-	R15: EnumRigType
-	Custom: EnumRigType
-	None: EnumRigType
 end
 declare class EnumRollOffMode extends EnumItem end
 declare class EnumRollOffMode_INTERNAL extends Enum
@@ -1823,14 +1606,6 @@ declare class EnumSavedQualitySetting_INTERNAL extends Enum
 	QualityLevel9: EnumSavedQualitySetting
 	QualityLevel10: EnumSavedQualitySetting
 end
-declare class EnumScaleType extends EnumItem end
-declare class EnumScaleType_INTERNAL extends Enum
-	Stretch: EnumScaleType
-	Slice: EnumScaleType
-	Tile: EnumScaleType
-	Fit: EnumScaleType
-	Crop: EnumScaleType
-end
 declare class EnumScopeCheckResult extends EnumItem end
 declare class EnumScopeCheckResult_INTERNAL extends Enum
 	ConsentAccepted: EnumScopeCheckResult
@@ -1841,20 +1616,6 @@ declare class EnumScopeCheckResult_INTERNAL extends Enum
 	UnexpectedError: EnumScopeCheckResult
 	InvalidArgument: EnumScopeCheckResult
 	ConsentDenied: EnumScopeCheckResult
-end
-declare class EnumScreenInsets extends EnumItem end
-declare class EnumScreenInsets_INTERNAL extends Enum
-	None: EnumScreenInsets
-	DeviceSafeInsets: EnumScreenInsets
-	CoreUISafeInsets: EnumScreenInsets
-end
-declare class EnumScreenOrientation extends EnumItem end
-declare class EnumScreenOrientation_INTERNAL extends Enum
-	LandscapeLeft: EnumScreenOrientation
-	LandscapeRight: EnumScreenOrientation
-	LandscapeSensor: EnumScreenOrientation
-	Portrait: EnumScreenOrientation
-	Sensor: EnumScreenOrientation
 end
 declare class EnumScrollBarInset extends EnumItem end
 declare class EnumScrollBarInset_INTERNAL extends Enum
@@ -1878,30 +1639,6 @@ declare class EnumSelectionRenderMode_INTERNAL extends Enum
 	Outlines: EnumSelectionRenderMode
 	BoundingBoxes: EnumSelectionRenderMode
 	Both: EnumSelectionRenderMode
-end
-declare class EnumSelfViewPosition extends EnumItem end
-declare class EnumSelfViewPosition_INTERNAL extends Enum
-	LastPosition: EnumSelfViewPosition
-	TopLeft: EnumSelfViewPosition
-	TopRight: EnumSelfViewPosition
-	BottomLeft: EnumSelfViewPosition
-	BottomRight: EnumSelfViewPosition
-end
-declare class EnumSensorMode extends EnumItem end
-declare class EnumSensorMode_INTERNAL extends Enum
-	Floor: EnumSensorMode
-	Ladder: EnumSensorMode
-end
-declare class EnumSensorUpdateType extends EnumItem end
-declare class EnumSensorUpdateType_INTERNAL extends Enum
-	OnRead: EnumSensorUpdateType
-	Manual: EnumSensorUpdateType
-end
-declare class EnumServerAudioBehavior extends EnumItem end
-declare class EnumServerAudioBehavior_INTERNAL extends Enum
-	Enabled: EnumServerAudioBehavior
-	Muted: EnumServerAudioBehavior
-	OnlineGame: EnumServerAudioBehavior
 end
 declare class EnumServiceVisibility extends EnumItem end
 declare class EnumServiceVisibility_INTERNAL extends Enum
@@ -1934,11 +1671,6 @@ declare class EnumSolverConvergenceVisualizationMode_INTERNAL extends Enum
 	Disabled: EnumSolverConvergenceVisualizationMode
 	PerIsland: EnumSolverConvergenceVisualizationMode
 	PerEdge: EnumSolverConvergenceVisualizationMode
-end
-declare class EnumSortDirection extends EnumItem end
-declare class EnumSortDirection_INTERNAL extends Enum
-	Ascending: EnumSortDirection
-	Descending: EnumSortDirection
 end
 declare class EnumSortOrder extends EnumItem end
 declare class EnumSortOrder_INTERNAL extends Enum
@@ -2089,27 +1821,6 @@ declare class EnumTeleportType_INTERNAL extends Enum
 	ToPlace: EnumTeleportType
 	ToInstance: EnumTeleportType
 	ToReservedServer: EnumTeleportType
-end
-declare class EnumTerrainAcquisitionMethod extends EnumItem end
-declare class EnumTerrainAcquisitionMethod_INTERNAL extends Enum
-	None: EnumTerrainAcquisitionMethod
-	Legacy: EnumTerrainAcquisitionMethod
-	Template: EnumTerrainAcquisitionMethod
-	Generate: EnumTerrainAcquisitionMethod
-	Import: EnumTerrainAcquisitionMethod
-	Convert: EnumTerrainAcquisitionMethod
-	EditAddTool: EnumTerrainAcquisitionMethod
-	EditSeaLevelTool: EnumTerrainAcquisitionMethod
-	EditReplaceTool: EnumTerrainAcquisitionMethod
-	RegionFillTool: EnumTerrainAcquisitionMethod
-	RegionPasteTool: EnumTerrainAcquisitionMethod
-	Other: EnumTerrainAcquisitionMethod
-end
-declare class EnumTextDirection extends EnumItem end
-declare class EnumTextDirection_INTERNAL extends Enum
-	Auto: EnumTextDirection
-	LeftToRight: EnumTextDirection
-	RightToLeft: EnumTextDirection
 end
 declare class EnumTextFilterContext extends EnumItem end
 declare class EnumTextFilterContext_INTERNAL extends Enum
@@ -2445,7 +2156,6 @@ declare class EnumPriorityMethod_INTERNAL extends Enum
 end
 
 type ENUM_LIST = {
-	AccessModifierType: EnumAccessModifierType_INTERNAL,
 	ActionType: EnumActionType_INTERNAL,
 	ActuatorRelativeTo: EnumActuatorRelativeTo_INTERNAL,
 	ActuatorType: EnumActuatorType_INTERNAL,
@@ -2453,9 +2163,7 @@ type ENUM_LIST = {
 	AdTeleportMethod: EnumAdTeleportMethod_INTERNAL,
 	AdUnitStatus: EnumAdUnitStatus_INTERNAL,
 	AdornCullingMode: EnumAdornCullingMode_INTERNAL,
-	AlignType: EnumAlignType_INTERNAL,
 	AlphaMode: EnumAlphaMode_INTERNAL,
-	AnalyticsEconomyAction: EnumAnalyticsEconomyAction_INTERNAL,
 	AnalyticsLogLevel: EnumAnalyticsLogLevel_INTERNAL,
 	AnalyticsProgressionStatus: EnumAnalyticsProgressionStatus_INTERNAL,
 	AnimationPriority: EnumAnimationPriority_INTERNAL,
@@ -2469,14 +2177,6 @@ type ENUM_LIST = {
 	AudioWindowSize: EnumAudioWindowSize_INTERNAL,
 	AutoIndentRule: EnumAutoIndentRule_INTERNAL,
 	AutomaticSize: EnumAutomaticSize_INTERNAL,
-	AvatarAssetType: EnumAvatarAssetType_INTERNAL,
-	AvatarChatServiceFeature: EnumAvatarChatServiceFeature_INTERNAL,
-	AvatarContextMenuOption: EnumAvatarContextMenuOption_INTERNAL,
-	AvatarItemType: EnumAvatarItemType_INTERNAL,
-	AvatarJointUpgrade: EnumAvatarJointUpgrade_INTERNAL,
-	AvatarPromptResult: EnumAvatarPromptResult_INTERNAL,
-	AvatarThumbnailCustomizationType: EnumAvatarThumbnailCustomizationType_INTERNAL,
-	AvatarUnificationMode: EnumAvatarUnificationMode_INTERNAL,
 	Axis: EnumAxis_INTERNAL,
 	BinType: EnumBinType_INTERNAL,
 	BodyPart: EnumBodyPart_INTERNAL,
@@ -2502,10 +2202,7 @@ type ENUM_LIST = {
 	ChatMode: EnumChatMode_INTERNAL,
 	ChatPrivacyMode: EnumChatPrivacyMode_INTERNAL,
 	ChatStyle: EnumChatStyle_INTERNAL,
-	ClientAnimatorThrottlingMode: EnumClientAnimatorThrottlingMode_INTERNAL,
-	CollisionFidelity: EnumCollisionFidelity_INTERNAL,
 	CommandPermission: EnumCommandPermission_INTERNAL,
-	CompileTarget: EnumCompileTarget_INTERNAL,
 	CompletionTriggerKind: EnumCompletionTriggerKind_INTERNAL,
 	ComputerCameraMovementMode: EnumComputerCameraMovementMode_INTERNAL,
 	ComputerMovementMode: EnumComputerMovementMode_INTERNAL,
@@ -2514,13 +2211,10 @@ type ENUM_LIST = {
 	ContextActionResult: EnumContextActionResult_INTERNAL,
 	ControlMode: EnumControlMode_INTERNAL,
 	CoreGuiType: EnumCoreGuiType_INTERNAL,
-	CreateOutfitFailure: EnumCreateOutfitFailure_INTERNAL,
 	CreatorType: EnumCreatorType_INTERNAL,
 	CreatorTypeFilter: EnumCreatorTypeFilter_INTERNAL,
 	CurrencyType: EnumCurrencyType_INTERNAL,
 	CustomCameraMode: EnumCustomCameraMode_INTERNAL,
-	DataStoreRequestType: EnumDataStoreRequestType_INTERNAL,
-	DeathStyle: EnumDeathStyle_INTERNAL,
 	DebuggerEndReason: EnumDebuggerEndReason_INTERNAL,
 	DebuggerExceptionBreakMode: EnumDebuggerExceptionBreakMode_INTERNAL,
 	DebuggerFrameType: EnumDebuggerFrameType_INTERNAL,
@@ -2546,7 +2240,6 @@ type ENUM_LIST = {
 	EasingStyle: EnumEasingStyle_INTERNAL,
 	ElasticBehavior: EnumElasticBehavior_INTERNAL,
 	EnviromentalPhysicsThrottle: EnumEnviromentalPhysicsThrottle_INTERNAL,
-	ExperienceAuthScope: EnumExperienceAuthScope_INTERNAL,
 	ExplosionType: EnumExplosionType_INTERNAL,
 	FacialAnimationStreamingState: EnumFacialAnimationStreamingState_INTERNAL,
 	FieldOfViewMode: EnumFieldOfViewMode_INTERNAL,
@@ -2565,7 +2258,6 @@ type ENUM_LIST = {
 	FriendRequestEvent: EnumFriendRequestEvent_INTERNAL,
 	FriendStatus: EnumFriendStatus_INTERNAL,
 	FunctionalTestResult: EnumFunctionalTestResult_INTERNAL,
-	GameAvatarType: EnumGameAvatarType_INTERNAL,
 	GearGenreSetting: EnumGearGenreSetting_INTERNAL,
 	GearType: EnumGearType_INTERNAL,
 	Genre: EnumGenre_INTERNAL,
@@ -2579,13 +2271,10 @@ type ENUM_LIST = {
 	HttpCachePolicy: EnumHttpCachePolicy_INTERNAL,
 	HttpContentType: EnumHttpContentType_INTERNAL,
 	HttpError: EnumHttpError_INTERNAL,
-	HttpRequestType: EnumHttpRequestType_INTERNAL,
 	HumanoidCollisionType: EnumHumanoidCollisionType_INTERNAL,
 	HumanoidDisplayDistanceType: EnumHumanoidDisplayDistanceType_INTERNAL,
 	HumanoidHealthDisplayType: EnumHumanoidHealthDisplayType_INTERNAL,
 	HumanoidOnlySetCollisionsOnStateChange: EnumHumanoidOnlySetCollisionsOnStateChange_INTERNAL,
-	HumanoidRigType: EnumHumanoidRigType_INTERNAL,
-	HumanoidStateMachineMode: EnumHumanoidStateMachineMode_INTERNAL,
 	HumanoidStateType: EnumHumanoidStateType_INTERNAL,
 	InOut: EnumInOut_INTERNAL,
 	InfoType: EnumInfoType_INTERNAL,
@@ -2637,25 +2326,19 @@ type ENUM_LIST = {
 	PoseEasingStyle: EnumPoseEasingStyle_INTERNAL,
 	PositionAlignmentMode: EnumPositionAlignmentMode_INTERNAL,
 	PrivilegeType: EnumPrivilegeType_INTERNAL,
-	ProductLocationRestriction: EnumProductLocationRestriction_INTERNAL,
 	ProductPurchaseDecision: EnumProductPurchaseDecision_INTERNAL,
 	PromptCreateAssetResult: EnumPromptCreateAssetResult_INTERNAL,
 	PromptPublishAssetResult: EnumPromptPublishAssetResult_INTERNAL,
 	PropertyStatus: EnumPropertyStatus_INTERNAL,
 	QualityLevel: EnumQualityLevel_INTERNAL,
-	R15CollisionType: EnumR15CollisionType_INTERNAL,
 	RaycastFilterType: EnumRaycastFilterType_INTERNAL,
-	RejectCharacterDeletions: EnumRejectCharacterDeletions_INTERNAL,
 	RenderFidelity: EnumRenderFidelity_INTERNAL,
 	RenderPriority: EnumRenderPriority_INTERNAL,
-	ReplicateInstanceDestroySetting: EnumReplicateInstanceDestroySetting_INTERNAL,
-	ResamplerMode: EnumResamplerMode_INTERNAL,
 	ReservedHighlightId: EnumReservedHighlightId_INTERNAL,
 	ReturnKeyType: EnumReturnKeyType_INTERNAL,
 	ReverbType: EnumReverbType_INTERNAL,
 	RibbonTool: EnumRibbonTool_INTERNAL,
 	RigScale: EnumRigScale_INTERNAL,
-	RigType: EnumRigType_INTERNAL,
 	RollOffMode: EnumRollOffMode_INTERNAL,
 	RotationOrder: EnumRotationOrder_INTERNAL,
 	RotationType: EnumRotationType_INTERNAL,
@@ -2667,24 +2350,16 @@ type ENUM_LIST = {
 	SaveAvatarThumbnailCustomizationFailure: EnumSaveAvatarThumbnailCustomizationFailure_INTERNAL,
 	SaveFilter: EnumSaveFilter_INTERNAL,
 	SavedQualitySetting: EnumSavedQualitySetting_INTERNAL,
-	ScaleType: EnumScaleType_INTERNAL,
 	ScopeCheckResult: EnumScopeCheckResult_INTERNAL,
-	ScreenInsets: EnumScreenInsets_INTERNAL,
-	ScreenOrientation: EnumScreenOrientation_INTERNAL,
 	ScrollBarInset: EnumScrollBarInset_INTERNAL,
 	ScrollingDirection: EnumScrollingDirection_INTERNAL,
 	SelectionBehavior: EnumSelectionBehavior_INTERNAL,
 	SelectionRenderMode: EnumSelectionRenderMode_INTERNAL,
-	SelfViewPosition: EnumSelfViewPosition_INTERNAL,
-	SensorMode: EnumSensorMode_INTERNAL,
-	SensorUpdateType: EnumSensorUpdateType_INTERNAL,
-	ServerAudioBehavior: EnumServerAudioBehavior_INTERNAL,
 	ServiceVisibility: EnumServiceVisibility_INTERNAL,
 	Severity: EnumSeverity_INTERNAL,
 	SignalBehavior: EnumSignalBehavior_INTERNAL,
 	SizeConstraint: EnumSizeConstraint_INTERNAL,
 	SolverConvergenceVisualizationMode: EnumSolverConvergenceVisualizationMode_INTERNAL,
-	SortDirection: EnumSortDirection_INTERNAL,
 	SortOrder: EnumSortOrder_INTERNAL,
 	SpecialKey: EnumSpecialKey_INTERNAL,
 	StartCorner: EnumStartCorner_INTERNAL,
@@ -2706,8 +2381,6 @@ type ENUM_LIST = {
 	TeleportResult: EnumTeleportResult_INTERNAL,
 	TeleportState: EnumTeleportState_INTERNAL,
 	TeleportType: EnumTeleportType_INTERNAL,
-	TerrainAcquisitionMethod: EnumTerrainAcquisitionMethod_INTERNAL,
-	TextDirection: EnumTextDirection_INTERNAL,
 	TextFilterContext: EnumTextFilterContext_INTERNAL,
 	TextInputType: EnumTextInputType_INTERNAL,
 	TextTruncate: EnumTextTruncate_INTERNAL,
@@ -3063,7 +2736,6 @@ type HttpResponseData = {
 type Hat = any
 type RocketPropulsion = any
 type Skin = any
-type Plane = any
 type CustomEvent = any
 type CustomEventReceiver = any
 type BevelMesh = any
@@ -3106,7 +2778,6 @@ declare class Instance
 	ClassName: string
 	DescendantAdded: RBXScriptSignal<Instance>
 	DescendantRemoving: RBXScriptSignal<Instance>
-	Destroying: RBXScriptSignal<>
 	Name: string
 	Parent: Instance?
 	RobloxLocked: boolean
@@ -3114,36 +2785,18 @@ declare class Instance
 
 	VideoRecordingChangeRequest: RBXScriptSignal<any> -- lmao okay then
 
-	function AddTag(self, tag: string): nil
 	function ClearAllChildren(self): nil
 	function Clone(self): Instance
 	function Destroy(self): nil
 	function Remove(self): nil
-	function remove(self): nil
-	function FindFirstAncestor(self, name: string): Instance?
-	function FindFirstAncestorOfClass(self, className: string): Instance?
-	function FindFirstAncestorWhichIsA(self, className: string): Instance?
 	function FindFirstChild(self, name: string, recursive: boolean?): Instance?
-	function FindFirstChildOfClass(self, className: string): Instance?
-	function FindFirstChildWhichIsA(self, className: string, recursive: boolean?): Instance?
 	function FindFirstDescendant(self, name: string): Instance?
-	function GetAttribute(self, attribute: string): any
-	function GetAttributeChangedSignal(self, attribute: string): RBXScriptSignal<>
-	function GetAttributes(self): { [string]: any }
 	function GetChildren(self): { Instance }
 	function GetDebugId(self, scopeLength: number?): string
-	function GetDescendants(self): { Instance }
 	function GetFullName(self): string
-	function GetPropertyChangedSignal(self, property: string): RBXScriptSignal<>
-	function GetTags(self): { any }
-	function HasTag(self, tag: string): boolean
 	function IsA(self, className: string): boolean
 	function IsAncestorOf(self, descendant: Instance): boolean
 	function IsDescendantOf(self, ancestor: Instance): boolean
-	function IsPropertyModified(self, name: string): boolean
-	function RemoveTag(self, tag: string): nil
-	function ResetPropertyToDefault(self, name: string): nil
-	function SetAttribute(self, attribute: string, value: any): nil
 	function WaitForChild(self, name: string): Instance
 	function WaitForChild(self, name: string, timeout: number): Instance?
 end
@@ -3251,121 +2904,6 @@ declare class AssetService extends Instance
 	function SetPlacePermissions(self, placeId: number, accessType: any --[[EnumAccessType]], inviteList: { any }): boolean
 end
 
-declare class AudioDeviceInput extends Instance
-	AccessType: EnumAccessModifierType
-	Active: boolean
-	IsReady: boolean
-	Muted: boolean
-	Player: Player
-	function GetUserIdAccessList(self): { any }
-	function SetUserIdAccessList(self, userIds: { any }): nil
-end
-
-declare class AudioDeviceOutput extends Instance
-	Player: Player
-end
-
-declare class AudioDistortion extends Instance
-	Level: number
-end
-
-declare class AudioEcho extends Instance
-	DelayTime: number
-	DryLevel: number
-	Feedback: number
-	WetLevel: number
-end
-
-declare class AudioEmitter extends Instance
-	AudioInteractionGroup: string
-end
-
-declare class AudioEqualizer extends Instance
-	HighGain: number
-	LowGain: number
-	MidGain: number
-	MidRange: NumberRange
-end
-
-declare class AudioFader extends Instance
-	Volume: number
-end
-
-declare class AudioFlanger extends Instance
-	Depth: number
-	Mix: number
-	Rate: number
-end
-
-declare class AudioListener extends Instance
-	AudioInteractionGroup: string
-end
-
-declare class AudioPitchShifter extends Instance
-	Pitch: number
-end
-
-declare class AudioPlayer extends Instance
-	AssetId: string
-	AutoLoad: boolean
-	IsPlaying: boolean
-	IsReady: boolean
-	LoopRegion: NumberRange
-	Looping: boolean
-	PlaybackRegion: NumberRange
-	PlaybackSpeed: number
-	TimeLength: number
-	TimePosition: number
-	function Play(self): nil
-	function Stop(self): nil
-end
-
-declare class AudioReverb extends Instance
-	DecayRatio: number
-	DecayTime: number
-	Density: number
-	Diffusion: number
-	DryLevel: number
-	EarlyDelayTime: number
-	HighCutFrequency: number
-	LateDelayTime: number
-	LowShelfFrequency: number
-	LowShelfGain: number
-	ReferenceFrequency: number
-	WetLevel: number
-end
-
-declare class AudioSearchParams extends Instance
-	Album: string
-	Artist: string
-	MaxDuration: number
-	MinDuration: number
-	SearchKeyword: string
-	Tag: string
-	Title: string
-end
-
-declare class AvatarChatService extends Instance
-	ClientFeatures: number
-	ClientFeaturesInitialized: boolean
-	ServerFeatures: number
-	function GetClientFeaturesAsync(self): number
-	function GetServerFeaturesAsync(self): number
-	function IsEnabled(self, mask: number, feature: EnumAvatarChatServiceFeature): boolean
-	function IsPlaceEnabled(self): boolean
-	function IsUniverseEnabled(self): boolean
-	function PollClientFeatures(self): number
-	function PollServerFeatures(self): number
-end
-
-declare class AvatarImportService extends Instance
-	function ImportFBXAnimationFromFilePathUserMayChooseModel(self, fbxFilePath: string, selectedRig: Instance, userChooseModelThenImportCB: ((...any) -> ...any)): Instance
-	function ImportFBXAnimationUserMayChooseModel(self, selectedRig: Instance, userChooseModelThenImportCB: ((...any) -> ...any)): Instance
-	function ImportFbxRigWithoutSceneLoad(self, isR15: boolean?): Instance
-	function ImportLoadedFBXAnimation(self, useFBXModel: boolean): Instance
-	function LoadRigAndDetectType(self, promptR15Callback: ((...any) -> ...any)): Instance
-end
-
 declare class Backpack extends Instance
 	function SetOldSchoolBackpack(self, enabled: boolean): nil
 end
@@ -3438,33 +2976,18 @@ declare class BasePlayerGui extends Instance
 end
 
 declare class CoreGui extends BasePlayerGui
-	SelectionImageObject: GuiObject
-	UserGuiRenderingChanged: RBXScriptSignal<boolean, Instance, EnumNormalId, number>
 	Version: number
-	RobloxGui: ScreenGui
-	MercuryGui: ScreenGui -- lmfaooo
-	function SetUserGuiRendering(self, enabled: boolean, guiAdornee: Instance, faceId: EnumNormalId, horizontalCurvature: number?): nil
-	function TakeScreenshot(self): nil
-	function ToggleRecording(self): nil
+	RobloxGui: ScreenGui -- graaah
 end
 
 declare class PlayerGui extends BasePlayerGui
-	CurrentScreenOrientation: EnumScreenOrientation
-	ScreenOrientation: EnumScreenOrientation
-	SelectionImageObject: GuiObject
 end
 
 declare class StarterGui extends BasePlayerGui
 	CoreGuiChangedSignal: RBXScriptSignal<EnumCoreGuiType, boolean>
 	ProcessUserInput: boolean
-	RtlTextSupport: EnumRtlTextSupport
-	ScreenOrientation: EnumScreenOrientation
 	ShowDevelopmentGui: boolean
-	function GetCore(self, parameterName: string): any
 	function GetCoreGuiEnabled(self, coreGuiType: EnumCoreGuiType): boolean
-	function RegisterGetCore(self, parameterName: string, getFunction: ((...any) -> ...any)): nil
-	function RegisterSetCore(self, parameterName: string, setFunction: ((...any) -> ...any)): nil
-	function SetCore(self, parameterName: string, value: any): nil
 	function SetCoreGuiEnabled(self, coreGuiType: EnumCoreGuiType, enabled: boolean): nil
 end
 
@@ -3559,9 +3082,6 @@ end
 
 declare class MeshContentProvider extends CacheableContentProvider
 	function GetContentMemoryData(self): { [any]: any }
-end
-
-declare class SolidModelContentProvider extends CacheableContentProvider
 end
 
 declare class CalloutService extends Instance
@@ -3750,13 +3270,6 @@ end
 declare class ConfigureServerService extends Instance
 end
 
-declare class AngularVelocity extends Constraint
-	AngularVelocity: Vector3
-	MaxTorque: number
-	ReactionTorqueEnabled: boolean
-	RelativeTo: EnumActuatorRelativeTo
-end
-
 declare class AnimationConstraint extends Constraint
 	IsKinematic: boolean
 	MaxForce: number
@@ -3772,23 +3285,6 @@ declare class BallSocketConstraint extends Constraint
 	TwistLimitsEnabled: boolean
 	TwistLowerAngle: number
 	TwistUpperAngle: number
-	UpperAngle: number
-end
-
-declare class HingeConstraint extends Constraint
-	ActuatorType: EnumActuatorType
-	AngularResponsiveness: number
-	AngularSpeed: number
-	AngularVelocity: number
-	CurrentAngle: number
-	LimitsEnabled: boolean
-	LowerAngle: number
-	MotorMaxAcceleration: number
-	MotorMaxTorque: number
-	Radius: number
-	Restitution: number
-	ServoMaxTorque: number
-	TargetAngle: number
 	UpperAngle: number
 end
 
@@ -3815,110 +3311,14 @@ declare class LinearVelocity extends Constraint
 	VelocityConstraintMode: EnumVelocityConstraintMode
 end
 
-declare class PlaneConstraint extends Constraint
-end
 
-
-
-declare class RigidConstraint extends Constraint
-end
-
-declare class RodConstraint extends Constraint
-	CurrentDistance: number
-	Length: number
-	LimitAngle0: number
-	LimitAngle1: number
-	LimitsEnabled: boolean
-	Thickness: number
-end
-
-declare class RopeConstraint extends Constraint
-	CurrentDistance: number
-	Length: number
-	Restitution: number
-	Thickness: number
-	WinchEnabled: boolean
-	WinchForce: number
-	WinchResponsiveness: number
-	WinchSpeed: number
-	WinchTarget: number
-end
-
-declare class SlidingBallConstraint extends Constraint
-	ActuatorType: EnumActuatorType
-	CurrentPosition: number
-	LimitsEnabled: boolean
-	LinearResponsiveness: number
-	LowerLimit: number
-	MotorMaxAcceleration: number
-	MotorMaxForce: number
-	Restitution: number
-	ServoMaxForce: number
-	Size: number
-	Speed: number
-	TargetPosition: number
-	UpperLimit: number
-	Velocity: number
-end
-
-declare class CylindricalConstraint extends SlidingBallConstraint
-	AngularActuatorType: EnumActuatorType
-	AngularLimitsEnabled: boolean
-	AngularResponsiveness: number
-	AngularRestitution: number
-	AngularSpeed: number
-	AngularVelocity: number
-	CurrentAngle: number
-	InclinationAngle: number
-	LowerAngle: number
-	MotorMaxAngularAcceleration: number
-	MotorMaxTorque: number
-	RotationAxisVisible: boolean
-	ServoMaxTorque: number
-	TargetAngle: number
-	UpperAngle: number
-	WorldRotationAxis: Vector3
-end
-
-declare class PrismaticConstraint extends SlidingBallConstraint
-end
-
-declare class SpringConstraint extends Constraint
-	Coils: number
-	CurrentLength: number
-	Damping: number
-	FreeLength: number
-	LimitsEnabled: boolean
-	MaxForce: number
-	MaxLength: number
-	MinLength: number
-	Radius: number
-	Stiffness: number
-	Thickness: number
-end
+-- As far as I can tell, RigidConstraint doesn't exist in 2013
+-- declare class RigidConstraint extends Constraint
+-- end
 
 declare class Torque extends Constraint
 	RelativeTo: EnumActuatorRelativeTo
 	Torque: Vector3
-end
-
-declare class TorsionSpringConstraint extends Constraint
-	Coils: number
-	CurrentAngle: number
-	Damping: number
-	LimitsEnabled: boolean
-	MaxAngle: number
-	MaxTorque: number
-	Radius: number
-	Restitution: number
-	Stiffness: number
-end
-
-declare class UniversalConstraint extends Constraint
-	LimitsEnabled: boolean
-	MaxAngle: number
-	Radius: number
-	Restitution: number
 end
 
 declare class ContentProvider extends Instance
@@ -4143,18 +3543,6 @@ declare class EventIngestService extends Instance
 	function SetRBXEventStream(self, target: string, eventContext: string, eventName: string, additionalArgs: { [any]: any }): nil
 end
 
-declare class ExperienceAuthService extends Instance
-	OpenAuthPrompt: RBXScriptSignal<string, { any }, { [any]: any }>
-	function ScopeCheckUIComplete(self, guid: string, scopes: { any }, result: EnumScopeCheckResult, metadata: { [any]: any }): nil
-end
-
-declare class ExperienceInviteOptions extends Instance
-	InviteMessageId: string
-	InviteUser: number
-	LaunchData: string
-	PromptMessage: string
-end
-
 declare class Explosion extends Instance
 	BlastPressure: number
 	BlastRadius: number
@@ -4183,30 +3571,6 @@ declare class Texture extends Decal
 	OffsetStudsV: number
 	StudsPerTileU: number
 	StudsPerTileV: number
-end
-
-declare class FacialAnimationRecordingService extends Instance
-	BiometricDataConsent: boolean
-	function CheckOrRequestCameraPermission(self): string
-	function IsAgeRestricted(self): boolean
-end
-
-declare class FacialAnimationStreamingServiceStats extends Instance
-	function Get(self, label: string): number
-	function GetWithPlayerId(self, label: string, playerId: number): number
-end
-
-declare class FacialAnimationStreamingServiceV2 extends Instance
-	ServiceState: number
-	function GetStats(self): FacialAnimationStreamingServiceStats
-	function IsAudioEnabled(self, mask: number): boolean
-	function IsPlaceEnabled(self, mask: number): boolean
-	function IsServerEnabled(self, mask: number): boolean
-	function IsVideoEnabled(self, mask: number): boolean
-	function ResolveStateForUser(self, userId: number): number
-end
-
-declare class FacialAnimationStreamingSubsessionStats extends Instance
 end
 
 declare class Feature extends Instance
@@ -4275,13 +3639,6 @@ declare class GlobalDataStore extends Instance
 	function IncrementAsync(self, key: string, delta: number?): (number, DataStoreKeyInfo)
 	function SetAsync(self, key: string, value: any): string
 	function UpdateAsync(self, key: string, transformFunction: ((any, DataStoreKeyInfo) -> (any, { number }?, {}?))): (any, DataStoreKeyInfo)
-end
-
-declare class DataStore extends GlobalDataStore
-	function GetVersionAsync(self, key: string, version: string): any
-	function ListKeysAsync(self, prefix: string?, pageSize: number?, cursor: string?, excludeDeleted: boolean?): DataStoreKeyPages
-	function ListVersionsAsync(self, key: string, sortDirection: EnumSortDirection?, minDate: number?, maxDate: number?, pageSize: number?): DataStoreVersionPages
-	function RemoveVersionAsync(self, key: string, version: string): nil
 end
 
 declare class GuiBase extends Instance
@@ -4371,21 +3728,9 @@ declare class GuiButton extends GuiObject
 end
 
 declare class ImageButton extends GuiButton
-	ContentImageSize: Vector2
-	HoverImage: Content
 	Image: Content
-	ImageColor3: Color3
 	ImageRectOffset: Vector2
 	ImageRectSize: Vector2
-	ImageTransparency: number
-	IsLoaded: boolean
-	PressedImage: Content
-	ResampleMode: EnumResamplerMode
-	ScaleType: EnumScaleType
-	SliceCenter: Rect
-	SliceScale: number
-	TileSize: UDim2
-	function SetEnableContentImageSizeChangedEvents(self, enabled: boolean): nil
 end
 
 declare class TextButton extends GuiButton
@@ -4399,7 +3744,6 @@ declare class TextButton extends GuiButton
 	Text: string
 	TextBounds: Vector2
 	TextColor3: Color3
-	TextDirection: EnumTextDirection
 	TextFits: boolean
 	TextScaled: boolean
 	TextSize: number
@@ -4417,19 +3761,9 @@ declare class GuiLabel extends GuiObject
 end
 
 declare class ImageLabel extends GuiLabel
-	ContentImageSize: Vector2
 	Image: Content
-	ImageColor3: Color3
 	ImageRectOffset: Vector2
 	ImageRectSize: Vector2
-	ImageTransparency: number
-	IsLoaded: boolean
-	ResampleMode: EnumResamplerMode
-	ScaleType: EnumScaleType
-	SliceCenter: Rect
-	SliceScale: number
-	TileSize: UDim2
-	function SetEnableContentImageSizeChangedEvents(self, enabled: boolean): nil
 end
 
 declare class TextLabel extends GuiLabel
@@ -4437,13 +3771,9 @@ declare class TextLabel extends GuiLabel
 	Font: EnumFont
 	FontFace: Font
 	LineHeight: number
-	LocalizedText: string
-	MaxVisibleGraphemes: number
-	RichText: boolean
 	Text: string
 	TextBounds: Vector2
 	TextColor3: Color3
-	TextDirection: EnumTextDirection
 	TextFits: boolean
 	TextScaled: boolean
 	TextSize: number
@@ -4456,7 +3786,6 @@ declare class TextLabel extends GuiLabel
 	TextYAlignment: EnumTextYAlignment
 
 	FontSize: EnumFontSize
-	function SetTextFromInput(self, text: string): nil
 end
 
 declare class TextBox extends GuiObject
@@ -4478,7 +3807,6 @@ declare class TextBox extends GuiObject
 	Text: string
 	TextBounds: Vector2
 	TextColor3: Color3
-	TextDirection: EnumTextDirection
 	TextEditable: boolean
 	TextFits: boolean
 	TextInputType: EnumTextInputType
@@ -4544,7 +3872,6 @@ declare class ScreenGui extends LayerCollector
 	IgnoreGuiInset: boolean
 	OnTopOfCoreBlur: boolean
 	SafeAreaCompatibility: EnumSafeAreaCompatibility
-	ScreenInsets: EnumScreenInsets
 end
 
 
@@ -4788,47 +4115,12 @@ end
 declare class GuidRegistryService extends Instance
 end
 
-declare class HeightmapImporterService extends Instance
-	ColormapHasUnknownPixels: RBXScriptSignal<>
-	ProgressUpdate: RBXScriptSignal<number, string>
-	function CancelImportHeightmap(self): nil
-	function GetHeightmapPreviewAsync(self, heightmapAssetId: Content): any
-	function ImportHeightmap(self, region: Region3, heightmapAssetId: Content, colormapAssetId: Content, defaultMaterial: EnumMaterial): nil
-	function IsValidColormap(self, colormapAssetId: Content): any
-	function IsValidHeightmap(self, heightmapAssetId: Content): any
-	function SetImportHeightmapPaused(self, paused: boolean): nil
-end
-
-declare class HiddenSurfaceRemovalAsset extends Instance
-end
-
-declare class HttpRbxApiService extends Instance
-	function GetAsync(self, apiUrlPath: string, priority: EnumThrottlingPriority?, httpRequestType: EnumHttpRequestType?): string
-	function GetAsyncFullUrl(self, apiUrl: string, priority: EnumThrottlingPriority?, httpRequestType: EnumHttpRequestType?): string
-	function GetDocumentationUrl(self, partialUrl: string): string
-	function PostAsync(self, apiUrlPath: string, data: string, priority: EnumThrottlingPriority?, content_type: EnumHttpContentType?, httpRequestType: EnumHttpRequestType?): string
-	function PostAsyncFullUrl(self, apiUrl: string, data: string, priority: EnumThrottlingPriority?, content_type: EnumHttpContentType?, httpRequestType: EnumHttpRequestType?): string
-	function RequestAsync(self, requestOptions: { [any]: any }, priority: EnumThrottlingPriority?, content_type: EnumHttpContentType?, httpRequestType: EnumHttpRequestType?): string
-	function RequestLimitedAsync(self, requestOptions: { [any]: any }, priority: EnumThrottlingPriority?, content_type: EnumHttpContentType?, httpRequestType: EnumHttpRequestType?): string
-end
-
-declare class HttpRequest extends Instance
-	function Cancel(self): nil
-	function Start(self, callback: ((...any) -> ...any)): nil
-end
-
 declare class HttpService extends Instance
 	HttpEnabled: boolean
-	function GenerateGUID(self, wrapInCurlyBraces: boolean?): string
 	function GetAsync(self, url: string, nocache: boolean?, headers: any): string
-	function GetHttpEnabled(self): boolean
-	function GetUserAgent(self): string
 	function JSONDecode(self, input: string): any
 	function JSONEncode(self, input: any): string
 	function PostAsync(self, url: string, data: string, content_type: EnumHttpContentType?, compress: boolean?, headers: any): string
-	function RequestAsync(self, options: HttpRequestOptions): HttpResponseData
-	function RequestInternal(self, options: { [any]: any }): Instance
-	function SetHttpEnabled(self, enabled: boolean): nil
 	function UrlEncode(self, input: string): string
 end
 
@@ -4869,7 +4161,6 @@ declare class Humanoid extends Instance
 	PlatformStanding: RBXScriptSignal<boolean>
 	Ragdoll: RBXScriptSignal<boolean>
 	RequiresNeck: boolean
-	RigType: EnumHumanoidRigType
 	RootPart: BasePart?
 	Running: RBXScriptSignal<number>
 	SeatPart: Seat | VehicleSeat | nil
@@ -5133,17 +4424,6 @@ end
 declare class LuaWebService extends Instance
 end
 
-declare class LuauScriptAnalyzerService extends Instance
-end
-
-declare class MarkerCurve extends Instance
-	Length: number
-	function GetMarkerAtIndex(self, index: number): { [any]: any }
-	function GetMarkers(self): { any }
-	function InsertMarkerAtTime(self, time: number, marker: string): { any }
-	function RemoveMarkerAtIndex(self, startingIndex: number, count: number?): number
-end
-
 declare class MarketplaceService extends Instance
 	ClientLuaDialogRequested: RBXScriptSignal<any>
 	ClientPurchaseSuccess: RBXScriptSignal<string, number, number>
@@ -5202,80 +4482,8 @@ declare class MarketplaceService extends Instance
 	function SetPlayerOwnsAssetUrl(self, url: string): nil
 end
 
-declare class MaterialGenerationService extends Instance
-	function GetAccountingBalanceAsync(self): number
-	function RefillAccountingBalanceAsync(self): number
-	function StartSession(self): MaterialGenerationSession
-end
-
-declare class MaterialGenerationSession extends Instance
-	function GenerateImagesAsync(self, prompt: string, options: { [any]: any }): any
-	function GenerateMaterialMapsAsync(self, imageId: string): { [any]: any }
-	function UploadMaterialAsync(self, imageId: string): { [any]: any }
-end
-
-declare class MemStorageConnection extends Instance
-	function Disconnect(self): nil
-end
-
-declare class MemStorageService extends Instance
-	function Bind(self, key: string, callback: ((...any) -> ...any)): MemStorageConnection
-	function BindAndFire(self, key: string, callback: ((...any) -> ...any)): MemStorageConnection
-	function Call(self, key: string, input: any): any
-	function Fire(self, key: string, value: string?): nil
-	function GetItem(self, key: string, defaultValue: string?): string
-	function HasItem(self, key: string): boolean
-	function RemoveItem(self, key: string): boolean
-	function SetItem(self, key: string, value: string?): nil
-end
-
-declare class MemoryStoreQueue extends Instance
-	function AddAsync(self, value: any, expiration: number, priority: number?): nil
-	function ReadAsync(self, count: number, allOrNothing: boolean?, waitTimeout: number?): any
-	function RemoveAsync(self, id: string): nil
-end
-
-declare class MemoryStoreService extends Instance
-	function GetQueue(self, name: string, invisibilityTimeout: number?): MemoryStoreQueue
-	function GetSortedMap(self, name: string): MemoryStoreSortedMap
-end
-
-declare class MemoryStoreSortedMap extends Instance
-	function GetAsync(self, key: string): any
-	function GetRangeAsync(self, direction: EnumSortDirection, count: number, exclusiveLowerBound: string?, exclusiveUpperBound: string?): { any }
-	function RemoveAsync(self, key: string): nil
-	function SetAsync(self, key: string, value: any, expiration: number): boolean
-	function UpdateAsync(self, key: string, transformFunction: ((...any) -> ...any), expiration: number): any
-end
 
 
-
-
-
-declare class MessageBusConnection extends Instance
-	function Disconnect(self): nil
-end
-
-declare class MessageBusService extends Instance
-	function Call(self, key: string, input: any): any
-	function GetLast(self, mid: string): any
-	function GetMessageId(self, domainName: string, messageName: string): string
-	function GetProtocolMethodRequestMessageId(self, protocolName: string, methodName: string): string
-	function GetProtocolMethodResponseMessageId(self, protocolName: string, methodName: string): string
-	function MakeRequest(self, protocolName: string, methodName: string, message: any, callback: ((...any) -> ...any), customTelemetryData: any): nil
-	function Publish(self, mid: string, params: any): nil
-	function PublishProtocolMethodRequest(self, protocolName: string, methodName: string, message: any, customTelemetryData: any): nil
-	function PublishProtocolMethodResponse(self, protocolName: string, methodName: string, message: any, responseCode: number, customTelemetryData: any): nil
-	function SetRequestHandler(self, protocolName: string, methodName: string, callback: ((...any) -> ...any)): nil
-	function Subscribe(self, mid: string, callback: ((...any) -> ...any), once: boolean, sticky: boolean): Instance
-	function SubscribeToProtocolMethodRequest(self, protocolName: string, methodName: string, callback: ((...any) -> ...any), once: boolean, sticky: boolean): Instance
-	function SubscribeToProtocolMethodResponse(self, protocolName: string, methodName: string, callback: ((...any) -> ...any), once: boolean, sticky: boolean): Instance
-end
-
-declare class MessagingService extends Instance
-	function PublishAsync(self, topic: string, message: any): nil
-	function SubscribeAsync(self, topic: string, callback: ((...any) -> ...any)): RBXScriptConnection
-end
 
 declare class Mouse extends Instance
 	Button1Down: RBXScriptSignal<>
@@ -5370,39 +4578,6 @@ declare class NetworkSettings extends Instance
 	MtuOverride: number
 end
 
-declare class NotificationService extends Instance
-	IsConnected: boolean
-	IsLuaChatEnabled: boolean
-	IsLuaGameDetailsEnabled: boolean
-	Roblox17sConnectionChanged: RBXScriptSignal<string, EnumConnectionState, string>
-	Roblox17sEventReceived: RBXScriptSignal<{ [any]: any }>
-	RobloxConnectionChanged: RBXScriptSignal<string, EnumConnectionState, string, string>
-	RobloxEventReceived: RBXScriptSignal<{ [any]: any }>
-	SelectedTheme: string
-	function ActionEnabled(self, actionType: EnumAppShellActionType): nil
-	function ActionTaken(self, actionType: EnumAppShellActionType): nil
-	function CancelAllNotification(self, userId: number): nil
-	function CancelNotification(self, userId: number, alertId: number): nil
-	function GetScheduledNotifications(self, userId: number): { any }
-	function ScheduleNotification(self, userId: number, alertId: number, alertMsg: string, minutesToFire: number): nil
-	function SwitchedToAppShellFeature(self, appShellFeature: EnumAppShellFeature): nil
-end
-
-declare class OmniRecommendationsService extends Instance
-	function ClearSessionId(self): nil
-	function GetSessionId(self): string
-	function MakeRequest(self, nextPageToken: string): HttpRequest
-end
-
-declare class OpenCloudApiV1 extends Instance
-	function CreateModel(self, name: string): OpenCloudModel
-	function CreateUserNotificationAsync(self, user: string, userNotification: OpenCloudModel): OpenCloudModel
-end
-
-declare class OpenCloudService extends Instance
-	function GetApiV1(self): OpenCloudApiV1
-end
-
 declare class PVInstance extends Instance
 	Origin: CFrame
 	function GetPivot(self): CFrame
@@ -5421,17 +4596,7 @@ declare class BasePart extends PVInstance
 	BrickColor: BrickColor
 	CFrame: CFrame
 	CanCollide: boolean
-	CanQuery: boolean
-	CanTouch: boolean
-	CastShadow: boolean
-	CenterOfMass: Vector3
-	CollisionGroup: string
 	Color: Color3
-	CurrentPhysicalProperties: PhysicalProperties
-	CustomPhysicalProperties: PhysicalProperties
-	EnableFluidForces: boolean
-	ExtentsCFrame: CFrame
-	ExtentsSize: Vector3
 	FrontSurface: EnumSurfaceType
 	LeftSurface: EnumSurfaceType
 	LocalTransparencyModifier: number
@@ -5440,8 +4605,6 @@ declare class BasePart extends PVInstance
 	Massless: boolean
 	Material: EnumMaterial
 	MaterialVariant: string
-	Orientation: Vector3
-	PivotOffset: CFrame
 	Position: Vector3
 	ReceiveAge: number
 	Reflectance: number
@@ -5455,27 +4618,14 @@ declare class BasePart extends PVInstance
 	TouchEnded: RBXScriptSignal<BasePart>
 	Touched: RBXScriptSignal<BasePart>
 	Transparency: number
-	function ApplyAngularImpulse(self, impulse: Vector3): nil
-	function ApplyImpulse(self, impulse: Vector3): nil
-	function ApplyImpulseAtPosition(self, impulse: Vector3, position: Vector3): nil
-	function CanCollideWith(self, part: BasePart): boolean
-	function CanSetNetworkOwnership(self): (boolean, string)
-	function GetClosestPointOnSurface(self, position: Vector3): Vector3
 	function GetConnectedParts(self, recursive: boolean?): { BasePart }
 	function GetJoints(self): { BasePart }
 	function GetMass(self): number
-	function GetNetworkOwner(self): Player?
-	function GetNetworkOwnershipAuto(self): boolean
 	function GetRootPart(self): BasePart
 	function GetTouchingParts(self): { BasePart }
 	function GetVelocityAtPosition(self, position: Vector3): Vector3
-	function IntersectAsync(self, parts: { Instance }, collisionfidelity: EnumCollisionFidelity?, renderFidelity: EnumRenderFidelity?): Instance
 	function IsGrounded(self): boolean
 	function Resize(self, normalId: EnumNormalId, deltaAmount: number): boolean
-	function SetNetworkOwner(self, playerInstance: Player?): nil
-	function SetNetworkOwnershipAuto(self): nil
-	function SubtractAsync(self, parts: { BasePart }, collisionfidelity: EnumCollisionFidelity?, renderFidelity: EnumRenderFidelity?): UnionOperation
-	function UnionAsync(self, parts: { BasePart }, collisionfidelity: EnumCollisionFidelity?, renderFidelity: EnumRenderFidelity?): UnionOperation
 end
 
 declare class CornerWedgePart extends BasePart
@@ -5514,7 +4664,6 @@ end
 
 declare class Terrain extends BasePart
 	Decoration: boolean
-	LastUsedModificationMethod: EnumTerrainAcquisitionMethod
 	MaterialColors: BinaryString
 	MaxExtents: Region3int16
 	ShorelinesUpgraded: boolean
@@ -5556,28 +4705,6 @@ declare class Terrain extends BasePart
 	function SetWaterCell(self, x: number, y: number, z: number, waterForce: EnumWaterForce, waterDirection: EnumWaterDirection): nil
 	function SetCell(self, x: number, y: number, z: number, material: EnumCellMaterial, orientation: EnumCellOrientation): nil
 	function GetCell(self, x: number, y: number, z: number): any -- "tuple" bruh
-end
-
-declare class TriangleMeshPart extends BasePart
-	CollisionFidelity: EnumCollisionFidelity
-	MeshSize: Vector3
-end
-
-declare class PartOperation extends TriangleMeshPart
-	RenderFidelity: EnumRenderFidelity
-	SmoothingAngle: number
-	TriangleCount: number
-	UsePartColor: boolean
-	function SubstituteGeometry(self, source: Instance): nil
-end
-
-declare class IntersectOperation extends PartOperation
-end
-
-declare class NegateOperation extends PartOperation
-end
-
-declare class UnionOperation extends PartOperation
 end
 
 declare class TrussPart extends BasePart
@@ -5650,8 +4777,6 @@ end
 declare class Workspace extends Model
 	AirDensity: number
 	AllowThirdPartySales: boolean
-	AvatarUnificationMode: EnumAvatarUnificationMode
-	ClientAnimatorThrottling: EnumClientAnimatorThrottlingMode
 	CurrentCamera: Camera
 	DistributedGameTime: number
 	FallenPartsDestroyHeight: number
@@ -5663,8 +4788,6 @@ declare class Workspace extends Model
 	MeshPartHeadsAndAccessories: EnumMeshPartHeadsAndAccessories
 	PersistentLoaded: RBXScriptSignal<Player>
 	PhysicsSteppingMethod: EnumPhysicsSteppingMethod
-	RejectCharacterDeletions: EnumRejectCharacterDeletions
-	ReplicateInstanceDestroySetting: EnumReplicateInstanceDestroySetting
 	Retargeting: EnumAnimatorRetargetingMode
 	SignalBehavior: EnumSignalBehavior
 	StreamOutBehavior: EnumStreamOutBehavior
@@ -5692,47 +4815,6 @@ declare class Workspace extends Model
 	function FindPartsInRegion3(self, region: Region3, ignoreDescendantsInstance: Instance, maxParts: number): { BasePart }
 end
 
-declare class PackageLink extends Instance
-	AutoUpdate: boolean
-	Creator: string
-	PackageAssetName: string
-	PackageId: Content
-	PermissionLevel: EnumPackagePermission
-	Status: string
-	VersionNumber: number
-end
-
-declare class PartOperationAsset extends Instance
-end
-
-declare class PatchBundlerFileWatch extends Instance
-end
-
-declare class PatchMapping extends Instance
-	FlattenTree: boolean
-	PatchId: string
-	TargetPath: string
-end
-
-declare class Path extends Instance
-	Blocked: RBXScriptSignal<number>
-	Status: EnumPathStatus
-	Unblocked: RBXScriptSignal<number>
-	function CheckOcclusionAsync(self, start: number): number
-	function ComputeAsync(self, start: Vector3, finish: Vector3): nil
-	function GetWaypoints(self): { PathWaypoint }
-end
-
-declare class PathfindingModifier extends Instance
-	Label: string
-	PassThrough: boolean
-end
-
-declare class PathfindingService extends Instance
-	function CreatePath(self, agentParameters: { [any]: any }?): Path
-	function FindPathAsync(self, start: Vector3, finish: Vector3): Path
-end
-
 declare class PausedState extends Instance
 	AllThreadsPaused: boolean
 	Reason: EnumDebuggerPauseReason
@@ -5745,14 +4827,6 @@ end
 
 declare class PausedStateException extends PausedState
 	ExceptionText: string
-end
-
-declare class PermissionsService extends Instance
-	function GetIsThirdPartyAssetAllowed(self): boolean
-	function GetIsThirdPartyPurchaseAllowed(self): boolean
-	function GetIsThirdPartyTeleportAllowed(self): boolean
-	function GetPermissions(self, assetId: string): { any }
-	function SetPermissions(self, assetId: string, permissions: { any }): nil
 end
 
 declare class PhysicsService extends Instance
@@ -5772,53 +4846,21 @@ declare class PhysicsSettings extends Instance
 	AllowSleep: boolean
 	AreAnchorsShown: boolean
 	AreAssembliesShown: boolean
-	AreAssemblyCentersOfMassShown: boolean
 	AreAwakePartsHighlighted: boolean
 	AreBodyTypesShown: boolean
-	AreCollisionCostsShown: boolean
-	AreConstraintForcesShownForSelectedOrHoveredInstances: boolean
-	AreConstraintTorquesShownForSelectedOrHoveredInstances: boolean
-	AreContactForcesShownForSelectedOrHoveredAssemblies: boolean
-	AreContactIslandsShown: boolean
 	AreContactPointsShown: boolean
 	AreJointCoordinatesShown: boolean
-	AreMagnitudesShownForDrawnForcesAndTorques: boolean
 	AreMechanismsShown: boolean
 	AreModelCoordsShown: boolean
 	AreOwnersShown: boolean
 	ArePartCoordsShown: boolean
 	AreRegionsShown: boolean
-	AreSolverIslandsShown: boolean
-	AreTerrainReplicationRegionsShown: boolean
-	AreTimestepsShown: boolean
 	AreUnalignedPartsShown: boolean
 	AreWorldCoordsShown: boolean
-	DisableCSGv2: boolean
-	DisableCSGv3ForPlugins: boolean
-	ForceCSGv2: boolean
-	ForceDrawScale: number
-	IsInterpolationThrottleShown: boolean
 	IsReceiveAgeShown: boolean
 	IsTreeShown: boolean
 	PhysicsEnvironmentalThrottle: EnumEnviromentalPhysicsThrottle
-	ShowDecompositionGeometry: boolean
-	SolverConvergenceVisualizationMode: EnumSolverConvergenceVisualizationMode
 	ThrottleAdjustTime: number
-	UseCSGv2: boolean
-
-	Is30FpsThrottleEnabled: boolean
-end
-
-declare class PlaceStatsService extends Instance
-end
-
-declare class PlacesService extends Instance
-	function StartPlaySolo(self): nil
-end
-
-declare class PlatformFriendsService extends Instance
-	function IsInviteFriendsEnabled(self): boolean
-	function ShowInviteFriendsUI(self): nil
 end
 
 declare class Player extends Instance
@@ -5907,17 +4949,6 @@ declare class Player extends Instance
 	function SetUnder13(self, value: boolean): nil
 end
 
-declare class PlayerEmulatorService extends Instance
-	CustomPoliciesEnabled: boolean
-	EmulatedCountryCode: string
-	EmulatedGameLocale: string
-	PlayerEmulationEnabled: boolean
-	SerializedEmulatedPolicyInfo: BinaryString
-	function GetEmulatedPolicyInfo(self): { [any]: any }
-	function RegionCodeWillHaveAutomaticNonCustomPolicies(self, regionCode: string): boolean
-	function SetEmulatedPolicyInfo(self, emulatedPolicyInfo: { [any]: any }): nil
-end
-
 declare class PlayerScripts extends Instance
 	ComputerCameraMovementModeRegistered: RBXScriptSignal<>
 	ComputerMovementModeRegistered: RBXScriptSignal<>
@@ -5989,75 +5020,15 @@ declare class Plugin extends Instance
 	Unloading: RBXScriptSignal<>
 	UsesAssetInsertionDrag: boolean
 	function Activate(self, exclusiveMouse: boolean): nil
-	function CreatePluginAction(self, actionId: string, text: string, statusTip: string, iconName: string?, allowBinding: boolean?): PluginAction
-	function CreatePluginMenu(self, id: string, title: string?, icon: string?): PluginMenu
-	function CreateQWidgetPluginGui(self, pluginGuiId: string, pluginGuiOptions: { [any]: any }): QWidgetPluginGui
 	function CreateToolbar(self, name: string): PluginToolbar
 	function Deactivate(self): nil
-	function GetItem(self, key: string, defaultValue: any): any
-	function GetJoinMode(self): EnumJointCreationMode
 	function GetMouse(self): PluginMouse
-	function GetSelectedRibbonTool(self): EnumRibbonTool
 	function GetSetting(self, key: string): any
-	function ImportFbxAnimation(self, rigModel: Instance, isR15: boolean?): Instance
-	function ImportFbxRig(self, isR15: boolean?): Instance
-	function Intersect(self, objects: { Instance }): Instance
-	function Invoke(self, key: string, arguments: any): nil
-	function IsActivated(self): boolean
-	function IsActivatedWithExclusiveMouse(self): boolean
-	function Negate(self, objects: { Instance }): { NegateOperation }
-	function OnInvoke(self, key: string, callback: ((...any) -> ...any)): Instance
-	function OnSetItem(self, key: string, callback: ((...any) -> ...any)): Instance
-	function OpenScript(self, script: BaseScript, lineNumber: number?): nil
-	function OpenWikiPage(self, url: string): nil
-	function PauseSound(self, sound: Instance): nil
-	function PlaySound(self, sound: Instance, normalizedTimePosition: number?): nil
-	function PromptForExistingAssetId(self, assetType: string): number
-	function PromptSaveSelection(self, suggestedFileName: string?): boolean
-	function ResumeSound(self, sound: Instance): nil
 	function SaveSelectedToRoblox(self): nil
-	function SelectRibbonTool(self, tool: EnumRibbonTool, position: UDim2): nil
-	function Separate(self, objects: { Instance }): { UnionOperation }
-	function SetItem(self, key: string, value: any): nil
-	function SetReady(self): nil
 	function SetSetting(self, key: string, value: any): nil
-	function StartDecalDrag(self, decal: Instance): nil
-	function StartDrag(self, dragData: { [any]: any }): nil
-	function StopAllSounds(self): nil
-	function Union(self, objects: { Instance }): UnionOperation
-end
-
-declare class PluginAction extends Instance
-	ActionId: string
-	AllowBinding: boolean
-	Checked: boolean
-	DefaultShortcut: string
-	Enabled: boolean
-	StatusTip: string
-	Text: string
-	Triggered: RBXScriptSignal<>
-end
-
-declare class PluginCapabilities extends Instance
-	Manifest: string
 end
 
 declare class PluginDebugService extends Instance
-end
-
-declare class PluginDragEvent extends Instance
-	Data: string
-	MimeType: string
-	Position: Vector2
-	Sender: string
-end
-
-declare class PluginGuiService extends Instance
-end
-
-declare class PluginManagementService extends Instance
-	function GetOTAPluginVersion(self, pluginName: string?): number
-	function SetAutoUpdate(self, pluginId: number, state: boolean): nil
 end
 
 declare class PluginManager extends Instance
@@ -6069,21 +5040,6 @@ end
 declare class PluginManagerInterface extends Instance
 	function ExportPlace(self, filePath: string?): nil
 	function ExportSelection(self, filePath: string?): nil
-end
-
-declare class PluginMenu extends Instance
-	Icon: string
-	Title: string
-	function AddAction(self, action: PluginAction): nil
-	function AddMenu(self, menu: PluginMenu): nil
-	function AddNewAction(self, actionId: string, text: string, icon: string?): PluginAction
-	function AddSeparator(self): nil
-	function Clear(self): nil
-	function ShowAsync(self): PluginAction
-end
-
-declare class PluginPolicyService extends Instance
-	function GetPluginPolicy(self, pluginName: string): { [any]: any }
 end
 
 declare class PluginToolbar extends Instance
@@ -6102,21 +5058,10 @@ end
 
 
 
-declare class PolicyService extends Instance
-	IsLuobuServer: EnumTriStateBoolean
-	LuobuWhitelisted: EnumTriStateBoolean
-	function GetPolicyInfoForPlayerAsync(self, player: Player): { [any]: any }
-	function GetPolicyInfoForServerRobloxOnlyAsync(self): { [any]: any }
-end
-
 declare class PoseBase extends Instance
 	EasingDirection: EnumPoseEasingDirection
 	EasingStyle: EnumPoseEasingStyle
 	Weight: number
-end
-
-declare class NumberPose extends PoseBase
-	Value: number
 end
 
 declare class Pose extends PoseBase
@@ -6124,9 +5069,6 @@ declare class Pose extends PoseBase
 	function AddSubPose(self, pose: Pose): nil
 	function GetSubPoses(self): { Instance }
 	function RemoveSubPose(self, pose: Pose): nil
-end
-
-declare class ProcessInstancePhysicsService extends Instance
 end
 
 declare class ReflectionMetadata extends Instance
@@ -6189,9 +5131,6 @@ end
 declare class ReflectionMetadataYieldFunctions extends Instance
 end
 
-declare class RemoteCursorService extends Instance
-end
-
 declare class RemoteDebuggerServer extends Instance
 end
 
@@ -6244,50 +5183,6 @@ end
 declare class RuntimeScriptService extends Instance
 end
 
-declare class SafetyService extends Instance
-	ScreenshotContentReady: RBXScriptSignal<number, Content>
-	ScreenshotUploaded: RBXScriptSignal<number, string>
-	function TakeScreenshot(self, screenshotOptions: { [any]: any }): number
-end
-
-declare class ScreenshotHud extends Instance
-	CameraButtonIcon: Content
-	CameraButtonPosition: UDim2
-	CloseButtonPosition: UDim2
-	CloseWhenScreenshotTaken: boolean
-	ExperienceNameOverlayEnabled: boolean
-	OverlayFont: EnumFont
-	UsernameOverlayEnabled: boolean
-	Visible: boolean
-end
-
-declare class ScriptBuilder extends Instance
-end
-
-declare class SyncScriptBuilder extends ScriptBuilder
-	CompileTarget: EnumCompileTarget
-	CoverageInfo: boolean
-	DebugInfo: boolean
-	PackAsSource: boolean
-end
-
-declare class ScriptChangeService extends Instance
-	ScriptAdded: RBXScriptSignal<LuaSourceContainer>
-	ScriptBeingRemoved: RBXScriptSignal<LuaSourceContainer>
-	ScriptChanged: RBXScriptSignal<LuaSourceContainer, string>
-	ScriptFullNameChanged: RBXScriptSignal<LuaSourceContainer>
-	ScriptSourceChanged: RBXScriptSignal<LuaSourceContainer>
-end
-
-declare class ScriptCloneWatcher extends Instance
-end
-
-declare class ScriptCloneWatcherHelper extends Instance
-end
-
-declare class ScriptCommitService extends Instance
-end
-
 declare class ScriptContext extends Instance
 	Error: RBXScriptSignal<string, string, Instance>
 	ScriptsDisabled: boolean
@@ -6325,13 +5220,6 @@ declare class ScriptDebugger extends Instance
 	function SetUpvalue(self, name: string, value: any, stackFrame: number?): nil
 end
 
-declare class ScriptRegistrationService extends Instance
-	function GetSourceContainerByScriptGuid(self, guid: string): LuaSourceContainer
-end
-
-declare class ScriptRuntime extends Instance
-end
-
 declare class ScriptService extends Instance
 end
 
@@ -6349,30 +5237,6 @@ declare class Selection extends Instance
 	function Remove(self, instancesToRemove: { Instance }): nil
 	function Set(self, selection: { Instance }): nil
 	function SetTerrainSelectionHack(self, center: Vector3, size: Vector3): nil
-end
-
-declare class SelectionHighlightManager extends Instance
-end
-
-declare class SensorBase extends Instance
-	OnSensorOutputChanged: RBXScriptSignal<>
-	UpdateType: EnumSensorUpdateType
-end
-
-declare class BuoyancySensor extends SensorBase
-	FullySubmerged: boolean
-	TouchingSurface: boolean
-end
-
-declare class ControllerSensor extends SensorBase
-end
-
-declare class ControllerPartSensor extends ControllerSensor
-	HitFrame: CFrame
-	HitNormal: Vector3
-	SearchDistance: number
-	SensedPart: BasePart
-	SensorMode: EnumSensorMode
 end
 
 declare class ServerScriptService extends Instance
@@ -6398,8 +5262,6 @@ declare class ServiceProvider extends Instance
 	AssetCounterService: AssetCounterService
 	AssetDeliveryProxy: AssetDeliveryProxy
 	AssetService: AssetService
-	AvatarChatService: AvatarChatService
-	AvatarImportService: AvatarImportService
 	BadgeService: BadgeService
 	BrowserService: BrowserService
 	BulkImportService: BulkImportService
@@ -6424,9 +5286,6 @@ declare class ServiceProvider extends Instance
 	DebuggerManager: DebuggerManager
 	DeviceIdService: DeviceIdService
 	EventIngestService: EventIngestService
-	ExperienceAuthService: ExperienceAuthService
-	FacialAnimationRecordingService: FacialAnimationRecordingService
-	FacialAnimationStreamingServiceV2: FacialAnimationStreamingServiceV2
 	FlagStandService: FlagStandService
 	FriendService: FriendService
 	GamePassService: GamePassService
@@ -6434,8 +5293,6 @@ declare class ServiceProvider extends Instance
 	GuiService: GuiService
 	GuidRegistryService: GuidRegistryService
 	HSRDataContentProvider: HSRDataContentProvider
-	HeightmapImporterService: HeightmapImporterService
-	HttpRbxApiService: HttpRbxApiService
 	HttpService: HttpService
 	InsertService: InsertService
 	KeyboardService: KeyboardService
@@ -6446,59 +5303,27 @@ declare class ServiceProvider extends Instance
 	LodDataService: LodDataService
 	LoginService: LoginService
 	LuaWebService: LuaWebService
-	LuauScriptAnalyzerService: LuauScriptAnalyzerService
 	MarketplaceService: MarketplaceService
 	MaterialGenerationService: MaterialGenerationService
-	MemStorageService: MemStorageService
-	MemoryStoreService: MemoryStoreService
 	MeshContentProvider: MeshContentProvider
-	MessageBusService: MessageBusService
-	MessagingService: MessagingService
 	MouseService: MouseService
 	NetworkClient: NetworkClient
 	NetworkServer: NetworkServer
 	NetworkSettings: NetworkSettings
-	NotificationService: NotificationService
-	OmniRecommendationsService: OmniRecommendationsService
-	OpenCloudService: OpenCloudService
-	PatchBundlerFileWatch: PatchBundlerFileWatch
-	PathfindingService: PathfindingService
-	PermissionsService: PermissionsService
 	PhysicsService: PhysicsService
-	PlaceStatsService: PlaceStatsService
-	PlacesService: PlacesService
-	PlatformFriendsService: PlatformFriendsService
-	PlayerEmulatorService: PlayerEmulatorService
 	Players: Players
 	PluginDebugService: PluginDebugService
-	PluginGuiService: PluginGuiService
-	PluginManagementService: PluginManagementService
-	PluginPolicyService: PluginPolicyService
-	PolicyService: PolicyService
-	ProcessInstancePhysicsService: ProcessInstancePhysicsService
-	RemoteCursorService: RemoteCursorService
 	RemoteDebuggerServer: RemoteDebuggerServer
 	RenderSettings: RenderSettings
 	ReplicatedStorage: ReplicatedStorage
 	RunService: RunService
 	RuntimeScriptService: RuntimeScriptService
-	SafetyService: SafetyService
-	ScriptChangeService: ScriptChangeService
-	ScriptCloneWatcher: ScriptCloneWatcher
-	ScriptCloneWatcherHelper: ScriptCloneWatcherHelper
-	ScriptCommitService: ScriptCommitService
 	ScriptContext: ScriptContext
-	ScriptRegistrationService: ScriptRegistrationService
 	ScriptService: ScriptService
 	Selection: Selection
-	SelectionHighlightManager: SelectionHighlightManager
 	ServerScriptService: ServerScriptService
 	ServerStorage: ServerStorage
-	SharedTableRegistry: SharedTableRegistry
-	SmoothVoxelsUpgraderService: SmoothVoxelsUpgraderService
-	SnippetService: SnippetService
 	SocialService: SocialService
-	SolidModelContentProvider: SolidModelContentProvider
 	SoundService: SoundService
 	SpawnerService: SpawnerService
 	StarterGui: StarterGui
@@ -6535,8 +5360,6 @@ declare class ServiceProvider extends Instance
 	function GetService(self, service: "AssetCounterService"): AssetCounterService
 	function GetService(self, service: "AssetDeliveryProxy"): AssetDeliveryProxy
 	function GetService(self, service: "AssetService"): AssetService
-	function GetService(self, service: "AvatarChatService"): AvatarChatService
-	function GetService(self, service: "AvatarImportService"): AvatarImportService
 	function GetService(self, service: "BadgeService"): BadgeService
 	function GetService(self, service: "BrowserService"): BrowserService
 	function GetService(self, service: "BulkImportService"): BulkImportService
@@ -6561,9 +5384,6 @@ declare class ServiceProvider extends Instance
 	function GetService(self, service: "DebuggerManager"): DebuggerManager
 	function GetService(self, service: "DeviceIdService"): DeviceIdService
 	function GetService(self, service: "EventIngestService"): EventIngestService
-	function GetService(self, service: "ExperienceAuthService"): ExperienceAuthService
-	function GetService(self, service: "FacialAnimationRecordingService"): FacialAnimationRecordingService
-	function GetService(self, service: "FacialAnimationStreamingServiceV2"): FacialAnimationStreamingServiceV2
 	function GetService(self, service: "FlagStandService"): FlagStandService
 	function GetService(self, service: "FriendService"): FriendService
 	function GetService(self, service: "GamePassService"): GamePassService
@@ -6571,9 +5391,7 @@ declare class ServiceProvider extends Instance
 	function GetService(self, service: "GuiService"): GuiService
 	function GetService(self, service: "GuidRegistryService"): GuidRegistryService
 	function GetService(self, service: "HSRDataContentProvider"): HSRDataContentProvider
-	function GetService(self, service: "HeightmapImporterService"): HeightmapImporterService
 	function GetService(self, service: "Hopper"): Hopper
-	function GetService(self, service: "HttpRbxApiService"): HttpRbxApiService
 	function GetService(self, service: "HttpService"): HttpService
 	function GetService(self, service: "InsertService"): InsertService
 	function GetService(self, service: "JointsService"): JointsService
@@ -6585,60 +5403,28 @@ declare class ServiceProvider extends Instance
 	function GetService(self, service: "LodDataService"): LodDataService
 	function GetService(self, service: "LoginService"): LoginService
 	function GetService(self, service: "LuaWebService"): LuaWebService
-	function GetService(self, service: "LuauScriptAnalyzerService"): LuauScriptAnalyzerService
 	function GetService(self, service: "MarketplaceService"): MarketplaceService
 	function GetService(self, service: "MaterialGenerationService"): MaterialGenerationService
-	function GetService(self, service: "MemStorageService"): MemStorageService
-	function GetService(self, service: "MemoryStoreService"): MemoryStoreService
 	function GetService(self, service: "MeshContentProvider"): MeshContentProvider
-	function GetService(self, service: "MessageBusService"): MessageBusService
-	function GetService(self, service: "MessagingService"): MessagingService
 	function GetService(self, service: "MouseService"): MouseService
 	function GetService(self, service: "NetworkClient"): NetworkClient
 	function GetService(self, service: "NetworkServer"): NetworkServer
 	function GetService(self, service: "NetworkSettings"): NetworkSettings
-	function GetService(self, service: "NotificationService"): NotificationService
-	function GetService(self, service: "OmniRecommendationsService"): OmniRecommendationsService
-	function GetService(self, service: "OpenCloudService"): OpenCloudService
-	function GetService(self, service: "PatchBundlerFileWatch"): PatchBundlerFileWatch
-	function GetService(self, service: "PathfindingService"): PathfindingService
-	function GetService(self, service: "PermissionsService"): PermissionsService
 	function GetService(self, service: "PhysicsService"): PhysicsService
-	function GetService(self, service: "PlaceStatsService"): PlaceStatsService
-	function GetService(self, service: "PlacesService"): PlacesService
-	function GetService(self, service: "PlatformFriendsService"): PlatformFriendsService
-	function GetService(self, service: "PlayerEmulatorService"): PlayerEmulatorService
 	function GetService(self, service: "Players"): Players
 	function GetService(self, service: "PluginDebugService"): PluginDebugService
-	function GetService(self, service: "PluginGuiService"): PluginGuiService
-	function GetService(self, service: "PluginManagementService"): PluginManagementService
-	function GetService(self, service: "PluginPolicyService"): PluginPolicyService
 	function GetService(self, service: "PointsService"): PointsService
-	function GetService(self, service: "PolicyService"): PolicyService
-	function GetService(self, service: "ProcessInstancePhysicsService"): ProcessInstancePhysicsService
-	function GetService(self, service: "RemoteCursorService"): RemoteCursorService
 	function GetService(self, service: "RemoteDebuggerServer"): RemoteDebuggerServer
 	function GetService(self, service: "RenderSettings"): RenderSettings
 	function GetService(self, service: "ReplicatedStorage"): ReplicatedStorage
 	function GetService(self, service: "RunService"): RunService
 	function GetService(self, service: "RuntimeScriptService"): RuntimeScriptService
-	function GetService(self, service: "SafetyService"): SafetyService
-	function GetService(self, service: "ScriptChangeService"): ScriptChangeService
-	function GetService(self, service: "ScriptCloneWatcher"): ScriptCloneWatcher
-	function GetService(self, service: "ScriptCloneWatcherHelper"): ScriptCloneWatcherHelper
-	function GetService(self, service: "ScriptCommitService"): ScriptCommitService
 	function GetService(self, service: "ScriptContext"): ScriptContext
-	function GetService(self, service: "ScriptRegistrationService"): ScriptRegistrationService
 	function GetService(self, service: "ScriptService"): ScriptService
 	function GetService(self, service: "Selection"): Selection
-	function GetService(self, service: "SelectionHighlightManager"): SelectionHighlightManager
 	function GetService(self, service: "ServerScriptService"): ServerScriptService
 	function GetService(self, service: "ServerStorage"): ServerStorage
-	function GetService(self, service: "SharedTableRegistry"): SharedTableRegistry
-	function GetService(self, service: "SmoothVoxelsUpgraderService"): SmoothVoxelsUpgraderService
-	function GetService(self, service: "SnippetService"): SnippetService
 	function GetService(self, service: "SocialService"): SocialService
-	function GetService(self, service: "SolidModelContentProvider"): SolidModelContentProvider
 	function GetService(self, service: "SoundService"): SoundService
 	function GetService(self, service: "SpawnerService"): SpawnerService
 	function GetService(self, service: "StarterGui"): StarterGui
@@ -6677,7 +5463,6 @@ declare class DataModel extends ServiceProvider
 	GameId: number
 	Genre: EnumGenre
 	GraphicsQualityChangeRequest: RBXScriptSignal<boolean>
-	IsSFFlagsLoaded: boolean
 	JobId: string
 	Loaded: RBXScriptSignal<>
 	PlaceId: number
@@ -6697,36 +5482,17 @@ declare class DataModel extends ServiceProvider
 	function DefineFastFlag(self, name: string, defaultValue: boolean): boolean
 	function DefineFastInt(self, name: string, defaultValue: number): number
 	function DefineFastString(self, name: string, defaultValue: string): string
-	function GetEngineFeature(self, name: string): boolean
-	function GetFastFlag(self, name: string): boolean
-	function GetFastInt(self, name: string): number
-	function GetFastString(self, name: string): string
 	function GetJobsInfo(self): { any }
 	function GetObjects(self, url: Content): { Instance }
-	function GetObjectsAllOrNone(self, url: Content, binaryFormatOnly: boolean?): { Instance }
-	function GetObjectsAsync(self, url: Content): { Instance }
-	function GetObjectsList(self, urls: { any }): { any }
-	function GetPlaySessionId(self): string
-	function HttpGet(self, url: string, synchronous: boolean, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
-	function HttpGetAsync(self, url: string, synchronous: boolean?, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
-	function HttpPost(self, url: string, data: string, synchronous: boolean, contentType: string?, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
-	function HttpPostAsync(self, url: string, data: string?, synchronous: boolean?, contentType: string?, httpRequestType: EnumHttpRequestType?, doNotAllowDiabolicalMode: boolean?): string
-	function InsertObjectsAndJoinIfLegacyAsync(self, url: Content): { Instance }
+	function HttpGet(self, url: string, synchronous: boolean?): string
+	function HttpGetAsync(self, url: string, synchronous: boolean?): string
+	function HttpPost(self, url: string, data: string, synchronous: boolean?): string
+	function HttpPostAsync(self, url: string, data: string): string
 	function IsContentLoaded(self): boolean
 	function IsLoaded(self): boolean
-	function IsUniverseMetadataLoaded(self): boolean
 	function Load(self, url: Content): nil
-	function OpenScreenshotsFolder(self): nil
-	function OpenVideosFolder(self): nil
-	function ReportInGoogleAnalytics(self, category: string, action: string?, label: string?, value: number?): nil
-	function SetFastFlagForTesting(self, name: string, newValue: boolean): boolean
-	function SetFastIntForTesting(self, name: string, newValue: number): number
-	function SetFastStringForTesting(self, name: string, newValue: string): string
-	function SetFlagVersion(self, name: string, version: number): nil
 	function SetIsLoaded(self, value: boolean, placeSizeInBytes: number?): nil
 	function SetPlaceId(self, placeId: number, idk: boolean?): nil
-	function SetPlaceID(self, placeId: number, idk: boolean?): nil
-	function SetUniverseId(self, universeId: number): nil
 	function Shutdown(self): nil
 
 	function SaveToRoblox(self): nil
@@ -6743,20 +5509,12 @@ end
 declare class GenericSettings extends ServiceProvider
 end
 
-declare class AnalysticsSettings extends GenericSettings
-end
-
 declare class UserSettings extends GenericSettings
 	GameSettings: UserGameSettings
 	function GetService(self, service: "UserGameSettings"): UserGameSettings
 	function IsUserFeatureEnabled(self, name: string): boolean
 	function Reset(self): nil
 	function SaveState(self): nil
-end
-
-declare class SharedTableRegistry extends Instance
-	function GetSharedTable(self, name: string): SharedTable
-	function SetSharedTable(self, name: string, st: SharedTable?): nil
 end
 
 declare class Sky extends Instance
@@ -6782,15 +5540,6 @@ declare class Smoke extends Instance
 	Size: number
 	TimeScale: number
 	function FastForward(self, numFrames: number): nil
-end
-
-declare class SmoothVoxelsUpgraderService extends Instance
-	Status: RBXScriptSignal<number>
-	function Cancel(self): nil
-	function Start(self): nil
-end
-
-declare class SnippetService extends Instance
 end
 
 declare class SocialService extends Instance
@@ -6897,54 +5646,11 @@ declare class StarterPack extends Instance
 end
 
 declare class StarterPlayer extends Instance
-	AllowCustomAnimations: boolean
-	AutoJumpEnabled: boolean
-	AvatarJointUpgrade: EnumAvatarJointUpgrade
 	CameraMaxZoomDistance: number
 	CameraMinZoomDistance: number
 	CameraMode: EnumCameraMode
-	CharacterJumpHeight: number
-	CharacterJumpPower: number
-	CharacterMaxSlopeAngle: number
-	CharacterUseJumpPower: boolean
-	CharacterWalkSpeed: number
-	DeathStyle: EnumDeathStyle
-	DevCameraOcclusionMode: EnumDevCameraOcclusionMode
-	DevComputerCameraMovementMode: EnumDevComputerCameraMovementMode
-	DevComputerMovementMode: EnumDevComputerMovementMode
-	DevTouchCameraMovementMode: EnumDevTouchCameraMovementMode
-	DevTouchMovementMode: EnumDevTouchMovementMode
-	EnableDynamicHeads: EnumLoadDynamicHeads
-	EnableMouseLockOption: boolean
-	GameSettingsAssetIDFace: number
-	GameSettingsAssetIDHead: number
-	GameSettingsAssetIDLeftArm: number
-	GameSettingsAssetIDLeftLeg: number
-	GameSettingsAssetIDPants: number
-	GameSettingsAssetIDRightArm: number
-	GameSettingsAssetIDRightLeg: number
-	GameSettingsAssetIDShirt: number
-	GameSettingsAssetIDTeeShirt: number
-	GameSettingsAssetIDTorso: number
-	GameSettingsAvatar: EnumGameAvatarType
-	GameSettingsR15Collision: EnumR15CollisionType
-	GameSettingsScaleRangeBodyType: NumberRange
-	GameSettingsScaleRangeHead: NumberRange
-	GameSettingsScaleRangeHeight: NumberRange
-	GameSettingsScaleRangeProportion: NumberRange
-	GameSettingsScaleRangeWidth: NumberRange
 	HealthDisplayDistance: number
-	HumanoidStateMachineMode: EnumHumanoidStateMachineMode
-	LoadCharacterAppearance: boolean
 	NameDisplayDistance: number
-	UserEmotesEnabled: boolean
-	function ClearDefaults(self): nil
-end
-
-declare class StarterPlayerScripts extends Instance
-end
-
-declare class StarterCharacterScripts extends StarterPlayerScripts
 end
 
 declare class Stats extends Instance
@@ -7012,15 +5718,6 @@ end
 declare class StudioScriptDebugEventListener extends Instance
 end
 
-declare class SurfaceAppearance extends Instance
-	AlphaMode: EnumAlphaMode
-	ColorMap: Content
-	MetalnessMap: Content
-	NormalMap: Content
-	RoughnessMap: Content
-	TexturePack: Content
-end
-
 declare class TaskScheduler extends Instance
 	SchedulerDutyCycle: number
 	SchedulerRate: number
@@ -7063,32 +5760,15 @@ declare class TeleportOptions extends Instance
 end
 
 declare class TeleportService extends Instance
-	LocalPlayerArrivedFromTeleport: RBXScriptSignal<Player, any>
 	MenuTeleportAttempt: RBXScriptSignal<>
-	TeleportInitFailed: RBXScriptSignal<Player, EnumTeleportResult, string, number, TeleportOptions>
-	function Block(self): nil
-	function GetArrivingTeleportGui(self): ScreenGui
-	function GetLocalPlayerTeleportData(self): any
-	function GetPlayerPlaceInstanceAsync(self, userId: number): (boolean, string, number, string)
-	function GetTeleportSetting(self, setting: string): any
-	function ReserveServer(self, placeId: number): (string, string)
 	function SetTeleportGui(self, gui: GuiObject): nil
-	function SetTeleportSetting(self, setting: string, value: any): nil
 	function Teleport(self, placeId: number, player: Player?, teleportData: any, customLoadingScreen: GuiObject?): nil
-	function TeleportAsync(self, placeId: number, players: { Player }, teleportOptions: TeleportOptions?): TeleportAsyncResult
 	function TeleportCancel(self): nil
-	function TeleportPartyAsync(self, placeId: number, players: { Player }, teleportData: any, customLoadingScreen: GuiObject?): string
-	function TeleportToPlaceInstance(self, placeId: number, instanceId: string, player: Player?, spawnName: string?, teleportData: any, customLoadingScreen: GuiObject?): nil
-	function TeleportToPrivateServer(self, placeId: number, reservedServerAccessCode: string, players: { Player }, spawnName: string?, teleportData: any, customLoadingScreen: GuiObject?): nil
 	function TeleportToSpawnByName(self, placeId: number, spawnName: string, player: Player?, teleportData: any, customLoadingScreen: GuiObject?): nil
-	function UnblockAsync(self): any
 end
 
 declare class TerrainRegion extends Instance
 	SizeInCells: Vector3
-	function ApplyTransform(self, rotation: CFrame, size: Vector3): nil
-	function ApplyTransformSubregion(self, rotation: CFrame, size: Vector3, region: Region3int16): TerrainRegion
-	function GetRegionWireframe(self): { any }
 end
 
 declare class TestService extends Instance
@@ -7360,7 +6040,7 @@ declare class Wire extends Instance
 end
 
 declare Instance: {
-	new: ((className: "Accoutrement", parent: Instance?) -> Accoutrement) & ((className: "Hat", parent: Instance?) -> Hat) & ((className: "AdvancedDragger", parent: Instance?) -> AdvancedDragger) & ((className: "Animation", parent: Instance?) -> Animation) & ((className: "CurveAnimation", parent: Instance?) -> CurveAnimation) & ((className: "KeyframeSequence", parent: Instance?) -> KeyframeSequence) & ((className: "AnimationController", parent: Instance?) -> AnimationController) & ((className: "Animator", parent: Instance?) -> Animator) & ((className: "AudioDeviceInput", parent: Instance?) -> AudioDeviceInput) & ((className: "AudioDeviceOutput", parent: Instance?) -> AudioDeviceOutput) & ((className: "AudioDistortion", parent: Instance?) -> AudioDistortion) & ((className: "AudioEcho", parent: Instance?) -> AudioEcho) & ((className: "AudioEmitter", parent: Instance?) -> AudioEmitter) & ((className: "AudioEqualizer", parent: Instance?) -> AudioEqualizer) & ((className: "AudioFader", parent: Instance?) -> AudioFader) & ((className: "AudioFlanger", parent: Instance?) -> AudioFlanger) & ((className: "AudioListener", parent: Instance?) -> AudioListener) & ((className: "AudioPitchShifter", parent: Instance?) -> AudioPitchShifter) & ((className: "AudioPlayer", parent: Instance?) -> AudioPlayer) & ((className: "AudioReverb", parent: Instance?) -> AudioReverb) & ((className: "AudioSearchParams", parent: Instance?) -> AudioSearchParams) & ((className: "Backpack", parent: Instance?) -> Backpack) & ((className: "BindableEvent", parent: Instance?) -> BindableEvent) & ((className: "BindableFunction", parent: Instance?) -> BindableFunction) & ((className: "BodyAngularVelocity", parent: Instance?) -> BodyAngularVelocity) & ((className: "BodyForce", parent: Instance?) -> BodyForce) & ((className: "BodyGyro", parent: Instance?) -> BodyGyro) & ((className: "BodyPosition", parent: Instance?) -> BodyPosition) & ((className: "BodyThrust", parent: Instance?) -> BodyThrust) & ((className: "BodyVelocity", parent: Instance?) -> BodyVelocity) & ((className: "RocketPropulsion", parent: Instance?) -> RocketPropulsion) & ((className: "BubbleChatMessageProperties", parent: Instance?) -> BubbleChatMessageProperties) & ((className: "Camera", parent: Instance?) -> Camera) & ((className: "BodyColors", parent: Instance?) -> BodyColors) & ((className: "CharacterMesh", parent: Instance?) -> CharacterMesh) & ((className: "Pants", parent: Instance?) -> Pants) & ((className: "Shirt", parent: Instance?) -> Shirt) & ((className: "ShirtGraphic", parent: Instance?) -> ShirtGraphic) & ((className: "Skin", parent: Instance?) -> Skin) & ((className: "ClickDetector", parent: Instance?) -> ClickDetector) & ((className: "DragDetector", parent: Instance?) -> DragDetector) & ((className: "Configuration", parent: Instance?) -> Configuration) & ((className: "AngularVelocity", parent: Instance?) -> AngularVelocity) & ((className: "AnimationConstraint", parent: Instance?) -> AnimationConstraint) & ((className: "BallSocketConstraint", parent: Instance?) -> BallSocketConstraint) & ((className: "HingeConstraint", parent: Instance?) -> HingeConstraint) & ((className: "LineForce", parent: Instance?) -> LineForce) & ((className: "LinearVelocity", parent: Instance?) -> LinearVelocity) & ((className: "PlaneConstraint", parent: Instance?) -> PlaneConstraint) & ((className: "Plane", parent: Instance?) -> Plane) & ((className: "RigidConstraint", parent: Instance?) -> RigidConstraint) & ((className: "RodConstraint", parent: Instance?) -> RodConstraint) & ((className: "RopeConstraint", parent: Instance?) -> RopeConstraint) & ((className: "CylindricalConstraint", parent: Instance?) -> CylindricalConstraint) & ((className: "PrismaticConstraint", parent: Instance?) -> PrismaticConstraint) & ((className: "SpringConstraint", parent: Instance?) -> SpringConstraint) & ((className: "Torque", parent: Instance?) -> Torque) & ((className: "TorsionSpringConstraint", parent: Instance?) -> TorsionSpringConstraint) & ((className: "UniversalConstraint", parent: Instance?) -> UniversalConstraint) & ((className: "HumanoidController", parent: Instance?) -> HumanoidController) & ((className: "SkateboardController", parent: Instance?) -> SkateboardController) & ((className: "VehicleController", parent: Instance?) -> VehicleController) & ((className: "CustomEvent", parent: Instance?) -> CustomEvent) & ((className: "CustomEventReceiver", parent: Instance?) -> CustomEventReceiver) & ((className: "CylinderMesh", parent: Instance?) -> CylinderMesh) & ((className: "FileMesh", parent: Instance?) -> FileMesh) & ((className: "SpecialMesh", parent: Instance?) -> SpecialMesh) & ((className: "DataStoreOptions", parent: Instance?) -> DataStoreOptions) & ((className: "DebuggerWatch", parent: Instance?) -> DebuggerWatch) & ((className: "Dialog", parent: Instance?) -> Dialog) & ((className: "DialogChoice", parent: Instance?) -> DialogChoice) & ((className: "Dragger", parent: Instance?) -> Dragger) & ((className: "ExperienceInviteOptions", parent: Instance?) -> ExperienceInviteOptions) & ((className: "Explosion", parent: Instance?) -> Explosion) & ((className: "Decal", parent: Instance?) -> Decal) & ((className: "Texture", parent: Instance?) -> Texture) & ((className: "Hole", parent: Instance?) -> Hole) & ((className: "MotorFeature", parent: Instance?) -> MotorFeature) & ((className: "Fire", parent: Instance?) -> Fire) & ((className: "CSGDictionaryService", parent: Instance?) -> CSGDictionaryService) & ((className: "ForceField", parent: Instance?) -> ForceField) & ((className: "FunctionalTest", parent: Instance?) -> FunctionalTest) & ((className: "GetTextBoundsParams", parent: Instance?) -> GetTextBoundsParams) & ((className: "Frame", parent: Instance?) -> Frame) & ((className: "ImageButton", parent: Instance?) -> ImageButton) & ((className: "TextButton", parent: Instance?) -> TextButton) & ((className: "ImageLabel", parent: Instance?) -> ImageLabel) & ((className: "TextLabel", parent: Instance?) -> TextLabel) & ((className: "TextBox", parent: Instance?) -> TextBox) & ((className: "BillboardGui", parent: Instance?) -> BillboardGui) & ((className: "ScreenGui", parent: Instance?) -> ScreenGui) & ((className: "GuiMain", parent: Instance?) -> GuiMain) & ((className: "AdGui", parent: Instance?) -> AdGui) & ((className: "SurfaceGui", parent: Instance?) -> SurfaceGui) & ((className: "FloorWire", parent: Instance?) -> FloorWire) & ((className: "SelectionBox", parent: Instance?) -> SelectionBox) & ((className: "BoxHandleAdornment", parent: Instance?) -> BoxHandleAdornment) & ((className: "ConeHandleAdornment", parent: Instance?) -> ConeHandleAdornment) & ((className: "CylinderHandleAdornment", parent: Instance?) -> CylinderHandleAdornment) & ((className: "ImageHandleAdornment", parent: Instance?) -> ImageHandleAdornment) & ((className: "LineHandleAdornment", parent: Instance?) -> LineHandleAdornment) & ((className: "SphereHandleAdornment", parent: Instance?) -> SphereHandleAdornment) & ((className: "WireframeHandleAdornment", parent: Instance?) -> WireframeHandleAdornment) & ((className: "ParabolaAdornment", parent: Instance?) -> ParabolaAdornment) & ((className: "SelectionSphere", parent: Instance?) -> SelectionSphere) & ((className: "ArcHandles", parent: Instance?) -> ArcHandles) & ((className: "Handles", parent: Instance?) -> Handles) & ((className: "SurfaceSelection", parent: Instance?) -> SurfaceSelection) & ((className: "SelectionPartLasso", parent: Instance?) -> SelectionPartLasso) & ((className: "SelectionPointLasso", parent: Instance?) -> SelectionPointLasso) & ((className: "HeightmapImporterService", parent: Instance?) -> HeightmapImporterService) & ((className: "HiddenSurfaceRemovalAsset", parent: Instance?) -> HiddenSurfaceRemovalAsset) & ((className: "Humanoid", parent: Instance?) -> Humanoid) & ((className: "RotateP", parent: Instance?) -> RotateP) & ((className: "RotateV", parent: Instance?) -> RotateV) & ((className: "Glue", parent: Instance?) -> Glue) & ((className: "ManualGlue", parent: Instance?) -> ManualGlue) & ((className: "ManualWeld", parent: Instance?) -> ManualWeld) & ((className: "Motor", parent: Instance?) -> Motor) & ((className: "Motor6D", parent: Instance?) -> Motor6D) & ((className: "Rotate", parent: Instance?) -> Rotate) & ((className: "Snap", parent: Instance?) -> Snap) & ((className: "VelocityMotor", parent: Instance?) -> VelocityMotor) & ((className: "Weld", parent: Instance?) -> Weld) & ((className: "Keyframe", parent: Instance?) -> Keyframe) & ((className: "KeyframeMarker", parent: Instance?) -> KeyframeMarker) & ((className: "PointLight", parent: Instance?) -> PointLight) & ((className: "SpotLight", parent: Instance?) -> SpotLight) & ((className: "SurfaceLight", parent: Instance?) -> SurfaceLight) & ((className: "Script", parent: Instance?) -> Script) & ((className: "LocalScript", parent: Instance?) -> LocalScript) & ((className: "ModuleScript", parent: Instance?) -> ModuleScript) & ((className: "MarkerCurve", parent: Instance?) -> MarkerCurve) & ((className: "MemoryStoreService", parent: Instance?) -> MemoryStoreService) & ((className: "Message", parent: Instance?) -> Message) & ((className: "Hint", parent: Instance?) -> Hint) & ((className: "CornerWedgePart", parent: Instance?) -> CornerWedgePart) & ((className: "Part", parent: Instance?) -> Part) & ((className: "FlagStand", parent: Instance?) -> FlagStand) & ((className: "Seat", parent: Instance?) -> Seat) & ((className: "SkateboardPlatform", parent: Instance?) -> SkateboardPlatform) & ((className: "SpawnLocation", parent: Instance?) -> SpawnLocation) & ((className: "WedgePart", parent: Instance?) -> WedgePart) & ((className: "PartOperation", parent: Instance?) -> PartOperation) & ((className: "IntersectOperation", parent: Instance?) -> IntersectOperation) & ((className: "NegateOperation", parent: Instance?) -> NegateOperation) & ((className: "UnionOperation", parent: Instance?) -> UnionOperation) & ((className: "TrussPart", parent: Instance?) -> TrussPart) & ((className: "VehicleSeat", parent: Instance?) -> VehicleSeat) & ((className: "Model", parent: Instance?) -> Model) & ((className: "HopperBin", parent: Instance?) -> HopperBin) & ((className: "Tool", parent: Instance?) -> Tool) & ((className: "Flag", parent: Instance?) -> Flag) & ((className: "PartOperationAsset", parent: Instance?) -> PartOperationAsset) & ((className: "PathfindingLink", parent: Instance?) -> PathfindingLink) & ((className: "PathfindingModifier", parent: Instance?) -> PathfindingModifier) & ((className: "Player", parent: Instance?) -> Player) & ((className: "PluginAction", parent: Instance?) -> PluginAction) & ((className: "PluginCapabilities", parent: Instance?) -> PluginCapabilities) & ((className: "NumberPose", parent: Instance?) -> NumberPose) & ((className: "Pose", parent: Instance?) -> Pose) & ((className: "ReflectionMetadata", parent: Instance?) -> ReflectionMetadata) & ((className: "ReflectionMetadataCallbacks", parent: Instance?) -> ReflectionMetadataCallbacks) & ((className: "ReflectionMetadataClasses", parent: Instance?) -> ReflectionMetadataClasses) & ((className: "ReflectionMetadataEnums", parent: Instance?) -> ReflectionMetadataEnums) & ((className: "ReflectionMetadataEvents", parent: Instance?) -> ReflectionMetadataEvents) & ((className: "ReflectionMetadataFunctions", parent: Instance?) -> ReflectionMetadataFunctions) & ((className: "ReflectionMetadataClass", parent: Instance?) -> ReflectionMetadataClass) & ((className: "ReflectionMetadataEnum", parent: Instance?) -> ReflectionMetadataEnum) & ((className: "ReflectionMetadataEnumItem", parent: Instance?) -> ReflectionMetadataEnumItem) & ((className: "ReflectionMetadataMember", parent: Instance?) -> ReflectionMetadataMember) & ((className: "ReflectionMetadataProperties", parent: Instance?) -> ReflectionMetadataProperties) & ((className: "ReflectionMetadataYieldFunctions", parent: Instance?) -> ReflectionMetadataYieldFunctions) & ((className: "RemoteEvent", parent: Instance?) -> RemoteEvent) & ((className: "RemoteFunction", parent: Instance?) -> RemoteFunction) & ((className: "BuoyancySensor", parent: Instance?) -> BuoyancySensor) & ((className: "ControllerPartSensor", parent: Instance?) -> ControllerPartSensor) & ((className: "Sky", parent: Instance?) -> Sky) & ((className: "Smoke", parent: Instance?) -> Smoke) & ((className: "Sound", parent: Instance?) -> Sound) & ((className: "Sparkles", parent: Instance?) -> Sparkles) & ((className: "StandalonePluginScripts", parent: Instance?) -> StandalonePluginScripts) & ((className: "StarterGear", parent: Instance?) -> StarterGear) & ((className: "StyleLink", parent: Instance?) -> StyleLink) & ((className: "SurfaceAppearance", parent: Instance?) -> SurfaceAppearance) & ((className: "Team", parent: Instance?) -> Team) & ((className: "TeleportOptions", parent: Instance?) -> TeleportOptions) & ((className: "TerrainRegion", parent: Instance?) -> TerrainRegion) & ((className: "TestService", parent: Instance?) -> TestService) & ((className: "BinaryStringValue", parent: Instance?) -> BinaryStringValue) & ((className: "BoolValue", parent: Instance?) -> BoolValue) & ((className: "BrickColorValue", parent: Instance?) -> BrickColorValue) & ((className: "CFrameValue", parent: Instance?) -> CFrameValue) & ((className: "Color3Value", parent: Instance?) -> Color3Value) & ((className: "DoubleConstrainedValue", parent: Instance?) -> DoubleConstrainedValue) & ((className: "IntConstrainedValue", parent: Instance?) -> IntConstrainedValue) & ((className: "IntValue", parent: Instance?) -> IntValue) & ((className: "NumberValue", parent: Instance?) -> NumberValue) & ((className: "ObjectValue", parent: Instance?) -> ObjectValue) & ((className: "RayValue", parent: Instance?) -> RayValue) & ((className: "StringValue", parent: Instance?) -> StringValue) & ((className: "Vector3Value", parent: Instance?) -> Vector3Value) &  ((className: "Wire", parent: Instance?) -> Wire) & ((className: string, parent: Instance?) -> Instance),
+	new: ((className: "Accoutrement", parent: Instance?) -> Accoutrement) & ((className: "Hat", parent: Instance?) -> Hat) & ((className: "AdvancedDragger", parent: Instance?) -> AdvancedDragger) & ((className: "Animation", parent: Instance?) -> Animation) & ((className: "CurveAnimation", parent: Instance?) -> CurveAnimation) & ((className: "KeyframeSequence", parent: Instance?) -> KeyframeSequence) & ((className: "AnimationController", parent: Instance?) -> AnimationController) & ((className: "Animator", parent: Instance?) -> Animator) & ((className: "Backpack", parent: Instance?) -> Backpack) & ((className: "BindableEvent", parent: Instance?) -> BindableEvent) & ((className: "BindableFunction", parent: Instance?) -> BindableFunction) & ((className: "BodyAngularVelocity", parent: Instance?) -> BodyAngularVelocity) & ((className: "BodyForce", parent: Instance?) -> BodyForce) & ((className: "BodyGyro", parent: Instance?) -> BodyGyro) & ((className: "BodyPosition", parent: Instance?) -> BodyPosition) & ((className: "BodyThrust", parent: Instance?) -> BodyThrust) & ((className: "BodyVelocity", parent: Instance?) -> BodyVelocity) & ((className: "RocketPropulsion", parent: Instance?) -> RocketPropulsion) & ((className: "BubbleChatMessageProperties", parent: Instance?) -> BubbleChatMessageProperties) & ((className: "Camera", parent: Instance?) -> Camera) & ((className: "BodyColors", parent: Instance?) -> BodyColors) & ((className: "CharacterMesh", parent: Instance?) -> CharacterMesh) & ((className: "Pants", parent: Instance?) -> Pants) & ((className: "Shirt", parent: Instance?) -> Shirt) & ((className: "ShirtGraphic", parent: Instance?) -> ShirtGraphic) & ((className: "Skin", parent: Instance?) -> Skin) & ((className: "ClickDetector", parent: Instance?) -> ClickDetector) & ((className: "DragDetector", parent: Instance?) -> DragDetector) & ((className: "Configuration", parent: Instance?) -> Configuration) & ((className: "AnimationConstraint", parent: Instance?) -> AnimationConstraint) & ((className: "BallSocketConstraint", parent: Instance?) -> BallSocketConstraint) & ((className: "LineForce", parent: Instance?) -> LineForce) & ((className: "LinearVelocity", parent: Instance?) -> LinearVelocity) & ((className: "Torque", parent: Instance?) -> Torque) & ((className: "HumanoidController", parent: Instance?) -> HumanoidController) & ((className: "SkateboardController", parent: Instance?) -> SkateboardController) & ((className: "VehicleController", parent: Instance?) -> VehicleController) & ((className: "CustomEvent", parent: Instance?) -> CustomEvent) & ((className: "CustomEventReceiver", parent: Instance?) -> CustomEventReceiver) & ((className: "CylinderMesh", parent: Instance?) -> CylinderMesh) & ((className: "FileMesh", parent: Instance?) -> FileMesh) & ((className: "SpecialMesh", parent: Instance?) -> SpecialMesh) & ((className: "DataStoreOptions", parent: Instance?) -> DataStoreOptions) & ((className: "DebuggerWatch", parent: Instance?) -> DebuggerWatch) & ((className: "Dialog", parent: Instance?) -> Dialog) & ((className: "DialogChoice", parent: Instance?) -> DialogChoice) & ((className: "Dragger", parent: Instance?) -> Dragger) & ((className: "Explosion", parent: Instance?) -> Explosion) & ((className: "Decal", parent: Instance?) -> Decal) & ((className: "Texture", parent: Instance?) -> Texture) & ((className: "Hole", parent: Instance?) -> Hole) & ((className: "MotorFeature", parent: Instance?) -> MotorFeature) & ((className: "Fire", parent: Instance?) -> Fire) & ((className: "CSGDictionaryService", parent: Instance?) -> CSGDictionaryService) & ((className: "ForceField", parent: Instance?) -> ForceField) & ((className: "FunctionalTest", parent: Instance?) -> FunctionalTest) & ((className: "GetTextBoundsParams", parent: Instance?) -> GetTextBoundsParams) & ((className: "Frame", parent: Instance?) -> Frame) & ((className: "ImageButton", parent: Instance?) -> ImageButton) & ((className: "TextButton", parent: Instance?) -> TextButton) & ((className: "ImageLabel", parent: Instance?) -> ImageLabel) & ((className: "TextLabel", parent: Instance?) -> TextLabel) & ((className: "TextBox", parent: Instance?) -> TextBox) & ((className: "BillboardGui", parent: Instance?) -> BillboardGui) & ((className: "ScreenGui", parent: Instance?) -> ScreenGui) & ((className: "GuiMain", parent: Instance?) -> GuiMain) & ((className: "AdGui", parent: Instance?) -> AdGui) & ((className: "SurfaceGui", parent: Instance?) -> SurfaceGui) & ((className: "FloorWire", parent: Instance?) -> FloorWire) & ((className: "SelectionBox", parent: Instance?) -> SelectionBox) & ((className: "BoxHandleAdornment", parent: Instance?) -> BoxHandleAdornment) & ((className: "ConeHandleAdornment", parent: Instance?) -> ConeHandleAdornment) & ((className: "CylinderHandleAdornment", parent: Instance?) -> CylinderHandleAdornment) & ((className: "ImageHandleAdornment", parent: Instance?) -> ImageHandleAdornment) & ((className: "LineHandleAdornment", parent: Instance?) -> LineHandleAdornment) & ((className: "SphereHandleAdornment", parent: Instance?) -> SphereHandleAdornment) & ((className: "WireframeHandleAdornment", parent: Instance?) -> WireframeHandleAdornment) & ((className: "ParabolaAdornment", parent: Instance?) -> ParabolaAdornment) & ((className: "SelectionSphere", parent: Instance?) -> SelectionSphere) & ((className: "ArcHandles", parent: Instance?) -> ArcHandles) & ((className: "Handles", parent: Instance?) -> Handles) & ((className: "SurfaceSelection", parent: Instance?) -> SurfaceSelection) & ((className: "SelectionPartLasso", parent: Instance?) -> SelectionPartLasso) & ((className: "SelectionPointLasso", parent: Instance?) -> SelectionPointLasso) & ((className: "Humanoid", parent: Instance?) -> Humanoid) & ((className: "RotateP", parent: Instance?) -> RotateP) & ((className: "RotateV", parent: Instance?) -> RotateV) & ((className: "Glue", parent: Instance?) -> Glue) & ((className: "ManualGlue", parent: Instance?) -> ManualGlue) & ((className: "ManualWeld", parent: Instance?) -> ManualWeld) & ((className: "Motor", parent: Instance?) -> Motor) & ((className: "Motor6D", parent: Instance?) -> Motor6D) & ((className: "Rotate", parent: Instance?) -> Rotate) & ((className: "Snap", parent: Instance?) -> Snap) & ((className: "VelocityMotor", parent: Instance?) -> VelocityMotor) & ((className: "Weld", parent: Instance?) -> Weld) & ((className: "Keyframe", parent: Instance?) -> Keyframe) & ((className: "KeyframeMarker", parent: Instance?) -> KeyframeMarker) & ((className: "PointLight", parent: Instance?) -> PointLight) & ((className: "SpotLight", parent: Instance?) -> SpotLight) & ((className: "SurfaceLight", parent: Instance?) -> SurfaceLight) & ((className: "Script", parent: Instance?) -> Script) & ((className: "LocalScript", parent: Instance?) -> LocalScript) & ((className: "ModuleScript", parent: Instance?) -> ModuleScript) & ((className: "Message", parent: Instance?) -> Message) & ((className: "Hint", parent: Instance?) -> Hint) & ((className: "CornerWedgePart", parent: Instance?) -> CornerWedgePart) & ((className: "Part", parent: Instance?) -> Part) & ((className: "FlagStand", parent: Instance?) -> FlagStand) & ((className: "Seat", parent: Instance?) -> Seat) & ((className: "SkateboardPlatform", parent: Instance?) -> SkateboardPlatform) & ((className: "SpawnLocation", parent: Instance?) -> SpawnLocation) & ((className: "WedgePart", parent: Instance?) -> WedgePart) & ((className: "IntersectOperation", parent: Instance?) -> IntersectOperation) & ((className: "TrussPart", parent: Instance?) -> TrussPart) & ((className: "VehicleSeat", parent: Instance?) -> VehicleSeat) & ((className: "Model", parent: Instance?) -> Model) & ((className: "HopperBin", parent: Instance?) -> HopperBin) & ((className: "Tool", parent: Instance?) -> Tool) & ((className: "Flag", parent: Instance?) -> Flag) & ((className: "Player", parent: Instance?) -> Player) & ((className: "Pose", parent: Instance?) -> Pose) & ((className: "ReflectionMetadata", parent: Instance?) -> ReflectionMetadata) & ((className: "ReflectionMetadataCallbacks", parent: Instance?) -> ReflectionMetadataCallbacks) & ((className: "ReflectionMetadataClasses", parent: Instance?) -> ReflectionMetadataClasses) & ((className: "ReflectionMetadataEnums", parent: Instance?) -> ReflectionMetadataEnums) & ((className: "ReflectionMetadataEvents", parent: Instance?) -> ReflectionMetadataEvents) & ((className: "ReflectionMetadataFunctions", parent: Instance?) -> ReflectionMetadataFunctions) & ((className: "ReflectionMetadataClass", parent: Instance?) -> ReflectionMetadataClass) & ((className: "ReflectionMetadataEnum", parent: Instance?) -> ReflectionMetadataEnum) & ((className: "ReflectionMetadataEnumItem", parent: Instance?) -> ReflectionMetadataEnumItem) & ((className: "ReflectionMetadataMember", parent: Instance?) -> ReflectionMetadataMember) & ((className: "ReflectionMetadataProperties", parent: Instance?) -> ReflectionMetadataProperties) & ((className: "ReflectionMetadataYieldFunctions", parent: Instance?) -> ReflectionMetadataYieldFunctions) & ((className: "RemoteEvent", parent: Instance?) -> RemoteEvent) & ((className: "RemoteFunction", parent: Instance?) -> RemoteFunction) & ((className: "Sky", parent: Instance?) -> Sky) & ((className: "Smoke", parent: Instance?) -> Smoke) & ((className: "Sound", parent: Instance?) -> Sound) & ((className: "Sparkles", parent: Instance?) -> Sparkles) & ((className: "StandalonePluginScripts", parent: Instance?) -> StandalonePluginScripts) & ((className: "StarterGear", parent: Instance?) -> StarterGear) & ((className: "Team", parent: Instance?) -> Team) & ((className: "TeleportOptions", parent: Instance?) -> TeleportOptions) & ((className: "TerrainRegion", parent: Instance?) -> TerrainRegion) & ((className: "TestService", parent: Instance?) -> TestService) & ((className: "BinaryStringValue", parent: Instance?) -> BinaryStringValue) & ((className: "BoolValue", parent: Instance?) -> BoolValue) & ((className: "BrickColorValue", parent: Instance?) -> BrickColorValue) & ((className: "CFrameValue", parent: Instance?) -> CFrameValue) & ((className: "Color3Value", parent: Instance?) -> Color3Value) & ((className: "DoubleConstrainedValue", parent: Instance?) -> DoubleConstrainedValue) & ((className: "IntConstrainedValue", parent: Instance?) -> IntConstrainedValue) & ((className: "IntValue", parent: Instance?) -> IntValue) & ((className: "NumberValue", parent: Instance?) -> NumberValue) & ((className: "ObjectValue", parent: Instance?) -> ObjectValue) & ((className: "RayValue", parent: Instance?) -> RayValue) & ((className: "StringValue", parent: Instance?) -> StringValue) & ((className: "Vector3Value", parent: Instance?) -> Vector3Value) &  ((className: "Wire", parent: Instance?) -> Wire) & ((className: string, parent: Instance?) -> Instance),
 
 	Lock: (instance: Instance, player: Player) -> nil,
 	Unlock: (instance: Instance) -> nil,
@@ -7888,12 +6568,7 @@ export type InstanceName =
 	| "KeyframeSequence"
 	| "AnimationController"
 	| "Animator"
-	| "AudioDeviceInput"
-	| "AudioDeviceOutput"
 	| "AudioDistortion"
-	| "AudioEcho"
-	| "AudioEmitter"
-	| "AudioEqualizer"
 	| "AudioFader"
 	| "AudioFlanger"
 	| "AudioListener"
@@ -7922,23 +6597,11 @@ export type InstanceName =
 	| "ClickDetector"
 	| "DragDetector"
 	| "Configuration"
-	| "AngularVelocity"
 	| "AnimationConstraint"
 	| "BallSocketConstraint"
-	| "HingeConstraint"
 	| "LineForce"
 	| "LinearVelocity"
-	| "PlaneConstraint"
-	| "Plane"
-	| "RigidConstraint"
-	| "RodConstraint"
-	| "RopeConstraint"
-	| "CylindricalConstraint"
-	| "PrismaticConstraint"
-	| "SpringConstraint"
 	| "Torque"
-	| "TorsionSpringConstraint"
-	| "UniversalConstraint"
 	| "HumanoidController"
 	| "SkateboardController"
 	| "VehicleController"
@@ -7952,7 +6615,6 @@ export type InstanceName =
 	| "Dialog"
 	| "DialogChoice"
 	| "Dragger"
-	| "ExperienceInviteOptions"
 	| "Explosion"
 	| "Decal"
 	| "Texture"
@@ -7990,8 +6652,6 @@ export type InstanceName =
 	| "SurfaceSelection"
 	| "SelectionPartLasso"
 	| "SelectionPointLasso"
-	| "HeightmapImporterService"
-	| "HiddenSurfaceRemovalAsset"
 	| "Humanoid"
 	| "RotateP"
 	| "RotateV"
@@ -8012,8 +6672,6 @@ export type InstanceName =
 	| "Script"
 	| "LocalScript"
 	| "ModuleScript"
-	| "MarkerCurve"
-	| "MemoryStoreService"
 	| "Message"
 	| "Hint"
 	| "CornerWedgePart"
@@ -8023,23 +6681,13 @@ export type InstanceName =
 	| "SkateboardPlatform"
 	| "SpawnLocation"
 	| "WedgePart"
-	| "PartOperation"
-	| "IntersectOperation"
-	| "NegateOperation"
-	| "UnionOperation"
 	| "TrussPart"
 	| "VehicleSeat"
 	| "Model"
 	| "HopperBin"
 	| "Tool"
 	| "Flag"
-	| "PartOperationAsset"
-	| "PathfindingLink"
-	| "PathfindingModifier"
 	| "Player"
-	| "PluginAction"
-	| "PluginCapabilities"
-	| "NumberPose"
 	| "Pose"
 	| "ReflectionMetadata"
 	| "ReflectionMetadataCallbacks"
@@ -8055,16 +6703,12 @@ export type InstanceName =
 	| "ReflectionMetadataYieldFunctions"
 	| "RemoteEvent"
 	| "RemoteFunction"
-	| "BuoyancySensor"
-	| "ControllerPartSensor"
 	| "Sky"
 	| "Smoke"
 	| "Sound"
 	| "Sparkles"
 	| "StandalonePluginScripts"
 	| "StarterGear"
-	| "StyleLink"
-	| "SurfaceAppearance"
 	| "Team"
 	| "TeleportOptions"
 	| "TerrainRegion"

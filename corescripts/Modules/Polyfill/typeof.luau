@@ -1,7 +1,7 @@
 --!strict
 -- A basic polyfill for the typeof function
 
-return function(value)
+return function(value: any): string
 	local basicType = type(value)
 
 	if

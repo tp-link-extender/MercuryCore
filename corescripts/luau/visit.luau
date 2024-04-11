@@ -15,7 +15,7 @@ local player
 -- Prepended to Edit.lua and Visit.lua and Studio.lua and PlaySolo.lua--
 
 pcall(function()
-	return game:SetPlaceID(_PLACE_ID)
+	game:SetPlaceId(_PLACE_ID)
 end)
 
 local message = Instance.new "Message"

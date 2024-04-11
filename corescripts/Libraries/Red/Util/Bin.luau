@@ -13,11 +13,11 @@ return function()
 	end, function()
 		for _, Item in ipairs(Bin) do
 			if typeof(Item) == "Instance" then
-				Item:Destroy()
+				(Item :: Instance):Destroy()
 			elseif typeof(Item) == "RBXScriptConnection" then
-				Item:disconnect()
+				(Item :: RBXScriptConnection):disconnect()
 			elseif typeof(Item) == "function" then
-				Spawn(Item)
+				Spawn(Item :: () -> ...any)
 			end
 		end
 

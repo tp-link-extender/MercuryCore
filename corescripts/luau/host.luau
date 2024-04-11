@@ -52,7 +52,7 @@ end)
 -- end)
 ScriptContext.ScriptsDisabled = true
 
--- game:SetPlaceID(nil, false)
+-- game:SetPlaceId(nil, false)
 ChangeHistoryService:SetEnabled(false)
 
 if url ~= nil then

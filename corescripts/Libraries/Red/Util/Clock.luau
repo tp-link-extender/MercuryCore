@@ -27,12 +27,12 @@ Clock.new = Clock.Clock
 
 function Clock.Pause(self: Clock)
 	if self.Connection then
-		self.Connection:Disconnect()
+		self.Connection:disconnect()
 	end
 end
 
 function Clock.Resume(self: Clock)
-	if self.Connection.Connected then
+	if self.Connection.connected then
 		return
 	end
 

@@ -11,7 +11,7 @@ local Visit = game:GetService "Visit"
 local player, connectionFailed
 
 pcall(function()
-	game:SetPlaceID(_PLACE_ID, false)
+	game:SetPlaceId(_PLACE_ID, false)
 end)
 
 -- if we are on a touch device, no blocking http calls allowed! This can cause a crash on iOS
@@ -21,9 +21,6 @@ end)
 settings()["Game Options"].CollisionSoundEnabled = true
 pcall(function()
 	settings().Rendering.EnableFRM = true
-end)
-pcall(function()
-	settings().Physics.Is30FpsThrottleEnabled = false
 end)
 pcall(function()
 	settings()["Task Scheduler"].PriorityMethod =

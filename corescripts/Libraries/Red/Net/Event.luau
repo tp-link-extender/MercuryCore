@@ -161,29 +161,49 @@ return function(IsServer: boolean)
 
 				-- debug.profileend()
 			end)
-		else
-			Remote.OnServerEvent:connect(
-				function(Player, SingleFire, MultipleFire, IncomingCall)
-					-- debug.profilebegin "Red.Listen.Incoming"
+			return
+		end
+		Remote.OnServerEvent:connect(
+			function(Player, SingleFire, MultipleFire, IncomingCall)
+				-- debug.profilebegin "Red.Listen.Incoming"
 
-					-- replace nil symbols with nil
-					if SingleFire.__nil then
-						SingleFire = nil
+				-- replace nil symbols with nil
+				if SingleFire.__nil then
+					SingleFire = nil
+				end
+				if MultipleFire.__nil then
+					MultipleFire = nil
+				end
+				if IncomingCall.__nil then
+					IncomingCall = nil
+				end
+
+				if SingleFire then
+					-- debug.profilebegin "Red.Listen.Incoming.SingleFire"
+
+					for EventId, Call in pairs(SingleFire) do
+						local Callback = Event.Callbacks[EventId]
+
+						if Callback then
+							if type(Call) == "table" then
+								Spawn(Callback, Player, unpack(Call))
+							else
+								Spawn(Callback, Player, Call)
+							end
+						end
 					end
-					if MultipleFire.__nil then
-						MultipleFire = nil
-					end
-					if IncomingCall.__nil then
-						IncomingCall = nil
-					end
 
-					if SingleFire then
-						-- debug.profilebegin "Red.Listen.Incoming.SingleFire"
+					-- debug.profileend()
+				end
 
-						for EventId, Call in pairs(SingleFire) do
-							local Callback = Event.Callbacks[EventId]
+				if MultipleFire then
+					-- debug.profilebegin "Red.Listen.Incoming.MultipleFire"
 
-							if Callback then
+					for EventId, Calls in pairs(MultipleFire) do
+						local Callback = Event.Callbacks[EventId]
+
+						if Callback then
+							for _, Call in ipairs(Calls) do
 								if type(Call) == "table" then
 									Spawn(Callback, Player, unpack(Call))
 								else
@@ -191,132 +211,112 @@ return function(IsServer: boolean)
 								end
 							end
 						end
-
-						-- debug.profileend()
-					end
-
-					if MultipleFire then
-						-- debug.profilebegin "Red.Listen.Incoming.MultipleFire"
-
-						for EventId, Calls in pairs(MultipleFire) do
-							local Callback = Event.Callbacks[EventId]
-
-							if Callback then
-								for _, Call in ipairs(Calls) do
-									if type(Call) == "table" then
-										Spawn(Callback, Player, unpack(Call))
-									else
-										Spawn(Callback, Player, Call)
-									end
-								end
-							end
-						end
-
-						-- debug.profileend()
-					end
-
-					if IncomingCall then
-						-- debug.profilebegin "Red.Listen.Incoming.Call"
-
-						for EventId, Calls in pairs(IncomingCall) do
-							if Event.Callbacks[EventId] then
-								for _, Call in ipairs(Calls) do
-									Spawn(function()
-										local CallId = table.remove(Call, 1)
-										local Result = {
-											CallId,
-											pcall(
-												Event.Callbacks[EventId],
-												Player,
-												unpack(Call)
-											),
-										}
-
-										if Event.Outgoing[Player] == nil then
-											Event.Outgoing[Player] = {}
-										end
-
-										if Event.Outgoing[Player][2] == nil then
-											Event.Outgoing[Player][2] = {}
-										end
-
-										table.insert(
-											Event.Outgoing[Player][2],
-											Result
-										)
-									end)
-								end
-							else
-								if Event.Outgoing[Player] == nil then
-									Event.Outgoing[Player] = {}
-								end
-
-								if Event.Outgoing[Player][2] == nil then
-									Event.Outgoing[Player][2] = {}
-								end
-
-								for _, Call in ipairs(Calls) do
-									table.insert(Event.Outgoing[Player][2], {
-										Call[1],
-										false,
-										"[Red]: Event not found",
-									})
-								end
-							end
-						end
-
-						-- debug.profileend()
 					end
 
 					-- debug.profileend()
 				end
-			)
 
-			RunService.Heartbeat:connect(function()
-				-- debug.profilebegin "Red.Listen.Outgoing"
+				if IncomingCall then
+					-- debug.profilebegin "Red.Listen.Incoming.Call"
 
-				for Player, Packets in pairs(Event.Outgoing) do
-					local SingleCall = {}
-					local SendSingleCall = false
+					for EventId, Calls in pairs(IncomingCall) do
+						if Event.Callbacks[EventId] then
+							for _, Call in ipairs(Calls) do
+								Spawn(function()
+									local CallId = table.remove(Call, 1)
+									local Result = {
+										CallId,
+										pcall(
+											Event.Callbacks[EventId],
+											Player,
+											unpack(Call)
+										),
+									}
 
-					if Packets[1] then
-						for EventId, Calls in pairs(Packets[1]) do
-							if #Calls == 1 then
-								SingleCall[EventId] = Calls[1]
-								Packets[1][EventId] = nil
+									if Event.Outgoing[Player] == nil then
+										Event.Outgoing[Player] = {}
+									end
 
-								SendSingleCall = true
+									if Event.Outgoing[Player][2] == nil then
+										Event.Outgoing[Player][2] = {}
+									end
+
+									table.insert(
+										Event.Outgoing[Player][2],
+										Result
+									)
+								end)
+							end
+						else
+							if Event.Outgoing[Player] == nil then
+								Event.Outgoing[Player] = {}
+							end
+
+							if Event.Outgoing[Player][2] == nil then
+								Event.Outgoing[Player][2] = {}
+							end
+
+							for _, Call in ipairs(Calls) do
+								table.insert(Event.Outgoing[Player][2], {
+									Call[1],
+									false,
+									"[Red]: Event not found",
+								})
 							end
 						end
 					end
 
-					-- nils cannot be sent properly across remoteevents in 2013,
-					-- so we have to use a symbol to represent nil
-					local sc = nil_symbol
-					if SendSingleCall then
-						sc = SingleCall
-					end
-
-					local p1, p2 = Packets[1], Packets[2]
-
-					if p1 == nil then
-						p1 = nil_symbol
-					end
-					if p2 == nil then
-						p2 = nil_symbol
-					end
-
-					Remote:FireClient(Player, sc, p1, p2)
-				end
-
-				-- table.clear(Event.Outgoing)
-				for i, _ in pairs(Event.Outgoing) do
-					Event.Outgoing[i] = nil
+					-- debug.profileend()
 				end
 
 				-- debug.profileend()
-			end)
-		end
+			end
+		)
+
+		RunService.Heartbeat:connect(function()
+			-- debug.profilebegin "Red.Listen.Outgoing"
+
+			for Player, Packets in pairs(Event.Outgoing) do
+				local SingleCall = {}
+				local SendSingleCall = false
+
+				if Packets[1] then
+					for EventId, Calls in pairs(Packets[1]) do
+						if #Calls == 1 then
+							SingleCall[EventId] = Calls[1]
+							Packets[1][EventId] = nil
+
+							SendSingleCall = true
+						end
+					end
+				end
+
+				-- nils cannot be sent properly across remoteevents in 2013,
+				-- so we have to use a symbol to represent nil
+				local sc = nil_symbol
+				if SendSingleCall then
+					sc = SingleCall
+				end
+
+				local p1, p2 = Packets[1], Packets[2]
+
+				if p1 == nil then
+					p1 = nil_symbol
+				end
+				if p2 == nil then
+					p2 = nil_symbol
+				end
+
+				Remote:FireClient(Player, sc, p1, p2)
+			end
+
+			-- table.clear(Event.Outgoing)
+			for i, _ in pairs(Event.Outgoing) do
+				Event.Outgoing[i] = nil
+			end
+
+			-- debug.profileend()
+		end)
 	end
 
 	function Event.AddQueue(Queue: { any }, Call: { any })
