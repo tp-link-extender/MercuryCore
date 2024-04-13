@@ -11,7 +11,7 @@ node_modules
 /data
 /keys
 /setup
-/corescripts/processed/*.lua
+/corescripts/processed
 scc
 scc.exe
 /RCCService/RCCService

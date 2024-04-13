@@ -2,13 +2,10 @@
 	import { basicSetup, EditorView } from "codemirror"
 	import { keymap } from "@codemirror/view"
 	import { indentWithTab } from "@codemirror/commands"
-	// import { HighlightStyle, syntaxHighlighting } from "@codemirror/language"
 	import { css } from "@codemirror/lang-css"
 	import type { SuperForm } from "sveltekit-superforms"
 
 	let code: HTMLDivElement
-
-	// const theme = HighlightStyle.define([])
 
 	export let formData: SuperForm<any>
 	const { form, errors, constraints } = formData
@@ -21,7 +18,6 @@
 				basicSetup,
 				keymap.of([indentWithTab]),
 				css()
-				// syntaxHighlighting(theme),
 			]
 		})
 	}

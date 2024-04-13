@@ -5,7 +5,9 @@ const db = new Surreal()
 
 async function reconnect() {
 	await db.close()
-	await db.connect("ws://localhost:8000")
+	console.log("connecting")
+	await db.connect("http://localhost:8000/rpc")
+	console.log("connected")
 	await db.signin({
 		username: "root",
 		password: "root",
@@ -19,10 +21,7 @@ async function reconnect() {
 	console.log("reloaded surreal")
 }
 
-if (!building) {
-	await db.connect("ws://localhost:8000")
-	await reconnect()
-}
+if (!building) await reconnect()
 
 // Probably the most referenced function in Mercury
 /**
@@ -161,6 +160,8 @@ export const findWhere = (
 		...params,
 		table,
 	}) as unknown as Promise<boolean>
+
+export const listenLive = db.listenLive
 
 export const failed = "The query was not executed due to a failed transaction"
 

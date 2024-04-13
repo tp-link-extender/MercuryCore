@@ -72,7 +72,7 @@
 		<span
 			class="pfp rounded-full"
 			style="{style};{style2};
-			--hover: var(--{transitionBackgrounds[bg]}">
+			--hover: var(--{transitionBackgrounds[bg]})">
 			<img
 				src="/api/avatar/{user.username}"
 				alt={user.username}

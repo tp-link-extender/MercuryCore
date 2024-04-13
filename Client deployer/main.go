@@ -18,7 +18,7 @@ import (
 	fileversion "github.com/bi-zone/go-fileversion"
 )
 
-// what a great coincidence that this is exactly 16 characters long
+// what a great coincidence that this is exactly 16 characters long (or rather will be, for a very very long time)
 // also makes it way easier to order the versions in a file explorer than a random string
 var versionHash = fmt.Sprintf("%x", time.Now().UnixNano())
 
@@ -35,7 +35,7 @@ func Assert(err error, txt string) {
 	}
 }
 
-// Create a waitgroup to wait for all goroutines to finish
+// Create a waitgroup to wait for all main goroutines to finish
 var wg sync.WaitGroup
 
 type Task struct {
@@ -163,6 +163,45 @@ func ZipFromFolder(destination string, source string) {
 	WriteFolder(archive, filepath.Join("staging", source), "")
 }
 
+func UpdateVersion(task string, newVersion string) {
+	defer list.CompleteTask(task)
+	// Update version.txt with the new version
+	versionFile, err := os.Create(filepath.Join("setup", "version.txt"))
+	Assert(err, "Could not create version.txt")
+	defer versionFile.Close()
+	fmt.Fprint(versionFile, newVersion)
+}
+
+func CopyLauncher(task string) {
+	defer list.CompleteTask(task)
+	// Copy MercuryPlayerLauncher.exe to setup
+	launcher, err := os.Open(filepath.Join("staging", task))
+	Assert(err, "Could not read MercuryPlayerLauncher.exe")
+	defer launcher.Close()
+
+	destination1, err := os.Create(filepath.Join("setup", task))
+	Assert(err, "Could not create MercuryPlayerLauncher.exe (1)")
+	defer destination1.Close()
+	destination2, err := os.Create(filepath.Join("PrepForUpload", task))
+	Assert(err, "Could not create MercuryPlayerLauncher.exe (2)")
+	defer destination2.Close()
+
+	fv, err := fileversion.New(filepath.Join("staging", "MercuryPlayerLauncher.exe"))
+	Assert(err, "Could not get file version of MercuryPlayerLauncher.exe")
+	fileVersion := fv.FileVersion()
+
+	// Write version to MercuryVersion.txt
+	versionFile, err := os.Create(filepath.Join("PrepForUpload", "MercuryVersion.txt"))
+	Assert(err, "Could not create MercuryVersion.txt")
+	defer versionFile.Close()
+	fmt.Fprint(versionFile, fileVersion)
+
+	_, err = io.Copy(destination1, launcher)
+	Assert(err, "Could not copy MercuryPlayerLauncher.exe (1)")
+	_, err = io.Copy(destination2, launcher)
+	Assert(err, "Could not copy MercuryPlayerLauncher.exe (2)")
+}
+
 func TexturesHalf(first bool) []string {
 	// Read staging/content/textures
 	files, err := os.ReadDir("staging/content/textures")
@@ -182,6 +221,8 @@ func TexturesHalf(first bool) []string {
 }
 
 func main() {
+	startTime := time.Now()
+
 	fmt.Println(c.InBold("\n  -- Mercury Setup Deployer 3: Now with more EVERYTHING! --  \n"))
 	var currentVersion string
 	newVersion := "version-" + versionHash
@@ -243,47 +284,9 @@ func main() {
 	list.AddTasks(tasks)
 	wg.Add(len(tasks))
 
-	go (func() {
-		// Update version.txt with the new version
-		versionFile, err := os.Create(filepath.Join("setup", "version.txt"))
-		Assert(err, "Could not create version.txt")
-		defer versionFile.Close()
-		fmt.Fprint(versionFile, newVersion)
-		list.CompleteTask(tasks[0])
-	})()
-
-	go (func() {
-		// Copy MercuryPlayerLauncher.exe to setup
-		launcher, err := os.Open(filepath.Join("staging", tasks[1]))
-		Assert(err, "Could not read MercuryPlayerLauncher.exe")
-		defer launcher.Close()
-
-		destination1, err := os.Create(filepath.Join("setup", tasks[1]))
-		Assert(err, "Could not create MercuryPlayerLauncher.exe (1)")
-		defer destination1.Close()
-		destination2, err := os.Create(filepath.Join("PrepForUpload", tasks[1]))
-		Assert(err, "Could not create MercuryPlayerLauncher.exe (2)")
-		defer destination2.Close()
-
-		fv, err := fileversion.New(filepath.Join("staging", "MercuryPlayerLauncher.exe"))
-		Assert(err, "Could not get file version of MercuryPlayerLauncher.exe")
-		fileVersion := fv.FileVersion()
-
-		// Write version to MercuryVersion.txt
-		versionFile, err := os.Create(filepath.Join("PrepForUpload", "MercuryVersion.txt"))
-		Assert(err, "Could not create MercuryVersion.txt")
-		defer versionFile.Close()
-		fmt.Fprint(versionFile, fileVersion)
-
-		_, err = io.Copy(destination1, launcher)
-		Assert(err, "Could not copy MercuryPlayerLauncher.exe (1)")
-		_, err = io.Copy(destination2, launcher)
-		Assert(err, "Could not copy MercuryPlayerLauncher.exe (2)")
-
-		list.CompleteTask(tasks[1])
-	})()
-
 	// I LOVE GOROUTINES!!!
+	go UpdateVersion(tasks[0], newVersion)
+	go CopyLauncher(tasks[1])
 	go ZipFromArray(tasks[2], []string{"Microsoft.VC90.CRT", "Microsoft.VC90.MFC", "Microsoft.VC90.OPENMP"}, "", true)
 	go ZipFromArray(tasks[3], []string{"MercuryPlayerBeta.exe", "MercuryStudioBeta.exe", "ReflectionMetadata.xml", "RobloxStudioRibbon.xml"}, "", false)
 	go ZipFromArray(tasks[4], dllFiles, "", false)
@@ -329,4 +332,5 @@ func main() {
 	}
 
 	fmt.Println(c.InGreen(" ~~~~  Deployment complete!!  ~~~~"))
+	fmt.Println("Took " + c.InBold(fmt.Sprint(time.Since(startTime))) + " to deploy")
 }
