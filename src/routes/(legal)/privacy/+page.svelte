@@ -1,3 +1,7 @@
+<script lang="ts">
+	export let data
+</script>
+
 <Head title="Privacy Policy" description="Mercury's Privacy Policy" />
 
 <h1 class="text-center">Privacy Policy</h1>
@@ -37,8 +41,8 @@
 		Protection Act (in the UK), or California Consumer Privacy Act (in
 		California), you remain in control of your data. If for any reason you
 		would like to retrieve or request deletion of your personal data, please
-		contact our support team at <a href="mailto:support@banland.xyz">
-			support@banland.xyz
+		contact our support team at <a href="mailto:support@{data.domain}">
+			support@{data.domain}
 		</a>
 		.
 	</p>
@@ -49,8 +53,8 @@
 	</p>
 	<p>
 		If you have any questions, suggestions, or if you want more information,
-		please contact our support team at <a href="mailto:support@banland.xyz">
-			support@banland.xyz
+		please contact our support team at <a href="mailto:support@{data.domain}">
+			support@{data.domain}
 		</a>
 		.
 	</p>

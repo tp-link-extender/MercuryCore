@@ -7,7 +7,6 @@ import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import { error, redirect } from "@sveltejs/kit"
 import fs from "node:fs"
-import "dotenv/config"
 
 const schemaManual = z.object({
 	type: z.enum(["8", "18"]),

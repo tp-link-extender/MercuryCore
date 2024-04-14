@@ -55,7 +55,10 @@ export async function GET({ url }) {
 				: `corescripts/processed/${id}.lua` // shaggy removed
 		).text()
 
-		let file2 = file.replaceAll("roblox.com/asset", "banland.xyz/asset")
+		let file2 = file.replaceAll(
+			"roblox.com/asset",
+			`${process.env.DOMAIN}/asset`
+		)
 
 		// Health corescript lol
 		if (id !== "38037265") file2 = await SignData(file2, +id)

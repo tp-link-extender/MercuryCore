@@ -42,6 +42,7 @@ export async function load({ request, locals }) {
 		user,
 		notifications: await getNotifications(user),
 		url: request.url,
+		domain: process.env.DOMAIN as string,
 		lines, // footer thing
 		...(isStudio && { isStudio }),
 	}

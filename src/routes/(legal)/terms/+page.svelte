@@ -1,3 +1,7 @@
+<script lang="ts">
+	export let data
+</script>
+
 <Head title="Terms of Service" description="Mercury's Terms of Service" />
 
 <h1 class="text-center">Terms of Service</h1>
@@ -153,8 +157,8 @@
 		<p>
 			If you believe you know of someone/a group of people who have broken
 			these terms or if you want more information, please contact our
-			support team at <a href="mailto:support@banland.xyz">
-				support@banland.xyz
+			support team at <a href="mailto:support@{data.domain}">
+				support@{data.domain}
 			</a>
 			.
 		</p>

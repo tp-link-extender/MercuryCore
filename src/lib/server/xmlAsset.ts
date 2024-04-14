@@ -1,5 +1,3 @@
-import "dotenv/config"
-
 const strings = {
 	"T-Shirt": {
 		class: "ShirtGraphic",

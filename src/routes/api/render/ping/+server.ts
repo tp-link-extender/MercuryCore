@@ -1,6 +1,5 @@
 import { query, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
-import "dotenv/config"
 
 export async function GET({ url }) {
 	const apiKey = url.searchParams.get("apiKey")

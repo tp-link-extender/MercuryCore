@@ -30,14 +30,4 @@ InsertService:SetAssetUrl(path "asset?id=%d")
 InsertService:SetAssetVersionUrl(path "asset/?assetversionid=%d")
 InsertService:SetTrustLevel(0)
 
-if
-	not pcall(function()
-		print "Adding starter script (1)"
-		ScriptContext:AddStarterScript(37801172)
-	end)
-then
-	pcall(function()
-		print "Adding starter script (2)"
-		ScriptContext:AddCoreScript(37801172, ScriptContext, "StarterScript")
-	end)
-end
+ScriptContext:AddStarterScript(37801172)

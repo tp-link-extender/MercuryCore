@@ -1,5 +1,4 @@
 import { error } from "@sveltejs/kit"
-import "dotenv/config"
 
 export async function GET({ url }) {
 	const id = url.searchParams.get("id")

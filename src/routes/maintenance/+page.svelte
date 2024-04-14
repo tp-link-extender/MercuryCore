@@ -3,6 +3,8 @@
 	import g from "stripe-gradient"
 	const { Gradient } = g
 
+	export let data
+
 	// Gradient must run upon page being loaded, and cannot be rendered on serverside.
 	onMount(() => new Gradient().initGradient("#gradient-canvas"))
 </script>
@@ -29,7 +31,7 @@
 		is currently undergoing maintenance. Check back later!
 	</p>
 	<a
-		href="https://status.banland.xyz"
+		href="https://status.{data.domain}"
 		class="no-underline pt-4 text-xs font-bold accent-text">
 		Status <fa fa-chevron-right />
 	</a>

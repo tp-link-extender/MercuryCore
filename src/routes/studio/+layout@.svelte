@@ -5,6 +5,8 @@
 	import "/src/fa/sass/fontawesome.styl"
 	import "uno.css"
 	import "/src/routes/studio/studio.styl"
+
+	export let data
 </script>
 
 <svelte:head>
@@ -14,8 +16,8 @@
 	{#if !dev}
 		<script
 			defer
-			data-domain="banland.xyz"
-			src="https://analytics.banland.xyz/js/script.js"></script>
+			data-domain={data.domain}
+			src="https://analytics.{data.domain}/js/script.js"></script>
 	{/if}
 
 	<script

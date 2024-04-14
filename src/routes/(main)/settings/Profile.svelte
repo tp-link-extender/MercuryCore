@@ -6,12 +6,7 @@
 	const formData = superForm(data.profileForm)
 	const { form } = formData
 
-	const themes = [
-		["standard", "Standard"],
-		["darken", "Darken"],
-		["storm", "Storm"],
-		["solar", "Solar"]
-	]
+	const themes: [string, string][] = []
 
 	if (user.bio?.[0]) $form.bio = user.bio[user.bio.length - 1]?.text || ""
 </script>

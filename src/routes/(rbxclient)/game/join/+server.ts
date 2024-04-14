@@ -56,8 +56,8 @@ export async function GET({ url }) {
 	const userNumber = gameSession.user.number
 	const placeId = gameSession.place.id
 	const creatorId = gameSession.place.ownerUser?.number || 0
-	const charApp = `http://banland.xyz/asset/characterfetch?userID=${userNumber}`
-	const pingUrl = `http://banland.xyz/game/clientpresence?ticket=${clientTicket}`
+	const charApp = `http://${process.env.DOMAIN}/asset/characterfetch?userID=${userNumber}`
+	const pingUrl = `http://${process.env.DOMAIN}/game/clientpresence?ticket=${clientTicket}`
 
 	const file = (await Bun.file("corescripts/processed/join.lua").text())
 		.replaceAll("_PLACE_ID", placeId.toString())
@@ -68,10 +68,10 @@ export async function GET({ url }) {
 		.replaceAll("_USER_NAME", gameSession.user.username)
 		.replaceAll(
 			"_MEMBERSHIP_TYPE",
-			gameSession.user.permissionLevel >= 2 ? "BuildersClub" : "None"
+			`Enum.MembershipType.${gameSession.user.permissionLevel >= 2 ? "BuildersClub" : "None"}`
 		)
-		.replaceAll("_CHAR_APPEARANCE", `"${charApp}"`)
-		.replaceAll("_PING_URL", `"${pingUrl}"`)
+		.replaceAll("_CHAR_APPEARANCE", charApp)
+		.replaceAll("_PING_URL", pingUrl)
 
 	return new Response(await SignData(file))
 }

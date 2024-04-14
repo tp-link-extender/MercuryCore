@@ -1,6 +1,5 @@
 import { query, squery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
-import "dotenv/config"
 
 type Render = {
 	type: "Clothing" | "Avatar"

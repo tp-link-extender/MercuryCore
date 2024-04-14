@@ -152,7 +152,7 @@ actions.join = async ({ request, locals }) => {
 	)[1][0]
 
 	return {
-		joinScriptUrl: `https://banland.xyz/game/join?ticket=${
+		joinScriptUrl: `${process.env.ORIGIN}/game/join?ticket=${
 			session.id.split(":")[1]
 		}`,
 	}

@@ -325,7 +325,10 @@
 					{/if}
 				</Tab>
 				<Tab tabData={tabData2}>
-					<Autopilot {launch} serverTicket={data.serverTicket} />
+					<Autopilot
+						{launch}
+						serverTicket={data.serverTicket}
+						domain={data.domain} />
 				</Tab>
 			</div>
 		{/if}
@@ -405,7 +408,7 @@
 			</span>
 			<a
 				class="btn btn-primary"
-				href="https://setup.banland.xyz/MercuryPlayerLauncher.exe">
+				href="https://setup.{data.domain}/MercuryPlayerLauncher.exe">
 				Download 2013
 			</a>
 		{/if}

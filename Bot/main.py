@@ -14,14 +14,19 @@ load_dotenv()
 envserverid = os.getenv("SERVERID")
 envadminid = os.getenv("ADMINID")
 envtoken = os.getenv("TOKEN")
+domain = os.getenv("DOMAIN")
 
-if envserverid == None or envadminid == None or envtoken == None:
-    raise Exception("Please provide a SERVERID, ADMINID, and TOKEN in the .env file.")
+if envserverid == None or envadminid == None or envtoken == None or domain == None:
+    raise Exception(
+        "Please provide a SERVERID, ADMINID, TOKEN, and DOMAIN in the .env file."
+    )
 
 serverid = int(envserverid)
 adminid = int(envadminid)
 
 bot = commands.Bot(command_prefix="/", intents=discord.Intents.all())
+
+iconUrl = f"{domain}/icon192.png"
 
 
 async def problemMessage(interaction: discord.Interaction):
@@ -36,8 +41,8 @@ async def confirmedFetch(interaction):
     embedV = discord.Embed(color=0x472A96, description=desc)
     embedV.set_author(
         name="Mercury 2 - Info",
-        url="https://banland.xyz",
-        icon_url="https://banland.xyz/icon192.png",
+        url=domain,
+        icon_url=iconUrl,
     )
     embedV.add_field(
         name="I don't see any message!",
@@ -52,8 +57,8 @@ async def confirmedDelete(interaction):
     embedV = discord.Embed(color=0x472A96, description=desc)
     embedV.set_author(
         name="Mercury 2 - Unsubmit",
-        url="https://banland.xyz",
-        icon_url="https://banland.xyz/icon192.png",
+        url=domain,
+        icon_url=iconUrl,
     )
     embedV.add_field(
         name="I don't see any message!",
@@ -68,8 +73,8 @@ async def confirmed(interaction):
     embedV = discord.Embed(color=0x472A96, description=desc)
     embedV.set_author(
         name="Mercury 2 - Register",
-        url="https://banland.xyz",
-        icon_url="https://banland.xyz/icon192.png",
+        url=domain,
+        icon_url=iconUrl,
     )
     embedV.add_field(
         name="I don't see any message!",
@@ -84,8 +89,8 @@ async def application(interaction):
     embedV = discord.Embed(color=0x472A96, description=desc)
     embedV.set_author(
         name="Mercury 2 - Register",
-        url="https://banland.xyz",
-        icon_url="https://banland.xyz/icon192.png",
+        url=domain,
+        icon_url=iconUrl,
     )
     embedV.title = "Mercury 2 Registration"
     embedV.add_field(
@@ -105,7 +110,7 @@ async def application(interaction):
     )
     embedV.set_footer(
         text="Mercury Discord - https://discord.gg/5dQWXJn6pW",
-        icon_url="https://banland.xyz/icon192.png",
+        icon_url=iconUrl,
     )
     if isinstance(interaction.channel, discord.DMChannel):
         await interaction.response.send_message(embed=embedV, view=applyBtns())
@@ -121,8 +126,8 @@ async def sendApplicationToAdmin(interaction, q1, q2, q3):
     embedV = discord.Embed(color=0x472A96)
     embedV.set_author(
         name="Mercury 2 - Applications",
-        url="https://banland.xyz",
-        icon_url="https://banland.xyz/icon192.png",
+        url=domain,
+        icon_url=iconUrl,
     )
     embedV.title = f"New Applicant - @{interaction.user}"
     embedV.add_field(name="User ID", value=str(interaction.user.id))
@@ -149,8 +154,8 @@ async def notifyAdminsUnsubmit(interaction):
     embedV = discord.Embed(color=0x472A96)
     embedV.set_author(
         name="Mercury 2 - Applications",
-        url="https://banland.xyz",
-        icon_url="https://banland.xyz/icon192.png",
+        url=domain,
+        icon_url=iconUrl,
     )
     embedV.title = f"Application Unsubmitted - @{interaction.user}"
     embedV.add_field(name="User ID", value=str(interaction.user.id))
@@ -246,8 +251,8 @@ async def fetchApplication(url, userID, interaction):
     embedV = discord.Embed(color=0x472A96)
     embedV.set_author(
         name="Mercury 2 - Info",
-        url="https://banland.xyz",
-        icon_url="https://banland.xyz/icon192.png",
+        url=domain,
+        icon_url=iconUrl,
     )
     embedV.title = "Your Application"
     embedV.add_field(
@@ -294,8 +299,8 @@ async def deleteApplication(userID, interaction):
     embedV = discord.Embed(color=0x472A96, description=desc)
     embedV.set_author(
         name="Mercury 2 - Unsubmit",
-        url="https://banland.xyz",
-        icon_url="https://banland.xyz/icon192.png",
+        url=domain,
+        icon_url=iconUrl,
     )
     embedV.title = "Unsubmit Application"
     if isinstance(interaction.channel, discord.DMChannel):
@@ -311,7 +316,7 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
         print(f"[green]Updating application #{userID}[/green]")
         data = {"status": "Denied", "reason": f"{str(reason)}"}
         await updateApplication(
-            f"https://banland.xyz/api/discord/updateApplication/{userID}?apiKey={os.getenv('APIKEY')}",
+            f"{domain}/api/discord/updateApplication/{userID}?apiKey={os.getenv('APIKEY')}",
             data,
             userID,
         )
@@ -319,8 +324,8 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
         embedV = discord.Embed(color=0xD9363E, description=desc)
         embedV.set_author(
             name="Mercury 2 - Applications",
-            url="https://banland.xyz",
-            icon_url="https://banland.xyz/icon192.png",
+            url=domain,
+            icon_url=iconUrl,
         )
         embedV.title = ":x: Application unsuccessful"
         embedV.add_field(
@@ -332,7 +337,8 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
             inline=False,
         )
         embedV.set_footer(
-            text="Thank you for applying!", icon_url="https://banland.xyz/icon192.png"
+            text="Thank you for applying!",
+            icon_url=iconUrl,
         )
         print(f"[green]Application #{userID} denied by {interaction.user}[/green]")
     elif decision == "approved":
@@ -356,8 +362,8 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
             embedV = discord.Embed(color=0xD9363E, description=desc)
             embedV.set_author(
                 name="Mercury 2 - Applications",
-                url="https://banland.xyz",
-                icon_url="https://banland.xyz/icon192.png",
+                url=domain,
+                icon_url=iconUrl,
             )
             embedV.title = ":x: Application unsuccessful"
             embedV.add_field(
@@ -372,7 +378,7 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
             )
             embedV.set_footer(
                 text="Thank you for applying!",
-                icon_url="https://banland.xyz/icon192.png",
+                icon_url=iconUrl,
             )
             print(
                 f"[green]Application #{userID} denied by {interaction.user} due to member not in server[/green]"
@@ -382,7 +388,7 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
             )
 
         key = await updateApplication(
-            f"https://banland.xyz/api/discord/updateApplication/{userID}?apiKey={os.getenv('APIKEY')}",
+            f"{domain}/api/discord/updateApplication/{userID}?apiKey={os.getenv('APIKEY')}",
             data,
             userID,
         )
@@ -394,25 +400,26 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
         embedV = discord.Embed(color=0x4ACC39, description=desc)
         embedV.set_author(
             name="Mercury 2 - Applications",
-            url="https://banland.xyz",
-            icon_url="https://banland.xyz/icon192.png",
+            url=domain,
+            icon_url=iconUrl,
         )
         embedV.title = ":white_check_mark: Application successful"
         embedV.add_field(name="Invite key", value=f"`{key}`", inline=False)
         embedV.add_field(
             name="What can I do now?",
-            value="You can now create an account on https://banland.xyz. Additionally, you have full access to the Mercury Discord server and have been given the prestigious role of QA tester and now you can contribute to the future of Mercury 2!",
+            value=f"You can now create an account on {domain}. Additionally, you have full access to the Mercury Discord server and have been given the prestigious role of QA tester and now you can contribute to the future of Mercury 2!",
             inline=False,
         )
         embedV.set_footer(
-            text="Thank you for applying!", icon_url="https://banland.xyz/icon192.png"
+            text="Thank you for applying!",
+            icon_url=iconUrl,
         )
         print(f"[green]Application #{userID} approved by {interaction.user}[/green]")
     else:
         print(f"[green]Updating application #{userID}[/green]")
         data = {"status": "Banned", "reason": f"{str(reason)}"}
         await updateApplication(
-            f"https://banland.xyz/api/discord/updateApplication/{userID}?apiKey={os.getenv('APIKEY')}",
+            f"{domain}/api/discord/updateApplication/{userID}?apiKey={os.getenv('APIKEY')}",
             data,
             userID,
         )
@@ -420,8 +427,8 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
         embedV = discord.Embed(color=0xD9363E, description=desc)
         embedV.set_author(
             name="Mercury 2 - Applications",
-            url="https://banland.xyz",
-            icon_url="https://banland.xyz/icon192.png",
+            url=domain,
+            icon_url=iconUrl,
         )
         embedV.title = ":x: Account banned from future applications"
         embedV.add_field(name="Reason for ban", value=f"`{str(reason)}`", inline=False)
@@ -431,7 +438,8 @@ async def reviewedApp(interaction, user, userID, decision, reason=None):
             inline=False,
         )
         embedV.set_footer(
-            text="Thank you for applying!", icon_url="https://banland.xyz/icon192.png"
+            text="Thank you for applying!",
+            icon_url=iconUrl,
         )
         print(f"[green]{userID} banned by {interaction.user}[/green]")
 
@@ -493,7 +501,7 @@ class keyApplication(ui.Modal):
 
         print(f"[green]Application #{self.userId} is sending to server for creation")
         appResp = await sendApplication(
-            f"https://banland.xyz/api/discord/createApplication/{self.userId}?apiKey={os.getenv('APIKEY')}",
+            f"{domain}/api/discord/createApplication/{self.userId}?apiKey={os.getenv('APIKEY')}",
             [str(self.q1), str(self.q2), str(self.q3)],
         )
         if appResp == "created":
@@ -505,8 +513,8 @@ class keyApplication(ui.Modal):
             embedV = discord.Embed(color=0x4ACC39, description=desc)
             embedV.set_author(
                 name="Mercury 2 - Applications",
-                url="https://banland.xyz",
-                icon_url="https://banland.xyz/icon192.png",
+                url=domain,
+                icon_url=iconUrl,
             )
             embedV.title = ":white_check_mark: Application sent"
             embedV.add_field(
@@ -526,7 +534,7 @@ class keyApplication(ui.Modal):
             )
             embedV.set_footer(
                 text="Thank you for applying!",
-                icon_url="https://banland.xyz/icon192.png",
+                icon_url=iconUrl,
             )
             await sendApplicationToAdmin(interaction, self.q1, self.q2, self.q3)
         elif appResp == "pending":
@@ -534,8 +542,8 @@ class keyApplication(ui.Modal):
             embedV = discord.Embed(color=0xD9363E, description=desc)
             embedV.set_author(
                 name="Mercury 2 - Applications",
-                url="https://banland.xyz",
-                icon_url="https://banland.xyz/icon192.png",
+                url=domain,
+                icon_url=iconUrl,
             )
             embedV.title = ":x: Previous application is still pending"
         elif appResp == "accepted":
@@ -543,8 +551,8 @@ class keyApplication(ui.Modal):
             embedV = discord.Embed(color=0xD9363E, description=desc)
             embedV.set_author(
                 name="Mercury 2 - Applications",
-                url="https://banland.xyz",
-                icon_url="https://banland.xyz/icon192.png",
+                url=domain,
+                icon_url=iconUrl,
             )
             embedV.title = ":question: You have already been accepted"
         else:
@@ -552,8 +560,8 @@ class keyApplication(ui.Modal):
             embedV = discord.Embed(color=0xD9363E, description=desc)
             embedV.set_author(
                 name="Mercury 2 - Applications",
-                url="https://banland.xyz",
-                icon_url="https://banland.xyz/icon192.png",
+                url=domain,
+                icon_url=iconUrl,
             )
             embedV.title = ":x: Account banned from future applications"
             embedV.add_field(
@@ -692,7 +700,7 @@ class deleteBtns(discord.ui.View):
 
         try:
             update = await updateApplication(
-                f"https://banland.xyz/api/discord/updateApplication/{self.userId}?apiKey={os.getenv('APIKEY')}",
+                f"{domain}/api/discord/updateApplication/{self.userId}?apiKey={os.getenv('APIKEY')}",
                 data,
                 self.userId,
             )
@@ -812,7 +820,7 @@ async def register(interaction: discord.Interaction):
 
     try:
         app = await getApplication(
-            f"https://banland.xyz/api/discord/getApplication/{interaction.user.id}?apiKey={os.getenv('APIKEY')}",
+            f"{domain}/api/discord/getApplication/{interaction.user.id}?apiKey={os.getenv('APIKEY')}",
             interaction.user.id,
         )
 
@@ -826,7 +834,9 @@ async def register(interaction: discord.Interaction):
                 return await interaction.response.send_message(
                     "You cannot submit an application at this moment. Please run */info* for more details."
                 )
-            if status == "Denied" and timestamp > int((datetime.datetime.now()).timestamp()):
+            if status == "Denied" and timestamp > int(
+                (datetime.datetime.now()).timestamp()
+            ):
                 date = dateutil.parser.isoparse(reviewed) + datetime.timedelta(days=3)
                 timestamp = int(date.timestamp())
                 return await interaction.response.send_message(
@@ -853,14 +863,14 @@ async def info(interaction: discord.Interaction):
 
     if isinstance(interaction.channel, discord.DMChannel):
         await fetchApplication(
-            f"https://banland.xyz/api/discord/getApplication/{interaction.user.id}?apiKey={os.getenv('APIKEY')}",
+            f"{domain}/api/discord/getApplication/{interaction.user.id}?apiKey={os.getenv('APIKEY')}",
             interaction.user.id,
             interaction,
         )
     else:
         await confirmedFetch(interaction)
         await fetchApplication(
-            f"https://banland.xyz/api/discord/getApplication/{interaction.user.id}?apiKey={os.getenv('APIKEY')}",
+            f"{domain}/api/discord/getApplication/{interaction.user.id}?apiKey={os.getenv('APIKEY')}",
             interaction.user.id,
             interaction,
         )
@@ -876,7 +886,7 @@ async def unsubmit(interaction: discord.Interaction):
 
     try:
         app = await getApplication(
-            f"https://banland.xyz/api/discord/getApplication/{interaction.user.id}?apiKey={os.getenv('APIKEY')}",
+            f"{domain}/api/discord/getApplication/{interaction.user.id}?apiKey={os.getenv('APIKEY')}",
             interaction.user.id,
         )
 
@@ -909,7 +919,7 @@ async def fetch(interaction: discord.Interaction):
 
     try:
         applications = await fetchAllApplications(
-            f"https://banland.xyz/api/discord/getApplication?apiKey={os.getenv('APIKEY')}",
+            f"{domain}/api/discord/getApplication?apiKey={os.getenv('APIKEY')}",
             interaction.user.id,
         )
     except:
@@ -934,8 +944,8 @@ async def fetch(interaction: discord.Interaction):
         embedV = discord.Embed(color=0x472A96)
         embedV.set_author(
             name="Mercury 2 - Applications",
-            url="https://banland.xyz",
-            icon_url="https://banland.xyz/icon192.png",
+            url=domain,
+            icon_url=iconUrl,
         )
         embedV.title = f"New Applicant - @{user}"
         embedV.add_field(name="User ID", value=str(applications[i]["discordId"]))

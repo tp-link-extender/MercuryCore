@@ -70,8 +70,8 @@
 	{#if !dev}
 		<script
 			defer
-			data-domain="banland.xyz"
-			src="https://analytics.banland.xyz/js/script.js"></script>
+			data-domain={data.domain}
+			src="https://analytics.{data.domain}/js/script.js"></script>
 	{/if}
 </svelte:head>
 
