@@ -1,29 +1,33 @@
+--!strict
 -- CoreGui.RobloxGui.CoreScripts/BackpackScripts/BackpackBuild
 print "[Mercury]: Loaded corescript 53878047"
+
+local Players = game:GetService "Players"
 
 local News = require "../Modules/New"
 local New = News.New
 local Hydrate = News.Hydrate
+local BaseUrl = require "../Modules/BaseUrl"
+local path = BaseUrl.path
 
 -- This script creates almost all gui elements found in the backpack (warning: there are a lot!)
 -- TODO: automate this process
 
-local gui = script.Parent
+local gui = script.Parent :: ScreenGui & { ControlFrame: Frame }
 
 -- A couple of necessary functions
-local function waitForChild(instance, name)
+local function waitForChild(instance: Instance, name: string)
 	while not instance:FindFirstChild(name) do
 		instance.ChildAdded:wait()
 	end
 end
-local function waitForProperty(instance, property)
+local function waitForProperty(instance: Instance, property: string)
 	while not instance[property] do
 		instance.Changed:wait()
 	end
 end
 
-waitForChild(game, "Players")
-waitForProperty(game.Players, "LocalPlayer")
+waitForProperty(Players, "LocalPlayer")
 
 -- Components
 
@@ -73,7 +77,7 @@ local CurrentLoadout = New "Frame" {
 	New "ImageLabel" {
 		Name = "Background",
 		Size = UDim2.new(1.2, 0, 1.2, 0),
-		Image = "http://banland.xyz/asset?id=96536002",
+		Image = path "asset?id=96536002",
 		BackgroundTransparency = 1,
 		Position = UDim2.new(-0.1, 0, -0.1, 0),
 		ZIndex = 0.0,
@@ -81,7 +85,7 @@ local CurrentLoadout = New "Frame" {
 		New "ImageLabel" {
 			Size = UDim2.new(1, 0, 0.025, 1),
 			Position = UDim2.new(0, 0, 0, 0),
-			Image = "http://banland.xyz/asset?id=97662207",
+			Image = path "asset?id=97662207",
 			BackgroundTransparency = 1,
 		},
 	},
@@ -101,13 +105,13 @@ local CurrentLoadout = New "Frame" {
 		New "ImageLabel" {
 			Name = "Background",
 			BackgroundTransparency = 1,
-			Image = "http://banland.xyz/asset?id=97613075",
+			Image = path "asset?id=97613075",
 			Size = UDim2.new(1, 0, 1, 0),
 		},
 		-- New "ImageLabel" {
 		-- 	Name = "Highlight",
 		-- 	BackgroundTransparency = 1,
-		-- 	Image = "http://banland.xyz/asset?id=97643886",
+		-- 	Image = path "asset?id=97643886",
 		-- 	Size = UDim2.new(1, 0, 1, 0),
 		-- 	Visible = false,
 		-- }
@@ -184,7 +188,7 @@ New "ImageButton" {
 	Visible = false,
 	Name = "BackpackButton",
 	BackgroundTransparency = 1,
-	Image = "http://banland.xyz/asset?id=97617958",
+	Image = path "asset?id=97617958",
 	Position = UDim2.new(0.5, -60, 1, -108),
 	Size = UDim2.new(0, 120, 0, 18),
 	Parent = gui.ControlFrame,
@@ -271,7 +275,7 @@ New "Frame" {
 			New "ImageLabel" {
 				RobloxLocked = true,
 				Name = "XImage",
-				Image = "http://banland.xyz/asset?id=75547445",
+				Image = path "asset?id=75547445",
 				BackgroundTransparency = 1,
 				Position = UDim2.new(-0.25, -1, -0.25, -1),
 				Size = UDim2.new(1.5, 2, 1.5, 2),
@@ -483,7 +487,7 @@ New "Frame" {
 				New "ImageLabel" {
 					Name = "Background",
 					BackgroundTransparency = 1,
-					Image = "http://banland.xyz/asset?id=97613075",
+					Image = path "asset?id=97613075",
 					Size = UDim2.new(1, 0, 1, 0),
 				},
 				New "ObjectValue" {

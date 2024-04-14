@@ -1,20 +1,28 @@
+--!strict
 -- CoreGui.RobloxGui.Backpack.CoreScripts/BackpackScripts/Back (2?)
 print "[Mercury]: Loaded corescript 89449093"
+
+local CoreGui = game:GetService "CoreGui"
+local GuiService = game:GetService "GuiService"
+local Players = game:GetService "Players"
+local StarterGui = game:GetService "StarterGui"
 
 local News = require "../Modules/New"
 local New = News.New
 local Hydrate = News.Hydrate
-
-local GuiService = game:GetService "GuiService"
+local BaseUrl = require "../Modules/BaseUrl"
+local path = BaseUrl.path
 
 -- basic functions
-local function waitForChild(instance, name)
-	while not instance:FindFirstChild(name) do
+local function waitForChild(instance: Instance, name: string)
+	local child = instance:FindFirstChild(name)
+	while not child do
 		instance.ChildAdded:wait()
+		child = instance:FindFirstChild(name)
 	end
-	return instance:FindFirstChild(name)
+	return child :: Instance
 end
-local function waitForProperty(instance, property)
+local function waitForProperty(instance: Instance, property: string)
 	while not instance[property] do
 		instance.Changed:wait()
 	end
@@ -22,12 +30,12 @@ end
 
 -- don't do anything if we are in an empty game
 waitForChild(game, "Players")
-if #game.Players:GetChildren() < 1 then
-	game.Players.ChildAdded:wait()
+if #Players:GetChildren() < 1 then
+	Players.ChildAdded:wait()
 end
 -- make sure everything is loaded in before we do anything
 -- get our local player
-waitForProperty(game.Players, "LocalPlayer")
+waitForProperty(Players, "LocalPlayer")
 
 ------------------------ Locals ------------------------------
 local backpack = script.Parent :: GuiObject
@@ -53,8 +61,8 @@ local searchBox = waitForChild(backpack.SearchFrame.SearchBoxFrame, "SearchBox")
 local searchButton = waitForChild(backpack.SearchFrame, "SearchButton")
 local resetButton = waitForChild(backpack.SearchFrame, "ResetButton")
 
-local mercuryGui = waitForChild(game.CoreGui, "RobloxGui")
-local currentLoadout = waitForChild(mercuryGui, "CurrentLoadout")
+local MercuryGui = waitForChild(CoreGui, "RobloxGui")
+local currentLoadout = waitForChild(MercuryGui, "CurrentLoadout")
 local loadoutBackground = waitForChild(currentLoadout, "Background")
 
 local canToggle = true
@@ -111,15 +119,15 @@ local function initHumanoidDiedConnections()
 	if humanoidDiedCon then
 		humanoidDiedCon:disconnect()
 	end
-	waitForProperty(game.Players.LocalPlayer, "Character")
-	local localPlayer = game.Players.LocalPlayer
+	waitForProperty(Players.LocalPlayer, "Character")
+	local localPlayer = Players.LocalPlayer
 	waitForChild(localPlayer.Character, "Humanoid")
 	humanoidDiedCon =
 		localPlayer.Character.Humanoid.Died:connect(deactivateBackpack)
 end
 
 local function showBackpack()
-	game.GuiService:AddCenterDialog(
+	GuiService:AddCenterDialog(
 		backpack,
 		Enum.CenterDialogType.PlayerInitiatedDialog,
 		function()
@@ -152,7 +160,7 @@ local function showBackpack()
 		backpackOpenEvent:Fire(currentTab)
 		canToggle = true
 		readyForNextEvent = true
-		backpackButton.Image = "http://banland.xyz/asset?id=97644093"
+		backpackButton.Image = path "asset?id=97644093"
 		backpackButton.Position =
 			UDim2.new(0.5, -60, 1, -backpackSize.Y.Offset - 103)
 	end)
@@ -184,13 +192,13 @@ local function hideBackpack()
 		guiTweenSpeed,
 		true,
 		function()
-			game.GuiService:RemoveCenterDialog(backpack)
+			GuiService:RemoveCenterDialog(backpack)
 			backpack.Visible = false
 			backpackButton.Selected = false
 		end
 	)
 	delay(guiTweenSpeed, function()
-		game.GuiService:RemoveCenterDialog(backpack)
+		GuiService:RemoveCenterDialog(backpack)
 		backpack.Visible = false
 		backpackButton.Selected = false
 		readyForNextEvent = true
@@ -201,8 +209,8 @@ end
 local function toggleBackpack()
 	if
 		not (
-			game.Players.LocalPlayer
-			and game.Players.LocalPlayer.Character
+			Players.LocalPlayer
+			and Players.LocalPlayer.Character
 			and canToggle
 			and readyForNextEvent
 		)
@@ -216,7 +224,7 @@ local function toggleBackpack()
 
 	if backpackIsOpen then
 		Hydrate(loadoutBackground) {
-			Image = "http://banland.xyz/asset?id=97623721",
+			Image = path "asset?id=97623721",
 			Position = UDim2.new(-0.03, 0, -0.17, 0),
 			Size = UDim2.new(1.05, 0, 1.25, 0),
 			ZIndex = 2.0,
@@ -228,9 +236,9 @@ local function toggleBackpack()
 		backpackButton.Position = UDim2.new(0.5, -60, 1, -44)
 		loadoutBackground.Visible = false
 		backpackButton.Selected = false
-		backpackButton.Image = "http://banland.xyz/asset?id=97617958"
+		backpackButton.Image = path "asset?id=97617958"
 		Hydrate(loadoutBackground) {
-			Image = "http://banland.xyz/asset?id=96536002",
+			Image = path "asset?id=96536002",
 			Position = UDim2.new(-0.1, 0, -0.1, 0),
 			Size = UDim2.new(1.2, 0, 1.2, 0),
 		}
@@ -353,9 +361,9 @@ publicFunction("BackpackReady", backpackReady)
 pcall(function()
 	coreGuiChanged(
 		Enum.CoreGuiType.Backpack,
-		game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
+		StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
 	)
-	game.StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
+	StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
 end)
 
 inventoryButton.MouseButton1Click:connect(newTabClicked)
@@ -399,11 +407,11 @@ backpackButton.MouseButton1Click:connect(function()
 	toggleBackpack()
 end)
 
-if game.Players.LocalPlayer.Character then
+if Players.LocalPlayer.Character then
 	activateBackpack()
 end
 
-game.Players.LocalPlayer.CharacterAdded:connect(activateBackpack)
+Players.LocalPlayer.CharacterAdded:connect(activateBackpack)
 
 -- search functions
 searchBox.FocusLost:connect(function(enterPressed)

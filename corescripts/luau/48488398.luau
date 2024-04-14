@@ -1,26 +1,45 @@
+--!strict
 -- CoreGui.RobloxGui.CoreScripts/NotificationScript
 print "[Mercury]: Loaded corescript 48488398"
 
 local GuiService = game:GetService "GuiService"
+local Players = game:GetService "Players"
 local TeleportService = game:GetService "TeleportService"
 
-local function waitForProperty(instance, property)
+local BaseUrl = require "../Modules/BaseUrl"
+local path = BaseUrl.path
+
+local function waitForProperty(instance: Instance, property: string)
 	while not instance[property] do
 		instance.Changed:wait()
 	end
 end
-local function waitForChild(instance, name)
+local function waitForChild(instance: Instance, name: string)
 	while not instance:FindFirstChild(name) do
 		instance.ChildAdded:wait()
 	end
 end
 
-waitForProperty(game.Players, "LocalPlayer")
-waitForChild(script.Parent, "Popup")
-waitForChild(script.Parent.Popup, "AcceptButton")
-script.Parent.Popup.AcceptButton.Modal = true
+type Popup = Frame & {
+	AcceptButton: TextButton,
+	OKButton: TextButton,
+	DeclineButton: TextButton,
+	PopupText: TextLabel,
+	PopupImage: ImageLabel,
+}
 
-local localPlayer = game.Players.LocalPlayer
+local gui = script.Parent :: ScreenGui
+
+local function getPopup()
+	return gui:FindFirstChild "Popup" :: Popup
+end
+
+waitForProperty(Players, "LocalPlayer")
+waitForChild(gui, "Popup")
+waitForChild(getPopup(), "AcceptButton")
+getPopup().AcceptButton.Modal = true
+
+local localPlayer = Players.LocalPlayer
 local teleportUI
 
 local friendRequestBlacklist = {}
@@ -28,31 +47,33 @@ local friendRequestBlacklist = {}
 local teleportEnabled = true
 
 local function makePopupInvisible()
-	if script.Parent.Popup then
-		script.Parent.Popup.Visible = false
+	if getPopup() then
+		getPopup().Visible = false
 	end
 end
 
 local function showOneButton()
-	local popup = script.Parent:FindFirstChild "Popup"
-	if popup then
-		popup.OKButton.Visible = true
-		popup.DeclineButton.Visible = false
-		popup.AcceptButton.Visible = false
+	local popup = gui:FindFirstChild "Popup" :: Popup
+	if not popup then
+		return
 	end
+	popup.OKButton.Visible = true
+	popup.DeclineButton.Visible = false
+	popup.AcceptButton.Visible = false
 end
 
 local function showTwoButtons()
-	local popup = script.Parent:FindFirstChild "Popup"
-	if popup then
-		popup.OKButton.Visible = false
-		popup.DeclineButton.Visible = true
-		popup.AcceptButton.Visible = true
+	local popup = gui:FindFirstChild "Popup" :: Popup
+	if not popup then
+		return
 	end
+	popup.OKButton.Visible = false
+	popup.DeclineButton.Visible = true
+	popup.AcceptButton.Visible = true
 end
 
 local function makeFriend(fromPlayer, toPlayer)
-	local popup = script.Parent:FindFirstChild "Popup"
+	local popup = gui:FindFirstChild "Popup" :: Popup
 	if
 		popup == nil -- there is no popup!
 		or popup.Visible -- currently popping something, abort!
@@ -63,7 +84,7 @@ local function makeFriend(fromPlayer, toPlayer)
 
 	popup.PopupText.Text = `Accept Friend Request from {fromPlayer.Name}?`
 	popup.PopupImage.Image =
-		`http://banland.xyz/thumbs/avatar.ashx?userId={fromPlayer.userId}&x=352&y=352`
+		path(`thumbs/avatar.ashx?userId={fromPlayer.userId}&x=352&y=352`)
 
 	showTwoButtons()
 	popup.Visible = true
@@ -120,7 +141,9 @@ local function makeFriend(fromPlayer, toPlayer)
 	end)
 end
 
-game.Players.FriendRequestEvent:connect(function(fromPlayer, toPlayer, event)
+Players.FriendRequestEvent:connect(function(fromPlr, toPlr, event)
+	local toPlayer = toPlr :: Player
+	local fromPlayer = fromPlr :: Player
 	-- if this doesn't involve me, then do nothing
 	if fromPlayer ~= localPlayer and toPlayer ~= localPlayer then
 		return
@@ -129,7 +152,7 @@ game.Players.FriendRequestEvent:connect(function(fromPlayer, toPlayer, event)
 			GuiService:SendNotification(
 				"You are Friends",
 				`With {toPlayer.Name}!`,
-				`http://banland.xyz/thumbs/avatar.ashx?userId={toPlayer.userId}&x=48&y=48`,
+				path(`thumbs/avatar.ashx?userId={toPlayer.userId}&x=48&y=48`),
 				5,
 				function() end
 			)
@@ -142,7 +165,7 @@ game.Players.FriendRequestEvent:connect(function(fromPlayer, toPlayer, event)
 			GuiService:SendNotification(
 				"Friend Request",
 				`From {fromPlayer.Name}`,
-				`http://banland.xyz/thumbs/avatar.ashx?userId={fromPlayer.userId}&x=48&y=48`,
+				path(`thumbs/avatar.ashx?userId={fromPlayer.userId}&x=48&y=48`),
 				8,
 				function()
 					makeFriend(fromPlayer, toPlayer)
@@ -152,7 +175,7 @@ game.Players.FriendRequestEvent:connect(function(fromPlayer, toPlayer, event)
 			GuiService:SendNotification(
 				"You are Friends",
 				`With {fromPlayer.Name}!`,
-				`http://banland.xyz/thumbs/avatar.ashx?userId={fromPlayer.userId}&x=48&y=48`,
+				path(`thumbs/avatar.ashx?userId={fromPlayer.userId}&x=48&y=48`),
 				5,
 				function() end
 			)
@@ -162,7 +185,7 @@ end)
 
 local function showTeleportUI(message, timer)
 	if teleportUI ~= nil then
-		teleportUI:Remove()
+		teleportUI:Destroy()
 	end
 	waitForChild(localPlayer, "PlayerGui")
 	teleportUI = Instance.new "Message"
@@ -170,7 +193,7 @@ local function showTeleportUI(message, timer)
 	teleportUI.Parent = localPlayer.PlayerGui
 	if timer > 0 then
 		wait(timer)
-		teleportUI:Remove()
+		teleportUI:Destroy()
 	end
 end
 
@@ -195,7 +218,7 @@ if teleportEnabled then
 	localPlayer.OnTeleport:connect(onTeleport)
 
 	function TeleportService.ErrorCallback(message)
-		local popup = script.Parent:FindFirstChild "Popup"
+		local popup = gui:FindFirstChild "Popup" :: Popup
 		showOneButton()
 		popup.PopupText.Text = message
 		local clickCon
@@ -204,9 +227,7 @@ if teleportEnabled then
 			if clickCon then
 				clickCon:disconnect()
 			end
-			game.GuiService:RemoveCenterDialog(
-				script.Parent:FindFirstChild "Popup"
-			)
+			GuiService:RemoveCenterDialog(gui:FindFirstChild "Popup" :: Popup)
 			popup:TweenSize(
 				UDim2.new(0, 0, 0, 0),
 				Enum.EasingDirection.Out,
@@ -216,13 +237,13 @@ if teleportEnabled then
 				makePopupInvisible()
 			)
 		end)
-		game.GuiService:AddCenterDialog(
-			script.Parent:FindFirstChild "Popup",
+		GuiService:AddCenterDialog(
+			gui:FindFirstChild "Popup" :: Popup,
 			Enum.CenterDialogType.QuitDialog,
 			--ShowFunction
 			function()
 				showOneButton()
-				script.Parent:FindFirstChild("Popup").Visible = true
+				gui:FindFirstChild("Popup").Visible = true
 				popup:TweenSize(
 					UDim2.new(0, 330, 0, 350),
 					Enum.EasingDirection.Out,
@@ -245,7 +266,7 @@ if teleportEnabled then
 		)
 	end
 	function TeleportService.ConfirmationCallback(message, placeId, spawnName)
-		local popup = script.Parent:FindFirstChild "Popup"
+		local popup = getPopup()
 		popup.PopupText.Text = message
 		popup.PopupImage.Image = ""
 
@@ -258,9 +279,7 @@ if teleportEnabled then
 			if noCon then
 				noCon:disconnect()
 			end
-			game.GuiService:RemoveCenterDialog(
-				script.Parent:FindFirstChild "Popup"
-			)
+			GuiService:RemoveCenterDialog(getPopup())
 			popup:TweenSize(
 				UDim2.new(0, 0, 0, 0),
 				Enum.EasingDirection.Out,
@@ -284,9 +303,7 @@ if teleportEnabled then
 					if clickCon then
 						clickCon:disconnect()
 					end
-					game.GuiService:RemoveCenterDialog(
-						script.Parent:FindFirstChild "Popup"
-					)
+					GuiService:RemoveCenterDialog(getPopup())
 					popup:TweenSize(
 						UDim2.new(0, 0, 0, 0),
 						Enum.EasingDirection.Out,
@@ -296,13 +313,13 @@ if teleportEnabled then
 						makePopupInvisible()
 					)
 				end)
-				game.GuiService:AddCenterDialog(
-					script.Parent:FindFirstChild "Popup",
+				GuiService:AddCenterDialog(
+					getPopup(),
 					Enum.CenterDialogType.QuitDialog,
 					--ShowFunction
 					function()
 						showOneButton()
-						script.Parent:FindFirstChild("Popup").Visible = true
+						getPopup().Visible = true
 						popup:TweenSize(
 							UDim2.new(0, 330, 0, 350),
 							Enum.EasingDirection.Out,
@@ -334,15 +351,15 @@ if teleportEnabled then
 		end)
 
 		local centerDialogSuccess = pcall(function()
-			game.GuiService:AddCenterDialog(
-				script.Parent:FindFirstChild "Popup",
+			GuiService:AddCenterDialog(
+				gui:FindFirstChild "Popup",
 				Enum.CenterDialogType.QuitDialog,
 				--ShowFunction
 				function()
 					showTwoButtons()
 					popup.AcceptButton.Text = "Leave"
 					popup.DeclineButton.Text = "Stay"
-					script.Parent:FindFirstChild("Popup").Visible = true
+					gui:FindFirstChild("Popup").Visible = true
 					popup:TweenSize(
 						UDim2.new(0, 330, 0, 350),
 						Enum.EasingDirection.Out,
@@ -366,7 +383,7 @@ if teleportEnabled then
 		end)
 
 		if centerDialogSuccess == false then
-			script.Parent:FindFirstChild("Popup").Visible = true
+			gui:FindFirstChild("Popup").Visible = true
 			popup.AcceptButton.Text = "Leave"
 			popup.DeclineButton.Text = "Stay"
 			popup:TweenSize(

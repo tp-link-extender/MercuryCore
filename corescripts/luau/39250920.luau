@@ -6,6 +6,8 @@ local News = require "../Modules/New"
 local New = News.New
 local Hydrate = News.Hydrate
 
+local CoreGui = game:GetService "CoreGui"
+local Chat = game:GetService "Chat"
 local InsertService = game:GetService "InsertService"
 local RunService = game:GetService "RunService"
 
@@ -42,14 +44,13 @@ local player, chatNotificationGui, messageDialog, timeoutScript, reenableDialogS
 local dialogMap = {}
 local dialogConnections = {}
 
-local gui
 waitForChild(game, "CoreGui")
-waitForChild(game.CoreGui, "RobloxGui")
-if game.CoreGui.RobloxGui:FindFirstChild "ControlFrame" then
-	gui = game.CoreGui.RobloxGui.ControlFrame
-else
-	gui = game.CoreGui.RobloxGui
-end
+waitForChild(CoreGui, "RobloxGui")
+
+local MercuryGui = CoreGui:FindFirstChild "RobloxGui" :: ScreenGui & {
+	ControlFrame: Frame,
+}
+local gui = MercuryGui:FindFirstChild "ControlFrame" or MercuryGui
 
 local function currentTone()
 	if currentConversationDialog then
@@ -333,7 +334,7 @@ local function selectChoice(choice)
 	--First hide the Gui
 	mainFrame.Visible = false
 	if choice == lastChoice then
-		game.Chat:Chat(
+		Chat:Chat(
 			localPlayer.Character,
 			"Goodbye!",
 			getChatColor(currentTone())
@@ -343,7 +344,7 @@ local function selectChoice(choice)
 	else
 		local dialogChoice = choiceMap[choice]
 
-		game.Chat:Chat(
+		Chat:Chat(
 			localPlayer.Character,
 			sanitiseMessage(dialogChoice.UserDialog),
 			getChatColor(currentTone())
@@ -353,7 +354,7 @@ local function selectChoice(choice)
 			player,
 			dialogChoice
 		)
-		game.Chat:Chat(
+		Chat:Chat(
 			currentConversationPartner,
 			sanitiseMessage(dialogChoice.ResponseDialog),
 			getChatColor(currentTone())
@@ -447,8 +448,8 @@ local function initialize(parent)
 	lastChoice.Parent = mainFrame
 end
 
-local function doDialog(dialog)
-	local il = Instance.Lock(dialog, player)
+local function doDialog(dialog: Dialog)
+	local il = Instance.Lock(dialog, player) -- does this even do anything in 2013
 	print("for instance", il)
 	while not il do
 		RunService.Heartbeat:wait()
@@ -467,7 +468,7 @@ local function doDialog(dialog)
 	Instance.Unlock(dialog)
 
 	currentConversationDialog = dialog
-	game.Chat:Chat(
+	Chat:Chat(
 		dialog.Parent,
 		dialog.InitialPrompt,
 		getChatColor(dialog.Tone)
@@ -534,7 +535,7 @@ local function addDialog(dialog: Dialog)
 				Enabled = not dialog.InUse,
 				Adornee = dialog.Parent,
 				RobloxLocked = true,
-				Parent = game.CoreGui,
+				Parent = CoreGui,
 			}
 			chatGui.Image.Button.MouseButton1Click:connect(function()
 				startDialog(dialog)

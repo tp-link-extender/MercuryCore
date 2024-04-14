@@ -2,13 +2,15 @@
 -- RbxGui
 print "[Mercury]: Loaded corescript 45284430"
 
-local News = require "../Modules/New"
-local New = News.New
-local Hydrate = News.Hydrate
-
 local ContentProvider = game:GetService "ContentProvider"
 local InsertService = game:GetService "InsertService"
 local RunService = game:GetService "RunService"
+
+local News = require "../Modules/New"
+local New = News.New
+local Hydrate = News.Hydrate
+local BaseUrl = require "../Modules/BaseUrl"
+local path = BaseUrl.path
 
 local RbxGui = {}
 
@@ -230,13 +232,13 @@ function RbxGui.CreateStyledMessageDialog(title, message, style, buttons)
 
 	if style == "error" or style == "Error" then
 		styleImage.Size = UDim2.new(0, 71, 0, 71)
-		styleImage.Image = "http://banland.xyz/asset?id=42565285"
+		styleImage.Image = path "asset?id=42565285"
 	elseif style == "notify" or style == "Notify" then
 		styleImage.Size = UDim2.new(0, 71, 0, 71)
-		styleImage.Image = "http://banland.xyz/asset?id=42604978"
+		styleImage.Image = path "asset?id=42604978"
 	elseif style == "confirm" or style == "Confirm" then
 		styleImage.Size = UDim2.new(0, 74, 0, 76)
-		styleImage.Image = "http://banland.xyz/asset?id=42557901"
+		styleImage.Image = path "asset?id=42557901"
 	else
 		return RbxGui.CreateMessageDialog(title, message, buttons)
 	end
@@ -280,7 +282,7 @@ function RbxGui.CreateDropDownMenu(
 		New "ImageLabel" {
 			Name = "Icon",
 			Active = false,
-			Image = "http://banland.xyz/asset?id=45732894",
+			Image = path "asset?id=45732894",
 			BackgroundTransparency = 1,
 			Size = UDim2.new(0, 11, 0, 6),
 			Position = UDim2.new(1, -11, 0.5, -2),
@@ -944,8 +946,8 @@ function RbxGui.CreateSlider(steps: number, width: number, position)
 end
 
 function RbxGui.CreateTrueScrollingFrame()
-	local lowY
-	local highY
+	local lowY: number?
+	local highY: number?
 
 	local dragCon: RBXScriptConnection?
 	local upCon: RBXScriptConnection?
@@ -1575,7 +1577,7 @@ function RbxGui.CreateScrollingFrame(orderList: { GuiObject }?, scrollStyle)
 	local scrollStamp = 0
 
 	local scrollDrag = New "ImageButton" {
-		Image = "http://banland.xyz/asset?id=61367186",
+		Image = path "asset?id=61367186",
 		Size = UDim2.new(1, 0, 0, 16),
 		BackgroundTransparency = 1,
 		Name = "ScrollDrag",
@@ -3014,7 +3016,7 @@ function RbxGui.CreateSetPanel(
 				New "ImageLabel" {
 					Name = "CancelImage",
 					BackgroundTransparency = 1,
-					Image = "http://banland.xyz/asset?id=54135717",
+					Image = path "asset?id=54135717",
 					Position = UDim2.new(0, -2, 0, -2),
 					Size = UDim2.new(0, 16, 0, 16),
 					ZIndex = 6,
@@ -3254,7 +3256,7 @@ function RbxGui.CreateSetPanel(
 	local function createDropDownMenuButton(parent: Frame)
 		local dropDownButton = New "ImageButton" {
 			Name = "DropDownButton",
-			Image = "http://banland.xyz/asset?id=67581509",
+			Image = path "asset?id=67581509",
 			BackgroundTransparency = 1,
 			Size = UDim2.new(0, 16, 0, 16),
 			Position = UDim2.new(1, -24, 0, 6),
@@ -3767,8 +3769,9 @@ function RbxGui.CreateTerrainMaterialSelector(size, position)
 			toAdd = 66887593
 		end
 
-		materialToImageMap[v] =
-			{ Regular = `http://banland.xyz/asset?id={toAdd}` }
+		materialToImageMap[v] = {
+			Regular = path "asset?id=" .. toAdd,
+		}
 	end
 
 	local scrollFrame, scrollUp, scrollDown, recalculateScroll =
@@ -3879,7 +3882,7 @@ function RbxGui.CreateTerrainMaterialSelector(size, position)
 end
 
 function RbxGui.CreateLoadingFrame(name, size, position)
-	ContentProvider:Preload "http://banland.xyz/asset?id=35238053"
+	ContentProvider:Preload(path "asset?id=35238053")
 
 	local loadingFrame = New "Frame" {
 		Name = "LoadingFrame",
@@ -3911,7 +3914,7 @@ function RbxGui.CreateLoadingFrame(name, size, position)
 
 	local loadingGreenBar = New "ImageLabel" {
 		Name = "LoadingGreenBar",
-		Image = "http://banland.xyz/asset?id=35238053",
+		Image = path "asset?id=35238053",
 		Position = UDim2.new(0, 0, 0, 0),
 		Size = UDim2.new(0, 0, 1, 0),
 		Visible = false,

@@ -3,7 +3,9 @@ print "[Mercury]: Loaded corescript 53878057"
 
 local CoreGui = game:GetService "CoreGui"
 local GuiService = game:GetService "GuiService"
+local Players = game:GetService "Players"
 local RunService = game:GetService "RunService"
+local StarterGui = game:GetService "StarterGui"
 local UserInputService = game:GetService "UserInputService"
 
 -- A couple of necessary functions
@@ -23,15 +25,15 @@ local currentLoadout = script.Parent
 local StaticTabName = "gear"
 local backpackEnabled = true
 
-local mercuryGui = CoreGui:FindFirstChild "RobloxGui"
-assert(mercuryGui)
+local MercuryGui = CoreGui:FindFirstChild "RobloxGui"
+assert(MercuryGui)
 
-local controlFrame = waitForChild(mercuryGui, "ControlFrame")
+local controlFrame = waitForChild(MercuryGui, "ControlFrame")
 local backpackButton = waitForChild(controlFrame, "BackpackButton")
-local backpack = waitForChild(mercuryGui, "Backpack")
-waitForChild(mercuryGui, "CurrentLoadout")
-waitForChild(mercuryGui.CurrentLoadout, "TempSlot")
-waitForChild(mercuryGui.CurrentLoadout.TempSlot, "SlotNumber")
+local backpack = waitForChild(MercuryGui, "Backpack")
+waitForChild(MercuryGui, "CurrentLoadout")
+waitForChild(MercuryGui.CurrentLoadout, "TempSlot")
+waitForChild(MercuryGui.CurrentLoadout.TempSlot, "SlotNumber")
 
 waitForChild(currentLoadout, "Background")
 local clBackground = currentLoadout.Background
@@ -59,9 +61,8 @@ local function setHealthBarVisible(pGui, visible)
 end
 
 --- Begin Locals
-waitForChild(game, "Players")
-waitForProperty(game.Players, "LocalPlayer")
-local player = game.Players.LocalPlayer
+waitForProperty(Players, "LocalPlayer")
+local player = Players.LocalPlayer
 
 waitForChild(player, "PlayerGui")
 Spawn(function()
@@ -149,7 +150,7 @@ local function unregisterNumberKeys()
 end
 
 local function characterInWorkspace()
-	local localPlayer = game.Players.LocalPlayer
+	local localPlayer = Players.LocalPlayer
 	return localPlayer
 		and localPlayer.Character
 		and localPlayer.Character ~= nil
@@ -168,10 +169,10 @@ local function removeGear(gear)
 		if gearSlots[emptySlot].GearReference.Value then
 			if
 				gearSlots[emptySlot].GearReference.Value.Parent
-				== game.Players.LocalPlayer.Character
+				== Players.LocalPlayer.Character
 			then -- if we currently have this equipped, unequip it
 				gearSlots[emptySlot].GearReference.Value.Parent =
-					game.Players.LocalPlayer.Backpack
+					Players.LocalPlayer.Backpack
 			end
 
 			if
@@ -635,7 +636,7 @@ local function unequipAllItems(dontEquipThis)
 				gearSlots[i].GearReference.Value:Disable()
 			elseif gearSlots[i].GearReference.Value:IsA "Tool" then
 				gearSlots[i].GearReference.Value.Parent =
-					game.Players.LocalPlayer.Backpack
+					Players.LocalPlayer.Backpack
 			end
 			gearSlots[i].Selected = false
 		end
@@ -885,7 +886,7 @@ local function addingPlayerChild(
 				childChangeCon:disconnect()
 			end
 			removeFromInventory(child)
-		elseif newParent == game.Players.LocalPlayer.Backpack then
+		elseif newParent == Players.LocalPlayer.Backpack then
 			normaliseButton(gearClone)
 		end
 	end)
@@ -1070,7 +1071,7 @@ local function coreGuiChanged(coreGuiType, enabled)
 		coreGuiType == Enum.CoreGuiType.Health
 		or coreGuiType == Enum.CoreGuiType.All
 	then
-		setHealthBarVisible(game.Players.LocalPlayer.PlayerGui, enabled)
+		setHealthBarVisible(Players.LocalPlayer.PlayerGui, enabled)
 	end
 end
 -- End Functions
@@ -1081,13 +1082,13 @@ registerNumberKeys()
 pcall(function()
 	coreGuiChanged(
 		Enum.CoreGuiType.Backpack,
-		game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
+		StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
 	)
 	coreGuiChanged(
 		Enum.CoreGuiType.Health,
-		game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Health)
+		StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Health)
 	)
-	game.StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
+	StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
 end)
 
 RunService.Heartbeat:wait() -- let stuff initialize incase this is first heartbeat...
@@ -1147,8 +1148,8 @@ player.CharacterRemoving:connect(function()
 end)
 
 player.CharacterAdded:connect(function()
-	waitForProperty(game.Players, "LocalPlayer")
-	player = game.Players.LocalPlayer -- make sure we are still looking at the correct character
+	waitForProperty(Players, "LocalPlayer")
+	player = Players.LocalPlayer -- make sure we are still looking at the correct character
 	waitForChild(player, "Backpack")
 
 	delay(1, function()

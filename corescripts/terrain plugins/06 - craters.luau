@@ -14,11 +14,11 @@ local on = false
 
 local On, Off
 
-local this = PluginManager():CreatePlugin()
+local this = PluginManager():CreatePlugin() :: Plugin
 local mouse = this:GetMouse()
 
-local toolbar = this:CreateToolbar "Terrain"
-local toolbarbutton = toolbar:CreateButton("Crater", "Crater", "craters.png")
+local toolbar = this:CreateToolbar "Terrain" :: Toolbar
+local toolbarbutton = toolbar:CreateButton("Crater", "Crater", "craters.png") :: Button
 toolbarbutton.Click:connect(function()
 	if on then
 		Off()

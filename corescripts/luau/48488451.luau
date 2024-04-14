@@ -1,9 +1,12 @@
+--!strict
 -- CoreGui.RobloxGui.CoreScripts/PopupScript
 print "[Mercury]: Loaded corescript 48488451"
 
 local News = require "../Modules/New"
 local New = News.New
 local Hydrate = News.Hydrate
+local BaseUrl = require "../Modules/BaseUrl"
+local path = BaseUrl.path
 
 -- build our gui
 
@@ -25,7 +28,7 @@ local popupFrame = New "Frame" {
 			Name = "Backing",
 			BackgroundTransparency = 1,
 			Size = UDim2.new(1, 0, 1, 0),
-			Image = "http://banland.xyz/asset?id=47574181",
+			Image = path "asset?id=47574181",
 			ZIndex = 2,
 		},
 	},
@@ -74,4 +77,4 @@ Hydrate(acceptButton:Clone()) {
 	Parent = popupFrame,
 }
 
-script:remove()
+script:Destroy()

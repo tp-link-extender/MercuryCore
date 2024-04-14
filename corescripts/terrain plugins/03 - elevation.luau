@@ -17,15 +17,15 @@ local on = false
 
 local On, Off
 
-local plugin = PluginManager():CreatePlugin()
+local plugin = PluginManager():CreatePlugin() :: Plugin
 local mouse = plugin:GetMouse()
 
-local toolbar = plugin:CreateToolbar "Terrain"
+local toolbar = plugin:CreateToolbar "Terrain" :: Toolbar
 local toolbarbutton = toolbar:CreateButton(
 	"Elevation Adjuster",
 	"Elevation Adjuster",
 	"elevation.png"
-)
+) :: Button
 toolbarbutton.Click:connect(function()
 	if on then
 		Off()
@@ -121,7 +121,7 @@ function MouseHighlighter.Create(mouseUse)
 
 	-- Update where the highlighter is displayed.
 	-- position - Where to display the highlighter, in world space.
-	local function UpdatePosition(position)
+	local function UpdatePosition(position: Vector3)
 		if not position then
 			return
 		end
@@ -130,7 +130,7 @@ function MouseHighlighter.Create(mouseUse)
 		-- Change this gui to be the one you want to use.
 		highlighter.selectionBox.Parent = CoreGui
 
-		local vectorPos = Vector3.new(position.x, position.y, position.z)
+		local vectorPos = Vector3.new(position.X, position.Y, position.Z)
 		local cellPos = WorldToCellPreferEmpty(c, vectorPos)
 		local solidCell = WorldToCellPreferSolid(c, vectorPos)
 		local success = false

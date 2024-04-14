@@ -2,20 +2,20 @@
 -- CoreGui.RobloxGui.CoreScripts/Settings
 print "[Mercury]: Loaded corescript 46295863"
 
+local GuiService = game:GetService "GuiService"
+local Players = game:GetService "Players"
+
 local News = require "../Modules/New"
 local New = News.New
 local Hydrate = News.Hydrate
-
-local CoreGui = game:GetService "CoreGui"
-local GuiService = game:GetService "GuiService"
-local Players = game:GetService "Players"
+local BaseUrl = require "../Modules/BaseUrl"
+local path = BaseUrl.path
 
 local function waitForChild(instance, name)
 	while not instance:FindFirstChild(name) do
 		instance.ChildAdded:wait()
 	end
 end
-
 local function waitForProperty(instance, property)
 	while not instance[property] do
 		instance.Changed:wait()
@@ -23,16 +23,16 @@ local function waitForProperty(instance, property)
 end
 
 -- A Few Script Globals
-local mercuryGui = script.Parent :: ScreenGui & { ControlFrame: Frame }
-local gui = mercuryGui:FindFirstChild "ControlFrame" and mercuryGui.ControlFrame
-	or mercuryGui
+local MercuryGui = script.Parent :: ScreenGui & { ControlFrame: Frame }
+local gui = MercuryGui:FindFirstChild "ControlFrame" and MercuryGui.ControlFrame
+	or MercuryGui
 
 local RbxGui
 local helpButton, updateCameraDropDownSelection, updateVideoCaptureDropDownSelection
 local tweenTime = 0.2
 
-local mouseLockLookScreenUrl = "http://banland.xyz/asset?id=54071825"
-local classicLookScreenUrl = "http://banland.xyz/asset?id=45915798"
+local mouseLockLookScreenUrl = path "asset?id=54071825"
+local classicLookScreenUrl = path "asset?id=45915798"
 
 local hasGraphicsSlider = true
 local GraphicsQualityLevels = 10 -- how many levels we allow on graphics slider
@@ -51,7 +51,7 @@ local inStudioMode = UserSettings().GameSettings:InStudioMode()
 
 local macClient = false
 local ok, isMac = pcall(function()
-	return not game.GuiService.IsWindows
+	return not GuiService.IsWindows
 end)
 macClient = ok and isMac
 
@@ -83,9 +83,9 @@ local function resumeGameFunction(shield)
 		shield.Visible = false
 		for i = 1, #centerDialogs do
 			centerDialogs[i].Visible = false
-			game.GuiService:RemoveCenterDialog(centerDialogs[i])
+			GuiService:RemoveCenterDialog(centerDialogs[i])
 		end
-		game.GuiService:RemoveCenterDialog(shield)
+		GuiService:RemoveCenterDialog(shield)
 		settingsButton.Active = true
 		currentMenuSelection = nil
 		lastMenuSelection = {}
@@ -182,7 +182,7 @@ local function goToMenu(container, menuName, moveDirection, size, position)
 end
 
 local function resetLocalCharacter()
-	local player = game.Players.LocalPlayer
+	local player = Players.LocalPlayer
 	if player and player.Character then
 		local humanoid = (player.Character:FindFirstChild "Humanoid") :: Humanoid
 		if humanoid then
@@ -298,11 +298,11 @@ local function backToGame(buttonClicked, shield, settingsButton2)
 	buttonClicked.Parent.Parent.Parent.Parent.Visible = false
 	shield.Visible = false
 	for i = 1, #centerDialogs do
-		game.GuiService:RemoveCenterDialog(centerDialogs[i])
+		GuiService:RemoveCenterDialog(centerDialogs[i])
 		centerDialogs[i].Visible = false
 	end
 	centerDialogs = {}
-	game.GuiService:RemoveCenterDialog(shield)
+	GuiService:RemoveCenterDialog(shield)
 	settingsButton2.Active = true
 end
 
@@ -417,19 +417,19 @@ local function createHelpDialog(baseZIndex)
 		{
 			Text = "Move",
 			Function = function()
-				image.Image = "http://banland.xyz/asset?id=45915811"
+				image.Image = path "asset?id=45915811"
 			end,
 		},
 		{
 			Text = "Gear",
 			Function = function()
-				image.Image = "http://banland.xyz/asset?id=45917596"
+				image.Image = path "asset?id=45917596"
 			end,
 		},
 		{
 			Text = "Zoom",
 			Function = function()
-				image.Image = "http://banland.xyz/asset?id=45915825"
+				image.Image = path "asset?id=45915825"
 			end,
 		},
 	}, UDim.new(0, 0), UDim.new(1, 0))
@@ -481,7 +481,7 @@ local function createHelpDialog(baseZIndex)
 		Parent = helpDialog,
 	}).MouseButton1Click:connect(function()
 		shield.Visible = false
-		game.GuiService:RemoveCenterDialog(shield)
+		GuiService:RemoveCenterDialog(shield)
 	end)
 
 	robloxLock(shield)
@@ -695,7 +695,7 @@ local function createGameMainMenu(baseZIndex, shield)
 
 	helpButton.MouseButton1Click:connect(function()
 		table.insert(centerDialogs, helpDialog)
-		game.GuiService:AddCenterDialog(
+		GuiService:AddCenterDialog(
 			helpDialog,
 			Enum.CenterDialogType.ModalDialog,
 			--ShowFunction
@@ -843,9 +843,9 @@ local function createGameMainMenu(baseZIndex, shield)
 		gameSettingsButton.ZIndex = baseZIndex + 4
 		gameSettingsButton.Parent = gameMainMenuFrame
 		gameSettingsButton.MouseButton1Click:connect(function()
-			if game:FindFirstChild "Players" and game.Players.LocalPlayer then
+			if game:FindFirstChild "Players" and Players.LocalPlayer then
 				local loadingGui =
-					game.Players.LocalPlayer:FindFirstChild "PlayerLoadingGui"
+					Players.LocalPlayer:FindFirstChild "PlayerLoadingGui"
 				if loadingGui then
 					loadingGui.Visible = true
 				end
@@ -872,7 +872,7 @@ end
 
 local mouseLockLabel, syncVideoCaptureSetting
 
-local function createGameSettingsMenu(baseZIndex, _)
+local function createGameSettingsMenu(baseZIndex: number)
 	local function fullscreenShortcut()
 		return New "TextLabel" {
 			BackgroundTransparency = 1,
@@ -1022,7 +1022,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 		Parent = gameSettingsMenuFrame,
 	}
 
-	local graphicsSlider, graphicsLevel = RbxGui.CreateSlider(
+	local graphicsSlider, graphicsLevel: NumberValue = RbxGui.CreateSlider(
 		GraphicsQualityLevels,
 		150,
 		UDim2.new(0, 230, 0, 280)
@@ -1098,7 +1098,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 		settings().Rendering.QualityLevel = Enum.QualityLevel.Automatic
 	end
 
-	local function setGraphicsQualityLevel(newLevel)
+	local function setGraphicsQualityLevel(newLevel: number)
 		local percentage = newLevel / GraphicsQualityLevels
 		local newSetting = math.floor(
 			(settings().Rendering:GetMaxQualityLevel() - 1) * percentage
@@ -1115,19 +1115,16 @@ local function createGameSettingsMenu(baseZIndex, _)
 		settings().Rendering.QualityLevel = newSetting
 	end
 
-	local function goToManualGraphics(explicitLevel)
+	local function goToManualGraphics(explicitLevel: number?)
 		setAutoGraphicsGui(false)
 
-		if explicitLevel then
-			graphicsLevel.Value = explicitLevel
-		else
-			graphicsLevel.Value = math.floor(
+		graphicsLevel.Value = explicitLevel
+			or math.floor(
 				(
 					settings().Rendering.AutoFRMLevel
 					/ (settings().Rendering:GetMaxQualityLevel() - 1)
 				) * GraphicsQualityLevels
 			)
-		end
 
 		if explicitLevel == graphicsLevel.Value then -- make sure we are actually in right graphics mode
 			setGraphicsQualityLevel(graphicsLevel.Value)
@@ -1279,7 +1276,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 	end
 
 	autoGraphicsButton.MouseButton1Click:connect(function()
-		if inStudioMode and not game.Players.LocalPlayer then
+		if inStudioMode and not Players.LocalPlayer then
 			return
 		elseif not isAutoGraphics then
 			goToAutoGraphics()
@@ -1324,13 +1321,13 @@ local function createGameSettingsMenu(baseZIndex, _)
 		end
 	end)
 
-	game.Players.PlayerAdded:connect(function(player)
-		if player == game.Players.LocalPlayer and inStudioMode then
+	Players.PlayerAdded:connect(function(player)
+		if player == Players.LocalPlayer and inStudioMode then
 			enableGraphicsWidget()
 		end
 	end)
-	game.Players.PlayerRemoving:connect(function(player)
-		if player == game.Players.LocalPlayer and inStudioMode then
+	Players.PlayerRemoving:connect(function(player)
+		if player == Players.LocalPlayer and inStudioMode then
 			disableGraphicsWidget()
 		end
 	end)
@@ -1354,7 +1351,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 	local wasManualGraphics = (
 		settings().Rendering.QualityLevel ~= Enum.QualityLevel.Automatic
 	)
-	if inStudioMode and not game.Players.LocalPlayer then
+	if inStudioMode and not Players.LocalPlayer then
 		studioCheckbox.Text = "X"
 		disableGraphicsWidget()
 	elseif inStudioMode then
@@ -1510,12 +1507,12 @@ local function createGameSettingsMenu(baseZIndex, _)
 				updateVideoCaptureDropDownSelection(videoNames[1])
 			elseif
 				UserSettings().GameSettings.VideoUploadPromptBehavior
-				== Enum.UploadSetting["Ask me first"]
+				== Enum.UploadSetting.Ask
 			then
 				updateVideoCaptureDropDownSelection(videoNames[2])
 			else
 				UserSettings().GameSettings.VideoUploadPromptBehavior =
-					Enum.UploadSetting["Ask me first"]
+					Enum.UploadSetting.Ask
 				updateVideoCaptureDropDownSelection(videoNames[2])
 			end
 		end
@@ -1535,7 +1532,7 @@ local function createGameSettingsMenu(baseZIndex, _)
 		Parent = gameSettingsMenuFrame,
 	}
 
-	mouseLockLabel = CoreGui.RobloxGui:FindFirstChild("MouseLockLabel", true)
+	mouseLockLabel = MercuryGui:FindFirstChild("MouseLockLabel", true)
 
 	local enumItems = Enum.ControlMode:GetEnumItems()
 	local enumNames = {}
@@ -1662,7 +1659,7 @@ if UserSettings then
 			end)
 		end
 
-		CoreGui.RobloxGui.Changed:connect(
+		MercuryGui.Changed:connect(
 			function(prop) -- We have stopped recording when we resize
 				if prop == "AbsoluteSize" and recordingVideo then
 					recordVideoClick(
@@ -1674,24 +1671,24 @@ if UserSettings then
 		)
 
 		local function localPlayerChange()
-			gameMainMenu.ResetButton.Visible = game.Players.LocalPlayer
-			if game.Players.LocalPlayer then
+			gameMainMenu.ResetButton.Visible = Players.LocalPlayer
+			if Players.LocalPlayer then
 				settings().Rendering.EnableFRM = true
 			elseif inStudioMode then
 				settings().Rendering.EnableFRM = false
 			end
 		end
 
-		gameMainMenu.ResetButton.Visible = game.Players.LocalPlayer
-		if game.Players.LocalPlayer ~= nil then
-			game.Players.LocalPlayer.Changed:connect(function()
+		gameMainMenu.ResetButton.Visible = Players.LocalPlayer
+		if Players.LocalPlayer ~= nil then
+			Players.LocalPlayer.Changed:connect(function()
 				localPlayerChange()
 			end)
 		else
 			delay(0, function()
-				waitForProperty(game.Players, "LocalPlayer")
-				gameMainMenu.ResetButton.Visible = game.Players.LocalPlayer
-				game.Players.LocalPlayer.Changed:connect(function()
+				waitForProperty(Players, "LocalPlayer")
+				gameMainMenu.ResetButton.Visible = Players.LocalPlayer
+				Players.LocalPlayer.Changed:connect(function()
 					localPlayerChange()
 				end)
 			end)
@@ -1806,7 +1803,7 @@ if UserSettings then
 				hotkeysConn = GuiService.KeyPressed:connect(leaveResetHotkeys)
 			end)
 			if currentMenuSelection == nil then
-				game.GuiService:AddCenterDialog(
+				GuiService:AddCenterDialog(
 					shield,
 					Enum.CenterDialogType.ModalDialog,
 					showFunction,
@@ -1815,7 +1812,7 @@ if UserSettings then
 			elseif #lastMenuSelection > 0 then
 				if #centerDialogs > 0 then
 					for i = 1, #centerDialogs do
-						game.GuiService:RemoveCenterDialog(centerDialogs[i])
+						GuiService:RemoveCenterDialog(centerDialogs[i])
 						centerDialogs[i].Visible = false
 					end
 					centerDialogs = {}
@@ -1872,7 +1869,7 @@ if UserSettings then
 		robloxLock(shield)
 
 		settingsButton.MouseButton1Click:connect(function()
-			game.GuiService:AddCenterDialog(
+			GuiService:AddCenterDialog(
 				shield,
 				Enum.CenterDialogType.ModalDialog,
 				--showFunction
@@ -2091,7 +2088,7 @@ local function createSaveDialogs()
 					-8
 				),
 				BackgroundTransparency = 1,
-				Image = "http://banland.xyz/asset?id=45880710",
+				Image = path "asset?id=45880710",
 				Parent = spinnerFrame,
 			}
 		)
@@ -2110,13 +2107,11 @@ local function createSaveDialogs()
 				local pos = 0
 
 				while pos < 8 do
-					if pos == spinPos or pos == ((spinPos + 1) % 8) then
-						spinnerIcons[pos + 1].Image =
-							"http://banland.xyz/asset?id=45880668"
-					else
-						spinnerIcons[pos + 1].Image =
-							"http://banland.xyz/asset?id=45880710"
-					end
+					spinnerIcons[pos + 1].Image = (
+						pos == spinPos or pos == ((spinPos + 1) % 8)
+					)
+							and path "asset?id=45880668"
+						or path "asset?id=45880710"
 
 					pos += 1
 				end
@@ -2171,7 +2166,7 @@ local function createSaveDialogs()
 		errorDialogMessageBox.Visible = false
 		spinnerDialog.Visible = false
 		shield.Visible = false
-		game.GuiService:RemoveCenterDialog(shield)
+		GuiService:RemoveCenterDialog(shield)
 	end
 
 	robloxLock(shield)
@@ -2184,8 +2179,8 @@ local function createReportAbuseDialog()
 	waitForChild(game, "NetworkClient")
 
 	waitForChild(game, "Players")
-	waitForProperty(game.Players, "LocalPlayer")
-	local localPlayer = game.Players.LocalPlayer
+	waitForProperty(Players, "LocalPlayer")
+	local localPlayer = Players.LocalPlayer
 
 	local reportAbuseButton
 	waitForChild(gui, "UserSettingsShield")
@@ -2448,7 +2443,7 @@ local function createReportAbuseDialog()
 		if submitReportButton.Active then
 			if abuse and abusingPlayer then
 				frame.Visible = false
-				game.Players:ReportAbuse(
+				Players:ReportAbuse(
 					abusingPlayer,
 					abuse,
 					shortDescriptionBox.Text
@@ -2499,7 +2494,7 @@ local function createReportAbuseDialog()
 		normalMessageBox.Visible = false
 		shield.Visible = false
 		reportAbuseButton.Active = true
-		game.GuiService:RemoveCenterDialog(shield)
+		GuiService:RemoveCenterDialog(shield)
 	end
 
 	cancelButton.MouseButton1Click:connect(closeAndResetDialog)
@@ -2507,7 +2502,7 @@ local function createReportAbuseDialog()
 	reportAbuseButton.MouseButton1Click:connect(function()
 		createPlayersDropDown().Parent = reportAbuseFrame
 		table.insert(centerDialogs, shield)
-		game.GuiService:AddCenterDialog(
+		GuiService:AddCenterDialog(
 			shield,
 			Enum.CenterDialogType.ModalDialog,
 			--ShowFunction
@@ -2539,7 +2534,7 @@ if isSaveDialogSupported then
 
 		function game.RequestShutdown()
 			table.insert(centerDialogs, saveDialogs)
-			game.GuiService:AddCenterDialog(
+			GuiService:AddCenterDialog(
 				saveDialogs,
 				Enum.CenterDialogType.QuitDialog,
 				--ShowFunction

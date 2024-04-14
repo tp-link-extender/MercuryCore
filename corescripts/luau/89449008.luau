@@ -1,6 +1,8 @@
 -- CoreGui.RobloxGui.Backpack.CoreScripts/BackpackScripts/Back (1?)
 print "[Mercury]: Loaded corescript 89449008"
 
+local Players = game:GetService "Players"
+local StarterGui = game:GetService "StarterGui"
 local UserInputService = game:GetService "UserInputService"
 
 local News = require "../Modules/New"
@@ -30,8 +32,8 @@ local function IsTouchDevice()
 end
 
 waitForChild(game, "Players")
-waitForProperty(game.Players, "LocalPlayer")
-local player = game.Players.LocalPlayer
+waitForProperty(Players, "LocalPlayer")
+local player = Players.LocalPlayer
 
 local RbxGui, _ = LoadLibrary "RbxGui"
 if not RbxGui then
@@ -69,10 +71,10 @@ local currentLoadout = waitForChild(backpack.Parent, "CurrentLoadout")
 local grid = waitForChild(backpack.Gear, "GearGrid")
 local gearButton = waitForChild(grid, "GearButton")
 
-local swapSlot = waitForChild(script.Parent, "SwapSlot")
+local swapSlot = waitForChild(backpack, "SwapSlot")
 
 local backpackManager =
-	waitForChild(script.Parent, "CoreScripts/BackpackScripts/BackpackManager")
+	waitForChild(backpack, "CoreScripts/BackpackScripts/BackpackManager")
 local backpackOpenEvent = waitForChild(backpackManager, "BackpackOpenEvent")
 local backpackCloseEvent = waitForChild(backpackManager, "BackpackCloseEvent")
 local tabClickedEvent = waitForChild(backpackManager, "TabClickedEvent")
@@ -741,14 +743,14 @@ local function setupCharacterConnections()
 	if backpackAddCon then
 		backpackAddCon:disconnect()
 	end
-	backpackAddCon = game.Players.LocalPlayer.Backpack.ChildAdded:connect(
+	backpackAddCon = Players.LocalPlayer.Backpack.ChildAdded:connect(
 		function(child)
 			addToGrid(child)
 		end
 	)
 
 	-- make sure we get all the children
-	local backpackChildren = game.Players.LocalPlayer.Backpack:GetChildren()
+	local backpackChildren = Players.LocalPlayer.Backpack:GetChildren()
 	for i = 1, #backpackChildren do
 		addToGrid(backpackChildren[i])
 	end
@@ -756,7 +758,7 @@ local function setupCharacterConnections()
 	if characterChildAddedCon then
 		characterChildAddedCon:disconnect()
 	end
-	characterChildAddedCon = game.Players.LocalPlayer.Character.ChildAdded:connect(
+	characterChildAddedCon = Players.LocalPlayer.Character.ChildAdded:connect(
 		function(child)
 			addToGrid(child)
 			updateGridActive()
@@ -766,7 +768,7 @@ local function setupCharacterConnections()
 	if characterChildRemovedCon then
 		characterChildRemovedCon:disconnect()
 	end
-	characterChildRemovedCon = game.Players.LocalPlayer.Character.ChildRemoved:connect(
+	characterChildRemovedCon = Players.LocalPlayer.Character.ChildRemoved:connect(
 		function(_)
 			updateGridActive()
 		end
@@ -934,7 +936,7 @@ player.ChildAdded:connect(function(child)
 		if backpackAddCon then
 			backpackAddCon:disconnect()
 		end
-		backpackAddCon = game.Players.LocalPlayer.Backpack.ChildAdded:connect(
+		backpackAddCon = Players.LocalPlayer.Backpack.ChildAdded:connect(
 			function(child2)
 				addToGrid(child2)
 			end
@@ -967,9 +969,9 @@ end
 pcall(function()
 	coreGuiChanged(
 		Enum.CoreGuiType.Backpack,
-		game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
+		StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.Backpack)
 	)
-	game.StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
+	StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
 end)
 
 resize()
@@ -985,11 +987,11 @@ if not backpack.Visible then
 end
 
 -- make sure that inventory is listening to gear reparenting
-if characterChildAddedCon == nil and game.Players.LocalPlayer.Character then
+if characterChildAddedCon == nil and Players.LocalPlayer.Character then
 	setupCharacterConnections()
 end
 if not backpackAddCon then
-	backpackAddCon = game.Players.LocalPlayer.Backpack.ChildAdded:connect(
+	backpackAddCon = Players.LocalPlayer.Backpack.ChildAdded:connect(
 		function(child)
 			addToGrid(child)
 		end

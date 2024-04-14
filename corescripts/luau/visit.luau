@@ -4,11 +4,15 @@ local ChangeHistoryService = game:GetService "ChangeHistoryService"
 local InsertService = game:GetService "InsertService"
 local Players = game:GetService "Players"
 local RunService = game:GetService "RunService"
-local ScriptInformationProvider = game:GetService "ScriptInformationProvider"
-local SocialService = game:GetService "SocialService"
+local ScriptInformationProvider =
+	game:GetService "ScriptInformationProvider" :: ScriptInformationProvider
+local SocialService = game:GetService "SocialService" :: SocialService
 local ContentProvider = game:GetService "ContentProvider"
 local GamePassService = game:GetService "GamePassService"
 local Visit = game:GetService "Visit"
+
+local BaseUrl = require "../Modules/BaseUrl"
+local path = BaseUrl.path
 
 local player
 
@@ -23,43 +27,61 @@ local message = Instance.new "Message"
 message.Parent = workspace
 message.archivable = false
 
-ScriptInformationProvider:SetAssetUrl "http://banland.xyz/Asset/"
+ScriptInformationProvider:SetAssetUrl(path "Asset/")
 ContentProvider:SetThreadPool(16)
 pcall(function()
-	InsertService:SetFreeModelUrl "http://banland.xyz/game/tools/insertasset?type=fm&q=%s&pg=%d&rs=%d"
+	InsertService:SetFreeModelUrl(
+		path "game/tools/insertasset?type=fm&q=%s&pg=%d&rs=%d"
+	)
 end) -- Used for free model search (insert tool)
 pcall(function()
-	InsertService:SetFreeDecalUrl "http://banland.xyz/game/tools/insertasset?type=fd&q=%s&pg=%d&rs=%d"
+	InsertService:SetFreeDecalUrl(
+		path "game/tools/insertasset?type=fd&q=%s&pg=%d&rs=%d"
+	)
 end) -- Used for free decal search (insert tool)
 
 settings().Diagnostics:LegacyScriptMode()
 
-InsertService:SetBaseSetsUrl "http://banland.xyz/game/tools/insertasset?nsets=10&type=base"
-InsertService:SetUserSetsUrl "http://banland.xyz/game/tools/insertasset?nsets=20&type=user&userid=%d"
-InsertService:SetCollectionUrl "http://banland.xyz/game/tools/insertasset?sid=%d"
-InsertService:SetAssetUrl "http://banland.xyz/asset?id=%d"
-InsertService:SetAssetVersionUrl "http://banland.xyz/Asset/?assetversionid=%d"
+InsertService:SetBaseSetsUrl(path "game/tools/insertasset?nsets=10&type=base")
+InsertService:SetUserSetsUrl(
+	path "game/tools/insertasset?nsets=20&type=user&userid=%d"
+)
+InsertService:SetCollectionUrl(path "game/tools/insertasset?sid=%d")
+InsertService:SetAssetUrl(path "asset?id=%d")
+InsertService:SetAssetVersionUrl(path "Asset/?assetversionid=%d")
 
 pcall(function()
-	SocialService:SetFriendUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsFriendsWith&playerid=%d&userid=%d"
+	SocialService:SetFriendUrl(
+		path "Game/LuaWebService/HandleSocialRequest.ashx?method=IsFriendsWith&playerid=%d&userid=%d"
+	)
 end)
 pcall(function()
-	SocialService:SetBestFriendUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsBestFriendsWith&playerid=%d&userid=%d"
+	SocialService:SetBestFriendUrl(
+		path "Game/LuaWebService/HandleSocialRequest.ashx?method=IsBestFriendsWith&playerid=%d&userid=%d"
+	)
 end)
 pcall(function()
-	SocialService:SetGroupUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=IsInGroup&playerid=%d&groupid=%d"
+	SocialService:SetGroupUrl(
+		path "Game/LuaWebService/HandleSocialRequest.ashx?method=IsInGroup&playerid=%d&groupid=%d"
+	)
 end)
 pcall(function()
-	SocialService:SetGroupRankUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRank&playerid=%d&groupid=%d"
+	SocialService:SetGroupRankUrl(
+		path "Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRank&playerid=%d&groupid=%d"
+	)
 end)
 pcall(function()
-	SocialService:SetGroupRoleUrl "http://banland.xyz/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRole&playerid=%d&groupid=%d"
+	SocialService:SetGroupRoleUrl(
+		path "Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRole&playerid=%d&groupid=%d"
+	)
 end)
 pcall(function()
-	GamePassService:SetPlayerHasPassUrl "http://banland.xyz/Game/GamePass/GamePassHandler.ashx?Action=HasPass&UserID=%d&PassID=%d"
+	GamePassService:SetPlayerHasPassUrl(
+		path "Game/GamePass/GamePassHandler.ashx?Action=HasPass&UserID=%d&PassID=%d"
+	)
 end)
 pcall(function()
-	game:SetCreatorID(0, Enum.CreatorType.User)
+	game:SetCreatorId(0, Enum.CreatorType.User)
 end)
 
 pcall(function()
@@ -79,7 +101,9 @@ end)
 
 ChangeHistoryService:SetEnabled(false)
 pcall(function()
-	Players:SetBuildUserPermissionsUrl "http://banland.xyz/Game/BuildActionPermissionCheck.ashx?assetId=0&userId=%d&isSolo=true"
+	Players:SetBuildUserPermissionsUrl(
+		path "Game/BuildActionPermissionCheck.ashx?assetId=0&userId=%d&isSolo=true"
+	)
 end)
 
 workspace:SetPhysicsThrottleEnabled(true)
@@ -101,7 +125,7 @@ local ok, err = pcall(function()
 	player.CharacterAppearance = ""
 	local propExists, canAutoLoadChar = false, false
 	propExists = pcall(function()
-		canAutoLoadChar = game.Players.CharacterAutoLoads
+		canAutoLoadChar = Players.CharacterAutoLoads
 	end)
 
 	if (propExists and canAutoLoadChar) or not propExists then

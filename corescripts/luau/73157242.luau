@@ -3,10 +3,15 @@ print "[Mercury]: Loaded corescript 73157242"
 
 local ChangeHistoryService = game:GetService "ChangeHistoryService"
 local InsertService = game:GetService "InsertService"
+local JointsService = game:GetService "JointsService"
+local Lighting = game:GetService "Lighting"
+local Players = game:GetService "Players"
 
 local News = require "../Modules/New"
 local New = News.New
 local Hydrate = News.Hydrate
+local BaseUrl = require "../Modules/BaseUrl"
+local path = BaseUrl.path
 
 local RbxStamper = {}
 
@@ -436,9 +441,7 @@ local function isBlocker(part: Instance) -- returns whether or not we want to ca
 		or part:FindFirstChild "RobloxModel"
 	then
 		return true
-	elseif
-		(part:IsA "Part" and not part.CanCollide) or (part == game.Lighting)
-	then
+	elseif (part:IsA "Part" and not part.CanCollide) or (part == Lighting) then
 		return false
 	end
 	return isBlocker(part.Parent)
@@ -844,7 +847,7 @@ local function setupFakeTerrainPart(cellMat, cellType, cellOrient)
 	if cellType == 3 then
 		New "SpecialMesh" {
 			MeshType = "FileMesh",
-			MeshId = "http://banland.xyz/asset?id=66832495",
+			MeshId = path "asset?id=66832495",
 			Scale = Vector3.new(2, 2, 2),
 			Parent = newTerrainPiece,
 		}
@@ -1116,8 +1119,8 @@ local function DoHighScalabilityRegionSelect(
 	-- make player able to see this ish
 
 	local gui
-	if game.Players.LocalPlayer then
-		gui = game.Players.LocalPlayer:FindFirstChild "PlayerGui"
+	if Players.LocalPlayer then
+		gui = Players.LocalPlayer:FindFirstChild "PlayerGui"
 		if
 			gui
 			and gui:IsA "PlayerGui"
@@ -1148,10 +1151,10 @@ local function flashRedBox(stampData: {
 	local gui = game.CoreGui
 	if
 		game:FindFirstChild "Players"
-		and game.Players.LocalPlayer
-		and game.Players.LocalPlayer:FindFirstChild "PlayerGui"
+		and Players.LocalPlayer
+		and Players.LocalPlayer:FindFirstChild "PlayerGui"
 	then
-		gui = game.Players.LocalPlayer.PlayerGui
+		gui = Players.LocalPlayer.PlayerGui
 	end
 	if not stampData.ErrorBox then
 		return
@@ -1872,7 +1875,7 @@ function RbxStamper.SetupStamperDragger(
 				if modelInfo then
 					hitFace = modelTargetSurface(
 						modelInfo.Parent,
-						workspace.CurrentCamera.CoordinateFrame.p,
+						(workspace.CurrentCamera :: Camera).CoordinateFrame.p,
 						mouse.Hit.p
 					)
 				end
@@ -1882,7 +1885,7 @@ function RbxStamper.SetupStamperDragger(
 					if hitFace == tonumber(bf) then
 						-- return before we hit the JointsService code below!
 						unstampableSurface = true
-						game.JointsService:ClearJoinAfterMoveJoints() -- clear the JointsService cache
+						JointsService:ClearJoinAfterMoveJoints() -- clear the JointsService cache
 						return
 					end
 				end
@@ -1891,14 +1894,14 @@ function RbxStamper.SetupStamperDragger(
 				hitFace = modelTargetSurface(
 					stampData.CurrentParts,
 					mouse.Hit.p,
-					workspace.CurrentCamera.CoordinateFrame.p
+					(workspace.CurrentCamera :: Camera).CoordinateFrame.p
 				)
 
 				-- are we stamping WITH an unstampable surface?
 				for bf in string.gmatch(myBreakingFaces, "[^,]+") do
 					if hitFace == tonumber(bf) then
 						unstampableSurface = true
-						game.JointsService:ClearJoinAfterMoveJoints() -- clear the JointsService cache
+						JointsService:ClearJoinAfterMoveJoints() -- clear the JointsService cache
 						return
 					end
 				end
@@ -1910,7 +1913,7 @@ function RbxStamper.SetupStamperDragger(
 
 		-- to show joints during the mouse move
 		unstampableSurface = false
-		game.JointsService:SetJoinAfterMoveInstance(stampData.CurrentParts)
+		JointsService:SetJoinAfterMoveInstance(stampData.CurrentParts)
 
 		-- most common mouse inactive error occurs here, so check mouse active one more time in a pcall
 		local ok = pcall(function()
@@ -1919,7 +1922,7 @@ function RbxStamper.SetupStamperDragger(
 				and not mouse.Target.Parent:FindFirstChild "RobloxModel"
 		end)
 		if not ok then
-			game.JointsService:ClearJoinAfterMoveJoints()
+			JointsService:ClearJoinAfterMoveJoints()
 			mouse = nil
 			error "Error: RbxStamper.DoStamperMouseMove Mouse is nil on second check"
 			return
@@ -1930,11 +1933,11 @@ function RbxStamper.SetupStamperDragger(
 			and mouse.Target
 			and mouse.Target.Parent:FindFirstChild "RobloxModel" == nil
 		then
-			game.JointsService:SetJoinAfterMoveTarget(mouse.Target)
+			JointsService:SetJoinAfterMoveTarget(mouse.Target)
 		else
-			game.JointsService:SetJoinAfterMoveTarget(nil)
+			JointsService:SetJoinAfterMoveTarget(nil)
 		end
-		game.JointsService:ShowPermissibleJoints()
+		JointsService:ShowPermissibleJoints()
 
 		-- here we allow for a line of high-scalability parts
 		if
@@ -2214,7 +2217,7 @@ function RbxStamper.SetupStamperDragger(
 		end
 
 		-- to show joints during the mouse move
-		game.JointsService:SetJoinAfterMoveInstance(stampData.CurrentParts)
+		JointsService:SetJoinAfterMoveInstance(stampData.CurrentParts)
 
 		return clone, parts
 	end
@@ -2377,11 +2380,11 @@ function RbxStamper.SetupStamperDragger(
 		-- something will be stamped!  so set the "StampedSomething" toggle to true
 		if
 			game:FindFirstChild "Players"
-			and game.Players.LocalPlayer
-			and game.Players.LocalPlayer.Character
+			and Players.LocalPlayer
+			and Players.LocalPlayer.Character
 		then
 			local stampTracker =
-				game.Players.LocalPlayer.Character:FindFirstChild "StampTracker"
+				Players.LocalPlayer.Character:FindFirstChild "StampTracker"
 			if stampTracker and not stampTracker.Value then
 				stampTracker.Value = true
 			end
@@ -2534,8 +2537,8 @@ function RbxStamper.SetupStamperDragger(
 		end
 
 		local function getPlayer()
-			if game:FindFirstChild "Players" and game.Players.LocalPlayer then
-				return game.Players.LocalPlayer
+			if game:FindFirstChild "Players" and Players.LocalPlayer then
+				return Players.LocalPlayer
 			end
 			return nil
 		end
@@ -2575,9 +2578,9 @@ function RbxStamper.SetupStamperDragger(
 			if
 				playerNameTag
 				and game:FindFirstChild "Players"
-				and game.Players.LocalPlayer
+				and Players.LocalPlayer
 			then
-				tempPlayerValue = game.Players.LocalPlayer
+				tempPlayerValue = Players.LocalPlayer
 				if tempPlayerValue then
 					playerNameTag.Value = tempPlayerValue.Name
 				end
@@ -2611,7 +2614,7 @@ function RbxStamper.SetupStamperDragger(
 
 		-- make sure all the joints are activated before restoring anchor states
 		-- if not createJoints then
-		game.JointsService:CreateJoinAfterMoveJoints()
+		JointsService:CreateJoinAfterMoveJoints()
 		-- end
 
 		-- Restore the original properties for all parts being stamped
@@ -2702,7 +2705,7 @@ function RbxStamper.SetupStamperDragger(
 
 		resetHighScalabilityLine()
 
-		game.JointsService:ClearJoinAfterMoveJoints()
+		JointsService:ClearJoinAfterMoveJoints()
 	end
 
 	local function prepareUnjoinableSurfaces(modelCFrame, parts, whichSurface)
@@ -2815,11 +2818,11 @@ function RbxStamper.SetupStamperDragger(
 			mouseTarget
 			and mouseTarget.Parent:FindFirstChild "RobloxModel" == nil
 		then
-			game.JointsService:SetJoinAfterMoveTarget(mouseTarget)
+			JointsService:SetJoinAfterMoveTarget(mouseTarget)
 		else
-			game.JointsService:SetJoinAfterMoveTarget(nil)
+			JointsService:SetJoinAfterMoveTarget(nil)
 		end
-		game.JointsService:ShowPermissibleJoints()
+		JointsService:ShowPermissibleJoints()
 
 		for _, object in pairs(stampData.DisabledScripts) do
 			if object.Name == "GhostRemovalScript" then
@@ -2905,6 +2908,7 @@ function RbxStamper.SetupStamperDragger(
 			return nil
 		end
 		resetStamperState(newStampModel)
+		return -- bruh
 	end
 
 	function control.ReloadModel() -- will automatically set stamper to get a new model of current model and start stamping with new model
@@ -2945,7 +2949,7 @@ function RbxStamper.SetupStamperDragger(
 			keyCon:disconnect()
 		end
 
-		game.JointsService:ClearJoinAfterMoveJoints()
+		JointsService:ClearJoinAfterMoveJoints()
 
 		if adorn then
 			adorn:Destroy()

@@ -1,3 +1,4 @@
+--!strict
 while not game do
 	wait()
 end
@@ -17,11 +18,11 @@ local on = false
 
 local On, Off
 
-local plugin = PluginManager():CreatePlugin()
+local plugin = PluginManager():CreatePlugin() :: Plugin
 local mouse = plugin:GetMouse()
 
-local toolbar = plugin:CreateToolbar "Terrain"
-local toolbarbutton = toolbar:CreateButton("Builder", "Builder", "builder.png")
+local toolbar = plugin:CreateToolbar "Terrain" :: Toolbar
+local toolbarbutton = toolbar:CreateButton("Builder", "Builder", "builder.png") :: Button
 toolbarbutton.Click:connect(function()
 	if on then
 		Off()
@@ -126,7 +127,7 @@ function MouseHighlighter.Create(mouseUse)
 	-- success - Value is true if there was a plane intersection, false if not.
 	-- cellPos - Value is the terrain cell intersection point if there is one, vectorPos if there isn't.
 	function PlaneIntersection(vectorPos)
-		local currCamera = workspace.CurrentCamera
+		local currCamera = workspace.CurrentCamera :: Camera
 		local startPos = Vector3.new(
 			currCamera.CoordinateFrame.p.X,
 			currCamera.CoordinateFrame.p.Y,
@@ -153,7 +154,7 @@ function MouseHighlighter.Create(mouseUse)
 
 	-- Update where the highlighter is displayed.
 	-- position - Where to display the highlighter, in world space.
-	function UpdatePosition(position)
+	function UpdatePosition(position: Vector3)
 		if not position then
 			return
 		end
@@ -162,7 +163,7 @@ function MouseHighlighter.Create(mouseUse)
 		-- Change this gui to be the one you want to use.
 		highlighter.selectionBox.Parent = CoreGui
 
-		local vectorPos = Vector3.new(position.x, position.y, position.z)
+		local vectorPos = Vector3.new(position.X, position.Y, position.Z)
 		local cellPos = WorldToCellPreferEmpty(c, vectorPos)
 		local solidCell = WorldToCellPreferSolid(c, vectorPos)
 		local success = false
@@ -179,9 +180,9 @@ function MouseHighlighter.Create(mouseUse)
 
 		local regionToSelect
 
-		local lowVec = CellCenterToWorld(c, cellPos.x, cellPos.y - 1, cellPos.z)
+		local lowVec = CellCenterToWorld(c, cellPos.X, cellPos.Y - 1, cellPos.Z)
 		local highVec =
-			CellCenterToWorld(c, cellPos.x, cellPos.y + 1, cellPos.z)
+			CellCenterToWorld(c, cellPos.X, cellPos.Y + 1, cellPos.Z)
 		regionToSelect = Region3.new(lowVec, highVec)
 
 		highlighter.selectionPart.Size = regionToSelect.Size
@@ -192,12 +193,12 @@ function MouseHighlighter.Create(mouseUse)
 			if nil == highlighter.lastUsedPoint then
 				highlighter.lastUsedPoint = WorldToCellPreferEmpty(
 					c,
-					Vector3.new(mouseH.Hit.x, mouseH.Hit.y, mouseH.Hit.z)
+					Vector3.new(mouseH.Hit.X, mouseH.Hit.Y, mouseH.Hit.Z)
 				)
 			else
 				cellPos = WorldToCellPreferEmpty(
 					c,
-					Vector3.new(mouseH.Hit.x, mouseH.Hit.y, mouseH.Hit.z)
+					Vector3.new(mouseH.Hit.X, mouseH.Hit.Y, mouseH.Hit.Z)
 				)
 			end
 		end
@@ -286,18 +287,18 @@ local function onClicked()
 
 	local cellPos = WorldToCellPreferEmpty(
 		c,
-		Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z)
+		Vector3.new(mouse.Hit.X, mouse.Hit.Y, mouse.Hit.Z)
 	)
-	local x = cellPos.x
-	local y = cellPos.y
-	local z = cellPos.z
+	local x = cellPos.X
+	local y = cellPos.Y
+	local z = cellPos.Z
 
 	local solidCellPos = WorldToCellPreferSolid(
 		c,
-		Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z)
+		Vector3.new(mouse.Hit.X, mouse.Hit.Y, mouse.Hit.Z)
 	)
 
-	local celMat = GetCell(c, solidCellPos.x, solidCellPos.y, solidCellPos.z)
+	local celMat = GetCell(c, solidCellPos.X, solidCellPos.Y, solidCellPos.Z)
 	local success = false
 
 	if celMat.Value > 0 then
@@ -312,15 +313,15 @@ local function onClicked()
 		end
 
 		success, cellPos = PlaneIntersection(
-			Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z)
+			Vector3.new(mouse.Hit.X, mouse.Hit.Y, mouse.Hit.Z)
 		)
 		if not success then
 			cellPos = solidCellPos
 		end
 
-		x = cellPos.x
-		y = cellPos.y
-		z = cellPos.z
+		x = cellPos.X
+		y = cellPos.Y
+		z = cellPos.Z
 	end
 
 	if selectionProps.isWater and 17 == selectionProps.terrainMaterial then

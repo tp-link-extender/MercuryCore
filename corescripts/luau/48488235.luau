@@ -2,12 +2,21 @@
 -- CoreGui.RobloxGui.CoreScripts/PlayerListScript
 print "[Mercury]: Loaded corescript 48488235"
 
+local ContentProvider = game:GetService "ContentProvider"
+local GuiService = game:GetService "GuiService"
+local PersonalServerService =
+	game:GetService "PersonalServerService" :: PersonalServerService
+local Players = game:GetService "Players"
 local RunService = game:GetService "RunService"
+local StarterGui = game:GetService "StarterGui"
+local Teams = game:GetService "Teams"
 
 local News = require "../Modules/New"
 local New = News.New
 local Hydrate = News.Hydrate
 local log = require "../Modules/Logger"
+local BaseUrl = require "../Modules/BaseUrl"
+local path = BaseUrl.path
 
 --------------------
 -- Super Util
@@ -16,9 +25,7 @@ local log = require "../Modules/Logger"
 local ADMINS = {
 	taskmanager = 1,
 	heliodex = 1,
-	multako = "http://banland.xyz/asset?id=6923328292",
 	mercury = 1,
-	pizzaboxer = "http://banland.xyz/asset?id=6917566633",
 }
 
 local Images = {
@@ -75,7 +82,7 @@ end
 local function getMembershipTypeIcon(membershipType, playerName)
 	if ADMINS[string.lower(playerName)] ~= nil then
 		if ADMINS[string.lower(playerName)] == 1 then
-			return "http://banland.xyz/asset?id=6923330951"
+			return path "asset?id=6923330951"
 		end
 		return ADMINS[string.lower(playerName)]
 	elseif membershipType == Enum.MembershipType.None then
@@ -86,9 +93,8 @@ local function getMembershipTypeIcon(membershipType, playerName)
 		return "rbxasset://textures/ui/TinyTbcIcon.png"
 	elseif membershipType == Enum.MembershipType.OutrageousBuildersClub then
 		return "rbxasset://textures/ui/TinyObcIcon.png"
-	else
-		error("Unknown membershipType " .. membershipType)
 	end
+	error("Unknown membershipType " .. membershipType)
 end
 
 local function getFriendStatusIcon(friendStatus)
@@ -98,24 +104,14 @@ local function getFriendStatusIcon(friendStatus)
 	then
 		return ""
 	elseif friendStatus == Enum.FriendStatus.Friend then
-		return "http://banland.xyz/asset?id=99749771"
+		return path "asset?id=99749771"
 	elseif friendStatus == Enum.FriendStatus.FriendRequestSent then
-		return "http://banland.xyz/asset?id=99776888"
+		return path "asset?id=99776888"
 	elseif friendStatus == Enum.FriendStatus.FriendRequestReceived then
-		return "http://banland.xyz/asset?id=99776838"
-	else
-		error("Unknown FriendStatus " .. friendStatus)
+		return path "asset?id=99776838"
 	end
+	error("Unknown FriendStatus " .. friendStatus)
 end
-
----------------------------
--- Workspace Objects
----------------------------
-
--- might want to move all this to an init function, wait for localplayer elsewhere
-local ContentProvider = game:GetService "ContentProvider"
-local PersonalServerService = game:GetService "PersonalServerService"
-local Players = game:GetService "Players"
 
 -- make sure this doesn't run on the server(it will if you dont do this)
 while not Players.LocalPlayer do
@@ -156,7 +152,7 @@ local HeaderFrame = New "Frame" {
 	Position = UDim2.new(0, 0, 0, 0),
 	Size = UDim2.new(1, 0, 0.07, 0),
 	Parent = MainFrame,
-	MakeBackgroundGuiObj "http://banland.xyz/asset?id=94692054",
+	MakeBackgroundGuiObj(path "asset?id=94692054"),
 }
 local HeaderFrameHeight = HeaderFrame.Size.Y.Scale
 local MaximizeButton = New "ImageButton" {
@@ -213,7 +209,7 @@ local BottomFrame = New "Frame" {
 	Position = UDim2.new(0, 0, 0.07, 0),
 	Size = UDim2.new(1, 0, 0.03, 0),
 	Parent = BottomShiftFrame,
-	MakeBackgroundGuiObj "http://banland.xyz/asset?id=94754966",
+	MakeBackgroundGuiObj(path "asset?id=94754966"),
 }
 local ExtendButton = New "ImageButton" {
 	Name = "bigbutton",
@@ -228,7 +224,7 @@ local ExtendTab = New "ImageButton" {
 	Name = "extendTab",
 	Active = true,
 	BackgroundTransparency = 1,
-	Image = "http://banland.xyz/asset?id=94692731",
+	Image = path "asset?id=94692731",
 	Position = UDim2.new(0.608, 0, 0.3, 0),
 	Size = UDim2.new(0.3, 0, 0.7, 0),
 	Parent = BottomFrame,
@@ -386,7 +382,7 @@ local MiddleBGTemplate = New "Frame" {
 	BackgroundTransparency = 1,
 	Position = UDim2.new(100, 0, 0.07, 0),
 	Size = UDim2.new(0.5, 0, 0.025, 0), --UDim2.new(1, 0, .03, 0),
-	MakeBackgroundGuiObj "http://banland.xyz/asset?id=94692025",
+	MakeBackgroundGuiObj(path "asset?id=94692025"),
 }
 
 -- REPORT ABUSE OBJECTS
@@ -417,7 +413,7 @@ local AbuseSettingsFrame = New "Frame" {
 	Size = UDim2.new(1, 0, 1, 0),
 	Active = true,
 	BackgroundTransparency = 1,
-	MakeBackgroundGuiObj "http://banland.xyz/asset?id=96488767", -- 96480351",
+	MakeBackgroundGuiObj(path "asset?id=96488767"), -- 96480351",
 	New "TextLabel" {
 		Name = "Title",
 		Text = "Report Abuse",
@@ -496,7 +492,7 @@ local SubmitReportButton = New "ImageButton" {
 	Position = UDim2.new(0.5, -200, 1, -80),
 	Size = UDim2.new(0, 150, 0, 50),
 	AutoButtonColor = false,
-	Image = "http://banland.xyz/asset?id=96502438", -- 96501119',
+	Image = path "asset?id=96502438", -- 96501119',
 	Parent = AbuseSettingsFrame,
 }
 
@@ -506,7 +502,7 @@ local CancelReportButton = New "ImageButton" {
 	Position = UDim2.new(0.5, 50, 1, -80),
 	Size = UDim2.new(0, 150, 0, 50),
 	AutoButtonColor = true,
-	Image = "http://banland.xyz/asset?id=96500683",
+	Image = path "asset?id=96500683",
 	Parent = AbuseSettingsFrame,
 }
 
@@ -542,7 +538,7 @@ local CalmingAbuseBox = New "Frame" {
 	BackgroundTransparency = 1,
 	Position = UDim2.new(0.25, 0, 0.300000012, 0),
 	Size = UDim2.new(0.5, 0, 0.370000005, 0),
-	MakeBackgroundGuiObj "http://banland.xyz/asset?id=96506233",
+	MakeBackgroundGuiObj(path "asset?id=96506233"),
 	New "TextLabel" {
 		Name = "Header",
 		Position = UDim2.new(0, 10, 0.05, 0),
@@ -575,7 +571,7 @@ local CalmingAbuseBox = New "Frame" {
 		Position = UDim2.new(0.5, -75, 1, -80),
 		Size = UDim2.new(0, 150, 0, 50),
 		AutoButtonColor = true,
-		Image = "http://banland.xyz/asset?id=96507959",
+		Image = path "asset?id=96507959",
 	},
 }
 local NormalAbuseBox = New "Frame" {
@@ -583,7 +579,7 @@ local NormalAbuseBox = New "Frame" {
 	BackgroundTransparency = 1,
 	Position = UDim2.new(0.25, 0, 0.300000012, 0),
 	Size = UDim2.new(0.5, 0, 0.370000005, 0),
-	MakeBackgroundGuiObj "http://banland.xyz/asset?id=96506233",
+	MakeBackgroundGuiObj(path "asset?id=96506233"),
 	New "TextLabel" {
 		Name = "Header",
 		Position = UDim2.new(0, 10, 0.05, 0),
@@ -616,7 +612,7 @@ local NormalAbuseBox = New "Frame" {
 		Position = UDim2.new(0.5, -75, 1, -80),
 		Size = UDim2.new(0, 150, 0, 50),
 		AutoButtonColor = true,
-		Image = "http://banland.xyz/asset?id=96507959",
+		Image = path "asset?id=96507959",
 	},
 }
 
@@ -653,7 +649,7 @@ local RbxGui = assert(LoadLibrary "RbxGui")
 local DefaultEntriesOnScreen = 8
 
 for _, i in pairs(Images) do
-	ContentProvider:Preload("http://banland.xyz/asset?id=" .. i)
+	ContentProvider:Preload(path "asset?id=" .. i)
 end
 
 -- ordered array of 'score data', each entry has:
@@ -893,7 +889,7 @@ end
 	player		player to change rank of
 	nrank		new integer rank to give player
 --]]
-local function SetPrivilegeRank(player, nrank: number)
+local function SetPrivilegeRank(player: Player, nrank: number)
 	while player.PersonalServerRank < nrank do
 		PersonalServerService:Promote(player)
 	end
@@ -914,25 +910,20 @@ local function HighlightMyRank(
 	MemberButton,
 	AdminButton
 )
-	BanPlayerButton.Image = "http://banland.xyz/asset?id="
-		.. Images.LightPopupMid
-	VisitorButton.Image = "http://banland.xyz/asset?id=" .. Images.DarkPopupMid
-	MemberButton.Image = "http://banland.xyz/asset?id=" .. Images.LightPopupMid
-	AdminButton.Image = "http://banland.xyz/asset?id=" .. Images.DarkPopupBottom
+	BanPlayerButton.Image = path "asset?id=" .. Images.LightPopupMid
+	VisitorButton.Image = path "asset?id=" .. Images.DarkPopupMid
+	MemberButton.Image = path "asset?id=" .. Images.LightPopupMid
+	AdminButton.Image = path "asset?id=" .. Images.DarkPopupBottom
 
 	local rank = player.PersonalServerRank
 	if rank <= PrivilegeLevel.Banned then
-		BanPlayerButton.Image =
-			`http://banland.xyz/asset?id={Images.LightBluePopupMid}`
+		BanPlayerButton.Image = path "asset?id=" .. Images.LightBluePopupMid
 	elseif rank <= PrivilegeLevel.Visitor then
-		VisitorButton.Image =
-			`http://banland.xyz/asset?id={Images.DarkBluePopupMid}`
+		VisitorButton.Image = path "asset?id=" .. Images.DarkBluePopupMid
 	elseif rank <= PrivilegeLevel.Member then
-		MemberButton.Image =
-			`http://banland.xyz/asset?id={Images.LightBluePopupMid}`
+		MemberButton.Image = path "asset?id=" .. Images.LightBluePopupMid
 	elseif rank <= PrivilegeLevel.Admin then
-		AdminButton.Image =
-			`http://banland.xyz/asset?id={Images.DarkBluePopupBottom}`
+		AdminButton.Image = path "asset?id=" .. Images.DarkBluePopupBottom
 	end
 end
 
@@ -971,7 +962,7 @@ end
 local function CloseAbuseDialog()
 	AbuseName = nil
 	SubmitReportButton.Active = false
-	SubmitReportButton.Image = "http://banland.xyz/asset?id=96502438" -- 96501119",
+	SubmitReportButton.Image = path "asset?id=96502438" -- 96501119",
 	AbuseDescriptionBox:Destroy()
 	CalmingAbuseBox.Parent = nil
 	NormalAbuseBox.Parent = nil
@@ -986,7 +977,7 @@ local function OnSubmitAbuse()
 	if SubmitReportButton.Active then
 		if AbuseName and SelectedPlayer then
 			AbuseSettingsFrame.Visible = false
-			game.Players:ReportAbuse(
+			Players:ReportAbuse(
 				SelectedPlayer,
 				AbuseName,
 				AbuseDescriptionBox.Text
@@ -1053,7 +1044,7 @@ local function InitReportAbuse()
 		AbuseName = abuseText
 		if AbuseName and SelectedPlayer then
 			SubmitReportButton.Active = true
-			SubmitReportButton.Image = "http://banland.xyz/asset?id=96501119"
+			SubmitReportButton.Image = path "asset?id=96501119"
 		end
 	end
 
@@ -1082,11 +1073,11 @@ end
 	@Return: enum of friend status
 --]]
 local function GetFriendStatus(player: Player)
-	if player == game.Players.LocalPlayer then
+	if player == Players.LocalPlayer then
 		return Enum.FriendStatus.NotFriend
 	end
 	local ok, result = pcall(function()
-		return game.Players.LocalPlayer:GetFriendStatus(player)
+		return Players.LocalPlayer:GetFriendStatus(player)
 	end)
 	if ok then
 		return result
@@ -1352,17 +1343,13 @@ local function UpdateMaximize()
 			BASE_TWEEN * 1.2,
 			true
 		)
-		HeaderFrame.Background.Image = "http://banland.xyz/asset?id="
-			.. Images.LargeHeader
-		BottomFrame.Background.Image = "http://banland.xyz/asset?id="
-			.. Images.LargeBottom
+		HeaderFrame.Background.Image = path "asset?id=" .. Images.LargeHeader
+		BottomFrame.Background.Image = path "asset?id=" .. Images.LargeBottom
 		for index, i in ipairs(MiddleFrameBackgrounds) do
 			if (index % 2) ~= 1 then
-				i.Background.Image = "http://banland.xyz/asset?id="
-					.. Images.LargeDark
+				i.Background.Image = path "asset?id=" .. Images.LargeDark
 			else
-				i.Background.Image = "http://banland.xyz/asset?id="
-					.. Images.LargeLight
+				i.Background.Image = path "asset?id=" .. Images.LargeLight
 			end
 		end
 		for _, i in ipairs(MiddleFrames) do
@@ -1422,17 +1409,13 @@ local function UpdateMaximize()
 			BASE_TWEEN * 1.2,
 			true
 		)
-		HeaderFrame.Background.Image = "http://banland.xyz/asset?id="
-			.. Images.NormalHeader
-		BottomFrame.Background.Image = "http://banland.xyz/asset?id="
-			.. Images.NormalBottom
+		HeaderFrame.Background.Image = path "asset?id=" .. Images.NormalHeader
+		BottomFrame.Background.Image = path "asset?id=" .. Images.NormalBottom
 		for index, i in ipairs(MiddleFrameBackgrounds) do
 			if index % 2 ~= 1 then
-				i.Background.Image = "http://banland.xyz/asset?id="
-					.. Images.midDark
+				i.Background.Image = path "asset?id=" .. Images.midDark
 			else
-				i.Background.Image = "http://banland.xyz/asset?id="
-					.. Images.midLight
+				i.Background.Image = path "asset?id=" .. Images.midLight
 			end
 		end
 		for _, i in ipairs(MiddleFrames) do
@@ -1473,6 +1456,12 @@ local function UpdateMaximize()
 		end
 	end
 end
+
+type ValueBase = {
+	Value: any,
+	ConstrainedValue: number,
+	IsA: (self: ValueBase, name: string) -> boolean,
+}
 
 local function GetScoreValue(score: ValueBase): number
 	if
@@ -1601,17 +1590,21 @@ local function AddTeamScores(team)
 	UpdateMinimize()
 end
 
+type SortableTeam = {
+	TeamScore: number,
+	ID: number,
+	MyPlayers: { any },
+}
+
 --[[
 	uses lua's table.sort to sort the teams
 --]]
-local function TeamSortFunc(a, b)
+local function TeamSortFunc(a: SortableTeam, b: SortableTeam)
 	if a.TeamScore == b.TeamScore then
 		return a.ID < b.ID
-	end
-	if not a.TeamScore then
+	elseif not a.TeamScore then
 		return false
-	end
-	if not b.TeamScore then
+	elseif not b.TeamScore then
 		return true
 	end
 	return a.TeamScore < b.TeamScore
@@ -1896,7 +1889,7 @@ function UpdateMinimize()
 			true
 		)
 		FocusFrame.Size = UDim2.new(1, 0, HeaderFrameHeight, 0)
-		ExtendTab.Image = "http://banland.xyz/asset?id=94692731"
+		ExtendTab.Image = path "asset?id=94692731"
 	else
 		if not IsMaximized.Value then
 			MainFrame:TweenSizeAndPosition(
@@ -1921,7 +1914,7 @@ function UpdateMinimize()
 		)
 		BottomFrame.Position = UDim2.new(0, 0, bottomPositon, 0)
 		FocusFrame.Size = UDim2.new(1, 0, bottomPositon + HeaderFrameHeight, 0)
-		ExtendTab.Image = "http://banland.xyz/asset?id=94825585"
+		ExtendTab.Image = path "asset?id=94825585"
 	end
 end
 
@@ -2066,7 +2059,7 @@ local function StatAdded(nchild, playerEntry)
 end
 
 --returns whether any of the existing players has this stat
-local function DoesStatExist(statName, exception)
+local function DoesStatExist(statName, exception: Player)
 	for _, playerf in pairs(PlayerFrames) do
 		if
 			playerf.Player ~= exception
@@ -2216,14 +2209,14 @@ local function MakePopupButton(nparent, ntext, index, last: boolean?)
 		Parent = nparent,
 	}
 	if index == 0 then
-		tobj.Image = "http://banland.xyz/asset?id=97108784"
+		tobj.Image = path "asset?id=97108784"
 	elseif last then
 		tobj.Image = index % 2 == 1
-				and "http://banland.xyz/asset?id=" .. Images.LightPopupBottom
-			or "http://banland.xyz/asset?id=" .. Images.DarkPopupBottom
+				and path "asset?id=" .. Images.LightPopupBottom
+			or path "asset?id=" .. Images.DarkPopupBottom
 	else
-		tobj.Image = index % 2 == 1 and "http://banland.xyz/asset?id=97112126"
-			or "http://banland.xyz/asset?id=97109338"
+		tobj.Image = index % 2 == 1 and path "asset?id=97112126"
+			or path "asset?id=97109338"
 	end
 	return tobj
 end
@@ -2555,7 +2548,7 @@ local function AddMiddleBGFrame()
 		UDim2.new(0.5, 0, (#MiddleFrameBackgrounds * nBGFrame.Size.Y.Scale), 0)
 
 	local function applyImage(id: string)
-		nBGFrame.Background.Image = "http://banland.xyz/asset?id=" .. id
+		nBGFrame.Background.Image = path "asset?id=" .. id
 	end
 
 	if (#MiddleFrameBackgrounds + 1) % 2 ~= 1 then
@@ -2800,7 +2793,7 @@ local function SetPlayerToTeam(entry)
 		end
 	end
 	-- if player was set to an invalid team, then set it back to neutral
-	if not setToTeam and #(game.Teams:GetTeams()) > 0 then
+	if not setToTeam and #Teams:GetTeams() > 0 then
 		log(`{entry.Player.Name} could not find team`)
 		entry.MyTeam = nil
 		if not NeutralTeam then
@@ -2827,7 +2820,7 @@ local function PlayerChanged(entry, property)
 	PlayerChangedLock = true
 	if property == "Neutral" then
 		-- if player changing to neutral
-		if entry.Player.Neutral and #(game.Teams:GetTeams()) > 0 then
+		if entry.Player.Neutral and #(Teams:GetTeams()) > 0 then
 			log(entry.Player.Name .. " setting to neutral")
 			FindRemovePlayerFromTeam(entry)
 			entry.MyTeam = nil
@@ -2838,7 +2831,7 @@ local function PlayerChanged(entry, property)
 				log(entry.Player.Name .. " adding to neutral team")
 				AddPlayerToTeam(NeutralTeam, entry)
 			end
-		elseif #(game.Teams:GetTeams()) > 0 then -- else player switching to a team, or a weird edgecase
+		elseif #(Teams:GetTeams()) > 0 then -- else player switching to a team, or a weird edgecase
 			log(entry.Player.Name .. " has been set non-neutral")
 			SetPlayerToTeam(entry)
 		end
@@ -3276,46 +3269,47 @@ end
 --[[
 	code for attaching tab key to maximizing player list
 --]]
-game.GuiService:AddKey "\t"
+GuiService:AddKey "\t"
 local LastTabTime = time()
-game.GuiService.KeyPressed:connect(function(key)
+GuiService.KeyPressed:connect(function(key)
 	if key == "\t" then
 		log "caught tab key"
 		local modalCheck, isModal = pcall(function()
-			return game.GuiService.IsModalDialog
+			return GuiService.IsModalDialog
 		end)
-		if modalCheck == false or (modalCheck and isModal == false) then
-			if time() - LastTabTime > 0.4 then
-				LastTabTime = time()
-				if IsTabified.Value then
-					if not IsMaximized.Value then
-						ScreenGui:TweenPosition(
-							UDim2.new(0, 0, 0, 0),
-							"Out",
-							"Linear",
-							BASE_TWEEN * 1.2,
-							true
-						)
-						IsMaximized.Value = true
-					else
-						ScreenGui:TweenPosition(
-							UDim2.new(
-								NormalBounds.X.Scale,
-								NormalBounds.X.Offset - 10,
-								0,
-								0
-							),
-							"Out",
-							"Linear",
-							BASE_TWEEN * 1.2,
-							true
-						)
-						IsMaximized.Value = false
-						IsMinimized.Value = true
-					end
+		if
+			(modalCheck == false or (modalCheck and isModal == false))
+			and time() - LastTabTime > 0.4
+		then
+			LastTabTime = time()
+			if IsTabified.Value then
+				if not IsMaximized.Value then
+					ScreenGui:TweenPosition(
+						UDim2.new(0, 0, 0, 0),
+						"Out",
+						"Linear",
+						BASE_TWEEN * 1.2,
+						true
+					)
+					IsMaximized.Value = true
 				else
-					ToggleMaximize()
+					ScreenGui:TweenPosition(
+						UDim2.new(
+							NormalBounds.X.Scale,
+							NormalBounds.X.Offset - 10,
+							0,
+							0
+						),
+						"Out",
+						"Linear",
+						BASE_TWEEN * 1.2,
+						true
+					)
+					IsMaximized.Value = false
+					IsMinimized.Value = true
 				end
+			else
+				ToggleMaximize()
 			end
 		end
 	end
@@ -3337,16 +3331,16 @@ end
 pcall(function()
 	coreGuiChanged(
 		Enum.CoreGuiType.PlayerList,
-		game.StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList)
+		StarterGui:GetCoreGuiEnabled(Enum.CoreGuiType.PlayerList)
 	)
-	game.StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
+	StarterGui.CoreGuiChangedSignal:connect(coreGuiChanged)
 end)
 
 while not game:GetService "Teams" do
 	RunService.Heartbeat:wait()
 	log "Waiting For Teams"
 end
-for _, i in pairs(game.Teams:GetTeams()) do
+for _, i in pairs(Teams:GetTeams()) do
 	TeamAdded(i)
 end
 for _, i in pairs(Players:GetPlayers()) do
@@ -3385,8 +3379,8 @@ end
 -- Hookups and initialization
 ----------------------------
 
-game.Teams.ChildAdded:connect(TeamsChildAdded)
-game.Teams.ChildRemoved:connect(TeamsChildRemoved)
+Teams.ChildAdded:connect(TeamsChildAdded)
+Teams.ChildRemoved:connect(TeamsChildRemoved)
 Players.ChildAdded:connect(PlayersChildAdded)
 
 InitReportAbuse()

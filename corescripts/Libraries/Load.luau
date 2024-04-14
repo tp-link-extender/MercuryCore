@@ -1,4 +1,7 @@
 --!strict
+local BaseUrl = require "../Modules/BaseUrl"
+local path = BaseUrl.path
+
 local Load = {}
 
 function Load.Help()
@@ -6,7 +9,7 @@ function Load.Help()
 end
 
 function Load.Start(ticket: string)
-	dofile("http://banland.xyz/game/host?ticket=" .. ticket)
+	dofile(path "game/host?ticket=" .. ticket)
 end
 
 return Load

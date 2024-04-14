@@ -1,3 +1,4 @@
+--!strict
 -- Script Context./Libraries/LibraryRegistration/LibraryRegist
 print "[Mercury]: Loaded corescript 60595695"
 
@@ -17,18 +18,19 @@ for _ = 1, 4 do
 	RunService.Heartbeat:wait()
 end
 
-if ScriptContext then
-	for name, id in pairs {
-		Fusion = 10000001,
-		Red = 10000002,
-		Load = 10000003,
-		Gui = 45284430,
-		Utility = 60595411,
-		Stamper = 73157242,
-	} do
-		ScriptContext:RegisterLibrary("Libraries/Rbx" .. name, tostring(id))
-	end
-	ScriptContext:LibraryRegistrationComplete()
-else
+if not ScriptContext then
 	print "[Mercury]: Failed to find ScriptContext, libraries did not load"
+	return
 end
+
+for name, id in pairs {
+	Fusion = 10000001,
+	Red = 10000002,
+	Load = 10000003,
+	Gui = 45284430,
+	Utility = 60595411,
+	Stamper = 73157242,
+} do
+	ScriptContext:RegisterLibrary("Libraries/Rbx" .. name, tostring(id))
+end
+ScriptContext:LibraryRegistrationComplete()

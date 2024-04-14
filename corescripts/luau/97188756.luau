@@ -2,10 +2,16 @@
 -- CoreGui.RobloxGui.CoreScripts/ChatScript
 print "[Mercury]: Loaded corescript 97188756"
 
+local CoreGui = game:GetService "CoreGui"
+local GuiService = game:GetService "GuiService"
+local Players = game:GetService "Players"
 local RunService = game:GetService "RunService"
+
 
 local SafeChat = require "../Modules/Safechat.yml" -- THANK YOU DARKLUA
 local New = require("../Modules/New").New
+local BaseUrl = require "../Modules/BaseUrl"
+local path = BaseUrl.path
 
 local forceChatGUI = false
 
@@ -17,20 +23,15 @@ local function WaitForChild(parent: Instance, childName)
 	return parent[childName]
 end
 
-while not game.Players.LocalPlayer do
+while not Players.LocalPlayer do
 	RunService.Heartbeat:wait()
 end
 
-local Player = game.Players.LocalPlayer
+local Player = Players.LocalPlayer
 while not Player.Character do
 	RunService.Heartbeat:wait()
 end
 local Camera = workspace.CurrentCamera
-
--- Services
-local CoreGui = game:GetService "CoreGui"
-local Players = game:GetService "Players"
-local GuiService = game:GetService "GuiService"
 
 -- Lua Enums
 local Enums = {}
@@ -667,7 +668,7 @@ function Chat:CreateGui()
 
 		New "ImageLabel" {
 			Name = "Background",
-			Image = "http://banland.xyz/asset?id=97120937", --96551212';
+			Image = path "asset?id=97120937", -- 96551212
 			Size = UDim2.new(1.3, 0, 1.64, 0),
 			Position = UDim2.new(0, 0, 0, 0),
 			BackgroundTransparency = 1,

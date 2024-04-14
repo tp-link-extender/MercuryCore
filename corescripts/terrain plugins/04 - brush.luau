@@ -16,10 +16,11 @@ local on = false
 
 local On, Off
 
-local this = PluginManager():CreatePlugin()
+local this = PluginManager():CreatePlugin() :: Plugin
 
-local toolbar = this:CreateToolbar "Terrain"
-local toolbarbutton = toolbar:CreateButton("Brush", "Brush", "brush.png")
+local toolbar = this:CreateToolbar "Terrain" :: Toolbar
+local toolbarbutton =
+	toolbar:CreateButton("Brush", "Brush", "brush.png") :: Button
 toolbarbutton.Click:connect(function()
 	if on then
 		Off()
@@ -292,9 +293,9 @@ function doFillCells(position, mouseDrag, needsCellPos)
 		local timeBetweenFills = tick() - lastCellFillTime
 		local totalDragPixels = math.abs(mouseDrag.x) + math.abs(mouseDrag.y)
 		local editDistance = (
-			workspace.CurrentCamera.CoordinateFrame.p
+			(workspace.CurrentCamera :: Camera).CoordinateFrame.p
 			- Vector3.new(position.x, position.y, position.z)
-		).magnitude
+		).Magnitude
 
 		if timeBetweenFills <= 0.05 then
 			if editDistance * totalDragPixels < 450 then

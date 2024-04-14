@@ -1,3 +1,4 @@
+--!strict
 -- RbxUtility
 print "[Mercury]: Loaded corescript 60595411"
 
@@ -5,7 +6,7 @@ local News = require "../Modules/New"
 local New = News.New
 local Hydrate = News.Hydrate
 
-local Terrain = game:GetService "Terrain"
+local Terrain = workspace.Terrain
 
 local RbxUtility = {}
 
@@ -30,7 +31,7 @@ end
 -- sets cell x, y, z to default material if parameter is provided, if not sets cell x, y, z to be whatever material it previously w
 -- returns true if made a wedge, false if the cell remains a block
 function RbxUtility.MakeWedge(x, y, z, _)
-	return Terrain:AutoWedgeCell(x, y, z)
+	return Terrain:AutowedgeCell(x, y, z)
 end
 
 function RbxUtility.SelectTerrainRegion(
@@ -80,7 +81,15 @@ function RbxUtility.SelectTerrainRegion(
 	local currentKeepAliveTag -- a tag that determines whether adorns should be destroyed
 	local aliveCounter = 0 -- helper for currentKeepAliveTag
 	local lastRegion -- used to stop updates that do nothing
-	local adornments = {} -- contains all adornments
+	local adornments: {
+		[Vector3int16]: {
+			SelectionPart: BasePart,
+			SelectionBox: SelectionBox,
+			KeepAlive: number,
+		},
+		SelectionPart: BasePart?,
+		SelectionBox: SelectionBox?,
+	} = {} -- contains all adornments
 	local reusableAdorns = {}
 
 	local selectionPart = New "Part" {
@@ -146,7 +155,7 @@ function RbxUtility.SelectTerrainRegion(
 	end
 
 	-- finds full cells in region and adorns each cell with a box, with the argument color
-	local function adornFullCellsInRegion(region, newColour)
+	local function adornFullCellsInRegion(region: Region3, newColour: BrickColor)
 		local regionBegin = region.CFrame.p
 			- (region.Size / 2)
 			+ Vector3.new(2, 2, 2)
@@ -158,9 +167,9 @@ function RbxUtility.SelectTerrainRegion(
 		local cellPosEnd = WorldToCellPreferSolid(terrain, regionEnd)
 
 		currentKeepAliveTag = incrementAliveCounter()
-		for y = cellPosBegin.y, cellPosEnd.y do
-			for z = cellPosBegin.z, cellPosEnd.z do
-				for x = cellPosBegin.x, cellPosEnd.x do
+		for y = cellPosBegin.Y, cellPosEnd.Y do
+			for z = cellPosBegin.Z, cellPosEnd.Z do
+				for x = cellPosBegin.X, cellPosEnd.X do
 					local cellMaterial = GetCell(terrain, x, y, z)
 
 					if cellMaterial ~= emptyMaterial then
@@ -222,7 +231,7 @@ function RbxUtility.SelectTerrainRegion(
 		end
 	else -- use individual cell adorns to represent the area selected
 		adornFullCellsInRegion(regionToSelect, colour)
-		function updateSelection(newRegion, newColour)
+		function updateSelection(newRegion: Region3, newColour)
 			if newRegion and newRegion ~= lastRegion then
 				lastRegion = newRegion
 				adornFullCellsInRegion(newRegion, newColour)
@@ -433,9 +442,18 @@ Note: It is also perfectly legal to save a reference to the function returned by
       local part = partCreatingFunction()
 ]]
 
---the Create function need to be created as a functor, not a function, in order to support the Create.E syntax, so it
---will be created in several steps rather than as a single function declaration.
-local function Create_PrivImpl(objectType: string)
+local Create_PrivImpl
+
+-- create the functor:
+RbxUtility.Create = setmetatable({}, {
+	__call = function(_, ...)
+		return Create_PrivImpl(...)
+	end,
+})
+
+-- the Create function need to be created as a functor, not a function, in order to support the Create.E syntax, so it
+-- will be created in several steps rather than as a single function declaration.
+function Create_PrivImpl(objectType: string)
 	if type(objectType) ~= "string" then
 		error("Argument of Create must be a string", 2)
 	end
@@ -518,12 +536,7 @@ local function Create_PrivImpl(objectType: string)
 	end
 end
 
---now, create the functor:
-RbxUtility.Create = setmetatable({}, {
-	__call = function(_, ...)
-		return Create_PrivImpl(...)
-	end,
-})
+
 
 --and create the "Event.E" syntax stub. Really it's just a stub to construct a table which our Create
 --function can recognize as special.

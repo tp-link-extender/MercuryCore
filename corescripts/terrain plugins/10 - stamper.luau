@@ -1,3 +1,4 @@
+--!strict
 while not game do
 	wait()
 end
@@ -16,17 +17,17 @@ local on = false
 
 local On, Off
 
-local this = PluginManager():CreatePlugin()
+local this = PluginManager():CreatePlugin() :: Plugin
 this.Deactivation:connect(function()
 	Off()
 end)
 
-local toolbar = this:CreateToolbar "Terrain"
+local toolbar = this:CreateToolbar "Terrain" :: Toolbar
 local toolbarbutton = toolbar:CreateButton(
 	"Stamper",
 	"Part Stamper - Toggle List (Shift + F)",
 	"stamp.png"
-)
+) :: Button
 toolbarbutton.Click:connect(function()
 	if on then
 		Off()

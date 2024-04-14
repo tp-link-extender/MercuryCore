@@ -20,10 +20,13 @@ local on = false
 
 local On, Off
 
-local plugin = PluginManager():CreatePlugin()
-local toolbar = plugin:CreateToolbar "Terrain"
-local toolbarbutton =
-	toolbar:CreateButton("Generator", "Terrain Generator", "terrain.png")
+local plugin = PluginManager():CreatePlugin() :: Plugin
+local toolbar = plugin:CreateToolbar "Terrain" :: Toolbar
+local toolbarbutton = toolbar:CreateButton(
+	"Generator",
+	"Terrain Generator",
+	"terrain.png"
+) :: Button
 toolbarbutton.Click:connect(function()
 	if on then
 		Off()
@@ -51,8 +54,8 @@ function TerrainOptions.Create()
 	setmetatable(options, TerrainOptions)
 
 	-- Offset to create terrain at.
-	options.xpos = 0
-	options.zpos = 0
+	options.Xpos = 0
+	options.Zpos = 0
 
 	-- X width
 	options.width = 512
@@ -110,7 +113,7 @@ end
 --
 -- Return:
 -- Value is a new terrain options set with the old terrain options data.
-function TerrainOptions:Clone(_)
+function TerrainOptions:Clone()
 	return CopyTable(self)
 end
 
@@ -236,9 +239,9 @@ function Highlighter.Create(_, ID, color)
 	highlighter.width = 0
 	highlighter.length = 0
 
-	highlighter.x = 0
-	highlighter.y = 0
-	highlighter.z = 0
+	highlighter.X = 0
+	highlighter.Y = 0
+	highlighter.Z = 0
 
 	-- Create the part that the highlighter will be attached to.
 	highlighter.selectionPart = New "Part" {
@@ -282,24 +285,24 @@ function Highlighter:UpdatePosition(cellPos: Vector3)
 
 	local regionToSelect
 
-	self.x = cellPos.x
-	self.y = cellPos.y
-	self.z = cellPos.z
+	self.X = cellPos.X
+	self.Y = cellPos.Y
+	self.Z = cellPos.Z
 
 	local width, length, height =
 		self.width :: number, self.length :: number, self.height :: number
 
 	local lowVec = CellCenterToWorld(
 		c,
-		cellPos.x - width / 2,
-		cellPos.y - 1,
-		cellPos.z - length / 2
+		cellPos.X - width / 2,
+		cellPos.Y - 1,
+		cellPos.Z - length / 2
 	)
 	local highVec = CellCenterToWorld(
 		c,
-		cellPos.x + width / 2,
-		cellPos.y + height,
-		cellPos.z + length / 2
+		cellPos.X + width / 2,
+		cellPos.Y + height,
+		cellPos.Z + length / 2
 	)
 	regionToSelect = Region3.new(lowVec, highVec)
 
@@ -320,7 +323,7 @@ function Highlighter:UpdateDimensions(
 	self.length = length
 	self.width = width
 	self.height = height
-	self:UpdatePosition(Vector3.new(self.x, self.y, self.z))
+	self:UpdatePosition(Vector3.new(self.X, self.Y, self.Z))
 end
 
 -- Create a standardized slider.
@@ -397,7 +400,7 @@ local function LoadProgressBar(text)
 	cancelValues.bindForCancel.Event:connect(function(_)
 		cancelValues.cancelActions = true -- Set the flag that everything should stop.
 
-		coroutine.yield()
+		coroutine.Yield()
 	end)
 end
 
@@ -428,13 +431,13 @@ local _, offsetXSliderPosition = CreateStandardSlider(
 	UDim2.new(0, 10, 0.5, -2),
 	128,
 	function(offsetXSliderPosition2)
-		terrainOptions.xpos = (offsetXSliderPosition2.Value - 1) * 4 - 252
-		offsetXLabel.Text = "X-Offset: " .. terrainOptions.xpos
+		terrainOptions.Xpos = (offsetXSliderPosition2.Value - 1) * 4 - 252
+		offsetXLabel.Text = "X-Offset: " .. terrainOptions.Xpos
 	end,
 	nil,
 	terrainFrame
 )
-offsetXSliderPosition.Value = (terrainOptions.xpos + 252) / 4 + 1
+offsetXSliderPosition.Value = (terrainOptions.Xpos + 252) / 4 + 1
 
 -- Slider for controlling the z offset to generate terrain at.
 local offsetZLabel = CreateStandardLabel(
@@ -450,13 +453,13 @@ local _, offsetZSliderPosition = CreateStandardSlider(
 	UDim2.new(0, 10, 0.5, -2),
 	128,
 	function(offsetZSliderPosition2)
-		terrainOptions.zpos = (offsetZSliderPosition2.Value - 1) * 4 - 252
-		offsetZLabel.Text = "Z-Offset: " .. terrainOptions.zpos
+		terrainOptions.Zpos = (offsetZSliderPosition2.Value - 1) * 4 - 252
+		offsetZLabel.Text = "Z-Offset: " .. terrainOptions.Zpos
 	end,
 	nil,
 	terrainFrame
 )
-offsetZSliderPosition.Value = (terrainOptions.zpos + 252) / 4 + 1
+offsetZSliderPosition.Value = (terrainOptions.Zpos + 252) / 4 + 1
 
 -----------------------
 --FUNCTION DEFINITIONS-
@@ -479,7 +482,7 @@ end
 -- makes a heightmap for a layer of mountains (width x depth)
 -- with a width frequency wf and depthfrequency df (width should be divisible by wf, depth should be divisible by df) (for unsquished results, width/wf = depth/df)
 -- with a range of amplitudes between 0 and a
-local function mountLayer(width, depth, wf, df, a)
+local function mountLayer(width: number, depth: number, wf, df, a: number)
 	local heightmap = {}
 	for i = 0, width - 1 do
 		heightmap[i] = {}
@@ -570,8 +573,14 @@ end
 -- Set the camera to look at the terrain from a distance so that all terrain will be in view.
 -- centerX, centerZ - Center coordinate of land.  This doesn't take into account clipping.
 -- length, width    - Land dimensions.
-local function SetCamera(centerX, centerZ, length, width, height)
-	local currCamera = workspace.CurrentCamera
+local function SetCamera(
+	centerX: number,
+	centerZ: number,
+	length: number,
+	width: number,
+	height: number
+)
+	local currCamera = workspace.CurrentCamera :: Camera
 	local cameraPos = Vector3.new(0, 400, 1600)
 	local cameraFocus = Vector3.new(0, height * 4, 0)
 
@@ -625,15 +634,15 @@ local function GenerateTerrain()
 
 	--Generate Terrain
 	-- offset terrain additionally by whatever the smallest cell is
-	--xpos2 = generateOptions.xpos + workspace.Terrain.MaxExtents.Min.X
-	--zpos2 = generateOptions.zpos + workspace.Terrain.MaxExtents.Min.Z
-	local xpos2 = generateOptions.xpos - generateOptions.width / 2
-	local zpos2 = generateOptions.zpos - generateOptions.length / 2
+	--xpos2 = generateOptions.Xpos + workspace.Terrain.MaxExtents.Min.X
+	--zpos2 = generateOptions.Zpos + workspace.Terrain.MaxExtents.Min.Z
+	local xpos2 = generateOptions.Xpos - generateOptions.width / 2
+	local zpos2 = generateOptions.Zpos - generateOptions.length / 2
 
 	-- Reposition to get a good view.
 	SetCamera(
-		generateOptions.xpos,
-		generateOptions.zpos,
+		generateOptions.Xpos,
+		generateOptions.Zpos,
 		generateOptions.length,
 		generateOptions.width,
 		math.max(generateOptions.baseHeight, generateOptions.a / 2)

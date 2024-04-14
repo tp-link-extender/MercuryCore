@@ -1,7 +1,8 @@
 --!strict
 -- Render script for R6 avatars
 
-local ThumbnailGenerator = game:GetService "ThumbnailGenerator"
+local ThumbnailGenerator =
+	game:GetService "ThumbnailGenerator" :: ThumbnailGenerator
 local RenderModule = require "../Modules/Render"
 local SetupAvatar = require "../Modules/Render/SetupAvatar"
 local Render = RenderModule(_BASE_URL, _PING_URL, _THUMBNAIL_KEY) -- avoid ambiguous syntax after compilation
@@ -23,7 +24,7 @@ player.Character.Torso["Right Shoulder"].CurrentAngle = 0
 -- Headshot Camera
 local CameraAngle = player.Character.Head.CFrame
 local CameraPosition = CameraAngle
-	+ CFrame.Angles(0, math.pi, 0).lookVector.unit * 2.75
+	+ CFrame.Angles(0, math.pi, 0).lookVector.Unit * 2.75
 
 workspace.CurrentCamera = New "Camera" {
 	Name = "ThumbnailCamera",

@@ -22,14 +22,10 @@ globals:
     args: []
   _MAP_LOCATION_EXISTS:
     args: []
-  _CHAR_APPEARANCE:
-    args: []
   _SERVER:
     args: []
 
   _BASE_URL:
-    args: []
-  _PING_URL:
     args: []
   _THUMBNAIL_KEY:
     args: []
@@ -7319,13 +7315,7 @@ structs:
         - required: false
           type: any
       method: true
-    SetPlaceID:
-      args:
-        - type: any
-        - required: false
-          type: any
-      method: true
-    SetCreatorID:
+    SetCreatorId:
       args:
         - type: any
         - type: any

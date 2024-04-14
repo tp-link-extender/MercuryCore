@@ -1,3 +1,4 @@
+--!strict
 while not game do
 	wait()
 end
@@ -11,6 +12,8 @@ local CreateStandardLabel = require "../Modules/Terrain/CreateStandardLabel"
 local News = require "../Modules/New"
 local New = News.New
 local Hydrate = News.Hydrate
+local BaseUrl = require "../Modules/BaseUrl"
+local path = BaseUrl.path
 
 ---------------
 --PLUGIN SETUP-
@@ -21,7 +24,7 @@ local on = false
 local On, Off
 local mouseDown, mouseUp
 
-local this = PluginManager():CreatePlugin()
+local this = PluginManager():CreatePlugin() :: Plugin
 local mouse = this:GetMouse()
 mouse.Button1Down:connect(function()
 	mouseDown(mouse)
@@ -30,9 +33,9 @@ mouse.Button1Up:connect(function()
 	mouseUp(mouse)
 end)
 
-local toolbar = this:CreateToolbar "Terrain"
+local toolbar = this:CreateToolbar "Terrain" :: Toolbar
 local toolbarbutton =
-	toolbar:CreateButton("Flood Fill", "Flood Fill", "floodFill.png")
+	toolbar:CreateButton("Flood Fill", "Flood Fill", "floodFill.png") :: Button
 toolbarbutton.Click:connect(function()
 	if on then
 		Off()
@@ -47,12 +50,12 @@ workspace:WaitForChild "Terrain"
 -----------------------------
 --LOCAL FUNCTION DEFINITIONS-
 -----------------------------
-local c = workspace.Terrain
+local Terrain = workspace.Terrain
 -- local WorldToCellPreferSolid = c.WorldToCellPreferSolid
-local WorldToCellPreferEmpty = c.WorldToCellPreferEmpty
-local CellCenterToWorld = c.CellCenterToWorld
-local GetCell = c.GetCell
-local SetCell = c.SetCell
+local WorldToCellPreferEmpty = Terrain.WorldToCellPreferEmpty
+local CellCenterToWorld = Terrain.CellCenterToWorld
+local GetCell = Terrain.GetCell
+local SetCell = Terrain.SetCell
 -- local maxYExtents = c.MaxExtents.Max.Y
 
 local emptyMaterial = Enum.CellMaterial.Empty
@@ -78,7 +81,7 @@ local currentMaterial = 1
 -- load our libraries
 local RbxGui = LoadLibrary "RbxGui"
 -- local RbxUtil = LoadLibrary "RbxUtility"
-ContentProvider:Preload "http://banland.xyz/asset?id=82741829"
+ContentProvider:Preload(path "asset?id=82741829")
 
 ------------------------- OBJECT DEFINITIONS ---------------------
 
@@ -168,7 +171,7 @@ function MouseHighlighter.Create(mouseUse)
 		BackgroundTransparency = 1,
 		Size = UDim2.new(1, 0, 1, 0),
 		Position = UDim2.new(-0.35, 0, -0.5, 0),
-		Image = "http://banland.xyz/asset?id=82741829",
+		Image = path "asset?id=82741829",
 		Parent = billboardGui,
 	}
 
@@ -245,47 +248,48 @@ function MouseHighlighter.Create(mouseUse)
 		end
 
 		local vectorPos = Vector3.new(position.x, position.y, position.z)
-		local cellPos = WorldToCellPreferEmpty(c, vectorPos)
+		local cellPos = WorldToCellPreferEmpty(Terrain, vectorPos)
 
 		local regionToSelect
 
-		local cellMaterial = GetCell(c, cellPos.x, cellPos.y, cellPos.z)
+		local cellMaterial = GetCell(Terrain, cellPos.x, cellPos.y, cellPos.z)
 		local y = cellPos.y
 		-- only select empty cells
 		while cellMaterial ~= emptyMaterial do
-			y = y + 1
-			cellMaterial = GetCell(c, cellPos.x, y, cellPos.z)
+			y += 1
+			cellMaterial = GetCell(Terrain, cellPos.x, y, cellPos.z)
 		end
 		cellPos = Vector3.new(cellPos.x, y, cellPos.z)
 
-		local lowVec = CellCenterToWorld(c, cellPos.x, cellPos.y - 1, cellPos.z)
+		local lowVec =
+			CellCenterToWorld(Terrain, cellPos.x, cellPos.y - 1, cellPos.z)
 		local highVec =
-			CellCenterToWorld(c, cellPos.x, cellPos.y + 1, cellPos.z)
+			CellCenterToWorld(Terrain, cellPos.x, cellPos.y + 1, cellPos.z)
 		regionToSelect = Region3.new(lowVec, highVec)
 
 		highlighter.selectionPart.CFrame = regionToSelect.CFrame
 
-		if nil ~= highlighter.OnClicked and highlighter.mouseDown then
-			if nil == highlighter.lastUsedPoint then
-				highlighter.lastUsedPoint = WorldToCellPreferEmpty(
-					c,
-					Vector3.new(mouseH.Hit.x, mouseH.Hit.y, mouseH.Hit.z)
-				)
-			else
-				cellPos = WorldToCellPreferEmpty(
-					c,
-					Vector3.new(mouseH.Hit.x, mouseH.Hit.y, mouseH.Hit.z)
-				)
+		if not (highlighter.OnClicked and highlighter.mouseDown) then
+			return
+		end
+		if nil == highlighter.lastUsedPoint then
+			highlighter.lastUsedPoint = WorldToCellPreferEmpty(
+				Terrain,
+				Vector3.new(mouseH.Hit.x, mouseH.Hit.y, mouseH.Hit.z)
+			)
+		else
+			cellPos = WorldToCellPreferEmpty(
+				Terrain,
+				Vector3.new(mouseH.Hit.x, mouseH.Hit.y, mouseH.Hit.z)
+			)
 
-				-- holdChange = cellPos - highlighter.lastUsedPoint
+			-- holdChange = cellPos - highlighter.lastUsedPoint
 
-				-- Require terrain.
-				if 0 == GetCell(c, cellPos.X, cellPos.Y, cellPos.Z).Value then
-					return
-				else
-					highlighter.lastUsedPoint = cellPos
-				end
+			-- Require terrain.
+			if 0 == GetCell(Terrain, cellPos.X, cellPos.Y, cellPos.Z).Value then
+				return
 			end
+			highlighter.lastUsedPoint = cellPos
 		end
 	end
 
@@ -305,8 +309,7 @@ function MouseHighlighter:SetMaterial(newMaterial)
 end
 
 function MouseHighlighter:GetPosition()
-	local position = self.selectionPart.CFrame.p
-	return WorldToCellPreferEmpty(c, position)
+	return WorldToCellPreferEmpty(Terrain, self.selectionPart.CFrame.p)
 end
 
 -- Hide the highlighter.
@@ -421,19 +424,16 @@ end
 
 -- Clear the popup, free up assets.
 function ConfirmationPopup:Clear()
-	if nil ~= self.confirmButton then
+	if self.confirmButton then
 		self.confirmButton.Parent = nil
 	end
-
-	if nil ~= self.declineButton then
+	if self.declineButton then
 		self.declineButton.Parent = nil
 	end
-
-	if nil ~= self.confirmationFrame then
+	if self.confirmationFrame then
 		self.confirmationFrame.Parent = nil
 	end
-
-	if nil ~= self.confirmLabel then
+	if self.confirmLabel then
 		self.confirmLabel.Parent = nil
 	end
 
@@ -499,7 +499,7 @@ local function LoadProgressBar(text)
 				-8
 			),
 			BackgroundTransparency = 1,
-			Image = "http://banland.xyz/asset?id=45880710",
+			Image = path "asset?id=45880710",
 			Parent = spinnerFrame,
 		}
 
@@ -514,15 +514,13 @@ local function LoadProgressBar(text)
 			local pos = 0
 
 			while pos < 8 do
-				if pos == spinPos or pos == ((spinPos + 1) % 8) then
-					spinnerIcons[pos + 1].Image =
-						"http://banland.xyz/asset?id=45880668"
-				else
-					spinnerIcons[pos + 1].Image =
-						"http://banland.xyz/asset?id=45880710"
-				end
+				spinnerIcons[pos + 1].Image = (
+					pos == spinPos or pos == ((spinPos + 1) % 8)
+				)
+						and path "asset?id=45880668"
+					or path "asset?id=45880710"
 
-				pos = pos + 1
+				pos += 1
 			end
 			spinPos = (spinPos + 1) % 8
 			wait(0.2)
@@ -603,8 +601,7 @@ function mouseUp(_)
 end
 
 local function getMaterial(x, y, z)
-	local material = GetCell(c, x, y, z)
-	return material
+	return GetCell(Terrain, x, y, z)
 end
 
 local function doBreadthFill(x, y, z)
@@ -680,15 +677,15 @@ function breadthFill(x, y, z)
 end
 
 local function cellInTerrain(x, y, z)
-	if x < c.MaxExtents.Min.X or x >= c.MaxExtents.Max.X then
+	if x < Terrain.MaxExtents.Min.X or x >= Terrain.MaxExtents.Max.X then
 		return false
 	end
 
-	if y < c.MaxExtents.Min.Y or y >= c.MaxExtents.Max.Y then
+	if y < Terrain.MaxExtents.Min.Y or y >= Terrain.MaxExtents.Max.Y then
 		return false
 	end
 
-	if z < c.MaxExtents.Min.Z or z >= c.MaxExtents.Max.Z then
+	if z < Terrain.MaxExtents.Min.Z or z >= Terrain.MaxExtents.Max.Z then
 		return false
 	end
 
@@ -698,7 +695,7 @@ end
 function breadthFillHelper(x, y, z, yDepthChecks)
 	-- first, lets try and fill this cell
 	if cellInTerrain(x, y, z) and getMaterial(x, y, z) == emptyMaterial then
-		SetCell(c, x, y, z, currentMaterial, 0, 0)
+		SetCell(Terrain, x, y, z, currentMaterial, 0, 0)
 	end
 
 	local cellsToFill = {}
@@ -735,7 +732,7 @@ function breadthFillHelper(x, y, z, yDepthChecks)
 
 	for i = 1, #cellsToFill do
 		SetCell(
-			c,
+			Terrain,
 			cellsToFill[i].xPos,
 			cellsToFill[i].yPos,
 			cellsToFill[i].zPos,
@@ -753,7 +750,7 @@ function breadthFillHelper(x, y, z, yDepthChecks)
 end
 
 On = function()
-	if not c then
+	if not Terrain then
 		return
 	elseif this then
 		this:Activate(true)

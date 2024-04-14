@@ -10,7 +10,7 @@ function TweenInfo.new(
 	repeatCount: number?,
 	reverses: boolean?,
 	delayTime: number?
-)
+): FakeTweenInfo
 	local proxy = newproxy(true)
 	local mt = getmetatable(proxy)
 
@@ -92,7 +92,7 @@ function TweenInfo.new(
 
 	-- When attempting to assign to properties, throw an error
 	mt.__newindex = function(_, prop)
-		error(prop .. " cannot be assigned to", math.huge) -- lmfao
+		error(prop .. " cannot be assigned to", 99)
 	end
 
 	mt.__tostring = function()

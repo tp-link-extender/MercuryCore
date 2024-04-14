@@ -1,3 +1,4 @@
+--!strict
 while not game do
 	wait()
 end
@@ -20,12 +21,12 @@ local On, Off
 ---------------
 --PLUGIN SETUP-
 ---------------
-local plugin = PluginManager():CreatePlugin()
+local plugin = PluginManager():CreatePlugin() :: Plugin
 local mouse = plugin:GetMouse()
 
-local toolbar = plugin:CreateToolbar "Terrain"
+local toolbar = plugin:CreateToolbar "Terrain" :: Toolbar
 local toolbarbutton =
-	toolbar:CreateButton("Remover", "Remover", "destroyer.png")
+	toolbar:CreateButton("Remover", "Remover", "destroyer.png") :: Button
 toolbarbutton.Click:connect(function()
 	if on then
 		Off()
@@ -102,14 +103,14 @@ function MouseHighlighter.Create(mouseUse)
 		-- Change this gui to be the one you want to use.
 		highlighter.selectionBox.Parent = CoreGui
 
-		local vectorPos = Vector3.new(position.x, position.y, position.z)
+		local vectorPos = Vector3.new(position.X, position.Y, position.Z)
 		local cellPos = WorldToCellPreferSolid(c, vectorPos)
 
 		local regionToSelect
 
-		local lowVec = CellCenterToWorld(c, cellPos.x, cellPos.y - 1, cellPos.z)
+		local lowVec = CellCenterToWorld(c, cellPos.X, cellPos.Y - 1, cellPos.Z)
 		local highVec =
-			CellCenterToWorld(c, cellPos.x, cellPos.y + 1, cellPos.z)
+			CellCenterToWorld(c, cellPos.X, cellPos.Y + 1, cellPos.Z)
 		regionToSelect = Region3.new(lowVec, highVec)
 
 		highlighter.selectionPart.Size = regionToSelect.Size
@@ -121,12 +122,12 @@ function MouseHighlighter.Create(mouseUse)
 		elseif not highlighter.lastUsedPoint then
 			highlighter.lastUsedPoint = WorldToCellPreferSolid(
 				c,
-				Vector3.new(mouse2.Hit.x, mouse2.Hit.y, mouse2.Hit.z)
+				Vector3.new(mouse2.Hit.X, mouse2.Hit.Y, mouse2.Hit.Z)
 			)
 		else
 			cellPos = WorldToCellPreferSolid(
 				c,
-				Vector3.new(mouse2.Hit.x, mouse2.Hit.y, mouse2.Hit.z)
+				Vector3.new(mouse2.Hit.X, mouse2.Hit.Y, mouse2.Hit.Z)
 			)
 
 			-- holdChange = cellPos - highlighter.lastUsedPoint -- ?
@@ -240,11 +241,11 @@ local function onClicked()
 	end
 	local cellPos = WorldToCellPreferSolid(
 		c,
-		Vector3.new(mouse.Hit.x, mouse.Hit.y, mouse.Hit.z)
+		Vector3.new(mouse.Hit.X, mouse.Hit.Y, mouse.Hit.Z)
 	)
-	local x = cellPos.x
-	local y = cellPos.y
-	local z = cellPos.z
+	local x = cellPos.X
+	local y = cellPos.Y
+	local z = cellPos.Z
 
 	SetCell(c, x, y, z, 0, 0, 0)
 

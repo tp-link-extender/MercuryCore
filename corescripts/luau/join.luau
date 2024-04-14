@@ -8,7 +8,11 @@ local Players = game:GetService "Players"
 local Client = game:GetService "NetworkClient"
 local Visit = game:GetService "Visit"
 
-local player, connectionFailed
+local BaseUrl = require "../Modules/BaseUrl"
+local path = BaseUrl.path
+
+local player: Player
+local connectionFailed: RBXScriptConnection
 
 pcall(function()
 	game:SetPlaceId(_PLACE_ID, false)
@@ -41,25 +45,21 @@ print "! Joining game '_PLACE_ID' place _PLACE_ID at _SERVER_ADDRESS"
 
 ChangeHistoryService:SetEnabled(false)
 ContentProvider:SetThreadPool(16)
-InsertService:SetBaseSetsUrl "http://banland.xyz/game/tools/insertasset?nsets=10&type=base"
-InsertService:SetUserSetsUrl "http://banland.xyz/game/tools/insertasset?nsets=20&type=user&userid=%d"
-InsertService:SetCollectionUrl "http://banland.xyz/game/tools/insertasset?sid=%d"
-InsertService:SetAssetUrl "http://banland.xyz/asset?id=%d"
-InsertService:SetAssetVersionUrl "http://banland.xyz/asset?assetversionid=%d"
+InsertService:SetBaseSetsUrl(path "game/tools/insertasset?nsets=10&type=base")
+InsertService:SetUserSetsUrl(
+	path "game/tools/insertasset?nsets=20&type=user&userid=%d"
+)
+InsertService:SetCollectionUrl(path "game/tools/insertasset?sid=%d")
+InsertService:SetAssetUrl(path "asset?id=%d")
+InsertService:SetAssetVersionUrl(path "asset?assetversionid=%d")
 
 pcall(function()
-	game:SetCreatorID(_CREATOR_ID, Enum.CreatorType.User)
+	game:SetCreatorId(_CREATOR_ID, Enum.CreatorType.User)
 end)
 
 -- Bubble chat.  This is all-encapsulated to allow us to turn it off with a config setting
 pcall(function()
 	Players:SetChatStyle(Enum.ChatStyle.ClassicAndBubble)
-end)
-
-pcall(function()
-	if settings().Network.MtuOverride == 0 then
-		settings().Network.MtuOverride = 1400
-	end
 end)
 
 -- functions ---------------------------------------
@@ -95,16 +95,15 @@ end
 
 -- called when the client connection closes
 local function onDisconnection(_, lostConnection)
-	if lostConnection then
-		setMessage "You have lost the connection to the game"
-	else
-		setMessage "This game has shut down"
-	end
+	setMessage(
+		lostConnection and "You have lost the connection to the game"
+			or "This game has shut down"
+	)
 end
 
 local function requestCharacter(replicator)
 	-- prepare code for when the Character appears
-	local connection
+	local connection: RBXScriptConnection
 	connection = player.Changed:connect(function(property)
 		if property == "Character" then
 			loadingState += 1
@@ -127,11 +126,12 @@ local function requestCharacter(replicator)
 end
 
 -- called when the client connection is established
-local function onConnectionAccepted(_, replicator)
+local function onConnectionAccepted(_, rep: Instance)
+	local replicator = rep :: NetworkReplicator
 	local waitingForMarker = true
 
 	local ok, err = pcall(function()
-		Visit:SetPing(_PING_URL, 30)
+		Visit:SetPing("_PING_URL", 30)
 
 		loadingState += 1
 		game:SetMessageBrickCount()
@@ -139,7 +139,7 @@ local function onConnectionAccepted(_, replicator)
 		replicator.Disconnection:connect(onDisconnection)
 
 		-- Wait for a marker to return before creating the Player
-		local marker = replicator:SendMarker()
+		local marker = replicator:SendMarker() :: NetworkMarker
 
 		marker.Received:connect(function()
 			waitingForMarker = false
@@ -161,8 +161,8 @@ local function onConnectionAccepted(_, replicator)
 end
 
 -- called when the client connection fails
-local function onConnectionFailed(_, err)
-	setMessage(`Failed to connect to the place. (ID={err})`)
+local function onConnectionFailed(_, code: number, reason: string)
+	setMessage(`Failed to connect to the place. (ID {code}, {reason})`)
 end
 
 -- called when the client connection is rejected
@@ -185,9 +185,7 @@ end
 
 -- main ------------------------------------------------------------
 
-pcall(function()
-	settings().Diagnostics:LegacyScriptMode()
-end)
+settings().Diagnostics:LegacyScriptMode()
 local ok, err = pcall(function()
 	game:SetRemoteBuildMode(true)
 
@@ -197,28 +195,19 @@ local ok, err = pcall(function()
 	connectionFailed = Client.ConnectionFailed:connect(onConnectionFailed)
 	Client.Ticket = ""
 
-	local playerConnectSuccess
-	playerConnectSuccess, player = pcall(function()
-		return Client:PlayerConnect(
-			_USER_ID,
-			"_SERVER_ADDRESS",
-			_SERVER_PORT,
-			0,
-			threadSleepTime
-		)
-	end)
-	if not playerConnectSuccess then
-		-- Old player connection scheme
-		player = Players:CreateLocalPlayer(_USER_ID)
-		Client:Connect("_SERVER_ADDRESS", _SERVER_PORT, 0, threadSleepTime)
-	end
-
+	player = Client:PlayerConnect(
+		_USER_ID,
+		"_SERVER_ADDRESS",
+		_SERVER_PORT,
+		0,
+		threadSleepTime
+	) :: Player
 	player:SetSuperSafeChat(false)
 	pcall(function()
 		player:SetUnder13(false)
 	end)
 	pcall(function()
-		player:SetMembershipType(Enum.MembershipType._MEMBERSHIP_TYPE)
+		player:SetMembershipType(_MEMBERSHIP_TYPE)
 	end)
 	pcall(function()
 		player:SetAccountAge(1)
@@ -228,7 +217,7 @@ local ok, err = pcall(function()
 	pcall(function()
 		player.Name = [========[_USER_NAME]========]
 	end)
-	player.CharacterAppearance = _CHAR_APPEARANCE
+	player.CharacterAppearance = "_CHAR_APPEARANCE"
 	Visit:SetUploadUrl ""
 end)
 
@@ -240,6 +229,6 @@ pcall(function()
 	game:SetScreenshotInfo ""
 end)
 pcall(function()
-	game:SetVideoInfo '<?xml version="1.0"?><entry xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:yt="http://gdata.youtube.com/schemas/2007"><media:group><media:title type="plain"><![CDATA[Mercury Place]]></media:title><media:description type="plain"><![CDATA[ For more games visit http://banland.xyz]]></media:description><media:category scheme="http://gdata.youtube.com/schemas/2007/categories.cat">Games</media:category><media:keywords>Mercury, video, free game, online virtual world</media:keywords></media:group></entry>'
+	game:SetVideoInfo '<?xml version="1.0"?><entry xmlns="http://w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:yt="http://gdata.youtube.com/schemas/2007"><media:group><media:title type="plain"><![CDATA[Mercury Place]]></media:title><media:description type="plain"><![CDATA[ For more games visit http://banland.xyz]]></media:description><media:category scheme="http://gdata.youtube.com/schemas/2007/categories.cat">Games</media:category><media:keywords>Mercury, video, free game, online virtual world</media:keywords></media:group></entry>'
 end)
 -- use single quotes here because the video info string may have unescaped double quotes
