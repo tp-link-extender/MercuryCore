@@ -48,7 +48,7 @@ InsertService:SetUserSetsUrl(
 )
 InsertService:SetCollectionUrl(path "game/tools/insertasset?sid=%d")
 InsertService:SetAssetUrl(path "asset?id=%d")
-InsertService:SetAssetVersionUrl(path "Asset/?assetversionid=%d")
+InsertService:SetAssetVersionUrl(path "asset?assetversionid=%d")
 
 pcall(function()
 	SocialService:SetFriendUrl(

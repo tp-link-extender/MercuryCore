@@ -113,7 +113,7 @@ func main() {
 		Assert(err, "Failed to read render script")
 
 		script := string(loadScript)
-		script = strings.ReplaceAll(script, "_PING_URL", `"http://localhost:64990/ping"`)
+		script = strings.ReplaceAll(script, "_PING_URL", "http://localhost:64990/ping")
 
 		id := r.PathValue("id")
 		currentTemplate := strings.ReplaceAll(template, "_TASK_ID", id)

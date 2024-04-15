@@ -18,10 +18,6 @@ pcall(function()
 	game:SetPlaceId(_PLACE_ID, false)
 end)
 
--- if we are on a touch device, no blocking http calls allowed! This can cause a crash on iOS
--- In general we need a long term strategy to remove blocking http calls from all platforms
--- local isTouchDevice = UserInputService.TouchEnabled
-
 settings()["Game Options"].CollisionSoundEnabled = true
 pcall(function()
 	settings().Rendering.EnableFRM = true
@@ -35,8 +31,6 @@ pcall(function()
 		Enum.EnviromentalPhysicsThrottle.DefaultAuto
 end)
 
--- arguments ---------------------------------------
--- (there aren't any)
 local threadSleepTime = 15
 
 -- local test = _IS_STUDIO_JOIN -- unused
@@ -121,7 +115,6 @@ local function requestCharacter(replicator)
 
 	if not ok then
 		reportError(err)
-		return
 	end
 end
 
@@ -172,15 +165,16 @@ local function onConnectionRejected()
 end
 
 local function onPlayerIdled(idleTime)
-	if idleTime > 20 * 60 then
-		setMessage(
-			string.format(
-				"You were disconnected for being idle %d minutes",
-				idleTime / 60
-			)
-		)
-		Client:Disconnect()
+	if idleTime < 20 * 60 then
+		return
 	end
+	setMessage(
+		string.format(
+			"You were disconnected for being idle %d minutes",
+			idleTime / 60
+		)
+	)
+	Client:Disconnect()
 end
 
 -- main ------------------------------------------------------------
@@ -229,6 +223,6 @@ pcall(function()
 	game:SetScreenshotInfo ""
 end)
 pcall(function()
-	game:SetVideoInfo '<?xml version="1.0"?><entry xmlns="http://w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:yt="http://gdata.youtube.com/schemas/2007"><media:group><media:title type="plain"><![CDATA[Mercury Place]]></media:title><media:description type="plain"><![CDATA[ For more games visit http://banland.xyz]]></media:description><media:category scheme="http://gdata.youtube.com/schemas/2007/categories.cat">Games</media:category><media:keywords>Mercury, video, free game, online virtual world</media:keywords></media:group></entry>'
+	game:SetVideoInfo '<?xml version="1.0"?><entry xmlns="http://w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:yt="http://gdata.youtube.com/schemas/2007"><media:group><media:title type="plain"><![CDATA[Mercury Place]]></media:title><media:description type="plain"><![CDATA[ For more games visit https://mercury2.com]]></media:description><media:category scheme="http://gdata.youtube.com/schemas/2007/categories.cat">Games</media:category><media:keywords>Mercury, video, free game, online virtual world</media:keywords></media:group></entry>'
 end)
 -- use single quotes here because the video info string may have unescaped double quotes

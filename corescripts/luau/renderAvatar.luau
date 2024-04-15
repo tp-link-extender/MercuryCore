@@ -5,7 +5,7 @@ local ThumbnailGenerator =
 	game:GetService "ThumbnailGenerator" :: ThumbnailGenerator
 local RenderModule = require "../Modules/Render"
 local SetupAvatar = require "../Modules/Render/SetupAvatar"
-local Render = RenderModule(_BASE_URL, _PING_URL, _THUMBNAIL_KEY) -- avoid ambiguous syntax after compilation
+local Render = RenderModule(_BASE_URL, "_PING_URL", _THUMBNAIL_KEY) -- avoid ambiguous syntax after compilation
 local New = require("../Modules/New").New
 
 local player = SetupAvatar(
