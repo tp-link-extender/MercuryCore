@@ -14,19 +14,21 @@ const schema = z.object({
 	bannerBody: z.string().optional(),
 })
 
+type Banner = { // bruce, it's been five years
+	id: string
+	active: boolean
+	bgColour: string
+	body: string
+	creator: BasicUser
+	textLight: boolean
+}
+
 export async function load({ locals }) {
 	await authorise(locals, 5)
 
 	return {
 		form: await superValidate(zod(schema)),
-		banners: await query<{
-			id: string
-			active: boolean
-			bgColour: string
-			body: string
-			creator: BasicUser
-			textLight: boolean
-		}>(surql`
+		banners: await query<Banner>(surql`
 			SELECT
 				*,
 				meta::id(id) AS id,

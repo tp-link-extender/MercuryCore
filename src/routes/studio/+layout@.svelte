@@ -2,7 +2,7 @@
 	import { dev } from "$app/environment"
 
 	import "/src/global.styl"
-	import "/src/fa/sass/fontawesome.styl"
+	import "/src/fontawesome.styl"
 	import "uno.css"
 	import "/src/routes/studio/studio.styl"
 

@@ -6,6 +6,7 @@ import { superValidate, message } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import type { RequestEvent } from "./$types"
+import auditLog from "$lib/server/auditLog.surql"
 
 const schema = z.object({
 	enableInviteCustom: z.boolean().optional(),
@@ -15,28 +16,20 @@ const schema = z.object({
 	inviteUses: z.number().int().min(1).max(100).default(1),
 })
 
+type Invite = {
+	id: string
+	created: string
+	usesLeft: number
+	expiry: string
+	creator?: BasicUser
+}
+
 export async function load({ locals }) {
 	await authorise(locals, 5)
 
-	const invites = await query<{
-		id: string
-		created: string
-		usesLeft: number
-		expiry: string
-		creator?: BasicUser
-	}>(
-		surql`
-			SELECT
-				*,
-				meta::id(id) AS id,
-				(SELECT number, status, username
-				FROM <-created<-user)[0] AS creator
-			FROM regKey ORDER BY creation DESC`
-	)
-
 	return {
 		form: await superValidate(zod(schema)),
-		invites,
+		invites: await query<Invite>(import("./invites.surql")),
 	}
 }
 
@@ -54,12 +47,9 @@ async function getData(e: RequestEvent) {
 export const actions: import("./$types").Actions = {}
 actions.create = async e => {
 	const { user, form, error } = await getData(e)
-
-	console.log(error)
 	if (error) return error
-	const { getClientAddress } = e
 
-	const limit = ratelimit(form, "createInvite", getClientAddress, 30)
+	const limit = ratelimit(form, "createInvite", e.getClientAddress, 30)
 	if (limit) return limit
 
 	const {
@@ -93,14 +83,11 @@ actions.create = async e => {
 				created: time::now()
 			};
 			RELATE $user->created->$key;
-			CREATE auditLog CONTENT {
-				action: "Administration",
-				note: string::concat("Created invite key ", meta::id($key[0].id)),
-				user: $user,
-				time: time::now()
-			};
+			LET $note = string::concat("Created invite key ", meta::id($key[0].id));
+			${auditLog};
 			COMMIT TRANSACTION`,
 		{
+			action: "Administration",
 			user: `user:${user.id}`,
 			inviteUses,
 			expiry,
@@ -131,21 +118,12 @@ actions.disable = async e => {
 			status: 400,
 		})
 
-	await query(
-		surql`
-			UPDATE $key SET usesLeft = 0;
-			CREATE auditLog CONTENT {
-				action: "Administration",
-				note: $note,
-				user: $user,
-				time: time::now()
-			}`,
-		{
-			note: `Disable invite key ${id}`,
-			user: `user:${user.id}`,
-			key: `regKey:⟨${id}⟩`,
-		}
-	)
+	await query(surql`UPDATE $key SET usesLeft = 0; ${auditLog}`, {
+		action: "Administration",
+		note: `Disable invite key ${id}`,
+		user: `user:${user.id}`,
+		key: `regKey:⟨${id}⟩`,
+	})
 
 	return message(form, "Invite key disabled successfully")
 }

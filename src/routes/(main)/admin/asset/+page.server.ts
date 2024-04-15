@@ -5,6 +5,7 @@ import { squery, query, surql } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import fs from "node:fs/promises"
 import type { RequestEvent } from "./$types"
+import auditLog from "$lib/server/auditLog.surql"
 
 type Asset = {
 	name: string
@@ -19,21 +20,9 @@ type Asset = {
 }
 
 export const load = async ({ locals }) => ({
-	assets: await query<Asset>(
-		surql`
-			SELECT
-				meta::id(id) AS id,
-				name,
-				price,
-				type,
-				(SELECT number, status, username
-				FROM <-created<-user)[0] AS creator,
-				(SELECT meta::id(id) AS id, name
-				FROM ->imageAsset->asset)[0] AS imageAsset
-			FROM asset WHERE visibility = "Pending"
-				AND type INSIDE [17, 18, 2, 11, 12, 19, 8]`,
-		{ user: `user:${(await authorise(locals, 3)).user.id}` }
-	),
+	assets: await query<Asset>(import("./asset.surql"), {
+		user: `user:${(await authorise(locals, 3)).user.id}`,
+	}),
 })
 
 async function getData({ locals, url }: RequestEvent) {
@@ -49,7 +38,7 @@ async function getData({ locals, url }: RequestEvent) {
 	}
 	const asset = await squery<{
 		name: string
-	}>(surql`SELECT * FROM $asset`, params)
+	}>(surql`SELECT name FROM $asset`, params)
 
 	if (!asset) error(404, "Asset not found")
 
@@ -67,14 +56,10 @@ actions.approve = async e => {
 		surql`
 			UPDATE $asset SET visibility = "Visible";
 			UPDATE $asset->imageAsset->asset SET visibility = "Visible";
-			CREATE auditLog CONTENT {
-				action: "Moderation",
-				note: $note,
-				user: $user,
-				time: time::now()
-			}`,
+			${auditLog}`,
 		{
 			...params,
+			action: "Moderation",
 			note: `Approve asset ${assetName} (id ${id})`,
 		}
 	)
@@ -85,14 +70,10 @@ actions.deny = async e => {
 		surql`
 			UPDATE $asset SET visibility = "Moderated";
 			UPDATE $asset->imageAsset->asset SET visibility = "Moderated";
-			CREATE auditLog CONTENT {
-				action: "Moderation",
-				note: $note,
-				user: $user,
-				time: time::now()
-			}`,
+			${auditLog}`,
 		{
 			...params,
+			action: "Moderation",
 			note: `Moderate asset ${assetName} (id ${id})`,
 		}
 	)
@@ -124,15 +105,11 @@ actions.purge = async e => {
 			surql`
 				DELETE $asset;
 				DELETE $imageAsset;
-				CREATE auditLog CONTENT {
-					action: "Moderation",
-					note: $note,
-					user: $user,
-					time: time::now()
-				}`,
+				${auditLog}`,
 			{
 				...params,
 				imageAsset: `asset:${iaid}`,
+				action: "Moderation",
 				note: `Purge asset ${assetName} (id ${id})`,
 			}
 		),

@@ -5,6 +5,7 @@ import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
+import auditLog from "$lib/server/auditLog.surql"
 
 const schema = z.object({
 	username: z.string().min(3).max(21),
@@ -79,8 +80,9 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 		"AccountDeleted",
 	]
 	const qParams = {
-		moderator: `user:${user.id}`,
+		user: `user:${user.id}`,
 		moderatee: `user:${getModeratee.id}`,
+		action: "Moderation",
 	}
 
 	if (intAction === 5) {
@@ -88,7 +90,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 		if (
 			!(await findWhere(
 				"moderation",
-				surql`in = $moderator
+				surql`in = $user
 					AND out = $moderatee
 					AND active = true`,
 				qParams
@@ -103,7 +105,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 		if (
 			await findWhere(
 				"moderation",
-				surql`in = $moderator
+				surql`in = $user
 					AND out = $moderatee
 					AND active = true
 					AND type = "AccountDeleted"`,
@@ -119,15 +121,10 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 		await query(
 			surql`
 				UPDATE moderation SET active = false WHERE out = $moderatee;
-				CREATE auditLog CONTENT {
-					action: "Moderation",
-					note: $note,
-					user: $moderator,
-					time: time::now(),
-				}`,
+				${auditLog}`,
 			{
-				note: `Unban ${username}`,
 				...qParams,
+				note: `Unban ${username}`,
 			}
 		)
 
@@ -139,8 +136,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	if (
 		await findWhere(
 			"moderation",
-			surql`out = $moderatee
-					AND active = true`,
+			surql`out = $moderatee AND active = true`,
 			qParams
 		)
 	)
@@ -166,12 +162,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 				timeEnds: $timeEnds,
 				active: true,
 			};
-			CREATE auditLog CONTENT {
-				action: "Moderation",
-				note: $note,
-				user: $moderator,
-				time: time::now(),
-			}`,
+			${auditLog}`,
 		{
 			note: `${notes[intAction - 1]}: ${reason}`,
 			reason,

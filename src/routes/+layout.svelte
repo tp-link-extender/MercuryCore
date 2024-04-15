@@ -5,7 +5,7 @@
 
 	import "/src/nprogress.styl"
 	import "/src/global.styl"
-	import "/src/fa/sass/fontawesome.styl"
+	import "/src/fontawesome.styl"
 	import "uno.css"
 
 	export let data
