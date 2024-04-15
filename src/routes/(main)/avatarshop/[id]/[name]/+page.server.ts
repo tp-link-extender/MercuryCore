@@ -22,7 +22,7 @@ const SELECTCOMMENTS = recurse(
 		(${from} <-replyToAsset<-assetComment
 		WHERE !->replyToComment
 		ORDER BY pinned DESC, score DESC) AS replies`,
-	// Make sure it's not a reply to another reply
+	// Make sure it's not a reply to a comment
 	"replyToComment",
 	"assetComment"
 )
@@ -44,6 +44,8 @@ type Asset = {
 	visibility: string
 }
 
+const assetQuery = (await import("./asset.surql")).default
+
 export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
 
@@ -51,20 +53,7 @@ export async function load({ locals, params }) {
 	const id = +params.id
 
 	const asset = await squery<Asset>(
-		surql`
-			SELECT
-				*,
-				meta::id(id) AS id,
-				(SELECT number, status, username
-				FROM <-created<-user)[0] AS creator,
-				count(<-owns<-user) AS sold,
-				$user INSIDE <-owns<-user.id AS owned,
-
-				(SELECT text, updated FROM $parent.description
-				ORDER BY updated DESC)[0] AS description,
-
-				${SELECTCOMMENTS}
-			FROM $asset`,
+		assetQuery.replace("_SELECTCOMMENTS", SELECTCOMMENTS),
 		{
 			asset: `asset:${id}`,
 			user: `user:${user.id}`,
@@ -126,19 +115,11 @@ async function findComment<T>(
 }
 
 const updateVisibility = (visibility: string, text: string, id: string) =>
-	query(
-		surql`
-			BEGIN TRANSACTION;
-			LET $poster = (SELECT <-posted<-user AS poster FROM $forumReply)[0].poster;
-
-			UPDATE $assetComment SET content += {
-				text: $text,
-				updated: time::now(),
-			};
-			UPDATE $assetComment SET visibility = $visibility;
-			COMMIT TRANSACTION`,
-		{ assetComment: `assetComment:${id}`, text, visibility }
-	)
+	query(import("./updateVisibility.surql"), {
+		assetComment: `assetComment:${id}`,
+		text,
+		visibility,
+	})
 
 const pinComment = (pinned: boolean) => async (e: RequestEvent) => {
 	await query(surql`UPDATE $assetComment SET pinned = $pinned`, {
@@ -156,55 +137,39 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	const limit = ratelimit(form, "assetComment", getClientAddress, 5)
 	if (limit) return limit
 
-	const replyId = url.searchParams.get("rid")
+	const commentId = url.searchParams.get("rid")
 	// If there is a replyId, it is a reply to another comment
 
 	const content = form.data.content.trim()
 	if (!content)
 		return formError(form, ["content"], ["Comment cannot be empty"])
 
-	if (replyId && !/^[0-9a-z]+$/.test(replyId)) error(400, "Invalid reply id")
+	if (commentId && !/^[0-9a-z]+$/.test(commentId))
+		error(400, "Invalid comment id")
 
 	const commentAuthor = await squery<{ id: string }>(
 		surql`SELECT meta::id(id) AS id FROM ` +
-			(replyId
+			(commentId
 				? surql`$comment<-posted<-user`
 				: surql`$asset<-created<-user`),
 		{
-			comment: `assetComment:${replyId}`,
+			comment: `assetComment:${commentId}`,
 			asset: `asset:${params.id}`,
 		}
 	)
 
-	if (replyId && !commentAuthor) error(404)
+	if (commentId && !commentAuthor) error(404)
 
 	const receiverId = commentAuthor?.id || ""
 	const newReplyId = await query<string>(surql`[fn::id()]`)
 
-	await query(
-		surql`
-			LET $reply = CREATE $assetComment CONTENT {
-				posted: time::now(),
-				visibility: "Visible",
-				pinned: false,
-				content: [{
-					text: $content,
-					updated: time::now(),
-				}],
-			};
-			RELATE $reply->replyToAsset->$asset;
-			IF $replyId {
-				RELATE $reply->replyToComment->$replyId;
-			};
-			RELATE $user->posted->$reply`,
-		{
-			content,
-			user: `user:${user.id}`,
-			assetComment: `assetComment:${newReplyId}`,
-			asset: `asset:${params.id}`,
-			replyId: replyId ? `assetComment:${replyId}` : undefined,
-		}
-	)
+	await query(import("./createComment.surql"), {
+		content,
+		user: `user:${user.id}`,
+		assetComment: `assetComment:${newReplyId}`,
+		asset: `asset:${params.id}`,
+		commentId: commentId ? `assetComment:${commentId}` : undefined,
+	})
 
 	await Promise.all([
 		user.id !== receiverId &&
@@ -218,11 +183,11 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 						read: false,
 					}`,
 				{
-					type: replyId ? "AssetCommentReply" : "AssetComment",
+					type: commentId ? "AssetCommentReply" : "AssetComment",
 					sender: `user:${user.id}`,
 					receiver: `user:${receiverId}`,
 					note: `${user.username} ${
-						replyId
+						commentId
 							? "replied to your comment"
 							: "commented on your asset"
 					}: ${content}`,

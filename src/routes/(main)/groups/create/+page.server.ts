@@ -67,19 +67,10 @@ actions.default = async ({ request, locals }) => {
 		return formError(form, ["other"], [e.message])
 	}
 
-	await query(
-		surql`
-			LET $group = CREATE group CONTENT {
-				name: $name,
-				created: time::now(),
-			};
-			RELATE $user->owns->$group SET time = time::now();
-			RELATE $user->member->$group SET time = time::now()`,
-		{
-			name,
-			user: `user:${user.id}`,
-		}
-	)
+	await query(import("./create.surql"), {
+		name,
+		user: `user:${user.id}`,
+	})
 
 	redirect(302, `/groups/${name}`)
 }

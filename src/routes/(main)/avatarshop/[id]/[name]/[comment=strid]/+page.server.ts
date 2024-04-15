@@ -18,6 +18,8 @@ type AssetComment = Replies[number] & {
 	}
 }
 
+const assetCommentsQuery = (await import("./comments.surql")).default
+
 export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
 
@@ -39,29 +41,7 @@ export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
 
 	const assetComments = await query<AssetComment>(
-		surql`
-			SELECT
-				*,
-				(SELECT text, updated FROM $parent.content
-				ORDER BY updated DESC) AS content,
-				meta::id(id) AS id,
-				(IF ->replyToComment->assetComment.id THEN
-					meta::id(->replyToComment[0]->assetComment[0].id)
-				END) AS parentReplyId,
-				(SELECT number, username FROM <-posted<-user)[0] AS author,
-
-				count(<-likes) - count(<-dislikes) AS score,
-				$user INSIDE <-likes<-user.id AS likes,
-				$user INSIDE <-dislikes<-user.id AS dislikes,
-
-				(SELECT
-					title,
-					meta::id(id) AS id,
-					->in[0]->forumCategory[0].name as forumCategoryName
-				FROM $forumPost)[0] AS parentPost,
-
-				${SELECTREPLIES}
-			FROM $assetComment`,
+		assetCommentsQuery.replace("_SELECTREPLIES", SELECTREPLIES),
 		{
 			assetComment: `assetComment:${params.comment}`,
 			forumPost: `forumPost:${params.id}`,

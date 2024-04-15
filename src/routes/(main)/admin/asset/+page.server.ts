@@ -6,18 +6,20 @@ import { error, fail } from "@sveltejs/kit"
 import fs from "node:fs/promises"
 import type { RequestEvent } from "./$types"
 
-export const load = async ({ locals }) => ({
-	assets: await query<{
-		name: string
-		price: number
+type Asset = {
+	name: string
+	price: number
+	id: number
+	type: string
+	creator: BasicUser
+	imageAsset?: {
 		id: number
-		type: string
-		creator: BasicUser
-		imageAsset?: {
-			id: number
-			name: string
-		}
-	}>(
+		name: string
+	}
+}
+
+export const load = async ({ locals }) => ({
+	assets: await query<Asset>(
 		surql`
 			SELECT
 				meta::id(id) AS id,
@@ -29,7 +31,7 @@ export const load = async ({ locals }) => ({
 				(SELECT meta::id(id) AS id, name
 				FROM ->imageAsset->asset)[0] AS imageAsset
 			FROM asset WHERE visibility = "Pending"
-				AND type INSIDE [17, 18, 2, 11, 12, 19]`,
+				AND type INSIDE [17, 18, 2, 11, 12, 19, 8]`,
 		{ user: `user:${(await authorise(locals, 3)).user.id}` }
 	),
 })

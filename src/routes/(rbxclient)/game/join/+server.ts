@@ -24,20 +24,9 @@ export async function GET({ url }) {
 
 	if (!clientTicket) error(400, "Invalid Request")
 
-	const gameSession = await squery<Session>(
-		surql`
-			SELECT
-				(SELECT
-					meta::id(id) AS id,
-					serverIP,
-					serverPort,
-					(SELECT number FROM <-owns<-user)[0] AS ownerUser
-				FROM ->place)[0] AS place,
-				(SELECT username, number, permissionLevel
-				FROM <-user)[0] AS user
-			FROM $playingId`,
-		{ playingId: `playing:${clientTicket}` }
-	)
+	const gameSession = await squery<Session>(import("./join.surql"), {
+		playingId: `playing:${clientTicket}`,
+	})
 
 	if (!gameSession) error(400, "Invalid Game Session")
 
@@ -68,7 +57,9 @@ export async function GET({ url }) {
 		.replaceAll("_USER_NAME", gameSession.user.username)
 		.replaceAll(
 			"_MEMBERSHIP_TYPE",
-			`Enum.MembershipType.${gameSession.user.permissionLevel >= 2 ? "BuildersClub" : "None"}`
+			`Enum.MembershipType.${
+				gameSession.user.permissionLevel >= 2 ? "BuildersClub" : "None"
+			}`
 		)
 		.replaceAll("_CHAR_APPEARANCE", charApp)
 		.replaceAll("_PING_URL", pingUrl)

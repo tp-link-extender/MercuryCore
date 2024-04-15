@@ -19,6 +19,8 @@ type ForumReplies = Replies[number] & {
 	}
 }
 
+const forumRepliesQuery = (await import("./reply.surql")).default
+
 export async function load({ locals, params }) {
 	const post = await squery<{
 		author: {
@@ -27,8 +29,7 @@ export async function load({ locals, params }) {
 	}>(
 		surql`
 			SELECT
-				(SELECT username
-				FROM <-posted<-user)[0] AS author
+				(SELECT username FROM <-posted<-user)[0] AS author
 			FROM $forumPost`,
 		{ forumPost: `forumPost:${params.post}` }
 	)
@@ -38,33 +39,9 @@ export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
 
 	const forumReplies = await query<ForumReplies>(
-		surql`
-			SELECT
-				*,
-				(SELECT text, updated FROM $parent.content
-				ORDER BY updated DESC) AS content,
-				meta::id(id) AS id,
-				$forumPost AS parentPost,
-				(IF ->replyToReply->forumReply.id THEN
-					meta::id(->replyToReply[0]->forumReply[0].id)
-				END) AS parentReplyId,
-				(SELECT number, status, username
-				FROM <-posted<-user)[0] AS author,
-
-				count(<-likes) - count(<-dislikes) AS score,
-				$user INSIDE <-likes<-user.id AS likes,
-				$user INSIDE <-dislikes<-user.id AS dislikes,
-
-				(SELECT
-					title,
-					meta::id(id) AS id,
-					->in[0]->forumCategory[0].name as forumCategoryName
-				FROM $forumPost)[0] AS parentPost,
-
-				${SELECTREPLIES}
-			FROM $forumReply`,
+		forumRepliesQuery.replace("_SELECTREPLIES", SELECTREPLIES),
 		{
-			forumReply: `forumReply:${params.comment}`,
+			forumReply: `forumReply:${params.reply}`,
 			forumPost: `forumPost:${params.post}`,
 			user: `user:${user.id}`,
 		}

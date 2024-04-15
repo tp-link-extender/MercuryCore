@@ -10,6 +10,7 @@
 		"sourceMap": true,
 		"strict": true,
 		"noErrorTruncation": true,
-		"strictPropertyInitialization": false
+		"strictPropertyInitialization": false,
+		"typeRoots": ["./src/app.d.ts"]
 	}
 }

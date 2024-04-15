@@ -1,0 +1,12 @@
+SELECT
+	*,
+	meta::id(id) AS id,
+	(SELECT number, status, username FROM <-created<-user)[0] AS creator,
+	count(<-owns<-user) AS sold,
+	$user INSIDE <-owns<-user.id AS owned,
+
+	(SELECT text, updated FROM $parent.description
+	ORDER BY updated DESC)[0] AS description,
+
+	_SELECTCOMMENTS
+FROM $asset;

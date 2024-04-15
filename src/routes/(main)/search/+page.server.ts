@@ -30,12 +30,14 @@ export const load = async ({ url }) => {
 	if (category && !["users", "places", "assets", "groups"].includes(category))
 		error(400, "Invalid category")
 
+	const param = { searchQ }
+
 	if (category === "users") {
 		const userExists = await squery<{ number: number }>(
 			surql`
 				SELECT number FROM user
 				WHERE username = $searchQ`,
-			{ searchQ }
+			param
 		)
 
 		if (userExists) redirect(302, `/user/${userExists.number}`)
@@ -46,56 +48,18 @@ export const load = async ({ url }) => {
 	return {
 		query: searchQ,
 		category,
-		users:
-			category === "users" &&
-			(await query<BasicUser>(
-				surql`
-					SELECT number, status, username
-					FROM user
-					WHERE string::lowercase($searchQ) INSIDE string::lowercase(username)`,
-				{ searchQ }
-			)),
-		places:
-			category === "places" &&
-			(await query<Place>(
-				surql`
-					SELECT
-						meta::id(id) AS id,
-						name,
-						serverPing,
-						count(
-							SELECT 1 FROM <-playing
-							WHERE valid AND ping > time::now() - 35s
-						) AS playerCount,
-						count(<-likes) AS likeCount,
-						count(<-dislikes) AS dislikeCount
-					FROM place
-					WHERE !privateServer
-						AND !deleted
-						AND string::lowercase($searchQ) INSIDE string::lowercase(name)`,
-				{ searchQ }
-			)),
-		assets:
-			category === "assets" &&
-			(await query<Asset>(
-				surql`
-					SELECT meta::id(id) AS id, name, price
-					FROM asset
-					WHERE string::lowercase($searchQ) INSIDE string::lowercase(name)
-						AND type INSIDE [17, 18, 2, 11, 12, 19]`,
-				{ searchQ }
-			)),
-		groups:
-			category === "groups" &&
-			(await query<Group>(
-				surql`
-					SELECT
-						name,
-						count(<-member) AS memberCount
-					FROM group
-					WHERE string::lowercase($searchQ) INSIDE string::lowercase(name)`,
-				{ searchQ }
-			)),
+		...(category === "users" && {
+			users: await query<BasicUser>(import("./searchUsers.surql"), param),
+		}),
+		...(category === "places" && {
+			places: await query<Place>(import("./searchPlaces.surql"), param),
+		}),
+		...(category === "assets" && {
+			assets: await query<Asset>(import("./searchAssets.surql"), param),
+		}),
+		...(category === "groups" && {
+			groups: await query<Group>(import("./searchGroups.surql"), param),
+		}),
 	}
 }
 

@@ -15,15 +15,7 @@ type Transaction = {
 }
 
 export const load = async ({ locals }) => ({
-	transactions: await query<Transaction>(
-		surql`
-			SELECT
-				*,
-				(SELECT number, status, username
-				FROM in.*)[0] AS sender,
-				(SELECT number, status, username
-				FROM out.*)[0] AS receiver
-			FROM array::union($user->transaction, $user<-transaction)`,
-		{ user: `user:${(await authorise(locals)).user.id}` }
-	),
+	transactions: await query<Transaction>(import("./transactions.surql"), {
+		user: `user:${(await authorise(locals)).user.id}`,
+	}),
 })

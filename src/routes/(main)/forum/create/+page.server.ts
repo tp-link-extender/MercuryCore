@@ -60,28 +60,13 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 
 	const postId = await squery<string>(surql`[fn::id()]`)
 
-	await query(
-		surql`
-			LET $post = CREATE $postId CONTENT {
-				title: $title,
-				posted: time::now(),
-				visibility: "Visible",
-				pinned: false, # otherwise the post sorting would sort by [true, false, null] and you'll get random ordering on posts that have been unpinned
-				content: [{
-					text: $content,
-					updated: time::now(),
-				}],
-			};
-			RELATE $post->in->$category;
-			RELATE $user->posted->$post`,
-		{
-			user: `user:${user.id}`,
-			postId: `forumPost:${postId}`,
-			category: `forumCategory:⟨${category}⟩`,
-			title,
-			content,
-		}
-	)
+	await query(import("./create.surql"), {
+		user: `user:${user.id}`,
+		postId: `forumPost:${postId}`,
+		category: `forumCategory:⟨${category}⟩`,
+		title,
+		content,
+	})
 
 	await like(user.id, `forumPost:${postId}`)
 

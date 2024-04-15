@@ -53,18 +53,7 @@ type Place = {
 }
 
 const placeQuery = async (id: string | number) =>
-	await squery<Place>(
-		surql`
-			SELECT
-				*,
-				meta::id(id) AS id,
-				(SELECT number, status, username
-				FROM <-owns<-user)[0] AS owner,
-				(SELECT text, updated FROM $parent.description
-				ORDER BY updated DESC)[0] AS description
-			FROM $place`,
-		{ place: `place:${id}` }
-	)
+	await squery<Place>(import("./settings.surql"), { place: `place:${id}` })
 
 export async function load({ locals, params }) {
 	const getPlace = await placeQuery(params.id)
@@ -125,28 +114,11 @@ actions.view = async e => {
 
 	const { title, description } = form.data
 
-	await query(
-		surql`
-			LET $og = SELECT
-				title,
-				(SELECT text, updated FROM $parent.description
-				ORDER BY updated DESC)[0] AS description
-			FROM $place;
-
-			UPDATE $place SET name = $title;
-
-			IF $og.description.text != $description {
-				UPDATE $place SET description += {
-					text: $description,
-					updated: time::now(),
-				};
-			}`,
-		{
-			place: `place:${id}`,
-			title,
-			description: description || "",
-		}
-	)
+	await query(import("./updateSettings.surql"), {
+		place: `place:${id}`,
+		title,
+		description: description || "",
+	})
 
 	return message(form, "View settings updated successfully!")
 }

@@ -46,20 +46,7 @@ export const surql = (
 		return newQuery
 	}, "")
 
-if (!building)
-	await db.query(surql`
-		DEFINE TABLE stuff SCHEMALESS;
-
-		DEFINE TABLE user SCHEMALESS;
-		DEFINE INDEX usernameI ON TABLE user COLUMNS username UNIQUE;
-		DEFINE INDEX numberI ON TABLE user COLUMNS number UNIQUE;
-		DEFINE INDEX emailI ON TABLE user COLUMNS email UNIQUE;
-
-		DEFINE FUNCTION fn::id() {
-			RETURN function((UPDATE ONLY stuff:increment SET ids += 1).ids) {
-				return arguments[0].toString(36) // jar var script in muh dayta bayse
-			}
-		}`)
+if (!building) await db.query((await import("./init.surql")).default)
 
 const stupidError =
 	"The query was not executed due to a failed transaction. There was a problem with a datastore transaction: Resource busy: "
@@ -85,6 +72,10 @@ async function fixError<T>(q: () => Promise<T>) {
 }
 
 type Param = string | number | boolean | null | object | Date | undefined // basically anything
+type Input = string | Promise<{ default: string }>
+
+const getInput = async (input: Input) =>
+	typeof input === "string" ? input : (await input).default
 
 /**
  * Executes a query in SurrealDB and returns its results.
@@ -98,10 +89,12 @@ type Param = string | number | boolean | null | object | Date | undefined // bas
  * ) // [{ email: heli@odex.cf }] - return an array for this query
  */
 export const query = <T>(
-	input: string,
+	input: Input,
 	params?: { [k: string]: Param }
 ): Promise<T[]> =>
-	fixError(async () => (await db.query(input, params))?.[0] as T[])
+	fixError(
+		async () => (await db.query(await getInput(input), params))?.[0] as T[]
+	)
 
 /**
  * Executes a query in SurrealDB and returns the first item in its results.
@@ -114,8 +107,11 @@ export const query = <T>(
  * 	{ username: "Heliodex" }
  * ) // { email: heli@odex.cf } - returns an object for this query
  */
-export const squery = <T>(input: string, params?: { [k: string]: Param }) =>
-	fixError(async () => ((await db.query(input, params))?.[0] as T[])[0])
+export const squery = <T>(input: Input, params?: { [k: string]: Param }) =>
+	fixError(
+		async () =>
+			((await db.query(await getInput(input), params))?.[0] as T[])[0]
+	)
 
 /**
  * Executes multiple queries in SurrealDB and returns their results.
@@ -129,8 +125,8 @@ export const squery = <T>(input: string, params?: { [k: string]: Param }) =>
  * 		SELECT email FROM user WHERE username = $username`
  * ) // [null, [{ email: heli@odex.cf }]] - returns an array with an element for each query
  */
-export const mquery = <T>(input: string, params?: { [k: string]: Param }) =>
-	fixError(async () => (await db.query(input, params)) as T)
+export const mquery = <T>(input: Input, params?: { [k: string]: Param }) =>
+	fixError(async () => (await db.query(await getInput(input), params)) as T)
 
 /**
  * Finds whether a record exists in the database.
@@ -215,60 +211,17 @@ export async function transaction(
 				link: string
 				time: string
 		  }[]
-	>(
-		surql`
-			BEGIN TRANSACTION; # lmfao
-			LET $taxRate = stuff:economy.taxRate OR 30;
-
-			LET $sender = (SELECT id, currency, number FROM user
-			WHERE number = $senderNumber OR id = $senderId)[0];
-			IF !$sender {
-				THROW "Sender not found"
-			};
-
-			LET $receiver = (SELECT id, currency, number FROM user
-			WHERE number = $receiverNumber OR id = $receiverId)[0];
-			IF !$receiver {
-				THROW "Receiver not found"
-			};
-
-			LET $senderAdmin = $sender.number == 1;
-			LET $receiverAdmin = $receiver.number == 1;
-
-			IF $amountSent > 0 {
-				IF !$senderAdmin AND $sender.currency < $amountSent {
-					THROW string::concat("Insufficient funds: You need ", $amountSent - $sender.currency, " more to buy this")
-				};
-
-				LET $finalAmount = math::round($amountSent * (1 - $taxRate / 100));
-
-				UPDATE $sender SET currency -=
-					IF $senderAdmin THEN 0 ELSE $amountSent END;
-
-				UPDATE $receiver SET currency +=
-					IF $receiverAdmin THEN 0 ELSE $finalAmount END;
-			};
-
-			RELATE $sender->transaction->$receiver CONTENT {
-				amountSent: $amountSent,
-				taxRate: $taxRate,
-				note: $note,
-				link: $link,
-				time: time::now(),
-			};
-			COMMIT TRANSACTION`,
-		{
-			...(sender?.number
-				? { senderNumber: sender.number }
-				: { senderId: `user:${sender.id}` }),
-			...(receiver?.number
-				? { receiverNumber: receiver.number }
-				: { receiverId: `user:${receiver.id}` }),
-			amountSent,
-			note,
-			link,
-		}
-	)
+	>(import("./transaction.surql"), {
+		...(sender?.number
+			? { senderNumber: sender.number }
+			: { senderId: `user:${sender.id}` }),
+		...(receiver?.number
+			? { receiverNumber: receiver.number }
+			: { receiverId: `user:${receiver.id}` }),
+		amountSent,
+		note,
+		link,
+	})
 
 	// todo test dis it might be broke
 	const e = getError(qResult)
@@ -289,18 +242,9 @@ export enum Action {
  * @param userId The id of the user who took the action
  */
 export async function auditLog(action: Action, note: string, userId: string) {
-	await query(
-		surql`
-			CREATE auditLog CONTENT {
-				action: $action,
-				note: $note,
-				user: $user,
-				time: time::now()
-			}`,
-		{
-			action,
-			note,
-			user: `user:${userId}`,
-		}
-	)
+	await query(import("./auditLog.surql"), {
+		action,
+		note,
+		user: `user:${userId}`,
+	})
 }

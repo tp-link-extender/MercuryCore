@@ -9,19 +9,7 @@ type Place = {
 	dislikeCount: number
 }
 
-const select = surql`
-	SELECT
-		meta::id(id) AS id,
-		name,
-		serverPing,
-		count(
-			SELECT 1 FROM <-playing
-			WHERE valid AND ping > time::now() - 35s
-		) AS playerCount,
-		count(<-likes) AS likeCount,
-		count(<-dislikes) AS dislikeCount
-	FROM place WHERE !privateServer AND !deleted
-	ORDER BY playerCount DESC, serverPing DESC`
+const select = (await import("./games.surql")).default
 
 export const load = async () => ({
 	places: await query<Place>(select),
@@ -29,9 +17,7 @@ export const load = async () => ({
 
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ request }) => ({
-	places: await query<Place>(
-		surql`${select}
-			AND string::lowercase($query) INSIDE string::lowercase(name)`,
-		{ query: (await request.formData()).get("q") as string }
-	),
+	places: await query<Place>(select, {
+		query: (await request.formData()).get("q") as string,
+	}),
 })

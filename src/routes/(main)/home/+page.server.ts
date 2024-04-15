@@ -33,35 +33,9 @@ export async function load({ locals }) {
 		`You are the ${ordinal(user?.number)} user to join Mercury!`,
 	]
 
-	const results = await mquery<unknown[]>(
-		surql`
-			# Places
-			SELECT
-				meta::id(id) AS id,
-				name,
-				serverPing,
-				count(
-					SELECT 1 FROM <-playing
-					WHERE valid AND ping > time::now() - 35s
-				) AS playerCount,
-				count(<-likes) AS likeCount,
-				count(<-dislikes) AS dislikeCount
-			FROM place WHERE !privateServer AND !deleted;
-
-			# Friends
-			SELECT number, status, username
-			FROM $user->friends->user OR $user<-friends<-user;
-
-			# Feed
-			SELECT
-				*,
-				(SELECT text, updated FROM $parent.content
-				ORDER BY updated DESC) AS content,
-				(SELECT number, status, username
-				FROM <-posted<-user)[0] as authorUser
-			FROM statusPost LIMIT 40`,
-		{ user: `user:${user.id}` }
-	)
+	const results = await mquery<unknown[]>(import("./home.surql"), {
+		user: `user:${user.id}`,
+	})
 
 	return {
 		stuff: {
@@ -104,20 +78,8 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	const content = form.data.status.trim()
 	if (!content) return formError(form, ["status"], ["Status cannot be empty"])
 
-	await query(
-		surql`
-			LET $status = CREATE statusPost CONTENT {
-				posted: time::now(),
-				visibility: "Visible",
-				content: [{
-					text: $content,
-					updated: time::now(),
-				}],
-			};
-			RELATE $user->posted->$status`,
-		{
-			content,
-			user: `user:${user.id}`,
-		}
-	)
+	await query(import("./status.surql"), {
+		content,
+		user: `user:${user.id}`,
+	})
 }

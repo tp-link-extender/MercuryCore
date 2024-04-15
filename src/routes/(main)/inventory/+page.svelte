@@ -3,8 +3,8 @@
 
 	export let data
 
-	let query = data.query,
-		searchedData: typeof data.assets = []
+	let query = data.query
+	let searchedData: typeof data.assets = []
 
 	// Run function whenever query changes
 	$: query &&

@@ -2,16 +2,18 @@ import { authorise } from "$lib/server/lucia"
 import { squery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
+type Asset = {
+	id: number
+	name: string
+	visibility: string
+}
+
 export async function GET({ locals, params }) {
 	if (!/^\d+$/.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
 
 	const id = +params.id
 
-	const asset = await squery<{
-		id: number
-		name: string
-		visibility: string
-	}>(
+	const asset = await squery<Asset>(
 		surql`
 			SELECT
 				meta::id(id) AS id,

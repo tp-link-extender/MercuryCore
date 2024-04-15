@@ -6,6 +6,12 @@ import { defineConfig } from "vite"
 
 export default defineConfig({
 	plugins: [
+		{
+			name: "surql",
+			transform(src: string, id: string) {
+				if (id.endsWith(".surql")) return `export default \`${src}\``
+			},
+		},
 		warmup({
 			clientFiles: ["./src/**/*.svelte"],
 		}),

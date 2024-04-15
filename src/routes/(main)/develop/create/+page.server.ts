@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { mquery, surql } from "$lib/server/surreal"
+import { mquery } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import {
@@ -109,49 +109,13 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 		return formError(form, ["asset"], ["Asset failed to upload"])
 	}
 
-	const res = await mquery<number[]>(
-		surql`
-			LET $id = (UPDATE ONLY stuff:increment SET asset += 1).asset;
-			LET $imageAsset = CREATE asset CONTENT {
-				id: $id,
-				name: $name,
-				type: 1,
-				price: 0,
-				description: [],
-				created: time::now(),
-				updated: time::now(),
-				visibility: "Pending",
-			};
-			RELATE $user->owns->$imageAsset;
-			RELATE $user->created->$imageAsset;
-
-			LET $id2 = (UPDATE ONLY stuff:increment SET asset += 1).asset;
-			LET $asset = CREATE asset CONTENT {
-				id: $id2,
-				name: $name,
-				type: $assetType,
-				price: $price,
-				description: [{
-					text: $description,
-					updated: time::now(),
-				}],
-				created: time::now(),
-				updated: time::now(),
-				visibility: "Pending",
-			};
-			RELATE $user->owns->$asset;
-			RELATE $user->created->$asset;
-			RELATE $asset->imageAsset->$imageAsset;
-			$id; # return the idz
-			$id2`,
-		{
-			name,
-			assetType,
-			price,
-			description,
-			user: `user:${user.id}`,
-		}
-	)
+	const res = await mquery<number[]>(import("./createAsset.surql"), {
+		name,
+		assetType,
+		price,
+		description,
+		user: `user:${user.id}`,
+	})
 
 	const imageAssetId = res[9]
 	const id = res[10] // concurrency issues fixed hopefully

@@ -136,23 +136,7 @@ async function getVersions(id: number, version?: number) {
 
 	console.log("CACHE", versions)
 
-	await query(
-		surql`
-			FOR $version IN $versions {
-				# can't do assetCache:$version.id or :($version.id) for some reason
-				# array record ids still hella useful though
-				UPDATE assetCache:[$version.id[0], $version.id[1]] CONTENT {
-					created: time::now(),
-					# what on earth do I name this field?
-					# cache invalidation AND naming things in the same query?
-					assetModified: $version.assetModified,
-					name: $version.name OR "Unnamed asset",
-					description: $version.description OR "No description available.",
-					type: $version.type,
-				}
-			}`,
-		{ versions }
-	)
+	await query(import("./getVersions.surql"), { versions })
 
 	return transformVersions(versions)
 }
@@ -246,63 +230,10 @@ actions.autopilot = async ({ request, locals }) => {
 	if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
 	if (!fs.existsSync("data/thumbnails")) fs.mkdirSync("data/thumbnails")
 
-	const res = await mquery<unknown[]>(
-		surql`
-			BEGIN TRANSACTION;
-			LET $user = (SELECT id FROM user WHERE number = 1)[0].id;
-			FOR $assetId IN $assets {
-				# All the assets are cached already
-				LET $id = (UPDATE ONLY stuff:increment SET asset += 1).asset;
-				LET $cached = (SELECT * FROM assetCache:[$assetId, 1])[0]; # version 1 is usually the only version
-				LET $asset = CREATE asset CONTENT {
-					id: $id,
-					name: $cached.name,
-					type: $cached.type,
-					price: 0,
-					description: [{
-						text: $cached.description,
-						updated: time::now(),
-					}],
-					created: time::now(),
-					updated: time::now(),
-					visibility: "Visible",
-				};
-				RELATE $user->owns->$asset;
-				RELATE $user->created->$asset;
-				RELATE $cached->createdAsset->$asset;
-			};
-			# Now time for the big one
-			LET $id = (UPDATE ONLY stuff:increment SET asset += 1).asset;
-			LET $cached = (SELECT data, type
-			FROM assetCache:[$assetId, $version])[0];
-			LET $asset = CREATE asset CONTENT {
-				id: $id,
-				name: $name,
-				type: $cached.type,
-				price: $price,
-				description: [{
-					text: $description,
-					updated: time::now(),
-				}],
-				created: time::now(),
-				updated: time::now(),
-				visibility: "Visible",
-			};
-			RELATE $user->owns->$asset;
-			RELATE $user->created->$asset;
-			{
-				id: $id,
-				type: $cached.type,
-			};
-			(SELECT
-				(SELECT meta::id(id) AS id
-				FROM ->createdAsset->asset)[0].id AS id,
-				type,
-				meta::id(id)[0] AS sharedId
-			FROM assetCache WHERE ->createdAsset->asset);
-			COMMIT TRANSACTION`,
-		{ assets: form.data.shared.split(",").map(s => +s), ...data }
-	)
+	const res = await mquery<unknown[]>(import("./createAutopilot.surql"), {
+		assets: form.data.shared.split(",").map(s => +s),
+		...data,
+	})
 
 	const { id, type } = res[7] as {
 		id: number

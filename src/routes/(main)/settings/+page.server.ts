@@ -36,27 +36,11 @@ actions.profile = async ({ request, locals }) => {
 
 	const { bio } = form.data
 
-	await query(
-		surql`
-			LET $og = SELECT
-				(SELECT text, updated FROM $parent.bio
-				ORDER BY updated DESC)[0] AS bio
-			FROM $user;
-
-			# UPDATE $user SET theme = $theme;
-
-			IF $og.bio.text != $bio {
-				UPDATE $user SET bio += {
-					text: $bio,
-					updated: time::now(),
-				}
-			}`,
-		{
-			user: `user:${user.id}`,
-			bio,
-			// theme,
-		}
-	)
+	await query(import("./updateProfile.surql"), {
+		user: `user:${user.id}`,
+		bio,
+		// theme,
+	})
 
 	return message(form, "Profile updated successfully!")
 }
@@ -103,8 +87,7 @@ actions.styling = async ({ request, locals }) => {
 	if (!form.valid) return formError(form)
 
 	const { css } = form.data
-	if (css === "undefined")
-		return message(form, "Styling already saved!")
+	if (css === "undefined") return message(form, "Styling already saved!")
 
 	await query(surql`UPDATE $user SET css = $css`, {
 		user: `user:${user.id}`,

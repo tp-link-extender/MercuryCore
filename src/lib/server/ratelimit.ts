@@ -31,7 +31,13 @@ export default function (
 	timeWindow: number,
 	maxRequests = 1
 ) {
-	const id = getClientAddress() + category
+	let id: string
+	try {
+		id = getClientAddress() + category
+	} catch {
+		console.log("Failed to ratelimit! Are you running Windows? Whoops, that sounds like a you problem!")
+		return
+	}
 	const currentTimewindow = ratelimitTimewindow.get(id) || Date.now()
 
 	const limit = () =>

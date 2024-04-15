@@ -2,6 +2,7 @@
 // from complaining about missing types.
 
 /// <reference types="lucia" />
+/// <reference types="@types/bun" />
 
 declare namespace svelteHTML {
 	import type { AttributifyAttributes } from "@unocss/preset-attributify"
@@ -44,6 +45,11 @@ declare global {
 		number: number
 		status: "Playing" | "Online" | "Offline"
 		username: string
+	}
+
+	declare module "*.surql" {
+		const value: string
+		export default value
 	}
 
 	namespace App {

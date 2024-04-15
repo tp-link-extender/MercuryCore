@@ -13,17 +13,9 @@ type Place = {
 }
 
 export async function load({ locals, params }) {
-	const place = await squery<Place>(
-		surql`
-			SELECT
-				name,
-				privateServer,
-				meta::id(id) AS id,
-				(SELECT meta::id(id) AS id
-				FROM <-owns<-user)[0] AS owner
-			FROM $place`,
-		{ place: `place:${params.id}` }
-	)
+	const place = await squery<Place>(import("./placeId.surql"), {
+		place: `place:${params.id}`,
+	})
 
 	if (
 		place &&

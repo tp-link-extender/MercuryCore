@@ -1,12 +1,5 @@
-import { query, surql } from "$lib/server/surreal"
-
-const select = surql`
-	SELECT
-		meta::id(id) AS id,
-		name,
-		price,
-		type
-	FROM asset WHERE visibility = "Visible"`
+import { query } from "$lib/server/surreal"
+import select from "./avatarshop.surql"
 
 export const load = async () => ({
 	assets: await query<{
@@ -19,9 +12,7 @@ export const load = async () => ({
 
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ request }) => ({
-	assets: await query(
-		surql`${select}
-			AND string::lowercase($query) INSIDE string::lowercase(name)`,
-		{ query: (await request.formData()).get("q") as string }
-	),
+	assets: await query(select, {
+		query: (await request.formData()).get("q") as string,
+	}),
 })

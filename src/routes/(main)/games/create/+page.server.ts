@@ -23,16 +23,15 @@ const schema = z.object({
 
 const placeCount = async (id: string) =>
 	(
-		await squery<{
-			count: number
-		}>(surql`SELECT count(->owns->place) FROM $user`, {
-			user: `user:${id}`,
-		})
+		await squery<{ count: number }>(
+			surql`SELECT count(->owns->place) FROM $user`,
+			{ user: `user:${id}` }
+		)
 	).count
 
-export const load = async ({ locals }) => ({
+export const load = async () => ({
 	form: await superValidate(zod(schema)),
-	placeCount: await placeCount((await authorise(locals)).user.id),
+	// placeCount: await placeCount((await authorise(locals)).user.id),
 })
 
 export const actions: import("./$types").Actions = {}
@@ -75,38 +74,15 @@ actions.default = async ({ request, locals }) => {
 		return formError(form, ["other"], [e.message])
 	}
 
-	await query(
-		surql`
-			LET $id = (UPDATE ONLY stuff:increment SET place += 1).place;
-			LET $place = CREATE place CONTENT {
-				id: $id,
-				name: $name,
-				description: [{
-					text: $description,
-					updated: time::now(),
-				}],
-				serverIP: $serverIP,
-				serverPort: $serverPort,
-				privateServer: $privateServer,
-				serverTicket: rand::guid(),
-				privateTicket: rand::guid(),
-				serverPing: 0,
-				maxPlayers: $maxPlayers,
-				created: time::now(),
-				updated: time::now(),
-				deleted: false,
-			};
-			RELATE $user->owns->$place`,
-		{
-			user: `user:${user.id}`,
-			name,
-			description,
-			serverIP,
-			serverPort,
-			privateServer,
-			maxPlayers,
-		}
-	)
+	await query(import("./create.surql"), {
+		user: `user:${user.id}`,
+		name,
+		description,
+		serverIP,
+		serverPort,
+		privateServer,
+		maxPlayers,
+	})
 
 	redirect(302, `/place/${id + 1}/${slug}`)
 }

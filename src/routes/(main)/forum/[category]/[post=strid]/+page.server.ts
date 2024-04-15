@@ -44,22 +44,13 @@ type ForumPost = {
 	visibility: string
 }
 
+const forumPostQuery = (await import("./post.surql")).default
+
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
 
 	const forumPost = await squery<ForumPost>(
-		surql`
-			SELECT
-				*,
-				meta::id(id) AS id,
-				(SELECT number, username FROM <-posted<-user)[0] AS author,
-				count(<-likes) - count(<-dislikes) AS score,
-				$user INSIDE <-likes<-user.id AS likes,
-				$user INSIDE <-dislikes<-user.id AS dislikes,
-				(->in->forumCategory)[0].name AS categoryName,
-
-				${SELECTREPLIES}
-			FROM $forumPost`,
+		forumPostQuery.replace("_SELECTREPLIES", SELECTREPLIES),
 		{
 			forumPost: `forumPost:${params.post}`,
 			user: `user:${user.id}`,
@@ -93,19 +84,11 @@ async function findReply<T>(
 }
 
 const updateVisibility = (visibility: string, text: string, id: string) =>
-	query(
-		surql`
-			BEGIN TRANSACTION;
-			LET $poster = (SELECT <-posted<-user AS poster FROM $forumReply)[0].poster;
-
-			UPDATE $forumReply SET content += {
-				text: $text,
-				updated: time::now(),
-			};
-			UPDATE $forumReply SET visibility = $visibility;
-			COMMIT TRANSACTION`,
-		{ forumReply: `forumReply:${id}`, text, visibility }
-	)
+	query(import("./updateVisibility.surql"), {
+		forumReply: `forumReply:${id}`,
+		text,
+		visibility,
+	})
 
 const pinThing = (pinned: boolean, thing: string) =>
 	query(surql`UPDATE $thing SET pinned = $pinned`, { thing, pinned })
@@ -159,30 +142,13 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 
 	const newReplyId = await squery<string>(surql`[fn::id()]`)
 
-	await query(
-		surql`
-			LET $reply = CREATE $forumReply CONTENT {
-				posted: time::now(),
-				visibility: "Visible",
-				pinned: false,
-				content: [{
-					text: $content,
-					updated: time::now(),
-				}],
-			};
-			RELATE $reply->replyToPost->$post;
-			IF $replyId {
-				RELATE $reply->replyToReply->$replyId;
-			};
-			RELATE $user->posted->$reply`,
-		{
-			content,
-			user: `user:${user.id}`,
-			forumReply: `forumReply:${newReplyId}`,
-			post: `forumPost:${params.post}`,
-			replyId: replyId ? `forumReply:${replyId}` : undefined,
-		}
-	)
+	await query(import("./createReply.surql"), {
+		content,
+		user: `user:${user.id}`,
+		forumReply: `forumReply:${newReplyId}`,
+		post: `forumPost:${params.post}`,
+		replyId: replyId ? `forumReply:${replyId}` : undefined,
+	})
 
 	if (user.id !== replypost.authorId)
 		await query(
