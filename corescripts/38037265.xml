@@ -199,7 +199,7 @@ humanoid.Died:connect(function() HealthChanged(0) end)</ProtectedString>
 					<Color3 name="BorderColor3">4279970357</Color3>
 					<int name="BorderSizePixel">1</int>
 					<bool name="Draggable">false</bool>
-					<Content name="Image"><url>http://banland.xyz/asset?id=34854607</url></Content>
+					<Content name="Image"><url>http://mercury2.com/asset?id=34854607</url></Content>
 					<string name="Name">hurtOverlay</string>
 					<UDim2 name="Position">
 						<XS>2</XS>
@@ -254,7 +254,7 @@ humanoid.Died:connect(function() HealthChanged(0) end)</ProtectedString>
 						<Color3 name="BorderColor3">4279970357</Color3>
 						<int name="BorderSizePixel">1</int>
 						<bool name="Draggable">false</bool>
-						<Content name="Image"><url>http://banland.xyz/asset?id=35238000</url></Content>
+						<Content name="Image"><url>http://mercury2.com/asset?id=35238000</url></Content>
 						<string name="Name">bkg</string>
 						<UDim2 name="Position">
 							<XS>0</XS>
@@ -282,7 +282,7 @@ humanoid.Died:connect(function() HealthChanged(0) end)</ProtectedString>
 						<Color3 name="BorderColor3">4279970357</Color3>
 						<int name="BorderSizePixel">1</int>
 						<bool name="Draggable">false</bool>
-						<Content name="Image"><url>http://banland.xyz/asset?id=35238036</url></Content>
+						<Content name="Image"><url>http://mercury2.com/asset?id=35238036</url></Content>
 						<string name="Name">barRed</string>
 						<UDim2 name="Position">
 							<XS>0.0189999994</XS>
@@ -338,7 +338,7 @@ humanoid.Died:connect(function() HealthChanged(0) end)</ProtectedString>
 						<Color3 name="BorderColor3">4279970357</Color3>
 						<int name="BorderSizePixel">1</int>
 						<bool name="Draggable">false</bool>
-						<Content name="Image"><url>http://banland.xyz/asset?id=35238053</url></Content>
+						<Content name="Image"><url>http://mercury2.com/asset?id=35238053</url></Content>
 						<string name="Name">bar</string>
 						<UDim2 name="Position">
 							<XS>0.0189999994</XS>
@@ -366,7 +366,7 @@ humanoid.Died:connect(function() HealthChanged(0) end)</ProtectedString>
 						<Color3 name="BorderColor3">4279970357</Color3>
 						<int name="BorderSizePixel">0</int>
 						<bool name="Draggable">false</bool>
-						<Content name="Image"><url>http://banland.xyz/asset?id=34816363</url></Content>
+						<Content name="Image"><url>http://mercury2.com/asset?id=34816363</url></Content>
 						<string name="Name">label</string>
 						<UDim2 name="Position">
 							<XS>0.680000007</XS>

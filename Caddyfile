@@ -1,4 +1,4 @@
-banland.xyz {
+mercury2.com {
 	rewrite /Asset /asset
 	rewrite /Asset/ /asset
 	rewrite /Asset/Default.ashx /asset
@@ -20,16 +20,16 @@ banland.xyz {
 	rewrite /Game/Tools/ThumbnailAsset.ashx /game/tools/thumbnailasset
 	rewrite /UploadMedia/PostImage.aspx /studio/uploadmedia/screenshot
 
-	redir /download https://setup.banland.xyz/MercuryPlayerLauncher.exe
+	redir /download https://setup.mercury2.com/MercuryPlayerLauncher.exe
 
 	reverse_proxy localhost:4443
 }
 
-analytics.banland.xyz {
+analytics.mercury2.com {
 	reverse_proxy localhost:8888
 }
 
-setup.banland.xyz, http://setup.banland.xyz {
+setup.mercury2.com, http://setup.mercury2.com {
 	root * /var/www/setup
 
 	uri path_regexp /version-(\w+)-(.*) /version-$1/$2
@@ -37,9 +37,33 @@ setup.banland.xyz, http://setup.banland.xyz {
 	file_server browse
 }
 
-api.banland.xyz, http://api.banland.xyz {
+api.mercury2.com, http://api.mercury2.com {
 	rewrite /Setting/QuietGet/ClientSharedSettings/* /api/clientsharedsettings
 	rewrite /Setting/QuietGet/ClientAppSettings/* /api/clientappsettings
 
 	reverse_proxy localhost:4443
+}
+
+# old domain redirects
+
+banland.xyz {
+	redir / https://mercury2.com
+}
+
+analytics.banland.xyz {
+	redir / https://analytics.mercury2.com
+}
+
+setup.banland.xyz {
+	redir / https://setup.mercury2.com
+}
+http://setup.banland.xyz {
+	redir / http://setup.mercury2.com
+}
+
+api.banland.xyz {
+	redir / https://api.mercury2.com
+}
+http://api.banland.xyz {
+	redir / http://api.mercury2.com
 }
