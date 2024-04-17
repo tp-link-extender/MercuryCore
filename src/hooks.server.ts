@@ -67,9 +67,6 @@ export async function handle({ event, resolve }) {
 			redirect(302, `/studio${newPathname}`)
 		}
 
-		// if (!isStudio && pathname.startsWith("/studio"))
-		// 	redirect(302, /studio(.*)/.exec(pathname)?.[1] || "/")
-
 		const res = await resolve(event)
 
 		// if it's html, add the user's custom css before the </body> tag

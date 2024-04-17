@@ -1,6 +1,6 @@
 module RCCService
 
-go 1.22.0
+go 1.22.2
 
 require (
 	github.com/TwiN/go-color v1.4.1

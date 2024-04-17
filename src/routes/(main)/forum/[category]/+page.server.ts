@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { squery, find } from "$lib/server/surreal"
+import { squery, surql, find } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error } from "@sveltejs/kit"
 import { likeActions } from "$lib/server/like"
@@ -35,19 +35,43 @@ export async function load({ locals, params }) {
 	return category
 }
 
+const select = (thing: string) =>
+	squery<{
+		id: string
+		score: number
+	}>(
+		surql`
+			SELECT
+				meta::id(id) AS id,
+				count(<-likes<-user) - count(<-dislikes<-user) AS score
+			FROM $thing`,
+		{ thing }
+	)
+
 export const actions: import("./$types").Actions = {}
-actions.like = async ({ request, locals, url }) => {
+actions.like = async ({ request, locals, params, url }) => {
 	const { user } = await authorise(locals)
-	const data = await formData(request)
-	const action = data.action as keyof typeof likeActions
+	const action = (await formData(request)).action as keyof typeof likeActions
 	const id = url.searchParams.get("id")
 	const replyId = url.searchParams.get("rid")
 
-	if (
-		(id && !(await find(`forumPost:${id}`))) ||
-		(replyId && !(await find(`forumReply:${replyId}`)))
-	)
-		error(404)
+	const foundPost = id ? await select(`forumPost:${id}`) : null
+	const foundReply = replyId ? await select(`forumReply:${replyId}`) : null
+
+	if (foundPost) {
+		// waiting for the likeAction to complete first doesn't work
+		foundPost.score += action === "like" ? 1 : -1
+		await fetch(`http://localhost:5555/forum-${params.category}`, {
+			method: "POST",
+			body: JSON.stringify({ ...foundPost, action }),
+		})
+	} else if (foundReply) {
+		foundReply.score += action === "like" ? 1 : -1
+		await fetch(`http://localhost:5555/forum-${params.category}`, {
+			method: "POST",
+			body: JSON.stringify({ ...foundReply, action }),
+		})
+	} else error(404)
 
 	await likeActions[action](
 		user.id,

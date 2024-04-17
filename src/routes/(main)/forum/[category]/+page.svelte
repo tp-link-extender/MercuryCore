@@ -4,7 +4,21 @@
 	import PostPage from "./[post=strid]/+page.svelte"
 
 	export let data
-	// Forum
+
+	let messages: string[] = []
+
+	onMount(() => {
+		console.log("subscribing to sse", data.name)
+		messages = ["Welcome to the forum!"]
+		// subscribe to sse server to get real-time updates
+		const sse = new EventSource(
+			`http://localhost:5555/forum-${data.name}`,
+			{ withCredentials: false }
+		)
+		sse.onmessage = async e => {
+			messages = [e.data, ...messages]
+		}
+	})
 </script>
 
 <Head title="{data.name} - Forum" />
@@ -43,8 +57,7 @@
 </div>
 
 {#if $page.state.openPost}
-	<div
-		class="modal-static fixed h-full z-10 overflow-y-auto p-10 py-20">
+	<div class="modal-static fixed h-full z-10 overflow-y-auto p-10 py-20">
 		<div
 			transition:fade={{ duration: 200 }}
 			role="button"
