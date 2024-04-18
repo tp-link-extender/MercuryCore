@@ -14,7 +14,7 @@
     "lines": "scc -c --no-size --no-cocomo --sort lines --exclude-dir staging --exclude-dir setup --exclude-dir PrepForUpload  --exclude-file mercury.yml,uno.config.ts,AppSettings.xml,ReflectionMetadata.xml,materials.json,shaders.json --exclude-ext lua,h,txt --ci -f cloc-yaml -o ./data/lines"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.6.4",
+    "@biomejs/biome": "^1.7.0",
     "@melt-ui/pp": "^0.3.0",
     "@melt-ui/svelte": "^0.76.3",
     "@sveltejs/adapter-node": "^5.0.1",
@@ -22,6 +22,7 @@
     "@sveltejs/vite-plugin-svelte": "^3.1.0",
     "@types/bun": "^1.0.12",
     "@types/d3-interpolate": "^3.0.4",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/nprogress": "^0.2.3",
     "@types/serviceworker": "^0.0.84",
     "@types/three": "^0.163.0",
@@ -49,9 +50,11 @@
     "@codemirror/view": "^6.26.3",
     "@threlte/core": "7.2.1",
     "@threlte/extras": "^8.11.2",
+    "centrifuge": "^5.1.1",
     "codemirror": "^6.0.1",
     "custom-protocol-check": "^1.4.0",
     "d3-interpolate": "^3.0.1",
+    "jsonwebtoken": "^9.0.2",
     "lucia": "^3.1.1",
     "nprogress": "^0.2.0",
     "oslo": "^1.2.0",
@@ -66,6 +69,10 @@
   },
   "trustedDependencies": [
     "@biomejs/biome",
+    "@sveltejs/kit",
+    "esbuild",
+    "protobufjs",
+    "sharp",
     "svelte-preprocess"
   ]
 }

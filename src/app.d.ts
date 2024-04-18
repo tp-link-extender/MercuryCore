@@ -35,6 +35,9 @@ declare module "lucia" {
 			lastOnline: string
 			permissionLevel: number
 			css: string
+			realtimeToken: string
+			realtimeExpiry: number
+			realtimeHash: number
 			// theme: "standard" | "darken" | "storm" | "solar"
 		} & BasicUser
 	}

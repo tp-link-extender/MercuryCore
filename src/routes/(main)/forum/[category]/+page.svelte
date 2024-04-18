@@ -2,22 +2,37 @@
 	import { page } from "$app/stores"
 	import ForumPost from "./ForumPost.svelte"
 	import PostPage from "./[post=strid]/+page.svelte"
+	import client from "$lib/realtime"
 
 	export let data
 
-	let messages: string[] = []
+	let posts = writable(data.posts)
 
 	onMount(() => {
-		console.log("subscribing to sse", data.name)
-		messages = ["Welcome to the forum!"]
-		// subscribe to sse server to get real-time updates
-		const sse = new EventSource(
-			`http://localhost:5555/forum-${data.name}`,
-			{ withCredentials: false }
-		)
-		sse.onmessage = async e => {
-			messages = [e.data, ...messages]
-		}
+		client(data.realtimeToken)
+			?.newSubscription(`forum:${data.name}`)
+			.on("publication", c => {
+				const newData = c.data as {
+					id: string
+					score: number
+				}
+
+				posts.update(p => {
+					const post = p.find(p => p.id === newData.id)
+					if (post) post.score = newData.score
+					return p
+				})
+			})
+			.on("subscribing", c => {
+				console.log(`subscribing: ${c.code}, ${c.reason}`)
+			})
+			.on("subscribed", c => {
+				console.log("subscribed", c)
+			})
+			.on("unsubscribed", c => {
+				console.log(`unsubscribed: ${c.code}, ${c.reason}`)
+			})
+			.subscribe()
 	})
 </script>
 
@@ -41,12 +56,12 @@
 			</a>
 		</span>
 	</h1>
-	{#if data.posts.length > 0}
-		{#each data.posts as post, num}
+	{#if $posts.length > 0}
+		{#each $posts as post, num}
 			<ForumPost
 				{post}
 				{num}
-				total={data.posts.length}
+				total={$posts.length}
 				categoryName={data.name} />
 		{/each}
 	{:else}

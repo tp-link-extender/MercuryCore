@@ -27,6 +27,9 @@ export const auth = new Lucia(new SurrealAdapter(), {
 		bodyColours: data.bodyColours,
 		hashedPassword: data.hashedPassword,
 		css: data.css,
+		realtimeToken: data.realtimeToken,
+		realtimeExpiry: data.realtimeExpiry,
+		realtimeHash: data.realtimeHash,
 		// theme: data.theme,
 		// Types for this are defined in src/app.d.ts.
 	}),

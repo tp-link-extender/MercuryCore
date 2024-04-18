@@ -20,3 +20,16 @@ services:
             - --pass=root
             - --allow-scripting
             - file:database
+    centrifugo:
+        container_name: centrifugo
+        image: centrifugo/centrifugo:v5
+        volumes:
+            - ./centrifugo.yml:/centrifugo/centrifugo.yml
+        command: centrifugo -c centrifugo.yml
+        ports:
+            - 7999:8000
+        restart: unless-stopped
+        ulimits:
+            nofile:
+                soft: 65535
+                hard: 65535

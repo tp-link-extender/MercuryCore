@@ -1,8 +1,9 @@
 import { authorise } from "$lib/server/lucia"
-import { squery, surql, find } from "$lib/server/surreal"
+import { squery, surql } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error } from "@sveltejs/kit"
 import { likeActions } from "$lib/server/like"
+import { publish } from "$lib/server/realtime"
 
 type Category = {
 	description: string
@@ -58,23 +59,19 @@ actions.like = async ({ request, locals, params, url }) => {
 	const foundPost = id ? await select(`forumPost:${id}`) : null
 	const foundReply = replyId ? await select(`forumReply:${replyId}`) : null
 
+	if (!foundPost && !foundReply) error(404)
+
+	const likes = await likeActions[action](
+		user.id,
+		`forum${foundPost ? "Post" : "Reply"}:${id || replyId}`
+	)
+
 	if (foundPost) {
 		// waiting for the likeAction to complete first doesn't work
-		foundPost.score += action === "like" ? 1 : -1
-		await fetch(`http://localhost:5555/forum-${params.category}`, {
-			method: "POST",
-			body: JSON.stringify({ ...foundPost, action }),
-		})
+		foundPost.score = likes
+		await publish(`forum:${params.category}`, foundPost)
 	} else if (foundReply) {
-		foundReply.score += action === "like" ? 1 : -1
-		await fetch(`http://localhost:5555/forum-${params.category}`, {
-			method: "POST",
-			body: JSON.stringify({ ...foundReply, action }),
-		})
-	} else error(404)
-
-	await likeActions[action](
-		user.id,
-		`forum${replyId ? "Reply" : "Post"}:${id || replyId}`
-	)
+		foundReply.score = likes
+		await publish(`forum:${params.category}`, foundReply)
+	}
 }
