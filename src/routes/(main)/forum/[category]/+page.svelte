@@ -8,30 +8,44 @@
 
 	let posts = writable(data.posts)
 
-	onMount(() => {
-		client(data.realtimeToken)
-			?.newSubscription(`forum:${data.name}`)
-			.on("publication", c => {
-				const newData = c.data as {
-					id: string
-					score: number
-				}
+	function onPub(c: import("centrifuge").PublicationContext) {
+		const newData = c.data as {
+			id: string
+			score: number
+			action: "like" | "dislike" | "unlike" | "undislike"
+			hash: number
+		}
 
-				posts.update(p => {
-					const post = p.find(p => p.id === newData.id)
-					if (post) post.score = newData.score
-					return p
-				})
-			})
-			.on("subscribing", c => {
-				console.log(`subscribing: ${c.code}, ${c.reason}`)
-			})
-			.on("subscribed", c => {
-				console.log("subscribed", c)
-			})
-			.on("unsubscribed", c => {
-				console.log(`unsubscribed: ${c.code}, ${c.reason}`)
-			})
+		posts.update(p => {
+			const post = p.find(p => p.id === newData.id)
+			if (!post) return p
+
+			post.score = newData.score
+			if (newData.hash !== data.user.realtimeHash) return p
+
+			switch (newData.action) {
+				case "like":
+					post.likes = true
+					post.dislikes = false
+					break
+				case "dislike":
+					post.likes = false
+					post.dislikes = true
+					break
+				case "unlike":
+				case "undislike":
+					post.likes = false
+					post.dislikes = false
+			}
+
+			return p
+		})
+	}
+
+	onMount(() => {
+		client(data.user.realtimeToken)
+			?.newSubscription(`forum:${data.name}`)
+			.on("publication", onPub)
 			.subscribe()
 	})
 </script>

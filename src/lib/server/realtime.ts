@@ -1,17 +1,7 @@
 import { sign } from "jsonwebtoken"
 
-const config = await Bun.file("./centrifugo.yml").text()
-
-// average yaml parser
-const getLine = (key: string) =>
-	config
-		.split("\n")
-		.filter(l => l.startsWith(key))[0]
-		.split(" ")
-		.pop() || ""
-
-export const apiKey = getLine("api_key")
-const secret = getLine("token_hmac_secret_key")
+const secret = process.env.REALTIME_HMAC as string
+export const apiKey = process.env.REALTIME_KEY as string
 
 export function token(sub: string) {
 	const exp = Date.now() / 1000 + 3600

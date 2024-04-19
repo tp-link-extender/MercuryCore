@@ -1,0 +1,9 @@
+allowed_origins:
+    - http://localhost:5173
+    - https://mercury2.com
+admin: false
+uni_websocket: true
+
+namespaces:
+    - name: forum
+      allow_subscribe_for_client: true

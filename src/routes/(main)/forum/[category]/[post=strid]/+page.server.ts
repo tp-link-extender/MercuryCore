@@ -61,7 +61,7 @@ export async function load({ locals, params }) {
 
 	return {
 		form: await superValidate(zod(schema)),
-		...forumPost,
+		post: forumPost,
 	}
 }
 

@@ -36,11 +36,13 @@ export async function load({ locals, params }) {
 	return category
 }
 
+type Thing = {
+	id: string
+	score: number
+}
+
 const select = (thing: string) =>
-	squery<{
-		id: string
-		score: number
-	}>(
+	squery<Thing>(
 		surql`
 			SELECT
 				meta::id(id) AS id,
@@ -59,19 +61,21 @@ actions.like = async ({ request, locals, params, url }) => {
 	const foundPost = id ? await select(`forumPost:${id}`) : null
 	const foundReply = replyId ? await select(`forumReply:${replyId}`) : null
 
-	if (!foundPost && !foundReply) error(404)
+	if (!foundPost === !foundReply) error(404)
 
+	const type = foundPost ? "Post" : "Reply"
 	const likes = await likeActions[action](
 		user.id,
-		`forum${foundPost ? "Post" : "Reply"}:${id || replyId}`
+		`forum${type}:${id || replyId}`
 	)
 
-	if (foundPost) {
-		// waiting for the likeAction to complete first doesn't work
-		foundPost.score = likes
-		await publish(`forum:${params.category}`, foundPost)
-	} else if (foundReply) {
-		foundReply.score = likes
-		await publish(`forum:${params.category}`, foundReply)
-	}
+	const thing = (foundPost || foundReply) as Thing
+
+	thing.score = likes
+	await publish(`forum:${params.category}`, {
+		...thing,
+		action,
+		type,
+		hash: user.realtimeHash,
+	})
 }

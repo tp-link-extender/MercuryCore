@@ -28,6 +28,9 @@ services:
         command: centrifugo -c centrifugo.yml
         ports:
             - 7999:8000
+        environment:
+            - CENTRIFUGO_TOKEN_HMAC_SECRET_KEY=${REALTIME_HMAC}
+            - CENTRIFUGO_API_KEY=${REALTIME_KEY}
         restart: unless-stopped
         ulimits:
             nofile:
