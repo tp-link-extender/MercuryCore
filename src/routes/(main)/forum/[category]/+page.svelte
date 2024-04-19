@@ -2,19 +2,14 @@
 	import { page } from "$app/stores"
 	import ForumPost from "./ForumPost.svelte"
 	import PostPage from "./[post=strid]/+page.svelte"
-	import client from "$lib/realtime"
+	import client, { type ForumResponse } from "$lib/realtime"
 
 	export let data
 
 	let posts = writable(data.posts)
 
 	function onPub(c: import("centrifuge").PublicationContext) {
-		const newData = c.data as {
-			id: string
-			score: number
-			action: "like" | "dislike" | "unlike" | "undislike"
-			hash: number
-		}
+		const newData = c.data as ForumResponse
 
 		posts.update(p => {
 			const post = p.find(p => p.id === newData.id)

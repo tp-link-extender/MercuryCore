@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance as enhance2 } from "$app/forms"
 	import { superForm } from "sveltekit-superforms/client"
-	import client from "$lib/realtime"
+	import client, { type ForumResponse } from "$lib/realtime"
 
 	export let data
 	const { user } = data
@@ -17,34 +17,69 @@
 	let refreshPost = 0
 	let refreshReplies = 0
 
-	function onPub(c: import("centrifuge").PublicationContext) {
-		const newData = c.data as {
-			id: string
-			score: number
-			action: "like" | "dislike" | "unlike" | "undislike"
-			hash: number
+	function searchReplies(
+		id: string,
+		replies: typeof $post.replies
+	): (typeof $post.replies)[0] | undefined {
+		for (const reply of replies) {
+			if (reply.id === id) return reply
+
+			if (reply.replies.length > 0) {
+				const found = searchReplies(id, reply.replies)
+				if (found) return found
+			}
 		}
+	}
+
+	function setAction(
+		thing: {
+			likes: boolean
+			dislikes: boolean
+		},
+		action: ForumResponse["action"]
+	) {
+		switch (action) {
+			case "like":
+				thing.likes = true
+				thing.dislikes = false
+				break
+			case "dislike":
+				thing.likes = false
+				thing.dislikes = true
+				break
+			case "unlike":
+			case "undislike":
+				thing.likes = false
+				thing.dislikes = false
+		}
+		return thing
+	}
+
+	function onPub(c: import("centrifuge").PublicationContext) {
+		const newData = c.data as ForumResponse
 
 		// We can do this more normally since we aren't updating nested data
-		if (newData.id !== $post.id) return
+		if (newData.id !== $post.id) {
+			if (newData.type !== "Reply") return
+
+			post.update(p => {
+				const reply = searchReplies(newData.id, p.replies)
+				if (!reply) return p
+
+				reply.score = newData.score
+				if (newData.hash !== data.user.realtimeHash) return p
+
+				setAction(reply, newData.action)
+				return p
+			})
+			return
+		}
+		if (newData.type !== "Post") return
 
 		$post.score = newData.score
 		if (newData.hash !== data.user.realtimeHash) return
 
-		switch (newData.action) {
-			case "like":
-				$post.likes = true
-				$post.dislikes = false
-				break
-			case "dislike":
-				$post.likes = false
-				$post.dislikes = true
-				break
-			case "unlike":
-			case "undislike":
-				$post.likes = false
-				$post.dislikes = false
-		}
+		setAction($post, newData.action)
 	}
 
 	onMount(() => {
