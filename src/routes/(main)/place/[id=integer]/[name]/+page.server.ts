@@ -1,7 +1,8 @@
 import { authorise } from "$lib/server/lucia"
 import { mquery, squery, surql, find, findWhere } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
-import { likeActions } from "$lib/server/like"
+import { likeLikesActions, type LikeActions } from "$lib/server/like"
+import { publish } from "$lib/server/realtime"
 import { encode, couldMatch } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
 
@@ -53,7 +54,10 @@ export async function load({ url, locals, params }) {
 	if (!couldMatch(getPlace.name, params.name))
 		redirect(302, `/place/${id}/${slug}`)
 
-	return { ...getPlace, slug }
+	return {
+		slug,
+		place: getPlace,
+	}
 }
 
 export const actions: import("./$types").Actions = {}
@@ -61,23 +65,42 @@ actions.like = async ({ url, request, locals, params }) => {
 	const id = +params.id
 	const { user } = await authorise(locals)
 	const data = await formData(request)
-	const action = data.action as keyof typeof likeActions
+	const action = data.action as LikeActions
 	const privateTicket = url.searchParams.get("privateTicket")
 
-	const likePlace = await squery<{
+	const foundPlace = await squery<{
 		privateServer: boolean
 		privateTicket: string
-	}>(surql`SELECT privateServer, privateTicket FROM $place`, {
-		place: `place:${id}`,
-	})
+		likeCount: number
+		dislikeCount: number
+	}>(
+		surql`
+			SELECT
+				privateServer,
+				privateTicket,
+				count(SELECT 1 FROM $parent<-likes) AS likeCount,
+				count(SELECT 1 FROM $parent<-dislikes) AS dislikeCount
+			FROM $place`,
+		{ place: `place:${id}` }
+	)
 
 	if (
-		!likePlace ||
-		(likePlace.privateServer && privateTicket !== likePlace.privateTicket)
+		!foundPlace ||
+		(foundPlace.privateServer && privateTicket !== foundPlace.privateTicket)
 	)
 		error(404, "Place not found")
 
-	await likeActions[action](user.id, `place:${id}`)
+	const likes = await likeLikesActions[action](user.id, `place:${id}`)
+
+	foundPlace.likeCount = likes.likeCount
+	foundPlace.dislikeCount = likes.dislikeCount
+	await publish(`place:${id}`, {
+		// cant destructure foundPlace because it contains sensitive data
+		id,
+		...likes,
+		action,
+		hash: user.realtimeHash,
+	})
 }
 actions.join = async ({ request, locals }) => {
 	const { user } = await authorise(locals)
@@ -99,28 +122,27 @@ actions.join = async ({ request, locals }) => {
 		error(403, "You cannot currently play games")
 
 	// Invalidate all game sessions and create valid session
-	const session = (
-		await mquery<
-			{
-				id: string
-				in: string
-				out: string
-				ping: number
-				valid: boolean
-			}[][]
-		>(
-			surql`
-				UPDATE (SELECT * FROM $user->playing) SET valid = false;
-				RELATE $user->playing->$place CONTENT {
-					ping: 0,
-					valid: true,
-				}`,
-			{
-				user: `user:${user.id}`,
-				place: `place:${serverId}`,
-			}
-		)
-	)[1][0]
+	const sessionQ = await mquery<
+		{
+			id: string
+			in: string
+			out: string
+			ping: number
+			valid: boolean
+		}[][]
+	>(
+		surql`
+			UPDATE (SELECT * FROM $user->playing) SET valid = false;
+			RELATE $user->playing->$place CONTENT {
+				ping: 0,
+				valid: true,
+			}`,
+		{
+			user: `user:${user.id}`,
+			place: `place:${serverId}`,
+		}
+	)
+	const session = sessionQ[1][0]
 
 	return {
 		joinScriptUrl: `${process.env.ORIGIN}/game/join?ticket=${

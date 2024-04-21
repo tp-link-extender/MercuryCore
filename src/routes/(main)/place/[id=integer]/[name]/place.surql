@@ -19,8 +19,8 @@ SELECT
 	FROM <-playing
 	WHERE valid AND ping > time::now() - 35s) AS players,
 
-	count((SELECT * FROM $parent<-likes).in) AS likeCount,
-	count((SELECT * FROM $parent<-dislikes).in) AS dislikeCount,
+	count(SELECT 1 FROM $parent<-likes) AS likeCount,
+	count(SELECT 1 FROM $parent<-dislikes) AS dislikeCount,
 	$user INSIDE (SELECT * FROM $parent<-likes).in AS likes,
 	$user INSIDE (SELECT * FROM $parent<-dislikes).in AS dislikes
 FROM $place;

@@ -1,4 +1,4 @@
-import { query, surql } from "$lib/server/surreal"
+import { query } from "$lib/server/surreal"
 
 type Place = {
 	id: number

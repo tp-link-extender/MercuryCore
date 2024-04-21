@@ -7,10 +7,10 @@ import { error, fail } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
-import { like, likeActions } from "$lib/server/like"
+import { like, likeScoreActions, type LikeActions } from "$lib/server/like"
 import { recurse, type Replies } from "$lib/server/nestedReplies"
-import requestRender, { RenderType } from "$lib/server/requestRender"
 import { publish } from "$lib/server/realtime"
+import requestRender, { RenderType } from "$lib/server/requestRender"
 import type { Actions, RequestEvent } from "./$types"
 
 const schema = z.object({
@@ -140,7 +140,7 @@ const select = (thing: string) =>
 		surql`
 			SELECT
 				meta::id(id) AS id,
-				count(<-likes<-user) - count(<-dislikes<-user) AS score,
+				count(<-likes) - count(<-dislikes) AS score,
 				meta::id((->replyToAsset->asset.id)[0]) AS assetId # remove if asset likes are implemented
 			FROM $thing`,
 		{ thing }
@@ -262,7 +262,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 actions.like = async ({ request, locals, url }) => {
 	const { user } = await authorise(locals)
 	const data = await formData(request)
-	const action = data.action as keyof typeof likeActions
+	const action = data.action as LikeActions
 	const id = url.searchParams.get("id")
 	const commentId = url.searchParams.get("rid")
 
@@ -278,7 +278,7 @@ actions.like = async ({ request, locals, url }) => {
 	if (foundAsset) error(400, "Asset likes not yet implemented")
 
 	const type = "assetComment" // commentId ? "assetComment" : "asset"
-	const likes = await likeActions[action](
+	const likes = await likeScoreActions[action](
 		user.id,
 		`${type}:${id || commentId}`
 	)
@@ -290,7 +290,7 @@ actions.like = async ({ request, locals, url }) => {
 	await publish(`avatarshop:${thing.assetId}`, {
 		...thing,
 		action,
-		type,
+		// type,
 		hash: user.realtimeHash,
 	})
 }

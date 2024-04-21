@@ -10,3 +10,5 @@ namespaces:
       allow_subscribe_for_client: true
     - name: avatarshop
       allow_subscribe_for_client: true
+    - name: place
+      allow_subscribe_for_client: true

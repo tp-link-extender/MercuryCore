@@ -2,7 +2,7 @@ import { authorise } from "$lib/server/lucia"
 import { squery, surql } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error } from "@sveltejs/kit"
-import { likeActions } from "$lib/server/like"
+import { likeScoreActions } from "$lib/server/like"
 import { publish } from "$lib/server/realtime"
 
 type Category = {
@@ -46,7 +46,7 @@ const select = (thing: string) =>
 		surql`
 			SELECT
 				meta::id(id) AS id,
-				count(<-likes<-user) - count(<-dislikes<-user) AS score
+				count(<-likes) - count(<-dislikes) AS score
 			FROM $thing`,
 		{ thing }
 	)
@@ -54,7 +54,7 @@ const select = (thing: string) =>
 export const actions: import("./$types").Actions = {}
 actions.like = async ({ request, locals, params, url }) => {
 	const { user } = await authorise(locals)
-	const action = (await formData(request)).action as keyof typeof likeActions
+	const action = (await formData(request)).action as keyof typeof likeScoreActions
 	const id = url.searchParams.get("id")
 	const replyId = url.searchParams.get("rid")
 
@@ -66,7 +66,7 @@ actions.like = async ({ request, locals, params, url }) => {
 	if (!foundPost === !foundReply) error(404)
 
 	const type = foundPost ? "Post" : "Reply"
-	const likes = await likeActions[action](
+	const likes = await likeScoreActions[action](
 		user.id,
 		`forum${type}:${id || replyId}`
 	)
