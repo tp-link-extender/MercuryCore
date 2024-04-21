@@ -14,7 +14,8 @@ const schema = z.object({
 	bannerBody: z.string().optional(),
 })
 
-type Banner = { // bruce, it's been five years
+type Banner = {
+	// bruce, it's been five years
 	id: string
 	active: boolean
 	bgColour: string

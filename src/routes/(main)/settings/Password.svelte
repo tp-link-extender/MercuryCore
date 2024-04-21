@@ -9,6 +9,15 @@
 	{formData}
 	action="?/password"
 	submit="<far fa-key></far> Change password">
+	<div class="hidden">
+		<!-- for accessibility, allows password managers to better autofill etc -->
+		<Input
+			{formData}
+			name="username"
+			label="Username"
+			type="text"
+			autocomplete="username" />
+	</div>
 	<Input
 		{formData}
 		name="cpassword"

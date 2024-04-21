@@ -27,7 +27,9 @@
 	export let bottom = false
 	export let rerender:
 		| {
-				form?: any
+				form?: {
+					avatar: string
+				} | null
 				regenerating?: boolean
 		  }
 		| undefined = undefined // Used on profile page for rerender button

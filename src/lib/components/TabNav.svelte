@@ -10,8 +10,8 @@
 		icons?: string[]
 		num: number
 	}
-	export let justify: boolean = false
-	export let vertical: boolean = false
+	export let justify = false
+	export let vertical = false
 
 	let colour = tweened("white", {
 		duration: 200,

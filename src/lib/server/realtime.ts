@@ -4,13 +4,13 @@ const secret = process.env.REALTIME_HMAC as string
 export const apiKey = process.env.REALTIME_KEY as string
 
 export function token(sub: string) {
-	const exp = Date.now() / 1000 + 3600
+	const exp = Date.now() / 1000 + 3600 * 12
 	const realtimeToken = sign({ sub, exp }, secret)
 
 	return {
 		expiry: exp,
 		realtimeToken,
-		realtimeHash: Bun.hash.crc32(realtimeToken),
+		realtimeHash: Bun.hash.crc32(realtimeToken), // crc32 because it's short
 	}
 }
 

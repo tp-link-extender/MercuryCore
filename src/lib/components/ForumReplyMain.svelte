@@ -25,7 +25,7 @@
 
 	let content = "" // Allows current reply to not be lost on clicking to another reply
 
-	$: hidden = reply.visibility != "Visible"
+	$: hidden = reply.visibility !== "Visible"
 </script>
 
 <div class="flex w-full">

@@ -5,8 +5,8 @@
 
 	export let data
 
-	let query = "",
-		searchedData: typeof data.places = []
+	let query = ""
+	let searchedData: typeof data.places = []
 
 	// Run function whenever query changes
 	$: query &&
@@ -31,7 +31,9 @@
 
 	export const snapshot = {
 		capture: () => query,
-		restore: v => (query = v)
+		restore: v => {
+			query = v
+		}
 	}
 </script>
 

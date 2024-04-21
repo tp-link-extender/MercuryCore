@@ -15,7 +15,7 @@
 
 	export let data
 	const { user } = data
-	export let form
+	export let form // ghoofy ahh types
 
 	let regenerating = false
 

@@ -1,8 +1,8 @@
 <script lang="ts">
 	export let data
 
-	let query = "",
-		searchedData: typeof data.assets = []
+	let query = ""
+	let searchedData: typeof data.assets = []
 
 	// Run function whenever query changes
 	$: query &&
@@ -25,7 +25,9 @@
 
 	export const snapshot = {
 		capture: () => query,
-		restore: v => (query = v)
+		restore: v => {
+			query = v
+		}
 	}
 
 	const tabTypes: { [k: string]: number } = {
@@ -40,7 +42,7 @@
 	let tabData = TabData(data.url, Object.keys(tabTypes))
 
 	$: assets = (query ? searchedData : data.assets || []).filter(
-		a => a.type == tabTypes[tabData.currentTab]
+		a => a.type === tabTypes[tabData.currentTab]
 	)
 </script>
 

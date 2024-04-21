@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { createAccordion, melt } from "@melt-ui/svelte"
+	import { melt, type createAccordion } from "@melt-ui/svelte"
 	import { slide } from "svelte/transition"
 
-	export let accordion: ReturnType<typeof createAccordion>
+	export let accordion: ReturnType<typeof createAccordion> // odd type imports but ok
 	export let title: string
 
 	const {

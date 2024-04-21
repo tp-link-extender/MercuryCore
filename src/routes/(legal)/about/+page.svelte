@@ -6,7 +6,9 @@
 	import Pagepart from "./Pagepart.svelte"
 	import Screenshots from "./Screenshots.svelte"
 
-	let top: HTMLElement, first: HTMLElement, scrollY: number
+	let top: HTMLElement
+	let first: HTMLElement
+	let scrollY: number
 
 	const range = (n: number) =>
 		Array.from({ length: n }, (_, index) => -Math.floor(n / 2) + index)

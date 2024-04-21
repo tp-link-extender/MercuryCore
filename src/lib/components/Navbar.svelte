@@ -6,7 +6,7 @@
 	let searchCompleted = true
 	let currentSearchFocus = -1
 
-	$: if (search == "") {
+	$: if (search === "") {
 		searchCompleted = true
 		currentSearchFocus = -1
 	}
@@ -30,13 +30,13 @@
 				currentSearchFocus = -1
 				break
 			case "ArrowDown":
-			case "ArrowUp":
+			case "ArrowUp": {
 				e.preventDefault()
 
 				// Focus first result
 				const prevSearchFocus = currentSearchFocus
 
-				currentSearchFocus += e.key == "ArrowDown" ? 1 : -1
+				currentSearchFocus += e.key === "ArrowDown" ? 1 : -1
 				currentSearchFocus =
 					currentSearchFocus >= searchCategories.length
 						? 0
@@ -48,6 +48,7 @@
 				searchResults[prevSearchFocus]?.classList.remove("pseudofocus")
 
 				break
+			}
 			case "Escape":
 				search = ""
 				break

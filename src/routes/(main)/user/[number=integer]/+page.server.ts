@@ -179,34 +179,35 @@ actions.request = async e => {
 	const { user, params } = await getInteractData(e)
 	if (
 		// Make sure users are not already friends
-		!(await query(
+		await query(
 			surql`$user INSIDE $user2->friends->user
 				OR $user2 INSIDE $user->friends->user`,
 			params
-		))
+		)
 	)
-		if (await query(surql`$user INSIDE $user2->request->user`, params))
-			// If there is already an incoming request, accept it instead
-			await acceptExisting(params, user)
-		else
-			await query(
-				surql`
-					RELATE $user->request->$user2 SET time = time::now();
-					RELATE $user->notification->$user2 CONTENT {
-						type: $type,
-						time: time::now(),
-						note: $note,
-						relativeId: $relativeId,
-						read: false,
-					}`,
-				{
-					type: "FriendRequest",
-					...params,
-					note: `${user.username} has sent you a friend request.`,
-					relativeId: user.id,
-				}
-			)
-	else error(400, "Already friends")
+		error(400, "Already friends")
+
+	if (await query(surql`$user INSIDE $user2->request->user`, params))
+		// If there is already an incoming request, accept it instead
+		await acceptExisting(params, user)
+	else
+		await query(
+			surql`
+				RELATE $user->request->$user2 SET time = time::now();
+				RELATE $user->notification->$user2 CONTENT {
+					type: $type,
+					time: time::now(),
+					note: $note,
+					relativeId: $relativeId,
+					read: false,
+				}`,
+			{
+				type: "FriendRequest",
+				...params,
+				note: `${user.username} has sent you a friend request.`,
+				relativeId: user.id,
+			}
+		)
 }
 actions.cancel = async e => {
 	const { params } = await getInteractData(e)

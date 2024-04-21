@@ -7,11 +7,13 @@
 	let isInView = true
 	export let fullheight = false
 
-	const inView = (
+	function inView(
 		e: Event & {
 			currentTarget: EventTarget & HTMLDivElement
 		} & { detail?: { inView: boolean } }
-	) => (isInView = !!e?.detail?.inView)
+	) {
+		isInView = !!e?.detail?.inView
+	}
 </script>
 
 <div

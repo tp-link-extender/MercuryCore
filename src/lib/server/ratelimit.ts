@@ -35,7 +35,9 @@ export default function (
 	try {
 		id = getClientAddress() + category
 	} catch {
-		console.log("Failed to ratelimit! Are you running Windows? Whoops, that sounds like a you problem!")
+		console.log(
+			"Failed to ratelimit! Are you running Windows? Whoops, that sounds like a you problem!"
+		)
 		return
 	}
 	const currentTimewindow = ratelimitTimewindow.get(id) || Date.now()

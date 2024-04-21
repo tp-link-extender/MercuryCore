@@ -1,8 +1,8 @@
 <script lang="ts">
 	export let data
 
-	let query = "",
-		searchedData: typeof data.groups = []
+	let query = ""
+	let searchedData: typeof data.groups = []
 
 	// Run function whenever query changes
 	$: query &&
@@ -27,7 +27,9 @@
 
 	export const snapshot = {
 		capture: () => query,
-		restore: v => (query = v)
+		restore: v => {
+			query = v
+		}
 	}
 </script>
 

@@ -2,8 +2,8 @@
 	export let num: number
 	export let total: number
 	export let href: string
-	export let iconClass: string = ""
-	export let emoji: string = ""
+	export let iconClass = ""
+	export let emoji = ""
 	export let name: string
 </script>
 

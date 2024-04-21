@@ -3,9 +3,6 @@
 	"formatter": {
 		"indentWidth": 4
 	},
-	"files": {
-		"ignore": ["*.svelte"]
-	},
 	"linter": {
 		"rules": {
 			"nursery": {
@@ -22,5 +19,27 @@
 			"trailingComma": "es5",
 			"arrowParentheses": "asNeeded"
 		}
-	}
+	},
+	"overrides": [
+		{
+			"include": ["*.svelte"],
+			"linter": {
+				"rules": {
+					"style": {
+						"useConst": "off"
+					},
+					"correctness": {
+						"noUnusedLabels": "off"
+					},
+					"suspicious": {
+						"noConfusingLabels": "off",
+						"noImplicitAnyLet": "off"
+					},
+					"nursery": {
+						"noEvolvingAny": "off"
+					}
+				}
+			}
+		}
+	]
 }

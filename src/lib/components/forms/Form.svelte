@@ -12,10 +12,10 @@
 	export let formData: any // boooo but nothing else works
 	const { errors, message, enhance, delayed } = formData
 
-	// use:enhance may not be used on forms that aren't method == "POST"
-	const use = method == "POST" ? enhance : () => {}
+	// use:enhance may not be used on forms that aren't method === "POST"
+	const use = method === "POST" ? enhance : () => {}
 
-	$: other = ($errors as any).other || ""
+	$: other = $errors.other || ""
 </script>
 
 <form use:use {method} {...$$restProps}>

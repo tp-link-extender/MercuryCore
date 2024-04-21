@@ -10,7 +10,10 @@
 	$: query &&
 		browser &&
 		(async () => {
-			if (query.trim().length < 1) return (searchedData = data.assets)
+			if (query.trim().length < 1) {
+				searchedData = data.assets
+				return
+			}
 
 			const formdata = new FormData()
 			formdata.append("q", query)
@@ -30,7 +33,9 @@
 
 	export const snapshot = {
 		capture: () => query,
-		restore: v => (query = v)
+		restore: v => {
+			query = v
+		}
 	}
 
 	const tabTypes: { [k: string]: number } = {
@@ -45,7 +50,7 @@
 	let tabData = TabData(data.url, Object.keys(tabTypes))
 
 	$: assets = (query && browser ? searchedData : data.assets || []).filter(
-		a => a.type == tabTypes[tabData.currentTab]
+		a => a.type === tabTypes[tabData.currentTab]
 	)
 </script>
 

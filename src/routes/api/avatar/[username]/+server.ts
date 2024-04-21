@@ -39,7 +39,7 @@ export async function GET({ url, params }) {
 			})
 
 			console.log("waited")
-		} else if (!await Bun.file(path).exists()) throw new Error()
+		} else if (!(await Bun.file(path).exists())) throw new Error()
 
 		return new Response(Bun.file(path))
 	} catch {

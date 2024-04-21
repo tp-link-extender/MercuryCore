@@ -6,7 +6,7 @@
 	const formData = superForm(data.form, {
 		onResult: ({ result }) =>
 			// Reload to get the new session after redirecting to homepage
-			result.type == "redirect" ? window.location.reload() : null
+			result.type === "redirect" ? window.location.reload() : null
 	})
 
 	export const snapshot = formData

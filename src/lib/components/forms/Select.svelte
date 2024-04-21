@@ -16,7 +16,7 @@
 
 	const mOptions = options.map(([value, label]) => ({ value, label }))
 	const mSelected = selected
-		? mOptions.find(({ value }) => value == selected)
+		? mOptions.find(o => o.value === selected)
 		: { value: "", label: "" }
 
 	export let formData: any
