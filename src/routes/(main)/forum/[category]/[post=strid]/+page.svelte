@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { enhance as enhance2 } from "$app/forms"
 	import { superForm } from "sveltekit-superforms/client"
-	import client, { type ForumResponse } from "$lib/realtime"
+	import realtime, { type ForumResponse } from "$lib/realtime"
+	import type { Centrifuge, PublicationContext } from "centrifuge"
 
 	export let data
 	const { user } = data
@@ -55,21 +56,21 @@
 		return thing
 	}
 
-	function onPub(c: import("centrifuge").PublicationContext) {
+	function onPub(c: PublicationContext) {
 		const newData = c.data as ForumResponse
 
 		// We can do this more normally since we aren't updating nested data
 		if (newData.id !== $post.id) {
-			if (newData.type !== "Reply") return
+			if (newData.type === "Reply") return
 
 			post.update(p => {
 				const reply = searchReplies(newData.id, p.replies)
 				if (!reply) return p
 
 				reply.score = newData.score
-				if (newData.hash !== data.user.realtimeHash) return p
+				if (newData.hash === data.user.realtimeHash)
+					setAction(reply, newData.action)
 
-				setAction(reply, newData.action)
 				return p
 			})
 			return
@@ -82,12 +83,15 @@
 		setAction($post, newData.action)
 	}
 
+	let client: Centrifuge | undefined
 	onMount(() => {
-		client(data.user.realtimeToken)
-			?.newSubscription(`forum:${$post.categoryName}`)
-			.on("publication", onPub)
-			.subscribe()
+		client = realtime(
+			data.user.realtimeToken,
+			`forum:${$post.categoryName}`,
+			onPub
+		)
 	})
+	onDestroy(() => client?.disconnect()) // lazy evaluation my beloved
 </script>
 
 <Head title={$post.title} />

@@ -2,13 +2,14 @@
 	import { page } from "$app/stores"
 	import ForumPost from "./ForumPost.svelte"
 	import PostPage from "./[post=strid]/+page.svelte"
-	import client, { type ForumResponse } from "$lib/realtime"
+	import realtime, { type ForumResponse } from "$lib/realtime"
+	import type { Centrifuge, PublicationContext } from "centrifuge"
 
 	export let data
 
 	let posts = writable(data.posts)
 
-	function onPub(c: import("centrifuge").PublicationContext) {
+	function onPub(c: PublicationContext) {
 		const newData = c.data as ForumResponse
 
 		posts.update(p => {
@@ -37,12 +38,11 @@
 		})
 	}
 
+	let client: Centrifuge | undefined
 	onMount(() => {
-		client(data.user.realtimeToken)
-			?.newSubscription(`forum:${data.name}`)
-			.on("publication", onPub)
-			.subscribe()
+		client = realtime(data.user.realtimeToken, `forum:${data.name}`, onPub)
 	})
+	onDestroy(() => client?.disconnect())
 </script>
 
 <Head title="{data.name} - Forum" />

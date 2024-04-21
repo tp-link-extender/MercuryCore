@@ -10,7 +10,8 @@ import { z } from "zod"
 import { like, likeActions } from "$lib/server/like"
 import { recurse, type Replies } from "$lib/server/nestedReplies"
 import requestRender, { RenderType } from "$lib/server/requestRender"
-import type { RequestEvent } from "./$types"
+import { publish } from "$lib/server/realtime"
+import type { Actions, RequestEvent } from "./$types"
 
 const schema = z.object({
 	content: z.string().min(1).max(1000),
@@ -75,7 +76,7 @@ export async function load({ locals, params }) {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
 		failText: failTexts[Math.floor(Math.random() * failTexts.length)],
 		form: await superValidate(zod(schema)),
-		...asset,
+		asset,
 	}
 }
 
@@ -128,7 +129,67 @@ const pinComment = (pinned: boolean) => async (e: RequestEvent) => {
 	})
 }
 
-export const actions: import("./$types").Actions = {}
+type Thing = {
+	id: string
+	score: number
+	assetId: string
+}
+
+const select = (thing: string) =>
+	squery<Thing>(
+		surql`
+			SELECT
+				meta::id(id) AS id,
+				count(<-likes<-user) - count(<-dislikes<-user) AS score,
+				meta::id((->replyToAsset->asset.id)[0]) AS assetId # remove if asset likes are implemented
+			FROM $thing`,
+		{ thing }
+	)
+
+// actions that return things are here because of sveltekit typescript limitations
+async function rerender({ locals, params }: RequestEvent) {
+	await authorise(locals, 5)
+
+	const asset = await squery<{
+		name: string
+		id: string
+		type: number
+		visibility: string
+	}>(
+		surql`
+			SELECT
+				name,
+				meta::id(id) AS id, 
+				type,
+				visibility
+			FROM $asset`,
+		{ asset: `asset:${params.id}` }
+	)
+
+	if (!asset) error(404, "Not found")
+
+	if (![11, 12, 8].includes(asset.type))
+		error(400, "Can't rerender this type of asset")
+
+	if (asset.visibility === "Moderated")
+		error(400, "Can't rerender a moderated asset")
+
+	try {
+		await requestRender(
+			asset.type === 8 ? RenderType.Model : RenderType.Clothing,
+			+params.id
+		)
+		return {
+			icon: `/avatarshop/${asset.id}/${
+				asset.name
+			}/icon?r=${Math.random()}`,
+		}
+	} catch (e) {
+		console.error(e)
+		fail(500, { msg: "Failed to request render" })
+	}
+}
+export const actions: Actions = { rerender }
 actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(schema))
@@ -203,20 +264,35 @@ actions.like = async ({ request, locals, url }) => {
 	const data = await formData(request)
 	const action = data.action as keyof typeof likeActions
 	const id = url.searchParams.get("id")
-	const replyId = url.searchParams.get("rid")
+	const commentId = url.searchParams.get("rid")
 
-	if (replyId && !/^[0-9a-z]+$/.test(replyId)) error(400, "Invalid reply id")
+	if (commentId && !/^[0-9a-z]+$/.test(commentId))
+		error(400, "Invalid comment id")
 
-	if (
-		(id && !(await find(`asset:${id}`))) ||
-		(replyId && !(await find(`assetComment:${replyId}`)))
-	)
-		error(404)
+	const foundAsset = id ? await find(`asset:${id}`) : null
+	const foundComment = commentId
+		? await select(`assetComment:${commentId}`)
+		: null
 
-	await likeActions[action](
+	if (!foundAsset === !foundComment) error(404)
+	if (foundAsset) error(400, "Asset likes not yet implemented")
+
+	const type = "assetComment" // commentId ? "assetComment" : "asset"
+	const likes = await likeActions[action](
 		user.id,
-		`asset${replyId ? "Comment" : ""}:${id || replyId}`
+		`${type}:${id || commentId}`
 	)
+
+	const thing = foundComment as Thing
+
+	thing.score = likes
+	// ok, better than publishing likes on all assets to all users but whatever
+	await publish(`avatarshop:${thing.assetId}`, {
+		...thing,
+		action,
+		type,
+		hash: user.realtimeHash,
+	})
 }
 actions.buy = async e => {
 	const { user, id } = await getBuyData(e)
@@ -314,45 +390,3 @@ actions.moderate = async e => {
 }
 actions.pin = pinComment(true)
 actions.unpin = pinComment(false)
-actions.rerender = async ({ locals, params }) => {
-	await authorise(locals, 5)
-
-	const asset = await squery<{
-		name: string
-		id: string
-		type: number
-		visibility: string
-	}>(
-		surql`
-			SELECT
-				name,
-				meta::id(id) AS id, 
-				type,
-				visibility
-			FROM $asset`,
-		{ asset: `asset:${params.id}` }
-	)
-
-	if (!asset) error(404, "Not found")
-
-	if (![11, 12, 8].includes(asset.type))
-		error(400, "Can't rerender this type of asset")
-
-	if (asset.visibility === "Moderated")
-		error(400, "Can't rerender a moderated asset")
-
-	try {
-		await requestRender(
-			asset.type === 8 ? RenderType.Model : RenderType.Clothing,
-			+params.id
-		)
-		return {
-			icon: `/avatarshop/${asset.id}/${
-				asset.name
-			}/icon?r=${Math.random()}`,
-		}
-	} catch (e) {
-		console.error(e)
-		fail(500, { msg: "Failed to request render" })
-	}
-}

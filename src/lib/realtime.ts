@@ -9,6 +9,13 @@ export type ForumResponse = {
 	hash: number
 }
 
+export type AssetResponse = {
+	id: string
+	score: number
+	action: "like" | "dislike" | "unlike" | "undislike"
+	hash: number
+}
+
 // Centrifugo supports many other transports:
 // - SockJS is being deprecated and is only useful in legacy scenarios
 // - SSE is nice with HTTP 2 and 3, but we can't guarantee that and its limit of 6 connections per browser/server on HTTP 1 causes it to get swamped

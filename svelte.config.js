@@ -20,7 +20,7 @@ export default {
 				{ name: "./src/lib/components/studio", prefix: "studio" },
 			],
 			module: {
-				svelte: ["onMount"],
+				svelte: ["onMount", "onDestroy"],
 				"svelte/store": ["writable"],
 				"$app/forms": ["enhance", "deserialize"],
 			},

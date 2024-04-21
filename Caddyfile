@@ -25,6 +25,14 @@ mercury2.com {
 	reverse_proxy localhost:4443
 }
 
+www.mercury2.com, web.mercury2.com { # the Funny
+	redir https://mercury2.com{uri} permanent
+}
+
+realtime.mercury2.com {
+	reverse_proxy localhost:7999
+}
+
 analytics.mercury2.com {
 	reverse_proxy localhost:8888
 }

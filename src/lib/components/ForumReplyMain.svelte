@@ -15,8 +15,8 @@
 	export let assetName = ""
 
 	const baseUrl = categoryName
-		? `/forum/${categoryName.toLowerCase()}/${postId}`
-		: `/avatarshop/${postId}/${assetName}`
+		? `forum/${categoryName.toLowerCase()}/${postId}`
+		: `avatarshop/${postId}/${assetName}`
 
 	export let repliesCollapsed: RepliesCollapsed
 	export let topLevel = true
@@ -231,7 +231,7 @@
 </div>
 
 {#if depth > 8}
-	<a href="{baseUrl}/{reply.id}" class="no-underline my-2">
+	<a href="/{baseUrl}/{reply.id}" class="no-underline my-2">
 		<fa fa-arrow-down class="pr-2" />
 		More replies
 	</a>

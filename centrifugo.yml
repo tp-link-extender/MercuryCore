@@ -4,6 +4,9 @@ allowed_origins:
 admin: false
 uni_websocket: true
 
+# do NOT forget to add namespaces you want to use in here
 namespaces:
     - name: forum
+      allow_subscribe_for_client: true
+    - name: avatarshop
       allow_subscribe_for_client: true
