@@ -17,9 +17,9 @@ jobs:
               uses: fifsky/ssh-action@master
               with:
                   command: |
-                    bash
-                    cd mercuryv2 && git restore . && git pull && aftman install && lune run ./corescripts/compile.luau && bun prod && pm2 start --interpreter ~/.bun/bin/bun build && cd / && caddy reload && exit
-                    exit
+                      bash
+                      cd mercuryv2 && git restore . && git pull && aftman install && lune run ./corescripts/compile.luau && bun --bun prod && pm2 start --interpreter ~/.bun/bin/bun build && cd / && caddy reload && exit
+                      exit
                   host: ${{ secrets.HOST }}
                   port: ${{ secrets.PORT }}
                   user: ${{ secrets.USER }}

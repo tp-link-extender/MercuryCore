@@ -14,16 +14,19 @@ try {
 	console.error(e)
 }
 
+type Banner = {
+	// bruce, it's- I'm not doing this again
+	id: string
+	bgColour: string
+	body: string
+	textLight: boolean
+}
+
 export async function load({ request, locals }) {
 	const { user } = locals
-	// Not authorise function, as we don't want to redirect to login page if not logged in
+	// No authorise() function call, as we don't want to redirect to login page if not logged in
 
-	const banners = await query<{
-		body: string
-		bgColour: string
-		textLight: boolean
-		id: string
-	}>(surql`
+	const banners = await query<Banner>(surql`
 		SELECT
 			body,
 			bgColour,

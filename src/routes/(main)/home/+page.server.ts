@@ -18,19 +18,45 @@ const suffixes: { [k: string]: string } = {
 	other: "th",
 }
 const ordinals = new Intl.PluralRules("en", { type: "ordinal" })
+// Add "st", "nd", "rd", "th" to number
 const ordinal = (n: number) => `${n}${suffixes[ordinals.select(n)]}`
+
+type Place = {
+	id: number
+	name: string
+	playerCount: number
+	serverPing: number
+	likeCount: number
+	dislikeCount: number
+}
+
+type FeedPost = {
+	authorUser: BasicUser
+	content: {
+		id: string
+		text: string
+		updated: string
+	}[]
+	id: string
+	posted: string
+	visibility: string
+}
 
 export async function load({ locals }) {
 	const { user } = await authorise(locals)
 	// (main)/+layout.server.ts will handle most redirects for logged-out users, but sometimes errors for this page.
 
-	const greets = [`Hi, ${user.username}!`, `Hello, ${user.username}!`]
+	// lazy eval 💞
+	const greets = [
+		() => `Hi, ${user.username}!`,
+		() => `Hello, ${user.username}!`,
+	]
 	const facts = [
-		`You joined Mercury on ${user?.accountCreated
-			.toLocaleString()
-			.substring(0, 10)}!`,
-		// Add "st", "nd", "rd", "th" to number
-		`You are the ${ordinal(user?.number)} user to join Mercury!`,
+		() =>
+			`You joined Mercury on ${user?.accountCreated
+				.toLocaleString()
+				.substring(0, 10)}!`,
+		() => `You are the ${ordinal(user?.number)} user to join Mercury!`,
 	]
 
 	const results = await mquery<unknown[]>(import("./home.surql"), {
@@ -39,30 +65,13 @@ export async function load({ locals }) {
 
 	return {
 		stuff: {
-			greet: greets[Math.floor(Math.random() * greets.length)],
-			fact: facts[Math.floor(Math.random() * facts.length)],
+			greet: greets[Math.floor(Math.random() * greets.length)](),
+			fact: facts[Math.floor(Math.random() * facts.length)](),
 		},
 		form: await superValidate(zod(schema)),
-		places: results[0] as {
-			id: number
-			name: string
-			playerCount: number
-			serverPing: number
-			likeCount: number
-			dislikeCount: number
-		}[],
+		places: results[0] as Place[],
 		friends: results[1] as BasicUser[],
-		feed: results[2] as {
-			authorUser: BasicUser
-			content: {
-				id: string
-				text: string
-				updated: string
-			}[]
-			id: string
-			posted: string
-			visibility: string
-		}[],
+		feed: results[2] as FeedPost[],
 	}
 }
 

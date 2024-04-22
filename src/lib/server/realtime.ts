@@ -1,4 +1,5 @@
-import { sign } from "jsonwebtoken"
+import jwt from "jsonwebtoken"
+const { sign } = jwt // I LOVE COMMONJS! (lies)
 
 const secret = process.env.REALTIME_HMAC as string
 export const apiKey = process.env.REALTIME_KEY as string
