@@ -40,7 +40,7 @@
     "sveltekit-autoimport": "^1.8.0",
     "sveltekit-superforms": "^2.12.5",
     "unocss": "^0.59.4",
-    "zod": "^3.23.0"
+    "zod": "^3.23.3"
   },
   "type": "module",
   "dependencies": {
@@ -52,7 +52,6 @@
     "@threlte/extras": "^8.11.2",
     "centrifuge": "^5.1.1",
     "codemirror": "^6.0.1",
-    "custom-protocol-check": "^1.4.0",
     "d3-interpolate": "^3.0.1",
     "jsonwebtoken": "^9.0.2",
     "lucia": "^3.1.1",

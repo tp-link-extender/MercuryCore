@@ -49,6 +49,7 @@ export async function load({ url, locals, params }) {
 	)
 		error(404, "Place not found")
 
+	// ahh, reminds me of early Mercury 2
 	const slug = encode(getPlace.name)
 
 	if (!couldMatch(getPlace.name, params.name))

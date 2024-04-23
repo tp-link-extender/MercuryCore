@@ -1,5 +1,5 @@
 <script lang="ts">
-	import customProtocolCheck from "custom-protocol-check"
+	import customProtocol from "./customprotocol"
 	import Autopilot from "./Autopilot.svelte"
 	import realtime, { type PlaceResponse } from "$lib/realtime"
 	import type { Centrifuge, PublicationContext } from "centrifuge"
@@ -71,18 +71,15 @@
 
 	const launch = (joinscripturl: string) => () => {
 		success = false
-		customProtocolCheck(
+		customProtocol(
 			joinscripturl,
 			() => {
-				installed = false
-				console.log("URI not found.")
-			},
-			() => {
 				success = true
-				console.log("URI found, launching")
 				setTimeout(() => modal.set(false), 16000)
 			},
-			5000
+			() => {
+				installed = false
+			}
 		)
 	}
 
@@ -98,6 +95,7 @@
 		formdata.append("serverId", $place.id.toString())
 		formdata.append("privateTicket", $place.privateTicket)
 
+		// Get the joinscript URL
 		const response = await fetch(`/place/${$place.id}/${data.slug}?/join`, {
 			method: "POST",
 			body: formdata
@@ -109,12 +107,14 @@
 			}
 		}
 
-		if (joinScriptData.status === 200)
-			launch(
-				`mercury-player:1+launchmode:play+joinscripturl:${encodeURIComponent(
-					joinScriptData.data.joinScriptUrl
-				)}+gameinfo:test`
-			)()
+		if (joinScriptData.status !== 200) return
+
+		// JoinScript is my favourite programming language (-i mean scripting language)
+		const joinScript = encodeURIComponent(joinScriptData.data.joinScriptUrl)
+
+		launch(
+			`mercury-player:1+launchmode:play+joinscripturl:${joinScript}+gameinfo:test`
+		)()
 	}
 
 	let tabData = TabData(data.url, ["Description", "Game"])
