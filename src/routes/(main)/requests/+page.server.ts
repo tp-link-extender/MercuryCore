@@ -5,7 +5,7 @@ export const load = async ({ locals }) => ({
 	users: await query<BasicUser>(
 		surql`
 			SELECT number, status, username
-			FROM user WHERE $user INSIDE ->request->user`,
+			FROM user WHERE $user IN ->request->user`,
 		{ user: `user:${(await authorise(locals)).user.id}` }
 	),
 })

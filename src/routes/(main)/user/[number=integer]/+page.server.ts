@@ -123,12 +123,29 @@ async function getInteractData(e: RequestEvent) {
 	}
 }
 
-export const actions: import("./$types").Actions = {}
+async function rerender(e: RequestEvent) {
+	const { locals, params } = e
+	await authorise(locals, 5)
+
+	const { user2 } = await getData(e)
+
+	try {
+		await requestRender(RenderType.Avatar, +params.number, true)
+		return {
+			avatarBody: `/api/avatar/${user2.username}-body?r=${Math.random()}`,
+			avatar: `/api/avatar/${user2.username}?r=${Math.random()}`,
+		}
+	} catch (e) {
+		console.error(e)
+		return fail(500, { msg: "Failed to request render" })
+	}
+}
+export const actions: import("./$types").Actions = { rerender }
 actions.follow = async e => {
 	const { user, params } = await getInteractData(e)
 	await query(
 		surql`
-			IF $user2 NOTINSIDE $user->follows->user {
+			IF $user2 NOT IN $user->follows->user {
 				RELATE $user->follows->$user2 SET time = time::now();
 				RELATE $user->notification->$user2 CONTENT {
 					type: $type,
@@ -177,37 +194,41 @@ actions.unfriend = async e => {
 }
 actions.request = async e => {
 	const { user, params } = await getInteractData(e)
-	if (
-		// Make sure users are not already friends
-		await query(
-			surql`$user INSIDE $user2->friends->user
-				OR $user2 INSIDE $user->friends->user`,
-			params
-		)
-	)
-		error(400, "Already friends")
 
-	if (await query(surql`$user INSIDE $user2->request->user`, params))
-		// If there is already an incoming request, accept it instead
+	// Make sure users are not already friends
+	const alreadyFriends = await query(
+		surql`$user IN $user2->friends->user
+			OR $user2 IN $user->friends->user`,
+		params
+	)
+	if (alreadyFriends) error(400, "Already friends")
+
+	const existingRequest = await query(
+		surql`$user IN $user2->request->user`,
+		params
+	)
+	if (existingRequest) {
 		await acceptExisting(params, user)
-	else
-		await query(
-			surql`
-				RELATE $user->request->$user2 SET time = time::now();
-				RELATE $user->notification->$user2 CONTENT {
-					type: $type,
-					time: time::now(),
-					note: $note,
-					relativeId: $relativeId,
-					read: false,
-				}`,
-			{
-				type: "FriendRequest",
-				...params,
-				note: `${user.username} has sent you a friend request.`,
-				relativeId: user.id,
-			}
-		)
+		return
+	}
+
+	await query(
+		surql`
+			RELATE $user->request->$user2 SET time = time::now();
+			RELATE $user->notification->$user2 CONTENT {
+				type: $type,
+				time: time::now(),
+				note: $note,
+				relativeId: $relativeId,
+				read: false,
+			}`,
+		{
+			type: "FriendRequest",
+			...params,
+			note: `${user.username} has sent you a friend request.`,
+			relativeId: user.id,
+		}
+	)
 }
 actions.cancel = async e => {
 	const { params } = await getInteractData(e)
@@ -230,25 +251,8 @@ actions.decline = async e => {
 actions.accept = async e => {
 	const { user, params } = await getInteractData(e)
 	// Make sure an incoming request exists before accepting
-	if (!(await query(surql`$user INSIDE $user2->request->user`, params)))
+	if (!(await query(surql`$user IN $user2->request->user`, params)))
 		error(400, "No friend request to accept")
 
 	await acceptExisting(params, user)
-}
-actions.rerender = async e => {
-	const { locals, params } = e
-	await authorise(locals, 5)
-
-	const { user2 } = await getData(e)
-
-	try {
-		await requestRender(RenderType.Avatar, +params.number, true)
-		return {
-			avatarBody: `/api/avatar/${user2.username}-body?r=${Math.random()}`,
-			avatar: `/api/avatar/${user2.username}?r=${Math.random()}`,
-		}
-	} catch (e) {
-		console.error(e)
-		fail(500, { msg: "Failed to request render" })
-	}
 }

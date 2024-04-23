@@ -32,13 +32,12 @@ export async function graphicAsset(
 	graphicAssetId: string | number
 ) {
 	const stringType = strings[type as keyof typeof strings]
-	const asset = (
-		await Bun.file(
-			`xml/graphicAsset${
-				type === "Face" || type === "Decal" ? "Image" : "Other"
-			}.xml`
-		).text()
+	const file = Bun.file(
+		`xml/graphicAsset${
+			type === "Face" || type === "Decal" ? "Image" : "Other"
+		}.xml`
 	)
+	const asset = (await file.text())
 		.replaceAll("_CLASS", stringType.class)
 		.replaceAll("_CONTENT_NAME", stringType.contentName)
 		.replaceAll("_STRING_NAME", stringType.stringName)

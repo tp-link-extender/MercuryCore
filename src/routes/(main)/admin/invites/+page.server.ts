@@ -65,9 +65,7 @@ actions.create = async e => {
 		(!!enableInviteCustom && !inviteCustom) ||
 		(!!enableInviteExpiry && !inviteExpiry)
 	)
-		return message(form, "Missing fields", {
-			status: 400,
-		})
+		return message(form, "Missing fields", { status: 400 })
 
 	const expiry = inviteExpiry ? new Date(inviteExpiry) : null
 

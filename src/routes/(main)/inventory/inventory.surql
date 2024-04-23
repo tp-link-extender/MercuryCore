@@ -4,10 +4,10 @@ SELECT
 	price,
 	type,
 	<-owns<-user AS owners
-FROM asset WHERE $user INSIDE <-owns<-user
-	AND type INSIDE [17, 18, 2, 11, 12, 19, 8]
+FROM asset WHERE $user IN <-owns<-user
+	AND type IN [17, 18, 2, 11, 12, 19, 8]
 	AND IF $query THEN
-		string::lowercase($query) INSIDE string::lowercase(name)
+		string::lowercase($query) IN string::lowercase(name)
 	ELSE
 		TRUE
 	END;

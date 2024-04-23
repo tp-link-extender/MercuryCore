@@ -20,9 +20,9 @@ const select = surql`
 		name,
 		price,
 		type,
-		($user INSIDE <-wearing<-user) AS wearing
-	FROM asset WHERE $user INSIDE <-owns<-user
-		AND type INSIDE [${allowedTypes.join(", ")}]
+		($user IN <-wearing<-user) AS wearing
+	FROM asset WHERE $user IN <-owns<-user
+		AND type IN [${allowedTypes.join(", ")}]
 		AND visibility = "Visible"`
 
 export const load = async ({ locals, url }) => {
@@ -39,7 +39,7 @@ export const load = async ({ locals, url }) => {
 		}>(
 			surql`${select} ${
 				searchQ
-					? surql`AND string::lowercase($query) INSIDE string::lowercase(name)`
+					? surql`AND string::lowercase($query) IN string::lowercase(name)`
 					: ""
 			}`,
 			{
@@ -67,7 +67,7 @@ async function getEquipData(e: RequestEvent) {
 	}>(
 		surql`
 			SELECT meta::id(id) AS id, type, visibility
-			FROM $asset WHERE $user INSIDE <-owns<-user`,
+			FROM $asset WHERE $user IN <-owns<-user`,
 		{
 			asset: `asset:${id}`,
 			user: `user:${user.id}`,
@@ -93,22 +93,11 @@ async function rerender(user: import("lucia").User) {
 		}
 	} catch (e) {
 		console.error(e)
-		fail(500, { msg: "Failed to request render" })
+		return fail(500, { msg: "Failed to request render" })
 	}
 }
 
-export const actions: import("./$types").Actions = {}
-actions.search = async ({ request, locals }) => ({
-	assets: await query(
-		surql`${select}
-			AND string::lowercase($query) INSIDE string::lowercase(name)`,
-		{
-			query: ((await request.formData()).get("q") as string).trim(),
-			user: `user:${(await authorise(locals)).user.id}`,
-		}
-	),
-})
-actions.paint = async ({ locals, url }) => {
+async function paint({ locals, url }: RequestEvent) {
 	const { user } = await authorise(locals)
 	const bodyPartQuery = url.searchParams.get("p")
 	const bodyColour = url.searchParams.get("c") as string
@@ -126,7 +115,7 @@ actions.paint = async ({ locals, url }) => {
 			"RightLeg",
 		].includes(bodyPartQuery)
 	)
-		fail(400)
+		return fail(400)
 
 	const bodyPart = bodyPartQuery as keyof typeof user.bodyColours
 	const currentColours = user.bodyColours
@@ -140,7 +129,7 @@ actions.paint = async ({ locals, url }) => {
 
 	return await rerender(user)
 }
-actions.regen = async ({ locals, getClientAddress }) => {
+async function regen({ locals, getClientAddress }: RequestEvent) {
 	const { user } = await authorise(locals)
 
 	const limit = ratelimit(null, "regen", getClientAddress, 2)
@@ -148,7 +137,7 @@ actions.regen = async ({ locals, getClientAddress }) => {
 
 	return await rerender(user)
 }
-actions.equip = async e => {
+async function equip(e: RequestEvent) {
 	const { user, id, asset, error } = await getEquipData(e)
 	if (error) return error
 
@@ -160,7 +149,7 @@ actions.equip = async e => {
 			{ user: `user:${user.id}` }
 		)) >= 3
 	)
-		fail(400, { msg: "You can only wear 3 hats" })
+		return fail(400, { msg: "You can only wear 3 hats" })
 
 	await query(
 		surql`
@@ -185,7 +174,7 @@ actions.equip = async e => {
 
 	return await rerender(user)
 }
-actions.unequip = async e => {
+async function unequip(e: RequestEvent) {
 	const { user, id, error } = await getEquipData(e)
 	if (error) return error
 
@@ -196,3 +185,19 @@ actions.unequip = async e => {
 
 	return await rerender(user)
 }
+export const actions: import("./$types").Actions = {
+	paint,
+	regen,
+	equip,
+	unequip,
+}
+actions.search = async ({ request, locals }) => ({
+	assets: await query(
+		surql`${select}
+			AND string::lowercase($query) IN string::lowercase(name)`,
+		{
+			query: ((await request.formData()).get("q") as string).trim(),
+			user: `user:${(await authorise(locals)).user.id}`,
+		}
+	),
+})

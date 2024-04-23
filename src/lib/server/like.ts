@@ -19,13 +19,13 @@ const countLikes = surql`
 
 const likeQuery = surql`
 	DELETE $user->dislikes WHERE out = $thing;
-	IF $user NOTINSIDE (SELECT * FROM $thing<-likes).in {
+	IF $user NOT IN (SELECT * FROM $thing<-likes).in {
 		RELATE $user->likes->$thing SET time = time::now()
 	};`
 const unlikeQuery = surql`DELETE $user->likes WHERE out = $thing;`
 const dislikeQuery = surql`
 	DELETE $user->likes WHERE out = $thing;
-	IF $user NOTINSIDE (SELECT * FROM $thing<-dislikes).in {
+	IF $user NOT IN (SELECT * FROM $thing<-dislikes).in {
 		RELATE $user->dislikes->$thing SET time = time::now()
 	};`
 const undislikeQuery = surql`DELETE $user->dislikes WHERE out = $thing;`

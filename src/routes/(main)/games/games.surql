@@ -11,7 +11,7 @@ SELECT
 FROM place WHERE !privateServer
 	AND !deleted
 	AND IF $query THEN
-		string::lowercase($query) INSIDE string::lowercase(name)
+		string::lowercase($query) IN string::lowercase(name)
 	ELSE
 		TRUE
 	END

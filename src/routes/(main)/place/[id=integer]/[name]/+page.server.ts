@@ -115,12 +115,12 @@ actions.join = async ({ request, locals }) => {
 
 	if (!(await find(`place:${serverId}`))) error(404, "Place not found")
 
-	if (
-		await findWhere("moderation", surql`out = $user AND active = true`, {
-			user: `user:${user.id}`,
-		})
+	const foundModerated = await findWhere(
+		"moderation",
+		surql`out = $user AND active = true`,
+		{ user: `user:${user.id}` }
 	)
-		error(403, "You cannot currently play games")
+	if (foundModerated) error(403, "You cannot currently play games")
 
 	// Invalidate all game sessions and create valid session
 	const sessionQ = await mquery<

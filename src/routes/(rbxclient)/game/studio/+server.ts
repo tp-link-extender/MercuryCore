@@ -1,8 +1,6 @@
 import { SignData } from "$lib/server/sign"
 
-export const GET = async () =>
-	new Response(
-		await SignData(
-			await Bun.file("corescripts/processed/studio.lua").text()
-		)
-	)
+export async function GET() {
+	const file = await Bun.file("corescripts/processed/studio.lua").text()
+	return new Response(await SignData(file))
+}

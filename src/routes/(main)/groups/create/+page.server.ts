@@ -44,13 +44,12 @@ actions.default = async ({ request, locals }) => {
 			["GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!"]
 		)
 
-	if (
-		await findWhere(
-			"group",
-			surql`string::lowercase(name) = string::lowercase($name)`,
-			{ name }
-		)
+	const foundGroup = await findWhere(
+		"group",
+		surql`string::lowercase(name) = string::lowercase($name)`,
+		{ name }
 	)
+	if (foundGroup)
 		return formError(
 			form,
 			["name"],

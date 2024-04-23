@@ -52,8 +52,8 @@ type Place = {
 	updated: string
 }
 
-const placeQuery = async (id: string | number) =>
-	await squery<Place>(import("./settings.surql"), { place: `place:${id}` })
+const placeQuery = (id: string | number) =>
+	squery<Place>(import("./settings.surql"), { place: `place:${id}` })
 
 export async function load({ locals, params }) {
 	const getPlace = await placeQuery(params.id)

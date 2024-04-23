@@ -26,5 +26,5 @@ export default function (
 		// add field and message to the errors object
 		for (const i in fields) form.errors[fields[i]] = [messages[i]]
 
-	fail(400, { form })
+	return fail(400, { form })
 }

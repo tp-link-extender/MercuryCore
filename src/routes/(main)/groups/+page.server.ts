@@ -15,7 +15,7 @@ export const actions: import("./$types").Actions = {}
 actions.default = async ({ request }) => ({
 	groups: await query<Group>(
 		surql`${select}
-			WHERE string::lowercase($query) INSIDE string::lowercase(name)`,
+			WHERE string::lowercase($query) IN string::lowercase(name)`,
 		{ query: (await request.formData()).get("q") as string }
 	),
 })

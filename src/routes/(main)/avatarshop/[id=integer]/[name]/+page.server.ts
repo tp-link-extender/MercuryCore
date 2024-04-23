@@ -186,7 +186,7 @@ async function rerender({ locals, params }: RequestEvent) {
 		}
 	} catch (e) {
 		console.error(e)
-		fail(500, { msg: "Failed to request render" })
+		return fail(500, { msg: "Failed to request render" })
 	}
 }
 export const actions: Actions = { rerender }
@@ -312,7 +312,7 @@ actions.buy = async e => {
 				*,
 				(SELECT meta::id(id) AS id, username
 				FROM <-created<-user)[0] AS creator,
-				$user INSIDE <-owns<-user.id AS owned
+				$user IN <-owns<-user.id AS owned
 			FROM $asset`,
 		{
 			asset: `asset:${id}`,

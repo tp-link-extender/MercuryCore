@@ -21,6 +21,6 @@ SELECT
 
 	count(SELECT 1 FROM $parent<-likes) AS likeCount,
 	count(SELECT 1 FROM $parent<-dislikes) AS dislikeCount,
-	$user INSIDE (SELECT * FROM $parent<-likes).in AS likes,
-	$user INSIDE (SELECT * FROM $parent<-dislikes).in AS dislikes
+	$user IN (SELECT * FROM $parent<-likes).in AS likes,
+	$user IN (SELECT * FROM $parent<-dislikes).in AS dislikes
 FROM $place;

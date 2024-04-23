@@ -33,15 +33,13 @@ export async function POST({ request, url, params }) {
 			{ status: 400 }
 		)
 	if (!(await canApply(id))) error(400, "This user can't apply again")
-	// if user already applied and has been accepted, error
-	if (
-		await findWhere(
-			"application",
-			surql`discordId = $id AND status = "Accepted"`,
-			{ id }
-		)
+
+	const accepted = await findWhere(
+		"application",
+		surql`discordId = $id AND status = "Accepted"`,
+		{ id }
 	)
-		error(400, "This user has already been accepted")
+	if (accepted) error(400, "This user has already been accepted")
 
 	await query(
 		surql`

@@ -42,12 +42,8 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 		permissionLevel: number
 	}>(
 		surql`
-			SELECT
-				meta::id(id) AS id,
-				number,
-				permissionLevel
-			FROM user
-			WHERE username = $username`,
+			SELECT meta::id(id) AS id, number, permissionLevel
+			FROM user WHERE username = $username`,
 		{ username }
 	)
 
@@ -87,31 +83,31 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 
 	if (intAction === 5) {
 		// Unban
-		if (
-			!(await findWhere(
-				"moderation",
-				surql`in = $user
-					AND out = $moderatee
-					AND active = true`,
-				qParams
-			))
+		const foundUnban = await findWhere(
+			"moderation",
+			surql`in = $user
+				AND out = $moderatee
+				AND active = true`,
+			qParams
 		)
+
+		if (!foundUnban)
 			return formError(
 				form,
 				["action"],
 				["You cannot unban a user that has not been moderated yet"]
 			)
 
-		if (
-			await findWhere(
-				"moderation",
-				surql`in = $user
-					AND out = $moderatee
-					AND active = true
-					AND type = "AccountDeleted"`,
-				qParams
-			)
+		const foundDeleted = await findWhere(
+			"moderation",
+			surql`in = $user
+				AND out = $moderatee
+				AND active = true
+				AND type = "AccountDeleted"`,
+			qParams
 		)
+
+		if (foundDeleted)
 			return formError(
 				form,
 				["action"],
@@ -122,10 +118,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 			surql`
 				UPDATE moderation SET active = false WHERE out = $moderatee;
 				${auditLog}`,
-			{
-				...qParams,
-				note: `Unban ${username}`,
-			}
+			{ ...qParams, note: `Unban ${username}` }
 		)
 
 		return message(form, `${username} has been unbanned`)
@@ -133,13 +126,13 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 
 	const moderationAction = moderationActions[intAction - 1]
 
-	if (
-		await findWhere(
-			"moderation",
-			surql`out = $moderatee AND active = true`,
-			qParams
-		)
+	const foundModeration = await findWhere(
+		"moderation",
+		surql`out = $moderatee AND active = true`,
+		qParams
 	)
+
+	if (foundModeration)
 		return formError(
 			form,
 			["username"],

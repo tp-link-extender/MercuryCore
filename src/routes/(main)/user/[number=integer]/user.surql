@@ -27,11 +27,11 @@ SELECT
 	count(<-follows) AS followerCount,
 	count(->follows) AS followingCount,
 
-	$user INSIDE <->friends<->user AS friends,
-	$user INSIDE <-follows<-user AS following,
-	$user INSIDE ->follows->user AS follower,
-	$user INSIDE ->request->user AS incomingRequest,
-	$user INSIDE <-request<-user AS outgoingRequest,
+	$user IN <->friends<->user AS friends,
+	$user IN <-follows<-user AS following,
+	$user IN ->follows->user AS follower,
+	$user IN ->request->user AS incomingRequest,
+	$user IN <-request<-user AS outgoingRequest,
 
 	(SELECT name, count(<-member) AS memberCount
 	FROM ->member->group) AS groups,

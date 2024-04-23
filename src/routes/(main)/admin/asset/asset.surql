@@ -8,4 +8,4 @@ SELECT
 	(SELECT meta::id(id) AS id, name
 	FROM ->imageAsset->asset)[0] AS imageAsset
 FROM asset WHERE visibility = "Pending"
-	AND type INSIDE [17, 18, 2, 11, 12, 19, 8];
+	AND type IN [17, 18, 2, 11, 12, 19, 8];

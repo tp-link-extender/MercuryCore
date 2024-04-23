@@ -12,6 +12,7 @@
 </script>
 
 <NoScript>
+	<!-- somebody fix typescript, whys it even linting my html, stick to ya day job nerd -->
 	<details name="details">
 		<summary class="bg-darker p-2 px-4 rounded-2 block">
 			{title}

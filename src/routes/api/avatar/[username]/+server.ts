@@ -23,10 +23,9 @@ export async function GET({ url, params }) {
 	const path = `data/avatars/${user.number}${shotType}.png`
 
 	try {
-		if (wait) {
+		if (wait)
 			// If the file doesn't exist, wait for it to be created
 			// if it does exist, wait for it to be modified
-			console.log("waiting...")
 			await new Promise<void>(resolve => {
 				try {
 					const watcher = fs.watch(path, () => {
@@ -37,9 +36,7 @@ export async function GET({ url, params }) {
 					resolve()
 				}
 			})
-
-			console.log("waited")
-		} else if (!(await Bun.file(path).exists())) throw new Error()
+		else if (!(await Bun.file(path).exists())) throw new Error()
 
 		return new Response(Bun.file(path))
 	} catch {

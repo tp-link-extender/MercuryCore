@@ -1,12 +1,12 @@
 import { building } from "$app/environment"
-import { Surreal } from "surrealdb.js"
+import Surreal from "surrealdb.js"
 
 const db = new Surreal()
 
 async function reconnect() {
 	await db.close()
 	console.log("connecting")
-	await db.connect("http://localhost:8000/rpc")
+	await db.connect("ws://localhost:8000")
 	console.log("connected")
 	await db.signin({
 		username: "root",
@@ -71,7 +71,6 @@ async function fixError<T>(q: () => Promise<T>) {
 	return undefined as unknown as T
 }
 
-type Param = string | number | boolean | null | object | Date | undefined // basically anything
 type Input = string | Promise<{ default: string }>
 
 const getInput = async (input: Input) =>
@@ -90,7 +89,7 @@ const getInput = async (input: Input) =>
  */
 export const query = <T>(
 	input: Input,
-	params?: { [k: string]: Param }
+	params?: { [k: string]: unknown }
 ): Promise<T[]> =>
 	fixError(
 		async () => (await db.query(await getInput(input), params))?.[0] as T[]
@@ -107,7 +106,7 @@ export const query = <T>(
  * 	{ username: "Heliodex" }
  * ) // { email: heli@odex.cf } - returns an object for this query
  */
-export const squery = <T>(input: Input, params?: { [k: string]: Param }) =>
+export const squery = <T>(input: Input, params?: { [k: string]: unknown }) =>
 	fixError(
 		async () =>
 			((await db.query(await getInput(input), params))?.[0] as T[])[0]
@@ -125,7 +124,7 @@ export const squery = <T>(input: Input, params?: { [k: string]: Param }) =>
  * 		SELECT email FROM user WHERE username = $username`
  * ) // [null, [{ email: heli@odex.cf }]] - returns an array with an element for each query
  */
-export const mquery = <T>(input: Input, params?: { [k: string]: Param }) =>
+export const mquery = <T>(input: Input, params?: { [k: string]: unknown }) =>
 	fixError(async () => (await db.query(await getInput(input), params)) as T)
 
 /**
@@ -150,14 +149,12 @@ export const find = (id: string) =>
 export const findWhere = (
 	table: string,
 	where: string,
-	params?: { [k: string]: Param }
+	params?: { [k: string]: unknown }
 ) =>
 	query(surql`!!SELECT 1 FROM type::table($table) WHERE ${where}`, {
 		...params,
 		table,
 	}) as unknown as Promise<boolean>
-
-export const listenLive = db.listenLive
 
 export const failed = "The query was not executed due to a failed transaction"
 
