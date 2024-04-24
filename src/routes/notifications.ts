@@ -1,4 +1,4 @@
-import { query, squery, surql } from "$lib/server/surreal"
+import { equery, surrealql, RecordId } from "$lib/server/surreal"
 import type { User } from "lucia"
 
 type Notification = {
@@ -14,10 +14,72 @@ type Notification = {
 	link?: string
 }
 
+type AssetComment = {
+	id: string
+	parentAsset: {
+		id: string
+		name: string
+	}
+}
+
+async function getAssetComment(relativeId: string) {
+	const result = await equery<AssetComment[][]>(
+		surrealql`
+			SELECT
+				*,
+				meta::id(id) AS id,
+				(SELECT meta::id(id) AS id, name
+				FROM ->replyToAsset->asset)[0] AS parentAsset
+			FROM $comment`,
+		{ comment: new RecordId("assetComment", relativeId) }
+	)
+
+	return result[0][0]
+}
+
+type ForumReply = {
+	id: string
+	parentPost: {
+		categoryName: string
+		id: string
+	}
+}
+
+async function getForumReply(relativeId: string) {
+	const result = await equery<ForumReply[][]>(
+		surrealql`
+			SELECT
+				meta::id(id) AS id,
+				(SELECT
+					meta::id(id) AS id,
+					(->in->forumCategory)[0].name as categoryName
+				FROM ->replyToPost[0]->forumPost)[0] AS parentPost
+			FROM $reply`,
+		{ reply: new RecordId("forumReply", relativeId) }
+	)
+
+	return result[0][0]
+}
+
+type ForumPost = { category: { name: string } }
+
+async function getForumPost(relativeId: string) {
+	const result = await equery<ForumPost[][]>(
+		surrealql`
+			SELECT
+				(SELECT name
+				FROM ->in->forumCategory) AS category
+			FROM $forumPost`,
+		{ forumPost: new RecordId("forumPost", relativeId) }
+	)
+
+	return result[0][0]
+}
+
 export default async function (user: User | null) {
 	if (!user) return []
-	const notifications = await query<Notification>(
-		surql`
+	const notifsQ = await equery<Notification[][]>(
+		surrealql`
 			SELECT
 				*,
 				meta::id(id) AS id,
@@ -28,6 +90,7 @@ export default async function (user: User | null) {
 			ORDER BY time DESC`,
 		{ user: `user:${user.id}` }
 	)
+	const notifications = notifsQ[0]
 
 	for (const i of notifications)
 		switch (i.type) {
@@ -40,22 +103,8 @@ export default async function (user: User | null) {
 
 			case "AssetComment":
 			case "AssetCommentReply": {
-				const comment = await squery<{
-					id: string
-					parentAsset: {
-						id: string
-						name: string
-					}
-				}>(
-					surql`
-						SELECT
-							*,
-							meta::id(id) AS id,
-							(SELECT meta::id(id) AS id, name
-							FROM ->replyToAsset->asset)[0] AS parentAsset
-						FROM $comment`,
-					{ comment: `assetComment:${i.relativeId}` }
-				)
+				if (!i.relativeId) break
+				const comment = await getAssetComment(i.relativeId)
 				if (!comment) break
 
 				i.link = `/avatarshop/${comment.parentAsset.id}/${comment.parentAsset.name}/${comment.id}`
@@ -63,23 +112,8 @@ export default async function (user: User | null) {
 			}
 			case "ForumPostReply":
 			case "ForumReplyReply": {
-				const reply = await squery<{
-					id: string
-					parentPost: {
-						categoryName: string
-						id: string
-					}
-				}>(
-					surql`
-						SELECT
-							meta::id(id) AS id,
-							(SELECT
-								meta::id(id) AS id,
-								(->in->forumCategory)[0].name as categoryName
-							FROM ->replyToPost[0]->forumPost)[0] AS parentPost
-						FROM $reply`,
-					{ reply: `forumReply:${i.relativeId}` }
-				)
+				if (!i.relativeId) break
+				const reply = await getForumReply(i.relativeId)
 				if (!reply) break
 
 				i.link = `/forum/${reply.parentPost.categoryName.toLowerCase()}/${
@@ -89,18 +123,8 @@ export default async function (user: User | null) {
 			}
 			case "ForumMention":
 			case "ForumPost": {
-				const post = await squery<{
-					category: {
-						name: string
-					}
-				}>(
-					surql`
-						SELECT
-							(SELECT name
-							FROM ->in->forumCategory) AS category
-						FROM $forumPost`,
-					{ forumPost: `forumPost:${i.relativeId}` }
-				)
+				if (!i.relativeId) break
+				const post = await getForumPost(i.relativeId)
 				if (!post) break
 
 				i.link = `/forum/${post.category.name.toLowerCase()}/${

@@ -3,7 +3,7 @@
 
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
-import { query, squery, surql } from "$lib/server/surreal"
+import { equery, RecordId, surrealql } from "$lib/server/surreal"
 import { auth } from "$lib/server/lucia"
 import { dev } from "$app/environment"
 import { redirect } from "@sveltejs/kit"
@@ -118,29 +118,34 @@ export async function handle({ event, resolve }) {
 	if (!session) setSession(auth.createBlankSessionCookie())
 	else if (session.fresh) setSession(auth.createSessionCookie(session.id))
 
-	const moderation = await squery(
-		surql`
-			SELECT * FROM moderation
+	const moderationQ = await equery<1[][]>(
+		surrealql`
+			SELECT 1 FROM moderation
 			WHERE out = $user AND active = true`,
-		{ user: `user:${user.id}` }
+		{ user: new RecordId("user", user.id) }
 	)
+	const moderated = moderationQ[0][0]
 
 	if (
+		moderated &&
 		!["/moderation", "/terms", "/privacy", "/api"].includes(pathname) &&
 		!pathname.startsWith("/api/avatar") &&
-		!pathname.startsWith("/studio") &&
-		moderation
+		!pathname.startsWith("/studio")
 	)
 		redirect(302, "/moderation")
 
-	await query(surql`UPDATE $user SET lastOnline = time::now()`, {
-		user: `user:${user.id}`,
+	await equery(surrealql`UPDATE $user SET lastOnline = time::now()`, {
+		user: new RecordId("user", user.id),
 	})
 
-	const economy = await squery<{
-		dailyStipend?: number
-		stipendTime?: number
-	}>(surql`SELECT * FROM stuff:economy`)
+	const economyQ = await equery<
+		{
+			dailyStipend?: number
+			stipendTime?: number
+		}[][]
+	>(surrealql`SELECT * FROM stuff:economy`)
+	const economy = economyQ[0][0]
+
 	const dailyStipend = economy?.dailyStipend || 10
 	const stipendTime = economy?.stipendTime || 12
 
@@ -149,12 +154,12 @@ export async function handle({ event, resolve }) {
 			(new Date().getTime() - 3600e3 * stipendTime) <
 		0
 	)
-		await query(
-			surql`
+		await equery(
+			surrealql`
 				UPDATE $user SET currencyCollected = time::now();
 				UPDATE $user SET currency += $dailyStipend`,
 			{
-				user: `user:${user.id}`,
+				user: new RecordId("user", user.id),
 				dailyStipend,
 			}
 		)

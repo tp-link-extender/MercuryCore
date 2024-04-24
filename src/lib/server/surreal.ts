@@ -1,5 +1,5 @@
 import { building } from "$app/environment"
-import Surreal from "surrealdb.js"
+import Surreal, { type PreparedQuery } from "surrealdb.js"
 
 const db = new Surreal()
 
@@ -19,6 +19,79 @@ async function reconnect() {
 	})
 
 	console.log("reloaded surreal")
+}
+
+export const failed = "The query was not executed due to a failed transaction"
+
+export { surrealql, RecordId } from "surrealdb.js"
+
+async function dbquery(query: string, bindings?: { [k: string]: unknown }) {
+	console.log("Making query:", query)
+	if (bindings) console.log("With bindings:", bindings)
+	return await db.query(query, bindings)
+}
+
+type Input = string | Promise<{ default: string }>
+type Prepared = PreparedQuery<(result: unknown[]) => unknown>
+
+const getInput = async (input: Input) =>
+	typeof input === "string" ? input : (await input).default
+/**
+ * Executes a query in SurrealDB and returns its results and whether it was successful.
+ * @param query The query to execute.
+ * @param bindings An object of parameters to pass to SurrealDB.
+ * @returns [true, result] if the query was successful, [false, error] if the query failed. (Lua-style!)
+ */
+export async function newquery<T>(
+	query: Input | Prepared,
+	bindings?: { [k: string]: unknown }
+): Promise<[false, string] | [true, T]> {
+	// console.log("Making query:", query)
+	// if (bindings) console.log("With bindings:", bindings)
+	const realQuery =
+		typeof (await query) === "string"
+			? await getInput(query as Input)
+			: (query as Prepared)
+	const result = await db.query_raw(realQuery, bindings)
+	const final: unknown[] = []
+
+	for (const res of result) {
+		// Result types my beloved
+		if (res.status === "ERR" && res.result !== failed)
+			return [false, res.result]
+		final.push(res.result)
+	}
+
+	return [true, final as T] // I could do this Go-style with [result, error] but that's bikeshedding
+}
+
+/**
+ * Executes a query in SurrealDB and returns its results. Errors if the query failed.
+ * @param query The query to execute.
+ * @param bindings An object of parameters to pass to SurrealDB.
+ * @returns the result of the query. Errors if unsuccessful.
+ */
+export async function equery<T>(
+	query: Input | Prepared,
+	bindings?: { [k: string]: unknown }
+): Promise<T> {
+	// console.log("Making query:", query)
+	// if (bindings) console.log("With bindings:", bindings)
+	const realQuery =
+		typeof (await query) === "string"
+			? await getInput(query as Input)
+			: (query as Prepared)
+	const result = await db.query_raw(realQuery, bindings)
+	const final: unknown[] = []
+
+	for (const res of result) {
+		// Result types my beloved
+		if (res.status === "ERR" && res.result !== failed)
+			throw new Error(res.result)
+		final.push(res.result)
+	}
+
+	return final as T
 }
 
 if (!building) await reconnect()
@@ -71,11 +144,6 @@ async function fixError<T>(q: () => Promise<T>) {
 	return undefined as unknown as T
 }
 
-type Input = string | Promise<{ default: string }>
-
-const getInput = async (input: Input) =>
-	typeof input === "string" ? input : (await input).default
-
 /**
  * Executes a query in SurrealDB and returns its results.
  * @param input The surql query to execute.
@@ -92,7 +160,7 @@ export const query = <T>(
 	params?: { [k: string]: unknown }
 ): Promise<T[]> =>
 	fixError(
-		async () => (await db.query(await getInput(input), params))?.[0] as T[]
+		async () => (await dbquery(await getInput(input), params))?.[0] as T[]
 	)
 
 /**
@@ -109,7 +177,7 @@ export const query = <T>(
 export const squery = <T>(input: Input, params?: { [k: string]: unknown }) =>
 	fixError(
 		async () =>
-			((await db.query(await getInput(input), params))?.[0] as T[])[0]
+			((await dbquery(await getInput(input), params))?.[0] as T[])[0]
 	)
 
 /**
@@ -125,7 +193,7 @@ export const squery = <T>(input: Input, params?: { [k: string]: unknown }) =>
  * ) // [null, [{ email: heli@odex.cf }]] - returns an array with an element for each query
  */
 export const mquery = <T>(input: Input, params?: { [k: string]: unknown }) =>
-	fixError(async () => (await db.query(await getInput(input), params)) as T)
+	fixError(async () => (await dbquery(await getInput(input), params)) as T)
 
 /**
  * Finds whether a record exists in the database.
@@ -156,8 +224,6 @@ export const findWhere = (
 		table,
 	}) as unknown as Promise<boolean>
 
-export const failed = "The query was not executed due to a failed transaction"
-
 /**
  * Returns an error if the query failed.
  * @param qResult The result of a query.
@@ -174,7 +240,7 @@ export function getError(qResult: unknown) {
 	if (!Array.isArray(res)) res = [qResult]
 
 	for (const result of res)
-		if (result === failed || res.length === 1)
+		if (result === failed || length === 1)
 			// Every other result will be `failed` if the query failed
 			for (const result2 of res)
 				if (typeof result2 === "string" && result2 !== failed)
