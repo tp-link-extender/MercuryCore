@@ -1,4 +1,4 @@
-import { query, surql } from "$lib/server/surreal"
+import { equery, surrealql } from "$lib/server/surreal"
 import getNotifications from "./notifications"
 
 let lines = "0"
@@ -26,15 +26,14 @@ export async function load({ request, locals }) {
 	const { user } = locals
 	// No authorise() function call, as we don't want to redirect to login page if not logged in
 
-	const banners = await query<Banner>(surql`
+	const banners = await equery<Banner>(surrealql`
 		SELECT
 			body,
 			bgColour,
 			textLight,
 			meta::id(id) AS id
 		OMIT deleted
-		FROM banner
-		WHERE deleted = false AND active = true`)
+		FROM banner WHERE deleted = false AND active = true`)
 
 	const isStudio = request.headers
 		.get("user-agent")

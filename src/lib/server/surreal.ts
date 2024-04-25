@@ -43,16 +43,10 @@ const getInput = async (input: Input) =>
  * @returns [true, result] if the query was successful, [false, error] if the query failed. (Lua-style!)
  */
 export async function newquery<T>(
-	query: Input | Prepared,
+	query: string | Promise<string> | Prepared,
 	bindings?: { [k: string]: unknown }
 ): Promise<[false, string] | [true, T]> {
-	// console.log("Making query:", query)
-	// if (bindings) console.log("With bindings:", bindings)
-	const realQuery =
-		typeof (await query) === "string"
-			? await getInput(query as Input)
-			: (query as Prepared)
-	const result = await db.query_raw(realQuery, bindings)
+	const result = await db.query_raw(await query, bindings)
 	const final: unknown[] = []
 
 	for (const res of result) {
@@ -72,16 +66,10 @@ export async function newquery<T>(
  * @returns the result of the query. Errors if unsuccessful.
  */
 export async function equery<T>(
-	query: Input | Prepared,
+	query:  string | Promise<string> | Prepared,
 	bindings?: { [k: string]: unknown }
 ): Promise<T> {
-	// console.log("Making query:", query)
-	// if (bindings) console.log("With bindings:", bindings)
-	const realQuery =
-		typeof (await query) === "string"
-			? await getInput(query as Input)
-			: (query as Prepared)
-	const result = await db.query_raw(realQuery, bindings)
+	const result = await db.query_raw(await query, bindings)
 	const final: unknown[] = []
 
 	for (const res of result) {
@@ -93,6 +81,9 @@ export async function equery<T>(
 
 	return final as T
 }
+
+export const unpack = async (imported: Promise<{ default: string }>) =>
+	(await imported).default
 
 if (!building) await reconnect()
 

@@ -1,4 +1,4 @@
-import { squery, surql } from "$lib/server/surreal"
+import { equery, surrealql } from "$lib/server/surreal"
 import fs from "node:fs"
 import { error } from "@sveltejs/kit"
 
@@ -14,9 +14,9 @@ export async function GET({ url, params }) {
 		shotType = "-body"
 	}
 
-	const user = await squery<{
+	const user = await equery<{
 		number: number
-	}>(surql`SELECT number FROM user WHERE username = $username`, { username })
+	}>(surrealql`SELECT number FROM user WHERE username = ${username}`)
 
 	if (!user) error(404, "User not found")
 

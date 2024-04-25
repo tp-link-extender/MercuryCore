@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { query, mquery, equery } from "$lib/server/surreal"
+import { query, equery, RecordId, unpack } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate } from "sveltekit-superforms/server"
@@ -59,9 +59,11 @@ export async function load({ locals }) {
 		() => `You are the ${ordinal(user?.number)} user to join Mercury!`,
 	]
 
-	const results = await equery<unknown[]>(import("./home.surql"), {
-		user: `user:${user.id}`,
+	console.log("homing")
+	const results = await equery<unknown[]>(unpack(import("./home.surql")), {
+		user: new RecordId("user", user.id),
 	})
+	console.log("homing")
 
 	return {
 		stuff: {

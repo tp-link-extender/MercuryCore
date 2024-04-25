@@ -43,7 +43,7 @@ export async function load({ locals }) {
 const bannerActiveCount = () =>
 	squery<number>(surql`
 		count(
-			SELECT * FROM banner
+			SELECT 1 FROM banner
 			WHERE active = true AND deleted = false
 		)`)
 
