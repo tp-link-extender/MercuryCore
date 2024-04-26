@@ -1,5 +1,5 @@
 import { building } from "$app/environment"
-import Surreal, { type PreparedQuery } from "surrealdb.js"
+import Surreal, { surrealql, RecordId, type PreparedQuery } from "surrealdb.js"
 
 const db = new Surreal()
 
@@ -23,7 +23,7 @@ async function reconnect() {
 
 export const failed = "The query was not executed due to a failed transaction"
 
-export { surrealql, RecordId } from "surrealdb.js"
+export { surrealql, RecordId }
 
 async function dbquery(query: string, bindings?: { [k: string]: unknown }) {
 	console.log("Making query:", query)
@@ -36,28 +36,53 @@ type Prepared = PreparedQuery<(result: unknown[]) => unknown>
 
 const getInput = async (input: Input) =>
 	typeof input === "string" ? input : (await input).default
+
+const stupidError =
+	"The query was not executed due to a failed transaction. There was a problem with a datastore transaction: Resource busy: "
+const sessionError =
+	"There was a problem with the database: The session has expired"
+
+async function fixError<T>(q: () => Promise<T>) {
+	// WORST
+	// DATABASE
+	// ISSUE
+	// EVER
+	for (let i = 1; i <= 3; i++) {
+		try {
+			return await q()
+		} catch (err) {
+			const e = err as Error
+			if (e.message === sessionError) await reconnect()
+			else if (e.message !== stupidError) throw new Error(e.message)
+		}
+		console.log(`retrying query ${i} time${i > 1 ? "s" : ""}`)
+	}
+	return undefined as unknown as T
+}
+
 /**
  * Executes a query in SurrealDB and returns its results and whether it was successful.
  * @param query The query to execute.
  * @param bindings An object of parameters to pass to SurrealDB.
  * @returns [true, result] if the query was successful, [false, error] if the query failed. (Lua-style!)
  */
-export async function newquery<T>(
+export const newquery = async <T>(
 	query: string | Promise<string> | Prepared,
 	bindings?: { [k: string]: unknown }
-): Promise<[false, string] | [true, T]> {
-	const result = await db.query_raw(await query, bindings)
-	const final: unknown[] = []
+): Promise<[false, string] | [true, T]> =>
+	await fixError(async () => {
+		const result = await db.query_raw(await query, bindings)
+		const final: unknown[] = []
 
-	for (const res of result) {
-		// Result types my beloved
-		if (res.status === "ERR" && res.result !== failed)
-			return [false, res.result]
-		final.push(res.result)
-	}
+		for (const res of result) {
+			// Result types my beloved
+			if (res.status === "ERR" && res.result !== failed)
+				return [false, res.result]
+			final.push(res.result)
+		}
 
-	return [true, final as T] // I could do this Go-style with [result, error] but that's bikeshedding
-}
+		return [true, final as T] // I could do this Go-style with [result, error] but that's bikeshedding
+	})
 
 /**
  * Executes a query in SurrealDB and returns its results. Errors if the query failed.
@@ -65,22 +90,23 @@ export async function newquery<T>(
  * @param bindings An object of parameters to pass to SurrealDB.
  * @returns the result of the query. Errors if unsuccessful.
  */
-export async function equery<T>(
-	query:  string | Promise<string> | Prepared,
+export const equery = async <T>(
+	query: string | Promise<string> | Prepared,
 	bindings?: { [k: string]: unknown }
-): Promise<T> {
-	const result = await db.query_raw(await query, bindings)
-	const final: unknown[] = []
+): Promise<T> =>
+	await fixError(async () => {
+		const result = await db.query_raw(await query, bindings)
+		const final: unknown[] = []
 
-	for (const res of result) {
-		// Result types my beloved
-		if (res.status === "ERR" && res.result !== failed)
-			throw new Error(res.result)
-		final.push(res.result)
-	}
+		for (const res of result) {
+			// Result types my beloved
+			if (res.status === "ERR" && res.result !== failed)
+				throw new Error(res.result)
+			final.push(res.result)
+		}
 
-	return final as T
-}
+		return final as T
+	})
 
 export const unpack = async (imported: Promise<{ default: string }>) =>
 	(await imported).default
@@ -111,29 +137,6 @@ export const surql = (
 	}, "")
 
 if (!building) await db.query((await import("./init.surql")).default)
-
-const stupidError =
-	"The query was not executed due to a failed transaction. There was a problem with a datastore transaction: Resource busy: "
-const sessionError =
-	"There was a problem with the database: The session has expired"
-
-async function fixError<T>(q: () => Promise<T>) {
-	// WORST
-	// DATABASE
-	// ISSUE
-	// EVER
-	for (let i = 1; i <= 3; i++) {
-		try {
-			return await q()
-		} catch (err) {
-			const e = err as Error
-			if (e.message === sessionError) await reconnect()
-			else if (e.message !== stupidError) throw new Error(e.message)
-		}
-		console.log(`retrying query ${i} time${i > 1 ? "s" : ""}`)
-	}
-	return undefined as unknown as T
-}
 
 /**
  * Executes a query in SurrealDB and returns its results.
@@ -193,8 +196,10 @@ export const mquery = <T>(input: Input, params?: { [k: string]: unknown }) =>
  * @example
  * await find("user:1")
  */
-export const find = (id: string) =>
-	query(surql`!!SELECT 1 FROM $id`, { id }) as unknown as Promise<boolean>
+export const find = (table: string, id: string | number) =>
+	equery(
+		surrealql`!!SELECT 1 FROM ${new RecordId(table, id)}`
+	) as unknown as Promise<boolean>
 
 /**
  * Finds whether a record exists in the database matching a given condition.
@@ -205,15 +210,17 @@ export const find = (id: string) =>
  * @example
  * await findWhere("user", surql`username = $username`, { username: "Heliodex" })
  */
-export const findWhere = (
+export const findWhere = async (
 	table: string,
 	where: string,
 	params?: { [k: string]: unknown }
 ) =>
-	query(surql`!!SELECT 1 FROM type::table($table) WHERE ${where}`, {
-		...params,
-		table,
-	}) as unknown as Promise<boolean>
+	(
+		await equery<boolean[]>(
+			`!!SELECT 1 FROM type::table($table) WHERE ${where}`,
+			{ ...params, table }
+		)
+	)[0]
 
 /**
  * Returns an error if the query failed.
@@ -256,7 +263,7 @@ export async function transaction(
 	amountSent: number,
 	{ note, link }: { note?: string; link?: string }
 ) {
-	const qResult = await mquery<
+	const qResult = await equery<
 		| string[]
 		| {
 				amountSent: number
@@ -265,13 +272,17 @@ export async function transaction(
 				link: string
 				time: string
 		  }[]
-	>(import("./transaction.surql"), {
+	>(unpack(import("./transaction.surql")), {
 		...(sender?.number
 			? { senderNumber: sender.number }
-			: { senderId: `user:${sender.id}` }),
+			: sender?.id
+				? { senderId: new RecordId("user", sender.id) }
+				: {}),
 		...(receiver?.number
 			? { receiverNumber: receiver.number }
-			: { receiverId: `user:${receiver.id}` }),
+			: receiver?.id
+				? { receiverId: new RecordId("user", receiver.id) }
+				: {}),
 		amountSent,
 		note,
 		link,
@@ -296,9 +307,9 @@ export enum Action {
  * @param userId The id of the user who took the action
  */
 export async function auditLog(action: Action, note: string, userId: string) {
-	await query(import("./auditLog.surql"), {
+	await equery(unpack(import("./auditLog.surql")), {
 		action,
 		note,
-		user: `user:${userId}`,
+		user: new RecordId("user", userId),
 	})
 }

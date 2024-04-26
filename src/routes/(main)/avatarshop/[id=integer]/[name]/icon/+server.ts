@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { squery, surql } from "$lib/server/surreal"
+import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
 type Asset = {
@@ -13,14 +13,13 @@ export async function GET({ locals, params }) {
 
 	const id = +params.id
 
-	const asset = await squery<Asset>(
-		surql`
+	const [[asset]] = await equery<Asset[][]>(
+		surrealql`
 			SELECT
 				meta::id(id) AS id,
 				name,
 				visibility
-			FROM $asset`,
-		{ asset: `asset:${id}` }
+			FROM ${new RecordId("asset", id)}`
 	)
 
 	if (!asset) error(404, "Not found")

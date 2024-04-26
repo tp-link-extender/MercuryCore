@@ -118,13 +118,12 @@ export async function handle({ event, resolve }) {
 	if (!session) setSession(auth.createBlankSessionCookie())
 	else if (session.fresh) setSession(auth.createSessionCookie(session.id))
 
-	const moderationQ = await equery<1[][]>(
+	const [[moderated]] = await equery<1[][]>(
 		surrealql`
 			SELECT 1 FROM moderation
 			WHERE out = $user AND active = true`,
 		{ user: new RecordId("user", user.id) }
 	)
-	const moderated = moderationQ[0][0]
 
 	if (
 		moderated &&
@@ -138,13 +137,12 @@ export async function handle({ event, resolve }) {
 		user: new RecordId("user", user.id),
 	})
 
-	const economyQ = await equery<
+	const [[economy]] = await equery<
 		{
 			dailyStipend?: number
 			stipendTime?: number
 		}[][]
 	>(surrealql`SELECT * FROM stuff:economy`)
-	const economy = economyQ[0][0]
 
 	const dailyStipend = economy?.dailyStipend || 10
 	const stipendTime = economy?.stipendTime || 12

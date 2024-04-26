@@ -14,10 +14,9 @@ export async function GET({ url, params }) {
 		shotType = "-body"
 	}
 
-	const user = await equery<{
-		number: number
-	}>(surrealql`SELECT number FROM user WHERE username = ${username}`)
-
+	const [[user]] = await equery<{ number: number }[][]>(
+		surrealql`SELECT number FROM user WHERE username = ${username}`
+	)
 	if (!user) error(404, "User not found")
 
 	const path = `data/avatars/${user.number}${shotType}.png`

@@ -13,7 +13,7 @@ FROM place WHERE !privateServer
 	AND IF $query THEN
 		string::lowercase($query) IN string::lowercase(name)
 	ELSE
-		TRUE
+		TRUE # whatever
 	END
 ORDER BY playerCount DESC, serverPing DESC;
 

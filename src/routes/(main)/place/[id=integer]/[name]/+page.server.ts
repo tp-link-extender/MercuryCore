@@ -1,10 +1,20 @@
 import { authorise } from "$lib/server/lucia"
-import { mquery, squery, surql, find, findWhere } from "$lib/server/surreal"
+import {
+	surql,
+	find,
+	findWhere,
+	equery,
+	surrealql,
+	unpack,
+	RecordId,
+} from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { likeLikesActions, type LikeActions } from "$lib/server/like"
 import { publish } from "$lib/server/realtime"
 import { encode, couldMatch } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
+
+const placeQuery = await unpack(import("./place.surql"))
 
 type Place = {
 	created: string
@@ -36,9 +46,9 @@ export async function load({ url, locals, params }) {
 	const { user } = await authorise(locals)
 	const id = +params.id
 	const privateServerCode = url.searchParams.get("privateServer")
-	const getPlace = await squery<Place>(import("./place.surql"), {
-		user: `user:${user.id}`,
-		place: `place:${id}`,
+	const [[getPlace]] = await equery<Place[][]>(placeQuery, {
+		user: new RecordId("user", user.id),
+		place: new RecordId("place", id),
 	})
 
 	if (
@@ -69,20 +79,22 @@ actions.like = async ({ url, request, locals, params }) => {
 	const action = data.action as LikeActions
 	const privateTicket = url.searchParams.get("privateTicket")
 
-	const foundPlace = await squery<{
-		privateServer: boolean
-		privateTicket: string
-		likeCount: number
-		dislikeCount: number
-	}>(
-		surql`
+	const [[foundPlace]] = await equery<
+		{
+			privateServer: boolean
+			privateTicket: string
+			likeCount: number
+			dislikeCount: number
+		}[][]
+	>(
+		surrealql`
 			SELECT
 				privateServer,
 				privateTicket,
 				count(SELECT 1 FROM $parent<-likes) AS likeCount,
 				count(SELECT 1 FROM $parent<-dislikes) AS dislikeCount
 			FROM $place`,
-		{ place: `place:${id}` }
+		{ place: new RecordId("place", id) }
 	)
 
 	if (
@@ -95,6 +107,7 @@ actions.like = async ({ url, request, locals, params }) => {
 
 	foundPlace.likeCount = likes.likeCount
 	foundPlace.dislikeCount = likes.dislikeCount
+	// don't worry, it's not a record id
 	await publish(`place:${id}`, {
 		// cant destructure foundPlace because it contains sensitive data
 		id,
@@ -113,17 +126,17 @@ actions.join = async ({ request, locals }) => {
 	if (requestType !== "RequestGame")
 		error(400, "Invalid Request (request type invalid)")
 
-	if (!(await find(`place:${serverId}`))) error(404, "Place not found")
+	if (!(await find("place", serverId))) error(404, "Place not found")
 
 	const foundModerated = await findWhere(
 		"moderation",
 		surql`out = $user AND active = true`,
-		{ user: `user:${user.id}` }
+		{ user: new RecordId("user", user.id) }
 	)
 	if (foundModerated) error(403, "You cannot currently play games")
 
 	// Invalidate all game sessions and create valid session
-	const sessionQ = await mquery<
+	const [, [session]] = await equery<
 		{
 			id: string
 			in: string
@@ -132,18 +145,17 @@ actions.join = async ({ request, locals }) => {
 			valid: boolean
 		}[][]
 	>(
-		surql`
+		surrealql`
 			UPDATE (SELECT * FROM $user->playing) SET valid = false;
 			RELATE $user->playing->$place CONTENT {
 				ping: 0,
 				valid: true,
 			}`,
 		{
-			user: `user:${user.id}`,
-			place: `place:${serverId}`,
+			user: new RecordId("user", user.id),
+			place: new RecordId("place", serverId),
 		}
 	)
-	const session = sessionQ[1][0]
 
 	return {
 		joinScriptUrl: `${process.env.ORIGIN}/game/join?ticket=${

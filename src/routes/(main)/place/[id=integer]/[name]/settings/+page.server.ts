@@ -1,5 +1,12 @@
 import { authorise } from "$lib/server/lucia"
-import { query, squery, surql } from "$lib/server/surreal"
+import {
+	query,
+	surql,
+	equery,
+	surrealql,
+	unpack,
+	RecordId,
+} from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { encode } from "$lib/urlName"
 import { error } from "@sveltejs/kit"
@@ -9,6 +16,8 @@ import { z } from "zod"
 import fs from "node:fs"
 import sharp from "sharp"
 import type { RequestEvent } from "./$types"
+
+const settingsQuery = await unpack(import("./settings.surql"))
 
 const schemas = {
 	view: z.object({
@@ -39,7 +48,7 @@ type Place = {
 		text: string
 		updated: string
 	}
-	id: string
+	id: string // graah
 	maxPlayers: number
 	name: string
 	owner: BasicUser
@@ -52,11 +61,14 @@ type Place = {
 	updated: string
 }
 
-const placeQuery = (id: string | number) =>
-	squery<Place>(import("./settings.surql"), { place: `place:${id}` })
-
+async function placeQuery(id: number) {
+	const [[place]] = await equery<Place[][]>(settingsQuery, {
+		place: new RecordId("place", id), // MAKE SURE ID IS A NUMBER
+	})
+	return place
+}
 export async function load({ locals, params }) {
-	const getPlace = await placeQuery(params.id)
+	const getPlace = await placeQuery(+params.id)
 	if (!getPlace) error(404, "Place not found")
 
 	const { user } = await authorise(locals)
@@ -78,7 +90,7 @@ export async function load({ locals, params }) {
 async function getData(e: RequestEvent) {
 	const id = +e.params.id
 	const { user } = await authorise(e.locals)
-	const getPlace = await placeQuery(e.params.id)
+	const getPlace = await placeQuery(id)
 
 	if (user.number !== getPlace.owner.number && user.permissionLevel < 4)
 		error(403, "You do not have permission to update this page.")
@@ -126,8 +138,8 @@ actions.ticket = async e => {
 	const id = await getData(e)
 	const { request } = e
 
-	await query(surql`UPDATE $place SET serverTicket = rand::guid()`, {
-		place: `place:${id}`,
+	await equery(surrealql`UPDATE $place SET serverTicket = rand::guid()`, {
+		place: new RecordId("place", id),
 	})
 
 	return message(

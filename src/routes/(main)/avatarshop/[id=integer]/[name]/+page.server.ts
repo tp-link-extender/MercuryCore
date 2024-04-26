@@ -1,5 +1,15 @@
 import { authorise } from "$lib/server/lucia"
-import { query, squery, transaction, surql, find } from "$lib/server/surreal"
+import {
+	query,
+	squery,
+	transaction,
+	surql,
+	find,
+	RecordId,
+	equery,
+	surrealql,
+	unpack,
+} from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formData from "$lib/server/formData"
 import formError from "$lib/server/formError"
@@ -45,7 +55,7 @@ type Asset = {
 	visibility: string
 }
 
-const assetQuery = (await import("./asset.surql")).default
+const assetQuery = await unpack(import("./asset.surql"))
 
 export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
@@ -53,11 +63,11 @@ export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
 	const id = +params.id
 
-	const asset = await squery<Asset>(
+	const [[asset]] = await equery<Asset[][]>(
 		assetQuery.replace("_SELECTCOMMENTS", SELECTCOMMENTS),
 		{
-			asset: `asset:${id}`,
-			user: `user:${user.id}`,
+			asset: new RecordId("asset", id),
+			user: new RecordId("user", user.id),
 		}
 	)
 
@@ -84,12 +94,10 @@ async function getBuyData(e: RequestEvent) {
 	const { user } = await authorise(e.locals)
 	const id = +e.params.id
 
-	if (
-		!(await squery(surql`SELECT * FROM $asset`, {
-			asset: `asset:${id}`,
-		}))
+	const [[assetExists]] = await equery<boolean[][]>(
+		surrealql`SELECT 1 FROM ${new RecordId("asset", id)}`
 	)
-		error(404)
+	if (!assetExists) error(404)
 
 	return { user, id }
 }
@@ -107,26 +115,31 @@ async function findComment<T>(
 	// Prevents incorrect ids erroring the Surreal query as well
 	if (!/^[0-9a-z]+$/.test(id)) error(400, "Invalid comment id")
 
-	const comment = await squery<T>(input, {
-		assetComment: `assetComment:${id}`,
+	const [[comment]] = await equery<T[][]>(input, {
+		assetComment: new RecordId("assetComment", id),
 	})
 	if (!comment) error(404, "Comment not found")
 
 	return { user, comment, id }
 }
 
+const updateVisibilityQuery = await unpack(import("./updateVisibility.surql"))
+const createCommentQuery = await unpack(import("./createComment.surql"))
+
 const updateVisibility = (visibility: string, text: string, id: string) =>
-	query(import("./updateVisibility.surql"), {
-		assetComment: `assetComment:${id}`,
+	equery(updateVisibilityQuery, {
+		assetComment: new RecordId("assetComment", id),
 		text,
 		visibility,
 	})
 
 const pinComment = (pinned: boolean) => async (e: RequestEvent) => {
-	await query(surql`UPDATE $assetComment SET pinned = $pinned`, {
-		assetComment: `assetComment:${(await findComment(e, 4)).id}`,
-		pinned,
-	})
+	await equery(
+		surrealql`UPDATE ${new RecordId(
+			"assetComment",
+			(await findComment(e, 4)).id
+		)} SET pinned = ${pinned}`
+	)
 }
 
 type Thing = {
@@ -150,22 +163,22 @@ const select = (thing: string) =>
 async function rerender({ locals, params }: RequestEvent) {
 	await authorise(locals, 5)
 
-	const asset = await squery<{
-		name: string
-		id: string
-		type: number
-		visibility: string
-	}>(
-		surql`
+	const [[asset]] = await equery<
+		{
+			name: string
+			id: string
+			type: number
+			visibility: string
+		}[][]
+	>(
+		surrealql`
 			SELECT
 				name,
 				meta::id(id) AS id, 
 				type,
 				visibility
-			FROM $asset`,
-		{ asset: `asset:${params.id}` }
+			FROM ${new RecordId("asset", params.id)}`
 	)
-
 	if (!asset) error(404, "Not found")
 
 	if (![11, 12, 8].includes(asset.type))
@@ -208,34 +221,36 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	if (commentId && !/^[0-9a-z]+$/.test(commentId))
 		error(400, "Invalid comment id")
 
-	const commentAuthor = await squery<{ id: string }>(
-		surql`SELECT meta::id(id) AS id FROM ` +
-			(commentId
-				? surql`$comment<-posted<-user`
-				: surql`$asset<-created<-user`),
-		{
-			comment: `assetComment:${commentId}`,
-			asset: `asset:${params.id}`,
-		}
+	const [[commentAuthor]] = await equery<{ id: string }[][]>(
+		commentId
+			? surrealql`SELECT meta::id(id) AS id FROM ${new RecordId(
+					"assetComment",
+					commentId
+				)}<-posted<-user`
+			: surrealql`SELECT meta::id(id) AS id FROM ${new RecordId(
+					"asset",
+					params.id
+				)}<-created<-user`
 	)
-
 	if (commentId && !commentAuthor) error(404)
 
 	const receiverId = commentAuthor?.id || ""
 	const newReplyId = await query<string>(surql`[fn::id()]`)
 
-	await query(import("./createComment.surql"), {
+	await equery(createCommentQuery, {
 		content,
-		user: `user:${user.id}`,
-		assetComment: `assetComment:${newReplyId}`,
-		asset: `asset:${params.id}`,
-		commentId: commentId ? `assetComment:${commentId}` : undefined,
+		user: new RecordId("user", user.id),
+		assetComment: new RecordId("assetComment", newReplyId),
+		asset: new RecordId("asset", params.id),
+		commentId: commentId
+			? new RecordId("assetComment", commentId)
+			: undefined,
 	})
 
 	await Promise.all([
 		user.id !== receiverId &&
-			query(
-				surql`
+			equery(
+				surrealql`
 					RELATE $sender->notification->$receiver CONTENT {
 						type: $type,
 						time: time::now(),
@@ -245,8 +260,8 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 					}`,
 				{
 					type: commentId ? "AssetCommentReply" : "AssetComment",
-					sender: `user:${user.id}`,
-					receiver: `user:${receiverId}`,
+					sender: new RecordId("user", user.id),
+					receiver: new RecordId("user", receiverId),
 					note: `${user.username} ${
 						commentId
 							? "replied to your comment"
@@ -256,7 +271,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 				}
 			),
 
-		like(user.id, `assetComment:${newReplyId}`),
+		like(user.id, new RecordId("assetComment", newReplyId)),
 	])
 }
 actions.like = async ({ request, locals, url }) => {
@@ -269,7 +284,7 @@ actions.like = async ({ request, locals, url }) => {
 	if (commentId && !/^[0-9a-z]+$/.test(commentId))
 		error(400, "Invalid comment id")
 
-	const foundAsset = id ? await find(`asset:${id}`) : null
+	const foundAsset = id ? await find("asset", id) : null
 	const foundComment = commentId
 		? await select(`assetComment:${commentId}`)
 		: null
@@ -280,7 +295,7 @@ actions.like = async ({ request, locals, url }) => {
 	const type = "assetComment" // commentId ? "assetComment" : "asset"
 	const likes = await likeScoreActions[action](
 		user.id,
-		`${type}:${id || commentId}`
+		new RecordId(type, (id || commentId) as string)
 	)
 
 	const thing = foundComment as Thing
@@ -297,17 +312,19 @@ actions.like = async ({ request, locals, url }) => {
 actions.buy = async e => {
 	const { user, id } = await getBuyData(e)
 
-	const asset = await squery<{
-		creator: {
-			id: string
-			username: string
-		}
-		name: string
-		owned: boolean
-		price: number
-		visibility: string
-	}>(
-		surql`
+	const [[asset]] = await equery<
+		{
+			creator: {
+				id: string
+				username: string
+			}
+			name: string
+			owned: boolean
+			price: number
+			visibility: string
+		}[][]
+	>(
+		surrealql`
 			SELECT
 				*,
 				(SELECT meta::id(id) AS id, username
@@ -315,8 +332,8 @@ actions.buy = async e => {
 				$user IN <-owns<-user.id AS owned
 			FROM $asset`,
 		{
-			asset: `asset:${id}`,
-			user: `user:${user.id}`,
+			asset: new RecordId("asset", id),
+			user: new RecordId("user", user.id),
 		}
 	)
 	if (!asset) error(404, "Not found")
@@ -336,13 +353,13 @@ actions.buy = async e => {
 	}
 
 	await Promise.all([
-		query(surql`RELATE $user->owns->$asset`, {
-			user: `user:${user.id}`,
-			asset: `asset:${id}`,
+		equery(surrealql`RELATE $user->owns->$asset`, {
+			user: new RecordId("user", user.id),
+			asset: new RecordId("asset", id),
 		}),
 		user.id === asset.creator.id ||
-			query(
-				surql`
+			equery(
+				surrealql`
 					RELATE $sender->notification->$receiver CONTENT {
 						type: $type,
 						time: time::now(),
@@ -352,8 +369,8 @@ actions.buy = async e => {
 					}`,
 				{
 					type: "ItemPurchase",
-					sender: `user:${user.id}`,
-					receiver: `user:${asset.creator.id}`,
+					sender: new RecordId("user", user.id),
+					receiver: new RecordId("user", asset.creator.id),
 					note: `${user.username} just purchased your item: ${asset.name}`,
 					relativeId: e.params.id,
 				}

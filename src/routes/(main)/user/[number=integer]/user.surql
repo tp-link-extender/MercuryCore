@@ -8,6 +8,7 @@ SELECT
 	(SELECT text, updated FROM $parent.bio ORDER BY updated DESC)[0] AS bio,
 	(SELECT
 		*,
+		meta::id(id) AS id,
 		(SELECT text, updated FROM $parent.content
 		ORDER BY updated DESC) AS content
 	FROM ->posted->statusPost LIMIT 40) AS posts,

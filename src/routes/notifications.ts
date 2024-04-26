@@ -78,7 +78,7 @@ async function getForumPost(relativeId: string) {
 
 export default async function (user: User | null) {
 	if (!user) return []
-	const notifsQ = await equery<Notification[][]>(
+	const [notifications] = await equery<Notification[][]>(
 		surrealql`
 			SELECT
 				*,
@@ -90,7 +90,6 @@ export default async function (user: User | null) {
 			ORDER BY time DESC`,
 		{ user: `user:${user.id}` }
 	)
-	const notifications = notifsQ[0]
 
 	for (const i of notifications)
 		switch (i.type) {

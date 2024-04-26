@@ -1,6 +1,6 @@
 import { actions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
-import { query, squery, surql } from "$lib/server/surreal"
+import { RecordId, equery, surql, surrealql, unpack } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { recurse, type Replies } from "$lib/server/nestedReplies"
 
@@ -18,37 +18,28 @@ type AssetComment = Replies[number] & {
 	}
 }
 
-const assetCommentsQuery = (await import("./comments.surql")).default
+const assetCommentsQuery = await unpack(import("./comments.surql"))
 
 export async function load({ locals, params }) {
-	if (!/^\d+$/.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
+	const { user } = await authorise(locals)
 
-	const asset = await squery<{
-		creator: {
-			username: string
-		}
-	}>(
-		surql`
+	const [[asset]] = await equery<{ creator: { username: string } }[][]>(
+		surrealql`
 			SELECT
 				(SELECT username
 				FROM <-created<-user)[0] AS creator
-			FROM $asset`,
-		{ asset: `asset:${params.id}` }
+			FROM ${new RecordId("asset", params.id)}`
 	)
-
 	if (!asset) error(404, "Asset not found")
 
-	const { user } = await authorise(locals)
-
-	const assetComments = await query<AssetComment>(
+	const [assetComments] = await equery<AssetComment[][]>(
 		assetCommentsQuery.replace("_SELECTREPLIES", SELECTREPLIES),
 		{
-			assetComment: `assetComment:${params.comment}`,
-			forumPost: `forumPost:${params.id}`,
-			user: `user:${user.id}`,
+			assetComment: new RecordId("assetComment", params.comment),
+			forumPost: new RecordId("forumPost", params.id),
+			user: new RecordId("user", user.id),
 		}
 	)
-
 	if (!assetComments) error(404, "Comment not found")
 
 	return {

@@ -59,11 +59,9 @@ export async function load({ locals }) {
 		() => `You are the ${ordinal(user?.number)} user to join Mercury!`,
 	]
 
-	console.log("homing")
-	const results = await equery<unknown[]>(unpack(import("./home.surql")), {
-		user: new RecordId("user", user.id),
-	})
-	console.log("homing")
+	const [places, friends, feed] = await equery<
+		[Place[], BasicUser[], FeedPost[]]
+	>(unpack(import("./home.surql")), { user: new RecordId("user", user.id) })
 
 	return {
 		stuff: {
@@ -71,9 +69,9 @@ export async function load({ locals }) {
 			fact: facts[Math.floor(Math.random() * facts.length)](),
 		},
 		form: await superValidate(zod(schema)),
-		places: results[0] as Place[],
-		friends: results[1] as BasicUser[],
-		feed: results[2] as FeedPost[],
+		places,
+		friends,
+		feed,
 	}
 }
 

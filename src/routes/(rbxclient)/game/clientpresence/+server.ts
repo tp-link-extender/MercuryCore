@@ -8,7 +8,7 @@ export async function GET({ url, request }) {
 	if (request.headers.get("user-agent") !== "Roblox/WinInet")
 		error(400, "Good one")
 
-	if (!(await find(`playing:${ticket}`))) error(400, "Ticket not found")
+	if (!(await find("playing", ticket))) error(400, "Ticket not found")
 
 	await query(surql`UPDATE $ticket SET ping = $ping`, {
 		ticket: `playing:${ticket}`,

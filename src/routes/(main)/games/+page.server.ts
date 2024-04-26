@@ -1,4 +1,4 @@
-import { query } from "$lib/server/surreal"
+import { equery, unpack } from "$lib/server/surreal"
 
 type Place = {
 	id: number
@@ -9,15 +9,16 @@ type Place = {
 	dislikeCount: number
 }
 
-const select = (await import("./games.surql")).default
+const select = await unpack(import("./games.surql"))
 
-export const load = async () => ({
-	places: await query<Place>(select),
-})
+export async function load() {
+	const [places] = await equery<Place[][]>(select)
+	return { places }
+}
 
 export const actions: import("./$types").Actions = {}
-actions.default = async ({ request }) => ({
-	places: await query<Place>(select, {
-		query: (await request.formData()).get("q") as string,
-	}),
-})
+actions.default = async ({ request }) => {
+	const query = (await request.formData()).get("q") as string
+	const [places] = await equery<Place[][]>(select, { query })
+	return { places }
+}

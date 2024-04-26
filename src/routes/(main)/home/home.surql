@@ -16,8 +16,11 @@ FROM $user->friends->user OR $user<-friends<-user;
 # Feed
 SELECT
 	*,
+	meta::id(id) AS id,
 	(SELECT text, updated FROM $parent.content
 	ORDER BY updated DESC) AS content,
 	(SELECT number, status, username
 	FROM <-posted<-user)[0] as authorUser
-FROM statusPost LIMIT 40;
+FROM statusPost 
+ORDER BY posted DESC
+LIMIT 40;

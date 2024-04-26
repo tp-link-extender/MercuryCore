@@ -1,4 +1,4 @@
-import { mquery, surql } from "./surreal"
+import { RecordId, equery, surql } from "./surreal"
 
 type ScoreResult = {
 	score: number
@@ -32,57 +32,72 @@ const undislikeQuery = surql`DELETE $user->dislikes WHERE out = $thing;`
 
 // most overengineered thing I have ever written
 // "you won't drown in millions of little tiny functions" they said
+const getParams = (userId: string, thing: RecordId<string>) => ({
+	user: new RecordId("user", userId),
+	thing,
+})
+
 type QueryFunction<T> = (
-	params: { thing: string; user: string },
+	userId: string,
+	thing: RecordId<string>,
 	queryString: string
 ) => Promise<T>
 
-const queryScore: QueryFunction<number> = async (params, queryString) =>
-	(await mquery<ScoreResult>(queryString + countScore, params)).pop()
-		?.score || 0
+const queryScore: QueryFunction<number> = async (userId, thing, queryString) =>
+	(
+		await equery<ScoreResult>(
+			queryString + countScore,
+			getParams(userId, thing)
+		)
+	).pop()?.score || 0
 const queryLikes: QueryFunction<{
 	likeCount: number
 	dislikeCount: number
-}> = async (params, queryString) =>
-	(await mquery<LikesResult>(queryString + countLikes, params)).pop() || {
+}> = async (userId, thing, queryString) =>
+	(
+		await equery<LikesResult>(
+			queryString + countLikes,
+			getParams(userId, thing)
+		)
+	).pop() || {
 		likeCount: 0,
 		dislikeCount: 0,
 	}
-const queryNone: QueryFunction<void> = async (params, queryString) => {
-	await mquery(queryString, params)
+const queryNone: QueryFunction<void> = async (userId, thing, queryString) => {
+	await equery(queryString, getParams(userId, thing))
 }
 
 // the things we do for those sweet sweet type definitions
 // likeLikes returns the like and dislike count
 // likeScore returns the score (likes - dislikes)
 // likeNone returns nothing
-export const likeLikes = async (userId: string, thing: string) =>
-	queryLikes({ thing, user: `user:${userId}` }, likeQuery)
-export const likeScore = async (userId: string, thing: string) =>
-	queryScore({ thing, user: `user:${userId}` }, likeQuery)
-export const likeNone = async (userId: string, thing: string) =>
-	queryNone({ thing, user: `user:${userId}` }, likeQuery)
+export const likeLikes = async (userId: string, thing: RecordId<string>) =>
+	queryLikes(userId, thing, likeQuery)
+export const likeScore = async (userId: string, thing: RecordId<string>) =>
+	queryScore(userId, thing, likeQuery)
+export const likeNone = async (userId: string, thing: RecordId<string>) =>
+	queryNone(userId, thing, likeQuery)
 
-export const unlikeLikes = async (userId: string, thing: string) =>
-	queryLikes({ thing, user: `user:${userId}` }, unlikeQuery)
-export const unlikeScore = async (userId: string, thing: string) =>
-	queryScore({ thing, user: `user:${userId}` }, unlikeQuery)
-export const unlikeNone = async (userId: string, thing: string) =>
-	queryNone({ thing, user: `user:${userId}` }, unlikeQuery)
+export const unlikeLikes = async (userId: string, thing: RecordId<string>) =>
+	queryLikes(userId, thing, unlikeQuery)
+export const unlikeScore = async (userId: string, thing: RecordId<string>) =>
+	queryScore(userId, thing, unlikeQuery)
+export const unlikeNone = async (userId: string, thing: RecordId<string>) =>
+	queryNone(userId, thing, unlikeQuery)
 
-export const dislikeLikes = async (userId: string, thing: string) =>
-	queryLikes({ thing, user: `user:${userId}` }, dislikeQuery)
-export const dislikeScore = async (userId: string, thing: string) =>
-	queryScore({ thing, user: `user:${userId}` }, dislikeQuery)
-export const dislikeNone = async (userId: string, thing: string) =>
-	queryNone({ thing, user: `user:${userId}` }, dislikeQuery)
+export const dislikeLikes = async (userId: string, thing: RecordId<string>) =>
+	queryLikes(userId, thing, dislikeQuery)
+export const dislikeScore = async (userId: string, thing: RecordId<string>) =>
+	queryScore(userId, thing, dislikeQuery)
+export const dislikeNone = async (userId: string, thing: RecordId<string>) =>
+	queryNone(userId, thing, dislikeQuery)
 
-export const undislikeLikes = async (userId: string, thing: string) =>
-	queryLikes({ thing, user: `user:${userId}` }, undislikeQuery)
-export const undislikeScore = async (userId: string, thing: string) =>
-	queryScore({ thing, user: `user:${userId}` }, undislikeQuery)
-export const undislikeNone = async (userId: string, thing: string) =>
-	queryNone({ thing, user: `user:${userId}` }, undislikeQuery)
+export const undislikeLikes = async (userId: string, thing: RecordId<string>) =>
+	queryLikes(userId, thing, undislikeQuery)
+export const undislikeScore = async (userId: string, thing: RecordId<string>) =>
+	queryScore(userId, thing, undislikeQuery)
+export const undislikeNone = async (userId: string, thing: RecordId<string>) =>
+	queryNone(userId, thing, undislikeQuery)
 
 // smells like legacy
 export {

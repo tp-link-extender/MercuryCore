@@ -1,5 +1,15 @@
 import { auth } from "$lib/server/lucia"
-import { query, squery, mquery, surql, findWhere } from "$lib/server/surreal"
+import {
+	query,
+	squery,
+	mquery,
+	surql,
+	findWhere,
+	surrealql,
+	equery,
+	RecordId,
+	unpack,
+} from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { redirect } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
@@ -39,11 +49,11 @@ async function createUser(
 	},
 	keyUsed?: string
 ) {
-	let createUserQuery = (await import("./createUser.surql")).default
+	let createUserQuery = await unpack(import("./createUser.surql"))
 	if (keyUsed)
 		createUserQuery += surql`
-		UPDATE ONLY $key SET usesLeft -= 1;
-		RELATE $u->used->$key`
+			UPDATE ONLY $key SET usesLeft -= 1;
+			RELATE $u->used->$key`
 
 	const q = await mquery<
 		{
@@ -55,10 +65,16 @@ async function createUser(
 	return q[3]
 }
 
-export const load = async () => ({
-	form: await superValidate(zod(schema)),
-	users: (await squery<number>(surql`[count(SELECT 1 FROM user)]`)) > 0,
-})
+export async function load() {
+	const [userCount] = await equery<number[]>(
+		surrealql`count(SELECT 1 FROM user)`
+	)
+
+	return {
+		form: await superValidate(zod(schema)),
+		users: userCount > 0,
+	}
+}
 
 export const actions: import("./$types").Actions = {}
 actions.register = async ({ request, cookies }) => {
@@ -95,11 +111,10 @@ actions.register = async ({ request, cookies }) => {
 	if (emailCheck)
 		return formError(form, ["email"], ["This email is already in use"])
 
-	const regkeyCheck = await squery<{
-		usesLeft: number
-	}>(surql`SELECT usesLeft FROM $regkey`, {
-		regkey: `regKey:⟨${regkey}⟩`,
-	})
+	const [[regkeyCheck]] = await equery<{ usesLeft: number }[][]>(
+		surql`SELECT usesLeft FROM $regkey`,
+		{ regkey: new RecordId("regKey", regkey) }
+	)
 
 	if (!regkeyCheck)
 		return formError(form, ["regkey"], ["Registration key is invalid"])
@@ -157,7 +172,7 @@ actions.initialAccount = async ({ request, cookies }) => {
 			["There's already an account registered"]
 		)
 
-	await query(surql`UPDATE ONLY stuff:increment SET user = 0`)
+	await equery(surrealql`UPDATE ONLY stuff:increment SET user = 0`)
 
 	// This is the kind of stuff that always breaks due to never getting tested
 	// Remember: untested === unworking

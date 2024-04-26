@@ -11,7 +11,7 @@
 			<small>
 				<em>{new Date(status.posted).toLocaleString()}</em>
 			</small>
-			<ReportButton user={status.authorUser.username} url={status.id} />
+			<ReportButton user={status.authorUser.username} url="status:{status.id}" />
 		</span>
 	</div>
 	<p class="text-start">

@@ -1,4 +1,6 @@
-import { query } from "$lib/server/surreal"
+import { equery, unpack } from "$lib/server/surreal"
+
+const forumQuery = await unpack(import("./forum.surql"))
 
 type Category = {
 	description: string
@@ -12,6 +14,7 @@ type Category = {
 	}
 }
 
-export const load = async () => ({
-	categories: await query<Category>(import("./forum.surql")),
-})
+export async function load() {
+	const [categories] = await equery<Category[][]>(forumQuery)
+	return { categories }
+}

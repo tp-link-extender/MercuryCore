@@ -12,7 +12,7 @@
 <Head title={titles[data.type]} />
 
 <div class="text-center">
-	<h1>{titles[data.type]} ({data.number})</h1>
+	<h1>{titles[data.type]} ({data.count})</h1>
 	<a href="/user/{data.number}" class="no-underline accent-text">
 		<fa fa-caret-left />
 		Back to {data.username}'s profile

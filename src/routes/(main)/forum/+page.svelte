@@ -66,9 +66,6 @@
 </div>
 
 <style lang="stylus">
-	.ctnr
-		flex-direction column !important
-
 	.category
 		border 1px solid var(--accent2)
 		transition all 0.3s ease-out

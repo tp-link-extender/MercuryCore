@@ -7,13 +7,18 @@ import type {
 } from "lucia"
 
 async function deleteSession(sessionId: string) {
-	await equery(surrealql`DELETE $sess`, { sess: `session:${sessionId}` })
+	await equery(surrealql`DELETE $sess`, {
+		sess: new RecordId("session", sessionId),
+	})
 }
 
 async function deleteUserSessions(userId: string) {
-	await equery(surrealql`DELETE session WHERE $user IN <-hasSession<-user`, {
-		user: `user:${userId}`,
-	})
+	await equery(
+		surrealql`DELETE session WHERE ${new RecordId(
+			"user",
+			userId
+		)} IN <-hasSession<-user`
+	)
 }
 
 async function getSessionAndUser(
@@ -42,9 +47,9 @@ async function setSession(session: DatabaseSession) {
 			LET $s = CREATE $sess SET expiresAt = time::unix($expiresAt);
 			RELATE $user->hasSession->$s`,
 		{
-			sess: `session:${session.id}`,
+			sess: new RecordId("session", session.id),
 			...session,
-			user: `user:${session.userId}`,
+			user: new RecordId("user", session.userId),
 		}
 	)
 }
@@ -54,7 +59,7 @@ async function updateSessionExpiration(
 	expiresAt: Date
 ): Promise<void> {
 	await equery(surrealql`UPDATE $sess SET expiresAt = $expiresAt`, {
-		sess: `session:${sessionId}`,
+		sess: new RecordId("session", sessionId),
 		expiresAt: Math.floor(expiresAt.getTime() / 1000),
 	})
 }
@@ -68,7 +73,7 @@ async function getUserSessions(userId: string) {
 		surrealql`
 			SELECT *, meta::id(id) AS id FROM session
 			WHERE $user IN <-usingKey<-user`,
-		{ user: `user:${userId}` }
+		{ user: new RecordId("user", userId) }
 	)
 	return result[0]
 }
