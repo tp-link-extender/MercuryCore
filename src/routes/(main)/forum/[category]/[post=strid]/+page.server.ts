@@ -1,6 +1,13 @@
 import { actions as categoryActions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
-import { query, squery, surql } from "$lib/server/surreal"
+import {
+	query,
+	squery,
+	surql,
+	equery,
+	surrealql,
+	RecordId,
+} from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { error } from "@sveltejs/kit"
@@ -49,13 +56,13 @@ const forumPostQuery = (await import("./post.surql")).default
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
 
-	const forumPost = await squery<ForumPost>(
-		forumPostQuery.replace("_SELECTREPLIES", SELECTREPLIES),
-		{
-			forumPost: `forumPost:${params.post}`,
-			user: `user:${user.id}`,
-		}
-	)
+	const postQuery = forumPostQuery.replace("_SELECTREPLIES", SELECTREPLIES)
+	const [[forumPost]] = await equery<ForumPost[][]>(postQuery, {
+		forumPost: new RecordId("forumPost", params.post),
+		user: new RecordId("user", user.id),
+	})
+
+	console.log(forumPost)
 
 	if (!forumPost) error(404, "Not found")
 
@@ -77,7 +84,9 @@ async function findReply<T>(
 	if (!id) error(400, "Missing reply id")
 	// Incorrect ids filtering is done with route matchers now
 
-	const reply = await squery<T>(input, { forumReply: `forumReply:${id}` })
+	const [[reply]] = await equery<T[][]>(input, {
+		forumReply: new RecordId("forumReply", id),
+	})
 	if (!reply) error(404, "Reply not found")
 
 	return { user, reply, id }
@@ -151,27 +160,25 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	})
 
 	if (user.id !== replypost.authorId)
-		await query(
-			surql`
+		await equery(
+			surrealql`
 				RELATE $sender->notification->$receiver CONTENT {
-					type: $type,
+					type: ${replyId ? "ForumReplyReply" : "ForumPostReply"},
 					time: time::now(),
 					note: $note,
-					relativeId: $relativeId,
+					relativeId: ${newReplyId},
 					read: false,
 				}`,
 			{
-				type: replyId ? "ForumReplyReply" : "ForumPostReply",
-				sender: `user:${user.id}`,
-				receiver: `user:${replypost.authorId}`,
+				sender: new RecordId("user", user.id),
+				receiver: new RecordId("user", replypost.authorId),
 				note: `${user.username} replied to your ${
 					replyId ? "reply" : "post"
 				}: ${content}`,
-				relativeId: newReplyId,
 			}
 		)
 
-	await like(user.id, `forumReply:${newReplyId}`)
+	await like(user.id, new RecordId("forumReply", newReplyId))
 }
 actions.delete = async e => {
 	const { user, reply, id } = await findReply<{
