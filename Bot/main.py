@@ -890,7 +890,7 @@ async def unsubmit(interaction: discord.Interaction):
             interaction.user.id,
         )
 
-        if app == None or app[0] == "Pending":
+        if app == None or app[0] != "Pending":
             return await interaction.response.send_message(
                 "You do not have a current pending application at the moment."
             )

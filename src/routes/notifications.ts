@@ -64,7 +64,7 @@ async function getForumReply(relativeId: string) {
 type ForumPost = { category: { name: string } }
 
 async function getForumPost(relativeId: string) {
-	const result = await equery<ForumPost[][]>(
+	const [[result]] = await equery<ForumPost[][]>(
 		surrealql`
 			SELECT
 				(SELECT name
@@ -72,8 +72,7 @@ async function getForumPost(relativeId: string) {
 			FROM $forumPost`,
 		{ forumPost: new RecordId("forumPost", relativeId) }
 	)
-
-	return result[0][0]
+	return result
 }
 
 export default async function (user: User | null) {

@@ -1,12 +1,12 @@
 import { actions as categoryActions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
 import {
-	query,
 	squery,
 	surql,
 	equery,
 	surrealql,
 	RecordId,
+	unpack,
 } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
@@ -51,7 +51,9 @@ type ForumPost = {
 	visibility: string
 }
 
-const forumPostQuery = (await import("./post.surql")).default
+const createReplyQuery = await unpack(import("./createReply.surql"))
+const forumPostQuery = await unpack(import("./post.surql"))
+const updateVisibilityQuery = await unpack(import("./updateVisibility.surql"))
 
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
@@ -61,9 +63,6 @@ export async function load({ locals, params }) {
 		forumPost: new RecordId("forumPost", params.post),
 		user: new RecordId("user", user.id),
 	})
-
-	console.log(forumPost)
-
 	if (!forumPost) error(404, "Not found")
 
 	return {
@@ -93,18 +92,21 @@ async function findReply<T>(
 }
 
 const updateVisibility = (visibility: string, text: string, id: string) =>
-	query(import("./updateVisibility.surql"), {
-		forumReply: `forumReply:${id}`,
+	equery(updateVisibilityQuery, {
+		forumReply: new RecordId("forumReply", id),
 		text,
 		visibility,
 	})
 
-const pinThing = (pinned: boolean, thing: string) =>
-	query(surql`UPDATE $thing SET pinned = $pinned`, { thing, pinned })
+const pinThing = (pinned: boolean, thing: RecordId<string>) =>
+	equery(surrealql`UPDATE $thing SET pinned = $pinned`, { thing, pinned })
 
 // wrapping this stuff in arrow functions just to prevent it from maybe returning god knows what to the client from an action
 const pinReply = (pinned: boolean) => async (e: RequestEvent) => {
-	await pinThing(pinned, `forumReply:${(await findReply(e, 4)).id}`)
+	await pinThing(
+		pinned,
+		new RecordId("forumReply", (await findReply(e, 4)).id)
+	)
 }
 
 const pinPost = (pinned: boolean) => async (e: RequestEvent) => {
@@ -115,7 +117,7 @@ const pinPost = (pinned: boolean) => async (e: RequestEvent) => {
 	if (!id) error(400, "Missing post id")
 	if (!/^[0-9a-z]+$/.test(id)) error(400, "Invalid post id")
 
-	await pinThing(pinned, `forumPost:${id}`)
+	await pinThing(pinned, new RecordId("forumPost", id))
 }
 
 export const actions: import("./$types").Actions = {}
@@ -151,12 +153,12 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 
 	const newReplyId = await squery<string>(surql`[fn::id()]`)
 
-	await query(import("./createReply.surql"), {
+	await equery(createReplyQuery, {
 		content,
-		user: `user:${user.id}`,
-		forumReply: `forumReply:${newReplyId}`,
-		post: `forumPost:${params.post}`,
-		replyId: replyId ? `forumReply:${replyId}` : undefined,
+		user: new RecordId("user", user.id),
+		forumReply: new RecordId("forumReply", newReplyId),
+		post: new RecordId("forumPost", params.post),
+		replyId: replyId ? new RecordId("forumReply", replyId) : undefined,
 	})
 
 	if (user.id !== replypost.authorId)
