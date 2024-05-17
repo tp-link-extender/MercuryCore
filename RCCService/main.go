@@ -26,13 +26,16 @@ import (
 	env "github.com/joho/godotenv"
 )
 
-var wg sync.WaitGroup
-var client http.Client
+var (
+	wg     sync.WaitGroup
+	client http.Client
+)
 
 func Log(txt string) {
 	// I HATE GO DATE FORMATTING!!! I HATE GO DATE FORMATTING!!!
 	fmt.Println(time.Now().Format("02/01/2006, 15:04:05 "), txt)
 }
+
 func Logr(txt string) {
 	fmt.Print("\r", time.Now().Format("02/01/2006, 15:04:05  "), txt)
 }

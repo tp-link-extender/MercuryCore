@@ -18,46 +18,58 @@ import (
 	fileversion "github.com/bi-zone/go-fileversion"
 )
 
-// what a great coincidence that this is exactly 16 characters long (or rather will be, for a very very long time)
-// also makes it way easier to order the versions in a file explorer than a random string
-var versionHash = fmt.Sprintf("%x", time.Now().UnixNano())
-
-func Error(txt string) {
-	fmt.Println(c.InRed("Error: ") + txt)
-	os.Exit(1)
-}
-
 func Assert(err error, txt string) {
 	// so that I don't have to write this every time
+	// if this was Luau it would probably be worse for performance
 	if err != nil {
-		fmt.Println(err)
-		Error(txt)
+		fmt.Println(c.InRed("Error: ") + txt)
+		os.Exit(1)
 	}
 }
 
-// Create a waitgroup to wait for all main goroutines to finish
-var wg sync.WaitGroup
-
 type Task struct {
 	name      string
-	timeStart int
-	timeEnd   int
+	endMillis int64
 }
 
-type TaskList struct {
-	tasks []Task
+// For epic logging
+var (
+	list        = []Task{}
+	timeStart   = time.Now()
+	startMillis = timeStart.UnixMilli()
+	// To wait for all main goroutines to finish
+	wg sync.WaitGroup
+)
+
+var tasks = []string{
+	"version.txt",
+	"MercuryPlayerLauncher.exe",
+	"redist.zip",
+	"Mercury.zip",
+	"Libraries.zip",
+	"content-textures.zip",
+	"content-textures2.zip",
+	"content-textures3.zip",
+	"content-sky.zip",
+	"content-fonts.zip",
+	"content-music.zip",
+	"content-sounds.zip",
+	"content-particles.zip",
+	"BuiltInPlugins.zip",
+	"imageformats.zip",
+	"shaders.zip",
 }
 
-func (t *TaskList) Update() {
+func UpdateTasks() {
 	// Clear last printed tasks
-	toPrint := fmt.Sprintf("\033[%dA", len(t.tasks))
+	toPrint := fmt.Sprintf("\033[%dA", len(list))
 
-	// Print all tasks, with "Done! (0ms)" at the end if they are completed
-	for _, task := range t.tasks {
+	// Print all tasks, with "Done! ({x}ms)" at the end if they are completed
+	for _, task := range list {
 		spaces := 30 - len(task.name)
-		toPrint += c.InBlue("Creating " + c.InUnderline(task.name) + strings.Repeat(" ", spaces))
-		if task.timeEnd > 0 {
-			toPrint += c.InBlackOverGreen(" Done! (" + fmt.Sprint(task.timeEnd-task.timeStart) + "ms) ")
+		toPrint += c.InBlue("Creating " + c.InUnderline(task.name))
+		if task.endMillis > 0 {
+			toPrint += strings.Repeat(" ", spaces) + c.InBlackOverGreen(fmt.Sprintf(" Done! (%dms) ", task.endMillis-startMillis))
 		}
 		toPrint += "\n"
 	}
@@ -65,43 +77,29 @@ func (t *TaskList) Update() {
 	fmt.Print(toPrint)
 }
 
-func (t *TaskList) AddTasks(tasks []string) {
-	fmt.Print(strings.Repeat("\n", len(tasks)))
-	for _, task := range tasks {
-		t.tasks = append(t.tasks, Task{name: task, timeStart: int(time.Now().UnixNano() / int64(time.Millisecond))})
-	}
-	t.Update()
-}
-
-func (t *TaskList) CompleteTask(completedTask string) {
-	for i, task := range t.tasks {
+func CompleteTask(completedTask string) {
+	for i, task := range list {
 		if task.name == completedTask {
-			t.tasks[i].timeEnd = int(time.Now().UnixNano() / int64(time.Millisecond))
+			list[i].endMillis = time.Now().UnixMilli()
 		}
 	}
-	t.Update()
+	UpdateTasks()
 	wg.Done()
 }
 
-var list = TaskList{tasks: []Task{}}
-
 func WriteFile(writer *zip.Writer, pathName string, entryName string) {
-	// Read file
 	file, err := os.Open(pathName)
 	Assert(err, "Could not read file "+pathName)
 	defer file.Close()
 
-	// Create zip entry
 	entry, err := writer.Create(entryName)
 	Assert(err, "Could not create zip entry "+entryName)
 
-	// Copy file to zip entry
 	_, err = io.Copy(entry, file)
 	Assert(err, "Could not copy file "+pathName+" to zip entry "+entryName)
 }
 
 func WriteFolder(writer *zip.Writer, pathName string, entryName string) {
-	// Read directory
 	files, err := os.ReadDir(pathName)
 	Assert(err, "Could not read directory "+pathName)
 
@@ -121,11 +119,12 @@ func WriteFolder(writer *zip.Writer, pathName string, entryName string) {
 }
 
 func ZipFromArray(destination string, sources []string, baseDirectory string, isFolder bool) {
-	defer list.CompleteTask(destination)
+	defer CompleteTask(destination)
 	destination = filepath.Join("PrepForUpload", destination)
 
 	zipFile, err := os.Create(destination)
 	Assert(err, "Could not create zip file "+destination)
+	defer zipFile.Close()
 
 	archive := zip.NewWriter(zipFile)
 	defer archive.Close()
@@ -151,11 +150,12 @@ func ZipFromArray(destination string, sources []string, baseDirectory string, is
 }
 
 func ZipFromFolder(destination string, source string) {
-	defer list.CompleteTask(destination)
+	defer CompleteTask(destination)
 	destination = filepath.Join("PrepForUpload", destination)
 
 	zipFile, err := os.Create(destination)
 	Assert(err, "Could not create zip file "+destination)
+	defer zipFile.Close()
 
 	archive := zip.NewWriter(zipFile)
 	defer archive.Close()
@@ -164,7 +164,7 @@ func ZipFromFolder(destination string, source string) {
 }
 
 func UpdateVersion(task string, newVersion string) {
-	defer list.CompleteTask(task)
+	defer CompleteTask(task)
 	// Update version.txt with the new version
 	versionFile, err := os.Create(filepath.Join("setup", "version.txt"))
 	Assert(err, "Could not create version.txt")
@@ -173,7 +173,7 @@ func UpdateVersion(task string, newVersion string) {
 }
 
 func CopyLauncher(task string) {
-	defer list.CompleteTask(task)
+	defer CompleteTask(task)
 	// Copy MercuryPlayerLauncher.exe to setup
 	launcher, err := os.Open(filepath.Join("staging", task))
 	Assert(err, "Could not read MercuryPlayerLauncher.exe")
@@ -181,9 +181,9 @@ func CopyLauncher(task string) {
 
 	destination1, err := os.Create(filepath.Join("setup", task))
 	Assert(err, "Could not create MercuryPlayerLauncher.exe (1)")
-	defer destination1.Close()
 	destination2, err := os.Create(filepath.Join("PrepForUpload", task))
 	Assert(err, "Could not create MercuryPlayerLauncher.exe (2)")
+	defer destination1.Close()
 	defer destination2.Close()
 
 	fv, err := fileversion.New(filepath.Join("staging", "MercuryPlayerLauncher.exe"))
@@ -193,17 +193,16 @@ func CopyLauncher(task string) {
 	// Write version to MercuryVersion.txt
 	versionFile, err := os.Create(filepath.Join("PrepForUpload", "MercuryVersion.txt"))
 	Assert(err, "Could not create MercuryVersion.txt")
-	defer versionFile.Close()
 	fmt.Fprint(versionFile, fileVersion)
+	versionFile.Close()
 
 	_, err = io.Copy(destination1, launcher)
-	Assert(err, "Could not copy MercuryPlayerLauncher.exe (1)")
+	Assert(err, "Could not copy MercuryPlayerLauncher.exe to setup")
 	_, err = io.Copy(destination2, launcher)
-	Assert(err, "Could not copy MercuryPlayerLauncher.exe (2)")
+	Assert(err, "Could not copy MercuryPlayerLauncher.exe to PrepForUpload")
 }
 
-func TexturesHalf(first bool) []string {
-	// Read staging/content/textures
+func TexturesHalf(half uint8) []string {
 	files, err := os.ReadDir("staging/content/textures")
 	Assert(err, "Could not read directory staging/content/textures")
 
@@ -214,26 +213,26 @@ func TexturesHalf(first bool) []string {
 		}
 	}
 
-	if first {
-		return append(filenames[:len(filenames)/2], "ui")
+	if half == 2 {
+		return filenames[len(filenames)/2:]
 	}
-	return filenames[len(filenames)/2:]
+	return append(filenames[:len(filenames)/2], "ui")
 }
 
 func main() {
-	startTime := time.Now()
-
 	fmt.Println(c.InBold("\n  -- Mercury Setup Deployer 3: Now with more EVERYTHING! --  \n"))
-	var currentVersion string
-	newVersion := "version-" + versionHash
+	currentVersion := "none"
+
+	// what a great coincidence that the timestamp exactly 16 characters long (or rather will be, for a very very long time)
+	// also makes it way easier to order the versions in a file explorer than a random string
+	newVersion := fmt.Sprintf("version-%x", time.Now().UnixNano())
 
 	// Get version from setup directory/version.txt
 	versionFile, err := os.Open(filepath.Join("setup", "version.txt"))
-	if err != nil {
-		currentVersion = "none"
+	if err == nil {
+		fmt.Fscanf(versionFile, "%s", &currentVersion)
+		versionFile.Close()
 	}
-	fmt.Fscanf(versionFile, "%s", &currentVersion)
-	versionFile.Close()
 
 	fmt.Println("Current version is", c.InBlue(currentVersion))
 	fmt.Println("New version to be deployed will have a version hash of", c.InBlue(newVersion))
@@ -241,18 +240,18 @@ func main() {
 
 	// Find if there are any files in the staging directory
 	stagingFiles, err := os.ReadDir("staging")
-	Assert(err, "Could not read staging directory")
+	Assert(err, "Could not read staging directory. Please create the staging directory if it doesn't exist and place your files in it, or run this script from a different directory.")
 	if len(stagingFiles) == 0 {
-		Error("Staging directory is empty. Please place your files in the staging directory, or run this script from a different directory.")
+		fmt.Println(c.InRed("Error:"), "Staging directory is empty. Please place your files in the staging directory, or run this script from a different directory.")
+		os.Exit(1)
 	}
 
-	// remove PreForUpload directory
+	// Create directories
 	os.RemoveAll("PrepForUpload")
-
-	// Create staging directory
-	os.Mkdir("staging", 0777)
-	os.Mkdir("PrepForUpload", 0777)
-	os.Mkdir("setup", 0777)
+	os.Mkdir("PrepForUpload", os.ModePerm)
+	// Deferring means we likely don't need to deal with file handles
+	defer os.RemoveAll("PrepForUpload")
+	os.Mkdir("setup", os.ModePerm)
 
 	// Get all files in the staging directory that end with .dll
 	dllFiles := []string{}
@@ -262,26 +261,10 @@ func main() {
 		}
 	}
 
-	tasks := []string{
-		"version.txt",
-		"MercuryPlayerLauncher.exe",
-		"redist.zip",
-		"Mercury.zip",
-		"Libraries.zip",
-		"content-textures.zip",
-		"content-textures2.zip",
-		"content-textures3.zip",
-		"content-sky.zip",
-		"content-fonts.zip",
-		"content-music.zip",
-		"content-sounds.zip",
-		"content-particles.zip",
-		"BuiltInPlugins.zip",
-		"imageformats.zip",
-		"shaders.zip",
+	for _, task := range tasks {
+		fmt.Println()
+		list = append(list, Task{name: task})
 	}
-
-	list.AddTasks(tasks)
 	wg.Add(len(tasks))
 
 	// I LOVE GOROUTINES!!!
@@ -290,8 +273,8 @@ func main() {
 	go ZipFromArray(tasks[2], []string{"Microsoft.VC90.CRT", "Microsoft.VC90.MFC", "Microsoft.VC90.OPENMP"}, "", true)
 	go ZipFromArray(tasks[3], []string{"MercuryPlayerBeta.exe", "MercuryStudioBeta.exe", "ReflectionMetadata.xml", "RobloxStudioRibbon.xml"}, "", false)
 	go ZipFromArray(tasks[4], dllFiles, "", false)
-	go ZipFromArray(tasks[5], TexturesHalf(true), "content/textures", false)
-	go ZipFromArray(tasks[6], TexturesHalf(false), "content/textures", false)
+	go ZipFromArray(tasks[5], TexturesHalf(1), "content/textures", false)
+	go ZipFromArray(tasks[6], TexturesHalf(2), "content/textures", false)
 	go ZipFromFolder(tasks[7], "PlatformContent/pc/textures")
 	go ZipFromFolder(tasks[8], "content/sky")
 	go ZipFromFolder(tasks[9], "content/fonts")
@@ -311,7 +294,7 @@ func main() {
 	// Copy all files in PrepForUpload to setup/newVersion
 	// the slow way, because copying the entire directory at once causes access denied errors
 	files, err := os.ReadDir("PrepForUpload")
-	Assert(err, "Could not read PrepForUpload directory")
+	Assert(err, "Could not read temporary PrepForUpload directory")
 
 	for _, file := range files {
 		filename := file.Name()
@@ -321,7 +304,7 @@ func main() {
 		defer file.Close()
 
 		// Create directories
-		err = os.MkdirAll(filepath.Join(finalPath, filepath.Dir(filename)), 0777)
+		err = os.MkdirAll(filepath.Join(finalPath, filepath.Dir(filename)), os.ModePerm)
 		Assert(err, "Could not create directory "+filepath.Join(finalPath, filepath.Dir(filename)))
 
 		destination, err := os.Create(filepath.Join(finalPath, filename))
@@ -332,5 +315,5 @@ func main() {
 	}
 
 	fmt.Println(c.InGreen(" ~~~~  Deployment complete!!  ~~~~"))
-	fmt.Println("Took " + c.InBold(fmt.Sprint(time.Since(startTime))) + " to deploy")
+	fmt.Println("Took", c.InBold(fmt.Sprint(time.Since(timeStart))), "to deploy")
 }
