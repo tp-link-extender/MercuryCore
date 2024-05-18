@@ -1,12 +1,13 @@
 import { authorise } from "$lib/server/lucia"
 import { superValidate } from "sveltekit-superforms/server"
-import { query, squery, mquery, surql } from "$lib/server/surreal"
+import { query, squery, surql, equery, surrealql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import requestRender, { RenderType } from "$lib/server/requestRender"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import { error, redirect } from "@sveltejs/kit"
 import fs from "node:fs"
+import createAutopilotQuery from "./createAutopilot.surql"
 
 const schemaManual = z.object({
 	type: z.enum(["8", "18"]),
@@ -142,14 +143,15 @@ async function getVersions(id: number, version?: number) {
 }
 
 async function getSharedAssets(id: number, version: number) {
-	const cache = await squery<{
-		id: [number, number]
-		assetModified: string
-	}>(
-		surql`
+	const [[cache]] = await equery<
+		{
+			id: [number, number]
+			assetModified: string
+		}[][]
+	>(
+		surrealql`
 			SELECT meta::id(id) AS id, assetModified
-			FROM assetCache:[$id, $version]`,
-		{ id, version }
+			FROM assetCache:[${id}, ${version}]`
 	)
 
 	if (!cache) return []
@@ -210,6 +212,8 @@ export async function load({ locals, url }) {
 			}),
 		...(stage >= 2 &&
 			assetId && {
+				// sup, time traveller
+				// i'm giving up here
 				type: (
 					await squery<{ type: number }>(
 						surql`SELECT type FROM assetCache:[$id, 0]..[$id, 99]`, // gud enogh
@@ -230,7 +234,7 @@ actions.autopilot = async ({ request, locals }) => {
 	if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
 	if (!fs.existsSync("data/thumbnails")) fs.mkdirSync("data/thumbnails")
 
-	const res = await mquery<unknown[]>(import("./createAutopilot.surql"), {
+	const res = await equery<unknown[]>(createAutopilotQuery, {
 		assets: form.data.shared.split(",").map(s => +s),
 		...data,
 	})

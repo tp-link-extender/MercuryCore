@@ -1,6 +1,7 @@
 import { error } from "@sveltejs/kit"
 import { SignData } from "$lib/server/sign"
-import { query, squery, surql, findWhere } from "$lib/server/surreal"
+import { findWhere, surrealql, equery, RecordId } from "$lib/server/surreal"
+import joinQuery from "./join.surql"
 
 type Session = {
 	place: {
@@ -24,22 +25,22 @@ export async function GET({ url }) {
 
 	if (!clientTicket) error(400, "Invalid Request")
 
-	const gameSession = await squery<Session>(import("./join.surql"), {
-		playingId: `playing:${clientTicket}`,
+	const [[gameSession]] = await equery<Session[][]>(joinQuery, {
+		playingId: new RecordId("playing", clientTicket),
 	})
 
 	if (!gameSession) error(400, "Invalid Game Session")
 
 	if (
 		privateServer &&
-		!(await findWhere("place", surql`privateTicket = $privateServer`, {
+		!(await findWhere("place", "privateTicket = $privateServer", {
 			privateServer,
 		}))
 	)
 		error(400, "Invalid Private Server")
 
-	await query(surql`UPDATE $playing SET valid = false`, {
-		playing: `playing:${clientTicket}`,
+	await equery(surrealql`UPDATE $playing SET valid = false`, {
+		playing: new RecordId("playing", clientTicket),
 	})
 
 	const userNumber = gameSession.user.number

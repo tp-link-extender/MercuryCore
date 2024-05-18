@@ -1,7 +1,10 @@
 import { authorise } from "$lib/server/lucia"
-import { squery, surql } from "$lib/server/surreal"
+import { equery, RecordId } from "$lib/server/surreal"
 import { encode } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
+import placeIdQuery from "./placeId.surql"
+
+// these files r kinda like the no-man's land of the Mercury codebase
 
 type Place = {
 	id: string
@@ -13,15 +16,12 @@ type Place = {
 }
 
 export async function load({ locals, params }) {
-	const place = await squery<Place>(import("./placeId.surql"), {
-		place: `place:${params.id}`,
+	const { user } = await authorise(locals)
+	const [[place]] = await equery<Place[][]>(placeIdQuery, {
+		place: new RecordId("place", params.id),
 	})
 
-	if (
-		place &&
-		(!place.privateServer ||
-			(await authorise(locals)).user.id === place.owner.id)
-	)
+	if (place && (!place.privateServer || user.id === place.owner.id))
 		redirect(302, `/place/${params.id}/${encode(place.name)}`)
 
 	error(404, "Place not found")

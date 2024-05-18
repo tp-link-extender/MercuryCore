@@ -1,5 +1,11 @@
 import { authorise } from "$lib/server/lucia"
-import { query, squery, surql, auditLog, Action } from "$lib/server/surreal"
+import {
+	auditLog,
+	Action,
+	surrealql,
+	equery,
+	RecordId,
+} from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -27,25 +33,30 @@ type Banner = {
 export async function load({ locals }) {
 	await authorise(locals, 5)
 
+	const [banners] = await equery<Banner[][]>(surrealql`
+		SELECT
+			*,
+			meta::id(id) AS id,
+			(SELECT number, status, username
+			FROM $parent.creator)[0] AS creator
+		OMIT deleted
+		FROM banner WHERE deleted = false`)
+
 	return {
 		form: await superValidate(zod(schema)),
-		banners: await query<Banner>(surql`
-			SELECT
-				*,
-				meta::id(id) AS id,
-				(SELECT number, status, username
-				FROM $parent.creator)[0] AS creator
-			OMIT deleted
-			FROM banner WHERE deleted = false`),
+		banners,
 	}
 }
 
-const bannerActiveCount = () =>
-	squery<number>(surql`
+async function bannerActiveCount() {
+	const [banners] = await equery<number[]>(surrealql`
 		count(
 			SELECT 1 FROM banner
 			WHERE active = true AND deleted = false
 		)`)
+
+	return banners
+}
 
 async function getData({ request, locals }: RequestEvent) {
 	const { user } = await authorise(locals, 5)
@@ -67,9 +78,8 @@ const showHide = (action: string) => async (e: RequestEvent) => {
 	if (action === "show" && (await bannerActiveCount()) >= 3)
 		return message(form, "Too many active banners", { status: 400 })
 
-	await query(surql`UPDATE $id SET active = $active`, {
-		id: `banner:${id}`,
-		active: action === "show",
+	await equery(surrealql`UPDATE $id SET active = ${action === "show"}`, {
+		id: new RecordId("banner", id),
 	})
 }
 
@@ -90,14 +100,14 @@ actions.create = async e => {
 		return message(form, "Too many active banners", { status: 400 })
 
 	await Promise.all([
-		query(surql`CREATE banner CONTENT $data`, {
+		equery(surrealql`CREATE banner CONTENT $data`, {
 			data: {
 				active: true,
 				deleted: false,
 				body: bannerText,
 				bgColour: bannerColour,
 				textLight: !!bannerTextLight,
-				creator: `user:${user.id}`,
+				creator: new RecordId("user", user.id),
 			},
 		}),
 		auditLog(
@@ -116,11 +126,12 @@ actions.delete = async e => {
 
 	if (!id) return message(form, "Missing fields", { status: 400 })
 
-	// const deletedBanner = await banner.merge(id, { deleted: true })
-	const deletedBanner = await squery<{
-		body: string
-		creator: string
-	}>(surql`UPDATE $id SET deleted = true`, { id: `banner:${id}` })
+	const [[deletedBanner]] = await equery<
+		{
+			body: string
+			creator: string
+		}[][]
+	>(surrealql`UPDATE ${new RecordId("banner", id)} SET deleted = true`)
 
 	await auditLog(
 		Action.Administration,
@@ -138,9 +149,8 @@ actions.updateBody = async e => {
 		return message(form, "Missing fields", { status: 400 })
 
 	// await banner.merge(id, { body: bannerBody })
-	await query(surql`UPDATE $id SET body = $bannerBody`, {
-		id: `banner:${id}`,
-		bannerBody,
+	await equery(surrealql`UPDATE $id SET body = ${bannerBody}`, {
+		id: new RecordId("banner", id),
 	})
 }
 actions.updateTextLight = async e => {
@@ -152,9 +162,8 @@ actions.updateTextLight = async e => {
 	if (!id) return message(form, "Missing fields", { status: 400 })
 
 	// await banner.merge(id, { textLight: !!bannerTextLight })
-	await query(surql`UPDATE $id SET textLight = $textLight`, {
-		id: `banner:${id}`,
-		textLight: !!bannerTextLight,
+	await equery(surrealql`UPDATE $id SET textLight = ${!!bannerTextLight}`, {
+		id: new RecordId("banner", id),
 	})
 }
 actions.show = showHide("show")

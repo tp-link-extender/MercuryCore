@@ -1,6 +1,10 @@
-import { query, squery, surql } from "$lib/server/surreal"
+import { equery, surrealql } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error, redirect } from "@sveltejs/kit"
+import searchUsersQuery from "./searchUsers.surql"
+import searchPlacesQuery from "./searchPlaces.surql"
+import searchAssetsQuery from "./searchAssets.surql"
+import searchGroupsQuery from "./searchGroups.surql"
 
 type Place = {
 	id: number
@@ -33,34 +37,41 @@ export const load = async ({ url }) => {
 	const param = { searchQ }
 
 	if (category === "users") {
-		const userExists = await squery<{ number: number }>(
-			surql`
+		const [[userExists]] = await equery<{ number: number }[][]>(
+			surrealql`
 				SELECT number FROM user
-				WHERE username = $searchQ`,
-			param
+				WHERE username = ${searchQ}`
 		)
 
 		if (userExists) redirect(302, `/user/${userExists.number}`)
 	}
 
 	// TODO: make this full-text search because that would be much nicer
+	const searches: {
+		users?: BasicUser[]
+		places?: Place[]
+		assets?: Asset[]
+		groups?: Group[]
+	} = {}
 
-	return {
-		query: searchQ,
-		category,
-		...(category === "users" && {
-			users: await query<BasicUser>(import("./searchUsers.surql"), param),
-		}),
-		...(category === "places" && {
-			places: await query<Place>(import("./searchPlaces.surql"), param),
-		}),
-		...(category === "assets" && {
-			assets: await query<Asset>(import("./searchAssets.surql"), param),
-		}),
-		...(category === "groups" && {
-			groups: await query<Group>(import("./searchGroups.surql"), param),
-		}),
+	if (category === "users") {
+		const [users] = await equery<BasicUser[][]>(searchUsersQuery, param)
+		searches.users = users
 	}
+	if (category === "places") {
+		const [places] = await equery<Place[][]>(searchPlacesQuery, param)
+		searches.places = places
+	}
+	if (category === "assets") {
+		const [assets] = await equery<Asset[][]>(searchAssetsQuery, param)
+		searches.assets = assets
+	}
+	if (category === "groups") {
+		const [groups] = await equery<Group[][]>(searchGroupsQuery, param)
+		searches.groups = groups
+	}
+
+	return { query: searchQ, category, ...searches }
 }
 
 export const actions: import("./$types").Actions = {}

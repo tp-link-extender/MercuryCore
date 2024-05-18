@@ -1,4 +1,4 @@
-import { mquery, surql } from "./surreal"
+import { equery, surql } from "./surreal"
 import fs from "node:fs"
 
 export enum Status {
@@ -36,22 +36,22 @@ export default async function (
 	relativeId: number,
 	wait = false
 ) {
-	const renders = await mquery<Render[]>(
+	const [, , render] = await equery<Render[]>(
 		surql`
 			LET $render = ${selectRender};
 			IF $render AND $render.created + 1s < time::now() {
 				UPDATE $render.id SET status = "Error"
 			};
+			# need the updated one
 			${selectRender}`,
 		{ renderType, relativeId }
 	)
-	const render = renders[2]
 
 	if (render && render.status !== "Error") return
 
 	// If the render doesn't exist or if the last one errored, create a new render
 
-	const newRender = await mquery<string[]>(
+	const [, renderId] = await equery<string[]>(
 		surql`
 			LET $render = (CREATE render CONTENT {
 				type: $renderType,
@@ -63,7 +63,6 @@ export default async function (
 			meta::id($render.id)`,
 		{ renderType, relativeId }
 	)
-	const renderId = newRender[1]
 	// Tap in rcc
 
 	const script = (

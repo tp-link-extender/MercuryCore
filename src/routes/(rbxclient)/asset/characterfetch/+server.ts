@@ -1,4 +1,4 @@
-import { squery, surql } from "$lib/server/surreal"
+import { equery, squery, surql, surrealql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 type User = {
@@ -19,14 +19,13 @@ export async function GET({ url }) {
 	if (!userNumber || !/^\d+$/.test(userNumber))
 		error(400, "Missing userID parameter")
 
-	const user = await squery<User>(
-		surql`
+	const [[user]] = await equery<User[][]>(
+		surrealql`
 			SELECT
 				bodyColours,
 				(SELECT meta::id(id) AS id
 				FROM ->wearing->asset).id AS wearing
-			FROM user WHERE number = $id`,
-		{ id: +userNumber }
+			FROM user WHERE number = ${+userNumber}`
 	)
 
 	if (!user) error(404, "User not found")

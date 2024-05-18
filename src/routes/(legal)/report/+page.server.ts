@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { query, squery, surql } from "$lib/server/surreal"
+import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import { error } from "@sveltejs/kit"
 import formError from "$lib/server/formError"
@@ -24,14 +24,14 @@ const schema = z.object({
 	note: z.string().optional(),
 })
 
-const getReportee = (username: string) =>
-	squery<{ id: string }>(
-		surql`
-			SELECT id
-			FROM user
-			WHERE username = $username`,
-		{ username }
+// const getReportee = (username: string) =>
+async function getReportee(username: string) {
+	const [[reportee]] = await equery<{ id: RecordId }[][]>(
+		surrealql`SELECT id FROM user WHERE username = ${username}`
 	)
+
+	return reportee
+}
 
 export async function load({ locals, url }) {
 	await authorise(locals)
@@ -62,31 +62,19 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 	const { category, note } = form.data
 	const username = url.searchParams.get("user")
 	const reportUrl = url.searchParams.get("url")
-
 	if (!username || !reportUrl) error(400, "Missing fields")
 
 	const reportee = await getReportee(username)
+	if (!reportee) return message(form, "Invalid user", { status: 400 })
 
-	if (!reportee)
-		return message(form, "Invalid user", {
-			status: 400,
-		})
-
-	await query(
-		surql`
-			RELATE $reporter->report->$reportee CONTENT {
+	await equery(
+		surrealql`
+			RELATE ${new RecordId("user", user.id)}->report->${reportee.id} CONTENT {
 				time: time::now(),
-				note: $note,
-				url: $reportUrl,
-				category: $category,
-			}`,
-		{
-			reporter: `user:${user.id}`,
-			reportee: reportee.id,
-			note,
-			reportUrl,
-			category,
-		}
+				note: ${note},
+				url: ${reportUrl},
+				category: ${category},
+			}`
 	)
 
 	return message(form, "Report sent successfully.")

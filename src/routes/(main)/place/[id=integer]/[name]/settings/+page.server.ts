@@ -10,6 +10,7 @@ import fs from "node:fs"
 import sharp from "sharp"
 import type { RequestEvent } from "./$types"
 import settingsQuery from "./settings.surql"
+import updateSettingsQuery from "./updateSettings.surql"
 
 const schemas = {
 	view: z.object({
@@ -118,8 +119,8 @@ actions.view = async e => {
 
 	const { title, description } = form.data
 
-	await query(import("./updateSettings.surql"), {
-		place: `place:${id}`,
+	await equery(updateSettingsQuery, {
+		place: new RecordId("place", id),
 		title,
 		description: description || "",
 	})
@@ -148,19 +149,13 @@ actions.network = async e => {
 
 	const { serverIP, serverPort, maxPlayers } = form.data
 
-	await query(
-		surql`
-			UPDATE $place MERGE {
-				serverIP: $serverIP,
-				serverPort: $serverPort,
-				maxPlayers: $maxPlayers,
-			}`,
-		{
-			place: `place:${id}`,
-			serverIP,
-			serverPort,
-			maxPlayers,
-		}
+	await equery(
+		surrealql`
+			UPDATE ${new RecordId("place", id)} MERGE {
+				serverIP: ${serverIP},
+				serverPort: ${serverPort},
+				maxPlayers: ${maxPlayers},
+			}`
 	)
 
 	return message(form, "Network settings updated successfully!")
@@ -174,10 +169,10 @@ actions.privacy = async e => {
 
 	const { privateServer } = form.data
 
-	await query(surql`UPDATE $place SET privateServer = $privateServer`, {
-		place: `place:${id}`,
-		privateServer,
-	})
+	await equery(
+		surrealql`UPDATE $place SET privateServer = ${privateServer}`,
+		{ place: new RecordId("place", id) }
+	)
 
 	return message(form, "Privacy settings updated successfully!")
 }
@@ -185,8 +180,8 @@ actions.privatelink = async e => {
 	const id = await getData(e)
 	const { url, request } = e
 
-	await query(surql`UPDATE $place SET privateTicket = rand::guid()`, {
-		place: `place:${id}`,
+	await equery(surrealql`UPDATE $place SET privateTicket = rand::guid()`, {
+		place: new RecordId("place", id),
 	})
 
 	return message(

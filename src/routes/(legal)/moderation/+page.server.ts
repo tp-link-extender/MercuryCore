@@ -1,20 +1,19 @@
-import { query, squery, surql } from "$lib/server/surreal"
+import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import { authorise } from "$lib/server/lucia"
 import { error, redirect } from "@sveltejs/kit"
 
-const getModeration = async (id: string) => {
-	const moderation = await squery<{
-		type: string
-		note: string
-		time: string
-		timeEnds: string
-	}>(
-		surql`
-			SELECT *
-			FROM moderation
-			WHERE out = $user
-				AND active = true`,
-		{ user: `user:${id}` }
+async function getModeration(id: string) {
+	const [[moderation]] = await equery<
+		{
+			type: string
+			note: string
+			time: string
+			timeEnds: string
+		}[][]
+	>(
+		surrealql`
+			SELECT * FROM moderation
+			WHERE out = ${new RecordId("user", id)} AND active = true`
 	)
 
 	if (moderation) return moderation
@@ -43,11 +42,10 @@ actions.default = async ({ locals }) => {
 	if (["AccountDeleted", "Termination"].includes(userModeration.type))
 		error(400, "You cannot reactivate your account")
 
-	await query(
-		surql`
+	await equery(
+		surrealql`
 			UPDATE moderation SET active = false
-			WHERE out = $user`,
-		{ user: `user:${user.id}` }
+			WHERE out = ${new RecordId("user", user.id)}`
 	)
 
 	redirect(302, "/home")

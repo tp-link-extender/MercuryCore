@@ -1,4 +1,4 @@
-import { query, surql, find } from "$lib/server/surreal"
+import { find, RecordId, surrealql, equery } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 export async function GET({ url, request }) {
@@ -10,8 +10,8 @@ export async function GET({ url, request }) {
 
 	if (!(await find("playing", ticket))) error(400, "Ticket not found")
 
-	await query(surql`UPDATE $ticket SET ping = $ping`, {
-		ticket: `playing:${ticket}`,
+	await equery(surrealql`UPDATE $ticket SET ping = $ping`, {
+		ticket: new RecordId("playing", ticket),
 		ping: Math.floor(Date.now() / 1000),
 	})
 

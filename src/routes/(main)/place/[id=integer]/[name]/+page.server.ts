@@ -1,6 +1,5 @@
 import { authorise } from "$lib/server/lucia"
 import {
-	surql,
 	find,
 	findWhere,
 	equery,
@@ -131,7 +130,7 @@ actions.join = async ({ request, locals }) => {
 
 	const foundModerated = await findWhere(
 		"moderation",
-		surql`out = $user AND active = true`,
+		"out = $user AND active = true",
 		{ user: new RecordId("user", user.id) }
 	)
 	if (foundModerated) error(403, "You cannot currently play games")

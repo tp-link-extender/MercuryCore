@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { query, surql, auditLog, Action } from "$lib/server/surreal"
+import { auditLog, Action, equery, surrealql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -19,9 +19,7 @@ const schema = z.object({
 export async function load({ locals }) {
 	await authorise(locals, 5)
 
-	return {
-		form: await superValidate(zod(schema)),
-	}
+	return { form: await superValidate(zod(schema)) }
 }
 
 export const actions: import("./$types").Actions = {}
@@ -36,14 +34,11 @@ actions.changePassword = async ({ request, locals, getClientAddress }) => {
 	const { username, password } = form.data
 
 	try {
-		await query(
-			surql`
+		await equery(
+			surrealql`
 				UPDATE user SET hashedPassword = $npassword
-				WHERE string::lowercase(username) = string::lowercase($username)`,
-			{
-				username,
-				npassword: await new Scrypt().hash(password),
-			}
+				WHERE string::lowercase(username) = string::lowercase(${username})`,
+			{ npassword: await new Scrypt().hash(password) }
 		)
 	} catch {
 		return message(form, "Invalid credentials", {

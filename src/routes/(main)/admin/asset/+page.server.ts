@@ -1,11 +1,12 @@
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender, { RenderType } from "$lib/server/requestRender"
-import { squery, query, surql } from "$lib/server/surreal"
+import { query, surql, equery, surrealql, RecordId } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import fs from "node:fs/promises"
 import type { RequestEvent } from "./$types"
 import auditLog from "$lib/server/auditLog.surql"
+import assetsQuery from "./asset.surql"
 
 type Asset = {
 	name: string
@@ -19,11 +20,14 @@ type Asset = {
 	}
 }
 
-export const load = async ({ locals }) => ({
-	assets: await query<Asset>(import("./asset.surql"), {
-		user: `user:${(await authorise(locals, 3)).user.id}`,
-	}),
-})
+export async function load({ locals }) {
+	const { user } = await authorise(locals, 3)
+	const [assets] = await query<Asset[][]>(assetsQuery, {
+		user: new RecordId("user", user.id),
+	})
+
+	return { assets }
+}
 
 async function getData({ locals, url }: RequestEvent) {
 	const { user } = await authorise(locals, 3)
@@ -33,12 +37,13 @@ async function getData({ locals, url }: RequestEvent) {
 	if (!/^\d+$/.test(id)) error(400, `Invalid asset id: ${id}`)
 
 	const params = {
-		user: `user:${user.id}`,
-		asset: `asset:${id}`,
+		user: new RecordId("user", user.id),
+		asset: new RecordId("asset", id),
 	}
-	const asset = await squery<{
-		name: string
-	}>(surql`SELECT name FROM $asset`, params)
+	const [[asset]] = await equery<{ name: string }[][]>(
+		surrealql`SELECT name FROM $asset`,
+		params
+	)
 
 	if (!asset) error(404, "Asset not found")
 
@@ -52,7 +57,7 @@ async function getData({ locals, url }: RequestEvent) {
 export const actions: import("./$types").Actions = {}
 actions.approve = async e => {
 	const { id, params, assetName } = await getData(e)
-	await squery(
+	await equery(
 		surql`
 			UPDATE $asset SET visibility = "Visible";
 			UPDATE $asset->imageAsset->asset SET visibility = "Visible";
@@ -66,7 +71,7 @@ actions.approve = async e => {
 }
 actions.deny = async e => {
 	const { id, params, assetName } = await getData(e)
-	await squery(
+	await equery(
 		surql`
 			UPDATE $asset SET visibility = "Moderated";
 			UPDATE $asset->imageAsset->asset SET visibility = "Moderated";
@@ -93,22 +98,21 @@ actions.rerender = async e => {
 actions.purge = async e => {
 	// Nuclear option
 	const { id, params, assetName } = await getData(e)
-	const { iaid } = await squery<{ iaid: number }>(
-		surql`
+	const [[{ iaid }]] = await equery<{ iaid: number }[][]>(
+		surrealql`
 			SELECT meta::id((->imageAsset->asset.id)[0]) AS iaid
-			FROM $asset`,
-		{ asset: `asset:${id}` }
+			FROM ${new RecordId("asset", id)}`
 	)
 
 	await Promise.all([
-		query(
+		equery(
 			surql`
 				DELETE $asset;
 				DELETE $imageAsset;
 				${auditLog}`,
 			{
 				...params,
-				imageAsset: `asset:${iaid}`,
+				imageAsset: new RecordId("asset", iaid),
 				action: "Moderation",
 				note: `Purge asset ${assetName} (id ${id})`,
 			}

@@ -1,5 +1,5 @@
 import { error } from "@sveltejs/kit"
-import { query, surql } from "$lib/server/surreal"
+import { equery, surrealql } from "$lib/server/surreal"
 
 export async function GET({ url, request }) {
 	const ticket = url.searchParams.get("ticket") as string
@@ -8,11 +8,10 @@ export async function GET({ url, request }) {
 	if (request.headers.get("user-agent") !== "Roblox/WinInet")
 		error(400, "Good one")
 
-	await query(
-		surql`
+	await equery(
+		surrealql`
 			UPDATE place SET serverPing = time::unix()
-			WHERE serverTicket = $ticket`,
-		{ ticket }
+			WHERE serverTicket = ${ticket}`
 	)
 
 	return new Response("OK", {
