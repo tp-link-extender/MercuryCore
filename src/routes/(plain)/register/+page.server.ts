@@ -1,15 +1,5 @@
 import { auth } from "$lib/server/lucia"
-import {
-	query,
-	squery,
-	mquery,
-	surql,
-	findWhere,
-	surrealql,
-	equery,
-	RecordId,
-	unpack,
-} from "$lib/server/surreal"
+import { findWhere, surrealql, equery, RecordId } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { redirect } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
@@ -17,6 +7,7 @@ import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import requestRender, { RenderType } from "$lib/server/requestRender"
 import { Scrypt } from "oslo/password"
+import createUserQuery from "./createUser.surql"
 
 const schemaInitial = z.object({
 	username: z
@@ -49,32 +40,35 @@ async function createUser(
 	},
 	keyUsed?: string
 ) {
-	let createUserQuery = await unpack(import("./createUser.surql"))
-	if (keyUsed)
-		createUserQuery += surql`
+	let query = createUserQuery
+	let key: RecordId | undefined
+	if (keyUsed) {
+		query += `
 			UPDATE ONLY $key SET usesLeft -= 1;
 			RELATE $u->used->$key`
+		key = new RecordId("regKey", keyUsed)
+	}
 
-	const q = await mquery<
-		{
-			number: number
-			id: string
-		}[]
-	>(createUserQuery, { user, key: `regKey:⟨${keyUsed}⟩` })
+	const q = await equery<{ number: number; id: string }[]>(query, {
+		user,
+		key,
+	})
 
 	return q[3]
 }
 
-export async function load() {
+async function isAccountRegistered() {
 	const [userCount] = await equery<number[]>(
 		surrealql`count(SELECT 1 FROM user)`
 	)
 
-	return {
-		form: await superValidate(zod(schema)),
-		users: userCount > 0,
-	}
+	return userCount > 0
 }
+
+export const load = async () => ({
+	form: await superValidate(zod(schema)),
+	users: await isAccountRegistered(),
+})
 
 export const actions: import("./$types").Actions = {}
 actions.register = async ({ request, cookies }) => {
@@ -93,7 +87,7 @@ actions.register = async ({ request, cookies }) => {
 			[" ", "The specified passwords do not match"]
 		)
 
-	const userCheck = await findWhere("user", surql`username = $username`, {
+	const userCheck = await findWhere("user", "username = $username", {
 		username,
 	})
 
@@ -104,16 +98,13 @@ actions.register = async ({ request, cookies }) => {
 			["This username is already in use"]
 		)
 
-	const emailCheck = await findWhere("user", surql`email = $email`, {
-		email,
-	})
+	const emailCheck = await findWhere("user", "email = $email", { email })
 
 	if (emailCheck)
 		return formError(form, ["email"], ["This email is already in use"])
 
 	const [[regkeyCheck]] = await equery<{ usesLeft: number }[][]>(
-		surql`SELECT usesLeft FROM $regkey`,
-		{ regkey: new RecordId("regKey", regkey) }
+		surrealql`SELECT usesLeft FROM ${new RecordId("regKey", regkey)}`
 	)
 
 	if (!regkeyCheck)
@@ -165,7 +156,7 @@ actions.initialAccount = async ({ request, cookies }) => {
 			[" ", "The specified passwords do not match"]
 		)
 
-	if ((await squery<number>(surql`[count(SELECT * FROM user)]`)) > 0)
+	if (await isAccountRegistered())
 		return formError(
 			form,
 			["username"],

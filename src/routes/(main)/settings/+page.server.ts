@@ -1,10 +1,11 @@
 import { authorise } from "$lib/server/lucia"
-import { query, surql } from "$lib/server/surreal"
+import { surrealql, equery, RecordId } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { Scrypt } from "oslo/password"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
+import updateProfileQuery from "./updateProfile.surql"
 
 const schemas = {
 	profile: z.object({
@@ -36,8 +37,8 @@ actions.profile = async ({ request, locals }) => {
 
 	const { bio } = form.data
 
-	await query(import("./updateProfile.surql"), {
-		user: `user:${user.id}`,
+	await equery(updateProfileQuery, {
+		user: new RecordId("user", user.id),
 		bio,
 		// theme,
 	})
@@ -68,10 +69,12 @@ actions.password = async ({ request, locals }) => {
 	if (!(await new Scrypt().verify(user.hashedPassword, cpassword)))
 		return formError(form, ["cpassword"], ["Incorrect password"])
 
-	await query(surql`UPDATE $user SET hashedPassword = $npassword`, {
-		user: `user:${user.id}`,
-		npassword: await new Scrypt().hash(npassword),
-	})
+	await equery(
+		surrealql`UPDATE ${new RecordId(
+			"user",
+			user.id
+		)} SET hashedPassword = ${await new Scrypt().hash(npassword)}`
+	)
 
 	// Don't send the password back to the client
 	form.data.cpassword = ""
@@ -89,10 +92,9 @@ actions.styling = async ({ request, locals }) => {
 	const { css } = form.data
 	if (css === "undefined") return message(form, "Styling already saved!")
 
-	await query(surql`UPDATE $user SET css = $css`, {
-		user: `user:${user.id}`,
-		css,
-	})
+	await equery(
+		surrealql`UPDATE ${new RecordId("user", user.id)} SET css = ${css}`
+	)
 
 	return message(form, "Styling updated successfully!")
 }

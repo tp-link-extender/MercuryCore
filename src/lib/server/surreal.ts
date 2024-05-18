@@ -1,5 +1,7 @@
 import { building } from "$app/environment"
 import Surreal, { surrealql, RecordId, type PreparedQuery } from "surrealdb.js"
+import transactionQuery from "./transaction.surql"
+import auditLogQuery from "./auditLog.surql"
 
 const db = new Surreal()
 
@@ -107,9 +109,6 @@ export const equery = async <T>(
 
 		return final as T
 	})
-
-export const unpack = async (imported: Promise<{ default: string }>) =>
-	(await imported).default
 
 if (!building) await reconnect()
 
@@ -272,7 +271,7 @@ export async function transaction(
 				link: string
 				time: string
 		  }[]
-	>(unpack(import("./transaction.surql")), {
+	>(transactionQuery, {
 		...(sender?.number
 			? { senderNumber: sender.number }
 			: sender?.id
@@ -307,7 +306,7 @@ export enum Action {
  * @param userId The id of the user who took the action
  */
 export async function auditLog(action: Action, note: string, userId: string) {
-	await equery(unpack(import("./auditLog.surql")), {
+	await equery(auditLogQuery, {
 		action,
 		note,
 		user: new RecordId("user", userId),

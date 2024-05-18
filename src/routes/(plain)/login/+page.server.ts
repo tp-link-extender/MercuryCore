@@ -1,5 +1,5 @@
 import { auth } from "$lib/server/lucia"
-import { squery, surql } from "$lib/server/surreal"
+import { equery, surrealql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { redirect } from "@sveltejs/kit"
 import { Scrypt } from "oslo/password"
@@ -26,10 +26,14 @@ const schema = z.object({
 		}),
 })
 
-export const load = async () => ({
-	form: await superValidate(zod(schema)),
-	users: (await squery<number>(surql`[count(SELECT 1 FROM user)]`)) > 0,
-})
+export async function load() {
+	const [users] = await equery<number[]>(surrealql`count(SELECT 1 FROM user)`)
+
+	return {
+		form: await superValidate(zod(schema)),
+		users: users > 0,
+	}
+}
 
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ request, cookies }) => {
@@ -38,15 +42,16 @@ actions.default = async ({ request, cookies }) => {
 
 	const { username, password } = form.data
 
-	const user = await squery<{
-		id: string
-		username: string
-		hashedPassword: string
-	}>(
-		surql`
+	const [[user]] = await equery<
+		{
+			id: string
+			username: string
+			hashedPassword: string
+		}[][]
+	>(
+		surrealql`
 			SELECT meta::id(id) AS id, username, hashedPassword FROM user
-			WHERE string::lowercase(username) = string::lowercase($username)`,
-		{ username }
+			WHERE string::lowercase(username) = string::lowercase(${username})`
 	)
 
 	// remove this statement and we'll end up like Mercury 1 💀

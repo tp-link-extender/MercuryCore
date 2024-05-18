@@ -1,6 +1,5 @@
-import { equery, unpack } from "$lib/server/surreal"
-
-const forumQuery = await unpack(import("./forum.surql"))
+import { equery } from "$lib/server/surreal"
+import forumQuery from "./forum.surql"
 
 type Category = {
 	description: string

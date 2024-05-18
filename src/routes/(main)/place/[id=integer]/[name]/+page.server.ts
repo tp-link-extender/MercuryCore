@@ -5,7 +5,6 @@ import {
 	findWhere,
 	equery,
 	surrealql,
-	unpack,
 	RecordId,
 } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
@@ -13,8 +12,7 @@ import { likeLikesActions, type LikeActions } from "$lib/server/like"
 import { publish } from "$lib/server/realtime"
 import { encode, couldMatch } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
-
-const placeQuery = await unpack(import("./place.surql"))
+import placeQuery from "./place.surql"
 
 type Place = {
 	created: string
@@ -103,7 +101,10 @@ actions.like = async ({ url, request, locals, params }) => {
 	)
 		error(404, "Place not found")
 
-	const likes = await likeLikesActions[action](user.id, `place:${id}`)
+	const likes = await likeLikesActions[action](
+		user.id,
+		new RecordId("place", id)
+	)
 
 	foundPlace.likeCount = likes.likeCount
 	foundPlace.dislikeCount = likes.dislikeCount

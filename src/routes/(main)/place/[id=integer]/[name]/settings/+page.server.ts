@@ -1,12 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import {
-	query,
-	surql,
-	equery,
-	surrealql,
-	unpack,
-	RecordId,
-} from "$lib/server/surreal"
+import { query, surql, equery, surrealql, RecordId } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { encode } from "$lib/urlName"
 import { error } from "@sveltejs/kit"
@@ -16,8 +9,7 @@ import { z } from "zod"
 import fs from "node:fs"
 import sharp from "sharp"
 import type { RequestEvent } from "./$types"
-
-const settingsQuery = await unpack(import("./settings.surql"))
+import settingsQuery from "./settings.surql"
 
 const schemas = {
 	view: z.object({

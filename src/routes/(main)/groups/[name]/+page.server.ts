@@ -1,7 +1,8 @@
 import { authorise } from "$lib/server/lucia"
-import { query, squery, surql } from "$lib/server/surreal"
+import { equery, surrealql, RecordId } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import type { RequestEvent } from "./$types"
+import groupQuery from "./group.surql"
 
 type Group = {
 	in: boolean
@@ -12,11 +13,10 @@ type Group = {
 
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
-	const group = await squery<Group>(import("./group.surql"), {
-		user: `user:${user.id}`,
+	const [[group]] = await equery<Group[][]>(groupQuery, {
+		user: new RecordId("user", user.id),
 		...params,
 	})
-
 	if (!group) error(404, "Not found")
 
 	return group
@@ -24,10 +24,8 @@ export async function load({ locals, params }) {
 
 async function getData({ locals, params }: RequestEvent) {
 	const { user } = await authorise(locals)
-	const group = await squery<{
-		id: string
-	}>(
-		surql`
+	const [[group]] = await equery<{ id: RecordId }[][]>(
+		surrealql`
 			SELECT id FROM group
 			WHERE string::lowercase(name) = string::lowercase($name)`,
 		params
@@ -36,21 +34,21 @@ async function getData({ locals, params }: RequestEvent) {
 	if (!group) fail(400, { msg: "Group not found" })
 
 	return {
-		user: `user:${user.id}`,
+		user: new RecordId("user", user.id),
 		group: group.id,
 	}
 }
 
 export const actions: import("./$types").Actions = {}
 actions.join = async e => {
-	await query(
-		surql`RELATE $user->member->$group SET time = time::now()`,
+	await equery(
+		surrealql`RELATE $user->member->$group SET time = time::now()`,
 		await getData(e)
 	)
 }
 actions.leave = async e => {
-	await query(
-		surql`DELETE $user->member WHERE out = $group`,
+	await equery(
+		surrealql`DELETE $user->member WHERE out = $group`,
 		await getData(e)
 	)
 }

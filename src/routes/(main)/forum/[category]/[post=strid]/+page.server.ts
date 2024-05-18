@@ -1,13 +1,6 @@
 import { actions as categoryActions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
-import {
-	squery,
-	surql,
-	equery,
-	surrealql,
-	RecordId,
-	unpack,
-} from "$lib/server/surreal"
+import { squery, surql, equery, surrealql, RecordId } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { error } from "@sveltejs/kit"
@@ -17,6 +10,9 @@ import { z } from "zod"
 import { like } from "$lib/server/like"
 import { recurse, type Replies } from "$lib/server/nestedReplies"
 import type { RequestEvent } from "./$types"
+import createReplyQuery from "./createReply.surql"
+import forumPostQuery from "./post.surql"
+import updateVisibilityQuery from "./updateVisibility.surql"
 
 const schema = z.object({
 	content: z.string().min(1).max(1000),
@@ -50,10 +46,6 @@ type ForumPost = {
 	title: string
 	visibility: string
 }
-
-const createReplyQuery = await unpack(import("./createReply.surql"))
-const forumPostQuery = await unpack(import("./post.surql"))
-const updateVisibilityQuery = await unpack(import("./updateVisibility.surql"))
 
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)

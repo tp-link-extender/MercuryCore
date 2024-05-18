@@ -1,7 +1,8 @@
 // The members page for a group.
 
-import { squery } from "$lib/server/surreal"
+import { equery } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
+import membersQuery from "./members.surql"
 
 type Group = {
 	memberCount: number
@@ -10,7 +11,7 @@ type Group = {
 }
 
 export async function load({ params }) {
-	const group = await squery<Group>(import("./members.surql"), params)
+	const [[group]] = await equery<Group[][]>(membersQuery, params)
 	if (!group) error(404, "Not found")
 	return group
 }

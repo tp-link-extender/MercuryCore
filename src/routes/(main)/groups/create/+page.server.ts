@@ -1,10 +1,11 @@
 import { authorise } from "$lib/server/lucia"
-import { query, transaction, surql, findWhere } from "$lib/server/surreal"
+import { transaction, findWhere, equery, RecordId } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import formError from "$lib/server/formError"
 import { superValidate } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
+import createQuery from "./create.surql"
 
 const schema = z.object({
 	name: z.string().min(3).max(40),
@@ -46,7 +47,7 @@ actions.default = async ({ request, locals }) => {
 
 	const foundGroup = await findWhere(
 		"group",
-		surql`string::lowercase(name) = string::lowercase($name)`,
+		"string::lowercase(name) = string::lowercase($name)",
 		{ name }
 	)
 	if (foundGroup)
@@ -66,9 +67,9 @@ actions.default = async ({ request, locals }) => {
 		return formError(form, ["other"], [e.message])
 	}
 
-	await query(import("./create.surql"), {
+	await equery(createQuery, {
 		name,
-		user: `user:${user.id}`,
+		user: new RecordId("user", user.id),
 	})
 
 	redirect(302, `/groups/${name}`)

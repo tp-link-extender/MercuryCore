@@ -1,8 +1,9 @@
 import { actions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
-import { RecordId, equery, surql, surrealql, unpack } from "$lib/server/surreal"
+import { RecordId, equery, surql, surrealql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { recurse, type Replies } from "$lib/server/nestedReplies"
+import assetCommentsQuery from "./comments.surql"
 
 const SELECTREPLIES = recurse(
 	from => surql`(${from} <-replyToComment<-assetComment) AS replies`,
@@ -17,8 +18,6 @@ type AssetComment = Replies[number] & {
 		forumCategoryName: string
 	}
 }
-
-const assetCommentsQuery = await unpack(import("./comments.surql"))
 
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)

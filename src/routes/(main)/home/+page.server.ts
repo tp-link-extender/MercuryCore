@@ -1,10 +1,12 @@
 import { authorise } from "$lib/server/lucia"
-import { query, equery, RecordId, unpack } from "$lib/server/surreal"
+import { equery, RecordId } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
+import homeQuery from "./home.surql"
+import statusQuery from "./status.surql"
 
 const schema = z.object({
 	status: z.string().min(1).max(1000),
@@ -61,7 +63,7 @@ export async function load({ locals }) {
 
 	const [places, friends, feed] = await equery<
 		[Place[], BasicUser[], FeedPost[]]
-	>(unpack(import("./home.surql")), { user: new RecordId("user", user.id) })
+	>(homeQuery, { user: new RecordId("user", user.id) })
 
 	return {
 		stuff: {
@@ -87,8 +89,8 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	const content = form.data.status.trim()
 	if (!content) return formError(form, ["status"], ["Status cannot be empty"])
 
-	await query(import("./status.surql"), {
+	await equery(statusQuery, {
 		content,
-		user: `user:${user.id}`,
+		user: new RecordId("user", user.id),
 	})
 }

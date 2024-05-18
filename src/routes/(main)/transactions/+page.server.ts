@@ -1,5 +1,6 @@
 import { authorise } from "$lib/server/lucia"
-import { query, surql } from "$lib/server/surreal"
+import { equery, RecordId } from "$lib/server/surreal"
+import transactionsQuery from "./transactions.surql"
 
 type Transaction = {
 	amountSent: number
@@ -14,8 +15,10 @@ type Transaction = {
 	time: string
 }
 
-export const load = async ({ locals }) => ({
-	transactions: await query<Transaction>(import("./transactions.surql"), {
-		user: `user:${(await authorise(locals)).user.id}`,
-	}),
-})
+export async function load({ locals }) {
+	const [transactions] = await equery<Transaction[][]>(transactionsQuery, {
+		user: new RecordId("user", (await authorise(locals)).user.id),
+	})
+
+	return { transactions }
+}

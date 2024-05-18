@@ -1,11 +1,10 @@
 import { authorise } from "$lib/server/lucia"
-import { unpack, equery, RecordId, surrealql } from "$lib/server/surreal"
+import { equery, RecordId, surrealql } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { error } from "@sveltejs/kit"
 import { likeScoreActions } from "$lib/server/like"
 import { publish } from "$lib/server/realtime"
-
-const categoryQuery = await unpack(import("./category.surql"))
+import categoryQuery from "./category.surql"
 
 type Category = {
 	description: string
@@ -56,8 +55,8 @@ async function select(table: string, id: string) {
 export const actions: import("./$types").Actions = {}
 actions.like = async ({ request, locals, params, url }) => {
 	const { user } = await authorise(locals)
-	const action = (await formData(request))
-		.action as keyof typeof likeScoreActions
+	const data = await formData(request)
+	const action = data.action as keyof typeof likeScoreActions
 	const id = url.searchParams.get("id")
 	const replyId = url.searchParams.get("rid")
 

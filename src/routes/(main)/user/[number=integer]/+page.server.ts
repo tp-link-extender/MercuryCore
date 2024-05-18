@@ -1,11 +1,10 @@
 import { authorise } from "$lib/server/lucia"
-import { RecordId, unpack, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
 import { fail, error } from "@sveltejs/kit"
 import requestRender, { RenderType } from "$lib/server/requestRender"
 import type { RequestEvent } from "./$types"
-
-const userQuery = await unpack(import("./user.surql"))
+import userQuery from "./user.surql"
 
 type User = {
 	bio: {
@@ -240,7 +239,7 @@ actions.accept = async e => {
 		surrealql`$user IN $user2->request->user`,
 		params
 	)
-	if (!incomingQ) error(400, "No friend request to accept")
+	if (!incoming) error(400, "No friend request to accept")
 
 	await acceptExisting(params, user)
 }

@@ -1,14 +1,11 @@
 import { authorise } from "$lib/server/lucia"
 import {
-	query,
-	squery,
 	transaction,
 	surql,
 	find,
 	RecordId,
 	equery,
 	surrealql,
-	unpack,
 } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formData from "$lib/server/formData"
@@ -22,6 +19,9 @@ import { recurse, type Replies } from "$lib/server/nestedReplies"
 import { publish } from "$lib/server/realtime"
 import requestRender, { RenderType } from "$lib/server/requestRender"
 import type { Actions, RequestEvent } from "./$types"
+import assetQuery from "./asset.surql"
+import updateVisibilityQuery from "./updateVisibility.surql"
+import createCommentQuery from "./createComment.surql"
 
 const schema = z.object({
 	content: z.string().min(1).max(1000),
@@ -54,8 +54,6 @@ type Asset = {
 	type: number
 	visibility: string
 }
-
-const assetQuery = await unpack(import("./asset.surql"))
 
 export async function load({ locals, params }) {
 	if (!/^\d+$/.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
@@ -123,9 +121,6 @@ async function findComment<T>(
 	return { user, comment, id }
 }
 
-const updateVisibilityQuery = await unpack(import("./updateVisibility.surql"))
-const createCommentQuery = await unpack(import("./createComment.surql"))
-
 const updateVisibility = (visibility: string, text: string, id: string) =>
 	equery(updateVisibilityQuery, {
 		assetComment: new RecordId("assetComment", id),
@@ -148,16 +143,18 @@ type Thing = {
 	assetId: string
 }
 
-const select = (thing: string) =>
-	squery<Thing>(
-		surql`
+async function select(thing: string) {
+	const [[got]] = await equery<Thing[][]>(
+		surrealql`
 			SELECT
 				meta::id(id) AS id,
 				count(<-likes) - count(<-dislikes) AS score,
 				meta::id((->replyToAsset->asset.id)[0]) AS assetId # remove if asset likes are implemented
-			FROM $thing`,
-		{ thing }
+			FROM ${thing}`
 	)
+
+	return got
+}
 
 // actions that return things are here because of sveltekit typescript limitations
 async function rerender({ locals, params }: RequestEvent) {
@@ -235,7 +232,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	if (commentId && !commentAuthor) error(404)
 
 	const receiverId = commentAuthor?.id || ""
-	const newReplyId = await query<string>(surql`[fn::id()]`)
+	const [newReplyId] = await equery<string[]>(surrealql`fn::id()`)
 
 	await equery(createCommentQuery, {
 		content,

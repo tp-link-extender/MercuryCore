@@ -1,5 +1,5 @@
 import { SignData } from "$lib/server/sign"
-import { squery, surql } from "$lib/server/surreal"
+import { equery, surrealql, RecordId } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import { createHash } from "node:crypto"
 
@@ -22,18 +22,19 @@ export async function GET({ url }) {
 		// Try loading as an asset
 
 		if (await Bun.file(`data/assets/${id}`).exists()) {
-			const asset = await squery<{
-				id: number
-				name: string
-				visibility: string
-			}>(
-				surql`
+			const [[asset]] = await equery<
+				{
+					id: number
+					name: string
+					visibility: string
+				}[][]
+			>(
+				surrealql`
 					SELECT
 						meta::id(id) AS id,
 						name,
 						visibility
-					FROM $asset`,
-				{ asset: `asset:${id}` }
+					FROM ${new RecordId("asset", id)}`
 			)
 
 			if (!asset || asset.visibility === "Moderated") throw new Error()
