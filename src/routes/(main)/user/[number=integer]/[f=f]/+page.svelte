@@ -3,16 +3,17 @@
 	export let data
 
 	const titles = {
-		friends: `${data.username}'s friends`,
-		followers: `${data.username}'s followers`,
-		following: `Followed by ${data.username}`
+		friends: () => `${data.username}'s friends`,
+		followers: () => `${data.username}'s followers`,
+		following: () => `Followed by ${data.username}`
 	}
+	let title = titles[data.type]()
 </script>
 
-<Head title={titles[data.type]} />
+<Head {title} />
 
 <div class="text-center">
-	<h1>{titles[data.type]} ({data.count})</h1>
+	<h1>{title} ({data.count})</h1>
 	<a href="/user/{data.number}" class="no-underline accent-text">
 		<fa fa-caret-left />
 		Back to {data.username}'s profile

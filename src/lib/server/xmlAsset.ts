@@ -1,4 +1,4 @@
-const strings = {
+const strings = Object.freeze({
 	"T-Shirt": {
 		class: "ShirtGraphic",
 		contentName: "Graphic",
@@ -16,7 +16,7 @@ const strings = {
 	},
 	Decal: { class: "Decal", contentName: "Texture", stringName: "Decal" },
 	Face: { class: "Decal", contentName: "Texture", stringName: "face" },
-}
+})
 
 /**
  * Creates a new XML graphic asset and saves it in data/assets

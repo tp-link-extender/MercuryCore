@@ -25,16 +25,17 @@ const schema = z.object({
 	price: z.number().int().min(0).max(999),
 	asset: z.any(),
 })
-const assets: { [k: number]: string } = {
-	2: "T-Shirt",
-	11: "Shirt",
-	12: "Pants",
-	13: "Decal",
-}
 
 export const load = async ({ request }) => ({
 	form: await superValidate(zod(schema)),
 	assettype: new URL(request.url).searchParams.get("asset"),
+})
+
+const assets: { [k: number]: string } = Object.freeze({
+	2: "T-Shirt",
+	11: "Shirt",
+	12: "Pants",
+	13: "Decal",
 })
 
 export const actions: import("./$types").Actions = {}

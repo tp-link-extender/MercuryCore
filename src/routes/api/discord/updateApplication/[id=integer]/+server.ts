@@ -31,7 +31,6 @@ export async function POST({ request, url, params }) {
 		id: string
 		usesLeft: number
 	}[] = []
-
 	try {
 		response = await mquery(import("./updateApplication.surql"), {
 			id: params.id,

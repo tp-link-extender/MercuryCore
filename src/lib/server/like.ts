@@ -110,21 +110,21 @@ export {
 export type LikeActions = "like" | "unlike" | "dislike" | "undislike"
 
 // better than like switch
-export const likeActions = {
+export const likeActions = Object.freeze({
 	like: likeNone,
 	unlike: unlikeNone,
 	dislike: dislikeNone,
 	undislike: undislikeNone,
-}
-export const likeScoreActions = {
+})
+export const likeScoreActions = Object.freeze({
 	like: likeScore,
 	unlike: unlikeScore,
 	dislike: dislikeScore,
 	undislike: undislikeScore,
-}
-export const likeLikesActions = {
+})
+export const likeLikesActions = Object.freeze({
 	like: likeLikes,
 	unlike: unlikeLikes,
 	dislike: dislikeLikes,
 	undislike: undislikeLikes,
-}
+})

@@ -3,7 +3,7 @@
 import { type RecordId, equery, surrealql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
-const usersQueries = {
+const usersQueries = Object.freeze({
 	// "$id->friends->user OR $id<-friends<-user" doesn't work
 	// "$id<->friends<->user" shows yourself in the list (twice)
 	friends: surrealql`
@@ -13,12 +13,12 @@ const usersQueries = {
 		SELECT number, status, username FROM $id<-follows<-user`,
 	following: surrealql`
 		SELECT number, status, username FROM $id->follows->user`,
-}
-const numberQueries = {
+})
+const numberQueries = Object.freeze({
 	friends: surrealql`count($id->friends->user) + count($id<-friends<-user)`,
 	followers: surrealql`count($id<-follows<-user)`,
 	following: surrealql`count($id->follows->user)`,
-}
+})
 
 export async function load({ params }) {
 	const type = params.f as keyof typeof usersQueries

@@ -23,6 +23,8 @@ export async function load({ locals }) {
 	}
 }
 
+const moderationActions = ["Warning", "Ban", "Termination", "AccountDeleted"]
+
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ request, locals, getClientAddress }) => {
 	const { user } = await authorise(locals, 4)
@@ -64,16 +66,10 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	if (limit) return limit
 
 	const moderationMessage = [
-		"warned",
-		`banned until ${date?.toLocaleDateString()}`,
-		"terminated",
-		"deleted",
-	]
-	const moderationActions = [
-		"Warning",
-		"Ban",
-		"Termination",
-		"AccountDeleted",
+		() => "warned",
+		() => `banned until ${date?.toLocaleDateString()}`,
+		() => "terminated",
+		() => "deleted",
 	]
 	const qParams = {
 		user: `user:${user.id}`,
@@ -167,6 +163,6 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 
 	return message(
 		form,
-		`${username} has been ${moderationMessage[intAction - 1]}`
+		`${username} has been ${moderationMessage[intAction - 1]()}`
 	)
 }

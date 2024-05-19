@@ -11,11 +11,11 @@ import pc from "picocolors"
 import type { Cookie } from "lucia"
 
 const { magenta, red, yellow, green, blue, gray: grey, cyan } = pc
-const methodColours = {
+const methodColours = Object.freeze({
 	GET: green("GET"),
 	POST: yellow("POST"),
-}
-const pathnameColours = {
+})
+const pathnameColours = Object.freeze({
 	"/api": green,
 	"/download": yellow,
 	"/moderation": yellow,
@@ -26,7 +26,7 @@ const pathnameColours = {
 	"/place": magenta,
 	"/admin": red,
 	"/studio": cyan,
-}
+})
 
 const pathnameColour = (pathname: string) => {
 	for (const [prefix, colour] of Object.entries(pathnameColours))

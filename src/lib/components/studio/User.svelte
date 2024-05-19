@@ -1,20 +1,20 @@
 <script lang="ts">
 	// User profile link component
 
-	const statusColours = {
+	const statusColours = Object.freeze({
 		// 8 months late lmao
 		Playing: "#238560",
 		Online: "#3459e6",
 		Offline: "#0000"
-	}
-	const backgrounds = {
+	})
+	const backgrounds = Object.freeze({
 		darker: "#0a0908",
 		background: "#100f0e",
 		accent: "#1f1d1c",
 		accent1: "#262423",
 		accent2: "#363433",
 		accent3: "#464443"
-	}
+	})
 
 	export let user: {
 		number: number

@@ -12,28 +12,26 @@ import type { RequestEvent } from "./$types"
 import settingsQuery from "./settings.surql"
 import updateSettingsQuery from "./updateSettings.surql"
 
-const schemas = {
-	view: z.object({
-		title: z.string().max(100),
-		icon: z.any().optional(),
-		description: z.string().max(1000).optional(),
-	}),
-	network: z.object({
-		serverIP: z
-			.string()
-			.max(100)
-			.regex(
-				/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
-			),
-		serverPort: z.number().int().min(1024).max(65535),
-		maxPlayers: z.number().int().min(1).max(100),
-	}),
-	ticket: z.object({}),
-	privacy: z.object({
-		privateServer: z.boolean(),
-	}),
-	privatelink: z.object({}),
-}
+const viewSchema = z.object({
+	title: z.string().max(100),
+	icon: z.any().optional(),
+	description: z.string().max(1000).optional(),
+})
+const networkSchema = z.object({
+	serverIP: z
+		.string()
+		.max(100)
+		.regex(
+			/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
+		),
+	serverPort: z.number().int().min(1024).max(65535),
+	maxPlayers: z.number().int().min(1).max(100),
+})
+const ticketSchema = z.object({})
+const privacySchema = z.object({
+	privateServer: z.boolean(),
+})
+const privatelinkSchema = z.object({})
 
 type Place = {
 	created: string
@@ -60,6 +58,7 @@ async function placeQuery(id: number) {
 	})
 	return place
 }
+
 export async function load({ locals, params }) {
 	const getPlace = await placeQuery(+params.id)
 	if (!getPlace) error(404, "Place not found")
@@ -72,11 +71,11 @@ export async function load({ locals, params }) {
 	return {
 		...getPlace,
 		slug: encode(getPlace.name),
-		viewForm: await superValidate(zod(schemas.view)),
-		networkForm: await superValidate(zod(schemas.network)),
-		ticketForm: await superValidate(zod(schemas.ticket)),
-		privacyForm: await superValidate(zod(schemas.privacy)),
-		privatelinkForm: await superValidate(zod(schemas.privatelink)),
+		viewForm: await superValidate(zod(viewSchema)),
+		networkForm: await superValidate(zod(networkSchema)),
+		ticketForm: await superValidate(zod(ticketSchema)),
+		privacyForm: await superValidate(zod(privacySchema)),
+		privatelinkForm: await superValidate(zod(privatelinkSchema)),
 	}
 }
 
@@ -97,7 +96,7 @@ actions.view = async e => {
 	const { request } = e
 
 	const formData = await request.formData()
-	const form = await superValidate(formData, zod(schemas.view))
+	const form = await superValidate(formData, zod(viewSchema))
 	if (!form.valid) return formError(form)
 
 	const icon = formData.get("icon") as File
@@ -136,7 +135,7 @@ actions.ticket = async e => {
 	})
 
 	return message(
-		await superValidate(request, zod(schemas.ticket)),
+		await superValidate(request, zod(ticketSchema)),
 		"Regenerated!"
 	)
 }
@@ -144,7 +143,7 @@ actions.network = async e => {
 	const id = await getData(e)
 	const { request } = e
 
-	const form = await superValidate(request, zod(schemas.network))
+	const form = await superValidate(request, zod(networkSchema))
 	if (!form.valid) return formError(form)
 
 	const { serverIP, serverPort, maxPlayers } = form.data
@@ -164,7 +163,7 @@ actions.privacy = async e => {
 	const id = await getData(e)
 	const { request } = e
 
-	const form = await superValidate(request, zod(schemas.privacy))
+	const form = await superValidate(request, zod(privacySchema))
 	if (!form.valid) return formError(form)
 
 	const { privateServer } = form.data
@@ -185,7 +184,7 @@ actions.privatelink = async e => {
 	})
 
 	return message(
-		await superValidate(request, zod(schemas.privatelink)),
+		await superValidate(request, zod(privatelinkSchema)),
 		"Regenerated!"
 	)
 }

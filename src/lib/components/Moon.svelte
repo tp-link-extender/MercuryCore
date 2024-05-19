@@ -37,9 +37,9 @@
 	<OrbitControls
 		autoRotate
 		autoRotateSpeed={Math.random() > 0.5 ? 10 : -10}
-		rotateSpeed="0.1"
+		rotateSpeed={0.1}
 		enablePan={false}
-		panSpeed="0.1"
+		panSpeed={0.1}
 		enableZoom={false} />
 </T.PerspectiveCamera>
 

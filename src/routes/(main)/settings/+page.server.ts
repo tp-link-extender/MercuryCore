@@ -7,32 +7,30 @@ import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import updateProfileQuery from "./updateProfile.surql"
 
-const schemas = {
-	profile: z.object({
-		// theme: z.enum(["standard", "darken", "storm", "solar"]),
-		bio: z.string().max(1000).optional(),
-	}),
-	password: z.object({
-		cpassword: z.string().min(1),
-		npassword: z.string().min(1),
-		cnpassword: z.string().min(1),
-	}),
-	styling: z.object({
-		css: z.string().max(10000).optional(),
-	}),
-}
+const profileSchema = z.object({
+	// theme: z.enum(["standard", "darken", "storm", "solar"]),
+	bio: z.string().max(1000).optional(),
+})
+const passwordSchema = z.object({
+	cpassword: z.string().min(1),
+	npassword: z.string().min(1),
+	cnpassword: z.string().min(1),
+})
+const stylingSchema = z.object({
+	css: z.string().max(10000).optional(),
+})
 
 export const load = async () => ({
-	profileForm: await superValidate(zod(schemas.profile)),
-	passwordForm: await superValidate(zod(schemas.password)),
-	stylingForm: await superValidate(zod(schemas.styling)),
+	profileForm: await superValidate(zod(profileSchema)),
+	passwordForm: await superValidate(zod(passwordSchema)),
+	stylingForm: await superValidate(zod(stylingSchema)),
 })
 
 export const actions: import("./$types").Actions = {}
 actions.profile = async ({ request, locals }) => {
 	const { user } = await authorise(locals)
 
-	const form = await superValidate(request, zod(schemas.profile))
+	const form = await superValidate(request, zod(profileSchema))
 	if (!form.valid) return formError(form)
 
 	const { bio } = form.data
@@ -48,7 +46,7 @@ actions.profile = async ({ request, locals }) => {
 actions.password = async ({ request, locals }) => {
 	const { user } = await authorise(locals)
 
-	const form = await superValidate(request, zod(schemas.password))
+	const form = await superValidate(request, zod(passwordSchema))
 	if (!form.valid) return formError(form)
 
 	const { cpassword, npassword, cnpassword } = form.data
@@ -86,7 +84,7 @@ actions.password = async ({ request, locals }) => {
 actions.styling = async ({ request, locals }) => {
 	const { user } = await authorise(locals)
 
-	const form = await superValidate(request, zod(schemas.styling))
+	const form = await superValidate(request, zod(stylingSchema))
 	if (!form.valid) return formError(form)
 
 	const { css } = form.data
