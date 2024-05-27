@@ -1,4 +1,4 @@
-import { equery, squery, surql, surrealql } from "$lib/server/surreal"
+import { equery, surrealql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 type User = {

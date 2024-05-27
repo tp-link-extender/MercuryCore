@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { mquery } from "$lib/server/surreal"
+import { RecordId, equery } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import {
@@ -16,6 +16,7 @@ import { superValidate } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import requestRender, { RenderType } from "$lib/server/requestRender"
+import createAssetQuery from "./createAsset.surql"
 
 const schema = z.object({
 	// Object.keys(assets) doesn't work
@@ -49,7 +50,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	const assetType = +type as keyof typeof assets
 	const asset = formData.get("asset") as File
 
-	if (!asset || asset.size < 1)
+	if (!asset || asset.size === 0)
 		return formError(form, ["asset"], ["You must upload an asset"])
 
 	if (asset.size > 20e6)
@@ -104,18 +105,20 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 					imageAsset(asset),
 					thumbnail(asset),
 				])
+				break
+			default:
 		}
 	} catch (e) {
 		console.log(e)
 		return formError(form, ["asset"], ["Asset failed to upload"])
 	}
 
-	const res = await mquery<number[]>(import("./createAsset.surql"), {
+	const res = await equery<number[]>(createAssetQuery, {
 		name,
 		assetType,
 		price,
 		description,
-		user: `user:${user.id}`,
+		user: new RecordId("user", user.id),
 	})
 
 	const imageAssetId = res[9]

@@ -1,12 +1,13 @@
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { query, squery, surql } from "$lib/server/surreal"
+import { surql, equery, surrealql, RecordId } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
 import type { RequestEvent } from "./$types"
-import auditLog from "$lib/server/auditLog.surql"
+import auditLogQuery from "$lib/server/auditLog.surql"
+import invitesQuery from "./invites.surql"
 
 const schema = z.object({
 	enableInviteCustom: z.boolean().optional(),
@@ -27,9 +28,11 @@ type Invite = {
 export async function load({ locals }) {
 	await authorise(locals, 5)
 
+	const [invites] = await equery<Invite[][]>(invitesQuery)
+
 	return {
 		form: await superValidate(zod(schema)),
-		invites: await query<Invite>(import("./invites.surql")),
+		invites,
 	}
 }
 
@@ -72,7 +75,7 @@ actions.create = async e => {
 	if (!!enableInviteExpiry && (expiry?.getTime() || 0) < new Date().getTime())
 		return formError(form, ["inviteExpiry"], ["Invalid date"])
 
-	const log = await query(
+	const [log] = await equery<unknown[]>(
 		surql`
 			BEGIN TRANSACTION;
 			LET $key = CREATE ${enableInviteCustom ? "$" : ""}regKey CONTENT {
@@ -82,14 +85,14 @@ actions.create = async e => {
 			};
 			RELATE $user->created->$key;
 			LET $note = string::concat("Created invite key ", meta::id($key[0].id));
-			${auditLog};
+			${auditLogQuery};
 			COMMIT TRANSACTION`,
 		{
 			action: "Administration",
-			user: `user:${user.id}`,
+			user: new RecordId("user", user.id),
 			inviteUses,
 			expiry,
-			regKey: `regKey:⟨${inviteCustom}⟩`,
+			regKey: new RecordId("regKey", inviteCustom || ""),
 		}
 	)
 
@@ -107,20 +110,18 @@ actions.disable = async e => {
 
 	if (!id) return message(form, "Missing fields", { status: 400 })
 
-	const key = await squery<{
-		usesLeft: number
-	}>(surql`SELECT usesLeft FROM $id`, { id: `regKey:⟨${id}⟩` })
+	const [[key]] = await equery<{ usesLeft: number }[][]>(
+		surrealql`SELECT usesLeft FROM ${new RecordId("regKey", id)}`
+	)
 
 	if (key && key.usesLeft === 0)
-		return message(form, "Invite key is already disabled", {
-			status: 400,
-		})
+		return message(form, "Invite key is already disabled", { status: 400 })
 
-	await query(surql`UPDATE $key SET usesLeft = 0; ${auditLog}`, {
+	await equery(surql`UPDATE $key SET usesLeft = 0; ${auditLogQuery}`, {
 		action: "Administration",
 		note: `Disable invite key ${id}`,
-		user: `user:${user.id}`,
-		key: `regKey:⟨${id}⟩`,
+		user: new RecordId("user", user.id),
+		key: new RecordId("regKey", id),
 	})
 
 	return message(form, "Invite key disabled successfully")

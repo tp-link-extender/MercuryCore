@@ -1,6 +1,7 @@
-import { mquery, surql, getError } from "$lib/server/surreal"
+import { equery, getError } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { verify } from "../../discord"
+import updateApplicationQuery from "./updateApplication.surql"
 
 export async function POST({ request, url, params }) {
 	verify(url)
@@ -32,7 +33,7 @@ export async function POST({ request, url, params }) {
 		usesLeft: number
 	}[] = []
 	try {
-		response = await mquery(import("./updateApplication.surql"), {
+		response = await equery(updateApplicationQuery, {
 			id: params.id,
 			status,
 			reason,

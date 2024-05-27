@@ -1,6 +1,6 @@
 import { actions as categoryActions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
-import { squery, surql, equery, surrealql, RecordId } from "$lib/server/surreal"
+import { surql, equery, surrealql, RecordId } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { error } from "@sveltejs/kit"
@@ -129,21 +129,21 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	const limit = ratelimit(form, "forumReply", getClientAddress, 5)
 	if (limit) return limit
 
-	const replypost = await squery<{ authorId: string }>(
-		surql`
+	const [[replypost]] = await equery<{ authorId: string }[][]>(
+		surrealql`
 			SELECT meta::id(<-posted[0]<-user[0].id) AS authorId
 			FROM $replypostId
 			WHERE visibility = "Visible"`,
 		{
 			replypostId: replyId
-				? `forumReply:${replyId}`
-				: `forumPost:${params.post}`,
+				? new RecordId("forumReply", replyId)
+				: new RecordId("forumPost", params.post),
 		}
 	)
 
 	if (!replypost) error(404, `${replyId ? "Reply" : "Post"} not found`)
 
-	const newReplyId = await squery<string>(surql`[fn::id()]`)
+	const [[newReplyId]] = await equery<string[]>(surrealql`fn::id()`)
 
 	await equery(createReplyQuery, {
 		content,

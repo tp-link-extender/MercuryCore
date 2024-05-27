@@ -1,18 +1,24 @@
-import { query } from "$lib/server/surreal"
-import select from "./avatarshop.surql"
+import { authorise } from "$lib/server/lucia"
+import { equery } from "$lib/server/surreal"
+import avatarshopQuery from "./avatarshop.surql"
 
-export const load = async () => ({
-	assets: await query<{
-		name: string
-		price: number
-		id: number
-		type: number
-	}>(select),
-})
+type Asset = {
+	name: string
+	price: number
+	id: number
+	type: number
+}
+
+export const load = async () => {
+	const [assets] = await equery<Asset[][]>(avatarshopQuery)
+	return { assets }
+}
 
 export const actions: import("./$types").Actions = {}
-actions.default = async ({ request }) => ({
-	assets: await query(select, {
-		query: (await request.formData()).get("q") as string,
-	}),
-})
+actions.default = async ({ request, locals }) => {
+	await authorise(locals)
+
+	const query = (await request.formData()).get("q") as string
+	const [assets] = await equery<Asset[][]>(avatarshopQuery, { query })
+	return { assets }
+}

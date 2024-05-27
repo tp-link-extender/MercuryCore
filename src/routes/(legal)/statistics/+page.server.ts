@@ -1,5 +1,6 @@
 import { authorise } from "$lib/server/lucia"
-import { mquery } from "$lib/server/surreal"
+import { equery } from "$lib/server/surreal"
+import statisticsQuery from "./statistics.surql"
 
 export async function load({ locals }) {
 	await authorise(locals)
@@ -18,7 +19,7 @@ export async function load({ locals }) {
 		,
 		avgCurrency,
 		totalCurrency,
-	] = await mquery<number[]>(import("./statistics.surql"))
+	] = await equery<number[]>(statisticsQuery)
 
 	return {
 		users,

@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { query, surql, equery, surrealql, RecordId } from "$lib/server/surreal"
+import { equery, surrealql, RecordId } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { encode } from "$lib/urlName"
 import { error } from "@sveltejs/kit"

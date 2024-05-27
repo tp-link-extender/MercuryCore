@@ -1,17 +1,16 @@
-import { query, surql } from "$lib/server/surreal"
+import { equery, surrealql } from "$lib/server/surreal"
 import { verify } from "../../discord"
 
 export async function POST({ url, params }) {
 	verify(url)
-	// Delete application by id
 
-	await query(
-		surql`
+	// Delete application by id
+	await equery(
+		surrealql`
 			UPDATE (
-				SELECT * FROM application WHERE discordId = $id
+				SELECT * FROM application WHERE discordId = ${params.id}
 				ORDER BY created DESC LIMIT 1
-			)[0] SET deleted = true`,
-		{ id: params.id }
+			)[0] SET deleted = true`
 	)
 
 	return new Response()

@@ -1,5 +1,6 @@
 import { building } from "$app/environment"
 import Surreal, { surrealql, RecordId, type PreparedQuery } from "surrealdb.js"
+import initQuery from "./init.surql"
 import transactionQuery from "./transaction.surql"
 import auditLogQuery from "./auditLog.surql"
 
@@ -26,12 +27,6 @@ async function reconnect() {
 export const failed = "The query was not executed due to a failed transaction"
 
 export { surrealql, RecordId }
-
-async function dbquery(query: string, bindings?: { [k: string]: unknown }) {
-	console.log("Making query:", query)
-	if (bindings) console.log("With bindings:", bindings)
-	return await db.query(query, bindings)
-}
 
 type Input = string | Promise<{ default: string }>
 type Prepared = PreparedQuery<(result: unknown[]) => unknown>
@@ -61,30 +56,6 @@ async function fixError<T>(q: () => Promise<T>) {
 	}
 	return undefined as unknown as T
 }
-
-/**
- * Executes a query in SurrealDB and returns its results and whether it was successful.
- * @param query The query to execute.
- * @param bindings An object of parameters to pass to SurrealDB.
- * @returns [true, result] if the query was successful, [false, error] if the query failed. (Lua-style!)
- */
-export const newquery = async <T>(
-	query: string | Promise<string> | Prepared,
-	bindings?: { [k: string]: unknown }
-): Promise<[false, string] | [true, T]> =>
-	await fixError(async () => {
-		const result = await db.query_raw(await query, bindings)
-		const final: unknown[] = []
-
-		for (const res of result) {
-			// Result types my beloved
-			if (res.status === "ERR" && res.result !== failed)
-				return [false, res.result]
-			final.push(res.result)
-		}
-
-		return [true, final as T] // I could do this Go-style with [result, error] but that's bikeshedding
-	})
 
 /**
  * Executes a query in SurrealDB and returns its results. Errors if the query failed.
@@ -135,58 +106,7 @@ export const surql = (
 		return newQuery
 	}, "")
 
-if (!building) await db.query((await import("./init.surql")).default)
-
-/**
- * Executes a query in SurrealDB and returns its results.
- * @param input The surql query to execute.
- * @param params An object of parameters to pass to SurrealDB.
- * @returns The result of the first query given.
- * @example
- * await query<{ email: string }>(
- * 	surql`SELECT email FROM user WHERE username = $username`,
- * 	{ username: "Heliodex" }
- * ) // [{ email: heli@odex.cf }] - return an array for this query
- */
-export const query = <T>(
-	input: Input,
-	params?: { [k: string]: unknown }
-): Promise<T[]> =>
-	fixError(
-		async () => (await dbquery(await getInput(input), params))?.[0] as T[]
-	)
-
-/**
- * Executes a query in SurrealDB and returns the first item in its results.
- * @param input The surql query to execute.
- * @param params An object of parameters to pass to SurrealDB.
- * @returns The first item in the array returned by the first query.
- * @example
- * await squery<{ email: string }>(
- * 	surql`SELECT email FROM user WHERE username = $username`,
- * 	{ username: "Heliodex" }
- * ) // { email: heli@odex.cf } - returns an object for this query
- */
-export const squery = <T>(input: Input, params?: { [k: string]: unknown }) =>
-	fixError(
-		async () =>
-			((await dbquery(await getInput(input), params))?.[0] as T[])[0]
-	)
-
-/**
- * Executes multiple queries in SurrealDB and returns their results.
- * @param input The surql query to execute.
- * @param params An object of parameters to pass to SurrealDB.
- * @returns The result of all queries given.
- * @example
- * await mquery<{ email: string }>(
- * 	surql`
- * 		LET $username = "Heliodex";
- * 		SELECT email FROM user WHERE username = $username`
- * ) // [null, [{ email: heli@odex.cf }]] - returns an array with an element for each query
- */
-export const mquery = <T>(input: Input, params?: { [k: string]: unknown }) =>
-	fixError(async () => (await dbquery(await getInput(input), params)) as T)
+if (!building) await db.query(initQuery)
 
 /**
  * Finds whether a record exists in the database.

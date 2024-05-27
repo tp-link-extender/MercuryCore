@@ -15,12 +15,11 @@ export async function load() {
 
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ request }) => {
+	const q = (await request.formData()).get("q")
 	const [groups] = await equery<Group[][]>(
 		surrealql`
 			SELECT name, count(<-member) AS memberCount FROM group
-			WHERE string::lowercase(${(await request.formData()).get(
-				"q"
-			)}) IN string::lowercase(name)`
+			WHERE string::lowercase(${q}) IN string::lowercase(name)`
 	)
 
 	return { groups }

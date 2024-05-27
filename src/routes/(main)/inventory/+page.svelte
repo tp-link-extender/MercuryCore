@@ -7,10 +7,11 @@
 	let searchedData: typeof data.assets = []
 
 	// Run function whenever query changes
+	// Todo restructure to a GET request
 	$: query &&
 		browser &&
 		(async () => {
-			if (query.trim().length < 1) {
+			if (query.trim().length === 0) {
 				searchedData = data.assets
 				return
 			}

@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { query, surql } from "$lib/server/surreal"
+import { equery, surrealql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { redirect } from "@sveltejs/kit"
@@ -35,8 +35,8 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	const limit = ratelimit(form, "forumCategory", getClientAddress, 30)
 	if (limit) return limit
 
-	await query(
-		surql`
+	await equery(
+		surrealql`
 			CREATE type::thing("forumCategory", $name) CONTENT {
 				name: $name,
 				description: $description,

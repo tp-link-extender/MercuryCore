@@ -1,6 +1,7 @@
-import { squery, surql } from "$lib/server/surreal"
+import { equery } from "$lib/server/surreal"
 import { json } from "@sveltejs/kit"
 import { verify } from "../../discord"
+import getApplicationQuery from "./getApplication.surql"
 
 type Application = {
 	response: string[]
@@ -12,12 +13,10 @@ type Application = {
 
 export async function GET({ url, params }) {
 	verify(url)
+
 	// Get information about the application
-
-	const application = await squery<Application>(
-		import("./getApplication.surql"),
-		{ id: params.id }
-	)
-
+	const [[application]] = await equery<Application[][]>(getApplicationQuery, {
+		id: params.id,
+	})
 	return json(application)
 }

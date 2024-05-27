@@ -132,6 +132,9 @@ export default async function (user: User | null) {
 			}
 			case "ItemPurchase":
 				i.link = `/avatarshop/${i.relativeId}`
+				break
+			default:
+				i.link = ""
 		}
 
 	return notifications.map(n => {

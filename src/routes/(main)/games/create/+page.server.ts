@@ -1,11 +1,12 @@
 import { authorise } from "$lib/server/lucia"
-import { query, squery, transaction, surql } from "$lib/server/surreal"
+import { equery, transaction, RecordId, surrealql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { encode } from "$lib/urlName"
 import { redirect } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
+import createQuery from "./create.surql"
 
 const schema = z.object({
 	name: z.string().min(3).max(50),
@@ -21,13 +22,12 @@ const schema = z.object({
 	privateServer: z.boolean().optional(),
 })
 
-const placeCount = async (id: string) =>
-	(
-		await squery<{ count: number }>(
-			surql`SELECT count(->owns->place) FROM $user`,
-			{ user: `user:${id}` }
-		)
-	).count
+async function placeCount(id: string) {
+	const [[{ count }]] = await equery<{ count: number }[][]>(
+		surrealql`SELECT count(->owns->place) FROM ${new RecordId("user", id)}`
+	)
+	return count
+}
 
 export const load = async () => ({
 	form: await superValidate(zod(schema)),
@@ -59,7 +59,7 @@ actions.default = async ({ request, locals }) => {
 			["You can't have more than two places"]
 		)
 
-	const id = await squery<number>(surql`[stuff:increment.place]`)
+	const [id] = await equery<number[]>(surrealql`stuff:increment.place`)
 
 	const slug = encode(name)
 
@@ -74,8 +74,8 @@ actions.default = async ({ request, locals }) => {
 		return formError(form, ["other"], [e.message])
 	}
 
-	await query(import("./create.surql"), {
-		user: `user:${user.id}`,
+	await equery(createQuery, {
+		user: new RecordId("user", user.id),
 		name,
 		description,
 		serverIP,

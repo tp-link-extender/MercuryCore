@@ -1,5 +1,11 @@
 import { authorise } from "$lib/server/lucia"
-import { findWhere, query, squery, surql } from "$lib/server/surreal"
+import {
+	equery,
+	findWhere,
+	surql,
+	surrealql,
+	RecordId,
+} from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { like } from "$lib/server/like"
@@ -7,6 +13,7 @@ import { error, redirect } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
+import createQuery from "./create.surql"
 
 const schema = z.object({
 	title: z.string().min(1).max(50),
@@ -17,11 +24,10 @@ export async function load({ url }) {
 	const categoryQuery = url.searchParams.get("category")
 	if (!categoryQuery) error(400, "Missing category")
 
-	const category = await squery<{ name: string }>(
-		surql`
+	const [[category]] = await equery<{ name: string }[][]>(
+		surrealql`
 			SELECT name FROM forumCategory
-			WHERE string::lowercase(name) = string::lowercase($categoryQuery)`,
-		{ categoryQuery }
+			WHERE string::lowercase(name) = string::lowercase(${categoryQuery})`
 	)
 
 	if (!category) error(404, "Category not found")
@@ -58,17 +64,17 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 	)
 		error(400, "Invalid category")
 
-	const postId = await squery<string>(surql`[fn::id()]`)
+	const [postId] = await equery<string[]>(surrealql`fn::id()`)
 
-	await query(import("./create.surql"), {
-		user: `user:${user.id}`,
-		postId: `forumPost:${postId}`,
-		category: `forumCategory:⟨${category}⟩`,
+	await equery(createQuery, {
+		user: new RecordId("user", user.id),
+		postId: new RecordId("forumPost", postId),
+		category: new RecordId("forumCategory", category),
 		title,
 		content,
 	})
 
-	await like(user.id, `forumPost:${postId}`)
+	await like(user.id, new RecordId("forumPost", postId))
 
 	redirect(302, `/forum/${category}/${postId}`)
 }

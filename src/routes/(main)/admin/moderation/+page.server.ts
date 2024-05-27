@@ -1,11 +1,11 @@
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { findWhere, query, squery, surql } from "$lib/server/surreal"
+import { findWhere, surql, equery, RecordId } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
-import auditLog from "$lib/server/auditLog.surql"
+import auditLogQuery from "$lib/server/auditLog.surql"
 
 const schema = z.object({
 	username: z.string().min(3).max(21),
@@ -18,9 +18,7 @@ const schema = z.object({
 export async function load({ locals }) {
 	await authorise(locals, 4)
 
-	return {
-		form: await superValidate(zod(schema)),
-	}
+	return { form: await superValidate(zod(schema)) }
 }
 
 const moderationActions = ["Warning", "Ban", "Termination", "AccountDeleted"]
@@ -38,15 +36,16 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	if (intAction === 2 && (date?.getTime() || 0) < new Date().getTime())
 		return formError(form, ["banDate"], ["Invalid date"])
 
-	const getModeratee = await squery<{
-		id: string
-		number: number
-		permissionLevel: number
-	}>(
+	const [[getModeratee]] = await equery<
+		{
+			id: string
+			number: number
+			permissionLevel: number
+		}[][]
+	>(
 		surql`
 			SELECT meta::id(id) AS id, number, permissionLevel
-			FROM user WHERE username = $username`,
-		{ username }
+			FROM user WHERE username = ${username}`
 	)
 
 	if (!getModeratee)
@@ -72,8 +71,8 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 		() => "deleted",
 	]
 	const qParams = {
-		user: `user:${user.id}`,
-		moderatee: `user:${getModeratee.id}`,
+		user: new RecordId("user", user.id),
+		moderatee: new RecordId("user", getModeratee.id),
 		action: "Moderation",
 	}
 
@@ -110,17 +109,15 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 				["You cannot unban a deleted user"]
 			)
 
-		await query(
+		await equery(
 			surql`
 				UPDATE moderation SET active = false WHERE out = $moderatee;
-				${auditLog}`,
+				${auditLogQuery}`,
 			{ ...qParams, note: `Unban ${username}` }
 		)
 
 		return message(form, `${username} has been unbanned`)
 	}
-
-	const moderationAction = moderationActions[intAction - 1]
 
 	const foundModeration = await findWhere(
 		"moderation",
@@ -136,13 +133,13 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 		)
 
 	const notes = [
-		`Warn ${username}`,
-		`Ban ${username}`,
-		`Terminate ${username}`,
-		`Delete ${username}'s account`,
+		() => `Warn ${username}`,
+		() => `Ban ${username}`,
+		() => `Terminate ${username}`,
+		() => `Delete ${username}'s account`,
 	]
 
-	await query(
+	await equery(
 		surql`
 			RELATE $moderator->moderation->$moderatee CONTENT {
 				note: $reason,
@@ -151,11 +148,11 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 				timeEnds: $timeEnds,
 				active: true,
 			};
-			${auditLog}`,
+			${auditLogQuery}`,
 		{
-			note: `${notes[intAction - 1]}: ${reason}`,
+			note: `${notes[intAction - 1]()}: ${reason}`,
 			reason,
-			moderationAction,
+			moderationAction: moderationActions[intAction - 1],
 			timeEnds: date || new Date(),
 			...qParams,
 		}

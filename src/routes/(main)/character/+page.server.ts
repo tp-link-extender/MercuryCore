@@ -192,13 +192,14 @@ export const actions: import("./$types").Actions = {
 	unequip,
 }
 actions.search = async ({ request, locals }) => {
+	const { user } = await authorise(locals)
 	const formData = await request.formData()
 	const [assets] = await equery<Asset[][]>(
 		surql`${select}
 			AND string::lowercase($query) IN string::lowercase(name)`,
 		{
 			query: (formData.get("q") as string).trim(),
-			user: new RecordId("user", (await authorise(locals)).user.id),
+			user: new RecordId("user", user.id),
 		}
 	)
 

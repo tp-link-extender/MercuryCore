@@ -5,6 +5,5 @@ SELECT
 	status,
 	reviewed,
 	reason
-FROM application
-WHERE status = "Pending"
+FROM application WHERE status = "Pending"
 ORDER BY created;

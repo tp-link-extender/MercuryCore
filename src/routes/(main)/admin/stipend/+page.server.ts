@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { query, squery, surql, auditLog, Action } from "$lib/server/surreal"
+import { auditLog, Action, equery, surrealql } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
@@ -12,10 +12,12 @@ const schema = z.object({
 })
 
 async function getEconomy() {
-	const economy = await squery<{
-		dailyStipend?: number
-		stipendTime?: number
-	}>(surql`SELECT * FROM stuff:economy`)
+	const [[economy]] = await equery<
+		{
+			dailyStipend?: number
+			stipendTime?: number
+		}[][]
+	>(surrealql`SELECT * FROM stuff:economy`)
 
 	return {
 		dailyStipend: economy?.dailyStipend || 10,
@@ -50,9 +52,9 @@ actions.updateStipend = async ({ request, locals, getClientAddress }) => {
 	)
 		return message(form, "No changes were made")
 
-	await query(surql`UPDATE stuff:economy MERGE $data`, {
-		data: { dailyStipend, stipendTime },
-	})
+	await equery(
+		surrealql`UPDATE stuff:economy MERGE ${{ dailyStipend, stipendTime }}`
+	)
 
 	let auditText = ""
 

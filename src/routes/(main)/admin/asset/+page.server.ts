@@ -1,7 +1,7 @@
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender, { RenderType } from "$lib/server/requestRender"
-import { query, surql, equery, surrealql, RecordId } from "$lib/server/surreal"
+import { surql, equery, surrealql, RecordId } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import fs from "node:fs/promises"
 import type { RequestEvent } from "./$types"
@@ -22,7 +22,7 @@ type Asset = {
 
 export async function load({ locals }) {
 	const { user } = await authorise(locals, 3)
-	const [assets] = await query<Asset[][]>(assetsQuery, {
+	const [assets] = await equery<Asset[][]>(assetsQuery, {
 		user: new RecordId("user", user.id),
 	})
 

@@ -1,6 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import { superValidate } from "sveltekit-superforms/server"
-import { query, squery, surql, equery, surrealql } from "$lib/server/surreal"
+import { equery, surql, surrealql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import requestRender, { RenderType } from "$lib/server/requestRender"
 import { zod } from "sveltekit-superforms/adapters"
@@ -8,6 +8,7 @@ import { z } from "zod"
 import { error, redirect } from "@sveltejs/kit"
 import fs from "node:fs"
 import createAutopilotQuery from "./createAutopilot.surql"
+import getVersionsQuery from "./getVersions.surql"
 
 const schemaManual = z.object({
 	type: z.enum(["8", "18"]),
@@ -102,7 +103,7 @@ async function getVersions(id: number, version?: number) {
 
 	// Badass caching system
 	// todo make it invalidatable cuz if you want a version of the asset later than when cached, good luck lmao
-	const cache = await query<Asset>(
+	const [cache] = await equery<Asset[][]>(
 		surql`
 			SELECT meta::id(id) AS id, assetModified
 			FROM assetCache:${
@@ -137,7 +138,7 @@ async function getVersions(id: number, version?: number) {
 
 	console.log("CACHE", versions)
 
-	await query(import("./getVersions.surql"), { versions })
+	await equery(getVersionsQuery, { versions })
 
 	return transformVersions(versions)
 }
@@ -185,6 +186,14 @@ async function getSharedAssets(id: number, version: number) {
 	return dependencies
 }
 
+async function getType(id: number) {
+	const [[{ type }]] = await equery<{ type: number }[][]>(
+		surrealql`SELECT type FROM assetCache:[$id, 0]..[$id, 99]`, // gud enogh
+		{ id }
+	)
+	return type
+}
+
 export async function load({ locals, url }) {
 	await authorise(locals, 3)
 	const assetId = url.searchParams.get("assetId")
@@ -210,17 +219,7 @@ export async function load({ locals, url }) {
 				version,
 				getSharedAssets: getSharedAssets(+assetId, +version),
 			}),
-		...(stage >= 2 &&
-			assetId && {
-				// sup, time traveller
-				// i'm giving up here
-				type: (
-					await squery<{ type: number }>(
-						surql`SELECT type FROM assetCache:[$id, 0]..[$id, 99]`, // gud enogh
-						{ id: +assetId }
-					)
-				)?.type,
-			}),
+		...(stage >= 2 && assetId && { type: await getType(+assetId) }),
 	}
 }
 
