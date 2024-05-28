@@ -23,18 +23,16 @@ type AssetComment = {
 }
 
 async function getAssetComment(relativeId: string) {
-	const result = await equery<AssetComment[][]>(
+	const [[result]] = await equery<AssetComment[][]>(
 		surrealql`
 			SELECT
 				*,
 				meta::id(id) AS id,
 				(SELECT meta::id(id) AS id, name
 				FROM ->replyToAsset->asset)[0] AS parentAsset
-			FROM $comment`,
-		{ comment: new RecordId("assetComment", relativeId) }
+			FROM ${new RecordId("assetComment", relativeId)}`
 	)
-
-	return result[0][0]
+	return result
 }
 
 type ForumReply = {
@@ -46,7 +44,7 @@ type ForumReply = {
 }
 
 async function getForumReply(relativeId: string) {
-	const result = await equery<ForumReply[][]>(
+	const [[result]] = await equery<ForumReply[][]>(
 		surrealql`
 			SELECT
 				meta::id(id) AS id,
@@ -54,11 +52,9 @@ async function getForumReply(relativeId: string) {
 					meta::id(id) AS id,
 					(->in->forumCategory)[0].name as categoryName
 				FROM ->replyToPost[0]->forumPost)[0] AS parentPost
-			FROM $reply`,
-		{ reply: new RecordId("forumReply", relativeId) }
+			FROM ${new RecordId("forumReply", relativeId)}`
 	)
-
-	return result[0][0]
+	return result
 }
 
 type ForumPost = { category: { name: string } }
@@ -69,8 +65,7 @@ async function getForumPost(relativeId: string) {
 			SELECT
 				(SELECT name
 				FROM ->in->forumCategory) AS category
-			FROM $forumPost`,
-		{ forumPost: new RecordId("forumPost", relativeId) }
+			FROM ${new RecordId("forumPost", relativeId)}`
 	)
 	return result
 }
@@ -85,9 +80,8 @@ export default async function (user: User | null) {
 				(SELECT number, status, username
 				FROM <-user)[0] AS sender
 			FROM notification
-			WHERE out = $user
-			ORDER BY time DESC`,
-		{ user: `user:${user.id}` }
+			WHERE out = ${new RecordId("user", user.id)}
+			ORDER BY time DESC`
 	)
 
 	for (const i of notifications)

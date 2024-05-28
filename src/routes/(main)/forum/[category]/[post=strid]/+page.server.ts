@@ -1,6 +1,6 @@
 import { actions as categoryActions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
-import { surql, equery, surrealql, RecordId } from "$lib/server/surreal"
+import { equery, surrealql, RecordId } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { error } from "@sveltejs/kit"
@@ -20,7 +20,7 @@ const schema = z.object({
 })
 
 const SELECTREPLIES = recurse(
-	from => surql`
+	from => `
 		(${from} <-replyToPost<-forumReply
 		WHERE !->replyToReply
 		ORDER BY pinned DESC, score DESC) AS replies`,
@@ -66,7 +66,7 @@ export async function load({ locals, params }) {
 async function findReply<T>(
 	e: RequestEvent,
 	permissionLevel?: number,
-	input = surql`SELECT 1 FROM $forumReply`
+	input = "SELECT 1 FROM $forumReply"
 ) {
 	const { locals, url } = e
 	const { user } = await authorise(locals, permissionLevel)
@@ -181,7 +181,7 @@ actions.delete = async e => {
 	}>(
 		e,
 		undefined,
-		surql`
+		`
 			SELECT
 				meta::id((<-posted<-user.id)[0]) AS authorId,
 				visibility

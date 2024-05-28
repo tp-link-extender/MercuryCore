@@ -1,6 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { findWhere, surql, equery, RecordId } from "$lib/server/surreal"
+import { findWhere, equery, RecordId, surrealql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
@@ -43,7 +43,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 			permissionLevel: number
 		}[][]
 	>(
-		surql`
+		surrealql`
 			SELECT meta::id(id) AS id, number, permissionLevel
 			FROM user WHERE username = ${username}`
 	)
@@ -80,7 +80,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 		// Unban
 		const foundUnban = await findWhere(
 			"moderation",
-			surql`in = $user
+			`in = $user
 				AND out = $moderatee
 				AND active = true`,
 			qParams
@@ -95,7 +95,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 
 		const foundDeleted = await findWhere(
 			"moderation",
-			surql`in = $user
+			`in = $user
 				AND out = $moderatee
 				AND active = true
 				AND type = "AccountDeleted"`,
@@ -110,7 +110,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 			)
 
 		await equery(
-			surql`
+			`
 				UPDATE moderation SET active = false WHERE out = $moderatee;
 				${auditLogQuery}`,
 			{ ...qParams, note: `Unban ${username}` }
@@ -121,7 +121,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 
 	const foundModeration = await findWhere(
 		"moderation",
-		surql`out = $moderatee AND active = true`,
+		"out = $moderatee AND active = true",
 		qParams
 	)
 
@@ -140,7 +140,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	]
 
 	await equery(
-		surql`
+		`
 			RELATE $moderator->moderation->$moderatee CONTENT {
 				note: $reason,
 				type: $moderationAction,

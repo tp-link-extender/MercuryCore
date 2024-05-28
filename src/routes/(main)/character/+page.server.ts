@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { surql, RecordId, surrealql, equery } from "$lib/server/surreal"
+import { RecordId, surrealql, equery } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import { fail, error } from "@sveltejs/kit"
 import requestRender, { RenderType } from "$lib/server/requestRender"
@@ -14,7 +14,7 @@ const brickColours = [
 	1016, 1017, 1018, 1019, 1020, 1021, 1022, 1023, 1024, 1025, 1026, 1027,
 	1028, 1029, 1030, 1031, 1032,
 ]
-const select = surql`
+const select = `
 	SELECT
 		meta::id(id) AS id,
 		name,
@@ -37,9 +37,9 @@ export const load = async ({ locals, url }) => {
 	const searchQ = url.searchParams.get("q")?.trim()
 
 	const [assets] = await equery<Asset[][]>(
-		surql`${select} ${
+		`${select} ${
 			searchQ
-				? surql`AND string::lowercase($query) IN string::lowercase(name)`
+				? "AND string::lowercase($query) IN string::lowercase(name)"
 				: ""
 		}`,
 		{
@@ -145,7 +145,7 @@ async function equip(e: RequestEvent) {
 
 	// Find if there's more than 3 hats equipped, throw an error if there is
 	const [hatsEquipped] = await equery<number[]>(
-		surql`count(SELECT 1 FROM $user->wearing WHERE out.type = 8)`,
+		surrealql`count(SELECT 1 FROM $user->wearing WHERE out.type = 8)`,
 		{ user: new RecordId("user", user.id) }
 	)
 	if (asset.type === 8 && hatsEquipped >= 3)
@@ -195,8 +195,7 @@ actions.search = async ({ request, locals }) => {
 	const { user } = await authorise(locals)
 	const formData = await request.formData()
 	const [assets] = await equery<Asset[][]>(
-		surql`${select}
-			AND string::lowercase($query) IN string::lowercase(name)`,
+		`${select} AND string::lowercase($query) IN string::lowercase(name)`,
 		{
 			query: (formData.get("q") as string).trim(),
 			user: new RecordId("user", user.id),

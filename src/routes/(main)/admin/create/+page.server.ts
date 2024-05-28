@@ -1,6 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import { superValidate } from "sveltekit-superforms/server"
-import { equery, surql, surrealql } from "$lib/server/surreal"
+import { equery, surrealql } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import requestRender, { RenderType } from "$lib/server/requestRender"
 import { zod } from "sveltekit-superforms/adapters"
@@ -104,7 +104,7 @@ async function getVersions(id: number, version?: number) {
 	// Badass caching system
 	// todo make it invalidatable cuz if you want a version of the asset later than when cached, good luck lmao
 	const [cache] = await equery<Asset[][]>(
-		surql`
+		`
 			SELECT meta::id(id) AS id, assetModified
 			FROM assetCache:${
 				version ? "[$id, $version]" : "[$id, 0]..[$id, 99]"

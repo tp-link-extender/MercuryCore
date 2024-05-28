@@ -1,9 +1,9 @@
-import { RecordId, equery, surql } from "./surreal"
+import { RecordId, equery } from "./surreal"
 
 type ScoreResult = {
 	score: number
 }[]
-const countScore = surql`
+const countScore = `
 	(SELECT count(<-likes) - count(<-dislikes) AS score
 	FROM $thing)[0]`
 
@@ -11,24 +11,24 @@ type LikesResult = {
 	likeCount: number
 	dislikeCount: number
 }[]
-const countLikes = surql`
+const countLikes = `
 	(SELECT 
 		count(SELECT 1 FROM <-likes) AS likeCount,
 		count(SELECT 1 FROM <-dislikes) AS dislikeCount
 	FROM $thing)[0]`
 
-const likeQuery = surql`
+const likeQuery = `
 	DELETE $user->dislikes WHERE out = $thing;
 	IF $user NOT IN (SELECT * FROM $thing<-likes).in {
 		RELATE $user->likes->$thing SET time = time::now()
 	};`
-const unlikeQuery = surql`DELETE $user->likes WHERE out = $thing;`
-const dislikeQuery = surql`
+const unlikeQuery = "DELETE $user->likes WHERE out = $thing;"
+const dislikeQuery = `
 	DELETE $user->likes WHERE out = $thing;
 	IF $user NOT IN (SELECT * FROM $thing<-dislikes).in {
 		RELATE $user->dislikes->$thing SET time = time::now()
 	};`
-const undislikeQuery = surql`DELETE $user->dislikes WHERE out = $thing;`
+const undislikeQuery = "DELETE $user->dislikes WHERE out = $thing;"
 
 // most overengineered thing I have ever written
 // "you won't drown in millions of little tiny functions" they said

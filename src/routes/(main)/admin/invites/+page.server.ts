@@ -1,6 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { surql, equery, surrealql, RecordId } from "$lib/server/surreal"
+import { equery, surrealql, RecordId } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
 import { superValidate, message } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
@@ -76,7 +76,7 @@ actions.create = async e => {
 		return formError(form, ["inviteExpiry"], ["Invalid date"])
 
 	const [log] = await equery<unknown[]>(
-		surql`
+		`
 			BEGIN TRANSACTION;
 			LET $key = CREATE ${enableInviteCustom ? "$" : ""}regKey CONTENT {
 				usesLeft: $inviteUses,
@@ -117,7 +117,7 @@ actions.disable = async e => {
 	if (key && key.usesLeft === 0)
 		return message(form, "Invite key is already disabled", { status: 400 })
 
-	await equery(surql`UPDATE $key SET usesLeft = 0; ${auditLogQuery}`, {
+	await equery(`UPDATE $key SET usesLeft = 0; ${auditLogQuery}`, {
 		action: "Administration",
 		note: `Disable invite key ${id}`,
 		user: new RecordId("user", user.id),

@@ -1,4 +1,4 @@
-import { equery, findWhere, surql, surrealql } from "$lib/server/surreal"
+import { equery, findWhere, surrealql } from "$lib/server/surreal"
 import { error, json } from "@sveltejs/kit"
 import { verify, canApply } from "../../discord"
 
@@ -36,7 +36,7 @@ export async function POST({ request, url, params }) {
 
 	const accepted = await findWhere(
 		"application",
-		surql`discordId = $id AND status = "Accepted"`,
+		`discordId = $id AND status = "Accepted"`,
 		{ id }
 	)
 	if (accepted) error(400, "This user has already been accepted")

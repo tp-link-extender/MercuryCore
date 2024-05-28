@@ -1,11 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import {
-	equery,
-	findWhere,
-	surql,
-	surrealql,
-	RecordId,
-} from "$lib/server/surreal"
+import { equery, findWhere, surrealql, RecordId } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
 import formError from "$lib/server/formError"
 import { like } from "$lib/server/like"
@@ -58,7 +52,7 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 		!category ||
 		!(await findWhere(
 			"forumCategory",
-			surql`string::lowercase(name) = string::lowercase($category)`,
+			"string::lowercase(name) = string::lowercase($category)",
 			{ category }
 		))
 	)

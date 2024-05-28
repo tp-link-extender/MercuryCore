@@ -1,7 +1,7 @@
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender, { RenderType } from "$lib/server/requestRender"
-import { surql, equery, surrealql, RecordId } from "$lib/server/surreal"
+import { equery, surrealql, RecordId } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import fs from "node:fs/promises"
 import type { RequestEvent } from "./$types"
@@ -58,7 +58,7 @@ export const actions: import("./$types").Actions = {}
 actions.approve = async e => {
 	const { id, params, assetName } = await getData(e)
 	await equery(
-		surql`
+		`
 			UPDATE $asset SET visibility = "Visible";
 			UPDATE $asset->imageAsset->asset SET visibility = "Visible";
 			${auditLog}`,
@@ -72,7 +72,7 @@ actions.approve = async e => {
 actions.deny = async e => {
 	const { id, params, assetName } = await getData(e)
 	await equery(
-		surql`
+		`
 			UPDATE $asset SET visibility = "Moderated";
 			UPDATE $asset->imageAsset->asset SET visibility = "Moderated";
 			${auditLog}`,
@@ -106,7 +106,7 @@ actions.purge = async e => {
 
 	await Promise.all([
 		equery(
-			surql`
+			`
 				DELETE $asset;
 				DELETE $imageAsset;
 				${auditLog}`,

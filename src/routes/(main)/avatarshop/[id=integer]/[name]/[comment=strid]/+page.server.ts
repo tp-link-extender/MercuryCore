@@ -1,12 +1,12 @@
 import { actions } from "../+page.server"
 import { authorise } from "$lib/server/lucia"
-import { RecordId, equery, surql, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { recurse, type Replies } from "$lib/server/nestedReplies"
 import assetCommentsQuery from "./comments.surql"
 
 const SELECTREPLIES = recurse(
-	from => surql`(${from} <-replyToComment<-assetComment) AS replies`,
+	from => `(${from} <-replyToComment<-assetComment) AS replies`,
 	"replyToComment",
 	"assetComment"
 )

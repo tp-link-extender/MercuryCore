@@ -1,7 +1,5 @@
 // Functions for selecting nested forum replies or asset comments
 
-import { surql } from "$lib/server/surreal"
-
 export type Replies = {
 	author: BasicUser
 	content: {
@@ -20,7 +18,7 @@ export type Replies = {
 	visibility: string
 }[]
 
-const SELECTFROM = surql`
+const SELECTFROM = `
 	SELECT
 		*,
 		(SELECT text, updated FROM $parent.content
@@ -47,10 +45,9 @@ export function recurse(
 
 	for (let i = 0; i < times; i++)
 		rep = rep.replace(
-			/# again #/g,
-			surql`
-				(${SELECTFROM} <-${relationName}<-${commentName}) AS replies`
+			"# again #",
+			`(${SELECTFROM} <-${relationName}<-${commentName}) AS replies`
 		)
 
-	return rep.replace(/# again #/g, "[] AS replies")
+	return rep.replace("# again #", "[] AS replies")
 }

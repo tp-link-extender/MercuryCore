@@ -1,4 +1,4 @@
-import { equery, surql } from "./surreal"
+import { equery, surrealql } from "./surreal"
 import fs from "node:fs"
 
 export enum Status {
@@ -19,7 +19,7 @@ type Render = {
 	status: Status
 }
 
-const selectRender = surql`
+const selectRender = `
 	(SELECT status, created, id
 	FROM render WHERE status IN ["Pending", "Rendering"]
 		AND type = $renderType
@@ -37,7 +37,7 @@ export default async function (
 	wait = false
 ) {
 	const [, , render] = await equery<Render[]>(
-		surql`
+		`
 			LET $render = ${selectRender};
 			IF $render AND $render.created + 1s < time::now() {
 				UPDATE $render.id SET status = "Error"
@@ -52,7 +52,7 @@ export default async function (
 	// If the render doesn't exist or if the last one errored, create a new render
 
 	const [, renderId] = await equery<string[]>(
-		surql`
+		surrealql`
 			LET $render = (CREATE render CONTENT {
 				type: $renderType,
 				status: "Pending",

@@ -1,4 +1,4 @@
-import { surql, findWhere } from "$lib/server/surreal"
+import { findWhere } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 export function verify(url: URL) {
@@ -9,7 +9,7 @@ export function verify(url: URL) {
 export const canApply = async (discordId: string) =>
 	!(await findWhere(
 		"application",
-		surql`discordId = $discordId
+		`discordId = $discordId
 			AND deleted != true
 			AND (status = "Pending"
 				OR status = "Banned"

@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit"
 import { SignData } from "$lib/server/sign"
-import { equery, surql } from "$lib/server/surreal"
+import { equery, surrealql } from "$lib/server/surreal"
 
 export async function GET({ url }) {
 	const ticket = url.searchParams.get("ticket")
@@ -9,7 +9,7 @@ export async function GET({ url }) {
 	if (!ticket) error(400, "Invalid Request")
 
 	const [[placeData]] = await equery<{ serverPort: number }[][]>(
-		surql`
+		surrealql`
 			SELECT serverPort FROM place
 			WHERE serverTicket = ${ticket}`
 	)

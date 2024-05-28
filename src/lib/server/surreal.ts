@@ -28,11 +28,7 @@ export const failed = "The query was not executed due to a failed transaction"
 
 export { surrealql, RecordId }
 
-type Input = string | Promise<{ default: string }>
 type Prepared = PreparedQuery<(result: unknown[]) => unknown>
-
-const getInput = async (input: Input) =>
-	typeof input === "string" ? input : (await input).default
 
 const stupidError =
 	"The query was not executed due to a failed transaction. There was a problem with a datastore transaction: Resource busy: "
@@ -81,32 +77,10 @@ export const equery = async <T>(
 		return final as T
 	})
 
-if (!building) await reconnect()
-
-// Probably the most referenced function in Mercury
-/**
- * Surreal template tag. No it's not injection-safe, we're not Next.js.
- * @param statement The statement to execute as a template literal.
- * @param substitutions The substitutions made into the template literal.
- * @returns The statement with the substitutions made.
- * @example
- * query(surql`SELECT * FROM user WHERE username = "Heliodex"`)
- */
-export const surql = (
-	statement: TemplateStringsArray,
-	...substitutions: string[]
-) =>
-	statement.raw.reduce((query, part, index) => {
-		// Add the current part of the statement to the query
-		let newQuery = query + part
-
-		// If there is a substitution at this index, add it
-		if (index < substitutions.length) newQuery += substitutions[index]
-
-		return newQuery
-	}, "")
-
-if (!building) await db.query(initQuery)
+if (!building) {
+	await reconnect()
+	await db.query(initQuery)
+}
 
 /**
  * Finds whether a record exists in the database.

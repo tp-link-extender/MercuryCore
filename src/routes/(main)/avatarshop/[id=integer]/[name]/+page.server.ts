@@ -1,7 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import {
 	transaction,
-	surql,
 	find,
 	RecordId,
 	equery,
@@ -29,7 +28,7 @@ const schema = z.object({
 })
 
 const SELECTCOMMENTS = recurse(
-	from => surql`
+	from => `
 		(${from} <-replyToAsset<-assetComment
 		WHERE !->replyToComment
 		ORDER BY pinned DESC, score DESC) AS replies`,
@@ -103,7 +102,7 @@ async function getBuyData(e: RequestEvent) {
 async function findComment<T>(
 	e: RequestEvent,
 	permissionLevel?: number,
-	input = surql`SELECT 1 FROM $assetComment`
+	input = "SELECT 1 FROM $assetComment"
 ) {
 	const { locals, url } = e
 	const { user } = await authorise(locals, permissionLevel)
@@ -381,7 +380,7 @@ actions.delete = async e => {
 	}>(
 		e,
 		undefined,
-		surql`
+		`
 			SELECT
 				meta::id((<-posted<-user.id)[0]) AS authorId,
 				visibility
