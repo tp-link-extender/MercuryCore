@@ -27,16 +27,16 @@
 	role="tablist">
 	{#each tabData.tabs as tab, pos}
 		<li
-			class="item {vertical && tabData.currentTab == tab
+			class="item {vertical && tabData.currentTab === tab
 				? 'activetab'
 				: ''} {vertical ? 'rounded-2' : 'p-1'}"
-			class:active={!vertical && tabData.currentTab == tab}
+			class:active={!vertical && tabData.currentTab === tab}
 			style="border-bottom-color: {$colour}"
 			data-sveltekit-preload-data="off">
 			<a
 				class="block tab no-underline {vertical
 					? 'p-4 py-2'
-					: 'p-3 py-1'} rounded-2 {tabData.currentTab == tab
+					: 'p-3 py-1'} rounded-2 {tabData.currentTab === tab
 					? 'disabled active'
 					: ''}"
 				href="?{(() => {

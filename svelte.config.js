@@ -8,11 +8,7 @@ import { resolve } from "node:path"
 export default {
 	// Consult https://github.com/sveltejs/svelte-preprocess for more information about preprocessors
 	preprocess: sequence([
-		preprocess({
-			stylus: {
-				prependData: '@import "src/variables.styl"',
-			},
-		}),
+		preprocess({ stylus: { prependData: '@import "src/variables.styl"' } }),
 		autoImport({
 			components: [
 				"./src/lib/components",
@@ -33,14 +29,8 @@ export default {
 	]),
 	kit: {
 		adapter: adapter(),
-		files: {
-			lib: "./src/lib",
-		},
+		files: { lib: "./src/lib" },
 	},
 
-	vitePlugin: {
-		inspector: {
-			toggleKeyCombo: "control-i",
-		},
-	},
+	vitePlugin: { inspector: { toggleKeyCombo: "control-i" } },
 }

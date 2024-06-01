@@ -154,7 +154,7 @@
 			</tbody>
 		</table>
 		<p
-			class:text-emerald-6={$page.status == 200}
+			class:text-emerald-6={$page.status === 200}
 			class:text-red-5={$page.status >= 400}>
 			{$message || ""}
 		</p>
@@ -187,7 +187,7 @@
 					on:click={() => modal.set(false)}
 					class="btn btn-primary"
 					disabled={!$form.bannerBody?.trim() ||
-						bannerData.body.trim() == $form.bannerBody?.trim()}
+						bannerData.body.trim() === $form.bannerBody?.trim()}
 					id="saveBannerBody">
 					{#if $delayed}
 						Working...

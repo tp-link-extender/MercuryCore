@@ -31,6 +31,8 @@
 			case "undislike":
 				$place.likes = false
 				$place.dislikes = false
+				break
+			default:
 		}
 	}
 
@@ -146,7 +148,7 @@
 								❮
 							</a>
 							<a
-								href="#slide{i == images.length - 1
+								href="#slide{i === images.length - 1
 									? 1
 									: i + 2}"
 								class="carousel-button"
@@ -163,7 +165,7 @@
 			<div class="card bg-darker p-4 pb-6 block">
 				<div class="flex justify-between">
 					<h1 class="text-2xl">{$place.name}</h1>
-					{#if $place.ownerUser?.number == user?.number || user?.permissionLevel >= 4}
+					{#if $place.ownerUser?.number === user?.number || user?.permissionLevel >= 4}
 						<div>
 							<a
 								aria-label="Place settings"
@@ -212,22 +214,22 @@
 					use:enhance={({ formData }) => {
 						const action = formData.get("action")
 
-						if (action == "like") {
+						if (action === "like") {
 							$place.likes = true
 
 							if ($place.dislikes) $place.dislikeCount--
 							$place.dislikes = false
 							$place.likeCount++
-						} else if (action == "dislike") {
+						} else if (action === "dislike") {
 							$place.dislikes = true
 
 							if ($place.likes) $place.likeCount--
 							$place.likes = false
 							$place.dislikeCount++
-						} else if (action == "unlike") {
+						} else if (action === "unlike") {
 							$place.likes = false
 							$place.likeCount--
-						} else if (action == "undislike") {
+						} else if (action === "undislike") {
 							$place.dislikes = false
 							$place.dislikeCount--
 						}
@@ -289,7 +291,7 @@
 					</div>
 					<div class="flex justify-between">
 						<span class="px-2">
-							{$place.likeCount} like{$place.likeCount == 1
+							{$place.likeCount} like{$place.likeCount === 1
 								? ""
 								: "s"}
 						</span>
@@ -312,7 +314,7 @@
 	</Tab>
 
 	<Tab {tabData}>
-		{#if user?.permissionLevel == 5 || $place.ownerUser?.number == user?.number}
+		{#if user?.permissionLevel === 5 || $place.ownerUser?.number === user?.number}
 			<h1 class="text-base">Hosting on Mercury</h1>
 			<p>
 				To begin hosting your map for everybody to play, you need to

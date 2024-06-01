@@ -1,7 +1,7 @@
 --
 -- Adapted from
 -- Tweener's easing functions (Penner's Easing Equations)
--- and http://code.google.com/p/tweener/ (jstweener javascript version)
+-- and https://code.google.com/p/tweener/ (jstweener javascript version)
 --
 
 -- For all easing functions:

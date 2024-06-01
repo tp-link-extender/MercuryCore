@@ -90,7 +90,7 @@
 <svelte:window
 	on:keydown={e => {
 		// the right way (actually works on different keyboard layouts)
-		if (e.ctrlKey && e.key == "k") {
+		if (e.ctrlKey && e.key === "k") {
 			e.preventDefault()
 			searchInput.focus()
 		}

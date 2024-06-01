@@ -23,8 +23,7 @@ export async function GET({ url }) {
 	if (mapLocation) {
 		mapLocation = Buffer.from(mapLocation, "base64").toString()
 		if (mapLocation.slice(-5) !== ".rbxl") mapLocation = null
-		else if (mapLocation != null)
-			mapLocation = `rbxasset://maps/${mapLocation}`
+		else if (mapLocation) mapLocation = `rbxasset://maps/${mapLocation}`
 	}
 
 	const script = (await Bun.file("corescripts/processed/host.lua").text())

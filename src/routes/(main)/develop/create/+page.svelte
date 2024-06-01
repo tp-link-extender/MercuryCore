@@ -47,7 +47,7 @@
 		label="Asset description"
 		placeholder="Up to 1000 characters" />
 	<Input {formData} name="price" label="Asset price" type="number" />
-	{#if data.assettype != "Hat"}
+	{#if data.assettype !== "Hat"}
 		<Input
 			{formData}
 			type="file"

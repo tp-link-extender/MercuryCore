@@ -94,7 +94,7 @@
 						class="sf font-bold pointer-events-none text-white opacity-75">
 						zoom out
 					</h3>
-				{:else if cubePercentage == 100 && cubePercentage2 < 2}
+				{:else if cubePercentage === 100 && cubePercentage2 < 2}
 					<h3
 						class="sf font-bold pointer-events-none text-red-5 opacity-75">
 						click the cubes

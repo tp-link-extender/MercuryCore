@@ -12,12 +12,8 @@ export default defineConfig({
 				if (id.endsWith(".surql")) return `export default \`${src}\``
 			},
 		},
-		warmup({
-			clientFiles: ["./src/**/*.svelte"],
-		}),
-		UnoCSS({
-			extractors: [extractorSvelte],
-		}),
+		warmup({ clientFiles: ["./src/**/*.svelte"] }),
+		UnoCSS({ extractors: [extractorSvelte] }),
 		sveltekit(),
 	],
 

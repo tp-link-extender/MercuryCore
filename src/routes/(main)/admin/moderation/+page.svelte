@@ -44,7 +44,7 @@
 				options={moderationOptions}
 				name="action"
 				label="Action" />
-			{#if $form.action == "2"}
+			{#if $form.action === "2"}
 				<div transition:fade>
 					<Input
 						{formData}

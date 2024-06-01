@@ -60,7 +60,7 @@
 				Moderator note: <code>{data.note}</code>
 			</p>
 
-			{#if moderationAction[data.type] == "Warning"}
+			{#if moderationAction[data.type] === "Warning"}
 				<form method="POST" use:enhance>
 					<p class="mb-12">
 						Please make sure to follow the Mercury <a
@@ -88,7 +88,7 @@
 						Reactivate
 					</button>
 				</form>
-			{:else if moderationAction[data.type] == "Ban"}
+			{:else if moderationAction[data.type] === "Ban"}
 				<form method="POST" use:enhance>
 					<p class="mb-12">
 						Please make sure to follow the Mercury <a
@@ -113,7 +113,7 @@
 						Reactivate
 					</button>
 				</form>
-			{:else if moderationAction[data.type] == "Termination"}
+			{:else if moderationAction[data.type] === "Termination"}
 				<p>You may not reactivate your account.</p>
 			{:else}
 				<p>

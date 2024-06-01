@@ -5,8 +5,8 @@
 <nav aria-label="breadcrumb" class="grey-text flex flex-wrap">
 	<ol class="text-base px-0">
 		{#each path as [name, href], num}
-			<li class="crumb" class:final={num == path.length - 1}>
-				{#if num == path.length - 1}
+			<li class="crumb" class:final={num === path.length - 1}>
+				{#if num === path.length - 1}
 					{name}
 				{:else}
 					<a {href} class="accent-text">{name}</a>

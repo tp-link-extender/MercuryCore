@@ -31,7 +31,7 @@
 		const { href } = e.currentTarget
 		const result = await preloadData(href)
 
-		if (result.type == "loaded" && result.status == 200)
+		if (result.type === "loaded" && result.status === 200)
 			pushState(href, { openPlace: result.data })
 		else goto(href)
 	}}

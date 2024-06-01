@@ -19,22 +19,22 @@
 		use:enhance={({ formData }) => {
 			const action = formData.get("action")
 
-			if (action == "like") {
+			if (action === "like") {
 				post.likes = true
 
 				if (post.dislikes) post.score++
 				post.dislikes = false
 				post.score++
-			} else if (action == "dislike") {
+			} else if (action === "dislike") {
 				post.dislikes = true
 
 				if (post.likes) post.score--
 				post.likes = false
 				post.score--
-			} else if (action == "unlike") {
+			} else if (action === "unlike") {
 				post.likes = false
 				post.score--
-			} else if (action == "undislike") {
+			} else if (action === "undislike") {
 				post.dislikes = false
 				post.score++
 			}
@@ -96,7 +96,7 @@
 				const { href } = e.currentTarget
 				const result = await preloadData(href)
 
-				if (result.type == "loaded" && result.status == 200)
+				if (result.type === "loaded" && result.status === 200)
 					pushState(href, { openPost: result.data })
 				else goto(href)
 			}}

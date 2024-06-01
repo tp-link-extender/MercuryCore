@@ -9,7 +9,7 @@
 	const num = ++tabData.num
 </script>
 
-{#if tabData.currentTab == tabData.tabs[num - 1]}
+{#if tabData.currentTab === tabData.tabs[num - 1]}
 	<div
 		class="w-full {$$restProps.class || ''}"
 		role="tabpanel"

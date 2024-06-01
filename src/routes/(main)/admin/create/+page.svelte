@@ -92,14 +92,14 @@
 						{/if}
 						asset with asset id
 						<b>{data.assetId}</b>
-						{#if data.stage == 3}
+						{#if data.stage === 3}
 							and version <b>{data.version}</b>
 						{/if}
 					</span>
 				</div>
 			{/if}
 
-			{#if data.stage == 2 && data.getVersions}
+			{#if data.stage === 2 && data.getVersions}
 				<p>
 					{#await data.getVersions}
 						Getting asset versions, please wait...
@@ -115,7 +115,7 @@
 					{/await}
 				</p>
 			{/if}
-			{#if data.stage == 3 && data.getSharedAssets}
+			{#if data.stage === 3 && data.getSharedAssets}
 				<p>
 					{#await data.getSharedAssets}
 						Getting asset versions, please wait...

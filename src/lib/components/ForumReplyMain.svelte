@@ -34,20 +34,20 @@
 			<a
 				href="/user/{reply.author.number}"
 				class="userlink items-center no-underline"
-				class:light-text={reply.author.username != postAuthorName}
+				class:light-text={reply.author.username !== postAuthorName}
 				class:opacity-33={hidden}>
 				<span class="flex flex-row font-bold">
 					{#if topLevel}
 						<User user={reply.author} thin size="1.5rem" image />
 					{/if}
 					<span
-						class="pl-4 {reply.author.username == postAuthorName
+						class="pl-4 {reply.author.username === postAuthorName
 							? assetName
 								? 'text-yellow-5'
 								: 'text-blue-6'
 							: ''}">
 						{reply.author.username}
-						{#if reply.author.username == postAuthorName}
+						{#if reply.author.username === postAuthorName}
 							<fa
 								class="{assetName
 									? 'fa-hammer'
@@ -63,27 +63,27 @@
 		<p class="py-2 m-0 break-all {hidden ? 'opacity-33' : ''}">
 			{reply.content[0].text}
 		</p>
-		{#if $replyingTo != reply.id}
+		{#if $replyingTo !== reply.id}
 			<form
 				use:enhance={({ formData }) => {
 					const action = formData.get("action")
 
-					if (action == "like") {
+					if (action === "like") {
 						reply.likes = true
 
 						if (reply.dislikes) reply.score++
 						reply.dislikes = false
 						reply.score++
-					} else if (action == "dislike") {
+					} else if (action === "dislike") {
 						reply.dislikes = true
 
 						if (reply.likes) reply.score--
 						reply.likes = false
 						reply.score--
-					} else if (action == "unlike") {
+					} else if (action === "unlike") {
 						reply.likes = false
 						reply.score--
-					} else if (action == "undislike") {
+					} else if (action === "undislike") {
 						reply.dislikes = false
 						reply.score++
 					}
@@ -135,7 +135,7 @@
 				Reply
 			</a>
 			{#if !hidden}
-				{#if reply.author.username == user.username}
+				{#if reply.author.username === user.username}
 					<DeleteButton id={reply.id} reverse />
 				{:else}
 					<ReportButton

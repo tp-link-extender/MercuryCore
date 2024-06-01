@@ -25,7 +25,7 @@
 	$: query &&
 		browser &&
 		(async () => {
-			if (query.trim().length < 1) {
+			if (query.trim().length === 0) {
 				searchedData = data.assets
 				return
 			}
@@ -232,9 +232,9 @@
 						currentTab={tabData.currentTab}
 						{enhanceRegen} />
 				{/each}
-				{#if query && assets.length == 0}
+				{#if query && assets.length === 0}
 					<h2 class="text-xs pt-12">
-						{#if tabData.currentTab == "Recent"}
+						{#if tabData.currentTab === "Recent"}
 							No recently worn items found with search term {query}
 						{:else}
 							No {tabData.currentTab} found with search term {query}
@@ -267,7 +267,7 @@
 						}}
 						class="inline">
 						<button
-							class="btn colour my-1"
+							class="btn colour mx-0.5 my-1 size-10"
 							style="background-color: #{brickToHex[colour]}" />
 					</form>
 				{/each}
@@ -289,8 +289,6 @@
 			border-radius 12px
 
 	.colour
-		margin-left 2px
-		margin-right 2px
 		transition filter 0.2s ease-out
 		&:hover
 			filter brightness(50%)
@@ -298,31 +296,17 @@
 	#colourPicker
 		max-width 27rem
 
-	button.colour
-		height 2.5rem
-		width 2.5rem
-
 	.parts
 		position relative
 		margin 11px 0px 0px 36px
-
 		+-sm()
-			position relative
 			margin 11px 4px 0px 7px
-
 		+sm()
-			position relative
 			margin 11px 4px 0px 7px
-
 		+md()
-			position relative
 			margin 11px 4px 0px 9px
-
 		+lg()
-			position relative
 			margin 11px 4px 0px -8px
-
 		+xl()
-			position relative
 			margin 11px 0px 0px 7px
 </style>

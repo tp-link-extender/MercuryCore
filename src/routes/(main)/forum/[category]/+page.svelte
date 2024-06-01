@@ -32,6 +32,8 @@
 				case "undislike":
 					post.likes = false
 					post.dislikes = false
+					break
+				default:
 			}
 
 			return p

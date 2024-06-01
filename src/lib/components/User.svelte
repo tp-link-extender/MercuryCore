@@ -32,7 +32,7 @@
 				} | null
 				regenerating?: boolean
 		  }
-		| undefined = undefined // Used on profile page for rerender button
+		| undefined // Used on profile page for rerender button
 	export let size = "2rem"
 	export let bg: keyof typeof transitionBackgrounds = "accent2"
 

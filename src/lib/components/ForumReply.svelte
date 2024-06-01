@@ -85,7 +85,7 @@
 				<small class="max-w-40 text-ellipsis">
 					<span class="grey-text">
 						{reply.author.username}
-						{#if reply.author.username == postAuthorName}
+						{#if reply.author.username === postAuthorName}
 							<fa
 								class="{assetName
 									? 'fa-hammer'

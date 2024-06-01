@@ -31,7 +31,7 @@
 					<fa fa-copy />
 				</button>
 				<button
-					class="btn btn-{$message && $page.status == 200
+					class="btn btn-{$message && $page.status === 200
 						? 'success'
 						: 'secondary'}">
 					<fa fa-rotate />

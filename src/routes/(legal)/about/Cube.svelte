@@ -11,12 +11,12 @@
 	const clicked = new Map<string, "hovered" | "clicked">()
 	const scale = spring(0, {
 		stiffness: 0.1,
-		damping: 1,
+		damping: 1
 	})
 
 	let colour = tweened(interpolateLab("#6c2fb9", "#321f9c")(Math.random()), {
 		duration: 500,
-		interpolate: interpolateLab,
+		interpolate: interpolateLab
 	})
 	let clickable = false
 
@@ -37,7 +37,11 @@
 	}}
 	on:pointerdown={e => {
 		e.stopPropagation()
-		if (!clickable || $scale != -j || clicked.get(`${i},${j}`) == "clicked")
+		if (
+			!clickable ||
+			$scale !== -j ||
+			clicked.get(`${i},${j}`) === "clicked"
+		)
 			return
 		clicked.set(`${i},${j}`, "clicked")
 		colour.set("red")
@@ -49,7 +53,7 @@
 		args={[
 			{
 				transparent: true,
-				opacity: $opacity,
-			},
+				opacity: $opacity
+			}
 		]} />
 </T.Mesh>

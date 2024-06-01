@@ -37,7 +37,7 @@
 {#if $message}
 	<p
 		class={inline ? "mb-0" : ""}
-		class:text-emerald-6={$page.status == 200}
+		class:text-emerald-6={$page.status === 200}
 		class:text-red-5={$page.status >= 400}>
 		{$message}
 	</p>

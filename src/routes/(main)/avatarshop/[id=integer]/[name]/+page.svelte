@@ -64,6 +64,8 @@
 			case "undislike":
 				thing.likes = false
 				thing.dislikes = false
+				break
+			default:
 		}
 		return thing
 	}

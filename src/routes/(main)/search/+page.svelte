@@ -15,7 +15,7 @@
 {/if}
 
 <div class="pt-12 px-4">
-	{#if data.category == "users" && data.users}
+	{#if data.category === "users" && data.users}
 		<div class="grid">
 			{#each data.users as user, num}
 				<div in:fade={{ num, total: data.users.length }}>
@@ -23,7 +23,7 @@
 				</div>
 			{/each}
 		</div>
-	{:else if data.category == "places" && data.places}
+	{:else if data.category === "places" && data.places}
 		<div class="grid">
 			{#each data.places as place, num}
 				<div class="px-2 pb-2">
@@ -31,7 +31,7 @@
 				</div>
 			{/each}
 		</div>
-	{:else if data.category == "assets" && data.assets}
+	{:else if data.category === "assets" && data.assets}
 		<div class="grid">
 			{#each data.assets as asset, num}
 				<div class="pb-4">
@@ -39,7 +39,7 @@
 				</div>
 			{/each}
 		</div>
-	{:else if data.category == "groups" && data.groups}
+	{:else if data.category === "groups" && data.groups}
 		<div class="grid">
 			{#each data.groups as group, num}
 				<div class="px-2 pb-2">
