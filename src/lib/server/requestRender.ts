@@ -1,5 +1,5 @@
-import { equery, surrealql } from "./surreal"
 import fs from "node:fs"
+import { equery, surrealql } from "./surreal"
 
 export enum Status {
 	Pending = "Pending",

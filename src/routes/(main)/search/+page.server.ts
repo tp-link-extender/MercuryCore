@@ -1,10 +1,10 @@
-import { equery, surrealql } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
+import { equery, surrealql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
-import searchUsersQuery from "./searchUsers.surql"
-import searchPlacesQuery from "./searchPlaces.surql"
 import searchAssetsQuery from "./searchAssets.surql"
 import searchGroupsQuery from "./searchGroups.surql"
+import searchPlacesQuery from "./searchPlaces.surql"
+import searchUsersQuery from "./searchUsers.surql"
 
 type Place = {
 	id: number

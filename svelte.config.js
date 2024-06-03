@@ -1,8 +1,8 @@
+import { resolve } from "node:path"
 import { preprocessMeltUI, sequence } from "@melt-ui/pp"
 import adapter from "@sveltejs/adapter-node"
 import preprocess from "svelte-preprocess"
 import autoImport from "sveltekit-autoimport"
-import { resolve } from "node:path"
 
 /** @type {import("@sveltejs/kit").Config}*/
 export default {
@@ -20,9 +20,7 @@ export default {
 				"svelte/store": ["writable"],
 				"$app/forms": ["enhance", "deserialize"],
 			},
-			mapping: {
-				fade: 'import fade from "$lib/fade"',
-			},
+			mapping: { fade: 'import fade from "$lib/fade"' },
 			include: ["**/*.svelte", "**/*.ts"],
 		}),
 		preprocessMeltUI(),

@@ -1,6 +1,6 @@
-import { equery, surrealql } from "$lib/server/surreal"
 import { authorise } from "$lib/server/lucia"
 import type { RenderType, Status } from "$lib/server/requestRender"
+import { equery, surrealql } from "$lib/server/surreal"
 import renderQueueQuery from "./renderqueue.surql"
 
 type Render = {

@@ -1,4 +1,4 @@
-import { find, RecordId, surrealql, equery } from "$lib/server/surreal"
+import { RecordId, equery, find, surrealql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 export async function GET({ url, request }) {

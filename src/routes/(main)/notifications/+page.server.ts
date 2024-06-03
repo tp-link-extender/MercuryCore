@@ -1,5 +1,5 @@
-import { equery, surrealql, RecordId } from "$lib/server/surreal"
 import { authorise } from "$lib/server/lucia"
+import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 export const load = async ({ locals }) => {

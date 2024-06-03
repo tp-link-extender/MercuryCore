@@ -1,6 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import { token } from "$lib/server/realtime"
-import { equery, surrealql, RecordId } from "$lib/server/surreal"
+import { RecordId, equery, surrealql } from "$lib/server/surreal"
 
 // Most pages on the site require a user to be logged in.
 // No risk of data leakage to unauthenticated users here as a redirect is performed.

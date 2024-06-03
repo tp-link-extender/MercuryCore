@@ -25,14 +25,12 @@
 	export let thin = false
 	export let image = false
 	export let bottom = false
-	export let rerender:
-		| {
-				form?: {
-					avatar: string
-				} | null
-				regenerating?: boolean
-		  }
-		| undefined // Used on profile page for rerender button
+	export let rerender: {
+		form?: {
+			avatar: string
+		} | null
+		regenerating?: boolean
+	} | null = null // Used on profile page for rerender button
 	export let size = "2rem"
 	export let bg: keyof typeof transitionBackgrounds = "accent2"
 

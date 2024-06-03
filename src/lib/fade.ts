@@ -1,7 +1,7 @@
 // Builds on the Svelte fade function to allow for easier delays for staggered animations
 
 // import { get } from "svelte/store"
-import { fade, type FadeParams } from "svelte/transition"
+import { type FadeParams, fade } from "svelte/transition"
 
 type Params = FadeParams & {
 	num?: number

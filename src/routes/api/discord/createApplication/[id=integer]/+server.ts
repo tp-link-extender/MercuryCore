@@ -1,6 +1,6 @@
 import { equery, findWhere, surrealql } from "$lib/server/surreal"
 import { error, json } from "@sveltejs/kit"
-import { verify, canApply } from "../../discord"
+import { canApply, verify } from "../../discord"
 
 export async function POST({ request, url, params }) {
 	verify(url)

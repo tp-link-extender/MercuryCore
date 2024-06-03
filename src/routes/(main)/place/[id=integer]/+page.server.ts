@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { equery, RecordId } from "$lib/server/surreal"
+import { RecordId, equery } from "$lib/server/surreal"
 import { encode } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
 import placeIdQuery from "./placeId.surql"

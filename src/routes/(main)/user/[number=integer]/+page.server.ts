@@ -1,8 +1,8 @@
-import { authorise } from "$lib/server/lucia"
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import formData from "$lib/server/formData"
-import { fail, error } from "@sveltejs/kit"
+import { authorise } from "$lib/server/lucia"
 import requestRender, { RenderType } from "$lib/server/requestRender"
+import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { error, fail } from "@sveltejs/kit"
 import type { RequestEvent } from "./$types"
 import userQuery from "./user.surql"
 

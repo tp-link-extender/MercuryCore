@@ -1,6 +1,6 @@
-import { error } from "@sveltejs/kit"
 import { SignData } from "$lib/server/sign"
-import { findWhere, surrealql, equery, RecordId } from "$lib/server/surreal"
+import { RecordId, equery, findWhere, surrealql } from "$lib/server/surreal"
+import { error } from "@sveltejs/kit"
 import joinQuery from "./join.surql"
 
 type Session = {

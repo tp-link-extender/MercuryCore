@@ -1,6 +1,6 @@
 import {
-	load as dLoad,
 	actions as dActions,
+	load as dLoad,
 } from "../../../(main)/home/+page.server"
 
 export const load = dLoad

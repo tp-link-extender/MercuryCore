@@ -3,12 +3,12 @@
 
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
-import { equery, RecordId, surrealql } from "$lib/server/surreal"
-import { auth } from "$lib/server/lucia"
 import { dev } from "$app/environment"
+import { auth } from "$lib/server/lucia"
+import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
-import pc from "picocolors"
 import type { Cookie } from "lucia"
+import pc from "picocolors"
 
 const { magenta, red, yellow, green, blue, gray: grey, cyan } = pc
 const methodColours = Object.freeze({

@@ -1,8 +1,8 @@
 // Initialising Lucia, the authentication library
 
 import { dev } from "$app/environment"
-import { redirect, error } from "@sveltejs/kit"
-import { Lucia, type User, type Session } from "lucia"
+import { error, redirect } from "@sveltejs/kit"
+import { Lucia, type Session, type User } from "lucia"
 import { SurrealAdapter } from "./surrealAdapter"
 
 // As of v3, Lucia no longer shits itself if it doesn't have access to the database clients during build time

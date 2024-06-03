@@ -1,6 +1,4 @@
-import { authorise } from "$lib/server/lucia"
-import { RecordId, equery } from "$lib/server/surreal"
-import ratelimit from "$lib/server/ratelimit"
+import fs from "node:fs"
 import formError from "$lib/server/formError"
 import {
 	clothingAsset,
@@ -9,13 +7,15 @@ import {
 	tShirtThumbnail,
 	thumbnail,
 } from "$lib/server/imageAsset"
+import { authorise } from "$lib/server/lucia"
+import ratelimit from "$lib/server/ratelimit"
+import requestRender, { RenderType } from "$lib/server/requestRender"
+import { RecordId, equery } from "$lib/server/surreal"
 import { graphicAsset } from "$lib/server/xmlAsset"
 import { redirect } from "@sveltejs/kit"
-import fs from "node:fs"
-import { superValidate } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
+import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
-import requestRender, { RenderType } from "$lib/server/requestRender"
 import createAssetQuery from "./createAsset.surql"
 
 const schema = z.object({

@@ -1,8 +1,8 @@
 import { building } from "$app/environment"
 import Surreal, { surrealql, RecordId, type PreparedQuery } from "surrealdb.js"
+import auditLogQuery from "./auditLog.surql"
 import initQuery from "./init.surql"
 import transactionQuery from "./transaction.surql"
-import auditLogQuery from "./auditLog.surql"
 
 const db = new Surreal()
 

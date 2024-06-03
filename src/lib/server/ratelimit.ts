@@ -1,9 +1,9 @@
 // Allows for a function to be ratelimited by a category,
 // and returns a 429 failure if too many requests are sent
 
-import { message } from "sveltekit-superforms/server"
-import type { SuperValidated } from "sveltekit-superforms"
 import { fail } from "@sveltejs/kit"
+import type { SuperValidated } from "sveltekit-superforms"
+import { message } from "sveltekit-superforms/server"
 
 const ratelimitTimewindow = new Map<string, number>()
 const ratelimitRequests = new Map<string, number>()

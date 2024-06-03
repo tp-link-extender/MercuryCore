@@ -1,12 +1,12 @@
-import { auth } from "$lib/server/lucia"
-import { findWhere, surrealql, equery, RecordId } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
-import { redirect } from "@sveltejs/kit"
-import { superValidate } from "sveltekit-superforms/server"
-import { zod } from "sveltekit-superforms/adapters"
-import { z } from "zod"
+import { auth } from "$lib/server/lucia"
 import requestRender, { RenderType } from "$lib/server/requestRender"
+import { RecordId, equery, findWhere, surrealql } from "$lib/server/surreal"
+import { redirect } from "@sveltejs/kit"
 import { Scrypt } from "oslo/password"
+import { zod } from "sveltekit-superforms/adapters"
+import { superValidate } from "sveltekit-superforms/server"
+import { z } from "zod"
 import createUserQuery from "./createUser.surql"
 
 const schemaInitial = z.object({

@@ -1,5 +1,5 @@
-import { Centrifuge, type PublicationContext } from "centrifuge"
 import { browser, dev } from "$app/environment"
+import { Centrifuge, type PublicationContext } from "centrifuge"
 
 export type ForumResponse = {
 	id: string

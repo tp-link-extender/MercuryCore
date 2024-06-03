@@ -1,4 +1,4 @@
-import { equery, surrealql, RecordId } from "$lib/server/surreal"
+import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import type { User } from "lucia"
 
 type Notification = {

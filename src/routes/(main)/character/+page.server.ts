@@ -1,8 +1,8 @@
 import { authorise } from "$lib/server/lucia"
-import { RecordId, surrealql, equery } from "$lib/server/surreal"
 import ratelimit from "$lib/server/ratelimit"
-import { fail, error } from "@sveltejs/kit"
 import requestRender, { RenderType } from "$lib/server/requestRender"
+import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { error, fail } from "@sveltejs/kit"
 import type { RequestEvent } from "./$types"
 
 // Heads, Faces, T-Shirts, Shirts, Pants, Gear, Hats

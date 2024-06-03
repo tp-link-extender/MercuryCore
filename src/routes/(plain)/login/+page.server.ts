@@ -1,10 +1,10 @@
+import formError from "$lib/server/formError"
 import { auth } from "$lib/server/lucia"
 import { equery, surrealql } from "$lib/server/surreal"
-import formError from "$lib/server/formError"
 import { redirect } from "@sveltejs/kit"
 import { Scrypt } from "oslo/password"
-import { superValidate } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
+import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 
 const schema = z.object({

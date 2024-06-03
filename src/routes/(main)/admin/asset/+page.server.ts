@@ -1,11 +1,11 @@
+import fs from "node:fs/promises"
+import auditLog from "$lib/server/auditLog.surql"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender, { RenderType } from "$lib/server/requestRender"
-import { equery, surrealql, RecordId } from "$lib/server/surreal"
+import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
-import fs from "node:fs/promises"
 import type { RequestEvent } from "./$types"
-import auditLog from "$lib/server/auditLog.surql"
 import assetsQuery from "./asset.surql"
 
 type Asset = {

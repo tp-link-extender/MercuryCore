@@ -1,11 +1,11 @@
+import auditLogQuery from "$lib/server/auditLog.surql"
+import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { findWhere, equery, RecordId, surrealql } from "$lib/server/surreal"
-import formError from "$lib/server/formError"
-import { superValidate, message } from "sveltekit-superforms/server"
+import { RecordId, equery, findWhere, surrealql } from "$lib/server/surreal"
 import { zod } from "sveltekit-superforms/adapters"
+import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
-import auditLogQuery from "$lib/server/auditLog.surql"
 
 const schema = z.object({
 	username: z.string().min(3).max(21),

@@ -1,10 +1,10 @@
-import { equery, surrealql, RecordId } from "./surreal"
 import type {
 	Adapter,
 	DatabaseSession,
 	DatabaseUser,
 	RegisteredDatabaseUserAttributes,
 } from "lucia"
+import { RecordId, equery, surrealql } from "./surreal"
 
 async function deleteSession(sessionId: string) {
 	await equery(surrealql`DELETE $sess`, {

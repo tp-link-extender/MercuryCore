@@ -1,6 +1,6 @@
-import { error } from "@sveltejs/kit"
 import { SignData } from "$lib/server/sign"
 import { equery, surrealql } from "$lib/server/surreal"
+import { error } from "@sveltejs/kit"
 
 export async function GET({ url }) {
 	const ticket = url.searchParams.get("ticket")

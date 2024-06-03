@@ -1,5 +1,5 @@
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import { authorise } from "$lib/server/lucia"
+import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
 async function getModeration(id: string) {

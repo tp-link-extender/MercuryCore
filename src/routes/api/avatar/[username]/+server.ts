@@ -1,5 +1,5 @@
-import { equery, surrealql } from "$lib/server/surreal"
 import fs from "node:fs"
+import { equery, surrealql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 export async function GET({ url, params }) {

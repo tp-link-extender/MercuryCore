@@ -1,5 +1,5 @@
-import { error } from "@sveltejs/kit"
 import { equery, surrealql } from "$lib/server/surreal"
+import { error } from "@sveltejs/kit"
 
 export async function GET({ url, request }) {
 	const ticket = url.searchParams.get("ticket") as string

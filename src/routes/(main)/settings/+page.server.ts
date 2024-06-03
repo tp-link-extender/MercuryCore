@@ -1,9 +1,9 @@
-import { authorise } from "$lib/server/lucia"
-import { surrealql, equery, RecordId } from "$lib/server/surreal"
 import formError from "$lib/server/formError"
+import { authorise } from "$lib/server/lucia"
+import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import { Scrypt } from "oslo/password"
-import { superValidate, message } from "sveltekit-superforms/server"
 import { zod } from "sveltekit-superforms/adapters"
+import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import updateProfileQuery from "./updateProfile.surql"
 
