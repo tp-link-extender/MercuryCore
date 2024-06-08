@@ -7,12 +7,16 @@ import transactionQuery from "./transaction.surql"
 const db = new Surreal()
 
 async function reconnect() {
-	await db.close()
+	await db.close() // doesn't do anything if not connected
 	console.log("connecting")
-	await db.connect("ws://localhost:8000")
-	console.log("connected")
-	await db.use({ namespace: "main", database: "main" }) // use ns and db first to prevent configuration errors
-	await db.signin({ username: "root", password: "root" })
+	await db.connect("ws://localhost:8000", {
+		namespace: "main",
+		database: "main",
+		auth: {
+			username: "root",
+			password: "root",
+		},
+	})
 	console.log("reloaded surreal")
 }
 
