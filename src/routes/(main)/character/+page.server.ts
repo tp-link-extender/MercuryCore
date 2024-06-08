@@ -2,7 +2,7 @@ import { intRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender, { RenderType } from "$lib/server/requestRender"
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surql } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import type { RequestEvent } from "./$types.d.ts"
 
@@ -69,7 +69,7 @@ async function getEquipData(e: RequestEvent) {
 			visibility: string
 		}[][]
 	>(
-		surrealql`
+		surql`
 			SELECT meta::id(id) AS id, type, visibility
 			FROM $asset WHERE $user IN <-owns<-user`,
 		{
@@ -126,7 +126,7 @@ async function paint({ locals, url }: RequestEvent) {
 
 	currentColours[bodyPart] = +bodyColour
 
-	await equery(surrealql`UPDATE $user SET bodyColours = ${currentColours}`, {
+	await equery(surql`UPDATE $user SET bodyColours = ${currentColours}`, {
 		user: new RecordId("user", user.id),
 	})
 
@@ -146,14 +146,14 @@ async function equip(e: RequestEvent) {
 
 	// Find if there's more than 3 hats equipped, throw an error if there is
 	const [hatsEquipped] = await equery<number[]>(
-		surrealql`count(SELECT 1 FROM $user->wearing WHERE out.type = 8)`,
+		surql`count(SELECT 1 FROM $user->wearing WHERE out.type = 8)`,
 		{ user: new RecordId("user", user.id) }
 	)
 	if (asset.type === 8 && hatsEquipped >= 3)
 		return fail(400, { msg: "You can only wear 3 hats" })
 
 	await equery(
-		surrealql`
+		surql`
 			# Unequip if there's already a T-Shirt/Shirt/Pants/Face equipped
 			IF $type = 2 {
 				DELETE $user->wearing WHERE out.type = 2;
@@ -179,7 +179,7 @@ async function unequip(e: RequestEvent) {
 	const { user, id, error } = await getEquipData(e)
 	if (error) return error
 
-	await equery(surrealql`DELETE $user->wearing WHERE out = $asset`, {
+	await equery(surql`DELETE $user->wearing WHERE out = $asset`, {
 		user: new RecordId("user", user.id),
 		asset: new RecordId("asset", id),
 	})

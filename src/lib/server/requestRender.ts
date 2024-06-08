@@ -1,5 +1,5 @@
 import fs from "node:fs"
-import { equery, surrealql } from "./surreal.ts"
+import { equery, surql } from "./surreal.ts"
 
 export enum Status {
 	Pending = "Pending",
@@ -52,7 +52,7 @@ export default async function (
 	// If the render doesn't exist or if the last one errored, create a new render
 
 	const [, renderId] = await equery<string[]>(
-		surrealql`
+		surql`
 			LET $render = (CREATE render CONTENT {
 				type: $renderType,
 				status: "Pending",

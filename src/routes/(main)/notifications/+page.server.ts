@@ -1,13 +1,12 @@
 import { authorise } from "$lib/server/lucia"
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 export const load = async ({ locals }) => {
 	const { user } = await authorise(locals)
-	await equery(
-		surrealql`UPDATE notification SET read = true WHERE out = $user`,
-		{ user: new RecordId("user", user.id) }
-	)
+	await equery(surql`UPDATE notification SET read = true WHERE out = $user`, {
+		user: new RecordId("user", user.id),
+	})
 }
 
 export const actions: import("./$types").Actions = {}
@@ -18,7 +17,7 @@ actions.default = async ({ locals, url }) => {
 
 	try {
 		await equery(
-			surrealql`
+			surql`
 				IF $notification.* {
 					UPDATE $notification SET read = true WHERE out = $user
 				}`,

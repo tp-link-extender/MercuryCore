@@ -1,4 +1,4 @@
-import { equery, surrealql } from "$lib/server/surreal"
+import { equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 export async function GET({ url, request }) {
@@ -9,7 +9,7 @@ export async function GET({ url, request }) {
 		error(400, "Good one")
 
 	await equery(
-		surrealql`
+		surql`
 			UPDATE place SET serverPing = time::unix()
 			WHERE serverTicket = ${ticket}`
 	)

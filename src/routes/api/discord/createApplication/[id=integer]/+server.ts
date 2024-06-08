@@ -1,4 +1,4 @@
-import { equery, findWhere, surrealql } from "$lib/server/surreal"
+import { equery, findWhere, surql } from "$lib/server/surreal"
 import { error, json } from "@sveltejs/kit"
 import { canApply, verify } from "../../discord.ts"
 
@@ -16,7 +16,7 @@ export async function POST({ request, url, params }) {
 	if (!Array.isArray(data)) error(400, "Body must be an array")
 
 	const [[ban]] = await equery<{ reason: string }[][]>(
-		surrealql`
+		surql`
 			SELECT reason, created FROM application
 			WHERE discordId = $id AND status = "Banned"
 			ORDER BY created DESC LIMIT 1`,
@@ -42,7 +42,7 @@ export async function POST({ request, url, params }) {
 	if (accepted) error(400, "This user has already been accepted")
 
 	await equery(
-		surrealql`
+		surql`
 			CREATE application CONTENT {
 				discordId: ${id},
 				status: "Pending",

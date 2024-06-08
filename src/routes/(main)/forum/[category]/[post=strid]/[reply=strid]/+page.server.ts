@@ -1,6 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import { type Replies, recurse } from "$lib/server/nestedReplies"
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { actions } from "../+page.server"
 import forumRepliesQuery from "./reply.surql"
@@ -24,7 +24,7 @@ export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
 
 	const [[post]] = await equery<{ author: { username: string } }[][]>(
-		surrealql`
+		surql`
 			SELECT
 				(SELECT username FROM <-posted<-user)[0] AS author
 			FROM ${new RecordId("forumPost", params.post)}`

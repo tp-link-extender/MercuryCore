@@ -1,5 +1,5 @@
 import { SignData } from "$lib/server/sign"
-import { RecordId, equery, findWhere, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, findWhere, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import joinQuery from "./join.surql"
 
@@ -39,7 +39,7 @@ export async function GET({ url }) {
 	)
 		error(400, "Invalid Private Server")
 
-	await equery(surrealql`UPDATE $playing SET valid = false`, {
+	await equery(surql`UPDATE $playing SET valid = false`, {
 		playing: new RecordId("playing", clientTicket),
 	})
 

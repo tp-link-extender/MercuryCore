@@ -1,7 +1,7 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { equery, surrealql } from "$lib/server/surreal"
+import { equery, surql } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
@@ -34,7 +34,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	if (limit) return limit
 
 	await equery(
-		surrealql`
+		surql`
 			CREATE type::thing("forumCategory", $name) CONTENT {
 				name: $name,
 				description: $description,

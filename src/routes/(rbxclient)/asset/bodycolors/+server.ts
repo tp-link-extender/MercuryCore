@@ -1,5 +1,5 @@
 import { intRegex } from "$lib/paramTests"
-import { equery, surrealql } from "$lib/server/surreal"
+import { equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 type User = {
@@ -18,7 +18,7 @@ export async function GET({ url }) {
 	if (!id || !intRegex.test(id)) error(400, "Missing id parameter")
 
 	const [[getUser]] = await equery<User[][]>(
-		surrealql`SELECT bodyColours FROM user WHERE number = ${+id}`
+		surql`SELECT bodyColours FROM user WHERE number = ${+id}`
 	)
 	if (!getUser) error(404, "User not found")
 

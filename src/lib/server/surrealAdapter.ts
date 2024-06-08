@@ -4,21 +4,16 @@ import type {
 	DatabaseUser,
 	RegisteredDatabaseUserAttributes,
 } from "lucia"
-import { RecordId, equery, surrealql } from "./surreal.ts"
+import { RecordId, equery, surql } from "./surreal.ts"
 
 async function deleteSession(sessionId: string) {
-	await equery(surrealql`DELETE $sess`, {
-		sess: new RecordId("session", sessionId),
-	})
+	await equery(surql`DELETE ${new RecordId("session", sessionId)}`)
 }
 
 async function deleteUserSessions(userId: string) {
-	await equery(
-		surrealql`DELETE session WHERE ${new RecordId(
-			"user",
-			userId
-		)} IN <-hasSession<-user`
-	)
+	await equery(surql`DELETE session WHERE $user IN <-hasSession<-user`, {
+		user: new RecordId("user", userId),
+	})
 }
 
 async function getSessionAndUser(
@@ -27,7 +22,7 @@ async function getSessionAndUser(
 	const [session, user] = await equery<
 		[DatabaseSession | null, RegisteredDatabaseUserAttributes | null]
 	>(
-		surrealql`
+		surql`
 			(SELECT *, meta::id(id) AS id FROM $sess)[0];
 			(SELECT *, meta::id(id) AS id FROM $sess<-hasSession<-user)[0]`,
 		{ sess: new RecordId("session", sessionId) }
@@ -43,14 +38,11 @@ async function getSessionAndUser(
 
 async function setSession(session: DatabaseSession) {
 	await equery(
-		surrealql`
-			LET $s = CREATE $sess SET expiresAt = time::unix($expiresAt);
+		surql`
+			LET $s = CREATE ${new RecordId("session", session.id)}
+				SET expiresAt = time::unix($expiresAt);
 			RELATE $user->hasSession->$s`,
-		{
-			sess: new RecordId("session", session.id),
-			...session,
-			user: new RecordId("user", session.userId),
-		}
+		{ ...session, user: new RecordId("user", session.userId) }
 	)
 }
 
@@ -58,22 +50,22 @@ async function updateSessionExpiration(
 	sessionId: string,
 	expiresAt: Date
 ): Promise<void> {
-	await equery(surrealql`UPDATE $sess SET expiresAt = $expiresAt`, {
-		sess: new RecordId("session", sessionId),
-		expiresAt: Math.floor(expiresAt.getTime() / 1000),
-	})
+	await equery(
+		surql`
+			UPDATE ${new RecordId("session", sessionId)}
+			SET expiresAt = ${Math.floor(expiresAt.getTime() / 1000)}`
+	)
 }
 
 async function deleteExpiredSessions(): Promise<void> {
-	await equery(surrealql`DELETE session WHERE expiresAt < time::millis()`)
+	await equery(surql`DELETE session WHERE expiresAt < time::millis()`)
 }
 
 async function getUserSessions(userId: string) {
 	const result = await equery<DatabaseSession[][]>(
-		surrealql`
+		surql`
 			SELECT *, meta::id(id) AS id FROM session
-			WHERE $user IN <-usingKey<-user`,
-		{ user: new RecordId("user", userId) }
+			WHERE ${new RecordId("user", userId)} IN <-usingKey<-user`
 	)
 	return result[0]
 }

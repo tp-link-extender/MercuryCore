@@ -2,13 +2,7 @@ import formData from "$lib/server/formData"
 import { type LikeActions, likeLikesActions } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
 import { publish } from "$lib/server/realtime"
-import {
-	RecordId,
-	equery,
-	find,
-	findWhere,
-	surrealql,
-} from "$lib/server/surreal"
+import { RecordId, equery, find, findWhere, surql } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
 import placeQuery from "./place.surql"
@@ -84,7 +78,7 @@ actions.like = async ({ url, request, locals, params }) => {
 			dislikeCount: number
 		}[][]
 	>(
-		surrealql`
+		surql`
 			SELECT
 				privateServer,
 				privateTicket,
@@ -145,7 +139,7 @@ actions.join = async ({ request, locals }) => {
 			valid: boolean
 		}[][]
 	>(
-		surrealql`
+		surql`
 			UPDATE (SELECT * FROM $user->playing) SET valid = false;
 			RELATE $user->playing->$place CONTENT {
 				ping: 0,

@@ -1,7 +1,7 @@
 import formError from "$lib/server/formError"
 import { auth } from "$lib/server/lucia"
 import requestRender, { RenderType } from "$lib/server/requestRender"
-import { RecordId, equery, findWhere, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, findWhere, surql } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import { Scrypt } from "oslo/password"
 import { zod } from "sveltekit-superforms/adapters"
@@ -58,9 +58,7 @@ async function createUser(
 }
 
 async function isAccountRegistered() {
-	const [userCount] = await equery<number[]>(
-		surrealql`count(SELECT 1 FROM user)`
-	)
+	const [userCount] = await equery<number[]>(surql`count(SELECT 1 FROM user)`)
 
 	return userCount > 0
 }
@@ -104,7 +102,7 @@ actions.register = async ({ request, cookies }) => {
 		return formError(form, ["email"], ["This email is already in use"])
 
 	const [[regkeyCheck]] = await equery<{ usesLeft: number }[][]>(
-		surrealql`SELECT usesLeft FROM ${new RecordId("regKey", regkey)}`
+		surql`SELECT usesLeft FROM ${new RecordId("regKey", regkey)}`
 	)
 
 	if (!regkeyCheck)
@@ -163,7 +161,7 @@ actions.initialAccount = async ({ request, cookies }) => {
 			["There's already an account registered"]
 		)
 
-	await equery(surrealql`UPDATE ONLY stuff:increment SET user = 0`)
+	await equery(surql`UPDATE ONLY stuff:increment SET user = 0`)
 
 	// This is the kind of stuff that always breaks due to never getting tested
 	// Remember: untested === unworking

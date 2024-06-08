@@ -1,6 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import { type Replies, recurse } from "$lib/server/nestedReplies"
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { actions } from "../+page.server"
 import assetCommentsQuery from "./comments.surql"
@@ -23,7 +23,7 @@ export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
 
 	const [[asset]] = await equery<{ creator: { username: string } }[][]>(
-		surrealql`
+		surql`
 			SELECT
 				(SELECT username
 				FROM <-created<-user)[0] AS creator

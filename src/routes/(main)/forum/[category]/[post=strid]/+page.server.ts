@@ -4,7 +4,7 @@ import { like } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
 import { type Replies, recurse } from "$lib/server/nestedReplies"
 import ratelimit from "$lib/server/ratelimit"
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
@@ -92,7 +92,7 @@ const updateVisibility = (visibility: string, text: string, id: string) =>
 	})
 
 const pinThing = (pinned: boolean, thing: RecordId<string>) =>
-	equery(surrealql`UPDATE $thing SET pinned = $pinned`, { thing, pinned })
+	equery(surql`UPDATE $thing SET pinned = $pinned`, { thing, pinned })
 
 // wrapping this stuff in arrow functions just to prevent it from maybe returning god knows what to the client from an action
 const pinReply = (pinned: boolean) => async (e: RequestEvent) => {
@@ -131,7 +131,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	if (limit) return limit
 
 	const [[replypost]] = await equery<{ authorId: string }[][]>(
-		surrealql`
+		surql`
 			SELECT meta::id(<-posted[0]<-user[0].id) AS authorId
 			FROM $replypostId
 			WHERE visibility = "Visible"`,
@@ -144,7 +144,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 
 	if (!replypost) error(404, `${replyId ? "Reply" : "Post"} not found`)
 
-	const [[newReplyId]] = await equery<string[]>(surrealql`fn::id()`)
+	const [[newReplyId]] = await equery<string[]>(surql`fn::id()`)
 
 	await equery(createReplyQuery, {
 		content,
@@ -156,7 +156,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 
 	if (user.id !== replypost.authorId)
 		await equery(
-			surrealql`
+			surql`
 				RELATE $sender->notification->$receiver CONTENT {
 					type: ${replyId ? "ForumReplyReply" : "ForumPostReply"},
 					time: time::now(),

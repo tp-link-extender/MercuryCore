@@ -1,6 +1,6 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surql } from "$lib/server/surreal"
 import { Scrypt } from "oslo/password"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
@@ -68,7 +68,7 @@ actions.password = async ({ request, locals }) => {
 		return formError(form, ["cpassword"], ["Incorrect password"])
 
 	await equery(
-		surrealql`UPDATE ${new RecordId(
+		surql`UPDATE ${new RecordId(
 			"user",
 			user.id
 		)} SET hashedPassword = ${await new Scrypt().hash(npassword)}`
@@ -91,7 +91,7 @@ actions.styling = async ({ request, locals }) => {
 	if (css === "undefined") return message(form, "Styling already saved!")
 
 	await equery(
-		surrealql`UPDATE ${new RecordId("user", user.id)} SET css = ${css}`
+		surql`UPDATE ${new RecordId("user", user.id)} SET css = ${css}`
 	)
 
 	return message(form, "Styling updated successfully!")

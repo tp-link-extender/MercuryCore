@@ -1,6 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import type { RenderType, Status } from "$lib/server/requestRender"
-import { equery, surrealql } from "$lib/server/surreal"
+import { equery, surql } from "$lib/server/surreal"
 import renderQueueQuery from "./renderqueue.surql"
 
 type Render = {
@@ -21,7 +21,7 @@ export async function load({ locals }) {
 	await authorise(locals, 3)
 
 	const [[status], [queue]] = await Promise.all([
-		equery<string[]>(surrealql`stuff:ping.render`),
+		equery<string[]>(surql`stuff:ping.render`),
 		equery<Render[][]>(renderQueueQuery),
 	])
 

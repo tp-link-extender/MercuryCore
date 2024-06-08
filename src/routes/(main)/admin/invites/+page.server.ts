@@ -2,7 +2,7 @@ import auditLogQuery from "$lib/server/auditLog.surql"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surql } from "$lib/server/surreal"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -111,7 +111,7 @@ actions.disable = async e => {
 	if (!id) return message(form, "Missing fields", { status: 400 })
 
 	const [[key]] = await equery<{ usesLeft: number }[][]>(
-		surrealql`SELECT usesLeft FROM ${new RecordId("regKey", id)}`
+		surql`SELECT usesLeft FROM ${new RecordId("regKey", id)}`
 	)
 
 	if (key && key.usesLeft === 0)

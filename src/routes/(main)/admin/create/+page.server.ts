@@ -3,7 +3,7 @@ import { intRegex } from "$lib/paramTests"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import requestRender, { RenderType } from "$lib/server/requestRender"
-import { equery, surrealql } from "$lib/server/surreal"
+import { equery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
@@ -153,7 +153,7 @@ async function getSharedAssets(id: number, version: number) {
 			assetModified: string
 		}[][]
 	>(
-		surrealql`
+		surql`
 			SELECT meta::id(id) AS id, assetModified
 			FROM assetCache:[${id}, ${version}]`
 	)
@@ -191,7 +191,7 @@ async function getSharedAssets(id: number, version: number) {
 
 async function getType(id: number) {
 	const [[{ type }]] = await equery<{ type: number }[][]>(
-		surrealql`SELECT type FROM assetCache:[$id, 0]..[$id, 99]`, // gud enogh
+		surql`SELECT type FROM assetCache:[$id, 0]..[$id, 99]`, // gud enogh
 		{ id }
 	)
 	return type

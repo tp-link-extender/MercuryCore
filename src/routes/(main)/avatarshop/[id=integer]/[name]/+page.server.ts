@@ -7,13 +7,7 @@ import { type Replies, recurse } from "$lib/server/nestedReplies"
 import ratelimit from "$lib/server/ratelimit"
 import { publish } from "$lib/server/realtime"
 import requestRender, { RenderType } from "$lib/server/requestRender"
-import {
-	RecordId,
-	equery,
-	find,
-	surrealql,
-	transaction,
-} from "$lib/server/surreal"
+import { RecordId, equery, find, surql, transaction } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
@@ -55,6 +49,15 @@ type Asset = {
 	visibility: string
 }
 
+const noTexts = [
+	"Cancel",
+	"No thanks",
+	"I've reconsidered",
+	"Not really",
+	"Nevermind",
+]
+const failTexts = ["Bruh", "Okay", "Aight", "Rip", "Aw man..."]
+
 export async function load({ locals, params }) {
 	if (!intRegex.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
 
@@ -71,15 +74,6 @@ export async function load({ locals, params }) {
 
 	if (!asset || !asset.creator) error(404, "Not found")
 
-	const noTexts = [
-		"Cancel",
-		"No thanks",
-		"I've reconsidered",
-		"Not really",
-		"Nevermind",
-	]
-	const failTexts = ["Bruh", "Okay", "Aight", "Rip", "Aw man..."]
-
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
 		failText: failTexts[Math.floor(Math.random() * failTexts.length)],
@@ -93,7 +87,7 @@ async function getBuyData(e: RequestEvent) {
 	const id = +e.params.id
 
 	const [[assetExists]] = await equery<boolean[][]>(
-		surrealql`SELECT 1 FROM ${new RecordId("asset", id)}`
+		surql`SELECT 1 FROM ${new RecordId("asset", id)}`
 	)
 	if (!assetExists) error(404)
 
@@ -130,7 +124,7 @@ const updateVisibility = (visibility: string, text: string, id: string) =>
 
 const pinComment = (pinned: boolean) => async (e: RequestEvent) => {
 	await equery(
-		surrealql`UPDATE ${new RecordId(
+		surql`UPDATE ${new RecordId(
 			"assetComment",
 			(await findComment(e, 4)).id
 		)} SET pinned = ${pinned}`
@@ -145,7 +139,7 @@ type Thing = {
 
 async function select(thing: RecordId) {
 	const [[got]] = await equery<Thing[][]>(
-		surrealql`
+		surql`
 			SELECT
 				meta::id(id) AS id,
 				count(<-likes) - count(<-dislikes) AS score,
@@ -171,7 +165,7 @@ async function rerender({ locals, params }: RequestEvent) {
 			visibility: string
 		}[][]
 	>(
-		surrealql`
+		surql`
 			SELECT
 				name,
 				meta::id(id) AS id, 
@@ -222,11 +216,11 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 
 	const [[commentAuthor]] = await equery<{ id: string }[][]>(
 		commentId
-			? surrealql`SELECT meta::id(id) AS id FROM ${new RecordId(
+			? surql`SELECT meta::id(id) AS id FROM ${new RecordId(
 					"assetComment",
 					commentId
 				)}<-posted<-user`
-			: surrealql`SELECT meta::id(id) AS id FROM ${new RecordId(
+			: surql`SELECT meta::id(id) AS id FROM ${new RecordId(
 					"asset",
 					params.id
 				)}<-created<-user`
@@ -234,7 +228,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	if (commentId && !commentAuthor) error(404)
 
 	const receiverId = commentAuthor?.id || ""
-	const [newReplyId] = await equery<string[]>(surrealql`fn::id()`)
+	const [newReplyId] = await equery<string[]>(surql`fn::id()`)
 
 	await equery(createCommentQuery, {
 		content,
@@ -249,7 +243,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	await Promise.all([
 		user.id !== receiverId &&
 			equery(
-				surrealql`
+				surql`
 					RELATE $sender->notification->$receiver CONTENT {
 						type: $type,
 						time: time::now(),
@@ -322,7 +316,7 @@ actions.buy = async e => {
 			visibility: string
 		}[][]
 	>(
-		surrealql`
+		surql`
 			SELECT
 				*,
 				(SELECT meta::id(id) AS id, username
@@ -351,13 +345,13 @@ actions.buy = async e => {
 	}
 
 	await Promise.all([
-		equery(surrealql`RELATE $user->owns->$asset`, {
+		equery(surql`RELATE $user->owns->$asset`, {
 			user: new RecordId("user", user.id),
 			asset: new RecordId("asset", id),
 		}),
 		user.id === asset.creator.id ||
 			equery(
-				surrealql`
+				surql`
 					RELATE $sender->notification->$receiver CONTENT {
 						type: $type,
 						time: time::now(),

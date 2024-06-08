@@ -1,7 +1,7 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { Action, auditLog, equery, surrealql } from "$lib/server/surreal"
+import { Action, auditLog, equery, surql } from "$lib/server/surreal"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -17,7 +17,7 @@ async function getEconomy() {
 			dailyStipend?: number
 			stipendTime?: number
 		}[][]
-	>(surrealql`SELECT * FROM stuff:economy`)
+	>(surql`SELECT * FROM stuff:economy`)
 
 	return {
 		dailyStipend: economy?.dailyStipend || 10,
@@ -53,7 +53,7 @@ actions.updateStipend = async ({ request, locals, getClientAddress }) => {
 		return message(form, "No changes were made")
 
 	await equery(
-		surrealql`UPDATE stuff:economy MERGE ${{ dailyStipend, stipendTime }}`
+		surql`UPDATE stuff:economy MERGE ${{ dailyStipend, stipendTime }}`
 	)
 
 	let auditText = ""

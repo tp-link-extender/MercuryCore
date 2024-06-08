@@ -5,7 +5,7 @@
 
 import { dev } from "$app/environment"
 import { auth } from "$lib/server/lucia"
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surql } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import type { Cookie } from "lucia"
 import pc from "picocolors"
@@ -120,7 +120,7 @@ export async function handle({ event, resolve }) {
 	else if (session.fresh) setSession(auth.createSessionCookie(session.id))
 
 	const [[moderated]] = await equery<1[][]>(
-		surrealql`
+		surql`
 			SELECT 1 FROM moderation
 			WHERE out = $user AND active = true`,
 		{ user: new RecordId("user", user.id) }
@@ -134,7 +134,7 @@ export async function handle({ event, resolve }) {
 	)
 		redirect(302, "/moderation")
 
-	await equery(surrealql`UPDATE $user SET lastOnline = time::now()`, {
+	await equery(surql`UPDATE $user SET lastOnline = time::now()`, {
 		user: new RecordId("user", user.id),
 	})
 
@@ -143,7 +143,7 @@ export async function handle({ event, resolve }) {
 			dailyStipend?: number
 			stipendTime?: number
 		}[][]
-	>(surrealql`SELECT * FROM stuff:economy`)
+	>(surql`SELECT * FROM stuff:economy`)
 
 	const dailyStipend = economy?.dailyStipend || 10
 	const stipendTime = economy?.stipendTime || 12
@@ -154,7 +154,7 @@ export async function handle({ event, resolve }) {
 		0
 	)
 		await equery(
-			surrealql`
+			surql`
 				UPDATE $user SET currencyCollected = time::now();
 				UPDATE $user SET currency += $dailyStipend`,
 			{

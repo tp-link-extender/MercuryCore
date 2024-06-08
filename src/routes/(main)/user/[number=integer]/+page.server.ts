@@ -1,7 +1,7 @@
 import formData from "$lib/server/formData"
 import { authorise } from "$lib/server/lucia"
 import requestRender, { RenderType } from "$lib/server/requestRender"
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surql } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import type { RequestEvent } from "./$types.d.ts"
 import userQuery from "./user.surql"
@@ -67,7 +67,7 @@ async function getData({ params }: RequestEvent) {
 			username: string
 		}[][]
 	>(
-		surrealql`
+		surql`
 			SELECT meta::id(id) AS id, username
 			FROM user WHERE number = ${+params.number}`
 	)
@@ -87,7 +87,7 @@ type ActionFunction = (
 const acceptExisting: ActionFunction = (params, user) =>
 	equery(
 		// The direction of the ->friends relationship matches the direction of the previous ->request relationship.
-		surrealql`
+		surql`
 			DELETE $user2->request WHERE out = $user;
 			RELATE $user2->friends->$user SET time = time::now();
 			RELATE $user->notification->$user2 CONTENT {
@@ -141,7 +141,7 @@ export const actions: import("./$types").Actions = { rerender }
 actions.follow = async e => {
 	const { user, params } = await getInteractData(e)
 	await equery(
-		surrealql`
+		surql`
 			IF $user2 NOT IN $user->follows->user {
 				RELATE $user->follows->$user2 SET time = time::now();
 				RELATE $user->notification->$user2 CONTENT {
@@ -161,7 +161,7 @@ actions.follow = async e => {
 actions.unfollow = async e => {
 	const { params } = await getInteractData(e)
 	await equery(
-		surrealql`
+		surql`
 			DELETE $user->follows WHERE out = $user2;
 			DELETE $user->notification WHERE out = $user2
 				AND type = "Follower"
@@ -172,7 +172,7 @@ actions.unfollow = async e => {
 actions.unfriend = async e => {
 	const { params } = await getInteractData(e)
 	await equery(
-		surrealql`
+		surql`
 			DELETE $user<-friends WHERE in = $user2;
 			DELETE $user->friends WHERE out = $user2;
 			DELETE $user->notification WHERE out = $user2
@@ -186,14 +186,14 @@ actions.request = async e => {
 
 	// Make sure users are not already friends
 	const [alreadyFriends] = await equery<boolean[]>(
-		surrealql`$user IN $user2->friends->user
+		surql`$user IN $user2->friends->user
 			OR $user2 IN $user->friends->user`,
 		params
 	)
 	if (alreadyFriends) error(400, "Already friends")
 
 	const [incoming] = await equery<boolean[]>(
-		surrealql`$user IN $user2->request->user`,
+		surql`$user IN $user2->request->user`,
 		params
 	)
 	if (incoming) {
@@ -202,7 +202,7 @@ actions.request = async e => {
 	}
 
 	await equery(
-		surrealql`
+		surql`
 			RELATE $user->request->$user2 SET time = time::now();
 			RELATE $user->notification->$user2 CONTENT {
 				type: "FriendRequest",
@@ -220,7 +220,7 @@ actions.request = async e => {
 actions.cancel = async e => {
 	const { params } = await getInteractData(e)
 	await equery(
-		surrealql`
+		surql`
 			DELETE $user->request WHERE out = $user2;
 			DELETE $user->notification WHERE out = $user2
 				AND type = "FriendRequest"
@@ -230,13 +230,13 @@ actions.cancel = async e => {
 }
 actions.decline = async e => {
 	const { params } = await getInteractData(e)
-	await equery(surrealql`DELETE $user2->request WHERE out = $user`, params)
+	await equery(surql`DELETE $user2->request WHERE out = $user`, params)
 }
 actions.accept = async e => {
 	const { user, params } = await getInteractData(e)
 	// Make sure an incoming request exists before accepting
 	const [incoming] = await equery<boolean[]>(
-		surrealql`$user IN $user2->request->user`,
+		surql`$user IN $user2->request->user`,
 		params
 	)
 	if (!incoming) error(400, "No friend request to accept")

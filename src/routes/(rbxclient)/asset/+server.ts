@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto"
 import { intRegex } from "$lib/paramTests"
 import { SignData } from "$lib/server/sign"
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
 const response = (file: Buffer | string) =>
@@ -30,7 +30,7 @@ export async function GET({ url }) {
 					visibility: string
 				}[][]
 			>(
-				surrealql`
+				surql`
 					SELECT
 						meta::id(id) AS id,
 						name,

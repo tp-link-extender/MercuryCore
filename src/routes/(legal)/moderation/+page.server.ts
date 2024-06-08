@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
 async function getModeration(id: string) {
@@ -11,7 +11,7 @@ async function getModeration(id: string) {
 			timeEnds: string
 		}[][]
 	>(
-		surrealql`
+		surql`
 			SELECT * FROM moderation
 			WHERE out = ${new RecordId("user", id)} AND active = true`
 	)
@@ -43,7 +43,7 @@ actions.default = async ({ locals }) => {
 		error(400, "You cannot reactivate your account")
 
 	await equery(
-		surrealql`
+		surql`
 			UPDATE moderation SET active = false
 			WHERE out = ${new RecordId("user", user.id)}`
 	)

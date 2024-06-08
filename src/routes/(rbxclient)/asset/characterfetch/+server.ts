@@ -1,5 +1,5 @@
 import { intRegex } from "$lib/paramTests"
-import { equery, surrealql } from "$lib/server/surreal"
+import { equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 type User = {
@@ -21,7 +21,7 @@ export async function GET({ url }) {
 		error(400, "Missing userID parameter")
 
 	const [[user]] = await equery<User[][]>(
-		surrealql`
+		surql`
 			SELECT
 				bodyColours,
 				(SELECT meta::id(id) AS id

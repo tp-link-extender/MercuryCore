@@ -1,7 +1,7 @@
 import fs from "node:fs"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surql } from "$lib/server/surreal"
 import { encode } from "$lib/urlName"
 import { error } from "@sveltejs/kit"
 import sharp from "sharp"
@@ -130,7 +130,7 @@ actions.ticket = async e => {
 	const id = await getData(e)
 	const { request } = e
 
-	await equery(surrealql`UPDATE $place SET serverTicket = rand::guid()`, {
+	await equery(surql`UPDATE $place SET serverTicket = rand::guid()`, {
 		place: new RecordId("place", id),
 	})
 
@@ -149,7 +149,7 @@ actions.network = async e => {
 	const { serverIP, serverPort, maxPlayers } = form.data
 
 	await equery(
-		surrealql`
+		surql`
 			UPDATE ${new RecordId("place", id)} MERGE {
 				serverIP: ${serverIP},
 				serverPort: ${serverPort},
@@ -168,10 +168,9 @@ actions.privacy = async e => {
 
 	const { privateServer } = form.data
 
-	await equery(
-		surrealql`UPDATE $place SET privateServer = ${privateServer}`,
-		{ place: new RecordId("place", id) }
-	)
+	await equery(surql`UPDATE $place SET privateServer = ${privateServer}`, {
+		place: new RecordId("place", id),
+	})
 
 	return message(form, "Privacy settings updated successfully!")
 }
@@ -179,7 +178,7 @@ actions.privatelink = async e => {
 	const id = await getData(e)
 	const { url, request } = e
 
-	await equery(surrealql`UPDATE $place SET privateTicket = rand::guid()`, {
+	await equery(surql`UPDATE $place SET privateTicket = rand::guid()`, {
 		place: new RecordId("place", id),
 	})
 

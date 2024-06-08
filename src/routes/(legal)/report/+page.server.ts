@@ -1,7 +1,7 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
@@ -27,7 +27,7 @@ const schema = z.object({
 // const getReportee = (username: string) =>
 async function getReportee(username: string) {
 	const [[reportee]] = await equery<{ id: RecordId }[][]>(
-		surrealql`SELECT id FROM user WHERE username = ${username}`
+		surql`SELECT id FROM user WHERE username = ${username}`
 	)
 
 	return reportee
@@ -68,7 +68,7 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 	if (!reportee) return message(form, "Invalid user", { status: 400 })
 
 	await equery(
-		surrealql`
+		surql`
 			RELATE ${new RecordId("user", user.id)}->report->${reportee.id} CONTENT {
 				time: time::now(),
 				note: ${note},

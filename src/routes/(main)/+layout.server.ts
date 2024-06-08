@@ -1,6 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import { token } from "$lib/server/realtime"
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surql } from "$lib/server/surreal"
 
 // Most pages on the site require a user to be logged in.
 // No risk of data leakage to unauthenticated users here as a redirect is performed.
@@ -15,7 +15,7 @@ export async function load({ locals }) {
 		user.realtimeHash = realtimeHash
 
 		await equery(
-			surrealql`
+			surql`
 				UPDATE $user MERGE {
 					realtimeExpiry: $expiry,
 					realtimeToken: $realtimeToken,

@@ -1,5 +1,5 @@
 import formData from "$lib/server/formData"
-import { equery, surrealql } from "$lib/server/surreal"
+import { equery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import searchAssetsQuery from "./searchAssets.surql"
 import searchGroupsQuery from "./searchGroups.surql"
@@ -38,7 +38,7 @@ export const load = async ({ url }) => {
 
 	if (category === "users") {
 		const [[userExists]] = await equery<{ number: number }[][]>(
-			surrealql`
+			surql`
 				SELECT number FROM user
 				WHERE username = ${searchQ}`
 		)

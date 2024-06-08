@@ -1,6 +1,6 @@
 import { intRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/lucia"
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
 type Asset = {
@@ -15,7 +15,7 @@ export async function GET({ locals, params }) {
 	const id = +params.id
 
 	const [[asset]] = await equery<Asset[][]>(
-		surrealql`
+		surql`
 			SELECT
 				meta::id(id) AS id,
 				name,

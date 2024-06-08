@@ -2,7 +2,7 @@ import formError from "$lib/server/formError"
 import { like } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { RecordId, equery, findWhere, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, findWhere, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
@@ -19,7 +19,7 @@ export async function load({ url }) {
 	if (!categoryQuery) error(400, "Missing category")
 
 	const [[category]] = await equery<{ name: string }[][]>(
-		surrealql`
+		surql`
 			SELECT name FROM forumCategory
 			WHERE string::lowercase(name) = string::lowercase(${categoryQuery})`
 	)
@@ -58,7 +58,7 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 	)
 		error(400, "Invalid category")
 
-	const [postId] = await equery<string[]>(surrealql`fn::id()`)
+	const [postId] = await equery<string[]>(surql`fn::id()`)
 
 	await equery(createQuery, {
 		user: new RecordId("user", user.id),

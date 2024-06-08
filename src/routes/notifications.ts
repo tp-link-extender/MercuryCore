@@ -1,4 +1,4 @@
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surql } from "$lib/server/surreal"
 import type { User } from "lucia"
 
 type Notification = {
@@ -22,7 +22,7 @@ type AssetComment = {
 
 async function getAssetComment(relativeId: string) {
 	const [[result]] = await equery<AssetComment[][]>(
-		surrealql`
+		surql`
 			SELECT
 				*,
 				meta::id(id) AS id,
@@ -43,7 +43,7 @@ type ForumReply = {
 
 async function getForumReply(relativeId: string) {
 	const [[result]] = await equery<ForumReply[][]>(
-		surrealql`
+		surql`
 			SELECT
 				meta::id(id) AS id,
 				(SELECT
@@ -59,7 +59,7 @@ type ForumPost = { category: { name: string } }
 
 async function getForumPost(relativeId: string) {
 	const [[result]] = await equery<ForumPost[][]>(
-		surrealql`
+		surql`
 			SELECT
 				(SELECT name
 				FROM ->in->forumCategory) AS category
@@ -71,7 +71,7 @@ async function getForumPost(relativeId: string) {
 export default async function (user: User | null) {
 	if (!user) return []
 	const [notifications] = await equery<Notification[][]>(
-		surrealql`
+		surql`
 			SELECT
 				*,
 				meta::id(id) AS id,

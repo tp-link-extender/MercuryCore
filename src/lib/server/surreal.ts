@@ -1,5 +1,5 @@
 import { building } from "$app/environment"
-import Surreal, { surrealql, RecordId, type PreparedQuery } from "surrealdb.js"
+import Surreal, { surql, RecordId, type PreparedQuery } from "surrealdb.js"
 import auditLogQuery from "./auditLog.surql"
 import initQuery from "./init.surql"
 import transactionQuery from "./transaction.surql"
@@ -26,7 +26,7 @@ async function reconnect() {
 
 export const failed = "The query was not executed due to a failed transaction"
 
-export { surrealql, RecordId }
+export { surql, RecordId }
 
 type Prepared = PreparedQuery<(result: unknown[]) => unknown>
 
@@ -68,7 +68,6 @@ export const equery = async <T>(
 		const final: unknown[] = []
 
 		for (const res of result) {
-			// Result types my beloved
 			if (res.status === "ERR" && res.result !== failed)
 				throw new Error(res.result)
 			final.push(res.result)
@@ -91,7 +90,7 @@ if (!building) {
  */
 export const find = (table: string, id: string | number) =>
 	equery(
-		surrealql`!!SELECT 1 FROM ${new RecordId(table, id)}`
+		surql`!!SELECT 1 FROM ${new RecordId(table, id)}`
 	) as unknown as Promise<boolean>
 
 /**

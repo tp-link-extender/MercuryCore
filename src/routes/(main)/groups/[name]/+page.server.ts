@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surql } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import type { RequestEvent } from "./$types.d.ts"
 import groupQuery from "./group.surql"
@@ -25,7 +25,7 @@ export async function load({ locals, params }) {
 async function getData({ locals, params }: RequestEvent) {
 	const { user } = await authorise(locals)
 	const [[group]] = await equery<{ id: RecordId }[][]>(
-		surrealql`
+		surql`
 			SELECT id FROM group
 			WHERE string::lowercase(name) = string::lowercase($name)`,
 		params
@@ -42,13 +42,13 @@ async function getData({ locals, params }: RequestEvent) {
 export const actions: import("./$types").Actions = {}
 actions.join = async e => {
 	await equery(
-		surrealql`RELATE $user->member->$group SET time = time::now()`,
+		surql`RELATE $user->member->$group SET time = time::now()`,
 		await getData(e)
 	)
 }
 actions.leave = async e => {
 	await equery(
-		surrealql`DELETE $user->member WHERE out = $group`,
+		surql`DELETE $user->member WHERE out = $group`,
 		await getData(e)
 	)
 }

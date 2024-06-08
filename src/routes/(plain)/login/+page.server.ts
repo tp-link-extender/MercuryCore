@@ -1,6 +1,6 @@
 import formError from "$lib/server/formError"
 import { auth } from "$lib/server/lucia"
-import { equery, surrealql } from "$lib/server/surreal"
+import { equery, surql } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import { Scrypt } from "oslo/password"
 import { zod } from "sveltekit-superforms/adapters"
@@ -27,7 +27,7 @@ const schema = z.object({
 })
 
 export async function load() {
-	const [users] = await equery<number[]>(surrealql`count(SELECT 1 FROM user)`)
+	const [users] = await equery<number[]>(surql`count(SELECT 1 FROM user)`)
 
 	return {
 		form: await superValidate(zod(schema)),
@@ -49,7 +49,7 @@ actions.default = async ({ request, cookies }) => {
 			hashedPassword: string
 		}[][]
 	>(
-		surrealql`
+		surql`
 			SELECT meta::id(id) AS id, username, hashedPassword FROM user
 			WHERE string::lowercase(username) = string::lowercase(${username})`
 	)

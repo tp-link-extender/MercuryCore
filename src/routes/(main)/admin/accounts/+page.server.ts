@@ -1,7 +1,7 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { Action, auditLog, equery, surrealql } from "$lib/server/surreal"
+import { Action, auditLog, equery, surql } from "$lib/server/surreal"
 import { Scrypt } from "oslo/password"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
@@ -35,7 +35,7 @@ actions.changePassword = async ({ request, locals, getClientAddress }) => {
 
 	try {
 		await equery(
-			surrealql`
+			surql`
 				UPDATE user SET hashedPassword = $npassword
 				WHERE string::lowercase(username) = string::lowercase(${username})`,
 			{ npassword: await new Scrypt().hash(password) }

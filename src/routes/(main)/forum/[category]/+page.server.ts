@@ -3,7 +3,7 @@ import formData from "$lib/server/formData"
 import { likeScoreActions } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
 import { publish } from "$lib/server/realtime"
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import categoryQuery from "./category.surql"
 
@@ -44,7 +44,7 @@ type Thing = {
 
 async function select(table: string, id: string) {
 	const [[thing]] = await equery<Thing[][]>(
-		surrealql`
+		surql`
 			SELECT
 				meta::id(id) AS id,
 				count(<-likes) - count(<-dislikes) AS score

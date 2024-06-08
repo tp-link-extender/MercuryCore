@@ -4,7 +4,7 @@ import auditLog from "$lib/server/auditLog.surql"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender, { RenderType } from "$lib/server/requestRender"
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surql } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import type { RequestEvent } from "./$types.d.ts"
 import assetsQuery from "./asset.surql"
@@ -42,7 +42,7 @@ async function getData({ locals, url }: RequestEvent) {
 		asset: new RecordId("asset", id),
 	}
 	const [[asset]] = await equery<{ name: string }[][]>(
-		surrealql`SELECT name FROM $asset`,
+		surql`SELECT name FROM $asset`,
 		params
 	)
 
@@ -100,7 +100,7 @@ actions.purge = async e => {
 	// Nuclear option
 	const { id, params, assetName } = await getData(e)
 	const [[{ iaid }]] = await equery<{ iaid: number }[][]>(
-		surrealql`
+		surql`
 			SELECT meta::id((->imageAsset->asset.id)[0]) AS iaid
 			FROM ${new RecordId("asset", id)}`
 	)

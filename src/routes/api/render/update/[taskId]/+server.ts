@@ -1,4 +1,4 @@
-import { RecordId, equery, surrealql } from "$lib/server/surreal"
+import { RecordId, equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 type Render = {
@@ -15,7 +15,7 @@ export async function POST({ request, url, params }) {
 	if (!taskIdRegex.test(id)) error(400, "Invalid taskId parameter")
 
 	const [[task]] = await equery<Render[][]>(
-		surrealql`SELECT type, relativeId FROM $render`,
+		surql`SELECT type, relativeId FROM $render`,
 		{ render: new RecordId("render", id) }
 	)
 
@@ -34,7 +34,7 @@ export async function POST({ request, url, params }) {
 	console.log("Render status update:", status)
 
 	if (status === "Rendering")
-		await equery(surrealql`UPDATE $render SET status = "Rendering"`, {
+		await equery(surql`UPDATE $render SET status = "Rendering"`, {
 			render: new RecordId("render", id),
 		})
 	else if (status === "Completed") {
@@ -57,7 +57,7 @@ export async function POST({ request, url, params }) {
 		else if (clickBody) await write(clickBody)
 
 		await equery(
-			surrealql`
+			surql`
 				UPDATE $render MERGE {
 					status: "Completed",
 					completed: time::now(),

@@ -1,5 +1,5 @@
 import fs from "node:fs"
-import { equery, surrealql } from "$lib/server/surreal"
+import { equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 export async function GET({ url, params }) {
@@ -15,7 +15,7 @@ export async function GET({ url, params }) {
 	}
 
 	const [[user]] = await equery<{ number: number }[][]>(
-		surrealql`SELECT number FROM user WHERE username = ${username}`
+		surql`SELECT number FROM user WHERE username = ${username}`
 	)
 	if (!user) error(404, "User not found")
 
