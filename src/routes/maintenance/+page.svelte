@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Canvas } from "@threlte/core"
 	import g from "stripe-gradient"
 	const { Gradient } = g
+	import { Canvas } from "@threlte/core"
 
 	export let data
 
