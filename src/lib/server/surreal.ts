@@ -11,16 +11,8 @@ async function reconnect() {
 	console.log("connecting")
 	await db.connect("ws://localhost:8000")
 	console.log("connected")
-	await db.signin({
-		username: "root",
-		password: "root",
-	})
-
-	await db.use({
-		namespace: "main",
-		database: "main",
-	})
-
+	await db.use({ namespace: "main", database: "main" }) // use ns and db first to prevent configuration errors
+	await db.signin({ username: "root", password: "root" })
 	console.log("reloaded surreal")
 }
 
