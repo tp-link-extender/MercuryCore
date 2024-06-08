@@ -33,7 +33,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	const date = banDate ? new Date(banDate) : null
 	const intAction = +action
 
-	if (intAction === 2 && (date?.getTime() || 0) < new Date().getTime())
+	if (intAction === 2 && (date?.getTime() || 0) < Date.now())
 		return formError(form, ["banDate"], ["Invalid date"])
 
 	const [[getModeratee]] = await equery<

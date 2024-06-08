@@ -1,6 +1,6 @@
 import { equery, getError } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
-import { verify } from "../../discord"
+import { verify } from "../../discord.ts"
 import updateApplicationQuery from "./updateApplication.surql"
 
 export async function POST({ request, url, params }) {

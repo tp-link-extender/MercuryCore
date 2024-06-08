@@ -178,7 +178,7 @@
 			<Textarea
 				{formData}
 				name="bannerBody"
-				rows="1"
+				rows={1}
 				placeholder="3-100 characters"
 				class="text-{bannerData.textLight ? 'light' : 'dark'}"
 				style="background: {bannerData.bgColour} !important" />

@@ -1,5 +1,5 @@
 import { equery, surrealql } from "$lib/server/surreal"
-import getNotifications from "./notifications"
+import getNotifications from "./notifications.ts"
 
 let lines = "0"
 

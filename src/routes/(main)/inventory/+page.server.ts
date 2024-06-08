@@ -19,12 +19,11 @@ async function getAssets(id: string, query: string) {
 
 export const load = async ({ locals, url }) => {
 	const { user } = await authorise(locals)
-	const query = url.searchParams.get("q")?.trim()
+	const query = url.searchParams.get("q")?.trim() as string
 
-	return {
-		query,
-		assets: await getAssets(user.id, query),
-	}
+	const assets = await getAssets(user.id, query)
+	console.log(assets[0])
+	return { query, assets }
 }
 
 export const actions: import("./$types").Actions = {}

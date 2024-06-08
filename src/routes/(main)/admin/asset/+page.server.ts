@@ -1,11 +1,12 @@
 import fs from "node:fs/promises"
 import auditLog from "$lib/server/auditLog.surql"
 import { authorise } from "$lib/server/lucia"
+import { intTest } from "$lib/server/paramTests"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender, { RenderType } from "$lib/server/requestRender"
 import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
-import type { RequestEvent } from "./$types"
+import type { RequestEvent } from "./$types.d.ts"
 import assetsQuery from "./asset.surql"
 
 type Asset = {
@@ -34,7 +35,7 @@ async function getData({ locals, url }: RequestEvent) {
 	const id = url.searchParams.get("id")
 
 	if (!id) error(400, "Missing asset id")
-	if (!/^\d+$/.test(id)) error(400, `Invalid asset id: ${id}`)
+	if (!intTest(id)) error(400, `Invalid asset id: ${id}`)
 
 	const params = {
 		user: new RecordId("user", user.id),

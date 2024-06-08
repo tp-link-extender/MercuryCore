@@ -35,7 +35,8 @@ export async function GET({ url, params }) {
 					resolve()
 				}
 			})
-		else if (!(await Bun.file(path).exists())) throw new Error()
+		else if (!(await Bun.file(path).exists()))
+			throw new Error("File does not exist")
 
 		return new Response(Bun.file(path))
 	} catch {

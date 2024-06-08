@@ -1,5 +1,5 @@
 import { equery, surrealql } from "$lib/server/surreal"
-import { verify } from "../../discord"
+import { verify } from "../../discord.ts"
 
 export async function POST({ url, params }) {
 	verify(url)

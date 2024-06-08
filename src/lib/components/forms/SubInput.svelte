@@ -5,7 +5,7 @@
 	export let name: string
 	export let type: HTMLInputTypeAttribute
 
-	export let formData: any
+	export let formData: import("sveltekit-superforms").SuperForm<any>
 	const { form, errors, constraints } = formData
 </script>
 

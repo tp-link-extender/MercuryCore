@@ -3,6 +3,7 @@ import formError from "$lib/server/formError"
 import { type LikeActions, like, likeScoreActions } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
 import { type Replies, recurse } from "$lib/server/nestedReplies"
+import { idTest, intTest } from "$lib/server/paramTests"
 import ratelimit from "$lib/server/ratelimit"
 import { publish } from "$lib/server/realtime"
 import requestRender, { RenderType } from "$lib/server/requestRender"
@@ -17,7 +18,7 @@ import { error, fail } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
-import type { Actions, RequestEvent } from "./$types"
+import type { Actions, RequestEvent } from "./$types.d.ts"
 import assetQuery from "./asset.surql"
 import createCommentQuery from "./createComment.surql"
 import updateVisibilityQuery from "./updateVisibility.surql"
@@ -55,7 +56,7 @@ type Asset = {
 }
 
 export async function load({ locals, params }) {
-	if (!/^\d+$/.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
+	if (!intTest(params.id)) error(400, `Invalid asset id: ${params.id}`)
 
 	const { user } = await authorise(locals)
 	const id = +params.id
@@ -110,7 +111,7 @@ async function findComment<T>(
 	const id = url.searchParams.get("id")
 	if (!id) error(400, "Missing comment id")
 	// Prevents incorrect ids erroring the Surreal query as well
-	if (!/^[0-9a-z]+$/.test(id)) error(400, "Invalid comment id")
+	if (!idTest(id)) error(400, "Invalid comment id")
 
 	const [[comment]] = await equery<T[][]>(input, {
 		assetComment: new RecordId("assetComment", id),
@@ -214,8 +215,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	if (!content)
 		return formError(form, ["content"], ["Comment cannot be empty"])
 
-	if (commentId && !/^[0-9a-z]+$/.test(commentId))
-		error(400, "Invalid comment id")
+	if (commentId && !idTest(commentId)) error(400, "Invalid comment id")
 
 	const [[commentAuthor]] = await equery<{ id: string }[][]>(
 		commentId
@@ -277,8 +277,7 @@ actions.like = async ({ request, locals, url }) => {
 	const id = url.searchParams.get("id")
 	const commentId = url.searchParams.get("rid")
 
-	if (commentId && !/^[0-9a-z]+$/.test(commentId))
-		error(400, "Invalid comment id")
+	if (commentId && !idTest(commentId)) error(400, "Invalid comment id")
 
 	const foundAsset = id ? await find("asset", id) : null
 	const foundComment = commentId

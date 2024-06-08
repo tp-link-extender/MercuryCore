@@ -6,7 +6,7 @@ import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
-import type { RequestEvent } from "./$types"
+import type { RequestEvent } from "./$types.d.ts"
 import invitesQuery from "./invites.surql"
 
 const schema = z.object({
@@ -72,7 +72,7 @@ actions.create = async e => {
 
 	const expiry = inviteExpiry ? new Date(inviteExpiry) : null
 
-	if (!!enableInviteExpiry && (expiry?.getTime() || 0) < new Date().getTime())
+	if (!!enableInviteExpiry && (expiry?.getTime() || 0) < Date.now())
 		return formError(form, ["inviteExpiry"], ["Invalid date"])
 
 	const [log] = await equery<unknown[]>(

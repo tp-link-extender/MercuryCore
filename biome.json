@@ -8,7 +8,9 @@
 			"nursery": {
 				"all": true,
 				"noUndeclaredDependencies": "off",
-				"noConsole": "off"
+				"noEvolvingTypes": "off",
+				"noConsole": "off",
+				"useDateNow": "off"
 			}
 		}
 	},
@@ -33,6 +35,9 @@
 					"suspicious": {
 						"noConfusingLabels": "off",
 						"noImplicitAnyLet": "off"
+					},
+					"nursery": {
+						"noEvolvingTypes": "off"
 					}
 				}
 			}

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import customProtocol from "./customprotocol"
+	import customProtocol from "./customprotocol.ts"
 	import Autopilot from "./Autopilot.svelte"
 	import realtime, { type PlaceResponse } from "$lib/realtime"
 	import type { Centrifuge, PublicationContext } from "centrifuge"

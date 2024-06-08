@@ -34,6 +34,8 @@ const pathnameColour = (pathname: string) => {
 	return pathname
 }
 
+const slashesRegex = /\/+$/
+
 // Ran every time a dynamic request is made.
 // Requests for prerendered pages do not trigger this hook.
 export async function handle({ event, resolve }) {
@@ -63,8 +65,7 @@ export async function handle({ event, resolve }) {
 			!pathname.startsWith("/api")
 		) {
 			// trim trailing slash
-			const newPathname = pathname.replace(/\/+$/, "")
-			redirect(302, `/studio${newPathname}`)
+			redirect(302, `/studio${pathname.replace(slashesRegex, "")}`)
 		}
 
 		const res = await resolve(event)
@@ -149,7 +150,7 @@ export async function handle({ event, resolve }) {
 
 	if (
 		new Date(user.currencyCollected).getTime() -
-			(new Date().getTime() - 3600e3 * stipendTime) <
+			(Date.now() - 3600e3 * stipendTime) <
 		0
 	)
 		await equery(

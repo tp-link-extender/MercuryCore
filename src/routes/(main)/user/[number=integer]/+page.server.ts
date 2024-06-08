@@ -3,7 +3,7 @@ import { authorise } from "$lib/server/lucia"
 import requestRender, { RenderType } from "$lib/server/requestRender"
 import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
-import type { RequestEvent } from "./$types"
+import type { RequestEvent } from "./$types.d.ts"
 import userQuery from "./user.surql"
 
 type User = {

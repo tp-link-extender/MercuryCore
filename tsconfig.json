@@ -11,6 +11,7 @@
 		"strict": true,
 		"noErrorTruncation": true,
 		"strictPropertyInitialization": false,
-		"typeRoots": ["./src/app.d.ts"]
+		"typeRoots": ["./src/app.d.ts"],
+		"allowImportingTsExtensions": true
 	}
 }

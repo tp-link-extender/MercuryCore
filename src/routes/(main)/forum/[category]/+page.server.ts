@@ -1,6 +1,7 @@
 import formData from "$lib/server/formData"
 import { likeScoreActions } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
+import { idTest } from "$lib/server/paramTests"
 import { publish } from "$lib/server/realtime"
 import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
@@ -60,7 +61,7 @@ actions.like = async ({ request, locals, params, url }) => {
 	const id = url.searchParams.get("id")
 	const replyId = url.searchParams.get("rid")
 
-	if (replyId && !/^[0-9a-z]+$/.test(replyId)) error(400, "Invalid reply id")
+	if (replyId && !idTest(replyId)) error(400, "Invalid reply id")
 
 	const foundPost = id ? await select("forumPost", id) : null
 	const foundReply = replyId ? await select("forumReply", replyId) : null

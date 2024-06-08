@@ -10,7 +10,7 @@
 
 	export let inline = false
 	export let column = false
-	export let formData: any
+	export let formData: import("sveltekit-superforms").SuperForm<any>
 	const { errors } = formData
 </script>
 

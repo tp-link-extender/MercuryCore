@@ -44,6 +44,6 @@
 			name="note"
 			label="Further information"
 			placeholder="Up to 1000 characters"
-			rows="5" />
+			rows={5} />
 	</Form>
 </div>

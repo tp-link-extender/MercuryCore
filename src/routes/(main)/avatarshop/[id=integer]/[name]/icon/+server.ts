@@ -1,4 +1,5 @@
 import { authorise } from "$lib/server/lucia"
+import { intTest } from "$lib/server/paramTests"
 import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
@@ -9,7 +10,7 @@ type Asset = {
 }
 
 export async function GET({ locals, params }) {
-	if (!/^\d+$/.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
+	if (!intTest(params.id)) error(400, `Invalid asset id: ${params.id}`)
 
 	const id = +params.id
 

@@ -27,7 +27,7 @@
 	export let bottom = false
 	export let rerender: {
 		form?: {
-			avatar: string
+			avatar?: string
 		} | null
 		regenerating?: boolean
 	} | null = null // Used on profile page for rerender button

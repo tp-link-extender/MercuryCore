@@ -9,7 +9,7 @@
 
 	export let method = "POST"
 
-	export let formData: any // boooo but nothing else works
+	export let formData: import("sveltekit-superforms").SuperForm<any> // boooo but nothing else works
 	const { errors, message, enhance, delayed } = formData
 
 	// use:enhance may not be used on forms that aren't method === "POST"

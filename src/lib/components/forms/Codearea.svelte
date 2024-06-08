@@ -1,24 +1,19 @@
 <script lang="ts">
-	import { basicSetup, EditorView } from "codemirror"
-	import { keymap } from "@codemirror/view"
 	import { indentWithTab } from "@codemirror/commands"
 	import { css } from "@codemirror/lang-css"
-	import type { SuperForm } from "sveltekit-superforms"
+	import { keymap } from "@codemirror/view"
+	import { EditorView, basicSetup } from "codemirror"
 
 	let code: HTMLDivElement
 
-	export let formData: SuperForm<any>
+	export let formData: import("sveltekit-superforms").SuperForm<any>
 	const { form, errors, constraints } = formData
 
 	function createEditor() {
 		new EditorView({
 			doc: $form.css,
 			parent: code,
-			extensions: [
-				basicSetup,
-				keymap.of([indentWithTab]),
-				css()
-			]
+			extensions: [basicSetup, keymap.of([indentWithTab]), css()]
 		})
 	}
 	$: code && createEditor()

@@ -2,6 +2,7 @@ import formError from "$lib/server/formError"
 import { like } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
 import { type Replies, recurse } from "$lib/server/nestedReplies"
+import { idTest } from "$lib/server/paramTests"
 import ratelimit from "$lib/server/ratelimit"
 import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
@@ -9,7 +10,7 @@ import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import { actions as categoryActions } from "../+page.server"
-import type { RequestEvent } from "./$types"
+import type { RequestEvent } from "./$types.d.ts"
 import createReplyQuery from "./createReply.surql"
 import forumPostQuery from "./post.surql"
 import updateVisibilityQuery from "./updateVisibility.surql"
@@ -107,7 +108,7 @@ const pinPost = (pinned: boolean) => async (e: RequestEvent) => {
 
 	const id = url.searchParams.get("id")
 	if (!id) error(400, "Missing post id")
-	if (!/^[0-9a-z]+$/.test(id)) error(400, "Invalid post id")
+	if (!idTest(id)) error(400, "Invalid post id")
 
 	await pinThing(pinned, new RecordId("forumPost", id))
 }
@@ -124,7 +125,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	const content = form.data.content.trim()
 	if (!content) return formError(form, ["content"], ["Reply cannot be empty"])
 
-	if (replyId && !/^[0-9a-z]+$/.test(replyId)) error(400, "Invalid reply id")
+	if (replyId && !idTest(replyId)) error(400, "Invalid reply id")
 
 	const limit = ratelimit(form, "forumReply", getClientAddress, 5)
 	if (limit) return limit

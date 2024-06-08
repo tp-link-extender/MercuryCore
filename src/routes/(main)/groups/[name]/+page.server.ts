@@ -1,7 +1,7 @@
 import { authorise } from "$lib/server/lucia"
 import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
-import type { RequestEvent } from "./$types"
+import type { RequestEvent } from "./$types.d.ts"
 import groupQuery from "./group.surql"
 
 type Group = {

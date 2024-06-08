@@ -3,9 +3,7 @@ import type { User } from "lucia"
 
 type Notification = {
 	id: string
-	in: string
 	note: string
-	out: string
 	read: boolean
 	relativeId?: string
 	sender: BasicUser
@@ -79,6 +77,7 @@ export default async function (user: User | null) {
 				meta::id(id) AS id,
 				(SELECT number, status, username
 				FROM <-user)[0] AS sender
+			OMIT in, out
 			FROM notification
 			WHERE out = ${new RecordId("user", user.id)}
 			ORDER BY time DESC`

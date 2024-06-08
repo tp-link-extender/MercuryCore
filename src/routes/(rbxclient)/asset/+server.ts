@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto"
+import { intTest } from "$lib/server/paramTests"
 import { SignData } from "$lib/server/sign"
 import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
@@ -15,7 +16,7 @@ const response = (file: Buffer | string) =>
 
 export async function GET({ url }) {
 	const id = url.searchParams.get("id")
-	if (!id || !/^\d+$/.test(id)) error(400, "Invalid Request")
+	if (!id || !intTest(id)) error(400, "Invalid Request")
 	console.log(`Serving ${id}`)
 
 	try {
@@ -37,7 +38,8 @@ export async function GET({ url }) {
 					FROM ${new RecordId("asset", id)}`
 			)
 
-			if (!asset || asset.visibility === "Moderated") throw new Error()
+			if (!asset || asset.visibility === "Moderated")
+				throw new Error("Asset not found")
 
 			// The asset is visible or pending
 			// (allow pending assets to be shown through the api)

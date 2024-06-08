@@ -19,7 +19,7 @@
 		? mOptions.find(o => o.value === selected)
 		: { value: "", label: "" }
 
-	export let formData: any
+	export let formData: import("sveltekit-superforms").SuperForm<any>
 	const { form, errors, constraints } = formData
 
 	const {

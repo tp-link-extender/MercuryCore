@@ -8,7 +8,7 @@ import sharp from "sharp"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
-import type { RequestEvent } from "./$types"
+import type { RequestEvent } from "./$types.d.ts"
 import settingsQuery from "./settings.surql"
 import updateSettingsQuery from "./updateSettings.surql"
 

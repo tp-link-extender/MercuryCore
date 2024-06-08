@@ -3,7 +3,7 @@
 import { dev } from "$app/environment"
 import { error, redirect } from "@sveltejs/kit"
 import { Lucia, type Session, type User } from "lucia"
-import { SurrealAdapter } from "./surrealAdapter"
+import { SurrealAdapter } from "./surrealAdapter.ts"
 
 // As of v3, Lucia no longer shits itself if it doesn't have access to the database clients during build time
 export const auth = new Lucia(new SurrealAdapter(), {

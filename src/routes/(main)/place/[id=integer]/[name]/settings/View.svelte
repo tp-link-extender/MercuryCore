@@ -29,5 +29,5 @@
 		name="description"
 		label="Description"
 		placeholder="Up to 1000 characters"
-		rows="3" />
+		rows={3} />
 </Form>

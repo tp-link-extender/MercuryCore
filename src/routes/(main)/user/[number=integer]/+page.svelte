@@ -28,7 +28,7 @@
 		}
 	}
 
-	let accordion: any // Sometimes undefined for some probably crazy reason
+	let accordion: import("@melt-ui/svelte").Accordion // Sometimes undefined for some probably crazy reason
 </script>
 
 <Head title={data.username} />

@@ -1,4 +1,4 @@
-import { RecordId, equery } from "./surreal"
+import { RecordId, equery } from "./surreal.ts"
 
 type ScoreResult = {
 	score: number

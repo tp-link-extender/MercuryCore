@@ -1,9 +1,10 @@
 import { authorise } from "$lib/server/lucia"
+import { intTest } from "$lib/server/paramTests"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender, { RenderType } from "$lib/server/requestRender"
 import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
-import type { RequestEvent } from "./$types"
+import type { RequestEvent } from "./$types.d.ts"
 
 // Heads, Faces, T-Shirts, Shirts, Pants, Gear, Hats
 const allowedTypes = [17, 18, 2, 11, 12, 19, 8]
@@ -56,7 +57,7 @@ async function getEquipData(e: RequestEvent) {
 	const id = e.url.searchParams.get("id")
 
 	if (!id) error(400, "Missing asset id")
-	if (!/^\d+$/.test(id)) error(400, `Invalid asset id: ${id}`)
+	if (!intTest(id)) error(400, `Invalid asset id: ${id}`)
 
 	const limit = ratelimit(null, "equip", e.getClientAddress, 2)
 	if (limit) return { error: limit }

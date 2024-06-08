@@ -6,12 +6,13 @@ type Render = {
 	relativeId: number
 }
 
+const taskIdTest = /^[\d\w]+$/.test
 export async function POST({ request, url, params }) {
 	const apiKey = url.searchParams.get("apiKey")
 	if (!apiKey || apiKey !== process.env.RCC_KEY) error(403, "Stfu")
 
 	const id = params.taskId
-	if (!/^[\d\w]+$/.test(id)) error(400, "Invalid taskId parameter")
+	if (!taskIdTest(id)) error(400, "Invalid taskId parameter")
 
 	const [[task]] = await equery<Render[][]>(
 		surrealql`SELECT type, relativeId FROM $render`,

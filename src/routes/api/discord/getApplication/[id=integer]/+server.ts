@@ -1,6 +1,6 @@
 import { equery } from "$lib/server/surreal"
 import { json } from "@sveltejs/kit"
-import { verify } from "../../discord"
+import { verify } from "../../discord.ts"
 import getApplicationQuery from "./getApplication.surql"
 
 type Application = {

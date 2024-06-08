@@ -2,7 +2,7 @@
 	import { page } from "$app/stores"
 
 	export let comment = false
-	export let formData: any
+	export let formData: import("sveltekit-superforms").SuperForm<any>
 
 	const { form, errors, message, constraints, enhance, delayed } = formData
 </script>

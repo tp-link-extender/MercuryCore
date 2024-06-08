@@ -1,3 +1,4 @@
+import { intTest } from "$lib/server/paramTests"
 import { equery, surrealql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
@@ -14,7 +15,7 @@ type User = {
 
 export async function GET({ url }) {
 	const id = url.searchParams.get("id")
-	if (!id || !/^\d+$/.test(id)) error(400, "Missing id parameter")
+	if (!id || !intTest(id)) error(400, "Missing id parameter")
 
 	const [[getUser]] = await equery<User[][]>(
 		surrealql`SELECT bodyColours FROM user WHERE number = ${+id}`

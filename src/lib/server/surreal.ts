@@ -115,6 +115,7 @@ export const findWhere = async (
 		)
 	)[0]
 
+const errorRegex = /An error occurred: (.*)/
 /**
  * Returns an error if the query failed.
  * @param qResult The result of a query.
@@ -135,7 +136,7 @@ export function getError(qResult: unknown) {
 			// Every other result will be `failed` if the query failed
 			for (const result2 of res)
 				if (typeof result2 === "string" && result2 !== failed)
-					return result2.match(/An error occurred: (.*)/)?.[1]
+					return result2.match(errorRegex)?.[1]
 }
 
 /**

@@ -3,9 +3,9 @@
 	export let label = ""
 	export let help = ""
 	export let placeholder = ""
-	export let rows = ""
+	export let rows = 3
 
-	export let formData: any
+	export let formData: import("sveltekit-superforms").SuperForm<any>
 	const { form, errors, constraints } = formData
 </script>
 
