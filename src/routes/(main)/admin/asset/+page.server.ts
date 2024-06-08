@@ -1,7 +1,7 @@
 import fs from "node:fs/promises"
+import { intRegex } from "$lib/paramTests"
 import auditLog from "$lib/server/auditLog.surql"
 import { authorise } from "$lib/server/lucia"
-import { intTest } from "$lib/server/paramTests"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender, { RenderType } from "$lib/server/requestRender"
 import { RecordId, equery, surrealql } from "$lib/server/surreal"
@@ -35,7 +35,7 @@ async function getData({ locals, url }: RequestEvent) {
 	const id = url.searchParams.get("id")
 
 	if (!id) error(400, "Missing asset id")
-	if (!intTest(id)) error(400, `Invalid asset id: ${id}`)
+	if (!intRegex.test(id)) error(400, `Invalid asset id: ${id}`)
 
 	const params = {
 		user: new RecordId("user", user.id),

@@ -26,7 +26,7 @@ export async function load({ request, locals }) {
 	const { user } = locals
 	// No authorise() function call, as we don't want to redirect to login page if not logged in
 
-	const banners = await equery<Banner>(surrealql`
+	const [banners] = await equery<Banner[][]>(surrealql`
 		SELECT
 			body,
 			bgColour,

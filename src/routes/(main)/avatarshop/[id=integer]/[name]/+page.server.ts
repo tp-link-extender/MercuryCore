@@ -1,9 +1,9 @@
+import { idRegex, intRegex } from "$lib/paramTests"
 import formData from "$lib/server/formData"
 import formError from "$lib/server/formError"
 import { type LikeActions, like, likeScoreActions } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
 import { type Replies, recurse } from "$lib/server/nestedReplies"
-import { idTest, intTest } from "$lib/server/paramTests"
 import ratelimit from "$lib/server/ratelimit"
 import { publish } from "$lib/server/realtime"
 import requestRender, { RenderType } from "$lib/server/requestRender"
@@ -56,7 +56,7 @@ type Asset = {
 }
 
 export async function load({ locals, params }) {
-	if (!intTest(params.id)) error(400, `Invalid asset id: ${params.id}`)
+	if (!intRegex.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
 
 	const { user } = await authorise(locals)
 	const id = +params.id
@@ -111,7 +111,7 @@ async function findComment<T>(
 	const id = url.searchParams.get("id")
 	if (!id) error(400, "Missing comment id")
 	// Prevents incorrect ids erroring the Surreal query as well
-	if (!idTest(id)) error(400, "Invalid comment id")
+	if (!idRegex.test(id)) error(400, "Invalid comment id")
 
 	const [[comment]] = await equery<T[][]>(input, {
 		assetComment: new RecordId("assetComment", id),
@@ -143,7 +143,7 @@ type Thing = {
 	assetId: string
 }
 
-async function select(thing: string) {
+async function select(thing: RecordId) {
 	const [[got]] = await equery<Thing[][]>(
 		surrealql`
 			SELECT
@@ -160,6 +160,9 @@ async function select(thing: string) {
 async function rerender({ locals, params }: RequestEvent) {
 	await authorise(locals, 5)
 
+	if (!intRegex.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
+	const id = +params.id
+
 	const [[asset]] = await equery<
 		{
 			name: string
@@ -174,7 +177,7 @@ async function rerender({ locals, params }: RequestEvent) {
 				meta::id(id) AS id, 
 				type,
 				visibility
-			FROM ${new RecordId("asset", params.id)}`
+			FROM ${new RecordId("asset", id)}`
 	)
 	if (!asset) error(404, "Not found")
 
@@ -187,7 +190,7 @@ async function rerender({ locals, params }: RequestEvent) {
 	try {
 		await requestRender(
 			asset.type === 8 ? RenderType.Model : RenderType.Clothing,
-			+params.id
+			id
 		)
 		return {
 			icon: `/avatarshop/${asset.id}/${
@@ -215,7 +218,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	if (!content)
 		return formError(form, ["content"], ["Comment cannot be empty"])
 
-	if (commentId && !idTest(commentId)) error(400, "Invalid comment id")
+	if (commentId && !idRegex.test(commentId)) error(400, "Invalid comment id")
 
 	const [[commentAuthor]] = await equery<{ id: string }[][]>(
 		commentId
@@ -277,11 +280,11 @@ actions.like = async ({ request, locals, url }) => {
 	const id = url.searchParams.get("id")
 	const commentId = url.searchParams.get("rid")
 
-	if (commentId && !idTest(commentId)) error(400, "Invalid comment id")
+	if (commentId && !idRegex.test(commentId)) error(400, "Invalid comment id")
 
 	const foundAsset = id ? await find("asset", id) : null
 	const foundComment = commentId
-		? await select(`assetComment:${commentId}`)
+		? await select(new RecordId("assetComment", commentId))
 		: null
 
 	if (!foundAsset === !foundComment) error(404)

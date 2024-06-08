@@ -1,7 +1,7 @@
 import fs from "node:fs"
+import { intRegex } from "$lib/paramTests"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
-import { intTest } from "$lib/server/paramTests"
 import requestRender, { RenderType } from "$lib/server/requestRender"
 import { equery, surrealql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
@@ -201,8 +201,8 @@ export async function load({ locals, url }) {
 	await authorise(locals, 3)
 	const assetId = url.searchParams.get("assetId")
 	const version = url.searchParams.get("version")
-	if (assetId && !intTest(assetId)) error(400, "Invalid assetId")
-	if (version && !intTest(version)) error(400, "Invalid version")
+	if (assetId && !intRegex.test(assetId)) error(400, "Invalid assetId")
+	if (version && !intRegex.test(version)) error(400, "Invalid version")
 
 	const stage = assetId ? (version ? 3 : 2) : 1
 
@@ -227,7 +227,7 @@ export async function load({ locals, url }) {
 }
 
 export const actions: import("./$types").Actions = {}
-const intRegex = /\d+/
+const intRegex2 = /\d+/
 actions.autopilot = async ({ request, locals }) => {
 	await authorise(locals, 3)
 	const form = await superValidate(request, zod(schemaAuto))
@@ -259,7 +259,7 @@ actions.autopilot = async ({ request, locals }) => {
 	// Replace the shared asset URLs with the new asset IDs
 	for (const exec of cachedXml.matchAll(/(<url>.+<\/url>)/g)) {
 		const url = exec[1]
-		const id = url.match(intRegex)?.[0]
+		const id = url.match(intRegex2)?.[0]
 		if (!id) continue // shouldn't happen, let's just ignore it
 
 		const newId = shared.find(s => s.sharedId === +id)?.id

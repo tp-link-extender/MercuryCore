@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto"
-import { intTest } from "$lib/server/paramTests"
+import { intRegex } from "$lib/paramTests"
 import { SignData } from "$lib/server/sign"
 import { RecordId, equery, surrealql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
@@ -16,7 +16,7 @@ const response = (file: Buffer | string) =>
 
 export async function GET({ url }) {
 	const id = url.searchParams.get("id")
-	if (!id || !intTest(id)) error(400, "Invalid Request")
+	if (!id || !intRegex.test(id)) error(400, "Invalid Request")
 	console.log(`Serving ${id}`)
 
 	try {

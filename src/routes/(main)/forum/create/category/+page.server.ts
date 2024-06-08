@@ -14,9 +14,7 @@ const schema = z.object({
 
 export async function load({ locals }) {
 	await authorise(locals, 5)
-	return {
-		form: await superValidate(zod(schema)),
-	}
+	return { form: await superValidate(zod(schema)) }
 }
 
 export const actions: import("./$types").Actions = {}

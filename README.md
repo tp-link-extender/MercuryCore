@@ -47,16 +47,12 @@ Instructions:
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
 -   Run `docker compose up -d` to start the database
 
-To start a local dev server, run `bun --bun dev` and navigate to the link shown in the terminal (remember not to use HTTPS!). Upon saving a file, your changes will be shown in the web browser.
+To start a local dev server, run `bun -b dev` and navigate to the link shown in the terminal (remember not to use HTTPS!). Upon saving a file, your changes will be shown in the web browser.
 
 -   If you are using WSL2, the server may not correctly reflect the changes you make if the repository is stored on the Windows drive. To fix this, move the repository into a folder managed by WSL, or alternatively add the following to the default export of vite.config.ts:
 
 ```ts
-server: {
-	watch: {
-		usePolling: true,
-	},
-},
+server: { watch: { usePolling: true } },
 ```
 
 After starting a local web server, navigate to /register and make an account.
@@ -86,7 +82,7 @@ Instructions:
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
 -   Open a terminal and navigate to the directory of the repository
 -   Run `bun i -g pm2` to install pm2, the node process manager
--   Run `bun prod` to install dependencies and build the website
+-   Run `bun -b prod` to install dependencies and build the website
 -   Run `pm2 start --interpreter ~/.bun/bin/bun build` to start the website as a background process.
 
 You can run other commands to manage the process, see `pm2 --help` for more information.

@@ -1,4 +1,5 @@
-import { idTest } from "$lib/server/paramTests"
+import { idRegex } from "$lib/paramTests"
 
-export const match: import("@sveltejs/kit").ParamMatcher = param =>
-	idTest(param)
+// bind() black magic
+export const match: import("@sveltejs/kit").ParamMatcher =
+	idRegex.test.bind(idRegex)
