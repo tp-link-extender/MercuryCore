@@ -1,5 +1,3 @@
-import { load as dLoad } from "../+layout.server"
-
-export const load = dLoad
+export { load } from "../+layout.server"
 
 export const csr = false
