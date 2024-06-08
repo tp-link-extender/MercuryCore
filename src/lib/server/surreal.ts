@@ -1,23 +1,20 @@
 import { building } from "$app/environment"
-import Surreal, { surql, RecordId, type PreparedQuery } from "surrealdb.js"
+import { type PreparedQuery, RecordId, Surreal, surql } from "surrealdb.js"
 import auditLogQuery from "./auditLog.surql"
 import initQuery from "./init.surql"
+import CustomHttpEngine from "./surrealEngine.ts"
 import transactionQuery from "./transaction.surql"
 
-const db = new Surreal()
+const db = new Surreal({ engines: { http: CustomHttpEngine } })
 
 async function reconnect() {
 	await db.close() // doesn't do anything if not connected
 	console.log("connecting")
 	await db.connect("http://localhost:8000", {
-		namespace: "main",
-		database: "main",
-		auth: {
-			username: "root",
-			password: "root",
-		},
+		// namespace and database are configured in the engine
+		auth: { username: "root", password: "root" },
 	})
-	console.log("reloaded surreal")
+	console.log("reloaded", await db.version())
 }
 
 export const failed = "The query was not executed due to a failed transaction"
