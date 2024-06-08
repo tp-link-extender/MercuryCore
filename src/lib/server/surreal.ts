@@ -9,7 +9,7 @@ const db = new Surreal()
 async function reconnect() {
 	await db.close() // doesn't do anything if not connected
 	console.log("connecting")
-	await db.connect("ws://localhost:8000", {
+	await db.connect("http://localhost:8000", {
 		namespace: "main",
 		database: "main",
 		auth: {
