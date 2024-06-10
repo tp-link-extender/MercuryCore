@@ -42,6 +42,7 @@ func Logr(txt string) {
 
 func Assert(err error, txt string) {
 	// so that I don't have to write this every time
+	// todo: should only be used for fatal errors
 	if err != nil {
 		fmt.Println(err)
 		Log(c.InRed(txt))
