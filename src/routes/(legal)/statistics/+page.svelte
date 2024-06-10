@@ -1,5 +1,17 @@
 <script lang="ts">
 	export let data
+
+	const [
+		users,
+		places,
+		groups,
+		assets,
+		friendships,
+		followerships,
+		statusPosts,
+		forumPosts,
+		forumReplies
+	] = data.stats
 </script>
 
 <Head title="Statistics" />
@@ -11,66 +23,51 @@
 	<table>
 		<tr>
 			<td>Users</td>
-			<td>{data.users}</td>
+			<td>{users}</td>
 		</tr>
 		<tr>
 			<td>Places</td>
-			<td>{data.places}</td>
+			<td>{places}</td>
 		</tr>
 		<tr>
 			<td>Groups</td>
-			<td>{data.groups}</td>
+			<td>{groups}</td>
 		</tr>
 		<tr>
 			<td>Assets</td>
-			<td>{data.assets}</td>
-		</tr>
-		<tr>
-			<td><fa fa-gem /></td>
-			<td>{data.totalCurrency}</td>
-		</tr>
-		<tr>
-			<td>Transactions</td>
-			<td>{data.transactions}</td>
+			<td>{assets}</td>
 		</tr>
 		<tr>
 			<td>Friendships</td>
-			<td>{data.friendships}</td>
+			<td>{friendships}</td>
 		</tr>
 		<tr>
 			<td>Followerships</td>
-			<td>{data.followerships}</td>
+			<td>{followerships}</td>
 		</tr>
 		<tr>
 			<td>Status posts</td>
-			<td>{data.statusPosts}</td>
+			<td>{statusPosts}</td>
 		</tr>
 		<tr>
 			<td>Forum posts</td>
-			<td>{data.forumPosts}</td>
+			<td>{forumPosts}</td>
 		</tr>
 		<tr>
 			<td>Forum replies</td>
-			<td>{data.forumReplies}</td>
+			<td>{forumReplies}</td>
 		</tr>
 	</table>
 	<br />
 	<h2 class="pb-2">Average number of:</h2>
 	<table>
 		<tr>
-			<td>
-				<fa fa-gem class="pr-2" />
-				per user
-			</td>
-			<td>{data.avgCurrency?.toFixed(2)}</td>
-		</tr>
-		<tr>
 			<td>Friends per user</td>
-			<td>{(data.friendships / data.users).toFixed(2)}</td>
+			<td>{(friendships / users).toFixed(2)}</td>
 		</tr>
 		<tr>
 			<td>Followers per user</td>
-			<td>{(data.followerships / data.users).toFixed(2)}</td>
+			<td>{(followerships / users).toFixed(2)}</td>
 		</tr>
 	</table>
 </div>

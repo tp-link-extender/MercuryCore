@@ -1,8 +1,8 @@
 <script lang="ts">
-	import ProfileForm from "./Profile.svelte"
-	import AccountInfo from "./Account.svelte"
-	import PasswordForm from "./Password.svelte"
-	import StylingForm from "./Styling.svelte"
+	import Account from "./Account.svelte"
+	import Profile from "./Profile.svelte"
+	import Security from "./Security.svelte"
+	import Styling from "./Styling.svelte"
 
 	export let data
 	const { user } = data
@@ -29,7 +29,7 @@
 	<Tab {tabData}>
 		<h2 class="text-xl">User Profile</h2>
 		<p class="grey-text pb-6">Change your bio, site theme and more.</p>
-		<ProfileForm {data} />
+		<Profile {data} />
 	</Tab>
 
 	<Tab {tabData}>
@@ -38,16 +38,20 @@
 			Information about your account, you can change certain aspects of it
 			here.
 		</p>
-		<AccountInfo {data} />
+		<Account {data} />
 	</Tab>
 
 	<Tab {tabData}>
-		<h2 class="text-xl pb-4">Change Password</h2>
-		<PasswordForm {data} />
+		<h2 class="text-xl">Account Security</h2>
+		<p class="grey-text pb-6">
+			Ensure your account is secure by changing your password and other
+			security settings.
+		</p>
+		<Security {data} />
 	</Tab>
 
 	<Tab {tabData}>
 		<h2 class="text-xl pb-4">Styling</h2>
-		<StylingForm {data} />
+		<Styling {data} />
 	</Tab>
 </div>

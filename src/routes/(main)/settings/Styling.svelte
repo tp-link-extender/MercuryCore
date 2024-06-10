@@ -19,17 +19,19 @@
 		placeholder="Maximum 10000 characters"
 		help="This styling will be applied to every page, only for you. Maximum 10 000 characters." />
 
-	<button
-		class="btn btn-secondary"
-		on:click|preventDefault={() => {
-			if (!$form.css) return
-			const style = document.getElementById("custom-css")
-			console.log(style)
-			if (!style) return
-			style.id = "custom-css"
-			style.innerHTML = $form.css.replaceAll(";", " !important;")
-			document.head.appendChild(style)
-		}}>
-		Preview
-	</button>
+	<span class="pr-2">
+		<button
+			class="btn btn-secondary"
+			on:click|preventDefault={() => {
+				if (!$form.css) return
+				const style = document.getElementById("custom-css")
+				console.log(style)
+				if (!style) return
+				style.id = "custom-css"
+				style.innerHTML = $form.css.replaceAll(";", " !important;")
+				document.head.appendChild(style)
+			}}>
+			Preview
+		</button>
+	</span>
 </Form>

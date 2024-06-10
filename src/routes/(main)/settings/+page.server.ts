@@ -20,11 +20,18 @@ const stylingSchema = z.object({
 	css: z.string().max(10000).optional(),
 })
 
-export const load = async () => ({
-	profileForm: await superValidate(zod(profileSchema)),
-	passwordForm: await superValidate(zod(passwordSchema)),
-	stylingForm: await superValidate(zod(stylingSchema)),
-})
+export async function load({ locals }) {
+	const { user } = await authorise(locals)
+
+	return {
+		profileForm: await superValidate(zod(profileSchema)),
+		passwordForm: await superValidate(zod(passwordSchema)),
+		stylingForm: await superValidate(zod(stylingSchema)),
+		privateKey: new Bun.CryptoHasher("sha256")
+			.update(user.username)
+			.digest("hex"), // lolololol
+	}
+}
 
 export const actions: import("./$types").Actions = {}
 actions.profile = async ({ request, locals }) => {
