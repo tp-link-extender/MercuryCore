@@ -9,7 +9,7 @@
 <form use:enhance method="POST" action="?/ticket&tab=Network">
 	<fieldset class="flex flex-wrap pb-4">
 		<label for="ticket" class="w-full md:w-1/4 text-md-right">
-			Server Ticket
+			Server ticket
 		</label>
 		<div class="w-full md:w-3/4">
 			<div class="input-group">

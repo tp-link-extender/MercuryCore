@@ -6,14 +6,18 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"sort"
+	"slices"
 	"strings"
 	"time"
 
 	c "github.com/TwiN/go-color"
+	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
-const filepath = "../data/ledger" // jsonl file
+const (
+	alphabet = "0123456789abcdefghijklmnopqrstuvwxyz"
+	filepath = "../data/ledger" // jsonl file
+)
 
 func Log(txt string) {
 	// I HATE GO DATE FORMATTING!!! I HATE GO DATE FORMATTING!!!
@@ -60,8 +64,8 @@ func PrintRichest() {
 	}
 
 	// sort
-	sort.Slice(sorted, func(i, j int) bool {
-		return sorted[i].Value > sorted[j].Value
+	slices.SortFunc(sorted, func(a kv, b kv) int {
+		return int(b.Value - a.Value)
 	})
 
 	// print top 10
@@ -80,10 +84,10 @@ type TxOutput struct {
 
 type Transaction struct {
 	// Transactions with From = 0 are minted coins
-	From       userNumber
-	Outputs    []TxOutput
-	Timestamp  uint64
-	Link, Note string
+	From           userNumber
+	Outputs        []TxOutput
+	Time           uint64
+	Link, Note, Id string
 }
 
 var balances = map[userNumber]currency{}
@@ -92,44 +96,54 @@ func MakeOutput(to userNumber, amount currency) TxOutput {
 	return TxOutput{To: to, Amount: amount}
 }
 
-const minFee = 50 * Milli
-
-var fee = TxOutput{To: 0, Amount: minFee}
-
 func ValidateTx(from userNumber, outputs []TxOutput) error {
 	if len(outputs) == 0 {
 		return fmt.Errorf("transaction must have at least one output")
 	}
 
 	var total currency
+	var feeIdx int
 	outs := map[userNumber]bool{}
-	for _, out := range outputs {
+	for i, out := range outputs {
 		if out.Amount == 0 {
 			return fmt.Errorf("output amount must be positive")
-		}
-		total += out.Amount
-
-		if outs[out.To] {
+		} else if outs[out.To] {
 			return fmt.Errorf("duplicate output")
 		}
 		outs[out.To] = true
 
 		if out.To == from {
 			return fmt.Errorf("circular transaction: %d -> %d", from, out.To)
+		} else if out.To == 0 {
+			feeIdx = i
+		} else {
+			total += out.Amount
 		}
-
-		if out.To == 0 && out.Amount < minFee {
-			return fmt.Errorf("fee too low")
-		}
-	}
-	if from != 0 && !outs[0] {
-		return fmt.Errorf("no fee")
-	}
-	if total > balances[from] && from != 0 {
-		return fmt.Errorf("insufficient balance")
 	}
 
+	if from != 0 {
+		if !outs[0] {
+			return fmt.Errorf("no fee")
+		}
+		fee := outputs[feeIdx].Amount
+
+		if fee < currency(float64(total)*0.3) {
+			return fmt.Errorf("fee too low, must be at least 30%% of total amount: expected %s, got %s", ToReadable(currency(float64(total)*0.3)), ToReadable(fee))
+		} else if total+fee > balances[from] {
+			return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", ToReadable(balances[from]), ToReadable(total+fee))
+		}
+	}
 	return nil
+}
+
+func AddFee(outputs []TxOutput) []TxOutput {
+	var total currency
+	for _, out := range outputs {
+		total += out.Amount
+	}
+
+	fee := currency(float64(total) * 0.3)
+	return append(outputs, TxOutput{To: 0, Amount: fee})
 }
 
 func MakeTx(from userNumber, outputs []TxOutput, link, note string) (Transaction, error) {
@@ -138,17 +152,23 @@ func MakeTx(from userNumber, outputs []TxOutput, link, note string) (Transaction
 		return Transaction{}, err
 	}
 
+	id, err := gonanoid.Generate(alphabet, 15)
+	if err != nil {
+		return Transaction{}, err
+	}
+
 	return Transaction{
-		From:      from,
-		Outputs:   outputs,
-		Timestamp: uint64(time.Now().UnixMilli()),
-		Link:      link,
-		Note:      note,
+		From:    from,
+		Outputs: outputs,
+		Time:    uint64(time.Now().UnixMilli()),
+		Link:    link,
+		Note:    note,
+		Id:      id,
 	}, nil
 }
 
 func AppendTx(file *os.File, tx Transaction) error {
-	if tx.Timestamp == 0 { // field overloading a bit
+	if tx.Time == 0 { // field overloading a bit
 		return fmt.Errorf("invalid transaction")
 	}
 
@@ -170,13 +190,7 @@ func AppendTx(file *os.File, tx Transaction) error {
 	return err
 }
 
-func main() {
-	Log(c.InYellow("Loading ledger..."))
-	// create the file if it dont exist
-	file, err := os.OpenFile(filepath, os.O_CREATE|os.O_APPEND, 0o644)
-	Assert(err, "Failed to open ledger")
-	Log(c.InGreen("Loaded!"))
-
+func CalculateBalances() {
 	// read transactions
 	bytes, err := os.ReadFile(filepath)
 	Assert(err, "Failed to read ledger")
@@ -210,7 +224,24 @@ func main() {
 			}
 		}
 	}
+}
 
-	fmt.Println(file)
-    PrintRichest()
+func main() {
+	Log(c.InYellow("Loading ledger..."))
+	// create the file if it dont exist
+	file, err := os.OpenFile(filepath, os.O_CREATE|os.O_APPEND, 0o644)
+	Assert(err, "Failed to open ledger")
+	Log(c.InGreen("Loaded!"))
+	CalculateBalances()
+
+	tx, err := MakeTx(
+		1,
+		AddFee([]TxOutput{
+			MakeOutput(2, 400*Milli),
+		}),
+		"https://mercury2.com", "test tx")
+	Assert(err, "Failed to make transaction")
+	AppendTx(file, tx)
+
+	PrintRichest()
 }

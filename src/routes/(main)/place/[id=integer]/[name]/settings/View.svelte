@@ -20,7 +20,7 @@
 	<Input
 		{formData}
 		name="icon"
-		label="Place Icon"
+		label="Place icon"
 		type="file"
 		accept="image/*" />
 	<hr class="grey-text" />

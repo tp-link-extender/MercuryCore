@@ -49,10 +49,10 @@
 
 <hr />
 
-<h3 class="text-base pb-4">Private key</h3>
+<h3 class="text-base pb-4">Account assets</h3>
 
 <div class="flex flex-wrap pb-2">
-	<label for="privateKey" class="w-full md:w-1/4">Private Key</label>
+	<label for="privateKey" class="w-full md:w-1/4">Private key</label>
 	<div class="w-full md:w-3/4">
 		<div class="input-group">
 			<input id="privateKey" type="password" {value} disabled />
