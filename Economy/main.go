@@ -14,10 +14,12 @@ import (
 	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
-const (
-	alphabet = "0123456789abcdefghijklmnopqrstuvwxyz"
-	filepath = "../data/ledger" // jsonl file
-)
+const filepath = "../data/ledger" // jsonl file
+
+func randId() string {
+	id, _ := gonanoid.Generate("0123456789abcdefghijklmnopqrstuvwxyz", 15)
+	return id
+}
 
 func Log(txt string) {
 	// I HATE GO DATE FORMATTING!!! I HATE GO DATE FORMATTING!!!
@@ -83,11 +85,18 @@ type TxOutput struct {
 }
 
 type Transaction struct {
-	// Transactions with From = 0 are minted coins
 	From           userNumber
 	Outputs        []TxOutput
+	Fee            currency
 	Time           uint64
 	Link, Note, Id string
+}
+
+type Mint struct {
+	To       userNumber
+	Amount   currency
+	Time     uint64
+	Note, Id string
 }
 
 var balances = map[userNumber]currency{}
@@ -96,15 +105,14 @@ func MakeOutput(to userNumber, amount currency) TxOutput {
 	return TxOutput{To: to, Amount: amount}
 }
 
-func ValidateTx(from userNumber, outputs []TxOutput) error {
+func ValidateTx(from userNumber, outputs []TxOutput, fee currency) error {
 	if len(outputs) == 0 {
 		return fmt.Errorf("transaction must have at least one output")
 	}
 
 	var total currency
-	var feeIdx int
 	outs := map[userNumber]bool{}
-	for i, out := range outputs {
+	for _, out := range outputs {
 		if out.Amount == 0 {
 			return fmt.Errorf("output amount must be positive")
 		} else if outs[out.To] {
@@ -114,80 +122,89 @@ func ValidateTx(from userNumber, outputs []TxOutput) error {
 
 		if out.To == from {
 			return fmt.Errorf("circular transaction: %d -> %d", from, out.To)
-		} else if out.To == 0 {
-			feeIdx = i
-		} else {
-			total += out.Amount
 		}
+		total += out.Amount
 	}
 
-	if from != 0 {
-		if !outs[0] {
-			return fmt.Errorf("no fee")
-		}
-		fee := outputs[feeIdx].Amount
-
-		if fee < currency(float64(total)*0.3) {
-			return fmt.Errorf("fee too low, must be at least 30%% of total amount: expected %s, got %s", ToReadable(currency(float64(total)*0.3)), ToReadable(fee))
-		} else if total+fee > balances[from] {
-			return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", ToReadable(balances[from]), ToReadable(total+fee))
-		}
+	if fee < currency(float64(total)*0.3) {
+		return fmt.Errorf("fee too low, must be at least 30%% of total amount: expected %s, got %s", ToReadable(currency(float64(total)*0.3)), ToReadable(fee))
+	} else if total+fee > balances[from] {
+		return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", ToReadable(balances[from]), ToReadable(total+fee))
 	}
 	return nil
 }
 
-func AddFee(outputs []TxOutput) []TxOutput {
+func ValidateMint(to userNumber, amount currency) error {
+	if amount == 0 {
+		return fmt.Errorf("mint amount must be positive")
+	}
+	return nil
+}
+
+func CalcFee(outputs []TxOutput) currency {
 	var total currency
 	for _, out := range outputs {
 		total += out.Amount
 	}
 
-	fee := currency(float64(total) * 0.3)
-	return append(outputs, TxOutput{To: 0, Amount: fee})
+	return currency(float64(total) * 0.3)
 }
 
-func MakeTx(from userNumber, outputs []TxOutput, link, note string) (Transaction, error) {
-	err := ValidateTx(from, outputs)
-	if err != nil {
-		return Transaction{}, err
-	}
-
-	id, err := gonanoid.Generate(alphabet, 15)
-	if err != nil {
-		return Transaction{}, err
-	}
-
-	return Transaction{
-		From:    from,
-		Outputs: outputs,
-		Time:    uint64(time.Now().UnixMilli()),
-		Link:    link,
-		Note:    note,
-		Id:      id,
-	}, nil
+type EventMaker struct {
+	file *os.File
 }
 
-func AppendTx(file *os.File, tx Transaction) error {
-	if tx.Time == 0 { // field overloading a bit
-		return fmt.Errorf("invalid transaction")
+func (e *EventMaker) Append(tx any, txType string) error {
+	_, err := e.file.WriteString(txType + " ")
+	if err != nil {
+		return err
+	}
+	err = json.NewEncoder(e.file).Encode(tx)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (e *EventMaker) MakeTx(from userNumber, outputs []TxOutput, fee currency, link, note string) error {
+	err := ValidateTx(from, outputs, fee)
+	if err != nil {
+		return err
 	}
 
-	for _, out := range tx.Outputs {
+	tx := Transaction{from, outputs, fee, uint64(time.Now().UnixMilli()), link, note, randId()}
+
+	err = e.Append(tx, "Transaction")
+	if err != nil {
+		return err
+	}
+
+	// successfully written
+	for _, out := range outputs {
+		balances[tx.From] -= out.Amount
 		if out.To != 0 {
 			balances[out.To] += out.Amount
 		}
-		if tx.From != 0 {
-			balances[tx.From] -= out.Amount
-		}
+	}
+	return nil
+}
+
+func (e *EventMaker) Mint(to userNumber, amount currency, note string) error {
+	err := ValidateMint(to, amount)
+	if err != nil {
+		return err
 	}
 
-	stringWriter := &strings.Builder{}
-	json.NewEncoder(stringWriter).Encode(tx)
-	str := stringWriter.String()
+	tx := Mint{to, amount, uint64(time.Now().UnixMilli()), note, randId()}
 
-	// write to file
-	_, err := file.WriteString(str)
-	return err
+	err = e.Append(tx, "Mint")
+	if err != nil {
+		return err
+	}
+
+	// successfully written
+	balances[to] += amount
+	return nil
 }
 
 func CalculateBalances() {
@@ -202,28 +219,38 @@ func CalculateBalances() {
 
 	// decode transactions
 	for _, line := range lines {
-		var tx Transaction
-		err := json.Unmarshal([]byte(line), &tx)
-		Assert(err, "Failed to decode transaction")
-		txs = append(txs, tx)
-	}
+		// split line at first space
+		parts := strings.Split(line, " ")
+		first, remaining := parts[0], strings.Join(parts[1:], " ")
 
-	// print transactions and update balances
-	println(len(txs), "transactions")
-	for _, tx := range txs {
-		for _, out := range tx.Outputs {
-			if out.To != 0 {
+		switch first {
+		case "Transaction":
+			var tx Transaction
+			err := json.Unmarshal([]byte(remaining), &tx)
+			Assert(err, "Failed to decode transaction from ledger")
+			txs = append(txs, tx)
+
+			balances[tx.From] -= tx.Fee
+			for _, out := range tx.Outputs {
 				balances[out.To] += out.Amount
-			}
-			if tx.From != 0 {
 				if out.Amount > balances[tx.From] {
 					fmt.Println("Invalid transaction in ledger")
 					os.Exit(1)
 				}
 				balances[tx.From] -= out.Amount
 			}
+		case "Mint":
+			var mint Mint
+			err := json.Unmarshal([]byte(remaining), &mint)
+			Assert(err, "Failed to decode mint from ledger")
+			balances[mint.To] += mint.Amount
+		default:
+			Log(c.InRed("Unknown transaction type in ledger"))
 		}
 	}
+
+	// print transactions and update balances
+	println(len(txs), "transactions")
 }
 
 func main() {
@@ -234,14 +261,21 @@ func main() {
 	Log(c.InGreen("Loaded!"))
 	CalculateBalances()
 
-	tx, err := MakeTx(
+	// create event maker
+	em := EventMaker{file}
+
+	err = em.Mint(1, 1*Unit, "initial mint")
+	Assert(err, "Failed to mint")
+
+	outputs := []TxOutput{
+		MakeOutput(2, 50*Milli),
+	}
+	err = em.MakeTx(
 		1,
-		AddFee([]TxOutput{
-			MakeOutput(2, 400*Milli),
-		}),
+		outputs,
+		CalcFee(outputs),
 		"https://mercury2.com", "test tx")
 	Assert(err, "Failed to make transaction")
-	AppendTx(file, tx)
 
 	PrintRichest()
 }
