@@ -33,11 +33,11 @@ var (
 
 func Log(txt string) {
 	// I HATE GO DATE FORMATTING!!! I HATE GO DATE FORMATTING!!!
-	fmt.Println(time.Now().Format("02/01/2006, 15:04:05 "), txt)
+	fmt.Println(time.Now().Format("2006/01/02, 15:04:05 "), txt)
 }
 
 func Logr(txt string) {
-	fmt.Print("\r", time.Now().Format("02/01/2006, 15:04:05  "), txt)
+	fmt.Print("\r", time.Now().Format("2006/01/02, 15:04:05  "), txt)
 }
 
 func Assert(err error, txt string) {

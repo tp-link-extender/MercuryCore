@@ -5,6 +5,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"slices"
 	"strings"
@@ -14,8 +15,6 @@ import (
 	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
-const filepath = "../data/ledger" // jsonl file
-
 func randId() string {
 	id, _ := gonanoid.Generate("0123456789abcdefghijklmnopqrstuvwxyz", 15)
 	return id
@@ -23,7 +22,7 @@ func randId() string {
 
 func Log(txt string) {
 	// I HATE GO DATE FORMATTING!!! I HATE GO DATE FORMATTING!!!
-	fmt.Println(time.Now().Format("02/01/2006, 15:04:05 "), txt)
+	fmt.Println(time.Now().Format("2006/01/02, 15:04:05 "), txt)
 }
 
 func Assert(err error, txt string) {
@@ -39,6 +38,7 @@ type (
 	currency   uint64
 )
 
+const filepath = "../data/ledger" // jsonl file
 const (
 	Micro currency = 1
 	Milli          = 1e3 * Micro
@@ -47,7 +47,9 @@ const (
 	Kilo = 1e3 * Unit
 	Mega = 1e6 * Unit
 	Giga = 1e9 * Unit
-	Tera = 1e12 * Unit // uint64 means 18 tera is the economy limit
+	Tera = 1e12 * Unit // uint64 means ~18 tera is the economy limit
+
+	minStipend = 500 * Unit
 )
 
 func ToReadable(c currency) string {
@@ -75,7 +77,7 @@ func PrintRichest() {
 		if i == 10 {
 			break
 		}
-		fmt.Printf("%d  %s\n", kv.Key, ToReadable(kv.Value))
+		fmt.Println(kv.Key, ToReadable(kv.Value))
 	}
 }
 
@@ -99,7 +101,32 @@ type Mint struct {
 	Note, Id string
 }
 
-var balances = map[userNumber]currency{}
+type Burn struct {
+	From     userNumber
+	Amount   currency
+	Time     uint64
+	Note, Id string
+}
+
+// includes both burns and fees
+type Exit struct {
+	Amount currency
+	Time   uint64
+}
+
+var (
+	file     *os.File
+	balances = map[userNumber]currency{}
+
+	// Stipends are calculated based on the amount of currency exited from the economy in the last 24 hours
+	exitsLast24h = []Exit{}
+)
+
+func appendExit(amount currency, t uint64) {
+	if t > uint64(time.Now().UnixMilli())-24*60*60*1000 {
+		exitsLast24h = append(exitsLast24h, Exit{amount, t})
+	}
+}
 
 func MakeOutput(to userNumber, amount currency) TxOutput {
 	return TxOutput{To: to, Amount: amount}
@@ -117,12 +144,10 @@ func ValidateTx(from userNumber, outputs []TxOutput, fee currency) error {
 			return fmt.Errorf("output amount must be positive")
 		} else if outs[out.To] {
 			return fmt.Errorf("duplicate output")
-		}
-		outs[out.To] = true
-
-		if out.To == from {
+		} else if out.To == from {
 			return fmt.Errorf("circular transaction: %d -> %d", from, out.To)
 		}
+		outs[out.To] = true
 		total += out.Amount
 	}
 
@@ -134,103 +159,34 @@ func ValidateTx(from userNumber, outputs []TxOutput, fee currency) error {
 	return nil
 }
 
-func ValidateMint(to userNumber, amount currency) error {
-	if amount == 0 {
-		return fmt.Errorf("mint amount must be positive")
-	}
-	return nil
-}
-
-func CalcFee(outputs []TxOutput) currency {
+func calcFee(outputs []TxOutput) currency {
 	var total currency
 	for _, out := range outputs {
 		total += out.Amount
 	}
-
 	return currency(float64(total) * 0.3)
 }
 
-type EventMaker struct {
-	file *os.File
-}
-
-func (e *EventMaker) Append(tx any, txType string) error {
-	_, err := e.file.WriteString(txType + " ")
-	if err != nil {
-		return err
-	}
-	err = json.NewEncoder(e.file).Encode(tx)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (e *EventMaker) MakeTx(from userNumber, outputs []TxOutput, fee currency, link, note string) error {
-	err := ValidateTx(from, outputs, fee)
-	if err != nil {
-		return err
-	}
-
-	tx := Transaction{from, outputs, fee, uint64(time.Now().UnixMilli()), link, note, randId()}
-
-	err = e.Append(tx, "Transaction")
-	if err != nil {
-		return err
-	}
-
-	// successfully written
-	for _, out := range outputs {
-		balances[tx.From] -= out.Amount
-		if out.To != 0 {
-			balances[out.To] += out.Amount
-		}
-	}
-	return nil
-}
-
-func (e *EventMaker) Mint(to userNumber, amount currency, note string) error {
-	err := ValidateMint(to, amount)
-	if err != nil {
-		return err
-	}
-
-	tx := Mint{to, amount, uint64(time.Now().UnixMilli()), note, randId()}
-
-	err = e.Append(tx, "Mint")
-	if err != nil {
-		return err
-	}
-
-	// successfully written
-	balances[to] += amount
-	return nil
-}
-
-func CalculateBalances() {
-	// read transactions
-	bytes, err := os.ReadFile(filepath)
-	Assert(err, "Failed to read ledger")
+func calcBalances() {
+	bytes, err := io.ReadAll(file)
+	Assert(err, "Failed to read from ledger")
 
 	lines := strings.Split(string(bytes), "\n")
 	lines = lines[:len(lines)-1] // remove last empty line
 
-	var txs []Transaction
-
-	// decode transactions
+	// decode transactions, update balances
 	for _, line := range lines {
-		// split line at first space
+		// split line at first space, with the transaction type being the first part
 		parts := strings.Split(line, " ")
-		first, remaining := parts[0], strings.Join(parts[1:], " ")
-
-		switch first {
+		switch first, remaining := parts[0], strings.Join(parts[1:], " "); first {
 		case "Transaction":
 			var tx Transaction
 			err := json.Unmarshal([]byte(remaining), &tx)
 			Assert(err, "Failed to decode transaction from ledger")
-			txs = append(txs, tx)
 
 			balances[tx.From] -= tx.Fee
+			appendExit(tx.Fee, tx.Time)
+
 			for _, out := range tx.Outputs {
 				balances[out.To] += out.Amount
 				if out.Amount > balances[tx.From] {
@@ -244,38 +200,109 @@ func CalculateBalances() {
 			err := json.Unmarshal([]byte(remaining), &mint)
 			Assert(err, "Failed to decode mint from ledger")
 			balances[mint.To] += mint.Amount
+		case "Burn":
+			var burn Burn
+			err := json.Unmarshal([]byte(remaining), &burn)
+			Assert(err, "Failed to decode burn from ledger")
+
+			balances[burn.From] -= burn.Amount
+			appendExit(burn.Amount, burn.Time)
 		default:
 			Log(c.InRed("Unknown transaction type in ledger"))
 		}
 	}
+}
 
-	// print transactions and update balances
-	println(len(txs), "transactions")
+func calcStipend() currency {
+	total := minStipend
+	var toRemove int
+	for _, exit := range exitsLast24h {
+		// remove exits older than 24 hours
+		if exit.Time > uint64(time.Now().UnixMilli())-24*60*60*1000 {
+			toRemove++
+		} else {
+			total += exit.Amount
+		}
+	}
+	exitsLast24h = exitsLast24h[toRemove:]
+	return total
+}
+
+func appendEvent(e any, eType string) error {
+	file.WriteString(eType + " ") // Lol good luck error handling this
+	return json.NewEncoder(file).Encode(e)
+}
+
+func transact(from userNumber, outputs []TxOutput, fee currency, link, note string) error {
+	if err := ValidateTx(from, outputs, fee); err != nil {
+		return err
+	} else if err := appendEvent(
+		Transaction{from, outputs, fee, uint64(time.Now().UnixMilli()), link, note, randId()},
+		"Transaction",
+	); err != nil {
+		return err
+	}
+
+	// successfully written
+	for _, out := range outputs {
+		balances[from] -= out.Amount
+		if out.To != 0 {
+			balances[out.To] += out.Amount
+		}
+	}
+	return nil
+}
+
+func mint(to userNumber, amount currency, note string) error {
+	if amount == 0 {
+		return fmt.Errorf("mint amount must be positive")
+	} else if err := appendEvent(
+		Mint{to, amount, uint64(time.Now().UnixMilli()), note, randId()},
+		"Mint",
+	); err != nil {
+		return err
+	}
+
+	// successfully written
+	balances[to] += amount
+	return nil
+}
+
+func stipend(to userNumber) error {
+	return mint(
+		to,
+		calcStipend(),
+		"Stipend",
+	)
+}
+
+func burn(from userNumber, amount currency, note string) error {
+	if amount == 0 {
+		return fmt.Errorf("burn amount must be positive")
+	} else if amount > balances[from] {
+		return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", ToReadable(balances[from]), ToReadable(amount))
+	} else if err := appendEvent(
+		Burn{from, amount, uint64(time.Now().UnixMilli()), note, randId()},
+		"Burn",
+	); err != nil {
+		return err
+	}
+
+	// successfully written
+	balances[from] -= amount
+	return nil
 }
 
 func main() {
 	Log(c.InYellow("Loading ledger..."))
 	// create the file if it dont exist
-	file, err := os.OpenFile(filepath, os.O_CREATE|os.O_APPEND, 0o644)
+	var err error
+	file, err = os.OpenFile(filepath, os.O_CREATE|os.O_APPEND, 0o644)
 	Assert(err, "Failed to open ledger")
-	Log(c.InGreen("Loaded!"))
-	CalculateBalances()
-
-	// create event maker
-	em := EventMaker{file}
-
-	err = em.Mint(1, 1*Unit, "initial mint")
-	Assert(err, "Failed to mint")
-
-	outputs := []TxOutput{
-		MakeOutput(2, 50*Milli),
-	}
-	err = em.MakeTx(
-		1,
-		outputs,
-		CalcFee(outputs),
-		"https://mercury2.com", "test tx")
-	Assert(err, "Failed to make transaction")
+	defer file.Close()
+	calcBalances()
 
 	PrintRichest()
+
+	println("\nCurrent stipend ", ToReadable(calcStipend()))
 }
