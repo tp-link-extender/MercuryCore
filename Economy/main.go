@@ -15,9 +15,9 @@ import (
 	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
-func randId() string {
-	id, _ := gonanoid.Generate("0123456789abcdefghijklmnopqrstuvwxyz", 15)
-	return id
+func randId() (id string) {
+	id, _ = gonanoid.Generate("0123456789abcdefghijklmnopqrstuvwxyz", 15)
+	return
 }
 
 func Log(txt string) {
@@ -34,22 +34,28 @@ func Assert(err error, txt string) {
 }
 
 type (
-	userNumber uint32
+	// uint64 is overkill? idgaf
+	userNumber uint64
 	currency   uint64
+	asset      uint64
 )
 
-const filepath = "../data/ledger" // jsonl file
 const (
+	filepath = "../data/ledger" // jsonl file
+
 	Micro currency = 1
 	Milli          = 1e3 * Micro
 	Unit           = 1e6 * Micro // standard unit
+	Kilo           = 1e3 * Unit
+	Mega           = 1e6 * Unit
+	Giga           = 1e9 * Unit
+	Tera           = 1e12 * Unit // uint64 means ~18 tera is the economy limit
 
-	Kilo = 1e3 * Unit
-	Mega = 1e6 * Unit
-	Giga = 1e9 * Unit
-	Tera = 1e12 * Unit // uint64 means ~18 tera is the economy limit
-
-	minStipend = 500 * Unit
+	// Target Currency per User, the economy size will try to be this * userCount()
+	// By "user", I mean every user who has ever transacted with the economy
+	TCU         = float64(100 * Unit)
+	baseStipend = float64(10 * Unit)
+	baseFee     = 0.1
 )
 
 func ToReadable(c currency) string {
@@ -92,6 +98,7 @@ type Transaction struct {
 	Fee            currency
 	Time           uint64
 	Link, Note, Id string
+	Returns        []asset
 }
 
 type Mint struct {
@@ -106,6 +113,7 @@ type Burn struct {
 	Amount   currency
 	Time     uint64
 	Note, Id string
+	Returns  []asset
 }
 
 // includes both burns and fees
@@ -117,16 +125,7 @@ type Exit struct {
 var (
 	file     *os.File
 	balances = map[userNumber]currency{}
-
-	// Stipends are calculated based on the amount of currency exited from the economy in the last 24 hours
-	exitsLast24h = []Exit{}
 )
-
-func appendExit(amount currency, t uint64) {
-	if t > uint64(time.Now().UnixMilli())-24*60*60*1000 {
-		exitsLast24h = append(exitsLast24h, Exit{amount, t})
-	}
-}
 
 func MakeOutput(to userNumber, amount currency) TxOutput {
 	return TxOutput{To: to, Amount: amount}
@@ -151,12 +150,41 @@ func ValidateTx(from userNumber, outputs []TxOutput, fee currency) error {
 		total += out.Amount
 	}
 
-	if fee < currency(float64(total)*0.3) {
-		return fmt.Errorf("fee too low, must be at least 30%% of total amount: expected %s, got %s", ToReadable(currency(float64(total)*0.3)), ToReadable(fee))
-	} else if total+fee > balances[from] {
+	if total+fee > balances[from] {
 		return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", ToReadable(balances[from]), ToReadable(total+fee))
 	}
 	return nil
+}
+
+func userCount() (users int) {
+	for range balances {
+		users++
+	}
+	return
+}
+
+func economySize() (size currency) {
+	for _, v := range balances {
+		size += v
+	}
+	return
+}
+
+// Current Currency per User
+func calcCCU() float64 {
+	return float64(economySize()) / float64(userCount())
+}
+
+// If the economy is too small, stipends will increase
+// If the economy is near or above desired size, stipends will be baseStipend
+func calcStipend() currency {
+	return currency(max((TCU-calcCCU()+baseStipend) / 2, baseStipend))
+}
+
+// If the economy is too large, fees will increase
+// If the economy is near or below desired size, fees will be baseFee
+func calcFeePercentage() float64 {
+	return max((1 + (calcCCU()*0.9-TCU)/TCU * 4) * baseFee, baseFee)
 }
 
 func calcFee(outputs []TxOutput) currency {
@@ -164,7 +192,7 @@ func calcFee(outputs []TxOutput) currency {
 	for _, out := range outputs {
 		total += out.Amount
 	}
-	return currency(float64(total) * 0.3)
+	return currency(float64(total) * calcFeePercentage())
 }
 
 func calcBalances() {
@@ -185,8 +213,6 @@ func calcBalances() {
 			Assert(err, "Failed to decode transaction from ledger")
 
 			balances[tx.From] -= tx.Fee
-			appendExit(tx.Fee, tx.Time)
-
 			for _, out := range tx.Outputs {
 				balances[out.To] += out.Amount
 				if out.Amount > balances[tx.From] {
@@ -206,26 +232,10 @@ func calcBalances() {
 			Assert(err, "Failed to decode burn from ledger")
 
 			balances[burn.From] -= burn.Amount
-			appendExit(burn.Amount, burn.Time)
 		default:
 			Log(c.InRed("Unknown transaction type in ledger"))
 		}
 	}
-}
-
-func calcStipend() currency {
-	total := minStipend
-	var toRemove int
-	for _, exit := range exitsLast24h {
-		// remove exits older than 24 hours
-		if exit.Time > uint64(time.Now().UnixMilli())-24*60*60*1000 {
-			toRemove++
-		} else {
-			total += exit.Amount
-		}
-	}
-	exitsLast24h = exitsLast24h[toRemove:]
-	return total
 }
 
 func appendEvent(e any, eType string) error {
@@ -237,7 +247,7 @@ func transact(from userNumber, outputs []TxOutput, fee currency, link, note stri
 	if err := ValidateTx(from, outputs, fee); err != nil {
 		return err
 	} else if err := appendEvent(
-		Transaction{from, outputs, fee, uint64(time.Now().UnixMilli()), link, note, randId()},
+		Transaction{from, outputs, fee, uint64(time.Now().UnixMilli()), link, note, randId(), []asset{}},
 		"Transaction",
 	); err != nil {
 		return err
@@ -282,7 +292,7 @@ func burn(from userNumber, amount currency, note string) error {
 	} else if amount > balances[from] {
 		return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", ToReadable(balances[from]), ToReadable(amount))
 	} else if err := appendEvent(
-		Burn{from, amount, uint64(time.Now().UnixMilli()), note, randId()},
+		Burn{from, amount, uint64(time.Now().UnixMilli()), note, randId(), []asset{}},
 		"Burn",
 	); err != nil {
 		return err
@@ -303,6 +313,11 @@ func main() {
 	calcBalances()
 
 	PrintRichest()
-
-	println("\nCurrent stipend ", ToReadable(calcStipend()))
+	println()
+	println("User count    ", userCount())
+	println("Economy size  ", ToReadable(economySize()))
+	println("CCU           ", ToReadable(currency(calcCCU())))
+	println("TCU           ", ToReadable(currency(TCU)))
+	println("Fee percentage", int(calcFeePercentage()*100))
+	println("Stipend size  ", ToReadable(calcStipend()))
 }
