@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math"
+	"net/http"
 	"os"
 	"slices"
 	"strings"
@@ -116,12 +118,6 @@ type Burn struct {
 	Returns  []asset
 }
 
-// includes both burns and fees
-type Exit struct {
-	Amount currency
-	Time   uint64
-}
-
 var (
 	file     *os.File
 	balances = map[userNumber]currency{}
@@ -172,19 +168,23 @@ func economySize() (size currency) {
 
 // Current Currency per User
 func calcCCU() float64 {
-	return float64(economySize()) / float64(userCount())
+	ccu := float64(economySize()) / float64(userCount())
+	if math.IsNaN(ccu) { // Division by zero causes overflowz
+		return 0
+	}
+	return ccu
 }
 
 // If the economy is too small, stipends will increase
 // If the economy is near or above desired size, stipends will be baseStipend
 func calcStipend() currency {
-	return currency(max((TCU-calcCCU()+baseStipend) / 2, baseStipend))
+	return currency(max((TCU-calcCCU()+baseStipend)/2, baseStipend))
 }
 
 // If the economy is too large, fees will increase
 // If the economy is near or below desired size, fees will be baseFee
 func calcFeePercentage() float64 {
-	return max((1 + (calcCCU()*0.9-TCU)/TCU * 4) * baseFee, baseFee)
+	return max((1+(calcCCU()*0.9-TCU)/TCU*4)*baseFee, baseFee)
 }
 
 func calcFee(outputs []TxOutput) currency {
@@ -195,17 +195,16 @@ func calcFee(outputs []TxOutput) currency {
 	return currency(float64(total) * calcFeePercentage())
 }
 
-func calcBalances() {
+func updateBalances() {
 	bytes, err := io.ReadAll(file)
 	Assert(err, "Failed to read from ledger")
 
 	lines := strings.Split(string(bytes), "\n")
-	lines = lines[:len(lines)-1] // remove last empty line
 
-	// decode transactions, update balances
-	for _, line := range lines {
+	for _, line := range lines[:len(lines)-1] { // remove last empty line
 		// split line at first space, with the transaction type being the first part
 		parts := strings.Split(line, " ")
+
 		switch first, remaining := parts[0], strings.Join(parts[1:], " "); first {
 		case "Transaction":
 			var tx Transaction
@@ -225,12 +224,17 @@ func calcBalances() {
 			var mint Mint
 			err := json.Unmarshal([]byte(remaining), &mint)
 			Assert(err, "Failed to decode mint from ledger")
+
 			balances[mint.To] += mint.Amount
 		case "Burn":
 			var burn Burn
 			err := json.Unmarshal([]byte(remaining), &burn)
 			Assert(err, "Failed to decode burn from ledger")
 
+			if burn.Amount > balances[burn.From] {
+				fmt.Println("Invalid burn in ledger")
+				os.Exit(1)
+			}
 			balances[burn.From] -= burn.Amount
 		default:
 			Log(c.InRed("Unknown transaction type in ledger"))
@@ -310,7 +314,7 @@ func main() {
 	file, err = os.OpenFile(filepath, os.O_CREATE|os.O_APPEND, 0o644)
 	Assert(err, "Failed to open ledger")
 	defer file.Close()
-	calcBalances()
+	updateBalances()
 
 	PrintRichest()
 	println()
@@ -320,4 +324,13 @@ func main() {
 	println("TCU           ", ToReadable(currency(TCU)))
 	println("Fee percentage", int(calcFeePercentage()*100))
 	println("Stipend size  ", ToReadable(calcStipend()))
+
+	router := http.NewServeMux()
+
+	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Mercury Economy service")
+	})
+
+	Log(c.InGreen("~ Economy service is up on port 2009 ~"))
+	http.ListenAndServe(":2009", router) // 03/Jan/2009 Chancellor on brink of second bailout for banks
 }

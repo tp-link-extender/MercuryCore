@@ -59,6 +59,14 @@ func StartRCC() {
 	}
 }
 
+func TestRCCStarted(loaded *bool, t int) {
+	Logr(c.InPurple(fmt.Sprintf("Waiting for RCCService to start... (%ds)", t)))
+	_, err := http.Get("http://localhost:64989")
+	if err == nil {
+		*loaded = true
+	}
+}
+
 func Compress(b64 string, resolution int, name string, compressed *string) {
 	data, err := base64.StdEncoding.DecodeString(b64)
 	Assert(err, "Failed to decode base64 of image")
@@ -91,13 +99,9 @@ func main() {
 	Log(c.InPurple("Starting RCCService..."))
 	go StartRCC()
 
-	for i := 1; ; i++ {
-		time.Sleep(1 * time.Second)
-		Logr(c.InPurple("Waiting for RCCService to start... (" + fmt.Sprint(i) + "s)"))
-		_, err := http.Get("http://localhost:64989")
-		if err == nil {
-			break
-		}
+	loaded := false
+	for startTime := time.Now(); !loaded; time.Sleep(100 * time.Millisecond) {
+		go TestRCCStarted(&loaded, int(time.Since(startTime).Seconds()))
 	}
 
 	fmt.Println()
@@ -116,8 +120,7 @@ func main() {
 		loadScript, err := io.ReadAll(r.Body)
 		Assert(err, "Failed to read render script")
 
-		script := string(loadScript)
-		script = strings.ReplaceAll(script, "_PING_URL", "http://localhost:64990/ping")
+		script := strings.ReplaceAll(string(loadScript), "_PING_URL", "http://localhost:64990/ping")
 
 		id := r.PathValue("id")
 		currentTemplate := strings.ReplaceAll(template, "_TASK_ID", id)
@@ -188,7 +191,7 @@ func main() {
 
 		// Send to server as base64
 		// todo make it multipart/form-data or something for lower bandwidth
-		endpoint := os.Getenv("ENDPOINT") + "/" + id + "?apiKey=" + apiKey
+		endpoint := fmt.Sprintf("%s/%s?apiKey=%s", os.Getenv("ENDPOINT"), id, apiKey)
 		// We (still) have to lie about the contentType to avoid being nuked by CORS from the website
 		_, err = http.Post(endpoint, "text/json", strings.NewReader(strings.Join(compressed, "\n")))
 		Assert(err, "Failed to send render data to server")
