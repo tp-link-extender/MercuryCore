@@ -1,4 +1,5 @@
 // Mercury Economy service
+// I'm NOT calling this "ECS"
 
 package main
 
@@ -94,28 +95,40 @@ type TxOutput struct {
 	Amount currency
 }
 
-type Transaction struct {
-	From           userNumber
-	Outputs        []TxOutput
-	Fee            currency
-	Time           uint64
-	Link, Note, Id string
-	Returns        []asset
+type SentTx struct {
+	From       userNumber
+	Outputs    []TxOutput
+	Link, Note string // Transaction links might be a bit of an ass backwards concept for now but ion care
+	Returns    []asset
+}
+type Tx struct {
+	SentTx
+	Fee  currency
+	Time uint64
+	Id   string
 }
 
+type SentMint struct {
+	To     userNumber
+	Amount currency
+	Note   string
+}
 type Mint struct {
-	To       userNumber
-	Amount   currency
-	Time     uint64
-	Note, Id string
+	SentMint
+	Time uint64
+	Id   string
 }
 
+type SentBurn struct {
+	From       userNumber
+	Amount     currency
+	Note, Link string
+	Returns    []asset
+}
 type Burn struct {
-	From     userNumber
-	Amount   currency
-	Time     uint64
-	Note, Id string
-	Returns  []asset
+	SentBurn
+	Time uint64
+	Id   string
 }
 
 var (
@@ -127,27 +140,59 @@ func MakeOutput(to userNumber, amount currency) TxOutput {
 	return TxOutput{To: to, Amount: amount}
 }
 
-func ValidateTx(from userNumber, outputs []TxOutput, fee currency) error {
-	if len(outputs) == 0 {
+func ValidateTx(sent SentTx, fee currency) error {
+	if len(sent.Outputs) == 0 {
 		return fmt.Errorf("transaction must have at least one output")
+	} else if sent.From == 0 {
+		return fmt.Errorf("transaction must have a sender")
+	} else if sent.Note == "" {
+		return fmt.Errorf("transaction must have a note")
+	} else if sent.Link == "" {
+		return fmt.Errorf("transaction must have a link")
 	}
 
 	var total currency
 	outs := map[userNumber]bool{}
-	for _, out := range outputs {
+	for _, out := range sent.Outputs {
 		if out.Amount == 0 {
-			return fmt.Errorf("output amount must be positive")
+			return fmt.Errorf("output must have an amount")
+		} else if out.To == 0 {
+			return fmt.Errorf("output must have a recipient")
 		} else if outs[out.To] {
 			return fmt.Errorf("duplicate output")
-		} else if out.To == from {
-			return fmt.Errorf("circular transaction: %d -> %d", from, out.To)
+		} else if out.To == sent.From {
+			return fmt.Errorf("circular transaction: %d -> %d", sent.From, out.To)
 		}
 		outs[out.To] = true
 		total += out.Amount
 	}
 
-	if total+fee > balances[from] {
-		return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", ToReadable(balances[from]), ToReadable(total+fee))
+	if total+fee > balances[sent.From] {
+		return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", ToReadable(balances[sent.From]), ToReadable(total+fee))
+	}
+	return nil
+}
+
+func ValidateMint(sent SentMint) error {
+	if sent.Amount == 0 {
+		return fmt.Errorf("mint amount must be positive")
+	} else if sent.To == 0 {
+		return fmt.Errorf("mint must have a recipient")
+	} else if sent.Note == "" {
+		return fmt.Errorf("mint must have a note")
+	}
+	return nil
+}
+
+func ValidateBurn(sent SentBurn) error {
+	if sent.Amount == 0 {
+		return fmt.Errorf("burn amount must be positive")
+	} else if sent.Amount > balances[sent.From] {
+		return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", ToReadable(balances[sent.From]), ToReadable(sent.Amount))
+	} else if sent.Note == "" {
+		return fmt.Errorf("burn must have a note")
+	} else if sent.Link == "" {
+		return fmt.Errorf("burn must have a link")
 	}
 	return nil
 }
@@ -200,14 +245,13 @@ func updateBalances() {
 	Assert(err, "Failed to read from ledger")
 
 	lines := strings.Split(string(bytes), "\n")
-
 	for _, line := range lines[:len(lines)-1] { // remove last empty line
 		// split line at first space, with the transaction type being the first part
 		parts := strings.Split(line, " ")
 
 		switch first, remaining := parts[0], strings.Join(parts[1:], " "); first {
 		case "Transaction":
-			var tx Transaction
+			var tx Tx
 			err := json.Unmarshal([]byte(remaining), &tx)
 			Assert(err, "Failed to decode transaction from ledger")
 
@@ -247,19 +291,20 @@ func appendEvent(e any, eType string) error {
 	return json.NewEncoder(file).Encode(e)
 }
 
-func transact(from userNumber, outputs []TxOutput, fee currency, link, note string) error {
-	if err := ValidateTx(from, outputs, fee); err != nil {
+func transact(sent SentTx) error {
+	fee := calcFee(sent.Outputs)
+	if err := ValidateTx(sent, fee); err != nil {
 		return err
 	} else if err := appendEvent(
-		Transaction{from, outputs, fee, uint64(time.Now().UnixMilli()), link, note, randId(), []asset{}},
+		Tx{sent, fee, uint64(time.Now().UnixMilli()), randId()},
 		"Transaction",
 	); err != nil {
 		return err
 	}
 
 	// successfully written
-	for _, out := range outputs {
-		balances[from] -= out.Amount
+	for _, out := range sent.Outputs {
+		balances[sent.From] -= out.Amount
 		if out.To != 0 {
 			balances[out.To] += out.Amount
 		}
@@ -267,44 +312,42 @@ func transact(from userNumber, outputs []TxOutput, fee currency, link, note stri
 	return nil
 }
 
-func mint(to userNumber, amount currency, note string) error {
-	if amount == 0 {
-		return fmt.Errorf("mint amount must be positive")
+func mint(sent SentMint) error {
+	if err := ValidateMint(sent); err != nil {
+		return err
 	} else if err := appendEvent(
-		Mint{to, amount, uint64(time.Now().UnixMilli()), note, randId()},
+		Mint{sent, uint64(time.Now().UnixMilli()), randId()},
 		"Mint",
 	); err != nil {
 		return err
 	}
 
 	// successfully written
-	balances[to] += amount
+	balances[sent.To] += sent.Amount
 	return nil
 }
 
-func stipend(to userNumber) error {
-	return mint(
-		to,
-		calcStipend(),
-		"Stipend",
-	)
-}
-
-func burn(from userNumber, amount currency, note string) error {
-	if amount == 0 {
-		return fmt.Errorf("burn amount must be positive")
-	} else if amount > balances[from] {
-		return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", ToReadable(balances[from]), ToReadable(amount))
+func burn(sent SentBurn) error {
+	if err := ValidateBurn(sent); err != nil {
+		return err
 	} else if err := appendEvent(
-		Burn{from, amount, uint64(time.Now().UnixMilli()), note, randId(), []asset{}},
+		Burn{sent, uint64(time.Now().UnixMilli()), randId()},
 		"Burn",
 	); err != nil {
 		return err
 	}
 
 	// successfully written
-	balances[from] -= amount
+	balances[sent.From] -= sent.Amount
 	return nil
+}
+
+func stipend(to userNumber) error {
+	return mint(SentMint{
+		to,
+		calcStipend(),
+		"Stipend",
+	})
 }
 
 func main() {
@@ -327,8 +370,25 @@ func main() {
 
 	router := http.NewServeMux()
 
-	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Mercury Economy service")
+	router.HandleFunc("GET /currentFee", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, calcFeePercentage())
+	})
+	router.HandleFunc("GET /currentStipend", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, calcStipend())
+	})
+	router.HandleFunc("POST /transact", func(w http.ResponseWriter, r *http.Request) {
+		// decode json body
+		var sentTx SentTx
+
+		if err := json.NewDecoder(r.Body).Decode(&sentTx); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		if err = transact(sentTx); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 	})
 
 	Log(c.InGreen("~ Economy service is up on port 2009 ~"))

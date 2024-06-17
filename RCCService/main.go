@@ -165,9 +165,10 @@ func main() {
 
 		var compressed []string
 
-		if status == "Rendering" {
+		switch status {
+		case "Rendering":
 			Log(c.InGreen("Render " + id + " is rendering"))
-		} else if status == "Completed" {
+		case "Completed":
 			num := len(data) - 1
 			wg.Add(num)
 
