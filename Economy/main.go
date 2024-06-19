@@ -59,6 +59,7 @@ const (
 	TCU         = float64(100 * Unit)
 	baseStipend = float64(10 * Unit)
 	baseFee     = 0.1
+	stipendTime = 12 * 60 * 60 * 1000
 )
 
 func ToReadable(c currency) string {
@@ -90,20 +91,19 @@ func PrintRichest() {
 	}
 }
 
-type TxOutput struct {
-	To     userNumber
-	Amount currency
-}
-
+// For now, transaction outputs are overkill
+// Since fees are stored as a separate value and are burned, I can't see a reason for them to exist for now
+// UTXOs lmao
 type SentTx struct {
 	From       userNumber
-	Outputs    []TxOutput
+	To         userNumber
+	Amount     currency
 	Link, Note string // Transaction links might be a bit of an ass backwards concept for now but ion care
 	Returns    []asset
 }
 type Tx struct {
 	SentTx
-	Fee  currency
+	Fee  currency // we ?could? store the fee as a percentage of the amount instead, unclear atm if it's worth it
 	Time uint64
 	Id   string
 }
@@ -132,69 +132,54 @@ type Burn struct {
 }
 
 var (
-	file     *os.File
-	balances = map[userNumber]currency{}
+	file         *os.File
+	balances     = map[userNumber]currency{}
+	prevStipends = map[userNumber]uint64{}
 )
 
-func MakeOutput(to userNumber, amount currency) TxOutput {
-	return TxOutput{To: to, Amount: amount}
-}
-
-func ValidateTx(sent SentTx, fee currency) error {
-	if len(sent.Outputs) == 0 {
-		return fmt.Errorf("transaction must have at least one output")
+func ValidateTx(sent SentTx, fee currency) (e error) {
+	if sent.Amount == 0 {
+		e = fmt.Errorf("transaction must have an amount")
 	} else if sent.From == 0 {
-		return fmt.Errorf("transaction must have a sender")
-	} else if sent.Note == "" {
-		return fmt.Errorf("transaction must have a note")
-	} else if sent.Link == "" {
-		return fmt.Errorf("transaction must have a link")
-	}
-
-	var total currency
-	outs := map[userNumber]bool{}
-	for _, out := range sent.Outputs {
-		if out.Amount == 0 {
-			return fmt.Errorf("output must have an amount")
-		} else if out.To == 0 {
-			return fmt.Errorf("output must have a recipient")
-		} else if outs[out.To] {
-			return fmt.Errorf("duplicate output")
-		} else if out.To == sent.From {
-			return fmt.Errorf("circular transaction: %d -> %d", sent.From, out.To)
-		}
-		outs[out.To] = true
-		total += out.Amount
-	}
-
-	if total+fee > balances[sent.From] {
-		return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", ToReadable(balances[sent.From]), ToReadable(total+fee))
-	}
-	return nil
-}
-
-func ValidateMint(sent SentMint) error {
-	if sent.Amount == 0 {
-		return fmt.Errorf("mint amount must be positive")
+		e = fmt.Errorf("transaction must have a sender")
 	} else if sent.To == 0 {
-		return fmt.Errorf("mint must have a recipient")
+		e = fmt.Errorf("transaction must have a recipient")
+	} else if sent.To == sent.From {
+		e = fmt.Errorf("circular transaction: %d -> %d", sent.From, sent.To)
 	} else if sent.Note == "" {
-		return fmt.Errorf("mint must have a note")
+		e = fmt.Errorf("transaction must have a note")
+	} else if sent.Link == "" {
+		e = fmt.Errorf("transaction must have a link")
+	} else if total := sent.Amount + fee; total > balances[sent.From] {
+		e = fmt.Errorf("insufficient balance: balance was %s, at least %s is required", ToReadable(balances[sent.From]), ToReadable(total))
 	}
-	return nil
+	return
 }
 
-func ValidateBurn(sent SentBurn) error {
+func ValidateMint(sent SentMint) (e error) {
 	if sent.Amount == 0 {
-		return fmt.Errorf("burn amount must be positive")
-	} else if sent.Amount > balances[sent.From] {
-		return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", ToReadable(balances[sent.From]), ToReadable(sent.Amount))
+		e = fmt.Errorf("mint must have an amount")
+	} else if sent.To == 0 {
+		e = fmt.Errorf("mint must have a recipient")
 	} else if sent.Note == "" {
-		return fmt.Errorf("burn must have a note")
-	} else if sent.Link == "" {
-		return fmt.Errorf("burn must have a link")
+		e = fmt.Errorf("mint must have a note")
 	}
-	return nil
+	return
+}
+
+func ValidateBurn(sent SentBurn) (e error) {
+	if sent.Amount == 0 {
+		e = fmt.Errorf("burn must have an amount")
+	} else if sent.From == 0 {
+		e = fmt.Errorf("burn must have a sender")
+	} else if sent.Amount > balances[sent.From] {
+		e = fmt.Errorf("insufficient balance: balance was %s, at least %s is required", ToReadable(balances[sent.From]), ToReadable(sent.Amount))
+	} else if sent.Note == "" {
+		e = fmt.Errorf("burn must have a note")
+	} else if sent.Link == "" {
+		e = fmt.Errorf("burn must have a link")
+	}
+	return
 }
 
 func userCount() (users int) {
@@ -232,14 +217,6 @@ func calcFeePercentage() float64 {
 	return max((1+(calcCCU()*0.9-TCU)/TCU*4)*baseFee, baseFee)
 }
 
-func calcFee(outputs []TxOutput) currency {
-	var total currency
-	for _, out := range outputs {
-		total += out.Amount
-	}
-	return currency(float64(total) * calcFeePercentage())
-}
-
 func updateBalances() {
 	bytes, err := io.ReadAll(file)
 	Assert(err, "Failed to read from ledger")
@@ -255,21 +232,21 @@ func updateBalances() {
 			err := json.Unmarshal([]byte(remaining), &tx)
 			Assert(err, "Failed to decode transaction from ledger")
 
-			balances[tx.From] -= tx.Fee
-			for _, out := range tx.Outputs {
-				balances[out.To] += out.Amount
-				if out.Amount > balances[tx.From] {
-					fmt.Println("Invalid transaction in ledger")
-					os.Exit(1)
-				}
-				balances[tx.From] -= out.Amount
+			if tx.Amount+tx.Fee > balances[tx.From] {
+				fmt.Println("Invalid transaction in ledger")
+				os.Exit(1)
 			}
+			balances[tx.From] -= tx.Amount + tx.Fee
+			balances[tx.To] += tx.Amount
 		case "Mint":
 			var mint Mint
 			err := json.Unmarshal([]byte(remaining), &mint)
 			Assert(err, "Failed to decode mint from ledger")
 
 			balances[mint.To] += mint.Amount
+			if mint.Note == "Stipend" {
+				prevStipends[mint.To] = mint.Time
+			}
 		case "Burn":
 			var burn Burn
 			err := json.Unmarshal([]byte(remaining), &burn)
@@ -292,7 +269,7 @@ func appendEvent(e any, eType string) error {
 }
 
 func transact(sent SentTx) error {
-	fee := calcFee(sent.Outputs)
+	fee := currency(float64(sent.Amount) * calcFeePercentage())
 	if err := ValidateTx(sent, fee); err != nil {
 		return err
 	} else if err := appendEvent(
@@ -303,20 +280,16 @@ func transact(sent SentTx) error {
 	}
 
 	// successfully written
-	for _, out := range sent.Outputs {
-		balances[sent.From] -= out.Amount
-		if out.To != 0 {
-			balances[out.To] += out.Amount
-		}
-	}
+	balances[sent.From] -= sent.Amount + fee
+	balances[sent.To] += sent.Amount
 	return nil
 }
 
-func mint(sent SentMint) error {
+func mint(sent SentMint, time uint64) error {
 	if err := ValidateMint(sent); err != nil {
 		return err
 	} else if err := appendEvent(
-		Mint{sent, uint64(time.Now().UnixMilli()), randId()},
+		Mint{sent, time, randId()},
 		"Mint",
 	); err != nil {
 		return err
@@ -343,11 +316,89 @@ func burn(sent SentBurn) error {
 }
 
 func stipend(to userNumber) error {
-	return mint(SentMint{
+	time := uint64(time.Now().UnixMilli())
+	if err := mint(SentMint{
 		to,
 		calcStipend(),
 		"Stipend",
-	})
+	}, time); err != nil {
+		return err
+	}
+
+	prevStipends[to] = time
+	return nil
+}
+
+func currentFeeRoute(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, calcFeePercentage())
+}
+
+func currentStipendRoute(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, calcStipend())
+}
+
+func transactRoute(w http.ResponseWriter, r *http.Request) {
+	var sentTx SentTx
+
+	if err := json.NewDecoder(r.Body).Decode(&sentTx); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	} else if err := transact(sentTx); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	Log(c.InGreen(fmt.Sprintf("Transaction successful  %d -[%s]-> %d", sentTx.From, ToReadable(sentTx.Amount), sentTx.To)))
+}
+
+func mintRoute(w http.ResponseWriter, r *http.Request) {
+	var sentMint SentMint
+
+	if err := json.NewDecoder(r.Body).Decode(&sentMint); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	} else if err := mint(sentMint, uint64(time.Now().UnixMilli())); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	Log(c.InGreen(fmt.Sprintf("Mint successful         %d <-[%s]-", sentMint.To, ToReadable(sentMint.Amount))))
+}
+
+func burnRoute(w http.ResponseWriter, r *http.Request) {
+	var sentBurn SentBurn
+
+	if err := json.NewDecoder(r.Body).Decode(&sentBurn); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	} else if err := burn(sentBurn); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	Log(c.InGreen(fmt.Sprintf("Burn successful         %d -[%s]->", sentBurn.From, ToReadable(sentBurn.Amount))))
+}
+
+func stipendRoute(w http.ResponseWriter, r *http.Request) {
+	var to userNumber
+
+	// decode number from body
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	} else if _, err := fmt.Sscanf(string(body), "%d", &to); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	} else if prevStipends[to]+stipendTime-uint64(time.Now().UnixMilli()) > 0 {
+		http.Error(w, "Next stipend not available yet", http.StatusBadRequest)
+		return
+	} else if err := stipend(to); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	Log(c.InGreen(fmt.Sprintf("Stipend successful      %d", to)))
 }
 
 func main() {
@@ -370,26 +421,12 @@ func main() {
 
 	router := http.NewServeMux()
 
-	router.HandleFunc("GET /currentFee", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, calcFeePercentage())
-	})
-	router.HandleFunc("GET /currentStipend", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, calcStipend())
-	})
-	router.HandleFunc("POST /transact", func(w http.ResponseWriter, r *http.Request) {
-		// decode json body
-		var sentTx SentTx
-
-		if err := json.NewDecoder(r.Body).Decode(&sentTx); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		if err = transact(sentTx); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-	})
+	router.HandleFunc("GET /currentFee", currentFeeRoute)
+	router.HandleFunc("GET /currentStipend", currentStipendRoute)
+	router.HandleFunc("POST /transact", transactRoute)
+	router.HandleFunc("POST /mint", mintRoute)
+	router.HandleFunc("POST /burn", burnRoute)
+	router.HandleFunc("POST /stipend", stipendRoute)
 
 	Log(c.InGreen("~ Economy service is up on port 2009 ~"))
 	http.ListenAndServe(":2009", router) // 03/Jan/2009 Chancellor on brink of second bailout for banks
