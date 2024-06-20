@@ -69,6 +69,7 @@
 		["Forum", "/forum", "fa-messages"]
 	]
 	const usernav = [
+		["fa-money-bill-transfer", "Economy", "/economy"],
 		["fa-user-group", "Friends", "/requests"],
 		["fa-box-open-full", "Inventory", "/inventory"],
 		["fa-user-pen", "Character", "/character"],

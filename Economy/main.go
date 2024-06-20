@@ -144,7 +144,7 @@ func ValidateTx(sent SentTx, fee currency) (e error) {
 		e = fmt.Errorf("transaction must have a sender")
 	} else if sent.To == 0 {
 		e = fmt.Errorf("transaction must have a recipient")
-	} else if sent.To == sent.From {
+	} else if sent.From == sent.To {
 		e = fmt.Errorf("circular transaction: %d -> %d", sent.From, sent.To)
 	} else if sent.Note == "" {
 		e = fmt.Errorf("transaction must have a note")
@@ -229,8 +229,7 @@ func updateBalances() {
 		switch first, remaining := parts[0], strings.Join(parts[1:], " "); first {
 		case "Transaction":
 			var tx Tx
-			err := json.Unmarshal([]byte(remaining), &tx)
-			Assert(err, "Failed to decode transaction from ledger")
+			Assert(json.Unmarshal([]byte(remaining), &tx), "Failed to decode transaction from ledger")
 
 			if tx.Amount+tx.Fee > balances[tx.From] {
 				fmt.Println("Invalid transaction in ledger")
@@ -240,8 +239,7 @@ func updateBalances() {
 			balances[tx.To] += tx.Amount
 		case "Mint":
 			var mint Mint
-			err := json.Unmarshal([]byte(remaining), &mint)
-			Assert(err, "Failed to decode mint from ledger")
+			Assert(json.Unmarshal([]byte(remaining), &mint), "Failed to decode mint from ledger")
 
 			balances[mint.To] += mint.Amount
 			if mint.Note == "Stipend" {
@@ -249,8 +247,7 @@ func updateBalances() {
 			}
 		case "Burn":
 			var burn Burn
-			err := json.Unmarshal([]byte(remaining), &burn)
-			Assert(err, "Failed to decode burn from ledger")
+			Assert(json.Unmarshal([]byte(remaining), &burn), "Failed to decode burn from ledger")
 
 			if burn.Amount > balances[burn.From] {
 				fmt.Println("Invalid burn in ledger")
@@ -337,6 +334,17 @@ func currentStipendRoute(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, calcStipend())
 }
 
+func balanceRoute(w http.ResponseWriter, r *http.Request) {
+	var user userNumber
+
+	if _, err := fmt.Scanf(r.PathValue("id"), "%d", &user); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	fmt.Fprint(w, balances[user])
+}
+
 func transactRoute(w http.ResponseWriter, r *http.Request) {
 	var sentTx SentTx
 
@@ -382,15 +390,10 @@ func burnRoute(w http.ResponseWriter, r *http.Request) {
 func stipendRoute(w http.ResponseWriter, r *http.Request) {
 	var to userNumber
 
-	// decode number from body
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
+	if _, err := fmt.Scanf(r.PathValue("id"), "%d", &to); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
-	} else if _, err := fmt.Sscanf(string(body), "%d", &to); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	} else if prevStipends[to]+stipendTime-uint64(time.Now().UnixMilli()) > 0 {
+	} else if prevStipends[to]+stipendTime > uint64(time.Now().UnixMilli()) {
 		http.Error(w, "Next stipend not available yet", http.StatusBadRequest)
 		return
 	} else if err := stipend(to); err != nil {
@@ -423,10 +426,11 @@ func main() {
 
 	router.HandleFunc("GET /currentFee", currentFeeRoute)
 	router.HandleFunc("GET /currentStipend", currentStipendRoute)
+	router.HandleFunc("GET /balance/{id}", balanceRoute)
 	router.HandleFunc("POST /transact", transactRoute)
 	router.HandleFunc("POST /mint", mintRoute)
 	router.HandleFunc("POST /burn", burnRoute)
-	router.HandleFunc("POST /stipend", stipendRoute)
+	router.HandleFunc("POST /stipend/{id}", stipendRoute)
 
 	Log(c.InGreen("~ Economy service is up on port 2009 ~"))
 	http.ListenAndServe(":2009", router) // 03/Jan/2009 Chancellor on brink of second bailout for banks

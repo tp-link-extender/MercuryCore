@@ -24,8 +24,7 @@ type Prepared = PreparedQuery<(result: unknown[]) => unknown>
 
 const stupidError =
 	"The query was not executed due to a failed transaction. There was a problem with a datastore transaction: Resource busy: "
-const sessionError =
-	"There was a problem with the database: The session has expired"
+const sessionError = "There was a problem with authentication"
 
 async function fixError<T>(q: () => Promise<T>) {
 	// WORST
