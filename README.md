@@ -1,6 +1,6 @@
 # Mercury monorepo
 
-![Logo banner](./.github/assets/banner.png)
+![Logo banner](./static/banner.png)
 
 Contents:
 
