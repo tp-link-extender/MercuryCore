@@ -2,16 +2,9 @@
 node_modules
 /build
 /.svelte-kit
-/package
 .env
-.env.*
-!.env.example
-*.zip
 .vscode
 /data
 /keys
-/setup
-/corescripts/processed
 scc
 scc.exe
-/RCCService/RCCService
