@@ -55,19 +55,6 @@ export async function handle({ event, resolve }) {
 			pathnameColour(decodeURI(pathname) + search)
 		)
 
-		const isStudio = event.request.headers
-			.get("user-agent")
-			?.includes("RobloxStudio/2013")
-
-		if (
-			isStudio &&
-			!pathname.startsWith("/studio") &&
-			!pathname.startsWith("/api")
-		) {
-			// trim trailing slash
-			redirect(302, `/studio${pathname.replace(slashesRegex, "")}`)
-		}
-
 		const res = await resolve(event)
 
 		// if it's html, add the user's custom css before the </body> tag
