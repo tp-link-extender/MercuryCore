@@ -81,10 +81,7 @@
 		</Form>
 
 		<p>
-			By signing up, you agree to our
-			<a href="/terms" class="no-underline">Terms of Service</a>
-			and
-			<a href="/privacy" class="no-underline">Privacy policy.</a>
+			By signing up, you agree to our Terms of Service and Privacy Policy.
 		</p>
 	{:else}
 		<h2>Create the initial account</h2>

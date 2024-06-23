@@ -6,6 +6,10 @@
 	import "/src/nprogress.styl"
 	import "/src/global.styl"
 	import "/src/fontawesome.styl"
+	import "/src/daisyui/carousel.styl"
+	import "/src/daisyui/dropdown.styl"
+	import "/src/daisyui/modal.styl"
+	import "/src/daisyui/tooltip.styl"
 	import "uno.css"
 
 	export let data

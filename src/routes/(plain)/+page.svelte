@@ -48,7 +48,7 @@
 		id="infotext"
 		class="flex flex-col justify-center items-center relative"
 		style="padding-top: {infoTextMargin}vh">
-		<h1 class="sf font-bold opacity-75 text-16">Mercury 2</h1>
+		<h1 class="font-bold opacity-75 text-16">Mercury 2</h1>
 		<p class="lead text-center">
 			Endless possibilities. New features. Same nostalgia.
 		</p>

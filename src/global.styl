@@ -1,46 +1,21 @@
 // Styles that will be applied to every page.
-// It's best to only put things in here that apply
-// to many pages, so bundle size is kept down.
-
-// @import "./variables.styl"
-@import "./daisyui/carousel.styl"
-@import "./daisyui/dropdown.styl"
-@import "./daisyui/modal.styl"
-@import "./daisyui/tooltip.styl"
+// It's best to only put things in here that apply to many pages, so bundle size is kept down.
 
 hue = 260
-
-@font-face
-	font-family "SF UI Display Regular"
-	font-style normal
-	font-weight 400
-	font-display swap
-	src url(/SFregular.woff2) format("woff2"),
-		url(/SFregular.woff) format("woff"),
-		url(/SFregular.ttf) format("truetype")
-
-@font-face
-	font-family "SF UI Display Regular"
-	font-style normal
-	font-weight 700
-	font-display swap
-	src url(/SFbold.woff2) format("woff2"),
-		url(/SFbold.woff) format("woff"),
-		url(/SFbold.ttf) format("truetype")
 
 @font-face
 	font-family Inter
 	font-style normal
 	font-weight 100 900
 	font-display swap
-	src url("/InterVariable.woff2") format("woff2")
+	src url("/fonts/InterVariable.woff2") format("woff2")
 
 @font-face
 	font-family Inter
 	font-style italic
 	font-weight 100 900
 	font-display swap
-	src url("/InterVariable-Italic.woff2") format("woff2")
+	src url("/fonts/InterVariable-Italic.woff2") format("woff2")
 
 :root
 html
@@ -54,10 +29,6 @@ main
 *
 	font-family Inter, -apple-system, BlinkMacSystemFont,
 		"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif
-
-.sf
-	font-family "SF UI Display Regular", -apple-system, BlinkMacSystemFont,
-		"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important
 
 main
 	overflow hidden
@@ -85,10 +56,6 @@ h6
 	margin 0
 	font-weight 500
 	line-height 1.2
-
-	.sf
-	&.sf
-		letter-spacing 0.02em
 
 p
 	margin-top 0
@@ -292,51 +259,44 @@ span
 		background hsl(hue 65% 15%)
 
 .btn-red-secondary
-	@apply bg-red-950/60 border-red-7/80
-	@apply ring-red-7/50
+	@apply bg-red-950/60 border-red-7/80 ring-red-7/50
 	&:hover:not(:disabled)
 	&:focus:not(:active):not(:disabled)
 		@apply bg-red-950 border-red-6
 
 .btn-red-tertiary
 	background hsl(hue 0% 12%)
-	@apply text-red-5
-	@apply ring-red-8/50
+	@apply text-red-5 ring-red-8/50
 	&:hover:not(:disabled)
 	&:focus:not(:active):not(:disabled)
 		@apply bg-red-950/80 text-white
 
 .btn-success
-	@apply bg-emerald-6
-	@apply ring-emerald-7/50
+	@apply bg-emerald-6 ring-emerald-7/50
 	&:hover:not(:disabled)
 	&:focus:not(:active):not(:disabled)
 		@apply bg-emerald-7
 
 .btn-danger
-	@apply bg-red-5
-	@apply ring-red-7/50
+	@apply bg-red-5 ring-red-7/50
 	&:hover:not(:disabled)
 	&:focus:not(:active):not(:disabled)
 		@apply bg-red-6
 
 .btn-warning
-	@apply bg-yellow-5
-	@apply ring-yellow-6/50
+	@apply bg-yellow-5 ring-yellow-6/50
 	&:hover:not(:disabled)
 	&:focus:not(:active):not(:disabled)
 		@apply bg-yellow-4
 
 .btn-info
-	@apply bg-cyan-5
-	@apply ring-cyan-6/50
+	@apply bg-cyan-5 ring-cyan-6/50
 	&:hover:not(:disabled)
 	&:focus:not(:active):not(:disabled)
 		@apply bg-cyan-4
 
 .btn-dark
-	@apply bg-neutral-8
-	@apply ring-neutral-6/50
+	@apply bg-neutral-8 ring-neutral-6/50
 	&:hover:not(:disabled)
 	&:focus:not(:active):not(:disabled)
 		@apply bg-neutral-7

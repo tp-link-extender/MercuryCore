@@ -30,9 +30,6 @@
 				</button>
 			</div>
 			<div class="flex <sm:flex-col sm:gap-3">
-				<a class="light-text" href="/about">About</a>
-				<a class="light-text" href="/terms">Terms of Service</a>
-				<a class="light-text" href="/privacy">Privacy Policy</a>
 				<a class="light-text" href="/statistics">Statistics</a>
 			</div>
 		</div>

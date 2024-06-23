@@ -34,8 +34,6 @@ const pathnameColour = (pathname: string) => {
 	return pathname
 }
 
-const slashesRegex = /\/+$/
-
 // Ran every time a dynamic request is made.
 // Requests for prerendered pages do not trigger this hook.
 export async function handle({ event, resolve }) {
@@ -115,7 +113,7 @@ export async function handle({ event, resolve }) {
 
 	if (
 		moderated &&
-		!["/moderation", "/terms", "/privacy", "/api"].includes(pathname) &&
+		!["/moderation", "/api"].includes(pathname) &&
 		!pathname.startsWith("/api/avatar") &&
 		!pathname.startsWith("/studio")
 	)

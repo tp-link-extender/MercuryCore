@@ -11,7 +11,7 @@
 			<fa fa-arrow-left class="pr-2" />
 			Home
 		</a>
-		<h1 class="sf font-bold pb-6 text-14">
+		<h1 class="font-bold pb-6 text-14">
 			Mercury 2 <span class="opacity-50">rc</span>
 		</h1>
 
