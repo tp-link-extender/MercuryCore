@@ -1,5 +1,3 @@
-// Handle form data
-
 /**
  * Handles form data in a simpler way.
  * @param request A request object.

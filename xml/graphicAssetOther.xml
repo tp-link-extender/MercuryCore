@@ -5,12 +5,10 @@
 	<External>nil</External>
 	<Item class="_CLASS" referent="RBX0">
 		<Properties>
-			<Content
-				name="_CONTENT_NAME">
+			<string name="Name">_STRING_NAME</string>
+			<Content name="_CONTENT_NAME">
 				<url>_ASSET_URL</url>
 			</Content>
-			<string
-				name="Name">_STRING_NAME</string>
 			<bool name="archivable">true</bool>
 		</Properties>
 	</Item>

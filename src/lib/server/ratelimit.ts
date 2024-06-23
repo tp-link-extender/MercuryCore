@@ -1,5 +1,4 @@
-// Allows for a function to be ratelimited by a category,
-// and returns a 429 failure if too many requests are sent
+// Allows for a function to be ratelimited by a category, and returns a 429 failure if too many requests are sent
 
 import { fail } from "@sveltejs/kit"
 import type { SuperValidated } from "sveltekit-superforms"

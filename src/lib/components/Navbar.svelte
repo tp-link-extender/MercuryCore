@@ -83,8 +83,6 @@
 
 	if (user && user.permissionLevel >= 4)
 		usernav.unshift(["fa-diamond-half-stroke", "Admin", "/admin"])
-
-	const directions = ["left", "right", "up", "down"]
 </script>
 
 <svelte:window
