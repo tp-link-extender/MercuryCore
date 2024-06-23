@@ -19,8 +19,7 @@
 	export let data
 	$: user = data.user
 
-	// Settings for nprogress, the loading bar shown
-	// at the top of the page when navigating
+	// Settings for nprogress, the loading bar shown at the top of the page when navigating
 	nprogress.configure({ showSpinner: false })
 
 	let timeout: Timer | null

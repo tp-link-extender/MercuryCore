@@ -8,8 +8,7 @@
 <div id="bg" class="fixed w-full h-full pointer-events-none" />
 
 <!--
-	Data from the root layout must be passed into
-	components, as it cannot be accessed directly.
+	Data from the root layout must be passed into components, as it cannot be accessed directly.
 -->
 <Navbar {data} />
 

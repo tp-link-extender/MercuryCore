@@ -6,8 +6,7 @@
 </script>
 
 <!--
-	Data from the root layout must be passed into the
-	Navbar component, as it cannot be accessed directly.
+	Data from the root layout must be passed into the Navbar component, as it cannot be accessed directly.
 -->
 <Navbar {data} />
 

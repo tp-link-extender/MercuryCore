@@ -12,7 +12,6 @@ export default {
 	]),
 	kit: {
 		adapter: adapter(),
-		files: { lib: "./src/lib" },
 	},
 
 	vitePlugin: { inspector: { toggleKeyCombo: "control-i" } },

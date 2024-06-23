@@ -15,5 +15,4 @@ export default defineConfig({
 		sveltekit(),
 	],
 	ssr: { noExternal: ["three", "troika-three-text", "d3-interpolate"] },
-	server: { watch: { usePolling: true } },
 })

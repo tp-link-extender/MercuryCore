@@ -21,9 +21,7 @@ export const load = async ({ locals, url }) => {
 	const { user } = await authorise(locals)
 	const query = url.searchParams.get("q")?.trim() as string
 
-	const assets = await getAssets(user.id, query)
-	console.log(assets[0])
-	return { query, assets }
+	return { query, assets: await getAssets(user.id, query) }
 }
 
 export const actions: import("./$types").Actions = {}
