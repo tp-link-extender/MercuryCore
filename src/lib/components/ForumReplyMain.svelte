@@ -259,18 +259,23 @@
 		{refreshReplies} />
 {/each}
 
-<style lang="stylus">
-	.reply
-		border-color var(--accent2)
+<style>
+	.reply {
+		border-color: var(--accent2);
+	}
 
-	.userlink
-		margin-top 1px
-		transition color 0.2s
-		// &:hover
-		// 	color var(--accent3)
+	.userlink {
+		margin-top: 1px;
+		transition: color 0.2s;
+		/* &:hover {
+			color: var(--accent3);
+		} */
 
-		span
-			transition color 0.2s
-			&:hover
-				color var(--grey-text) !important
+		& span {
+			transition: color 0.2s;
+			&:hover {
+				color: var(--grey-text) !important;
+			}
+		}
+	}
 </style>

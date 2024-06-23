@@ -62,13 +62,14 @@
 	</div>
 </div>
 
-<style lang="stylus">
-	.dropdown-toggle::after
-		// funny down arrow
-		display inline-block
-		vertical-align 0.255rem
-		content ""
-		border-top 0.3rem solid
-		border-right 0.3rem solid transparent
-		border-left 0.3rem solid transparent
+<style>
+	.dropdown-toggle::after {
+		/* funny down arrow */
+		display: inline-block;
+		vertical-align: 0.255rem;
+		content: "";
+		border-top: 0.3rem solid;
+		border-right: 0.3rem solid transparent;
+		border-left: 0.3rem solid transparent;
+	}
 </style>

@@ -43,9 +43,11 @@
 	</p>
 {/if}
 
-<style lang="stylus">
-	button:not(.nopad)
-		:global(fa)
-		:global(far)
-			padding-right 0.5rem
+<style>
+	button:not(.nopad) {
+		& :global(fa),
+		& :global(far) {
+			padding-right: 0.5rem;
+		}
+	}
 </style>

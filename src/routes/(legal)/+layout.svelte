@@ -18,7 +18,12 @@
 
 <Footer {data} />
 
-<style lang="stylus">
-	#bg
-		background linear-gradient(-20deg, #0c0521 50%, var(--mainaccent) 250%)
+<style>
+	#bg {
+		background: linear-gradient(
+			-20deg,
+			#0c0521 50%,
+			var(--mainaccent) 250%
+		);
+	}
 </style>

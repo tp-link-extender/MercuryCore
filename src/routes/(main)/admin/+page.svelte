@@ -150,10 +150,12 @@
 	</Tab>
 </SidebarShell>
 
-<style lang="stylus">
-	h2
-		border-color var(--accent3) !important
+<style>
+	h2 {
+		border-color: var(--accent3) !important;
+	}
 
-	.card
-		border 1px solid var(--accent2)
+	.card {
+		border: 1px solid var(--accent2);
+	}
 </style>

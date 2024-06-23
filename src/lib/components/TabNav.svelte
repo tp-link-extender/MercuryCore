@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { tweened } from "svelte/motion"
 	import { interpolateLab } from "d3-interpolate"
+	import { tweened } from "svelte/motion"
 
 	export let tabData: {
 		name: string
@@ -61,40 +61,55 @@
 	{/each}
 </ul>
 
-<style lang="stylus">
-	.active.item
-		border-bottom-width 2px
-		border-bottom-style solid
-	.activetab.item
-		background var(--accent2)
+<style>
+	.active.item {
+		border-bottom-width: 2px;
+		border-bottom-style: solid;
+	}
+	.activetab.item {
+		background: var(--accent2);
+	}
 
-	.justified .item
-		flex-basis 0
-		flex-grow 1
-		text-align center
-		width 100%
+	.justified .item {
+		flex-basis: 0;
+		flex-grow: 1;
+		text-align: center;
+		width: 100%;
+	}
 
-	.item
-	.tab
-		transition background-color 0.2s
-	.tab
-		color var(--light-text) !important
-		border-width 0px 0px 2px !important
-		--un-ring-color hsla(260, 75%, 45%, 50%)
+	.item,
+	.tab {
+		transition: background-color 0.2s;
+	}
 
-	:not(.activetab) > .tab
-		&:hover
-			background hsla(260, 100%, 60%, 50%)
-		&:active
-			background hsla(260, 100%, 55%, 40%)
+	.tab {
+		color: var(--light-text) !important;
+		border-width: 0px 0px 2px !important;
+		--un-ring-color: rgba(86, 29, 201, 0.5);
+	}
 
-	.vertical .tab
-		@apply ring-offset-neutral-9
-		@media (prefers-reduced-motion no-preference)
-			transition all 0.3s, box-shadow 0.1s ease-in-out
+	:not(.activetab) > .tab {
+		&:hover {
+			background: rgba(119, 51, 255, 0.5);
+		}
+		&:active {
+			background: rgba(102, 26, 255, 0.4);
+		}
+	}
 
-		&:focus:not(:active)
-			@apply ring-2 ring-offset-2
-		&:active
-			@apply ring-3
+	.vertical .tab {
+		@apply ring-offset-neutral-9;
+		@media (prefers-reduced-motion: no-preference) {
+			transition:
+				all 0.3s,
+				box-shadow 0.1s ease-in-out;
+		}
+
+		&:focus:not(:active) {
+			@apply ring-2 ring-offset-2;
+		}
+		&:active {
+			@apply ring-3;
+		}
+	}
 </style>

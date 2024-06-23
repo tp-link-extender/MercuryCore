@@ -117,10 +117,12 @@
 	</Tab>
 </SidebarShell>
 
-<style lang="stylus">
-	table
-		tr
-		td
-		th
-			color var(--light-text) !important
+<style>
+	table {
+		& tr,
+		& td,
+		& th {
+			color: var(--light-text) !important;
+		}
+	}
 </style>

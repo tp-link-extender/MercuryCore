@@ -116,23 +116,33 @@
 	<label class="modal-backdrop" for="purge{asset.id}">Close</label>
 </div>
 
-<style lang="stylus">
-	.card
-		border 1px solid var(--accent2)
-		&:hover
-			background var(--darker) !important
+<style>
+	.card {
+		border: 1px solid var(--accent2);
+		&:hover {
+			background: var(--darker) !important;
+		}
+	}
 
-	.image
-		background var(--accent)
-		background-image:
-			linear-gradient(45deg,
-				var(--darker) 25%, transparent 25%,
-				transparent 75%, var(--darker) 75%
+	.image {
+		background: var(--accent);
+		background-image: linear-gradient(
+				45deg,
+				var(--darker) 25%,
+				transparent 25%,
+				transparent 75%,
+				var(--darker) 75%
 			),
-			linear-gradient(45deg,
-				var(--darker) 25%, transparent 25%,
-				transparent 75%, var(--darker) 75%
-			)
-		background-size 20px 20px
-		background-position 0 0, 10px 10px
+			linear-gradient(
+				45deg,
+				var(--darker) 25%,
+				transparent 25%,
+				transparent 75%,
+				var(--darker) 75%
+			);
+		background-size: 20px 20px;
+		background-position:
+			0 0,
+			10px 10px;
+	}
 </style>

@@ -289,24 +289,34 @@
 	<label class="modal-backdrop" for="buy">Close</label>
 </div>
 
-<style lang="stylus">
-	.image
-		background var(--accent1)
-		background-image:
-			linear-gradient(45deg,
-				var(--darker) 25%, transparent 25%,
-				transparent 75%, var(--darker) 75%
+<style>
+	.image {
+		background: var(--accent1);
+		background-image: linear-gradient(
+				45deg,
+				var(--darker) 25%,
+				transparent 25%,
+				transparent 75%,
+				var(--darker) 75%
 			),
-			linear-gradient(45deg,
-				var(--darker) 25%, transparent 25%,
-				transparent 75%, var(--darker) 75%
-			)
-		background-size 20px 20px
-		background-position 0 0, 10px 10px
+			linear-gradient(
+				45deg,
+				var(--darker) 25%,
+				transparent 25%,
+				transparent 75%,
+				var(--darker) 75%
+			);
+		background-size: 20px 20px;
+		background-position:
+			0 0,
+			10px 10px;
+	}
 
-	#buy
-		z-index 5
+	#buy {
+		z-index: 5;
+	}
 
-	.modal-box
-		min-width 30rem
+	.modal-box {
+		min-width: 30rem;
+	}
 </style>

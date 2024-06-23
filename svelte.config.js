@@ -6,10 +6,7 @@ import preprocess from "svelte-preprocess"
 /** @type {import("@sveltejs/kit").Config}*/
 export default {
 	// Consult https://github.com/sveltejs/svelte-preprocess for more information about preprocessors
-	preprocess: sequence([
-		preprocess({ stylus: { prependData: '@import "src/variables.styl"' } }),
-		preprocessMeltUI(),
-	]),
+	preprocess: sequence([preprocess(), preprocessMeltUI()]),
 	kit: {
 		adapter: adapter(),
 	},

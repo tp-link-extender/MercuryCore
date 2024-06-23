@@ -30,13 +30,14 @@
 	{/each}
 </div>
 
-<style lang="stylus">
-	.ctnr
-		max-width 100%
-		font-size 0.9rem
+<style>
+	.ctnr {
+		max-width: 100%;
+		font-size: 0.9rem;
 
-		grid-template-columns repeat(auto-fit, minmax(20rem, 1fr))
-		column-gap 1rem
-		row-gap 1rem
-		place-items center
+		grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+		column-gap: 1rem;
+		row-gap: 1rem;
+		place-items: center;
+	}
 </style>

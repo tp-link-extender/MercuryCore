@@ -34,15 +34,25 @@
 	</div>
 </div>
 
-<style lang="stylus">
-	#light
-		background radial-gradient(#35332e7f 1px, #0000 1px), var(--background)
-		background-size 2rem 2rem
-		background-attachment fixed
+<style>
+	#light {
+		background: radial-gradient(
+				rgba(53, 51, 46, 0.498) 1px,
+				rgba(0, 0, 0, 0) 1px
+			),
+			var(--background);
+		background-size: 2rem 2rem;
+		background-attachment: fixed;
+		& :global(form) :global(button) {
+			width: 100%;
+		}
+	}
 
-		:global(form) :global(button)
-			width 100%
-
-	#dark
-		background linear-gradient(-20deg, var(--darker) 50%, var(--mainaccent) 250%)
+	#dark {
+		background: linear-gradient(
+			-20deg,
+			var(--darker) 50%,
+			var(--mainaccent) 250%
+		);
+	}
 </style>

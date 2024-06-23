@@ -254,17 +254,19 @@
 	</nav>
 {/if}
 
-<style lang="stylus">
-	#bottomnav
-		border-top 1px solid var(--accent)
+<style>
+	#bottomnav {
+		border-top: 1px solid var(--accent);
+		box-shadow: 0 0 1rem 0.2rem #000;
+	}
 
-		box-shadow 0 0 1rem 0.2rem black
-
-	#results
-		a:hover
-			background var(--accent)
-
-		:global(.pseudofocus)
-			color var(--grey-text) !important
-			background var(--accent)
+	#results {
+		& a:hover {
+			background: var(--accent);
+		}
+		& :global(.pseudofocus) {
+			color: var(--grey-text) !important;
+			background: var(--accent);
+		}
+	}
 </style>

@@ -69,12 +69,14 @@
 	{/if}
 </div>
 
-<style lang="stylus">
-	.grid
-		grid-template-columns repeat(auto-fill, minmax(8rem, 1fr))
-		grid-gap 0 1rem
+<style>
+	.grid {
+		grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+		grid-gap: 0 1rem;
 
-		div a
-			width 8rem
-			margin auto
+		& div a {
+			width: 8rem;
+			margin: auto;
+		}
+	}
 </style>

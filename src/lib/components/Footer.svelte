@@ -1,12 +1,12 @@
 <script lang="ts">
 	import NoScript from "./NoScript.svelte"
-	
+
 	export let data: import("../../routes/$types").LayoutData
 
 	let clicked = false
 </script>
 
-<footer class="relative flex justify-center bg-darker">
+<footer class="relative flex justify-center <lg:pb-20 bg-darker">
 	<div class="flex <sm:flex-col justify-between items-start w-200 p-4 pb-8">
 		<div>
 			<img src="/icon-footer.svg" alt="Mercury logo" class="size-8" />
@@ -47,61 +47,77 @@
 	</div>
 </noscript>
 
-<style lang="stylus">
-	#heart
-		fa
-			transition 0.2s
-		span
-			transition all 0.3s
-			display inline-block
-			overflow hidden
-			white-space nowrap
-			width 0
-			vertical-align middle // not perfectly centered
-			margin-top -0.2rem // there we go
+<style>
+	#heart {
+		& fa {
+			transition: 0.2s;
+		}
 
-		&:hover
-			span
-				width 5rem
-				margin-left 0.2rem
+		& span {
+			transition: all 0.3s;
+			display: inline-block;
+			overflow: hidden;
+			white-space: nowrap;
+			width: 0;
+			vertical-align: middle;
+			margin-top: -0.2rem;
+		}
 
-	#heart:not(.clicked) fa:hover
-		color var(--light-text) !important
+		&:hover span {
+			width: 5rem;
+			margin-left: 0.2rem;
+		}
 
-	@keyframes heart
-		0%
-			transform scale(1)
-		15%
-			transform scale(0.9)
-			rotate -10deg
-		25%
-			transform scale(1)
-			rotate 5deg
-		40%
-			transform scale(1.2)
-			filter drop-shadow(0 0 3px #f4b)
-		100%
-			transform scale(1)
-			rotate 0
+		&:not(.clicked) fa:hover {
+			color: var(--light-text) !important;
+		}
+	}
 
-	.clicked
-		fa
-			animation heart 2s
-		fa
-		span
-			color #f4b !important
+	@keyframes heart {
+		0% {
+			transform: scale(1);
+		}
+		15% {
+			transform: scale(0.9);
+			rotate: -10deg;
+		}
+		25% {
+			transform: scale(1);
+			rotate: 5deg;
+		}
+		40% {
+			transform: scale(1.2);
+			filter: drop-shadow(0 0 3px #f4b);
+		}
+		100% {
+			transform: scale(1);
+			rotate: 0;
+		}
+	}
 
-	footer
-		flex-shrink 0
-		padding 1vh
-		+-lg()
-			padding-bottom 5rem
-		a
-			text-decoration none
-			&:hover
-				text-decoration underline
+	.clicked {
+		& fa {
+			animation: heart 2s;
+		}
+		& fa,
+		& span {
+			color: #f4b !important;
+		}
+	}
 
-	#nojs
-		background rgba(0, 0, 0, 0.5)
-		transform translate(0px, 1rem)
+	footer {
+		flex-shrink: 0;
+		padding: 1vh;
+		& a {
+			text-decoration: none;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	#nojs {
+		background: rgba(0, 0, 0, 0.5);
+		transform: translate(0px, 1rem);
+	}
 </style>

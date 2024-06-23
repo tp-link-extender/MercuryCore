@@ -26,13 +26,17 @@
 	</div>
 </a>
 
-<style lang="stylus">
-	.card
-		width 11rem
-		height 11rem
-		border none
-	a
-		transition all 0.2s
-		&:hover
-			transition all 0.2s
+<style>
+	.card {
+		width: 11rem;
+		height: 11rem;
+		border: none;
+	}
+
+	a {
+		transition: all 0.2s;
+		&:hover {
+			transition: all 0.2s;
+		}
+	}
 </style>

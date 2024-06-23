@@ -87,11 +87,13 @@
 	</table>
 </div>
 
-<style lang="stylus">
-	// Change colour of every second row
-	tr:nth-child(2n)
-		background var(--darker)
+<style>
+	/* Change colour of every second row */
+	tr:nth-child(2n) {
+		background: var(--darker);
+	}
 
-	td
-		height 3.5rem
+	td {
+		height: 3.5rem;
+	}
 </style>

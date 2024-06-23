@@ -47,20 +47,26 @@
 	{/if}
 </form>
 
-<style lang="stylus">
-	small
-		font-size 0.9rem
+<style>
+	small {
+		font-size: 0.9rem;
+	}
 
-	span
-		transition all 0.2s
-		display inline-block
-		white-space nowrap
+	span {
+		transition: all 0.2s;
+		display: inline-block;
+		white-space: nowrap;
+	}
 
-	button:hover
-		far
-			font-weight 900
-		.delete
-			width 2.8rem
-		.moderate
-			width 4.1rem
+	button:hover {
+		& far {
+			font-weight: 900;
+		}
+		& .delete {
+			width: 2.8rem;
+		}
+		& .moderate {
+			width: 4.1rem;
+		}
+	}
 </style>

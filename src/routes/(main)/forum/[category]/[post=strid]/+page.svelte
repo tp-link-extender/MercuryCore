@@ -245,7 +245,8 @@
 	{/if}
 </div>
 
-<style lang="stylus">
-	.post
-		border 1px solid var(--accent2)
+<style>
+	.post {
+		border: 1px solid var(--accent2);
+	}
 </style>

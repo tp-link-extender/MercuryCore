@@ -118,22 +118,26 @@
 	</div>
 {/if}
 
-<style lang="stylus">
-	.collapseBar
-	.expandBar
-		transition all 0.2s ease-out
+<style>
+	.collapseBar,
+	.expandBar {
+		transition: all 0.2s ease-out;
+	}
 
-	.collapseBar
-		border-left 9px solid var(--background)
-		border-right 13px solid var(--background)
-		&:hover
-			background var(--grey-text)
+	.collapseBar {
+		border-left: 9px solid var(--background);
+		border-right: 13px solid var(--background);
+		&:hover {
+			background: var(--grey-text);
+		}
+	}
 
-	.expandBar
-		border none
-		background none
-
-		color var(--accent3)
-		&:hover
-			color var(--grey-text)
+	.expandBar {
+		border: none;
+		background: none;
+		color: var(--accent3);
+		&:hover {
+			color: var(--grey-text);
+		}
+	}
 </style>

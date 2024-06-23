@@ -117,14 +117,17 @@
 	</div>
 </div>
 
-<style lang="stylus">
-	.post
-		border 1px solid var(--accent2)
-		transition all 0.3s ease-out
-		&:hover
-			background var(--background)
-			border 1px solid var(--accent3)
+<style>
+	.post {
+		border: 1px solid var(--accent2);
+		transition: all 0.3s ease-out;
+		&:hover {
+			background: var(--background);
+			border: 1px solid var(--accent3);
+		}
+	}
 
-	.gradient
-		background linear-gradient(#0000, var(--darker))
+	.gradient {
+		background: linear-gradient(rgba(0, 0, 0, 0), var(--darker));
+	}
 </style>

@@ -8,7 +8,7 @@
 
 <Head title={data.name} />
 
-<div class="ctnr">
+<div class="ctnr max-w-240">
 	<div class="px-6">
 		<h1>{data.name}</h1>
 		<p class="flex">
@@ -40,8 +40,3 @@
 		</div>
 	</div>
 </div>
-
-<style lang="stylus">
-	.ctnr
-		max-width 60rem
-</style>

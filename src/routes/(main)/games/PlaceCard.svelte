@@ -37,7 +37,7 @@
 		else goto(href)
 	}}
 	in:fade|global={{ num, total }}
-	class="card text-center light-text bg-darker no-underline rounded-4"
+	class="card text-center no-underline rounded-4 w-90 md:w-82 lg:w-78 light-text bg-darker"
 	href="/place/{place.id}/{slug}">
 	<div class="flex" class:opacity-50={!online}>
 		<div class="w-1/2">
@@ -66,28 +66,25 @@
 	</div>
 </a>
 
-<style lang="stylus">
-	.card
-		width 19.5rem
-		+-lg()
-			width 20.5rem
-		+-md()
-			width 25rem
+<style>
+	a {
+		line-height: 1.2;
+		transition: all 0.2s;
+		&:hover {
+			transition: all 0.2s;
+			& .shadow::after {
+				box-shadow: inset 0 0 4rem 0 rgba(255, 255, 255, 0.133);
+			}
+		}
+	}
 
-	a
-		line-height 1.2
-		transition all 0.2s
-		&:hover
-			transition all 0.2s
-			.shadow::after
-				box-shadow inset 0 0 4rem 0 #fff2
-
-	.shadow::after
-		transition all 0.3s
-		content ""
-		position absolute
-		top 0
-		left 0
-		width 100%
-		height 100%
+	.shadow::after {
+		transition: all 0.3s;
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
 </style>

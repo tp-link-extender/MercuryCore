@@ -126,15 +126,18 @@
 	</Tab>
 </SidebarShell>
 
-<style lang="stylus">
-	// Change colour of every second row
-	#rendertable 
-		tbody tr:nth-child(2n-1)
-			background var(--darker)
+<style>
+	/* Change colour of every second row */
+	#rendertable {
+		& tbody tr:nth-child(2n-1) {
+			background: var(--darker);
+		}
+		& td {
+			height: 3rem;
+		}
+	}
 
-		td
-			height 3rem
-
-	.card
-		border 1px solid var(--accent2)
+	.card {
+		border: 1px solid var(--accent2);
+	}
 </style>

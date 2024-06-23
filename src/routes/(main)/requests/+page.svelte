@@ -44,19 +44,21 @@
 	{/each}
 </div>
 
-<style lang="stylus">
-	.ctnr
-		max-width 100%
-		font-size 0.9rem
+<style>
+	.ctnr {
+		max-width: 100%;
+		font-size: 0.9rem;
+		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+		column-gap: 1rem;
+		row-gap: 1rem;
+		place-items: center;
+	}
 
-		grid-template-columns repeat(auto-fit, minmax(16rem, 1fr))
-		column-gap 1rem
-		row-gap 1rem
-		place-items center
-
-	.card
-		max-width 25rem
-		text-decoration none
-		div
-			word-break break-all
+	.card {
+		max-width: 25rem;
+		text-decoration: none;
+		& div {
+			word-break: break-all;
+		}
+	}
 </style>

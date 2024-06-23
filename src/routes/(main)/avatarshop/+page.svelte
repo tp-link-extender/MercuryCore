@@ -175,12 +175,13 @@
 	</div>
 </div>
 
-<style lang="stylus">
-	input
-	select
-		background-color var(--accent)
-		border-color var(--accent2)
-
-	select
-		max-width 9rem
+<style>
+	input,
+	select {
+		background-color: var(--accent);
+		border-color: var(--accent2);
+	}
+	select {
+		max-width: 9rem;
+	}
 </style>

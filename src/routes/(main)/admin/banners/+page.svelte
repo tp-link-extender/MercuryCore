@@ -213,11 +213,13 @@
 	</Modal>
 {/if}
 
-<style lang="stylus">
-	input[type=color]
-		height 2.5rem
-		border-radius var(--rounding)
+<style>
+	input[type="color"] {
+		height: 2.5rem;
+		border-radius: var(--rounding);
+	}
 
-	td
-		height: 4.8rem
+	td {
+		height: 4.8rem;
+	}
 </style>

@@ -43,12 +43,15 @@
 	</button>
 </form>
 
-<style lang="stylus">
-	.card
-		border 1px solid var(--accent2)
+<style>
+	.card {
+		border: 1px solid var(--accent2);
+	}
 
-	.assetcard
-		transition 0.3s
-		&:hover
-			background var(--darker)
+	.assetcard {
+		transition: 0.3s;
+		&:hover {
+			background: var(--darker);
+		}
+	}
 </style>

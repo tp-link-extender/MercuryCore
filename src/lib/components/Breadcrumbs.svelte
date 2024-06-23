@@ -16,18 +16,19 @@
 	</ol>
 </nav>
 
-<style lang="stylus">
-	ol
-		list-style none
-		display flex
-		flex-wrap wrap
-		align-items center
-		justify-content flex-start
+<style>
+	ol {
+		list-style: none;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: flex-start;
+	}
 
-	.crumb:not(:last-child)::after
-			content "/"
-			margin 0 .5rem
-			color var(--grey-text)
-			// remove text underline
-			text-decoration none
+	.crumb:not(:last-child)::after {
+		content: "/";
+		margin: 0 0.5rem;
+		color: var(--grey-text);
+		text-decoration: none;
+	}
 </style>

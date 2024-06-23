@@ -3,9 +3,9 @@
 	import { applyAction } from "$app/forms"
 	import { deserialize, enhance } from "$app/forms"
 	import { invalidateAll } from "$app/navigation"
+	import TabData from "$lib/components/TabData"
 	import TabNav from "$lib/components/TabNav.svelte"
 	import AvatarItem from "./AvatarItem.svelte"
-	import TabData from "$lib/components/TabData"
 
 	export let data
 	const { user } = data
@@ -258,7 +258,7 @@
 	<div class="modal2">
 		<div class="modal-box flex flex-col p-4">
 			<h1 class="text-base">Choose a {bodyPart} color</h1>
-			<div id="colourPicker" class="text-left mx-auto">
+			<div id="colourPicker" class="text-left mx-auto max-w-108">
 				{#each bodyColours as colour}
 					<form
 						use:enhance={enhanceRegen}
@@ -280,36 +280,44 @@
 	</div>
 {/each}
 
-<style lang="stylus">
-	.card
-		background var(--accent)
-		border-width 1px
-		border-color var(--accent2)
+<style>
+	.card {
+		background: var(--accent);
+		border-width: 1px;
+		border-color: var(--accent2);
+	}
 
-	.bodyPart
-		border-radius 3px
-		&:first-child // Head
-			border-radius 12px
+	.bodyPart {
+		border-radius: 3px;
+		&:first-child {
+			border-radius: 12px;
+		}
+	}
 
-	.colour
-		transition filter 0.2s ease-out
-		&:hover
-			filter brightness(50%)
+	.colour {
+		transition: filter 0.2s ease-out;
+		&:hover {
+			filter: brightness(50%);
+		}
+	}
 
-	#colourPicker
-		max-width 27rem
-
-	.parts
-		position relative
-		margin 11px 0px 0px 36px
-		+-sm()
-			margin 11px 4px 0px 7px
-		+sm()
-			margin 11px 4px 0px 7px
-		+md()
-			margin 11px 4px 0px 9px
-		+lg()
-			margin 11px 4px 0px -8px
-		+xl()
-			margin 11px 0px 0px 7px
+	.parts {
+		position: relative;
+		margin: 11px 0px 0px 36px;
+		@media (max-width: 639.9px) {
+			margin: 11px 4px 0px 7px;
+		}
+		@media (min-width: 640px) {
+			margin: 11px 4px 0px 7px;
+		}
+		@media (min-width: 768px) {
+			margin: 11px 4px 0px 9px;
+		}
+		@media (min-width: 1024px) {
+			margin: 11px 4px 0px -8px;
+		}
+		@media (min-width: 1280px) {
+			margin: 11px 0px 0px 7px;
+		}
+	}
 </style>

@@ -84,16 +84,17 @@
 	{/if}
 </div>
 
-<style lang="stylus">
-	input
-		background-color var(--accent)
-		border-color var(--accent2)
+<style>
+	input {
+		background-color: var(--accent);
+		border-color: var(--accent2);
+	}
+	.grid {
+		font-size: 0.9rem;
 
-	.grid
-		font-size 0.9rem
-
-		grid-template-columns repeat(auto-fit, minmax(11rem, 1fr))
-		column-gap 0.7rem
-		row-gap 0.7rem
-		place-items center
+		grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+		column-gap: 0.7rem;
+		row-gap: 0.7rem;
+		place-items: center;
+	}
 </style>

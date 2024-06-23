@@ -69,8 +69,9 @@
 	{/if}
 </div>
 
-<style lang="stylus">
-	.category
-		border 1px solid var(--accent2)
-		transition all 0.3s ease-out
+<style>
+	.category {
+		border: 1px solid var(--accent2);
+		transition: all 0.3s ease-out;
+	}
 </style>

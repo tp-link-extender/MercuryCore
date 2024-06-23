@@ -23,11 +23,13 @@
 	</p>
 </a>
 
-<style lang="stylus">
-	.card
-		max-width 25rem
-		text-decoration none
-		p
-			width fit-content
-			word-break break-all
+<style>
+	.card {
+		max-width: 25rem;
+		text-decoration: none;
+		& p {
+			width: fit-content;
+			word-break: break-all;
+		}
+	}
 </style>

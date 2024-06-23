@@ -137,12 +137,13 @@
 	</div>
 {/if}
 
-<style lang="stylus">
-	input
-	select
-		background-color var(--accent)
-		border-color var(--accent2)
-
-	.modal-box
-		max-height initial !important
+<style>
+	input,
+	select {
+		background-color: var(--accent);
+		border-color: var(--accent2);
+	}
+	.modal-box {
+		max-height: initial !important;
+	}
 </style>

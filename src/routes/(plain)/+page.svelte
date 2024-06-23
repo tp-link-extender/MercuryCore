@@ -78,31 +78,36 @@
 	</div>
 </div>
 
-<style lang="stylus">
-	canvas
-	#gradientbg
-		--gradient-color-1 #161a92
-		--gradient-color-2 #2b0574
-		--gradient-color-3 #6c2fb9
-		--gradient-color-4 #060e25
+<style>
+	canvas,
+	#gradientbg {
+		--gradient-color-1: #161a92;
+		--gradient-color-2: #2b0574;
+		--gradient-color-3: #6c2fb9;
+		--gradient-color-4: #060e25;
+	}
 
-	canvas
-	#moon
-		transition opacity 0.75s ease-in
+	canvas,
+	#moon {
+		transition: opacity 0.75s ease-in;
+	}
 
-	#gradientbg
-		background linear-gradient(
+	#gradientbg {
+		background: linear-gradient(
 			25deg,
 			var(--gradient-color-2),
 			var(--gradient-color-4),
 			var(--gradient-color-1),
 			var(--gradient-color-3)
-		)
+		);
+	}
 
-	#info
-	#infotext
-		transition padding-top 1s ease-in-out
+	#info,
+	#infotext {
+		transition: padding-top 1s ease-in-out;
+	}
 
-	#moon
-		margin-bottom min(22rem, 60vh)
+	#moon {
+		margin-bottom: 22rem;
+	}
 </style>

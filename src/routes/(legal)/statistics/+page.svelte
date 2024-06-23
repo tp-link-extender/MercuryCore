@@ -77,10 +77,12 @@
 	</table>
 </div>
 
-<style lang="stylus">
-	td
-		padding 0
-		&:nth-child(2)
-			text-align right
-			padding-left 2rem
+<style>
+	td {
+		padding: 0;
+		&:nth-child(2) {
+			text-align: right;
+			padding-left: 2rem;
+		}
+	}
 </style>

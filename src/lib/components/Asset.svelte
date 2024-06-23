@@ -35,16 +35,21 @@
 	</div>
 </a>
 
-<style lang="stylus">
-	.card
-		border 1px solid var(--accent2)
+<style>
+	.card {
+		border: 1px solid var(--accent2);
+	}
 
-	a
-		.card-body
-			transition 0.3s
-		&:hover .card-body
-			background var(--darker) !important
+	a {
+		& .card-body {
+			transition: 0.3s;
+		}
+		&:hover .card-body {
+			background: var(--darker) !important;
+		}
+	}
 
-	img
-		width 85%
+	img {
+		width: 85%;
+	}
 </style>

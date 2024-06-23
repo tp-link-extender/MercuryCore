@@ -94,20 +94,25 @@
 	</a>
 {/if}
 
-<style lang="stylus">
-	a
-		span
-			transition all 0.2s
-		&:hover
-			.username
-				color var(--grey-text)
-			.pfp
-				background var(--hover) !important
+<style>
+	a {
+		& span {
+			transition: all 0.2s;
+		}
+		&:hover .username {
+			color: var(--grey-text);
+		}
+		&:hover .pfp {
+			background: var(--hover) !important;
+		}
+	}
 
-	span.rounded-full
-		box-shadow inset 0 0 0rem 1.5px var(--status)
+	span.rounded-full {
+		box-shadow: inset 0 0 0rem 1.5px var(--status);
+	}
 
-	.bottom
-		overflow hidden
-		max-height 3rem
+	.bottom {
+		overflow: hidden;
+		max-height: 3rem;
+	}
 </style>

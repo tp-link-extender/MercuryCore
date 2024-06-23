@@ -18,17 +18,21 @@
 	</small>
 </a>
 
-<style lang="stylus">
-	span
-		transition all 0.2s
-		display inline-block
-		overflow hidden
-		white-space nowrap
-		width 0
+<style>
+	span {
+		transition: all 0.2s;
+		display: inline-block;
+		overflow: hidden;
+		white-space: nowrap;
+		width: 0;
+	}
 
-	a:hover
-		far
-			font-weight 900
-		span
-			width 5.3rem
+	a:hover {
+		& far {
+			font-weight: 900;
+		}
+		& span {
+			width: 5.3rem;
+		}
+	}
 </style>
