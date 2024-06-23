@@ -15,6 +15,8 @@
 </script>
 
 <script lang="ts">
+	import fade from "$lib/fade"
+
 	import ForumReplyMain from "./ForumReplyMain.svelte"
 	import type { Writable } from "svelte/store"
 

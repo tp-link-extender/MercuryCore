@@ -1,6 +1,7 @@
 <script lang="ts">
 	// Link to a place used on the homepage and the search page.
 
+	import fade from "$lib/fade"
 	import { encode } from "$lib/urlName"
 
 	export let place: {

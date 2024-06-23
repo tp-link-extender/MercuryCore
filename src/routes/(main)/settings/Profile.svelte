@@ -1,4 +1,7 @@
 <script lang="ts">
+	import Form from "$lib/components/forms/Form.svelte"
+	import Select from "$lib/components/forms/Select.svelte"
+	import Textarea from "$lib/components/forms/Textarea.svelte"
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data: import("./$types").PageData
@@ -27,6 +30,6 @@
 		name="bio"
 		label="Bio"
 		placeholder="Maximum 1000 characters"
-		help="Your bio will appear on your profile and allow other users to know who you are." 
+		help="Your bio will appear on your profile and allow other users to know who you are."
 		rows={3} />
 </Form>

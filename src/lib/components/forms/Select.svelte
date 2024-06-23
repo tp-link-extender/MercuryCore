@@ -1,7 +1,10 @@
 <script lang="ts">
 	// could make forms based on a js object or something instead of components but concerns with forms that require more interactivity/customisation
 
+	import fade from "$lib/fade"
 	import { createSelect, melt } from "@melt-ui/svelte"
+	import NoScript from "../NoScript.svelte"
+	import YesScript from "../YesScript.svelte"
 
 	export let name: string
 	export let label: string

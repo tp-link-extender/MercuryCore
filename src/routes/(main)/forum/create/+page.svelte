@@ -1,4 +1,7 @@
 <script lang="ts">
+	import Form from "$lib/components/forms/Form.svelte"
+	import Input from "$lib/components/forms/Input.svelte"
+	import Textarea from "$lib/components/forms/Textarea.svelte"
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data

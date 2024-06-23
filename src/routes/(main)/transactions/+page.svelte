@@ -1,4 +1,6 @@
 <script lang="ts">
+	import fade from "$lib/fade"
+
 	export let data
 </script>
 

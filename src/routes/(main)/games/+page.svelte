@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { deserialize, enhance } from "$app/forms"
 	import { page } from "$app/stores"
+	import fade from "$lib/fade"
 	import PlacePage from "../place/[id=integer]/[name]/+page.svelte"
 	import PlaceCard from "./PlaceCard.svelte"
 

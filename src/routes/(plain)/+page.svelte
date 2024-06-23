@@ -2,8 +2,9 @@
 	import g from "stripe-gradient"
 	const { Gradient } = g
 	import { Canvas } from "@threlte/core"
-	import Waves from "./Waves.svelte"
 	import { onMount } from "svelte"
+	import Moon from "./Moon.svelte"
+	import Waves from "./Waves.svelte"
 
 	// Gradient must run upon page being loaded, and cannot be rendered on serverside.
 	let canvasOpacity = 0

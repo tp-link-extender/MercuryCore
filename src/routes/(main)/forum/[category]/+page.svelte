@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores"
+	import fade from "$lib/fade"
 	import realtime, { type ForumResponse } from "$lib/realtime"
 	import type { Centrifuge, PublicationContext } from "centrifuge"
 	import { onDestroy, onMount } from "svelte"

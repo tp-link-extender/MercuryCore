@@ -4,6 +4,8 @@
 	import { keymap } from "@codemirror/view"
 	import { EditorView, basicSetup } from "codemirror"
 	import { onMount } from "svelte"
+	import NoScript from "../NoScript.svelte"
+	import YesScript from "../YesScript.svelte"
 
 	let code: HTMLDivElement
 

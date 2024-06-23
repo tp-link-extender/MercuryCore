@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores"
+	import fade from "$lib/fade"
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data: import("./$types").PageData

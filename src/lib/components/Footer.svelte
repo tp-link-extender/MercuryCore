@@ -1,4 +1,6 @@
 <script lang="ts">
+	import NoScript from "./NoScript.svelte"
+	
 	export let data: import("../../routes/$types").LayoutData
 
 	let clicked = false

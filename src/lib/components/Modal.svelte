@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { fly } from "svelte/transition"
+	import fade from "$lib/fade"
 	import type { Writable } from "svelte/store"
+	import { fly } from "svelte/transition"
 
 	export let modal: Writable<boolean>
 	const close = () => modal.set(false)

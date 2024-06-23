@@ -1,8 +1,9 @@
 <script lang="ts">
 	// Link to a place used on Games page.
 
+	import { goto, preloadData, pushState } from "$app/navigation"
+	import fade from "$lib/fade"
 	import { encode } from "$lib/urlName"
-	import { preloadData, pushState, goto } from "$app/navigation"
 
 	export let place: {
 		id: number

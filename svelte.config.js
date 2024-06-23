@@ -11,7 +11,6 @@ export default {
 		preprocess({ stylus: { prependData: '@import "src/variables.styl"' } }),
 		autoImport({
 			components: ["./src/lib/components", "./src/lib/components/forms"],
-			mapping: { fade: 'import fade from "$lib/fade"' },
 			include: ["**/*.svelte", "**/*.ts"],
 		}),
 		preprocessMeltUI(),

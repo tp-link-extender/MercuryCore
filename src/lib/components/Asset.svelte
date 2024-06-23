@@ -1,6 +1,7 @@
 <script lang="ts">
-	// An avatar shop item component, used in the
-	// avatar shop and inventory pages.
+	// An avatar shop item component, used in the avatar shop and inventory pages.
+
+	import fade from "$lib/fade"
 
 	export let asset: {
 		id: number

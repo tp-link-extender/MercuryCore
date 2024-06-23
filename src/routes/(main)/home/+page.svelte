@@ -1,4 +1,7 @@
 <script lang="ts">
+	import Form from "$lib/components/forms/Form.svelte"
+	import Input from "$lib/components/forms/Input.svelte"
+	import fade from "$lib/fade"
 	import { superForm } from "sveltekit-superforms/client"
 	import Status from "./Status.svelte"
 

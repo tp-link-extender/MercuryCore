@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { deserialize, enhance } from "$app/forms"
+	import fade from "$lib/fade"
 	import realtime, { type PlaceResponse } from "$lib/realtime"
 	import type { Centrifuge, PublicationContext } from "centrifuge"
 	import { onDestroy, onMount } from "svelte"

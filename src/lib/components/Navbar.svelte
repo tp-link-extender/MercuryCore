@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 	import { goto } from "$app/navigation"
+	import fade from "$lib/fade"
 	import { slide } from "svelte/transition"
 
 	let search = ""

@@ -2,6 +2,7 @@
 	// An equippable avatar item component
 
 	import { enhance } from "$app/forms"
+	import fade from "$lib/fade"
 
 	export let asset: {
 		name: string

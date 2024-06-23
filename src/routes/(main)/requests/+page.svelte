@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
+	import fade from "$lib/fade"
 
 	export let data
 </script>

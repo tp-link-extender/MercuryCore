@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 	import { goto, preloadData, pushState } from "$app/navigation"
+	import fade from "$lib/fade"
 
 	export let post: import("./$types").PageData["posts"][number]
 	export let num: number

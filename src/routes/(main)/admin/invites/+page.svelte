@@ -1,6 +1,9 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
 	import { enhance } from "$app/forms"
+	import Form from "$lib/components/forms/Form.svelte"
+	import Input from "$lib/components/forms/Input.svelte"
+	import fade from "$lib/fade"
+	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
 	const formData = superForm(data.form)
