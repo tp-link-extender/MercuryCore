@@ -1,4 +1,7 @@
 <script lang="ts">
+	import type TabData from "./TabData.ts"
+	import TabNav from "./TabNav.svelte"
+
 	export let tabData: ReturnType<typeof TabData>
 	export let space = false
 </script>

@@ -1,11 +1,14 @@
 <script lang="ts">
 	import "./settings.styl"
-
-	import ViewForm from "./View.svelte"
-	import TicketForm from "./Ticket.svelte"
+	import Head from "$lib/components/Head.svelte"
 	import NetworkForm from "./Network.svelte"
-	import PrivatelinkForm from "./Privatelink.svelte"
 	import PrivacyForm from "./Privacy.svelte"
+	import PrivatelinkForm from "./Privatelink.svelte"
+	import TicketForm from "./Ticket.svelte"
+	import ViewForm from "./View.svelte"
+	import TabNav from "$lib/components/TabNav.svelte"
+	import TabData from "$lib/components/TabData"
+	import Tab from "$lib/components/Tab.svelte"
 
 	export let data
 

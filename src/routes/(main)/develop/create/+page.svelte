@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Head from "$lib/components/Head.svelte"
 	import Form from "$lib/components/forms/Form.svelte"
 	import Input from "$lib/components/forms/Input.svelte"
 	import Select from "$lib/components/forms/Select.svelte"

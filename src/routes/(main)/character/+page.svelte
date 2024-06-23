@@ -3,7 +3,9 @@
 	import { applyAction } from "$app/forms"
 	import { deserialize, enhance } from "$app/forms"
 	import { invalidateAll } from "$app/navigation"
+	import TabNav from "$lib/components/TabNav.svelte"
 	import AvatarItem from "./AvatarItem.svelte"
+	import TabData from "$lib/components/TabData"
 
 	export let data
 	const { user } = data

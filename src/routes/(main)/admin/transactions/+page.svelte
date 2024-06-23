@@ -1,4 +1,9 @@
 <script lang="ts">
+	import Head from "$lib/components/Head.svelte"
+	import SidebarShell from "$lib/components/SidebarShell.svelte"
+	import Tab from "$lib/components/Tab.svelte"
+	import TabData from "$lib/components/TabData"
+	import User from "$lib/components/User.svelte"
 	import fade from "$lib/fade"
 
 	export let data

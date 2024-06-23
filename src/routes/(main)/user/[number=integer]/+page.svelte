@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { applyAction, enhance } from "$app/forms"
 	import { invalidateAll } from "$app/navigation"
+	import Accordion from "$lib/components/Accordion.svelte"
+	import AccordionItem from "$lib/components/AccordionItem.svelte"
+	import Head from "$lib/components/Head.svelte"
+	import ReportButton from "$lib/components/ReportButton.svelte"
+	import User from "$lib/components/User.svelte"
 	import fade from "$lib/fade"
 	import Interactions from "./Interactions.svelte"
 	import ProfilePlace from "./ProfilePlace.svelte"

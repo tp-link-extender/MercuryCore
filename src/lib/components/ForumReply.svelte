@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-	export type User = {
+	export type UserType = {
 		username: string
 		permissionLevel: number
 		status: "Playing" | "Online" | "Offline"
@@ -16,12 +16,12 @@
 
 <script lang="ts">
 	import fade from "$lib/fade"
-
 	import ForumReplyMain from "./ForumReplyMain.svelte"
 	import type { Writable } from "svelte/store"
+	import User from "./User.svelte"
 
 	// too many exports help
-	export let user: User
+	export let user: UserType
 	export let reply: Reply
 
 	export let num: number

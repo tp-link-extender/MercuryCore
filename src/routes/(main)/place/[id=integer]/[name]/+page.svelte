@@ -1,5 +1,12 @@
 <script lang="ts">
 	import { deserialize, enhance } from "$app/forms"
+	import Head from "$lib/components/Head.svelte"
+	import Modal from "$lib/components/Modal.svelte"
+	import ReportButton from "$lib/components/ReportButton.svelte"
+	import Tab from "$lib/components/Tab.svelte"
+	import TabData from "$lib/components/TabData"
+	import TabNav from "$lib/components/TabNav.svelte"
+	import User from "$lib/components/User.svelte"
 	import fade from "$lib/fade"
 	import realtime, { type PlaceResponse } from "$lib/realtime"
 	import type { Centrifuge, PublicationContext } from "centrifuge"

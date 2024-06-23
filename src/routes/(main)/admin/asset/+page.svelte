@@ -1,4 +1,7 @@
 <script lang="ts">
+	import Head from "$lib/components/Head.svelte"
+	import SidebarShell from "$lib/components/SidebarShell.svelte"
+	import TabData from "$lib/components/TabData"
 	import AssetApprove from "./AssetApprove.svelte"
 
 	export let data
@@ -25,7 +28,6 @@
 		<div class="<lg:hidden shrink-9999 w-75" />
 	</div>
 </div>
-
 
 <div class="px-4 pt-6">
 	<SidebarShell

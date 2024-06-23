@@ -1,4 +1,11 @@
 <script lang="ts">
+	import AdminLink from "$lib/components/AdminLink.svelte"
+	import Head from "$lib/components/Head.svelte"
+	import SidebarShell from "$lib/components/SidebarShell.svelte"
+	import Tab from "$lib/components/Tab.svelte"
+	import TabData from "$lib/components/TabData"
+	import TabNav from "$lib/components/TabNav.svelte"
+
 	const assetTypes = [
 		["Shirts", "🧥", "11"],
 		["T-Shirts", "👕", "2"],

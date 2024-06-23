@@ -1,5 +1,10 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
+	import Head from "$lib/components/Head.svelte"
+	import SidebarShell from "$lib/components/SidebarShell.svelte"
+	import Tab from "$lib/components/Tab.svelte"
+	import TabData from "$lib/components/TabData"
+	import User from "$lib/components/User.svelte"
 	import Form from "$lib/components/forms/Form.svelte"
 	import Input from "$lib/components/forms/Input.svelte"
 	import fade from "$lib/fade"

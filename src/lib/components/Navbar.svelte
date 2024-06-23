@@ -3,6 +3,7 @@
 	import { goto } from "$app/navigation"
 	import fade from "$lib/fade"
 	import { slide } from "svelte/transition"
+	import User from "./User.svelte"
 
 	let search = ""
 	let searchCompleted = true

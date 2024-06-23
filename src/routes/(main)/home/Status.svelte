@@ -1,4 +1,7 @@
 <script lang="ts">
+	import ReportButton from "$lib/components/ReportButton.svelte"
+	import User from "$lib/components/User.svelte"
+
 	export let status: import("./$types").PageData["feed"][0]
 </script>
 
@@ -11,7 +14,9 @@
 			<small>
 				<em>{new Date(status.posted).toLocaleString()}</em>
 			</small>
-			<ReportButton user={status.authorUser.username} url="status:{status.id}" />
+			<ReportButton
+				user={status.authorUser.username}
+				url="status:{status.id}" />
 		</span>
 	</div>
 	<p class="text-start">

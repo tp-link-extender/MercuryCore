@@ -1,8 +1,12 @@
 <script lang="ts">
-	import ProfileForm from "./Profile.svelte"
+	import Head from "$lib/components/Head.svelte"
 	import AccountInfo from "./Account.svelte"
 	import PasswordForm from "./Password.svelte"
+	import ProfileForm from "./Profile.svelte"
 	import StylingForm from "./Styling.svelte"
+	import TabNav from "$lib/components/TabNav.svelte"
+	import TabData from "$lib/components/TabData"
+	import Tab from "$lib/components/Tab.svelte"
 
 	export let data
 	const { user } = data

@@ -1,4 +1,7 @@
 <script lang="ts">
+	import Breadcrumbs from "$lib/components/Breadcrumbs.svelte"
+	import ForumReply from "$lib/components/ForumReply.svelte"
+	import Head from "$lib/components/Head.svelte"
 	import { writable } from "svelte/store"
 
 	let replyingTo = writable("")

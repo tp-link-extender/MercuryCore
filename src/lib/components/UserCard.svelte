@@ -1,5 +1,6 @@
 <script lang="ts">
 	import fade from "$lib/fade"
+	import User from "./User.svelte"
 
 	export let user: {
 		number: number

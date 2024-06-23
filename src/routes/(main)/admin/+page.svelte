@@ -1,5 +1,9 @@
 <script lang="ts">
+	import AdminLink from "$lib/components/AdminLink.svelte"
+	import Head from "$lib/components/Head.svelte"
 	import SidebarShell from "$lib/components/SidebarShell.svelte"
+	import Tab from "$lib/components/Tab.svelte"
+	import TabData from "$lib/components/TabData"
 
 	const permissions = [
 		[], // index from 1

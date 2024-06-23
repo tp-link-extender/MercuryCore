@@ -1,10 +1,14 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 	import type { Writable } from "svelte/store"
+	import DeleteButton from "./DeleteButton.svelte"
 	import ForumReply from "./ForumReply.svelte"
-	import type { RepliesCollapsed, Reply, User } from "./ForumReply.svelte"
+	import type { RepliesCollapsed, Reply, UserType } from "./ForumReply.svelte"
+	import PinButton from "./PinButton.svelte"
+	import ReportButton from "./ReportButton.svelte"
+	import User from "./User.svelte"
 
-	export let user: User
+	export let user: UserType
 	export let reply: Reply
 
 	export let num: number

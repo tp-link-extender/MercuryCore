@@ -1,3 +1,7 @@
+<script lang="ts">
+	import Head from "$lib/components/Head.svelte"
+</script>
+
 <Head title="Thank You" />
 
 <h1 class="text-center">Welcome to Mercury</h1>

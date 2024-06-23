@@ -1,4 +1,7 @@
 <script lang="ts">
+	import Head from "$lib/components/Head.svelte"
+	import User from "$lib/components/User.svelte"
+
 	export let data
 
 	const notificationNotes: { [k: string]: string } = {
@@ -13,7 +16,7 @@
 		ForumPost: "New forum post",
 		ItemPurchase: "Item purchased",
 		Message: "New message",
-		NewFriend: "New friend",
+		NewFriend: "New friend"
 	}
 </script>
 

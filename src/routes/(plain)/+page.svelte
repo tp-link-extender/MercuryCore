@@ -1,6 +1,7 @@
 <script lang="ts">
 	import g from "stripe-gradient"
 	const { Gradient } = g
+	import Head from "$lib/components/Head.svelte"
 	import { Canvas } from "@threlte/core"
 	import { onMount } from "svelte"
 	import Moon from "./Moon.svelte"

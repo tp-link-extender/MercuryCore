@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Head from "$lib/components/Head.svelte"
 	import Form from "$lib/components/forms/Form.svelte"
 	import Input from "$lib/components/forms/Input.svelte"
 	import Textarea from "$lib/components/forms/Textarea.svelte"
@@ -11,7 +12,6 @@
 </script>
 
 <Head title="Create a post in {data.categoryName}" />
-
 
 <div class="text-center">
 	<h1>Create a post in {data.categoryName}</h1>

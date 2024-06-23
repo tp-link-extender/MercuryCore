@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { deserialize, enhance } from "$app/forms"
+	import Group from "$lib/components/Group.svelte"
+	import Head from "$lib/components/Head.svelte"
 
 	export let data
 

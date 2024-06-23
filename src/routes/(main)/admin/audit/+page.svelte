@@ -1,4 +1,9 @@
 <script lang="ts">
+	import Head from "$lib/components/Head.svelte"
+	import SidebarShell from "$lib/components/SidebarShell.svelte"
+	import Tab from "$lib/components/Tab.svelte"
+	import TabData from "$lib/components/TabData"
+
 	export let data
 
 	let tabData = TabData(data.url, ["Audit logs"], ["fa fa-list"])

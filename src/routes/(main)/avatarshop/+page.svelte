@@ -1,5 +1,9 @@
 <script lang="ts">
 	import { deserialize, enhance } from "$app/forms"
+	import Asset from "$lib/components/Asset.svelte"
+	import Head from "$lib/components/Head.svelte"
+	import TabData from "$lib/components/TabData"
+	import TabNav from "$lib/components/TabNav.svelte"
 
 	export let data
 

@@ -1,5 +1,12 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
+	import Breadcrumbs from "$lib/components/Breadcrumbs.svelte"
+	import ForumReply from "$lib/components/ForumReply.svelte"
+	import Head from "$lib/components/Head.svelte"
+	import PinButton from "$lib/components/PinButton.svelte"
+	import PostReply from "$lib/components/PostReply.svelte"
+	import ReportButton from "$lib/components/ReportButton.svelte"
+	import User from "$lib/components/User.svelte"
 	import realtime, { type ForumResponse } from "$lib/realtime"
 	import type { Centrifuge, PublicationContext } from "centrifuge"
 	import { onDestroy, onMount } from "svelte"

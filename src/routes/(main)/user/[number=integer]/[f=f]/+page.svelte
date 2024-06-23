@@ -1,5 +1,9 @@
 <script lang="ts">
 	// The friends, followers, and following pages for a user.
+
+	import Head from "$lib/components/Head.svelte"
+	import UserCard from "$lib/components/UserCard.svelte"
+
 	export let data
 
 	const titles = {

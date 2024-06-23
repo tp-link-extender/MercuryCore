@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/stores"
+	import Breadcrumbs from "$lib/components/Breadcrumbs.svelte"
+	import Head from "$lib/components/Head.svelte"
 	import fade from "$lib/fade"
 	import realtime, { type ForumResponse } from "$lib/realtime"
 	import type { Centrifuge, PublicationContext } from "centrifuge"

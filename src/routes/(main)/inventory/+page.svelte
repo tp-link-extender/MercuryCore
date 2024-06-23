@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { browser } from "$app/environment"
 	import { deserialize } from "$app/forms"
+	import Asset from "$lib/components/Asset.svelte"
+	import Head from "$lib/components/Head.svelte"
+	import SidebarShell from "$lib/components/SidebarShell.svelte"
+	import TabData from "$lib/components/TabData"
 
 	export let data
 

@@ -1,4 +1,8 @@
 <script lang="ts">
+	import Head from "$lib/components/Head.svelte"
+	import SidebarShell from "$lib/components/SidebarShell.svelte"
+	import Tab from "$lib/components/Tab.svelte"
+	import TabData from "$lib/components/TabData"
 	import Form from "$lib/components/forms/Form.svelte"
 	import Input from "$lib/components/forms/Input.svelte"
 	import Select from "$lib/components/forms/Select.svelte"

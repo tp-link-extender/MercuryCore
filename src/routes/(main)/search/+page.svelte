@@ -1,4 +1,9 @@
 <script lang="ts">
+	import Asset from "$lib/components/Asset.svelte"
+	import Group from "$lib/components/Group.svelte"
+	import Head from "$lib/components/Head.svelte"
+	import Place from "$lib/components/Place.svelte"
+	import User from "$lib/components/User.svelte"
 	import fade from "$lib/fade"
 
 	export let data
