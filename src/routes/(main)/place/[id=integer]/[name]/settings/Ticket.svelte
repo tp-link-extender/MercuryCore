@@ -3,10 +3,10 @@
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data: import("./$types").PageData
-	const { message, enhance, delayed } = superForm(data.ticketForm)
+	const { message, enhance: enh, delayed } = superForm(data.ticketForm)
 </script>
 
-<form use:enhance method="POST" action="?/ticket&tab=Network">
+<form use:enh method="POST" action="?/ticket&tab=Network">
 	<fieldset class="flex flex-wrap pb-4">
 		<label for="ticket" class="w-full md:w-1/4 text-md-right">
 			Server Ticket

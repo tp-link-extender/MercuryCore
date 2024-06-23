@@ -3,7 +3,7 @@
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data: import("./$types").PageData
-	const { message, enhance, delayed } = superForm(data.privatelinkForm)
+	const { message, enhance: enh, delayed } = superForm(data.privatelinkForm)
 
 	$: value = encodeURI(
 		`https://${data.domain}/place/${data.id}/${data.slug}?privateServer=${data.privateTicket}`
@@ -12,7 +12,7 @@
 	let copiedSuccess = false
 </script>
 
-<form use:enhance method="POST" action="?/privatelink&tab=Privacy">
+<form use:enh method="POST" action="?/privatelink&tab=Privacy">
 	<fieldset class="flex flex-wrap pb-2">
 		<label for="privateLink" class="w-full md:w-1/4">
 			Private Server Link

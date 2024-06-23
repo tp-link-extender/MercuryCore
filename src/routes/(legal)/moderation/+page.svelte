@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { enhance } from "$app/forms"
+
 	export let data
 
 	let checked = false
@@ -88,8 +90,9 @@
 			{:else if moderationAction[data.type] === "Ban"}
 				<form method="POST" use:enhance>
 					<p class="mb-12">
-						Please make sure to follow the Mercury's Terms of Service
-						to prevent further action to be taken on your account.
+						Please make sure to follow the Mercury's Terms of
+						Service to prevent further action to be taken on your
+						account.
 					</p>
 					<p>
 						You may reactivate your account after your ban ends in {formatDateDifference(

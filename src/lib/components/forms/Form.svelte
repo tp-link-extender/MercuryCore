@@ -10,10 +10,10 @@
 	export let method = "POST"
 
 	export let formData: import("sveltekit-superforms").SuperForm<any> // boooo but nothing else works
-	const { errors, message, enhance, delayed } = formData
+	const { errors, message, enhance: enh, delayed } = formData
 
-	// use:enhance may not be used on forms that aren't method === "POST"
-	const use = method === "POST" ? enhance : () => {}
+	// use:enh may not be used on forms that aren't method === "POST"
+	const use = method === "POST" ? enh : () => {}
 
 	$: other = $errors.other || ""
 </script>

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { preloadData, pushState, goto } from "$app/navigation"
+	import { enhance } from "$app/forms"
+	import { goto, preloadData, pushState } from "$app/navigation"
 
 	export let post: import("./$types").PageData["posts"][number]
 	export let num: number

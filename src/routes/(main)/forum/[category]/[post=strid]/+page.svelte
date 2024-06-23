@@ -1,8 +1,10 @@
 <script lang="ts">
-	import { enhance as enhance2 } from "$app/forms"
-	import { superForm } from "sveltekit-superforms/client"
+	import { enhance } from "$app/forms"
 	import realtime, { type ForumResponse } from "$lib/realtime"
 	import type { Centrifuge, PublicationContext } from "centrifuge"
+	import { onDestroy, onMount } from "svelte"
+	import { writable } from "svelte/store"
+	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
 	const { user } = data
@@ -118,7 +120,7 @@
 				? 'border-(solid 1px green-5)!'
 				: ''}">
 			<form
-				use:enhance2={({ formData }) => {
+				use:enhance={({ formData }) => {
 					const action = formData.get("action")
 
 					if (action === "like") {

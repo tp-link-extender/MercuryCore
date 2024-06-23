@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { page } from "$app/stores"
-	import ForumPost from "./ForumPost.svelte"
-	import PostPage from "./[post=strid]/+page.svelte"
 	import realtime, { type ForumResponse } from "$lib/realtime"
 	import type { Centrifuge, PublicationContext } from "centrifuge"
+	import { onDestroy, onMount } from "svelte"
+	import { writable } from "svelte/store"
+	import ForumPost from "./ForumPost.svelte"
+	import PostPage from "./[post=strid]/+page.svelte"
 
 	export let data
 

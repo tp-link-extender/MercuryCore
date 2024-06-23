@@ -10,16 +10,7 @@ export default {
 	preprocess: sequence([
 		preprocess({ stylus: { prependData: '@import "src/variables.styl"' } }),
 		autoImport({
-			components: [
-				"./src/lib/components",
-				"./src/lib/components/forms",
-				{ name: "./src/lib/components/studio", prefix: "studio" },
-			],
-			module: {
-				svelte: ["onMount", "onDestroy"],
-				"svelte/store": ["writable"],
-				"$app/forms": ["enhance", "deserialize"],
-			},
+			components: ["./src/lib/components", "./src/lib/components/forms"],
 			mapping: { fade: 'import fade from "$lib/fade"' },
 			include: ["**/*.svelte", "**/*.ts"],
 		}),

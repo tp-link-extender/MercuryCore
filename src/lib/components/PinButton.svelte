@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { applyAction } from "$app/forms"
+	import { applyAction, enhance } from "$app/forms"
 	import { invalidateAll } from "$app/navigation"
 
 	export let id: string

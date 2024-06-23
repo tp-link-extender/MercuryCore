@@ -3,6 +3,7 @@
 	const { Gradient } = g
 	import { Canvas } from "@threlte/core"
 	import Waves from "./Waves.svelte"
+	import { onMount } from "svelte"
 
 	// Gradient must run upon page being loaded, and cannot be rendered on serverside.
 	let canvasOpacity = 0

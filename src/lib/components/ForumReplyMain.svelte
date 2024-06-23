@@ -1,7 +1,8 @@
 <script lang="ts">
-	import ForumReply from "./ForumReply.svelte"
+	import { enhance } from "$app/forms"
 	import type { Writable } from "svelte/store"
-	import type { User, Reply, RepliesCollapsed } from "./ForumReply.svelte"
+	import ForumReply from "./ForumReply.svelte"
+	import type { RepliesCollapsed, Reply, User } from "./ForumReply.svelte"
 
 	export let user: User
 	export let reply: Reply

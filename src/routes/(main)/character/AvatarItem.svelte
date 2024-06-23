@@ -1,6 +1,8 @@
 <script lang="ts">
 	// An equippable avatar item component
 
+	import { enhance } from "$app/forms"
+
 	export let asset: {
 		name: string
 		id: number

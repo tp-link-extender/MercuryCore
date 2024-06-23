@@ -1,8 +1,11 @@
 <script lang="ts">
-	import customProtocol from "./customprotocol.ts"
-	import Autopilot from "./Autopilot.svelte"
+	import { deserialize, enhance } from "$app/forms"
 	import realtime, { type PlaceResponse } from "$lib/realtime"
 	import type { Centrifuge, PublicationContext } from "centrifuge"
+	import { onDestroy, onMount } from "svelte"
+	import { writable } from "svelte/store"
+	import Autopilot from "./Autopilot.svelte"
+	import customProtocol from "./customprotocol.ts"
 
 	export let data
 	const { user } = data

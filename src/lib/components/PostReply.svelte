@@ -4,10 +4,10 @@
 	export let comment = false
 	export let formData: import("sveltekit-superforms").SuperForm<any>
 
-	const { form, errors, message, constraints, enhance, delayed } = formData
+	const { form, errors, message, constraints, enhance: enh, delayed } = formData
 </script>
 
-<form use:enhance class="py-2" method="POST" action="?/reply">
+<form use:enh class="py-2" method="POST" action="?/reply">
 	<label for="content" class="light-text py-2">
 		Post a {comment ? "comment" : "reply"}
 	</label>

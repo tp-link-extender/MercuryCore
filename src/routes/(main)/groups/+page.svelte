@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { deserialize, enhance } from "$app/forms"
+
 	export let data
 
 	let query = ""

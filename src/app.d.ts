@@ -101,10 +101,6 @@ declare global {
 	declare const Input: typeof import("$lib/components/forms/Input.svelte").default
 	declare const Select: typeof import("$lib/components/forms/Select.svelte").default
 	declare const Textarea: typeof import("$lib/components/forms/Textarea.svelte").default
-
-	declare const { onMount, onDestroy }: typeof import("svelte")
-	declare const { writable }: typeof import("svelte/store")
-	declare const { enhance, deserialize }: typeof import("$app/forms")
 }
 
 export type {}

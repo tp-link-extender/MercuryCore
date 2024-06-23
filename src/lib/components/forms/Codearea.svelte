@@ -3,6 +3,7 @@
 	import { css } from "@codemirror/lang-css"
 	import { keymap } from "@codemirror/view"
 	import { EditorView, basicSetup } from "codemirror"
+	import { onMount } from "svelte"
 
 	let code: HTMLDivElement
 

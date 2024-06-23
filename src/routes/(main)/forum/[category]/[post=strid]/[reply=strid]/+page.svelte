@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { writable } from "svelte/store"
+
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({})
 

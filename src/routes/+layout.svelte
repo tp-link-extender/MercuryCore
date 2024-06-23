@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { dev } from "$app/environment"
+	import { enhance } from "$app/forms"
 	import { navigating } from "$app/stores"
 	import nprogress from "nprogress"
+	import { onMount } from "svelte"
 
 	import "/src/nprogress.styl"
 	import "/src/global.styl"

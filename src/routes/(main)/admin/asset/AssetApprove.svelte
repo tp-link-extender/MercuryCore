@@ -1,6 +1,8 @@
 <script lang="ts">
 	// An avatar shop item component, used in the avatar shop and inventory pages.
 
+	import { enhance } from "$app/forms"
+
 	export let asset: import("./$types").PageData["assets"][0]
 	export let num: number
 	export let total: number

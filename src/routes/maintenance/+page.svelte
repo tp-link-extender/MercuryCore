@@ -2,6 +2,7 @@
 	import g from "stripe-gradient"
 	const { Gradient } = g
 	import { Canvas } from "@threlte/core"
+	import { onMount } from "svelte"
 
 	export let data
 

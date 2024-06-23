@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { applyAction } from "$app/forms"
+	import { enhance } from "$app/forms"
 	import { invalidateAll } from "$app/navigation"
-	import { superForm } from "sveltekit-superforms/client"
 	import types from "$lib/assetTypes"
 	import realtime, { type AssetResponse } from "$lib/realtime"
 	import type { Centrifuge, PublicationContext } from "centrifuge"
+	import { onDestroy, onMount } from "svelte"
+	import { writable } from "svelte/store"
+	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
 	const { user } = data

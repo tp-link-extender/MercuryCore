@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { enhance } from "$app/forms"
+
 	export let id: string
 	export let reverse = false
 	export let moderate = false
