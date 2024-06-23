@@ -13,6 +13,7 @@
 	import "/src/daisyui/dropdown.css"
 	import "/src/daisyui/modal.css"
 	import "/src/daisyui/tooltip.css"
+	import "/src/themes/standard.css"
 	import "uno.css"
 
 	export let data
@@ -127,8 +128,3 @@
 </div>
 
 <slot />
-
-<!-- Theme files contain CSS variables that are used throughout the site. -->
-<style lang="stylus">
-	@import "../themes/standard"
-</style>

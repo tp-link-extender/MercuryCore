@@ -22,8 +22,7 @@
 <Head title="{data.name} Settings" />
 
 <!--
-	Pretty chuffed with this way of organising forms, makes it way easier
-	to have multiple forms on a page without them messing eachother up.
+	Pretty chuffed with this way of organising forms, makes it way easier to have multiple forms on a page without them messing eachother up.
  -->
 <div class="ctnr max-w-220 light-text">
 	<div class="pb-4">

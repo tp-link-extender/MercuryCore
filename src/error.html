@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <!-- fcuk -->
 <html lang="en">
 	<head>
@@ -18,14 +18,14 @@
 				height: 100vh;
 			}
 
-			.error {
+			#error {
 				display: flex;
 				align-items: center;
 				max-width: 32rem;
 				margin: 0 1rem;
 			}
 
-			.status {
+			#status {
 				font-weight: 200;
 				font-size: 3rem;
 				line-height: 1;
@@ -33,26 +33,26 @@
 				top: -0.05rem;
 			}
 
-			.message {
+			#message {
 				border-left: 1px solid #ccc;
 				padding-left: 1rem;
 				margin-left: 1rem;
 				min-height: 2.5rem;
 				display: flex;
 				align-items: center;
-			}
 
-			.message h1 {
-				font-weight: 400;
-				font-size: 1em;
-				margin: 0;
+				& h1 {
+					font-weight: 400;
+					font-size: 1em;
+					margin: 0;
+				}
 			}
 		</style>
 	</head>
 	<body>
-		<div class="error">
-			<span class="status">%sveltekit.status%</span>
-			<div class="message">
+		<div id="error">
+			<span id="status">%sveltekit.status%</span>
+			<div id="message">
 				<h1>%sveltekit.error.message% :(</h1>
 			</div>
 		</div>
