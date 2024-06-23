@@ -6,13 +6,13 @@
 	import nprogress from "nprogress"
 	import { onMount } from "svelte"
 
-	import "/src/nprogress.styl"
-	import "/src/global.styl"
-	import "/src/fontawesome.styl"
-	import "/src/daisyui/carousel.styl"
-	import "/src/daisyui/dropdown.styl"
-	import "/src/daisyui/modal.styl"
-	import "/src/daisyui/tooltip.styl"
+	import "/src/nprogress.css"
+	import "/src/global.css"
+	import "/src/fontawesome.css"
+	import "/src/daisyui/carousel.css"
+	import "/src/daisyui/dropdown.css"
+	import "/src/daisyui/modal.css"
+	import "/src/daisyui/tooltip.css"
 	import "uno.css"
 
 	export let data

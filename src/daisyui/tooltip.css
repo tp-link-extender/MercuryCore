@@ -1,0 +1,53 @@
+.tooltip {
+	@apply relative inline-block text-center;
+
+	&:before,
+	&:after {
+		@apply transition duration-300 ease-in-out;
+		opacity: 0;
+	}
+
+	&:before {
+		@apply max-w-48 rounded-2 px-2 py-1 text-sm;
+		content: attr(aria-label);
+		display: block;
+		position: absolute;
+		font-weight: 500;
+		left: 50%;
+		bottom: -162%;
+		transform: translateX(-50%);
+		background-color: rgba(255, 255, 255, 0.624);
+		color: #000;
+		width: max-content;
+	}
+
+	&:after {
+		content: "";
+		border-style: solid;
+		border-width: 0.35rem;
+		width: 0;
+		height: 0;
+		display: block;
+		position: absolute;
+		transform: translateX(-50%);
+		border-color: transparent transparent rgba(255, 255, 255, 0.624)
+			transparent;
+		top: 100%;
+		left: 50%;
+		right: auto;
+		bottom: auto;
+	}
+
+	&:hover:before,
+	&:hover:after,
+	&:has(:focus-visible):after,
+	&:has(:focus-visible):before {
+		opacity: 1;
+	}
+
+	&:not([aria-label]):hover:before,
+	&:not([aria-label]):hover:after {
+		visibility: hidden;
+		opacity: 0;
+	}
+}
