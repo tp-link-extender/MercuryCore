@@ -14,5 +14,5 @@ export default defineConfig({
 		UnoCSS({ extractors: [extractorSvelte] }),
 		sveltekit(),
 	],
-	ssr: { noExternal: ["three", "troika-three-text", "d3-interpolate"] },
+	ssr: { noExternal: ["d3-interpolate"] },
 })

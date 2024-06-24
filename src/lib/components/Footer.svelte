@@ -1,8 +1,4 @@
 <script lang="ts">
-	import NoScript from "./NoScript.svelte"
-
-	export let data: import("../../routes/$types").LayoutData
-
 	let clicked = false
 </script>
 
@@ -16,11 +12,8 @@
 			</span>
 		</div>
 		<div class="sm:text-right <sm:pt-4">
-			<div class="grey-text pb-2">
-				<span class="grey-text pr-1">
-					<!-- Brag -->
-					{data.lines} lines of code
-				</span>
+			<div class="flex <sm:flex-col sm:gap-3">
+				<a class="light-text" href="/statistics">Statistics</a>
 				&ndash;
 				<button
 					on:mousedown={() => (clicked = !clicked)}
@@ -30,9 +23,6 @@
 					<span class="grey-text">made with</span>
 					<fa fa-heart />
 				</button>
-			</div>
-			<div class="flex <sm:flex-col sm:gap-3">
-				<a class="light-text" href="/statistics">Statistics</a>
 			</div>
 		</div>
 	</div>

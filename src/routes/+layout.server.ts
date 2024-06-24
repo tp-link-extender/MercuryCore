@@ -1,19 +1,6 @@
 import { equery, surql } from "$lib/server/surreal"
 import getNotifications from "./notifications.ts"
 
-let lines = "0"
-
-// extract the line count from the stupid file that scc outputs
-try {
-	const codes = (await Bun.file("data/lines").text()) // 月 moment
-		.split("\n")
-		.filter(l => l.startsWith("  code"))
-
-	lines = codes[codes.length - 1].split(" ").pop() || "Unknown"
-} catch (e) {
-	console.error(e)
-}
-
 type Banner = {
 	// bruce, it's- I'm not doing this again
 	id: string
@@ -45,7 +32,6 @@ export async function load({ request, locals }) {
 		notifications: await getNotifications(user),
 		url: request.url,
 		domain: process.env.DOMAIN as string,
-		lines, // footer thing
 		...(isStudio && { isStudio }),
 	}
 }
