@@ -3,7 +3,6 @@ import { type PreparedQuery, RecordId, Surreal, surql } from "surrealdb.js"
 import auditLogQuery from "./auditLog.surql"
 import initQuery from "./init.surql"
 import CustomHttpEngine from "./surrealEngine.ts"
-import transactionQuery from "./transaction.surql"
 
 const db = new Surreal({ engines: { http: CustomHttpEngine } })
 
@@ -25,8 +24,7 @@ type Prepared = PreparedQuery<(result: unknown[]) => unknown>
 
 const stupidError =
 	"The query was not executed due to a failed transaction. There was a problem with a datastore transaction: Resource busy: "
-const sessionError =
-	"There was a problem with authentication"
+const sessionError = "There was a problem with authentication"
 
 async function fixError<T>(q: () => Promise<T>) {
 	// WORST
@@ -149,34 +147,7 @@ export async function transaction(
 	amountSent: number,
 	{ note, link }: { note?: string; link?: string }
 ) {
-	const qResult = await equery<
-		| string[]
-		| {
-				amountSent: number
-				taxRate: number
-				note: string
-				link: string
-				time: string
-		  }[]
-	>(transactionQuery, {
-		...(sender?.number
-			? { senderNumber: sender.number }
-			: sender?.id
-				? { senderId: new RecordId("user", sender.id) }
-				: {}),
-		...(receiver?.number
-			? { receiverNumber: receiver.number }
-			: receiver?.id
-				? { receiverId: new RecordId("user", receiver.id) }
-				: {}),
-		amountSent,
-		note,
-		link,
-	})
-
-	// todo test dis it might be broke
-	const e = getError(qResult)
-	if (e) throw new Error(e)
+	throw new Error("todo test dis its broke")
 }
 
 export enum Action {

@@ -10,8 +10,6 @@ Contents:
 -   [Hosting the website](#hosting-the-website)
 -   [Mercury's stack](#mercurys-stack)
     -   [Route structure](#route-structure)
--   [Deploying new client versions](#deploying-new-client-versions)
--   [Running RCCService](#running-rccservice)
 
 # Recommended development setup
 
@@ -107,15 +105,3 @@ See the [SvelteKit Routing docs](https://kit.svelte.dev/docs/routing) for more i
 The markup for pages is enhanced with HTMLx templating, which adds extra features such as adding variables, reactivity, and logic blocks such as {#if} and {#each}.
 
 Take a look at the [Svelte docs](https://svelte.dev/docs), or the incredibly helpful [Svelte tutorial](https://learn.svelte.dev), for more information.
-
-# Deploying new client versions
-
-To deploy a new version of the client, you will need Go.
-
-Edit files in the /Client deployer/staging directory. Navigate to /Client deployer and run `go run .` to start the deployer.
-
-# Running RCCService
-
-You will also need Go to run RCC.
-
-Navigate to /RCCService and run `go run .` to start the RCCService proxy and wrapper. It should start within 20 seconds or so.

@@ -17,6 +17,6 @@
 	<Input
 		{formData}
 		name="privateServer"
-		label="Private Server"
+		label="Private server"
 		type="checkbox" />
 </Form>

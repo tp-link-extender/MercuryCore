@@ -32,9 +32,9 @@ export type PlaceResponse = {
 // - WebTransport I LOVE and using it with Centrifugo is a joy, but concerns with TLS between Caddy reverse proxy and Centrifugo server (plus it isn't supported in Safari... STILL)
 // WebSockets are fine for now. Might even mean we don't need to use the Centrifuge client library (~50kb iirc), but it has some nice features for reconnection and such
 
-const url = `ws${
-	dev ? "://localhost:7999" : `s://realtime.${process.env.DOMAIN}`
-}/connection/websocket` // only i would write template literals like this
+const url = dev
+	? "ws://localhost:7999/connection/websocket"
+	: `wss://realtime.${process.env.DOMAIN}/connection/websocket`
 
 export default (
 	token: string,

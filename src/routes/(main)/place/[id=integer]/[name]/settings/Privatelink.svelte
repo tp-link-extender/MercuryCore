@@ -16,7 +16,7 @@
 <form use:enh method="POST" action="?/privatelink&tab=Privacy">
 	<fieldset class="flex flex-wrap pb-2">
 		<label for="privateLink" class="w-full md:w-1/4">
-			Private Server Link
+			Private server link
 		</label>
 		<div class="w-full md:w-3/4">
 			<div class="input-group">

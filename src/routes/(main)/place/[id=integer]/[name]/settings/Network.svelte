@@ -23,5 +23,5 @@
 		label="Port"
 		type="number"
 		help="Using a port number lower than 49152 may not work correctly." />
-	<Input {formData} name="maxPlayers" label="Server Limit" type="number" />
+	<Input {formData} name="maxPlayers" label="Server limit" type="number" />
 </Form>

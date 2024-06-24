@@ -7,11 +7,7 @@ import { SurrealAdapter } from "./surrealAdapter.ts"
 
 // As of v3, Lucia no longer shits itself if it doesn't have access to the database clients during build time
 export const auth = new Lucia(new SurrealAdapter(), {
-	sessionCookie: {
-		attributes: {
-			secure: !dev,
-		},
-	},
+	sessionCookie: { attributes: { secure: !dev } },
 	getUserAttributes: data => ({
 		// This is the data that will be available in data.user in a +page.svelte or +layout.svelte file, or authorise() in a +page.server.ts or +layout.server.ts file.
 		id: data.id,
@@ -44,13 +40,7 @@ export const auth = new Lucia(new SurrealAdapter(), {
  * const { session, user } = await authorise(locals)
  */
 export async function authorise(
-	{
-		user,
-		session,
-	}: {
-		user: User | null
-		session: Session | null
-	},
+	{ user, session }: { user: User | null; session: Session | null },
 	level?: number
 ) {
 	if (!session || !user) redirect(302, "/login")

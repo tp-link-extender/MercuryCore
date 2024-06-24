@@ -14,7 +14,7 @@ export async function GET({ url }) {
 			WHERE serverTicket = ${ticket}`
 	)
 
-	if (!placeData) error(400, "Invalid Server Ticket")
+	if (!placeData) error(400, "Invalid Server ticket")
 
 	const port = placeData.serverPort
 	// const serverId = placeData.id.toString()
