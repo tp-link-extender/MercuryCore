@@ -8,6 +8,7 @@ import type { RequestEvent } from "./$types.d.ts"
 
 // Heads, Faces, T-Shirts, Shirts, Pants, Gear, Hats
 const allowedTypes = [17, 18, 2, 11, 12, 19, 8]
+const oneEquippable = [2, 11, 12, 18]
 const brickColours = [
 	1, 5, 9, 11, 18, 21, 23, 24, 26, 28, 29, 37, 38, 101, 102, 104, 105, 106,
 	107, 119, 125, 135, 141, 151, 153, 192, 194, 199, 208, 217, 226, 1001, 1002,
@@ -155,21 +156,15 @@ async function equip(e: RequestEvent) {
 	await equery(
 		surql`
 			# Unequip if there's already a T-Shirt/Shirt/Pants/Face equipped
-			IF $type = 2 {
-				DELETE $user->wearing WHERE out.type = 2;
-			} ELSE IF $type = 11 {
-				DELETE $user->wearing WHERE out.type = 11;
-			} ELSE IF $type = 12 {
-				DELETE $user->wearing WHERE out.type = 12;
-			} ELSE IF $type = 18 {
-				DELETE $user->wearing WHERE out.type = 18;
-			};
+			IF $type {	
+				DELETE $user->wearing WHERE out.type = $type;
+			}
 			RELATE $user->wearing->$asset SET time = time::now();
 			RELATE $user->recentlyWorn->$asset SET time = time::now()`,
 		{
 			user: new RecordId("user", user.id),
 			asset: new RecordId("asset", id),
-			type: asset.type,
+			...(oneEquippable.includes(asset.type) ? asset : {}),
 		}
 	)
 

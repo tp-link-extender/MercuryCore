@@ -1,4 +1,5 @@
 import formData from "$lib/server/formData"
+import { authorise } from "$lib/server/lucia"
 import { equery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import searchAssetsQuery from "./searchAssets.surql"
@@ -27,60 +28,47 @@ type Group = {
 }
 
 export const load = async ({ url }) => {
-	const searchQ = url.searchParams.get("q") || ""
+	const query = url.searchParams.get("q") || ""
 	const category = url.searchParams.get("c")?.toLowerCase() || ""
+	if (!query) error(400, "Missing search query")
 
-	if (!searchQ) error(400, "Missing search query")
-	if (category && !["users", "places", "assets", "groups"].includes(category))
-		error(400, "Invalid category")
-
-	const param = { searchQ }
-
-	if (category === "users") {
-		const [[userExists]] = await equery<{ number: number }[][]>(
-			surql`
-				SELECT number FROM user
-				WHERE username = ${searchQ}`
-		)
-
-		if (userExists) redirect(302, `/user/${userExists.number}`)
-	}
+	const param = { query }
 
 	// TODO: make this full-text search because that would be much nicer
-	const searches: {
-		users?: BasicUser[]
-		places?: Place[]
-		assets?: Asset[]
-		groups?: Group[]
-	} = {}
+	switch (category) {
+		case "users": {
+			const [[userExists]] = await equery<{ number: number }[][]>(
+				surql`SELECT number FROM user WHERE username = ${query}`
+			)
+			if (userExists) redirect(302, `/user/${userExists.number}`)
 
-	if (category === "users") {
-		const [users] = await equery<BasicUser[][]>(searchUsersQuery, param)
-		searches.users = users
+			const [users] = await equery<BasicUser[][]>(searchUsersQuery, param)
+			return { query, category, users }
+		}
+		case "places": {
+			const [places] = await equery<Place[][]>(searchPlacesQuery, param)
+			return { query, category, places }
+		}
+		case "assets": {
+			const [assets] = await equery<Asset[][]>(searchAssetsQuery, param)
+			return { query, category, assets }
+		}
+		case "groups": {
+			const [groups] = await equery<Group[][]>(searchGroupsQuery, param)
+			return { query, category, groups }
+		}
+		default:
+			error(400, "Invalid category")
 	}
-	if (category === "places") {
-		const [places] = await equery<Place[][]>(searchPlacesQuery, param)
-		searches.places = places
-	}
-	if (category === "assets") {
-		const [assets] = await equery<Asset[][]>(searchAssetsQuery, param)
-		searches.assets = assets
-	}
-	if (category === "groups") {
-		const [groups] = await equery<Group[][]>(searchGroupsQuery, param)
-		searches.groups = groups
-	}
-
-	return { query: searchQ, category, ...searches }
 }
 
 export const actions: import("./$types").Actions = {}
-actions.default = async ({ url, request }) => {
-	const data = await formData(request)
-	const { query } = data
-	const category = url.searchParams.get("c") || ""
+actions.default = async ({ url, request, locals }) => {
+	await authorise(locals)
+
+	const { query } = await formData(request)
+	const category = url.searchParams.get("c")
 
 	console.log(`searching for ${query} in ${category}`)
-
 	redirect(302, `/search?q=${query}${category ? `&c=${category}` : ""}`)
 }

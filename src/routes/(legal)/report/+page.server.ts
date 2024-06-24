@@ -38,7 +38,6 @@ export async function load({ locals, url }) {
 
 	const reportee = url.searchParams.get("user")
 	const reportedUrl = url.searchParams.get("url")
-
 	if (!reportee || !reportedUrl) error(400, "Missing user or url parameters")
 
 	const reporteeUser = await getReportee(reportee)

@@ -11,7 +11,7 @@
     "buildview": "vite build && vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
-    "lines": "scc -c --no-size --no-cocomo --sort lines --exclude-dir staging --exclude-dir setup --exclude-dir PrepForUpload  --exclude-file mercury.yml,uno.config.ts,AppSettings.xml,ReflectionMetadata.xml,materials.json,shaders.json --exclude-ext lua,h,txt --ci -f cloc-yaml -o ./data/lines"
+    "lines": "scc -c --no-size --no-cocomo --sort lines --exclude-dir staging --exclude-ext json --ci -f cloc-yaml -o ./data/lines"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.2",

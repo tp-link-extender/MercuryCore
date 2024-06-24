@@ -45,7 +45,6 @@ actions.profile = async ({ request, locals }) => {
 }
 actions.password = async ({ request, locals }) => {
 	const { user } = await authorise(locals)
-
 	const form = await superValidate(request, zod(passwordSchema))
 	if (!form.valid) return formError(form)
 
@@ -61,17 +60,12 @@ actions.password = async ({ request, locals }) => {
 			["New password cannot be the same as the current password", ""]
 		)
 
-	if (user.hashedPassword.startsWith("s2:"))
-		user.hashedPassword = user.hashedPassword.slice(3)
-
 	if (!(await new Scrypt().verify(user.hashedPassword, cpassword)))
 		return formError(form, ["cpassword"], ["Incorrect password"])
 
 	await equery(
-		surql`UPDATE ${new RecordId(
-			"user",
-			user.id
-		)} SET hashedPassword = ${await new Scrypt().hash(npassword)}`
+		surql`UPDATE $user SET hashedPassword = ${await new Scrypt().hash(npassword)}`,
+		{ user: new RecordId("user", user.id) }
 	)
 
 	// Don't send the password back to the client

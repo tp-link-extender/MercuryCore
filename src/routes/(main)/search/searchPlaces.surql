@@ -10,4 +10,4 @@ SELECT
 FROM place
 WHERE !privateServer
 	AND !deleted
-	AND string::lowercase($searchQ) IN string::lowercase(name);
+	AND string::lowercase($query) IN string::lowercase(name);
