@@ -5,12 +5,7 @@ import { error } from "@sveltejs/kit"
 import { actions } from "../+page.server"
 import forumRepliesQuery from "./reply.surql"
 
-const SELECTREPLIES = recurse(
-	from => `(${from} <-replyToReply<-forumReply) AS replies`,
-	"replyToReply",
-	"forumReply",
-	8
-)
+const SELECTREPLIES = recurse("<-replyToReply<-forumReply")
 
 type ForumReplies = Replies[number] & {
 	parentPost: {
@@ -35,8 +30,8 @@ export async function load({ locals, params }) {
 	const [forumReplies] = await equery<ForumReplies[][]>(
 		forumRepliesQuery.replace("_SELECTREPLIES", SELECTREPLIES),
 		{
-			forumReply: `forumReply:${params.reply}`,
-			forumPost: `forumPost:${params.post}`,
+			forumReply: new RecordId("forumReply", params.reply),
+			forumPost: new RecordId("forumPost", params.post),
 			user: new RecordId("user", user.id),
 		}
 	)

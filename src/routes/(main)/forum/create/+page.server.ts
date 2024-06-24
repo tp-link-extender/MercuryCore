@@ -58,17 +58,17 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 	)
 		error(400, "Invalid category")
 
-	const [postId] = await equery<string[]>(surql`fn::id()`)
+	const [newPostId] = await equery<string[]>(surql`fn::id()`)
 
 	await equery(createQuery, {
 		user: new RecordId("user", user.id),
-		postId: new RecordId("forumPost", postId),
+		postId: new RecordId("forumPost", newPostId),
 		category: new RecordId("forumCategory", category),
 		title,
 		content,
 	})
 
-	await like(user.id, new RecordId("forumPost", postId))
+	await like(user.id, new RecordId("forumPost", newPostId))
 
-	redirect(302, `/forum/${category}/${postId}`)
+	redirect(302, `/forum/${category}/${newPostId}`)
 }

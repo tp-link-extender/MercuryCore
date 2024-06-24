@@ -66,7 +66,7 @@ actions.like = async ({ request, locals, params, url }) => {
 	const foundPost = id ? await select("forumPost", id) : null
 	const foundReply = replyId ? await select("forumReply", replyId) : null
 
-	if (!foundPost === !foundReply) error(404)
+	if (!foundPost || !foundReply) error(404)
 
 	const type = foundPost ? "Post" : "Reply"
 	const likes = await likeScoreActions[action](

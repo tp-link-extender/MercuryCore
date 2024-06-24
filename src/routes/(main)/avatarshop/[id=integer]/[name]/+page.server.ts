@@ -1,4 +1,4 @@
-import { idRegex, intRegex } from "$lib/paramTests"
+import { idRegex } from "$lib/paramTests"
 import formData from "$lib/server/formData"
 import formError from "$lib/server/formError"
 import { type LikeActions, like, likeScoreActions } from "$lib/server/like"
@@ -23,13 +23,11 @@ const schema = z.object({
 })
 
 const SELECTCOMMENTS = recurse(
-	from => `
-		(${from} <-replyToAsset<-assetComment
-		WHERE !->replyToComment
-		ORDER BY pinned DESC, score DESC) AS replies`,
 	// Make sure it's not a reply to a comment
-	"replyToComment",
-	"assetComment"
+	`<-replyToAsset<-assetComment
+		WHERE !->replyToComment
+		ORDER BY pinned DESC, score DESC`,
+	"<-replyToComment<-assetComment"
 )
 
 type Asset = {
@@ -49,25 +47,21 @@ type Asset = {
 	visibility: string
 }
 
-const noTexts = [
+const noTexts = Object.freeze([
 	"Cancel",
 	"No thanks",
 	"I've reconsidered",
 	"Not really",
 	"Nevermind",
-]
-const failTexts = ["Bruh", "Okay", "Aight", "Rip", "Aw man..."]
+])
+const failTexts = Object.freeze(["Bruh", "Okay", "Aight", "Rip", "Aw man..."])
 
 export async function load({ locals, params }) {
-	if (!intRegex.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
-
 	const { user } = await authorise(locals)
-	const id = +params.id
-
 	const [[asset]] = await equery<Asset[][]>(
 		assetQuery.replace("_SELECTCOMMENTS", SELECTCOMMENTS),
 		{
-			asset: new RecordId("asset", id),
+			asset: new RecordId("asset", +params.id),
 			user: new RecordId("user", user.id),
 		}
 	)
@@ -85,7 +79,6 @@ export async function load({ locals, params }) {
 async function getBuyData(e: RequestEvent) {
 	const { user } = await authorise(e.locals)
 	const id = +e.params.id
-
 	const [[assetExists]] = await equery<boolean[][]>(
 		surql`SELECT 1 FROM ${new RecordId("asset", id)}`
 	)
@@ -123,11 +116,9 @@ const updateVisibility = (visibility: string, text: string, id: string) =>
 	})
 
 const pinComment = (pinned: boolean) => async (e: RequestEvent) => {
+	const { id } = await findComment(e, 4)
 	await equery(
-		surql`UPDATE ${new RecordId(
-			"assetComment",
-			(await findComment(e, 4)).id
-		)} SET pinned = ${pinned}`
+		surql`UPDATE ${new RecordId("assetComment", id)} SET pinned = ${pinned}`
 	)
 }
 
@@ -154,9 +145,7 @@ async function select(thing: RecordId) {
 async function rerender({ locals, params }: RequestEvent) {
 	await authorise(locals, 5)
 
-	if (!intRegex.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
 	const id = +params.id
-
 	const [[asset]] = await equery<
 		{
 			name: string
@@ -187,9 +176,7 @@ async function rerender({ locals, params }: RequestEvent) {
 			id
 		)
 		return {
-			icon: `/avatarshop/${asset.id}/${
-				asset.name
-			}/icon?r=${Math.random()}`,
+			icon: `/avatarshop/${asset.id}/${asset.name}/icon?r=${Math.random()}`,
 		}
 	} catch (e) {
 		console.error(e)
@@ -214,6 +201,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 
 	if (commentId && !idRegex.test(commentId)) error(400, "Invalid comment id")
 
+	const id = +params.id
 	const [[commentAuthor]] = await equery<{ id: string }[][]>(
 		commentId
 			? surql`SELECT meta::id(id) AS id FROM ${new RecordId(
@@ -222,7 +210,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 				)}<-posted<-user`
 			: surql`SELECT meta::id(id) AS id FROM ${new RecordId(
 					"asset",
-					params.id
+					id
 				)}<-created<-user`
 	)
 	if (commentId && !commentAuthor) error(404)
@@ -234,7 +222,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 		content,
 		user: new RecordId("user", user.id),
 		assetComment: new RecordId("assetComment", newReplyId),
-		asset: new RecordId("asset", params.id),
+		asset: new RecordId("asset", id),
 		commentId: commentId
 			? new RecordId("assetComment", commentId)
 			: undefined,
@@ -255,11 +243,9 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 					type: commentId ? "AssetCommentReply" : "AssetComment",
 					sender: new RecordId("user", user.id),
 					receiver: new RecordId("user", receiverId),
-					note: `${user.username} ${
-						commentId
-							? "replied to your comment"
-							: "commented on your asset"
-					}: ${content}`,
+					note: commentId
+						? `${user.username} replied to your comment: ${content}`
+						: `${user.username} commented on your asset: ${content}`,
 					relativeId: newReplyId,
 				}
 			),
@@ -281,7 +267,7 @@ actions.like = async ({ request, locals, url }) => {
 		? await select(new RecordId("assetComment", commentId))
 		: null
 
-	if (!foundAsset === !foundComment) error(404)
+	if (!foundAsset || !foundComment) error(404)
 	if (foundAsset) error(400, "Asset likes not yet implemented")
 
 	const type = "assetComment" // commentId ? "assetComment" : "asset"
@@ -289,8 +275,7 @@ actions.like = async ({ request, locals, url }) => {
 		user.id,
 		new RecordId(type, (id || commentId) as string)
 	)
-
-	const thing = foundComment as Thing
+	const thing = foundComment
 
 	thing.score = likes
 	// ok, better than publishing likes on all assets to all users but whatever
@@ -385,17 +370,13 @@ actions.delete = async e => {
 
 	if (comment.authorId !== user.id)
 		error(403, "You cannot delete someone else's comment")
-
 	if (comment.visibility !== "Visible") error(400, "Comment already deleted")
 
 	await updateVisibility("Deleted", "[deleted]", id)
 }
 actions.moderate = async e => {
-	await updateVisibility(
-		"Moderated",
-		"[removed]",
-		(await findComment(e, 4)).id
-	)
+	const { id } = await findComment(e, 4)
+	await updateVisibility("Moderated", "[removed]", id)
 }
 actions.pin = pinComment(true)
 actions.unpin = pinComment(false)

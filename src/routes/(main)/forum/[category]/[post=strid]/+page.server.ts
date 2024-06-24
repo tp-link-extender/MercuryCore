@@ -21,13 +21,11 @@ const schema = z.object({
 })
 
 const SELECTREPLIES = recurse(
-	from => `
-		(${from} <-replyToPost<-forumReply
-		WHERE !->replyToReply
-		ORDER BY pinned DESC, score DESC) AS replies`,
 	// Make sure it's not a reply to another reply
-	"replyToReply",
-	"forumReply"
+	`<-replyToPost<-forumReply
+		WHERE !->replyToReply
+		ORDER BY pinned DESC, score DESC`,
+	"<-replyToReply<-forumReply"
 )
 
 type ForumPost = {
@@ -144,7 +142,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 
 	if (!replypost) error(404, `${replyId ? "Reply" : "Post"} not found`)
 
-	const [[newReplyId]] = await equery<string[]>(surql`fn::id()`)
+	const [newReplyId] = await equery<string[]>(surql`fn::id()`)
 
 	await equery(createReplyQuery, {
 		content,
