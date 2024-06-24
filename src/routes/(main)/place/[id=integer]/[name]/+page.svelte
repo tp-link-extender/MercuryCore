@@ -133,6 +133,32 @@
 	let tabData = TabData(data.url, ["Description", "Game"])
 	let tabData2 = TabData(data.url, ["Manual", "Autopilot"], undefined, "tab2")
 	let copiedSuccess = false
+
+	const likeEnhance: import("./$types").SubmitFunction = ({ formData }) => {
+		const action = formData.get("action")
+
+		if (action === "like") {
+			$place.likes = true
+
+			if ($place.dislikes) $place.dislikeCount--
+			$place.dislikes = false
+			$place.likeCount++
+		} else if (action === "dislike") {
+			$place.dislikes = true
+
+			if ($place.likes) $place.likeCount--
+			$place.likes = false
+			$place.dislikeCount++
+		} else if (action === "unlike") {
+			$place.likes = false
+			$place.likeCount--
+		} else if (action === "undislike") {
+			$place.dislikes = false
+			$place.dislikeCount--
+		}
+
+		return () => {}
+	}
 </script>
 
 <Head title={$place.name} />
@@ -222,31 +248,7 @@
 				</button>
 
 				<form
-					use:enhance={({ formData }) => {
-						const action = formData.get("action")
-
-						if (action === "like") {
-							$place.likes = true
-
-							if ($place.dislikes) $place.dislikeCount--
-							$place.dislikes = false
-							$place.likeCount++
-						} else if (action === "dislike") {
-							$place.dislikes = true
-
-							if ($place.likes) $place.likeCount--
-							$place.likes = false
-							$place.dislikeCount++
-						} else if (action === "unlike") {
-							$place.likes = false
-							$place.likeCount--
-						} else if (action === "undislike") {
-							$place.dislikes = false
-							$place.dislikeCount--
-						}
-
-						return () => {}
-					}}
+					use:enhance={likeEnhance}
 					class="w-full pt-4 px-0 pb-2"
 					method="POST"
 					action="?/like&privateTicket={$place.privateTicket}">

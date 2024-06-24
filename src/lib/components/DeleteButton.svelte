@@ -5,6 +5,7 @@
 	export let reverse = false
 	export let moderate = false
 	export let post = false
+	export let refreshReplies: import("@sveltejs/kit").SubmitFunction
 
 	const text = moderate ? "moderate" : "delete"
 	const colour = moderate ? "text-cyan-5" : "text-yellow-5"
@@ -13,7 +14,7 @@
 </script>
 
 <form
-	use:enhance
+	use:enhance={refreshReplies}
 	method="POST"
 	class="inline"
 	action="?/{text}{post ? 'post' : ''}&id={id}">

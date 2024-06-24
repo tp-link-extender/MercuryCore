@@ -38,7 +38,7 @@
 
 	export const snapshot = formData
 
-	let refreshComments = 0
+	let refresh = 0
 
 	function searchComments(
 		id: string,
@@ -222,8 +222,8 @@
 
 	<Tab {tabData}>
 		<PostReply {formData} comment />
-		{#if $asset.replies.length > 0}
-			{#key refreshComments}
+		{#key refresh}
+			{#if $asset.replies.length > 0}
 				{#each $asset.replies as reply, num}
 					<ForumReply
 						{user}
@@ -236,14 +236,22 @@
 						{repliesCollapsed}
 						topLevel={false}
 						pinnable
-						refreshReplies={() => refreshComments++} />
+						refreshReplies={() => {
+							return async ({ result }) => {
+								if (result.type === "success")
+									await invalidateAll()
+								// Reload the asset with the data including the new comment, as the form that posted the comment didn't do that
+								$asset = data.asset
+								refresh++
+							}
+						}} />
 				{/each}
-			{/key}
-		{:else}
-			<h3 class="text-center pt-6">
-				No replies yet. Be the first to post one!
-			</h3>
-		{/if}
+			{:else}
+				<h3 class="text-center pt-6">
+					No replies yet. Be the first to post one!
+				</h3>
+			{/if}
+		{/key}
 	</Tab>
 </div>
 

@@ -6,8 +6,8 @@
 	}
 
 	export type Reply =
-		| import("../../routes/(main)/forum/[category]/[post]/$types").PageData["replies"][number]
-		| import("../../routes/(main)/avatarshop/[id]/[name]/$types").PageData["replies"][number]
+		| import("../../routes/(main)/forum/[category]/[post=strid]/$types").PageData["post"]["replies"][number]
+		| import("../../routes/(main)/avatarshop/[id=integer]/[name]/$types").PageData["asset"]["replies"][number]
 
 	export type RepliesCollapsed = Writable<{
 		[id: string]: boolean
@@ -32,7 +32,7 @@
 	export let postId: string
 	export let assetName = ""
 	export let pinnable = false
-	export let refreshReplies: () => void
+	export let refreshReplies: import("@sveltejs/kit").SubmitFunction
 
 	const baseUrl = categoryName
 		? `/forum/${categoryName.toLowerCase()}/${postId}`

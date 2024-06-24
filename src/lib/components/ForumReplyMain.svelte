@@ -26,11 +26,39 @@
 	export let repliesCollapsed: RepliesCollapsed
 	export let topLevel = true
 	export let pinnable = false
-	export let refreshReplies: () => void
+	export let refreshReplies: import("@sveltejs/kit").SubmitFunction
 
 	let content = "" // Allows current reply to not be lost on clicking to another reply
 
 	$: hidden = reply.visibility !== "Visible"
+
+	const likeEnhance: import("@sveltejs/kit").SubmitFunction = ({
+		formData
+	}) => {
+		const action = formData.get("action")
+
+		if (action === "like") {
+			reply.likes = true
+
+			if (reply.dislikes) reply.score++
+			reply.dislikes = false
+			reply.score++
+		} else if (action === "dislike") {
+			reply.dislikes = true
+
+			if (reply.likes) reply.score--
+			reply.likes = false
+			reply.score--
+		} else if (action === "unlike") {
+			reply.likes = false
+			reply.score--
+		} else if (action === "undislike") {
+			reply.dislikes = false
+			reply.score++
+		}
+
+		return () => {}
+	}
 </script>
 
 <div class="flex w-full">
@@ -70,31 +98,7 @@
 		</p>
 		{#if $replyingTo !== reply.id}
 			<form
-				use:enhance={({ formData }) => {
-					const action = formData.get("action")
-
-					if (action === "like") {
-						reply.likes = true
-
-						if (reply.dislikes) reply.score++
-						reply.dislikes = false
-						reply.score++
-					} else if (action === "dislike") {
-						reply.dislikes = true
-
-						if (reply.likes) reply.score--
-						reply.likes = false
-						reply.score--
-					} else if (action === "unlike") {
-						reply.likes = false
-						reply.score--
-					} else if (action === "undislike") {
-						reply.dislikes = false
-						reply.score++
-					}
-
-					return () => {}
-				}}
+				use:enhance={likeEnhance}
 				class="inline pr-2 {hidden ? 'opacity-33' : ''}"
 				method="POST"
 				action="?/like&rid={reply.id}">
@@ -141,19 +145,23 @@
 			</a>
 			{#if !hidden}
 				{#if reply.author.username === user.username}
-					<DeleteButton id={reply.id} reverse />
+					<DeleteButton id={reply.id} reverse {refreshReplies} />
 				{:else}
 					<ReportButton
 						user={reply.author.username}
 						url="/forum/{categoryName}/{postId}/{reply.id}"
 						reverse />
 					{#if user.permissionLevel >= 4}
-						<DeleteButton id={reply.id} moderate reverse />
+						<DeleteButton
+							id={reply.id}
+							moderate
+							reverse
+							{refreshReplies} />
 					{/if}
 				{/if}
 				{#if pinnable && user.permissionLevel >= 4}
 					<PinButton
-						refresh={refreshReplies}
+						{refreshReplies}
 						id={reply.id}
 						pinned={reply.pinned}
 						reverse />
@@ -162,8 +170,10 @@
 		{:else}
 			<div class="card reply bg-darker mb-2 p-4 pt-2 max-w-3/4">
 				<form
-					use:enhance
-					on:submit={() => replyingTo.set("")}
+					use:enhance={e => {
+						replyingTo.set("")
+						return refreshReplies(e)
+					}}
 					method="POST"
 					action="?/reply&rid={reply.id}">
 					<label for="content" class="light-text pb-2">

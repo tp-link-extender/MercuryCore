@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { invalidateAll } from "$app/navigation"
 	import Breadcrumbs from "$lib/components/Breadcrumbs.svelte"
 	import ForumReply from "$lib/components/ForumReply.svelte"
 	import Head from "$lib/components/Head.svelte"
@@ -37,7 +38,11 @@
 				postAuthorName={data.creator || ""}
 				{repliesCollapsed}
 				pinnable={!reply.parentReplyId}
-				refreshReplies={() => refresh++} />
+				refreshReplies={() =>
+					async ({ result }) => {
+						if (result.type === "success") await invalidateAll()
+						refresh++
+					}} />
 		{/each}
 	{/key}
 </div>

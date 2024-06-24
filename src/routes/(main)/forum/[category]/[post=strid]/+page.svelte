@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
+	import { invalidateAll } from "$app/navigation"
 	import Breadcrumbs from "$lib/components/Breadcrumbs.svelte"
 	import ForumReply from "$lib/components/ForumReply.svelte"
 	import Head from "$lib/components/Head.svelte"
@@ -25,7 +26,7 @@
 	export const snapshot = formData
 
 	let refreshPost = 0
-	let refreshReplies = 0
+	let refresh = 0
 
 	function searchReplies(
 		id: string,
@@ -103,6 +104,41 @@
 		)
 	})
 	onDestroy(() => client?.disconnect()) // lazy evaluation my beloved
+
+	const likeEnhance: import("./$types").SubmitFunction = ({ formData }) => {
+		const action = formData.get("action")
+
+		if (action === "like") {
+			$post.likes = true
+
+			if ($post.dislikes) $post.score++
+			$post.dislikes = false
+			$post.score++
+		} else if (action === "dislike") {
+			$post.dislikes = true
+
+			if ($post.likes) $post.score--
+			$post.likes = false
+			$post.score--
+		} else if (action === "unlike") {
+			$post.likes = false
+			$post.score--
+		} else if (action === "undislike") {
+			$post.dislikes = false
+			$post.score++
+		}
+
+		return () => {}
+	}
+
+	const refreshReplies: import("./$types").SubmitFunction =
+		() =>
+		async ({ result }) => {
+			if (result.type === "success") await invalidateAll()
+			// Reload the post with the data including the new reply, as the form that posted the reply didn't do that
+			$post = data.post
+			refresh++
+		}
 </script>
 
 <Head title={$post.title} />
@@ -127,31 +163,7 @@
 				? 'border-(solid 1px green-5)!'
 				: ''}">
 			<form
-				use:enhance={({ formData }) => {
-					const action = formData.get("action")
-
-					if (action === "like") {
-						$post.likes = true
-
-						if ($post.dislikes) $post.score++
-						$post.dislikes = false
-						$post.score++
-					} else if (action === "dislike") {
-						$post.dislikes = true
-
-						if ($post.likes) $post.score--
-						$post.likes = false
-						$post.score--
-					} else if (action === "unlike") {
-						$post.likes = false
-						$post.score--
-					} else if (action === "undislike") {
-						$post.dislikes = false
-						$post.score++
-					}
-
-					return () => {}
-				}}
+				use:enhance={likeEnhance}
 				class="bg-a p-1"
 				method="POST"
 				action="?/like&id={$post.id}">
@@ -199,7 +211,7 @@
 					<span>
 						{#if user.permissionLevel >= 4}
 							<PinButton
-								refresh={() => refreshPost++}
+								refreshReplies={() => refreshPost++}
 								id={$post.id}
 								pinned={$post.pinned}
 								post />
@@ -221,8 +233,8 @@
 
 	<PostReply {formData} />
 
-	{#if $post.replies.length > 0}
-		{#key refreshReplies}
+	{#key refresh}
+		{#if $post.replies.length > 0}
 			{#each $post.replies as reply, num}
 				<ForumReply
 					{user}
@@ -235,14 +247,14 @@
 					{repliesCollapsed}
 					topLevel={false}
 					pinnable
-					refreshReplies={() => refreshReplies++} />
+					{refreshReplies} />
 			{/each}
-		{/key}
-	{:else}
-		<h3 class="text-center pt-6">
-			No replies yet. Be the first to post one!
-		</h3>
-	{/if}
+		{:else}
+			<h3 class="text-center pt-6">
+				No replies yet. Be the first to post one!
+			</h3>
+		{/if}
+	{/key}
 </div>
 
 <style>

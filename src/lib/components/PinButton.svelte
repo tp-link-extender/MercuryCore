@@ -1,13 +1,12 @@
 <script lang="ts">
-	import { applyAction, enhance } from "$app/forms"
-	import { invalidateAll } from "$app/navigation"
+	import { enhance } from "$app/forms"
 
 	export let id: string
 	export let reverse = false
 	export let pinned = false
 	export let post = false
 	// Replies need to be re-ordered after a reply is pinned or unpinned
-	export let refresh: () => void
+	export let refreshReplies: import("@sveltejs/kit").SubmitFunction
 
 	const text = pinned ? "unpin" : "pin"
 	const colour = pinned ? "text-red-5" : "text-green-5"
@@ -16,13 +15,7 @@
 </script>
 
 <form
-	use:enhance={() =>
-		async ({ result }) => {
-			if (result.type === "success") await invalidateAll()
-			await applyAction(result)
-			// We need to wait until the new data has been fetched before refreshing
-			refresh()
-		}}
+	use:enhance={refreshReplies}
 	method="POST"
 	class="inline"
 	action="?/{text}{post ? 'post' : ''}&id={id}">

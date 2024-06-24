@@ -11,6 +11,32 @@
 
 	let likesDisabled = false
 	let dislikesDisabled = false
+
+	const likeEnhance: import("./$types").SubmitFunction = ({ formData }) => {
+		const action = formData.get("action")
+
+		if (action === "like") {
+			post.likes = true
+
+			if (post.dislikes) post.score++
+			post.dislikes = false
+			post.score++
+		} else if (action === "dislike") {
+			post.dislikes = true
+
+			if (post.likes) post.score--
+			post.likes = false
+			post.score--
+		} else if (action === "unlike") {
+			post.likes = false
+			post.score--
+		} else if (action === "undislike") {
+			post.dislikes = false
+			post.score++
+		}
+
+		return () => {}
+	}
 </script>
 
 <div
@@ -19,31 +45,7 @@
 		? 'border-(solid 1px green-5)!'
 		: ''}">
 	<form
-		use:enhance={({ formData }) => {
-			const action = formData.get("action")
-
-			if (action === "like") {
-				post.likes = true
-
-				if (post.dislikes) post.score++
-				post.dislikes = false
-				post.score++
-			} else if (action === "dislike") {
-				post.dislikes = true
-
-				if (post.likes) post.score--
-				post.likes = false
-				post.score--
-			} else if (action === "unlike") {
-				post.likes = false
-				post.score--
-			} else if (action === "undislike") {
-				post.dislikes = false
-				post.score++
-			}
-
-			return () => {}
-		}}
+		use:enhance={likeEnhance}
 		class="bg-a p-1 z-1"
 		method="POST"
 		action="?/like&id={post.id}">
