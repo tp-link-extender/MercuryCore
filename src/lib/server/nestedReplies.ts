@@ -35,19 +35,21 @@ const SELECTFROM = `
 		# again #
 	FROM`
 
-export function recurse(
-	query: (from: string) => string,
-	relationName: string,
-	commentName: string,
-	times = 9 // On a comment page, the top comment is already selected
-) {
-	let rep = query(SELECTFROM)
+const asReplies = (from: string) => `(${from}) AS replies`
 
-	for (let i = 0; i < times; i++)
-		rep = rep.replace(
-			"# again #",
-			`(${SELECTFROM} <-${relationName}<-${commentName}) AS replies`
-		)
+/**
+ * Recursively select nested replies or comments in a database query.
+ * @param query
+ * @param relationName
+ * @param commentName
+ * @param times
+ * @returns
+ */
+export function recurse(query: string, query2 = query) {
+	let rep = asReplies(`${SELECTFROM} ${query}`) 
+	const q = asReplies(`${SELECTFROM} ${query2}`) 
+	// On a comment page, the top comment is already selected
+	for (let i = 0; i < 9; i++) rep = rep.replace("# again #", q)
 
 	return rep.replace("# again #", "[] AS replies")
 }

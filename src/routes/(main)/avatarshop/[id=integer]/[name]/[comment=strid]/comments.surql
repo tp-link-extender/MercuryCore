@@ -16,7 +16,7 @@ SELECT
 		title,
 		meta::id(id) AS id,
 		->in[0]->forumCategory[0].name as forumCategoryName
-	FROM $forumPost)[0] AS parentPost,
+	FROM $asset)[0] AS parentPost,
 
 	_SELECTREPLIES
 FROM $assetComment;

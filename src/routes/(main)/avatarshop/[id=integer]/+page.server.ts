@@ -7,13 +7,11 @@ type Asset = {
 }
 
 export async function load({ params }) {
+	const id = +params.id
 	const [[asset]] = await equery<Asset[][]>(
-		surql`SELECT name, meta::id(id) AS id FROM ${new RecordId(
-			"asset",
-			params.id
-		)}`
+		surql`SELECT name, meta::id(id) AS id FROM ${new RecordId("asset", id)}`
 	)
 	if (!asset) error(404, "Not found")
 
-	redirect(302, `/avatarshop/${params.id}/${asset.name}`)
+	redirect(302, `/avatarshop/${id}/${asset.name}`)
 }
