@@ -1,5 +1,4 @@
-// Mercury Economy service
-// I'm NOT calling this "ECS"
+// Mercury Economy service implementation in Go
 
 package main
 
@@ -24,7 +23,7 @@ func randId() (id string) {
 }
 
 func Log(txt string) {
-	// I HATE GO DATE FORMATTING!!! I HATE GO DATE FORMATTING!!!
+	// I HATE GO DATE FORMATTI- actually, F#'s isn't any better
 	fmt.Println(time.Now().Format("2006/01/02, 15:04:05 "), txt)
 }
 
