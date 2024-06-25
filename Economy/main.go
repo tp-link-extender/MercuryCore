@@ -1,4 +1,4 @@
-// Mercury Economy service implementation in Go
+// Mercury Economy service
 
 package main
 
@@ -6,10 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"math"
 	"net/http"
 	"os"
-	"slices"
 	"strings"
 	"time"
 
@@ -53,41 +51,17 @@ const (
 	Giga           = 1e9 * Unit
 	Tera           = 1e12 * Unit // uint64 means ~18 tera is the economy limit
 
-	// Target Currency per User, the economy size will try to be this * userCount()
+	// Target Currency per User, the economy size will try to be this * user count (len(balances))
 	// By "user", I mean every user who has ever transacted with the economy
+	// If I'm correct, the stipend and fee should change if the CCU is more than 10% off from this
 	TCU         = float64(100 * Unit)
 	baseStipend = float64(10 * Unit)
 	baseFee     = 0.1
 	stipendTime = 12 * 60 * 60 * 1000
 )
 
-func ToReadable(c currency) string {
+func toReadable(c currency) string {
 	return fmt.Sprintf("%d.%06d unit", c/Unit, c%Unit)
-}
-
-func PrintRichest() {
-	// sort balances
-	type kv struct {
-		Key   userNumber
-		Value currency
-	}
-	var sorted []kv
-	for k, v := range balances {
-		sorted = append(sorted, kv{k, v})
-	}
-
-	// sort
-	slices.SortFunc(sorted, func(a kv, b kv) int {
-		return int(b.Value - a.Value)
-	})
-
-	// print top 10
-	for i, kv := range sorted {
-		if i == 10 {
-			break
-		}
-		fmt.Println(kv.Key, ToReadable(kv.Value))
-	}
 }
 
 // For now, transaction outputs are overkill
@@ -136,7 +110,7 @@ var (
 	prevStipends = map[userNumber]uint64{}
 )
 
-func ValidateTx(sent SentTx, fee currency) (e error) {
+func validateTx(sent SentTx, fee currency) (e error) {
 	if sent.Amount == 0 {
 		e = fmt.Errorf("transaction must have an amount")
 	} else if sent.From == 0 {
@@ -150,12 +124,12 @@ func ValidateTx(sent SentTx, fee currency) (e error) {
 	} else if sent.Link == "" {
 		e = fmt.Errorf("transaction must have a link")
 	} else if total := sent.Amount + fee; total > balances[sent.From] {
-		e = fmt.Errorf("insufficient balance: balance was %s, at least %s is required", ToReadable(balances[sent.From]), ToReadable(total))
+		e = fmt.Errorf("insufficient balance: balance was %s, at least %s is required", toReadable(balances[sent.From]), toReadable(total))
 	}
 	return
 }
 
-func ValidateMint(sent SentMint) (e error) {
+func validateMint(sent SentMint) (e error) {
 	if sent.Amount == 0 {
 		e = fmt.Errorf("mint must have an amount")
 	} else if sent.To == 0 {
@@ -166,24 +140,17 @@ func ValidateMint(sent SentMint) (e error) {
 	return
 }
 
-func ValidateBurn(sent SentBurn) (e error) {
+func validateBurn(sent SentBurn) (e error) {
 	if sent.Amount == 0 {
 		e = fmt.Errorf("burn must have an amount")
 	} else if sent.From == 0 {
 		e = fmt.Errorf("burn must have a sender")
 	} else if sent.Amount > balances[sent.From] {
-		e = fmt.Errorf("insufficient balance: balance was %s, at least %s is required", ToReadable(balances[sent.From]), ToReadable(sent.Amount))
+		e = fmt.Errorf("insufficient balance: balance was %s, at least %s is required", toReadable(balances[sent.From]), toReadable(sent.Amount))
 	} else if sent.Note == "" {
 		e = fmt.Errorf("burn must have a note")
 	} else if sent.Link == "" {
 		e = fmt.Errorf("burn must have a link")
-	}
-	return
-}
-
-func userCount() (users int) {
-	for range balances {
-		users++
 	}
 	return
 }
@@ -196,24 +163,58 @@ func economySize() (size currency) {
 }
 
 // Current Currency per User
-func calcCCU() float64 {
-	ccu := float64(economySize()) / float64(userCount())
-	if math.IsNaN(ccu) { // Division by zero causes overflowz
-		return 0
+func CCU() float64 {
+	users := len(balances)
+	if users == 0 {
+		return 0 // Division by zero causes overflowz
 	}
-	return ccu
+	return float64(economySize()) / float64(users)
 }
 
 // If the economy is too small, stipends will increase
 // If the economy is near or above desired size, stipends will be baseStipend
-func calcStipend() currency {
-	return currency(max((TCU-calcCCU()+baseStipend)/2, baseStipend))
+func currentStipend() currency {
+	return currency(max((TCU-CCU()+baseStipend)/2, baseStipend))
 }
 
 // If the economy is too large, fees will increase
 // If the economy is near or below desired size, fees will be baseFee
-func calcFeePercentage() float64 {
-	return max((1+(calcCCU()*0.9-TCU)/TCU*4)*baseFee, baseFee)
+func currentFee() float64 {
+	return max((1+(CCU()*0.9-TCU)/TCU*4)*baseFee, baseFee)
+}
+
+func readTx(txType string, remaining string) {
+	switch txType {
+	case "Transaction":
+		var tx Tx
+		Assert(json.Unmarshal([]byte(remaining), &tx), "Failed to decode transaction from ledger")
+
+		if tx.Amount+tx.Fee > balances[tx.From] {
+			fmt.Println("Invalid transaction in ledger")
+			os.Exit(1)
+		}
+		balances[tx.From] -= tx.Amount + tx.Fee
+		balances[tx.To] += tx.Amount
+	case "Mint":
+		var mint Mint
+		Assert(json.Unmarshal([]byte(remaining), &mint), "Failed to decode mint from ledger")
+
+		balances[mint.To] += mint.Amount
+		if mint.Note == "Stipend" {
+			prevStipends[mint.To] = mint.Time
+		}
+	case "Burn":
+		var burn Burn
+		Assert(json.Unmarshal([]byte(remaining), &burn), "Failed to decode burn from ledger")
+
+		if burn.Amount > balances[burn.From] {
+			fmt.Println("Invalid burn in ledger")
+			os.Exit(1)
+		}
+		balances[burn.From] -= burn.Amount
+	default:
+		Log(c.InRed("Unknown transaction type in ledger"))
+	}
 }
 
 func updateBalances() {
@@ -222,40 +223,8 @@ func updateBalances() {
 
 	lines := strings.Split(string(bytes), "\n")
 	for _, line := range lines[:len(lines)-1] { // remove last empty line
-		// split line at first space, with the transaction type being the first part
-		parts := strings.Split(line, " ")
-
-		switch first, remaining := parts[0], strings.Join(parts[1:], " "); first {
-		case "Transaction":
-			var tx Tx
-			Assert(json.Unmarshal([]byte(remaining), &tx), "Failed to decode transaction from ledger")
-
-			if tx.Amount+tx.Fee > balances[tx.From] {
-				fmt.Println("Invalid transaction in ledger")
-				os.Exit(1)
-			}
-			balances[tx.From] -= tx.Amount + tx.Fee
-			balances[tx.To] += tx.Amount
-		case "Mint":
-			var mint Mint
-			Assert(json.Unmarshal([]byte(remaining), &mint), "Failed to decode mint from ledger")
-
-			balances[mint.To] += mint.Amount
-			if mint.Note == "Stipend" {
-				prevStipends[mint.To] = mint.Time
-			}
-		case "Burn":
-			var burn Burn
-			Assert(json.Unmarshal([]byte(remaining), &burn), "Failed to decode burn from ledger")
-
-			if burn.Amount > balances[burn.From] {
-				fmt.Println("Invalid burn in ledger")
-				os.Exit(1)
-			}
-			balances[burn.From] -= burn.Amount
-		default:
-			Log(c.InRed("Unknown transaction type in ledger"))
-		}
+		parts := strings.SplitN(line, " ", 2) // split line at first space, with the transaction type being the first part
+		readTx(parts[0], parts[1])
 	}
 }
 
@@ -265,8 +234,8 @@ func appendEvent(e any, eType string) error {
 }
 
 func transact(sent SentTx) error {
-	fee := currency(float64(sent.Amount) * calcFeePercentage())
-	if err := ValidateTx(sent, fee); err != nil {
+	fee := currency(float64(sent.Amount) * currentFee())
+	if err := validateTx(sent, fee); err != nil {
 		return err
 	} else if err := appendEvent(
 		Tx{sent, fee, uint64(time.Now().UnixMilli()), randId()},
@@ -282,12 +251,9 @@ func transact(sent SentTx) error {
 }
 
 func mint(sent SentMint, time uint64) error {
-	if err := ValidateMint(sent); err != nil {
+	if err := validateMint(sent); err != nil {
 		return err
-	} else if err := appendEvent(
-		Mint{sent, time, randId()},
-		"Mint",
-	); err != nil {
+	} else if err := appendEvent(Mint{sent, time, randId()}, "Mint"); err != nil {
 		return err
 	}
 
@@ -297,12 +263,9 @@ func mint(sent SentMint, time uint64) error {
 }
 
 func burn(sent SentBurn) error {
-	if err := ValidateBurn(sent); err != nil {
+	if err := validateBurn(sent); err != nil {
 		return err
-	} else if err := appendEvent(
-		Burn{sent, uint64(time.Now().UnixMilli()), randId()},
-		"Burn",
-	); err != nil {
+	} else if err := appendEvent(Burn{sent, uint64(time.Now().UnixMilli()), randId()}, "Burn"); err != nil {
 		return err
 	}
 
@@ -313,11 +276,7 @@ func burn(sent SentBurn) error {
 
 func stipend(to userNumber) error {
 	time := uint64(time.Now().UnixMilli())
-	if err := mint(SentMint{
-		to,
-		calcStipend(),
-		"Stipend",
-	}, time); err != nil {
+	if err := mint(SentMint{to, currentStipend(), "Stipend"}, time); err != nil {
 		return err
 	}
 
@@ -326,11 +285,11 @@ func stipend(to userNumber) error {
 }
 
 func currentFeeRoute(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, calcFeePercentage())
+	fmt.Fprint(w, currentFee())
 }
 
 func currentStipendRoute(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, calcStipend())
+	fmt.Fprint(w, currentStipend())
 }
 
 func balanceRoute(w http.ResponseWriter, r *http.Request) {
@@ -355,7 +314,7 @@ func transactRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Log(c.InGreen(fmt.Sprintf("Transaction successful  %d -[%s]-> %d", sentTx.From, ToReadable(sentTx.Amount), sentTx.To)))
+	Log(c.InGreen(fmt.Sprintf("Transaction successful  %d -[%s]-> %d", sentTx.From, toReadable(sentTx.Amount), sentTx.To)))
 }
 
 func mintRoute(w http.ResponseWriter, r *http.Request) {
@@ -369,7 +328,7 @@ func mintRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Log(c.InGreen(fmt.Sprintf("Mint successful         %d <-[%s]-", sentMint.To, ToReadable(sentMint.Amount))))
+	Log(c.InGreen(fmt.Sprintf("Mint successful         %d <-[%s]-", sentMint.To, toReadable(sentMint.Amount))))
 }
 
 func burnRoute(w http.ResponseWriter, r *http.Request) {
@@ -383,7 +342,7 @@ func burnRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Log(c.InGreen(fmt.Sprintf("Burn successful         %d -[%s]->", sentBurn.From, ToReadable(sentBurn.Amount))))
+	Log(c.InGreen(fmt.Sprintf("Burn successful         %d -[%s]->", sentBurn.From, toReadable(sentBurn.Amount))))
 }
 
 func stipendRoute(w http.ResponseWriter, r *http.Request) {
@@ -412,14 +371,12 @@ func main() {
 	defer file.Close()
 	updateBalances()
 
-	PrintRichest()
-	println()
-	println("User count    ", userCount())
-	println("Economy size  ", ToReadable(economySize()))
-	println("CCU           ", ToReadable(currency(calcCCU())))
-	println("TCU           ", ToReadable(currency(TCU)))
-	println("Fee percentage", int(calcFeePercentage()*100))
-	println("Stipend size  ", ToReadable(calcStipend()))
+	println("User count    ", len(balances))
+	println("Economy size  ", toReadable(economySize()))
+	println("CCU           ", toReadable(currency(CCU())))
+	println("TCU           ", toReadable(currency(TCU)))
+	println("Fee percentage", int(currentFee()*100))
+	println("Stipend size  ", toReadable(currentStipend()))
 
 	router := http.NewServeMux()
 
