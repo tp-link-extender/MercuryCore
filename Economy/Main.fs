@@ -2,6 +2,7 @@
 
 open System
 open System.IO
+open System.Text.Json
 
 let alphabet = "0123456789abcdefghijklmnopqrstuvwxyz"
 
@@ -44,39 +45,47 @@ let ToReadable (c: currency) =
 // For now, transaction outputs are overkill
 // Since fees are stored as a separate value and are burned, I can't see a reason for them to exist for now
 // UTXOs lmao
-type SentTx =
-    { From: userNumber
-      To: userNumber
-      Amount: currency
-      Link: string
-      Note: string
-      Returns: asset list }
+type SentTx() =
+    member val From: userNumber = 0UL
+    member val To: userNumber = 0UL
+    member val Amount: currency = 0UL
+    member val Link = ""
+    member val Note = ""
+    member val Returns: asset list = []
 
-type Tx =
-    SentTx * {| Fee: currency
-                Time: uint64
-                Id: string |}
+type Tx() =
+    inherit SentTx()
+    member val Fee: currency = 0UL
+    member val Time = 0UL
+    member val Id = ""
 
-type SentMint =
-    { To: userNumber
-      Amount: currency
-      Note: string }
+type SentMint() =
+    member val To: userNumber = 0UL
+    member val Amount: currency = 0UL
+    member val Note = ""
 
-type Mint = SentMint * {| Time: uint64; Id: string |}
+type Mint() =
+    inherit SentMint()
+    member val Time = 0UL
+    member val Id = ""
 
-type SentBurn =
-    { From: userNumber
-      Amount: currency
-      Note: string
-      Link: string
-      Returns: asset list }
+type SentBurn() =
+    member val From: userNumber = 0UL
+    member val Amount: currency = 0UL
+    member val Note = ""
+    member val Link = ""
+    member val Returns: asset list = []
 
-type Burn = SentBurn * {| Time: uint64; Id: string |}
+type Burn() =
+    inherit SentBurn()
+    member val Time = 0UL
+    member val Id = ""
+
 
 let balances = Map.empty<userNumber, currency>
 let prevStipends = Map.empty<userNumber, uint64>
 
-let ValidateTx (sent: SentTx) (fee: currency) =
+let ValidateTx (sent: Tx) (fee: currency) =
     let total = sent.Amount + fee
 
     if sent.Amount = 0UL then
@@ -97,7 +106,7 @@ let ValidateTx (sent: SentTx) (fee: currency) =
     else
         Ok()
 
-let ValidateMint (sent: SentMint) =
+let ValidateMint (sent: Mint) =
     if sent.Amount = 0UL then
         Error "mint must have an amount"
     else if sent.To = 0UL then
@@ -107,7 +116,7 @@ let ValidateMint (sent: SentMint) =
     else
         Ok()
 
-let ValidateBurn (sent: SentBurn) =
+let ValidateBurn (sent: Burn) =
     if sent.Amount = 0UL then
         Error "mint must have an amount"
     else if sent.From = 0UL then
@@ -147,8 +156,31 @@ let updateBalances () =
     let lines =
         File.ReadLines(filepath)
         |> Seq.toList
-        |> (fun l -> l[.. l.Length - 1])
+        |> (fun l -> l[.. l.Length - 1]) // remove last empty line
 
     lines
+    |> List.map (fun line ->
+        // split line at first space, with the transaction type being the first part
+        let parts = line.Split(' ', 2)
+        let first, remaining = parts[0], parts[1]
 
-Log(updateBalances ())
+        match first with
+        | "Transaction" ->
+            let tx = JsonSerializer.Deserialize<Tx>(remaining)
+            Log $"transaction {tx.Id}, {tx.Amount}"
+            0
+        | "Mint" ->
+            let mint = JsonSerializer.Deserialize<Mint>(remaining)
+            Log $"mint {mint}"
+            0
+        | "Burn" ->
+            let burn = JsonSerializer.Deserialize<Burn>(remaining)
+            Log $"burn {burn}"
+            0
+        | _ ->
+            Log $"unknown transaction type: {first}"
+            Environment.Exit 1
+            0)
+    |> ignore
+
+updateBalances ()
