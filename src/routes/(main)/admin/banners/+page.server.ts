@@ -1,7 +1,7 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { Action, RecordId, auditLog, equery, surql } from "$lib/server/surreal"
+import { RecordId, auditLog, equery, surql } from "$lib/server/surreal"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -104,11 +104,7 @@ actions.create = async e => {
 				creator: new RecordId("user", user.id),
 			},
 		}),
-		auditLog(
-			Action.Administration,
-			`Create banner "${bannerText}"`,
-			user.id
-		),
+		auditLog("Administration", `Create banner "${bannerText}"`, user.id),
 	])
 
 	return message(form, "Banner created successfully!")
@@ -128,7 +124,7 @@ actions.delete = async e => {
 	>(surql`UPDATE ${new RecordId("banner", id)} SET deleted = true`)
 
 	await auditLog(
-		Action.Administration,
+		"Administration",
 		`Delete banner "${deletedBanner.body}"`,
 		user.id
 	)

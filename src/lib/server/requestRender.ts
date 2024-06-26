@@ -1,19 +1,8 @@
 import fs from "node:fs"
 import { equery, surql } from "./surreal.ts"
 
-export enum Status {
-	Pending = "Pending",
-	Rendering = "Rendering",
-	Completed = "Completed",
-	Error = "Error",
-}
-
-export enum RenderType {
-	Clothing = "Clothing",
-	Avatar = "Avatar",
-	Model = "Model",
-	Mesh = "Mesh",
-}
+export type Status = "Pending" | "Rendering" | "Completed" | "Error"
+export type RenderType = "Clothing" | "Avatar" | "Model" | "Mesh"
 
 type Render = {
 	status: Status
@@ -75,9 +64,10 @@ export default async function (
 
 	// Send the script to the RCCService proxy
 
-	const path = `data/${
-		renderType === RenderType.Avatar ? "avatars" : "thumbnails"
-	}/${relativeId}${renderType === RenderType.Avatar ? ".png" : ""}`
+	const path =
+		renderType === "Avatar"
+			? `data/avatars/${relativeId}.png`
+			: `data/thumbnails/${relativeId}`
 
 	// If the file doesn't exist, wait for it to be created
 	// if it does exist, wait for it to be modified

@@ -9,7 +9,7 @@ import {
 } from "$lib/server/imageAsset"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import requestRender, { RenderType } from "$lib/server/requestRender"
+import requestRender from "$lib/server/requestRender"
 import { RecordId, equery } from "$lib/server/surreal"
 import { graphicAsset } from "$lib/server/xmlAsset"
 import { redirect } from "@sveltejs/kit"
@@ -80,8 +80,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 			case 11: // Shirt
 			case 12: // Pants
 				saveImages[0] = await clothingAsset(asset)
-				saveImages[1] = (id: number) =>
-					requestRender(RenderType.Clothing, id)
+				saveImages[1] = (id: number) => requestRender("Clothing", id)
 
 				break
 

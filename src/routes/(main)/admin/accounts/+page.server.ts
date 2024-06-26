@@ -1,8 +1,7 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { Action, auditLog, equery, surql } from "$lib/server/surreal"
-import { Scrypt } from "oslo/password"
+import { auditLog, equery, surql } from "$lib/server/surreal"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -38,7 +37,7 @@ actions.changePassword = async ({ request, locals, getClientAddress }) => {
 			surql`
 				UPDATE user SET hashedPassword = $npassword
 				WHERE string::lowercase(username) = string::lowercase(${username})`,
-			{ npassword: await new Scrypt().hash(password) }
+			{ npassword: Bun.password.hashSync(password) }
 		)
 	} catch {
 		return message(form, "Invalid credentials", {
@@ -47,7 +46,7 @@ actions.changePassword = async ({ request, locals, getClientAddress }) => {
 	}
 
 	await auditLog(
-		Action.Account,
+		"Account",
 		`Change account password for ${username}`,
 		user.id
 	)

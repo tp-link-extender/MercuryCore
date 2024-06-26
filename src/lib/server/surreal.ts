@@ -150,12 +150,7 @@ export async function transaction(
 	throw new Error("todo test dis its broke")
 }
 
-export enum Action {
-	Account = "Account",
-	Administration = "Administration",
-	Moderation = "Moderation",
-	Economy = "Economy",
-}
+type Action = "Account" | "Administration" | "Moderation" | "Economy"
 
 /**
  * Creates a new audit log in the database.

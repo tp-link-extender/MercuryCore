@@ -1,7 +1,7 @@
 import { intRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import requestRender, { RenderType } from "$lib/server/requestRender"
+import requestRender from "$lib/server/requestRender"
 import { RecordId, equery, surql } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import type { RequestEvent } from "./$types.d.ts"
@@ -92,7 +92,7 @@ async function getEquipData(e: RequestEvent) {
 
 async function rerender(user: import("lucia").User) {
 	try {
-		await requestRender(RenderType.Avatar, user.number, true)
+		await requestRender("Avatar", user.number, true)
 		return {
 			avatar: `/api/avatar/${user.username}-body?r=${Math.random()}`,
 		}

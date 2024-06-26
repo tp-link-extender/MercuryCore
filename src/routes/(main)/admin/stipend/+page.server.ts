@@ -1,7 +1,7 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { Action, auditLog, equery, surql } from "$lib/server/surreal"
+import { auditLog, equery, surql } from "$lib/server/surreal"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -66,7 +66,7 @@ actions.updateStipend = async ({ request, locals, getClientAddress }) => {
 		auditText += `Change stipend time from ${current.stipendTime} to ${stipendTime}`
 	}
 
-	await auditLog(Action.Economy, auditText, user.id)
+	await auditLog("Economy", auditText, user.id)
 
 	return message(form, "Economy updated successfully!")
 }

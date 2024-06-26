@@ -12,7 +12,7 @@
 		user.css || "/* Enter your CSS here! Maximum 10 000 characters. */\n"
 </script>
 
-<Form {formData} action="?/styling" submit="<fa fa-save></fa> Save changes">
+<Form {formData} action="?/styling" submit="<fa fa-save class='pr-2'></fa> Save changes">
 	<Codearea
 		{formData}
 		rows={15}

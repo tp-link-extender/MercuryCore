@@ -33,16 +33,15 @@ const schema = z.object({
 	regkey: z.string().min(1).max(6969),
 })
 
-async function createUser(
-	user: {
-		username: string
-		email: string
-		hashedPassword: string
-		permissionLevel: number
-		currency: number
-	},
-	keyUsed?: string
-) {
+type CreatedUser = {
+	username: string
+	email: string
+	hashedPassword: string
+	permissionLevel: number
+	currency: number
+}
+
+async function createUser(user: CreatedUser, keyUsed?: string) {
 	const q = await equery<{ number: number; id: string }[]>(
 		keyUsed ? createRegkeyUserQuery : createUserQuery,
 		{ user, key: keyUsed ? new RecordId("regKey", keyUsed) : undefined }

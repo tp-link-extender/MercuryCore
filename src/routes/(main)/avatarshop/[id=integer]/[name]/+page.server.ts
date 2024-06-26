@@ -6,7 +6,7 @@ import { authorise } from "$lib/server/lucia"
 import { type Replies, recurse } from "$lib/server/nestedReplies"
 import ratelimit from "$lib/server/ratelimit"
 import { publish } from "$lib/server/realtime"
-import requestRender, { RenderType } from "$lib/server/requestRender"
+import requestRender from "$lib/server/requestRender"
 import { RecordId, equery, find, surql, transaction } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
@@ -171,10 +171,7 @@ async function rerender({ locals, params }: RequestEvent) {
 		error(400, "Can't rerender a moderated asset")
 
 	try {
-		await requestRender(
-			asset.type === 8 ? RenderType.Model : RenderType.Clothing,
-			id
-		)
+		await requestRender(asset.type === 8 ? "Model" : "Clothing", id)
 		return {
 			icon: `/avatarshop/${asset.id}/${asset.name}/icon?r=${Math.random()}`,
 		}

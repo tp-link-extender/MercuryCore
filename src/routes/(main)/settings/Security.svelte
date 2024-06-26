@@ -1,4 +1,7 @@
 <script lang="ts">
+	import Form from "$lib/components/forms/Form.svelte"
+	import Input from "$lib/components/forms/Input.svelte"
+	import fade from "$lib/fade"
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data: import("./$types").PageData
@@ -13,7 +16,7 @@
 <Form
 	{formData}
 	action="?/password"
-	submit="<far fa-key></far> Change password">
+	submit="<far fa-key class='pr-2'></far> Change password">
 	<div class="hidden">
 		<!-- for accessibility, allows password managers to better autofill etc -->
 		<Input
@@ -72,7 +75,8 @@
 				id="copiedSuccess"
 				transition:fade
 				class="block text-yellow-5">
-				Successfully copied key to clipboard. Store in a cool, dry place.
+				Successfully copied key to clipboard. Store in a cool, dry
+				place.
 			</small>
 		{/if}
 

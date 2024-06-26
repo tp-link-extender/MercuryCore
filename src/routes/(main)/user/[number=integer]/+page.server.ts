@@ -1,6 +1,6 @@
 import formData from "$lib/server/formData"
 import { authorise } from "$lib/server/lucia"
-import requestRender, { RenderType } from "$lib/server/requestRender"
+import requestRender from "$lib/server/requestRender"
 import { RecordId, equery, surql } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import type { RequestEvent } from "./$types.d.ts"
@@ -127,7 +127,7 @@ async function rerender(e: RequestEvent) {
 	const { user2 } = await getData(e)
 
 	try {
-		await requestRender(RenderType.Avatar, +params.number, true)
+		await requestRender("Avatar", +params.number, true)
 		return {
 			avatarBody: `/api/avatar/${user2.username}-body?r=${Math.random()}`,
 			avatar: `/api/avatar/${user2.username}?r=${Math.random()}`,

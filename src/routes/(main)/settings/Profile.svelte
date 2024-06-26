@@ -14,7 +14,10 @@
 	if (user.bio?.[0]) $form.bio = user.bio[user.bio.length - 1]?.text || ""
 </script>
 
-<Form {formData} action="?/profile" submit="<fa fa-save></fa> Save changes">
+<Form
+	{formData}
+	action="?/profile"
+	submit="<fa fa-save class='pr-2'></fa> Save changes">
 	<Select
 		{formData}
 		options={themes}

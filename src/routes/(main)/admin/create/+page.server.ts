@@ -2,7 +2,7 @@ import fs from "node:fs"
 import { intRegex } from "$lib/paramTests"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
-import requestRender, { RenderType } from "$lib/server/requestRender"
+import requestRender from "$lib/server/requestRender"
 import { equery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
@@ -294,9 +294,9 @@ actions.autopilot = async ({ request, locals }) => {
 				)
 			)
 	} else {
-		renders.push(requestRender(RenderType.Model, id))
+		renders.push(requestRender("Model", id))
 		const renderMesh = shared.find(s => s.type === 4)?.id
-		if (renderMesh) renders.push(requestRender(RenderType.Mesh, renderMesh))
+		if (renderMesh) renders.push(requestRender("Mesh", renderMesh))
 	}
 
 	await Promise.all(renders)

@@ -54,7 +54,7 @@ actions.default = async ({ request, cookies }) => {
 	)
 
 	// remove this statement and we'll end up like Mercury 1 💀
-	if (!user || !Bun.password.verifySync(user.hashedPassword, password))
+	if (!user || !Bun.password.verifySync(password, user.hashedPassword))
 		return formError(
 			form,
 			["username", "password"],

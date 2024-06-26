@@ -3,7 +3,7 @@ import { intRegex } from "$lib/paramTests"
 import auditLog from "$lib/server/auditLog.surql"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import requestRender, { RenderType } from "$lib/server/requestRender"
+import requestRender from "$lib/server/requestRender"
 import { RecordId, equery, surql } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import type { RequestEvent } from "./$types.d.ts"
@@ -90,7 +90,7 @@ actions.rerender = async e => {
 	if (limit) return limit
 
 	try {
-		await requestRender(RenderType.Clothing, +id)
+		await requestRender("Clothing", +id)
 	} catch (e) {
 		console.error(e)
 		fail(500, { msg: "Failed to request render" })
