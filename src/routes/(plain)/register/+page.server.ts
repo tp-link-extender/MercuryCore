@@ -1,13 +1,16 @@
 import formError from "$lib/server/formError"
 import { auth } from "$lib/server/lucia"
-import requestRender, { RenderType } from "$lib/server/requestRender"
+import requestRender from "$lib/server/requestRender"
 import { RecordId, equery, findWhere, surql } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
-import { Scrypt } from "oslo/password"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import createUserQuery from "./createUser.surql"
+
+const createRegkeyUserQuery = `${createUserQuery}
+	UPDATE ONLY $key SET usesLeft -= 1;
+	RELATE $u->used->$key`
 
 const schemaInitial = z.object({
 	username: z
@@ -40,26 +43,15 @@ async function createUser(
 	},
 	keyUsed?: string
 ) {
-	let query = createUserQuery
-	let key: RecordId | undefined
-	if (keyUsed) {
-		query += `
-			UPDATE ONLY $key SET usesLeft -= 1;
-			RELATE $u->used->$key`
-		key = new RecordId("regKey", keyUsed)
-	}
-
-	const q = await equery<{ number: number; id: string }[]>(query, {
-		user,
-		key,
-	})
-
+	const q = await equery<{ number: number; id: string }[]>(
+		keyUsed ? createRegkeyUserQuery : createUserQuery,
+		{ user, key: keyUsed ? new RecordId("regKey", keyUsed) : undefined }
+	)
 	return q[3]
 }
 
 async function isAccountRegistered() {
 	const [userCount] = await equery<number[]>(surql`count(SELECT 1 FROM user)`)
-
 	return userCount > 0
 }
 
@@ -72,11 +64,7 @@ export const actions: import("./$types").Actions = {}
 actions.register = async ({ request, cookies }) => {
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
-
-	let { username, email, password, cpassword, regkey } = form.data
-
-	email = email.toLowerCase()
-	regkey = regkey.split("-")[1]
+	const { username, email, password, cpassword, regkey } = form.data
 
 	if (cpassword !== password)
 		return formError(
@@ -102,7 +90,7 @@ actions.register = async ({ request, cookies }) => {
 		return formError(form, ["email"], ["This email is already in use"])
 
 	const [[regkeyCheck]] = await equery<{ usesLeft: number }[][]>(
-		surql`SELECT usesLeft FROM ${new RecordId("regKey", regkey)}`
+		surql`SELECT usesLeft FROM ${new RecordId("regKey", regkey.split("-")[1])}`
 	)
 
 	if (!regkeyCheck)
@@ -118,7 +106,8 @@ actions.register = async ({ request, cookies }) => {
 		{
 			username,
 			email,
-			hashedPassword: await new Scrypt().hash(password),
+			// I still love scrypt, though argon2 is better supported
+			hashedPassword: Bun.password.hashSync(password),
 			permissionLevel: 1,
 			currency: 0,
 		},
@@ -126,7 +115,7 @@ actions.register = async ({ request, cookies }) => {
 	)
 
 	try {
-		await requestRender(RenderType.Avatar, user.number)
+		await requestRender("Avatar", user.number)
 	} catch {}
 
 	const session = await auth.createSession(user.id, {})
@@ -139,12 +128,10 @@ actions.register = async ({ request, cookies }) => {
 
 	redirect(302, "/home")
 }
+// This is the initial account creation, which is only allowed if there are no existing users.
 actions.initialAccount = async ({ request, cookies }) => {
-	// This is the initial account creation, which is only allowed if there are no existing users.
-
 	const form = await superValidate(request, zod(schemaInitial))
 	if (!form.valid) return formError(form)
-
 	const { username, password, cpassword } = form.data
 
 	if (cpassword !== password)
@@ -168,13 +155,13 @@ actions.initialAccount = async ({ request, cookies }) => {
 	const user = await createUser({
 		username,
 		email: "",
-		hashedPassword: await new Scrypt().hash(password),
+		hashedPassword: Bun.password.hashSync(password),
 		permissionLevel: 5,
 		currency: 0,
 	})
 
 	try {
-		await requestRender(RenderType.Avatar, user.number)
+		await requestRender("Avatar", user.number)
 	} catch {}
 
 	const session = await auth.createSession(user.id, {})

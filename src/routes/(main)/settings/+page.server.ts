@@ -1,7 +1,6 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import { RecordId, equery, surql } from "$lib/server/surreal"
-import { Scrypt } from "oslo/password"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -67,11 +66,11 @@ actions.password = async ({ request, locals }) => {
 			["New password cannot be the same as the current password", ""]
 		)
 
-	if (!(await new Scrypt().verify(user.hashedPassword, cpassword)))
+	if (!Bun.password.verifySync(cpassword, user.hashedPassword))
 		return formError(form, ["cpassword"], ["Incorrect password"])
 
 	await equery(
-		surql`UPDATE $user SET hashedPassword = ${await new Scrypt().hash(npassword)}`,
+		surql`UPDATE $user SET hashedPassword = ${Bun.password.hashSync(npassword)}`,
 		{ user: new RecordId("user", user.id) }
 	)
 

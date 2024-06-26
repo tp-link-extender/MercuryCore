@@ -2,7 +2,6 @@ import formError from "$lib/server/formError"
 import { auth } from "$lib/server/lucia"
 import { equery, surql } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
-import { Scrypt } from "oslo/password"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -55,11 +54,11 @@ actions.default = async ({ request, cookies }) => {
 	)
 
 	// remove this statement and we'll end up like Mercury 1 💀
-	if (!user || !(await new Scrypt().verify(user.hashedPassword, password)))
+	if (!user || !Bun.password.verifySync(user.hashedPassword, password))
 		return formError(
 			form,
 			["username", "password"],
-			[" ", "Incorrect username or password"]
+			[" ", "Incorrect username or password"] // Don't give any extra information which may be useful to attackers
 		)
 
 	const session = await auth.createSession(user.id, {})
