@@ -45,4 +45,4 @@
 	</div>
 </main>
 
-<Footer {data} />
+<Footer />

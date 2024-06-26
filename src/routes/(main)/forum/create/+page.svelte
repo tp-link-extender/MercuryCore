@@ -30,7 +30,7 @@
 			placeholder="Make sure to make it accurate" />
 		<Textarea
 			{formData}
-			rows="3"
+			rows={3}
 			name="content"
 			label="Post content"
 			placeholder="Up to 3000 characters" />

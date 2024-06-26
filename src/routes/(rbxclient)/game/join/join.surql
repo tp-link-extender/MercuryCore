@@ -7,4 +7,4 @@ SELECT
 	FROM ->place)[0] AS place,
 	(SELECT username, number, permissionLevel
 	FROM <-user)[0] AS user
-FROM $playingId;
+FROM $playing;

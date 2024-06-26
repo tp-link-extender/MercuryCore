@@ -16,7 +16,7 @@
 	<slot />
 </main>
 
-<Footer {data} />
+<Footer />
 
 <style>
 	#bg {

@@ -14,4 +14,4 @@
 	<slot />
 </main>
 
-<Footer {data} />
+<Footer />

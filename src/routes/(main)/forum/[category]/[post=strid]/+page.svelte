@@ -211,7 +211,7 @@
 					<span>
 						{#if user.permissionLevel >= 4}
 							<PinButton
-								refreshReplies={() => refreshPost++}
+								{refreshReplies}
 								id={$post.id}
 								pinned={$post.pinned}
 								post />

@@ -6,7 +6,7 @@
 	export let pinned = false
 	export let post = false
 	// Replies need to be re-ordered after a reply is pinned or unpinned
-	export let refreshReplies: import("@sveltejs/kit").SubmitFunction
+	export let refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any>
 
 	const text = pinned ? "unpin" : "pin"
 	const colour = pinned ? "text-red-5" : "text-green-5"

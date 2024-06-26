@@ -32,7 +32,7 @@
 	export let postId: string
 	export let assetName = ""
 	export let pinnable = false
-	export let refreshReplies: import("@sveltejs/kit").SubmitFunction
+	export let refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any>
 
 	const baseUrl = categoryName
 		? `/forum/${categoryName.toLowerCase()}/${postId}`
