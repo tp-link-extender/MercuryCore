@@ -10,7 +10,7 @@ import {
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
-import { RecordId, equery } from "$lib/server/surreal"
+import { Record, equery } from "$lib/server/surreal"
 import { graphicAsset } from "$lib/server/xmlAsset"
 import { redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
@@ -117,7 +117,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 		assetType,
 		price,
 		description,
-		user: new RecordId("user", user.id),
+		user: Record("user", user.id),
 	})
 
 	const imageAssetId = res[9]

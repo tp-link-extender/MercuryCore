@@ -1,6 +1,6 @@
 import { intRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/lucia"
-import { RecordId, equery, surql } from "$lib/server/surreal"
+import { Record, equery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
 type Asset = {
@@ -20,7 +20,7 @@ export async function GET({ locals, params }) {
 				meta::id(id) AS id,
 				name,
 				visibility
-			FROM ${new RecordId("asset", id)}`
+			FROM ${Record("asset", id)}`
 	)
 
 	if (!asset) error(404, "Not found")

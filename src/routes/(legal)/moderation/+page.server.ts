@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { RecordId, equery, surql } from "$lib/server/surreal"
+import { Record, equery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
 async function getModeration(id: string) {
@@ -13,7 +13,7 @@ async function getModeration(id: string) {
 	>(
 		surql`
 			SELECT * FROM moderation
-			WHERE out = ${new RecordId("user", id)} AND active = true`
+			WHERE out = ${Record("user", id)} AND active = true`
 	)
 
 	if (moderation) return moderation
@@ -45,7 +45,7 @@ actions.default = async ({ locals }) => {
 	await equery(
 		surql`
 			UPDATE moderation SET active = false
-			WHERE out = ${new RecordId("user", user.id)}`
+			WHERE out = ${Record("user", user.id)}`
 	)
 
 	redirect(302, "/home")

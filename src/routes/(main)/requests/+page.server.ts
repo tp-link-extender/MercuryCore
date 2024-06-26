@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { RecordId, equery, surql } from "$lib/server/surreal"
+import { Record, equery, surql } from "$lib/server/surreal"
 
 export async function load({ locals }) {
 	const { user } = await authorise(locals)
@@ -7,7 +7,7 @@ export async function load({ locals }) {
 		surql`
 			SELECT number, status, username
 			FROM user WHERE $user IN ->request->user`,
-		{ user: new RecordId("user", user.id) }
+		{ user: Record("user", user.id) }
 	)
 
 	return { users }

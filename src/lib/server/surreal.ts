@@ -20,6 +20,63 @@ export const failed = "The query was not executed due to a failed transaction"
 
 export { surql, RecordId }
 
+export type RecordIdTypes = {
+	application: string
+	applicationKey: string
+	asset: number
+	assetCache: [number, number]
+	assetComment: string
+	auditLog: string
+	banner: string
+	created: string
+	createdAsset: string
+	dislikes: string
+	follows: string
+	forumCategory: string
+	forumPost: string
+	forumReply: string
+	friends: string
+	group: string
+	hasSession: string
+	imageAsset: string
+	in: string
+	likes: string
+	moderation: string
+	notification: string
+	owns: string
+	place: number
+	playing: string
+	posted: string
+	recentlyWorn: string
+	regKey: string
+	render: string
+	replyToAsset: string
+	replyToComment: string
+	replyToPost: string
+	replyToReply: string
+	report: string
+	request: string
+	session: string
+	statusPost: string
+	stuff: string
+	thumbnailCache: number
+	transaction: string
+	used: string
+	user: string
+	wearing: string
+}
+
+/**
+ * Returns a record id object for a given table and id.
+ * @param table The table to get the record id for.
+ * @param id The id of the record.
+ * @returns a Record object.
+ */
+export const Record = <T extends keyof RecordIdTypes>(
+	table: T,
+	id: RecordIdTypes[T]
+) => new RecordId(table, id)
+
 type Prepared = PreparedQuery<(result: unknown[]) => unknown>
 
 const stupidError =
@@ -79,9 +136,12 @@ if (!building) {
  * @example
  * await find("user:1")
  */
-export const find = (table: string, id: string | number) =>
+export const find = <T extends keyof RecordIdTypes>(
+	table: T,
+	id: RecordIdTypes[T]
+) =>
 	equery(
-		surql`!!SELECT 1 FROM ${new RecordId(table, id)}`
+		surql`!!SELECT 1 FROM ${Record(table, id)}`
 	) as unknown as Promise<boolean>
 
 /**
@@ -94,7 +154,7 @@ export const find = (table: string, id: string | number) =>
  * await findWhere("user", surql`username = $username`, { username: "Heliodex" })
  */
 export const findWhere = async (
-	table: string,
+	table: keyof RecordIdTypes,
 	where: string,
 	params?: { [k: string]: unknown }
 ) =>
@@ -162,6 +222,6 @@ export async function auditLog(action: Action, note: string, userId: string) {
 	await equery(auditLogQuery, {
 		action,
 		note,
-		user: new RecordId("user", userId),
+		user: Record("user", userId),
 	})
 }

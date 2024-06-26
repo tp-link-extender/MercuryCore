@@ -1,7 +1,7 @@
 import fs from "node:fs"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
-import { RecordId, equery, surql } from "$lib/server/surreal"
+import { Record, equery, surql } from "$lib/server/surreal"
 import { encode } from "$lib/urlName"
 import { error } from "@sveltejs/kit"
 import sharp from "sharp"
@@ -54,7 +54,7 @@ type Place = {
 
 async function placeQuery(id: number) {
 	const [[place]] = await equery<Place[][]>(settingsQuery, {
-		place: new RecordId("place", id), // MAKE SURE ID IS A NUMBER
+		place: Record("place", id), // MAKE SURE ID IS A NUMBER
 	})
 	return place
 }
@@ -119,7 +119,7 @@ actions.view = async e => {
 	const { title, description } = form.data
 
 	await equery(updateSettingsQuery, {
-		place: new RecordId("place", id),
+		place: Record("place", id),
 		title,
 		description: description || "",
 	})
@@ -131,7 +131,7 @@ actions.ticket = async e => {
 	const { request } = e
 
 	await equery(surql`UPDATE $place SET serverTicket = rand::guid()`, {
-		place: new RecordId("place", id),
+		place: Record("place", id),
 	})
 
 	return message(
@@ -150,7 +150,7 @@ actions.network = async e => {
 
 	await equery(
 		surql`
-			UPDATE ${new RecordId("place", id)} MERGE {
+			UPDATE ${Record("place", id)} MERGE {
 				serverIP: ${serverIP},
 				serverPort: ${serverPort},
 				maxPlayers: ${maxPlayers},
@@ -169,7 +169,7 @@ actions.privacy = async e => {
 	const { privateServer } = form.data
 
 	await equery(surql`UPDATE $place SET privateServer = ${privateServer}`, {
-		place: new RecordId("place", id),
+		place: Record("place", id),
 	})
 
 	return message(form, "Privacy settings updated successfully!")
@@ -179,7 +179,7 @@ actions.privatelink = async e => {
 	const { url, request } = e
 
 	await equery(surql`UPDATE $place SET privateTicket = rand::guid()`, {
-		place: new RecordId("place", id),
+		place: Record("place", id),
 	})
 
 	return message(

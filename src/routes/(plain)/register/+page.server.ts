@@ -1,7 +1,7 @@
 import formError from "$lib/server/formError"
 import { auth } from "$lib/server/lucia"
 import requestRender from "$lib/server/requestRender"
-import { RecordId, equery, findWhere, surql } from "$lib/server/surreal"
+import { Record, equery, findWhere, surql } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
@@ -44,7 +44,7 @@ type CreatedUser = {
 async function createUser(user: CreatedUser, keyUsed?: string) {
 	const q = await equery<{ number: number; id: string }[]>(
 		keyUsed ? createRegkeyUserQuery : createUserQuery,
-		{ user, key: keyUsed ? new RecordId("regKey", keyUsed) : undefined }
+		{ user, key: keyUsed ? Record("regKey", keyUsed) : undefined }
 	)
 	return q[3]
 }
@@ -89,7 +89,7 @@ actions.register = async ({ request, cookies }) => {
 		return formError(form, ["email"], ["This email is already in use"])
 
 	const [[regkeyCheck]] = await equery<{ usesLeft: number }[][]>(
-		surql`SELECT usesLeft FROM ${new RecordId("regKey", regkey.split("-")[1])}`
+		surql`SELECT usesLeft FROM ${Record("regKey", regkey.split("-")[1])}`
 	)
 
 	if (!regkeyCheck)

@@ -1,6 +1,6 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
-import { RecordId, equery, surql } from "$lib/server/surreal"
+import { Record, equery, surql } from "$lib/server/surreal"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -42,7 +42,7 @@ actions.profile = async ({ request, locals }) => {
 	const { bio } = form.data
 
 	await equery(updateProfileQuery, {
-		user: new RecordId("user", user.id),
+		user: Record("user", user.id),
 		bio,
 		// theme,
 	})
@@ -71,7 +71,7 @@ actions.password = async ({ request, locals }) => {
 
 	await equery(
 		surql`UPDATE $user SET hashedPassword = ${Bun.password.hashSync(npassword)}`,
-		{ user: new RecordId("user", user.id) }
+		{ user: Record("user", user.id) }
 	)
 
 	// Don't send the password back to the client
@@ -90,9 +90,7 @@ actions.styling = async ({ request, locals }) => {
 	const { css } = form.data
 	if (css === "undefined") return message(form, "Styling already saved!")
 
-	await equery(
-		surql`UPDATE ${new RecordId("user", user.id)} SET css = ${css}`
-	)
+	await equery(surql`UPDATE ${Record("user", user.id)} SET css = ${css}`)
 
 	return message(form, "Styling updated successfully!")
 }

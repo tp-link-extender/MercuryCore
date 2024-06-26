@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { RecordId, equery } from "$lib/server/surreal"
+import { Record, equery } from "$lib/server/surreal"
 import { encode } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
 import placeIdQuery from "./placeId.surql"
@@ -18,7 +18,7 @@ type Place = {
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
 	const [[place]] = await equery<Place[][]>(placeIdQuery, {
-		place: new RecordId("place", params.id),
+		place: Record("place", +params.id),
 	})
 
 	if (place && (!place.privateServer || user.id === place.owner.id))

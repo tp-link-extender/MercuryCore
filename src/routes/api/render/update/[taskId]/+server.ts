@@ -1,4 +1,4 @@
-import { RecordId, equery, surql } from "$lib/server/surreal"
+import { Record, equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 type Render = {
@@ -16,7 +16,7 @@ export async function POST({ request, url, params }) {
 
 	const [[task]] = await equery<Render[][]>(
 		surql`SELECT type, relativeId FROM $render`,
-		{ render: new RecordId("render", id) }
+		{ render: Record("render", id) }
 	)
 
 	if (!task) error(404, "Task not found")
@@ -35,7 +35,7 @@ export async function POST({ request, url, params }) {
 
 	if (status === "Rendering")
 		await equery(surql`UPDATE $render SET status = "Rendering"`, {
-			render: new RecordId("render", id),
+			render: Record("render", id),
 		})
 	else if (status === "Completed") {
 		// Less repetitive and more readable
@@ -62,7 +62,7 @@ export async function POST({ request, url, params }) {
 					status: "Completed",
 					completed: time::now(),
 				}`,
-			{ render: new RecordId("render", id) }
+			{ render: Record("render", id) }
 		)
 	}
 

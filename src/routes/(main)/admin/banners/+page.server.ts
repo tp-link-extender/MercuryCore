@@ -1,7 +1,7 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { RecordId, auditLog, equery, surql } from "$lib/server/surreal"
+import { Record, auditLog, equery, surql } from "$lib/server/surreal"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -73,7 +73,7 @@ const showHide = (action: string) => async (e: RequestEvent) => {
 		return message(form, "Too many active banners", { status: 400 })
 
 	await equery(surql`UPDATE $id SET active = ${action === "show"}`, {
-		id: new RecordId("banner", id),
+		id: Record("banner", id),
 	})
 }
 
@@ -101,7 +101,7 @@ actions.create = async e => {
 				body: bannerText,
 				bgColour: bannerColour,
 				textLight: !!bannerTextLight,
-				creator: new RecordId("user", user.id),
+				creator: Record("user", user.id),
 			},
 		}),
 		auditLog("Administration", `Create banner "${bannerText}"`, user.id),
@@ -121,7 +121,7 @@ actions.delete = async e => {
 			body: string
 			creator: string
 		}[][]
-	>(surql`UPDATE ${new RecordId("banner", id)} SET deleted = true`)
+	>(surql`UPDATE ${Record("banner", id)} SET deleted = true`)
 
 	await auditLog(
 		"Administration",
@@ -140,7 +140,7 @@ actions.updateBody = async e => {
 
 	// await banner.merge(id, { body: bannerBody })
 	await equery(surql`UPDATE $id SET body = ${bannerBody}`, {
-		id: new RecordId("banner", id),
+		id: Record("banner", id),
 	})
 }
 actions.updateTextLight = async e => {
@@ -153,7 +153,7 @@ actions.updateTextLight = async e => {
 
 	// await banner.merge(id, { textLight: !!bannerTextLight })
 	await equery(surql`UPDATE $id SET textLight = ${!!bannerTextLight}`, {
-		id: new RecordId("banner", id),
+		id: Record("banner", id),
 	})
 }
 actions.show = showHide("show")

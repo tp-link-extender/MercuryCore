@@ -1,4 +1,4 @@
-import { RecordId, equery, surql } from "$lib/server/surreal"
+import { Record, equery, surql } from "$lib/server/surreal"
 import type { User } from "lucia"
 
 type Notification = {
@@ -28,7 +28,7 @@ async function getAssetComment(relativeId: string) {
 				meta::id(id) AS id,
 				(SELECT meta::id(id) AS id, name
 				FROM ->replyToAsset->asset)[0] AS parentAsset
-			FROM ${new RecordId("assetComment", relativeId)}`
+			FROM ${Record("assetComment", relativeId)}`
 	)
 	return result
 }
@@ -50,7 +50,7 @@ async function getForumReply(relativeId: string) {
 					meta::id(id) AS id,
 					(->in->forumCategory)[0].name as categoryName
 				FROM ->replyToPost[0]->forumPost)[0] AS parentPost
-			FROM ${new RecordId("forumReply", relativeId)}`
+			FROM ${Record("forumReply", relativeId)}`
 	)
 	return result
 }
@@ -63,7 +63,7 @@ async function getForumPost(relativeId: string) {
 			SELECT
 				(SELECT name
 				FROM ->in->forumCategory) AS category
-			FROM ${new RecordId("forumPost", relativeId)}`
+			FROM ${Record("forumPost", relativeId)}`
 	)
 	return result
 }
@@ -79,7 +79,7 @@ export default async function (user: User | null) {
 				FROM <-user)[0] AS sender
 			OMIT in, out
 			FROM notification
-			WHERE out = ${new RecordId("user", user.id)}
+			WHERE out = ${Record("user", user.id)}
 			ORDER BY time DESC`
 	)
 

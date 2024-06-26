@@ -1,6 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import { token } from "$lib/server/realtime"
-import { RecordId, equery, surql } from "$lib/server/surreal"
+import { Record, equery, surql } from "$lib/server/surreal"
 
 // Most pages on the site require a user to be logged in.
 // No risk of data leakage to unauthenticated users here as a redirect is performed.
@@ -25,7 +25,7 @@ export async function load({ locals }) {
 				expiry,
 				realtimeToken,
 				realtimeHash,
-				user: new RecordId("user", user.id),
+				user: Record("user", user.id),
 			}
 		)
 	}

@@ -4,7 +4,7 @@ import { like } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
 import { type Replies, recurse } from "$lib/server/nestedReplies"
 import ratelimit from "$lib/server/ratelimit"
-import { RecordId, equery, surql } from "$lib/server/surreal"
+import { Record, type RecordId, equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
@@ -51,8 +51,8 @@ export async function load({ locals, params }) {
 
 	const postQuery = forumPostQuery.replace("_SELECTREPLIES", SELECTREPLIES)
 	const [[forumPost]] = await equery<ForumPost[][]>(postQuery, {
-		forumPost: new RecordId("forumPost", params.post),
-		user: new RecordId("user", user.id),
+		forumPost: Record("forumPost", params.post),
+		user: Record("user", user.id),
 	})
 	if (!forumPost) error(404, "Not found")
 
@@ -75,7 +75,7 @@ async function findReply<T>(
 	// Incorrect ids filtering is done with route matchers now
 
 	const [[reply]] = await equery<T[][]>(input, {
-		forumReply: new RecordId("forumReply", id),
+		forumReply: Record("forumReply", id),
 	})
 	if (!reply) error(404, "Reply not found")
 
@@ -84,7 +84,7 @@ async function findReply<T>(
 
 const updateVisibility = (visibility: string, text: string, id: string) =>
 	equery(updateVisibilityQuery, {
-		forumReply: new RecordId("forumReply", id),
+		forumReply: Record("forumReply", id),
 		text,
 		visibility,
 	})
@@ -94,10 +94,7 @@ const pinThing = (pinned: boolean, thing: RecordId<string>) =>
 
 // wrapping this stuff in arrow functions just to prevent it from maybe returning god knows what to the client from an action
 const pinReply = (pinned: boolean) => async (e: RequestEvent) => {
-	await pinThing(
-		pinned,
-		new RecordId("forumReply", (await findReply(e, 4)).id)
-	)
+	await pinThing(pinned, Record("forumReply", (await findReply(e, 4)).id))
 }
 
 const pinPost = (pinned: boolean) => async (e: RequestEvent) => {
@@ -108,7 +105,7 @@ const pinPost = (pinned: boolean) => async (e: RequestEvent) => {
 	if (!id) error(400, "Missing post id")
 	if (!idRegex.test(id)) error(400, "Invalid post id")
 
-	await pinThing(pinned, new RecordId("forumPost", id))
+	await pinThing(pinned, Record("forumPost", id))
 }
 
 export const actions: import("./$types").Actions = {}
@@ -135,8 +132,8 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 			WHERE visibility = "Visible"`,
 		{
 			replypostId: replyId
-				? new RecordId("forumReply", replyId)
-				: new RecordId("forumPost", params.post),
+				? Record("forumReply", replyId)
+				: Record("forumPost", params.post),
 		}
 	)
 
@@ -146,10 +143,10 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 
 	await equery(createReplyQuery, {
 		content,
-		user: new RecordId("user", user.id),
-		forumReply: new RecordId("forumReply", newReplyId),
-		post: new RecordId("forumPost", params.post),
-		replyId: replyId ? new RecordId("forumReply", replyId) : undefined,
+		user: Record("user", user.id),
+		forumReply: Record("forumReply", newReplyId),
+		post: Record("forumPost", params.post),
+		replyId: replyId ? Record("forumReply", replyId) : undefined,
 	})
 
 	if (user.id !== replypost.authorId)
@@ -163,15 +160,15 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 					read: false,
 				}`,
 			{
-				sender: new RecordId("user", user.id),
-				receiver: new RecordId("user", replypost.authorId),
+				sender: Record("user", user.id),
+				receiver: Record("user", replypost.authorId),
 				note: `${user.username} replied to your ${
 					replyId ? "reply" : "post"
 				}: ${content}`,
 			}
 		)
 
-	await like(user.id, new RecordId("forumReply", newReplyId))
+	await like(user.id, Record("forumReply", newReplyId))
 }
 actions.delete = async e => {
 	const { user, reply, id } = await findReply<{

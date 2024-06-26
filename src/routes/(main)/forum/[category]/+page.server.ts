@@ -3,7 +3,7 @@ import formData from "$lib/server/formData"
 import { likeScoreActions } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
 import { publish } from "$lib/server/realtime"
-import { RecordId, equery, surql } from "$lib/server/surreal"
+import { Record, type RecordIdTypes, equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import categoryQuery from "./category.surql"
 
@@ -30,7 +30,7 @@ export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
 	const [[category]] = await equery<Category[][]>(categoryQuery, {
 		...params,
-		user: new RecordId("user", user.id),
+		user: Record("user", user.id),
 	})
 	if (!category) error(404, "Not found")
 
@@ -42,13 +42,13 @@ type Thing = {
 	score: number
 }
 
-async function select(table: string, id: string) {
+async function select(table: keyof RecordIdTypes, id: string) {
 	const [[thing]] = await equery<Thing[][]>(
 		surql`
 			SELECT
 				meta::id(id) AS id,
 				count(<-likes) - count(<-dislikes) AS score
-			FROM ${new RecordId(table, id)}`
+			FROM ${Record(table, id)}`
 	)
 	return thing
 }
@@ -60,18 +60,16 @@ actions.like = async ({ request, locals, params, url }) => {
 	const action = data.action as keyof typeof likeScoreActions
 	const id = url.searchParams.get("id")
 	const replyId = url.searchParams.get("rid")
-
 	if (replyId && !idRegex.test(replyId)) error(400, "Invalid reply id")
 
 	const foundPost = id ? await select("forumPost", id) : null
 	const foundReply = replyId ? await select("forumReply", replyId) : null
-
 	if (!foundPost || !foundReply) error(404)
 
 	const type = foundPost ? "Post" : "Reply"
 	const likes = await likeScoreActions[action](
 		user.id,
-		new RecordId(`forum${type}`, (id || replyId) as string)
+		Record(`forum${type}`, (id || replyId) as string)
 	)
 
 	const thing = (foundPost || foundReply) as Thing

@@ -1,11 +1,11 @@
 import { authorise } from "$lib/server/lucia"
-import { RecordId, equery, surql } from "$lib/server/surreal"
+import { Record, equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 export const load = async ({ locals }) => {
 	const { user } = await authorise(locals)
 	await equery(surql`UPDATE notification SET read = true WHERE out = $user`, {
-		user: new RecordId("user", user.id),
+		user: Record("user", user.id),
 	})
 }
 
@@ -22,8 +22,8 @@ actions.default = async ({ locals, url }) => {
 					UPDATE $notification SET read = true WHERE out = $user
 				}`,
 			{
-				notification: new RecordId("notification", id),
-				user: new RecordId("user", user.id),
+				notification: Record("notification", id),
+				user: Record("user", user.id),
 			}
 		)
 	} catch (e) {

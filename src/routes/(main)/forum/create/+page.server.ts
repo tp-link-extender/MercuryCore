@@ -2,7 +2,7 @@ import formError from "$lib/server/formError"
 import { like } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { RecordId, equery, findWhere, surql } from "$lib/server/surreal"
+import { Record, equery, findWhere, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
@@ -61,14 +61,14 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 	const [newPostId] = await equery<string[]>(surql`fn::id()`)
 
 	await equery(createQuery, {
-		user: new RecordId("user", user.id),
-		postId: new RecordId("forumPost", newPostId),
-		category: new RecordId("forumCategory", category),
+		user: Record("user", user.id),
+		postId: Record("forumPost", newPostId),
+		category: Record("forumCategory", category),
 		title,
 		content,
 	})
 
-	await like(user.id, new RecordId("forumPost", newPostId))
+	await like(user.id, Record("forumPost", newPostId))
 
 	redirect(302, `/forum/${category}/${newPostId}`)
 }

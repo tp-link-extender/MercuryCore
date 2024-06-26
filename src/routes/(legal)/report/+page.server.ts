@@ -1,7 +1,7 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { RecordId, equery, surql } from "$lib/server/surreal"
+import { Record, type RecordId, equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
@@ -68,7 +68,7 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 
 	await equery(
 		surql`
-			RELATE ${new RecordId("user", user.id)}->report->${reportee.id} CONTENT {
+			RELATE ${Record("user", user.id)}->report->${reportee.id} CONTENT {
 				time: time::now(),
 				note: ${note},
 				url: ${reportUrl},

@@ -1,4 +1,4 @@
-import { RecordId, equery } from "./surreal.ts"
+import { Record, type RecordId, equery } from "./surreal.ts"
 
 type ScoreResult = {
 	score: number
@@ -33,7 +33,7 @@ const undislikeQuery = "DELETE $user->dislikes WHERE out = $thing;"
 // most overengineered thing I have ever written
 // "you won't drown in millions of little tiny functions" they said
 const getParams = (userId: string, thing: RecordId<string>) => ({
-	user: new RecordId("user", userId),
+	user: Record("user", userId),
 	thing,
 })
 

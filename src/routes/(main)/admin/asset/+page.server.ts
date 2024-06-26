@@ -4,7 +4,7 @@ import auditLog from "$lib/server/auditLog.surql"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
-import { RecordId, equery, surql } from "$lib/server/surreal"
+import { Record, equery, surql } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import type { RequestEvent } from "./$types.d.ts"
 import assetsQuery from "./asset.surql"
@@ -24,7 +24,7 @@ type Asset = {
 export async function load({ locals }) {
 	const { user } = await authorise(locals, 3)
 	const [assets] = await equery<Asset[][]>(assetsQuery, {
-		user: new RecordId("user", user.id),
+		user: Record("user", user.id),
 	})
 
 	return { assets }
@@ -38,8 +38,8 @@ async function getData({ locals, url }: RequestEvent) {
 	if (!intRegex.test(id)) error(400, `Invalid asset id: ${id}`)
 
 	const params = {
-		user: new RecordId("user", user.id),
-		asset: new RecordId("asset", id),
+		user: Record("user", user.id),
+		asset: Record("asset", +id),
 	}
 	const [[asset]] = await equery<{ name: string }[][]>(
 		surql`SELECT name FROM $asset`,
@@ -102,7 +102,7 @@ actions.purge = async e => {
 	const [[{ iaid }]] = await equery<{ iaid: number }[][]>(
 		surql`
 			SELECT meta::id((->imageAsset->asset.id)[0]) AS iaid
-			FROM ${new RecordId("asset", id)}`
+			FROM ${Record("asset", +id)}`
 	)
 
 	await Promise.all([
@@ -113,7 +113,7 @@ actions.purge = async e => {
 				${auditLog}`,
 			{
 				...params,
-				imageAsset: new RecordId("asset", iaid),
+				imageAsset: Record("asset", iaid),
 				action: "Moderation",
 				note: `Purge asset ${assetName} (id ${id})`,
 			}

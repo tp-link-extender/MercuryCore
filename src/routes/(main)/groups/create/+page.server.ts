@@ -1,6 +1,6 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
-import { RecordId, equery, findWhere, transaction } from "$lib/server/surreal"
+import { Record, equery, findWhere, transaction } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
@@ -69,7 +69,7 @@ actions.default = async ({ request, locals }) => {
 
 	await equery(createQuery, {
 		name,
-		user: new RecordId("user", user.id),
+		user: Record("user", user.id),
 	})
 
 	redirect(302, `/groups/${name}`)

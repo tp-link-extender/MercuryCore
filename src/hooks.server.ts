@@ -5,7 +5,7 @@
 
 import { dev } from "$app/environment"
 import { auth } from "$lib/server/lucia"
-import { RecordId, equery, surql } from "$lib/server/surreal"
+import { Record, equery, surql } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import type { Cookie } from "lucia"
 import pc from "picocolors"
@@ -108,7 +108,7 @@ export async function handle({ event, resolve }) {
 		surql`
 			SELECT 1 FROM moderation
 			WHERE out = $user AND active = true`,
-		{ user: new RecordId("user", user.id) }
+		{ user: Record("user", user.id) }
 	)
 
 	if (
@@ -120,7 +120,7 @@ export async function handle({ event, resolve }) {
 		redirect(302, "/moderation")
 
 	await equery(surql`UPDATE $user SET lastOnline = time::now()`, {
-		user: new RecordId("user", user.id),
+		user: Record("user", user.id),
 	})
 
 	const [[economy]] = await equery<
@@ -143,7 +143,7 @@ export async function handle({ event, resolve }) {
 				UPDATE $user SET currencyCollected = time::now();
 				UPDATE $user SET currency += $dailyStipend`,
 			{
-				user: new RecordId("user", user.id),
+				user: Record("user", user.id),
 				dailyStipend,
 			}
 		)

@@ -1,6 +1,6 @@
 // This should be moved to asset thumbnails for every asset on Mercury, but for now we'll use it for the stamper tool (and other games which require it)
 
-import { RecordId, equery, surql } from "$lib/server/surreal"
+import { Record, equery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
 export async function GET({ url }) {
@@ -20,7 +20,7 @@ export async function GET({ url }) {
 	})
 	const [[cache]] = await equery<{ url: string }[][]>(
 		surql`SELECT url FROM $asset`,
-		{ asset: new RecordId("thumbnailCache", stringAssetId) }
+		{ asset: Record("thumbnailCache", assetId) }
 	)
 
 	if (cache) redirect(302, cache.url)
@@ -33,7 +33,7 @@ export async function GET({ url }) {
 
 	const { imageUrl } = JSON.parse(await thumb.text()).data[0]
 	await equery(surql`UPDATE $asset SET url = ${imageUrl}`, {
-		asset: new RecordId("thumbnailCache", stringAssetId),
+		asset: Record("thumbnailCache", assetId),
 	})
 
 	redirect(302, imageUrl)

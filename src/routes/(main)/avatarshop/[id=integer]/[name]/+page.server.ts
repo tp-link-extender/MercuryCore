@@ -7,7 +7,14 @@ import { type Replies, recurse } from "$lib/server/nestedReplies"
 import ratelimit from "$lib/server/ratelimit"
 import { publish } from "$lib/server/realtime"
 import requestRender from "$lib/server/requestRender"
-import { RecordId, equery, find, surql, transaction } from "$lib/server/surreal"
+import {
+	Record,
+	type RecordId,
+	equery,
+	find,
+	surql,
+	transaction,
+} from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
@@ -61,8 +68,8 @@ export async function load({ locals, params }) {
 	const [[asset]] = await equery<Asset[][]>(
 		assetQuery.replace("_SELECTCOMMENTS", SELECTCOMMENTS),
 		{
-			asset: new RecordId("asset", +params.id),
-			user: new RecordId("user", user.id),
+			asset: Record("asset", +params.id),
+			user: Record("user", user.id),
 		}
 	)
 
@@ -80,7 +87,7 @@ async function getBuyData(e: RequestEvent) {
 	const { user } = await authorise(e.locals)
 	const id = +e.params.id
 	const [[assetExists]] = await equery<boolean[][]>(
-		surql`SELECT 1 FROM ${new RecordId("asset", id)}`
+		surql`SELECT 1 FROM ${Record("asset", id)}`
 	)
 	if (!assetExists) error(404)
 
@@ -101,7 +108,7 @@ async function findComment<T>(
 	if (!idRegex.test(id)) error(400, "Invalid comment id")
 
 	const [[comment]] = await equery<T[][]>(input, {
-		assetComment: new RecordId("assetComment", id),
+		assetComment: Record("assetComment", id),
 	})
 	if (!comment) error(404, "Comment not found")
 
@@ -110,7 +117,7 @@ async function findComment<T>(
 
 const updateVisibility = (visibility: string, text: string, id: string) =>
 	equery(updateVisibilityQuery, {
-		assetComment: new RecordId("assetComment", id),
+		assetComment: Record("assetComment", id),
 		text,
 		visibility,
 	})
@@ -118,7 +125,7 @@ const updateVisibility = (visibility: string, text: string, id: string) =>
 const pinComment = (pinned: boolean) => async (e: RequestEvent) => {
 	const { id } = await findComment(e, 4)
 	await equery(
-		surql`UPDATE ${new RecordId("assetComment", id)} SET pinned = ${pinned}`
+		surql`UPDATE ${Record("assetComment", id)} SET pinned = ${pinned}`
 	)
 }
 
@@ -160,7 +167,7 @@ async function rerender({ locals, params }: RequestEvent) {
 				meta::id(id) AS id, 
 				type,
 				visibility
-			FROM ${new RecordId("asset", id)}`
+			FROM ${Record("asset", id)}`
 	)
 	if (!asset) error(404, "Not found")
 
@@ -201,11 +208,11 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	const id = +params.id
 	const [[commentAuthor]] = await equery<{ id: string }[][]>(
 		commentId
-			? surql`SELECT meta::id(id) AS id FROM ${new RecordId(
+			? surql`SELECT meta::id(id) AS id FROM ${Record(
 					"assetComment",
 					commentId
 				)}<-posted<-user`
-			: surql`SELECT meta::id(id) AS id FROM ${new RecordId(
+			: surql`SELECT meta::id(id) AS id FROM ${Record(
 					"asset",
 					id
 				)}<-created<-user`
@@ -217,12 +224,10 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 
 	await equery(createCommentQuery, {
 		content,
-		user: new RecordId("user", user.id),
-		assetComment: new RecordId("assetComment", newReplyId),
-		asset: new RecordId("asset", id),
-		commentId: commentId
-			? new RecordId("assetComment", commentId)
-			: undefined,
+		user: Record("user", user.id),
+		assetComment: Record("assetComment", newReplyId),
+		asset: Record("asset", id),
+		commentId: commentId ? Record("assetComment", commentId) : undefined,
 	})
 
 	await Promise.all([
@@ -238,8 +243,8 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 					}`,
 				{
 					type: commentId ? "AssetCommentReply" : "AssetComment",
-					sender: new RecordId("user", user.id),
-					receiver: new RecordId("user", receiverId),
+					sender: Record("user", user.id),
+					receiver: Record("user", receiverId),
 					note: commentId
 						? `${user.username} replied to your comment: ${content}`
 						: `${user.username} commented on your asset: ${content}`,
@@ -247,7 +252,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 				}
 			),
 
-		like(user.id, new RecordId("assetComment", newReplyId)),
+		like(user.id, Record("assetComment", newReplyId)),
 	])
 }
 actions.like = async ({ request, locals, url }) => {
@@ -256,12 +261,11 @@ actions.like = async ({ request, locals, url }) => {
 	const action = data.action as LikeActions
 	const id = url.searchParams.get("id")
 	const commentId = url.searchParams.get("rid")
-
 	if (commentId && !idRegex.test(commentId)) error(400, "Invalid comment id")
 
-	const foundAsset = id ? await find("asset", id) : null
+	const foundAsset = id ? await find("asset", +id) : null
 	const foundComment = commentId
-		? await select(new RecordId("assetComment", commentId))
+		? await select(Record("assetComment", commentId))
 		: null
 
 	if (!foundAsset || !foundComment) error(404)
@@ -270,7 +274,7 @@ actions.like = async ({ request, locals, url }) => {
 	const type = "assetComment" // commentId ? "assetComment" : "asset"
 	const likes = await likeScoreActions[action](
 		user.id,
-		new RecordId(type, (id || commentId) as string)
+		Record(type, (id || commentId) as string)
 	)
 	const thing = foundComment
 
@@ -306,8 +310,8 @@ actions.buy = async e => {
 				$user IN <-owns<-user.id AS owned
 			FROM $asset`,
 		{
-			asset: new RecordId("asset", id),
-			user: new RecordId("user", user.id),
+			asset: Record("asset", id),
+			user: Record("user", user.id),
 		}
 	)
 	if (!asset) error(404, "Not found")
@@ -328,8 +332,8 @@ actions.buy = async e => {
 
 	await Promise.all([
 		equery(surql`RELATE $user->owns->$asset`, {
-			user: new RecordId("user", user.id),
-			asset: new RecordId("asset", id),
+			user: Record("user", user.id),
+			asset: Record("asset", id),
 		}),
 		user.id === asset.creator.id ||
 			equery(
@@ -343,8 +347,8 @@ actions.buy = async e => {
 					}`,
 				{
 					type: "ItemPurchase",
-					sender: new RecordId("user", user.id),
-					receiver: new RecordId("user", asset.creator.id),
+					sender: Record("user", user.id),
+					receiver: Record("user", asset.creator.id),
 					note: `${user.username} just purchased your item: ${asset.name}`,
 					relativeId: e.params.id,
 				}

@@ -1,7 +1,7 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { RecordId, equery } from "$lib/server/surreal"
+import { Record, equery } from "$lib/server/surreal"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -63,7 +63,7 @@ export async function load({ locals }) {
 
 	const [places, friends, feed] = await equery<
 		[Place[], BasicUser[], FeedPost[]]
-	>(homeQuery, { user: new RecordId("user", user.id) })
+	>(homeQuery, { user: Record("user", user.id) })
 
 	return {
 		stuff: {
@@ -91,6 +91,6 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 
 	await equery(statusQuery, {
 		content,
-		user: new RecordId("user", user.id),
+		user: Record("user", user.id),
 	})
 }

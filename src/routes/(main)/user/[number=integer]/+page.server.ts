@@ -1,7 +1,7 @@
 import formData from "$lib/server/formData"
 import { authorise } from "$lib/server/lucia"
 import requestRender from "$lib/server/requestRender"
-import { RecordId, equery, surql } from "$lib/server/surreal"
+import { Record, type RecordId, equery, surql } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import type { RequestEvent } from "./$types.d.ts"
 import userQuery from "./user.surql"
@@ -53,7 +53,7 @@ export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
 	const [[userExists]] = await equery<User[][]>(userQuery, {
 		number,
-		user: new RecordId("user", user.id),
+		user: Record("user", user.id),
 	})
 
 	if (!userExists) error(404, "Not found")
@@ -113,8 +113,8 @@ async function getInteractData(e: RequestEvent) {
 	return {
 		user,
 		params: {
-			user: new RecordId("user", user.id),
-			user2: new RecordId("user", user2.id),
+			user: Record("user", user.id),
+			user2: Record("user", user2.id),
 		},
 		data: await formData(request),
 	}

@@ -2,7 +2,7 @@ import auditLogQuery from "$lib/server/auditLog.surql"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { RecordId, equery, findWhere, surql } from "$lib/server/surreal"
+import { Record, equery, findWhere, surql } from "$lib/server/surreal"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -71,8 +71,8 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 		() => "deleted",
 	]
 	const qParams = {
-		user: new RecordId("user", user.id),
-		moderatee: new RecordId("user", getModeratee.id),
+		user: Record("user", user.id),
+		moderatee: Record("user", getModeratee.id),
 		action: "Moderation",
 	}
 

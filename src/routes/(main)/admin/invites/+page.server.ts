@@ -2,7 +2,7 @@ import auditLogQuery from "$lib/server/auditLog.surql"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { RecordId, equery, surql } from "$lib/server/surreal"
+import { Record, equery, surql } from "$lib/server/surreal"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -89,10 +89,10 @@ actions.create = async e => {
 			COMMIT TRANSACTION`,
 		{
 			action: "Administration",
-			user: new RecordId("user", user.id),
+			user: Record("user", user.id),
 			inviteUses,
 			expiry,
-			regKey: new RecordId("regKey", inviteCustom || ""),
+			regKey: Record("regKey", inviteCustom || ""),
 		}
 	)
 
@@ -111,7 +111,7 @@ actions.disable = async e => {
 	if (!id) return message(form, "Missing fields", { status: 400 })
 
 	const [[key]] = await equery<{ usesLeft: number }[][]>(
-		surql`SELECT usesLeft FROM ${new RecordId("regKey", id)}`
+		surql`SELECT usesLeft FROM ${Record("regKey", id)}`
 	)
 
 	if (key && key.usesLeft === 0)
@@ -120,8 +120,8 @@ actions.disable = async e => {
 	await equery(`UPDATE $key SET usesLeft = 0; ${auditLogQuery}`, {
 		action: "Administration",
 		note: `Disable invite key ${id}`,
-		user: new RecordId("user", user.id),
-		key: new RecordId("regKey", id),
+		user: Record("user", user.id),
+		key: Record("regKey", id),
 	})
 
 	return message(form, "Invite key disabled successfully")

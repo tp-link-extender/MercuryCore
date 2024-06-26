@@ -1,6 +1,6 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
-import { RecordId, equery, surql, transaction } from "$lib/server/surreal"
+import { Record, equery, surql, transaction } from "$lib/server/surreal"
 import { encode } from "$lib/urlName"
 import { redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
@@ -24,7 +24,7 @@ const schema = z.object({
 
 async function placeCount(id: string) {
 	const [[{ count }]] = await equery<{ count: number }[][]>(
-		surql`SELECT count(->owns->place) FROM ${new RecordId("user", id)}`
+		surql`SELECT count(->owns->place) FROM ${Record("user", id)}`
 	)
 	return count
 }
@@ -75,7 +75,7 @@ actions.default = async ({ request, locals }) => {
 	}
 
 	await equery(createQuery, {
-		user: new RecordId("user", user.id),
+		user: Record("user", user.id),
 		name,
 		description,
 		serverIP,

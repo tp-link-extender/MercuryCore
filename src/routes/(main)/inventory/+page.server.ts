@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { RecordId, equery } from "$lib/server/surreal"
+import { Record, equery } from "$lib/server/surreal"
 import inventoryQuery from "./inventory.surql"
 
 type Asset = {
@@ -12,7 +12,7 @@ type Asset = {
 async function getAssets(id: string, query: string) {
 	const [assets] = await equery<Asset[][]>(inventoryQuery, {
 		query,
-		user: new RecordId("user", id),
+		user: Record("user", id),
 	})
 	return assets
 }

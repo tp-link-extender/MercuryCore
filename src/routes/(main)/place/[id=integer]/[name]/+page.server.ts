@@ -2,7 +2,7 @@ import formData from "$lib/server/formData"
 import { type LikeActions, likeLikesActions } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
 import { publish } from "$lib/server/realtime"
-import { RecordId, equery, find, findWhere, surql } from "$lib/server/surreal"
+import { Record, equery, find, findWhere, surql } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
 import placeQuery from "./place.surql"
@@ -38,8 +38,8 @@ export async function load({ url, locals, params }) {
 	const id = +params.id
 	const privateServerCode = url.searchParams.get("privateServer")
 	const [[getPlace]] = await equery<Place[][]>(placeQuery, {
-		user: new RecordId("user", user.id),
-		place: new RecordId("place", id),
+		user: Record("user", user.id),
+		place: Record("place", id),
 	})
 
 	if (
@@ -85,7 +85,7 @@ actions.like = async ({ url, request, locals, params }) => {
 				count(SELECT 1 FROM $parent<-likes) AS likeCount,
 				count(SELECT 1 FROM $parent<-dislikes) AS dislikeCount
 			FROM $place`,
-		{ place: new RecordId("place", id) }
+		{ place: Record("place", id) }
 	)
 
 	if (
@@ -94,10 +94,7 @@ actions.like = async ({ url, request, locals, params }) => {
 	)
 		error(404, "Place not found")
 
-	const likes = await likeLikesActions[action](
-		user.id,
-		new RecordId("place", id)
-	)
+	const likes = await likeLikesActions[action](user.id, Record("place", id))
 
 	foundPlace.likeCount = likes.likeCount
 	foundPlace.dislikeCount = likes.dislikeCount
@@ -125,7 +122,7 @@ actions.join = async ({ request, locals }) => {
 	const foundModerated = await findWhere(
 		"moderation",
 		"out = $user AND active = true",
-		{ user: new RecordId("user", user.id) }
+		{ user: Record("user", user.id) }
 	)
 	if (foundModerated) error(403, "You cannot currently play games")
 
@@ -146,8 +143,8 @@ actions.join = async ({ request, locals }) => {
 				valid: true,
 			}`,
 		{
-			user: new RecordId("user", user.id),
-			place: new RecordId("place", serverId),
+			user: Record("user", user.id),
+			place: Record("place", serverId),
 		}
 	)
 
