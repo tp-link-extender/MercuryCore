@@ -57,7 +57,7 @@ export default async function (
 	const script = (
 		await Bun.file(`corescripts/processed/render${renderType}.lua`).text()
 	)
-		.replaceAll("_BASE_URL", `"${process.env.RCC_ORIGIN}"`)
+		.replaceAll("_BASE_URL", `"${process.env.DOMAIN}"`)
 		.replaceAll("_THUMBNAIL_KEY", `"${process.env.RCC_KEY}"`)
 		.replaceAll("_RENDER_TYPE", `"${renderType}"`)
 		.replaceAll("_ASSET_ID", relativeId.toString())

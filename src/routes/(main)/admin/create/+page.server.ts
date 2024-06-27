@@ -266,7 +266,7 @@ actions.autopilot = async ({ request, locals }) => {
 		if (!newId) continue // same as above
 		cachedXml = cachedXml.replace(
 			url,
-			`<url>${process.env.RCC_ORIGIN}/asset?id=${newId}</url>`
+			`<url>${process.env.DOMAIN}/asset?id=${newId}</url>`
 		)
 	}
 

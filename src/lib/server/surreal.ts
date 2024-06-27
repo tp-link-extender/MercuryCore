@@ -21,8 +21,6 @@ export const failed = "The query was not executed due to a failed transaction"
 export { surql, RecordId }
 
 export type RecordIdTypes = {
-	application: string
-	applicationKey: string
 	asset: number
 	assetCache: [number, number]
 	assetComment: string

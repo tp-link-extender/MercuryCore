@@ -31,10 +31,10 @@ export async function GET({ url }) {
 
 	if (!user) error(404, "User not found")
 
-	let charApp = `${process.env.RCC_ORIGIN}/asset/bodycolors?id=${userNumber}`
+	let charApp = `${process.env.DOMAIN}/asset/bodycolors?id=${userNumber}`
 
 	for (const asset of user.wearing)
-		charApp += `;${process.env.RCC_ORIGIN}/asset?id=${asset}`
+		charApp += `;${process.env.DOMAIN}/asset?id=${asset}`
 
 	return new Response(charApp, {
 		headers: {
