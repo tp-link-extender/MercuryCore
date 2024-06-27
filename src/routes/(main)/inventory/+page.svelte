@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { browser } from "$app/environment"
-	import { deserialize } from "$app/forms"
 	import Asset from "$lib/components/Asset.svelte"
 	import Head from "$lib/components/Head.svelte"
 	import SidebarShell from "$lib/components/SidebarShell.svelte"
@@ -12,30 +11,11 @@
 	let searchedData: typeof data.assets = []
 
 	// Run function whenever query changes
-	// Todo restructure to a GET request
-	$: query &&
-		browser &&
-		(async () => {
-			if (query.trim().length === 0) {
-				searchedData = data.assets
-				return
-			}
-
-			const formdata = new FormData()
-			formdata.append("q", query)
-
-			const response = await fetch("/inventory", {
-				method: "POST",
-				body: formdata
-			})
-			const result = deserialize(await response.text()) as {
-				data: {
-					assets: typeof data.assets
-				}
-			}
-
-			searchedData = result.data.assets
-		})()
+	async function search() {
+		const response = await fetch(`/inventory/search?q=${query}`)
+		searchedData = JSON.parse(await response.text()) as typeof data.assets
+	}
+	$: query && browser && search()
 
 	export const snapshot = {
 		capture: () => query,

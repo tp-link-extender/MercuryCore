@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { deserialize, enhance } from "$app/forms"
+	import { enhance } from "$app/forms"
 	import { page } from "$app/stores"
 	import Head from "$lib/components/Head.svelte"
 	import fade from "$lib/fade"
@@ -12,23 +12,11 @@
 	let searchedData: typeof data.places = []
 
 	// Run function whenever query changes
-	$: query &&
-		(async () => {
-			const formdata = new FormData()
-			formdata.append("q", query)
-
-			const response = await fetch("/games", {
-				method: "POST",
-				body: formdata
-			})
-			const result = deserialize(await response.text()) as {
-				data: {
-					places: typeof data.places
-				}
-			}
-
-			searchedData = result.data.places
-		})()
+	async function search() {
+		const response = await fetch(`/games/search?q=${query}`)
+		searchedData = JSON.parse(await response.text()) as typeof data.places
+	}
+	$: query && search()
 
 	$: places = query ? searchedData : data.places || []
 

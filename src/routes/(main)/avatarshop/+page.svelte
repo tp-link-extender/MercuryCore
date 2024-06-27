@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { deserialize, enhance } from "$app/forms"
+	import { enhance } from "$app/forms"
 	import Asset from "$lib/components/Asset.svelte"
 	import Head from "$lib/components/Head.svelte"
 	import TabData from "$lib/components/TabData"
@@ -11,23 +11,11 @@
 	let searchedData: typeof data.assets = []
 
 	// Run function whenever query changes
-	$: query &&
-		(async () => {
-			const formdata = new FormData()
-			formdata.append("q", query)
-
-			const response = await fetch("/avatarshop", {
-				method: "POST",
-				body: formdata
-			})
-			const result = deserialize(await response.text()) as {
-				data: {
-					assets: typeof data.assets
-				}
-			}
-
-			searchedData = result.data.assets
-		})()
+	async function search() {
+		const response = await fetch(`/avatarshop/search?q=${query}`)
+		searchedData = JSON.parse(await response.text()) as typeof data.assets
+	}
+	$: query && search()
 
 	export const snapshot = {
 		capture: () => query,

@@ -1,7 +1,7 @@
 import { equery } from "$lib/server/surreal"
 import gamesQuery from "./games.surql"
 
-type Place = {
+export type Place = {
 	id: number
 	name: string
 	playerCount: number

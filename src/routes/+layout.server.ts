@@ -22,16 +22,11 @@ export async function load({ request, locals }) {
 		OMIT deleted
 		FROM banner WHERE deleted = false AND active = true`)
 
-	const isStudio = request.headers
-		.get("user-agent")
-		?.includes("RobloxStudio/2013")
-
 	return {
 		banners,
 		user,
 		notifications: await getNotifications(user),
 		url: request.url,
 		domain: process.env.DOMAIN as string,
-		...(isStudio && { isStudio }),
 	}
 }

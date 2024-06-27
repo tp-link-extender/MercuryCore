@@ -16,17 +16,11 @@ export async function load({ locals }) {
 
 		await equery(
 			surql`
-				UPDATE $user MERGE {
-					realtimeExpiry: $expiry,
-					realtimeToken: $realtimeToken,
-					realtimeHash: $realtimeHash
-				}`,
-			{
-				expiry,
-				realtimeToken,
-				realtimeHash,
-				user: Record("user", user.id),
-			}
+				UPDATE ${Record("user", user.id)} MERGE {
+					realtimeExpiry: ${expiry},
+					realtimeToken: ${realtimeToken},
+					realtimeHash: ${realtimeHash}
+				}`
 		)
 	}
 

@@ -5,7 +5,8 @@ import { error } from "@sveltejs/kit"
 import { actions } from "../+page.server"
 import assetCommentsQuery from "./comments.surql"
 
-const SELECTREPLIES = recurse("<-replyToComment<-assetComment")
+const SELECTCOMMENTS = recurse("<-replyToComment<-assetComment")
+const commentsQuery = assetCommentsQuery.replace("_SELECTCOMMENTS", SELECTCOMMENTS)
 
 type AssetComment = Replies[number] & {
 	parentPost: {
@@ -17,25 +18,21 @@ type AssetComment = Replies[number] & {
 
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
-
 	const id = +params.id
 	const [[asset]] = await equery<{ creator: { username: string } }[][]>(
 		surql`
 			SELECT
-				(SELECT username
-				FROM <-created<-user)[0] AS creator
+				(SELECT username FROM <-created<-user)[0] AS creator
 			FROM ${Record("asset", id)}`
 	)
 	if (!asset) error(404, "Asset not found")
 
-	const [assetComments] = await equery<AssetComment[][]>(
-		assetCommentsQuery.replace("_SELECTREPLIES", SELECTREPLIES),
-		{
-			assetComment: Record("assetComment", params.comment),
-			asset: Record("asset", id),
-			user: Record("user", user.id),
-		}
-	)
+	
+	const [assetComments] = await equery<AssetComment[][]>(commentsQuery, {
+		assetComment: Record("assetComment", params.comment),
+		asset: Record("asset", id),
+		user: Record("user", user.id),
+	})
 	if (!assetComments) error(404, "Comment not found")
 
 	return {

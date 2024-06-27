@@ -18,5 +18,5 @@ SELECT
 		->in[0]->forumCategory[0].name as forumCategoryName
 	FROM $asset)[0] AS parentPost,
 
-	_SELECTREPLIES
+	_SELECTCOMMENTS
 FROM $assetComment;

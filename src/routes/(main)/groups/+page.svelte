@@ -9,23 +9,11 @@
 	let searchedData: typeof data.groups = []
 
 	// Run function whenever query changes
-	$: query &&
-		(async () => {
-			const formdata = new FormData()
-			formdata.append("q", query)
-
-			const response = await fetch("/groups", {
-				method: "POST",
-				body: formdata
-			})
-			const result = deserialize(await response.text()) as {
-				data: {
-					groups: typeof data.groups
-				}
-			}
-
-			searchedData = result.data.groups
-		})()
+	async function search() {
+		const response = await fetch(`/groups/search?q=${query}`)
+		searchedData = JSON.parse(await response.text()) as typeof data.groups
+	}
+	$: query && search()
 
 	$: groups = query ? searchedData : data.groups || []
 
