@@ -32,11 +32,9 @@ export async function graphicAsset(
 	graphicAssetId: string | number
 ) {
 	const stringType = strings[type as keyof typeof strings]
-	const file = Bun.file(
-		`xml/graphicAsset${
-			type === "Face" || type === "Decal" ? "Image" : "Other"
-		}.xml`
-	)
+	const assetType = type === "Face" || type === "Decal" ? "Image" : "Other"
+	const file = Bun.file(`xml/graphicAsset${assetType}.xml`)
+
 	const asset = (await file.text())
 		.replaceAll("_CLASS", stringType.class)
 		.replaceAll("_CONTENT_NAME", stringType.contentName)
@@ -45,6 +43,5 @@ export async function graphicAsset(
 			"_ASSET_URL",
 			`${process.env.DOMAIN}/asset?id=${imageAssetId.toString()}`
 		)
-
 	await Bun.write(`data/assets/${graphicAssetId}`, asset)
 }

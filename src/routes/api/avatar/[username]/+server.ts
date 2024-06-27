@@ -40,6 +40,6 @@ export async function GET({ url, params }) {
 
 		return new Response(Bun.file(path))
 	} catch {
-		return new Response(Bun.file("static/m....png"))
+		return new Response(Bun.file("static/dots.png"))
 	}
 }

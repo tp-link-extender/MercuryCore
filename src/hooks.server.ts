@@ -10,27 +10,26 @@ import { redirect } from "@sveltejs/kit"
 import type { Cookie } from "lucia"
 import pc from "picocolors"
 
-const { magenta, red, yellow, green, blue, gray: grey, cyan } = pc
+const { magenta, red, yellow, green, blue, gray: grey } = pc
 const methodColours = Object.freeze({
 	GET: green("GET"),
 	POST: yellow("POST"),
 })
 const pathnameColours = Object.freeze({
-	"/api": green,
-	"/download": yellow,
-	"/moderation": yellow,
-	"/report": yellow,
-	"/statistics": yellow,
-	"/register": blue,
-	"/login": blue,
-	"/place": magenta,
-	"/admin": red,
-	"/studio": cyan,
+	api: green,
+	download: yellow,
+	moderation: yellow,
+	report: yellow,
+	statistics: yellow,
+	register: blue,
+	login: blue,
+	place: magenta,
+	admin: red,
 })
 
-const pathnameColour = (pathname: string) => {
+function pathnameColour(pathname: string) {
 	for (const [prefix, colour] of Object.entries(pathnameColours))
-		if (pathname.startsWith(prefix)) return colour(pathname)
+		if (pathname.startsWith(`/${prefix}`)) return colour(pathname)
 	return pathname
 }
 
@@ -75,12 +74,10 @@ export async function handle({ event, resolve }) {
 				}
 			)
 		}
-
 		return res
 	}
 
 	const sessionId = event.cookies.get(auth.sessionCookieName)
-
 	if (!sessionId) {
 		event.locals.session = null
 		event.locals.user = null
@@ -88,7 +85,6 @@ export async function handle({ event, resolve }) {
 	}
 
 	const { session, user } = await auth.validateSession(sessionId)
-
 	if (!session || !user) return await finish()
 
 	event.locals.session = session
@@ -100,52 +96,30 @@ export async function handle({ event, resolve }) {
 			path: ".",
 			...sessionCookie.attributes,
 		})
-
 	if (!session) setSession(auth.createBlankSessionCookie())
 	else if (session.fresh) setSession(auth.createSessionCookie(session.id))
 
-	const [[moderated]] = await equery<1[][]>(
+	const [, [moderated]] = await equery<1[][]>(
 		surql`
-			SELECT 1 FROM moderation
-			WHERE out = $user AND active = true`,
+			UPDATE $user SET lastOnline = time::now();
+			SELECT 1 FROM moderation WHERE out = $user AND active`,
 		{ user: Record("user", user.id) }
 	)
 
 	if (
 		moderated &&
 		!["/moderation", "/api"].includes(pathname) &&
-		!pathname.startsWith("/api/avatar") &&
-		!pathname.startsWith("/studio")
+		!pathname.startsWith("/api/avatar")
 	)
 		redirect(302, "/moderation")
 
-	await equery(surql`UPDATE $user SET lastOnline = time::now()`, {
-		user: Record("user", user.id),
-	})
-
-	const [[economy]] = await equery<
-		{
-			dailyStipend?: number
-			stipendTime?: number
-		}[][]
-	>(surql`SELECT * FROM stuff:economy`)
-
-	const dailyStipend = economy?.dailyStipend || 10
-	const stipendTime = economy?.stipendTime || 12
-
-	if (
+	const stipendAvailable =
 		new Date(user.currencyCollected).getTime() -
-			(Date.now() - 3600e3 * stipendTime) <
+			(Date.now() - 3600e3 * 12) <
 		0
-	)
+	if (stipendAvailable)
 		await equery(
-			surql`
-				UPDATE $user SET currencyCollected = time::now();
-				UPDATE $user SET currency += $dailyStipend`,
-			{
-				user: Record("user", user.id),
-				dailyStipend,
-			}
+			surql`UPDATE ${Record("user", user.id)} SET currencyCollected = time::now()`
 		)
 
 	return await finish()

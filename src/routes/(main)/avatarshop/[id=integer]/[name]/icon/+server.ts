@@ -39,5 +39,5 @@ export async function GET({ locals, params }) {
 		} catch (e) {}
 
 	// If the asset is visible, but the file doesn't exist (waiting for RCC?)
-	redirect(302, "/m....png")
+	redirect(302, "/dots.png")
 }

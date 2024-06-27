@@ -27,7 +27,6 @@ declare module "lucia" {
 				RightLeg: number
 				Torso: number
 			}
-			currency: number
 			currencyCollected: string
 			created: string
 			email: string

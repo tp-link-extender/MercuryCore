@@ -28,22 +28,20 @@
 	}
 
 	export let data
-	const { user } = data
+	const { user, totalmem, freemem } = data
 
-	const perms = permissions[user?.permissionLevel]
-
-	if (user?.permissionLevel === 5) {
-		panel.Economy.push(["Daily Stipend", "/admin/stipend", "far fa-clock"])
+	const perms = permissions[user.permissionLevel]
+	const isAdmin = user.permissionLevel === 5
+	if (isAdmin)
 		panel.Administration = [
 			["Banners", "/admin/banners", "fa fa-bullhorn"],
 			["Accounts", "/admin/accounts", "far fa-user"],
 			["Audit Logs", "/admin/audit", "fa fa-book"],
 			["Invites", "/admin/invites", "fa fa-envelopes"]
 		]
-	}
 
 	const tabNames = ["Moderation", "Catalog", "Economy", "Statistics"]
-	if (user?.permissionLevel === 5) tabNames.unshift("Administration")
+	if (isAdmin) tabNames.unshift("Administration")
 
 	let tabData = TabData(data.url, tabNames, [
 		"fa fa-diamond-half-stroke",
@@ -52,6 +50,9 @@
 		"fa fa-coins",
 		"fa fa-chart-mixed"
 	])
+	const mbUsed = (totalmem - freemem) / 1e3 ** 2
+	const gbUsed = mbUsed / 1e3
+	const gbTotal = totalmem / 1e3 ** 3
 </script>
 
 <Head title="Admin" />
@@ -87,23 +88,19 @@
 				<div class="card bg-a p-4">
 					<h3>
 						<fa fa-memory />
-						{((data.totalmem - data.freemem) / 1024 ** 3).toFixed(
-							2
-						)} / {(data.totalmem / 1024 ** 3).toFixed(2)} GB
+						{gbUsed.toFixed(2)} / {gbTotal.toFixed(2)} GB
 					</h3>
 					<span class="pb-2">
-						{Math.round((data.totalmem - data.freemem) / 1024 ** 2)}
-						MB is being used
+						{Math.round(mbUsed)} MB is being used
 					</span>
-					<div class="flex bg-darker rounded-2" style="height: 1rem">
+					<div class="flex rounded-2 bg-darker h-4">
 						<div
 							class="progress-bar-striped bg-emerald-6 rounded-2"
 							role="progressbar"
-							aria-valuenow={data.totalmem - data.freemem}
+							aria-valuenow={totalmem - freemem}
 							aria-valuemin={0}
-							aria-valuemax={data.totalmem}
-							style="width: {((data.totalmem - data.freemem) /
-								data.totalmem) *
+							aria-valuemax={totalmem}
+							style="width: {((totalmem - freemem) / totalmem) *
 								100}%;" />
 					</div>
 				</div>

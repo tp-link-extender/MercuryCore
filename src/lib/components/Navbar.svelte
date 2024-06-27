@@ -167,13 +167,6 @@
 					class="tooltip <lg:hidden font-bold light-text">
 					<fa fa-bell />
 				</a>
-				<a
-					href="/transactions"
-					aria-label="Transactions"
-					class="tooltip flex items-center no-underline <sm:w-20 text-emerald-6 hover:text-emerald-8!">
-					<fa fa-gem class="pr-2" />
-					{user.currency}
-				</a>
 				<div class="dropdown dropdown-hover dropdown-end">
 					<User
 						{user}
