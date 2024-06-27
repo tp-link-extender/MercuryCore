@@ -50,7 +50,9 @@
 		"fa fa-coins",
 		"fa fa-chart-mixed"
 	])
+
 	const mbUsed = (totalmem - freemem) / 1e3 ** 2
+	// they done let gbs in the door
 	const gbUsed = mbUsed / 1e3
 	const gbTotal = totalmem / 1e3 ** 3
 </script>

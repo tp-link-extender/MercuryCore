@@ -32,6 +32,7 @@ main {
 * {
 	font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 		"Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-feature-settings: "cv03", "cv04", "cv08", "cv09";
 }
 
 body {
