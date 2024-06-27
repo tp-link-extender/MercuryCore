@@ -16,7 +16,6 @@ export const auth = new Lucia(new SurrealAdapter(), {
 		email: data.email ? `*******@${data.email.split("@")[1]}` : undefined,
 		username: data.username,
 		status: data.status,
-		currency: data.currency,
 		currencyCollected: data.currencyCollected,
 		permissionLevel: data.permissionLevel,
 		accountCreated: data.created,

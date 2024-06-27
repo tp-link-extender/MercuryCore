@@ -58,7 +58,6 @@ export type RecordIdTypes = {
 	statusPost: string
 	stuff: string
 	thumbnailCache: number
-	transaction: string
 	used: string
 	user: string
 	wearing: string
@@ -77,10 +76,6 @@ export const Record = <T extends keyof RecordIdTypes>(
 
 type Prepared = PreparedQuery<(result: unknown[]) => unknown>
 
-const stupidError =
-	"The query was not executed due to a failed transaction. There was a problem with a datastore transaction: Resource busy: "
-const sessionError = "There was a problem with authentication"
-
 async function fixError<T>(q: () => Promise<T>) {
 	// WORST
 	// DATABASE
@@ -90,9 +85,7 @@ async function fixError<T>(q: () => Promise<T>) {
 		try {
 			return await q()
 		} catch (err) {
-			const e = err as Error
-			if (e.message === sessionError) await reconnect()
-			else if (e.message !== stupidError) throw new Error(e.message)
+			await reconnect()
 		}
 		console.log(`retrying query ${i} time${i > 1 ? "s" : ""}`)
 	}

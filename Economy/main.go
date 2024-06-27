@@ -284,6 +284,10 @@ func stipend(to userNumber) error {
 	return nil
 }
 
+func pingRoute(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "pong")
+}
+
 func currentFeeRoute(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, currentFee())
 }
@@ -295,7 +299,7 @@ func currentStipendRoute(w http.ResponseWriter, r *http.Request) {
 func balanceRoute(w http.ResponseWriter, r *http.Request) {
 	var user userNumber
 
-	if _, err := fmt.Scanf(r.PathValue("id"), "%d", &user); err != nil {
+	if _, err := fmt.Sscanf(r.PathValue("id"), "%d", &user); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -348,7 +352,7 @@ func burnRoute(w http.ResponseWriter, r *http.Request) {
 func stipendRoute(w http.ResponseWriter, r *http.Request) {
 	var to userNumber
 
-	if _, err := fmt.Scanf(r.PathValue("id"), "%d", &to); err != nil {
+	if _, err := fmt.Sscanf(r.PathValue("id"), "%d", &to); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	} else if prevStipends[to]+stipendTime > uint64(time.Now().UnixMilli()) {
@@ -380,6 +384,7 @@ func main() {
 
 	router := http.NewServeMux()
 
+	router.HandleFunc("GET /ping", pingRoute)
 	router.HandleFunc("GET /currentFee", currentFeeRoute)
 	router.HandleFunc("GET /currentStipend", currentStipendRoute)
 	router.HandleFunc("GET /balance/{id}", balanceRoute)
