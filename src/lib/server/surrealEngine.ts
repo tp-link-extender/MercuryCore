@@ -4,7 +4,6 @@ import {
 	type Emitter,
 	type Engine,
 	type EngineEvents,
-	HttpConnectionError,
 	type RpcRequest,
 	type RpcResponse,
 	decodeCbor,
@@ -20,6 +19,7 @@ function getIncrementalId() {
 	return id.toString()
 }
 
+export const realUrl = new URL("http://localhost:8000")
 const namespace = "main"
 const database = "main"
 
@@ -72,53 +72,56 @@ export default class implements Engine {
 		Params extends unknown[] | undefined,
 		Result,
 	>(request: RpcRequest<Method, Params>): Promise<RpcResponse<Result>> {
-		await this.ready
-		if (!this.connection.url) throw new ConnectionUnavailable()
+		while (true) {
+			await this.ready
+			if (!this.connection.url) throw new ConnectionUnavailable()
 
-		if (request.method === "use") return { result: true as Result }
+			if (request.method === "use") return { result: true as Result }
 
-		if (request.method === "let") {
-			const [key, value] = z
-				.tuple([z.string(), z.unknown()])
-				.parse(request.params)
-			this.connection.variables[key] = value
-			return { result: true as Result }
-		}
+			if (request.method === "let") {
+				const [key, value] = z
+					.tuple([z.string(), z.unknown()])
+					.parse(request.params)
+				this.connection.variables[key] = value
+				return { result: true as Result }
+			}
 
-		if (request.method === "unset") {
-			const [key] = z.tuple([z.string()]).parse(request.params)
-			delete this.connection.variables[key]
-			return { result: true as Result }
-		}
+			if (request.method === "unset") {
+				const [key] = z.tuple([z.string()]).parse(request.params)
+				delete this.connection.variables[key]
+				return { result: true as Result }
+			}
 
-		if (request.method === "query")
-			request.params = [
-				request.params?.[0],
-				{
-					...this.connection.variables,
-					...(request.params?.[1] ?? {}),
+			if (request.method === "query")
+				request.params = [
+					request.params?.[0],
+					{
+						...this.connection.variables,
+						...(request.params?.[1] ?? {}),
+					},
+				] as Params
+
+			const id = getIncrementalId()
+			const raw = await fetch(this.connection.url.toString(), {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/cbor",
+					Accept: "application/cbor",
+					"Surreal-NS": namespace,
+					"Surreal-DB": database,
+					...(this.connection.token
+						? { Authorization: `Bearer ${this.connection.token}` }
+						: {}),
 				},
-			] as Params
+				body: encodeCbor({ id, ...request }),
+			})
+			if (raw.status !== 200) {
+				console.log("reconnecting")
+				this.connect(realUrl)
+				continue
+			}
 
-		const id = getIncrementalId()
-		const raw = await fetch(this.connection.url.toString(), {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/cbor",
-				Accept: "application/cbor",
-				"Surreal-NS": namespace,
-				"Surreal-DB": database,
-				...(this.connection.token
-					? { Authorization: `Bearer ${this.connection.token}` }
-					: {}),
-			},
-			body: encodeCbor({ id, ...request }),
-		})
-
-		const buffer = await raw.arrayBuffer()
-
-		if (raw.status === 200) {
-			const response: RpcResponse = decodeCbor(buffer)
+			const response: RpcResponse = decodeCbor(await raw.arrayBuffer())
 			if ("result" in response)
 				switch (request.method) {
 					case "signin":
@@ -137,13 +140,6 @@ export default class implements Engine {
 			this.emitter.emit(`rpc-${id}`, [response])
 			return response as RpcResponse<Result>
 		}
-		const dec = new TextDecoder("utf-8")
-		throw new HttpConnectionError(
-			dec.decode(buffer),
-			raw.status,
-			raw.statusText,
-			buffer
-		)
 	}
 
 	// get online!

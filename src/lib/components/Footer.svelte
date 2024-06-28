@@ -2,8 +2,9 @@
 	let clicked = false
 </script>
 
-<footer class="relative flex justify-center <lg:pb-20 bg-darker">
-	<div class="flex <sm:flex-col justify-between items-start w-200 p-4 pb-8">
+<footer class="bg-darker relative flex justify-center <lg:pb-20!">
+	<div
+		class="flex <sm:flex-col justify-between items-start w-200 p-4 sm:pb-8">
 		<div>
 			<img src="/icon-footer.svg" alt="Mercury logo" class="size-8" />
 			<a href="/" class="no-underline pl-2">Mercury</a>
@@ -14,15 +15,19 @@
 		<div class="sm:text-right <sm:pt-4">
 			<div class="flex <sm:flex-col sm:gap-3">
 				<a class="light-text" href="/statistics">Statistics</a>
-				&ndash;
-				<button
-					on:mousedown={() => (clicked = !clicked)}
-					id="heart"
-					class="border-0 p-0 pr-2 grey-text cursor-pointer text-base bg-transparent"
-					class:clicked>
-					<span class="grey-text">made with</span>
-					<fa fa-heart />
-				</button>
+				<span>
+					&ndash;
+					<button
+						on:mousedown={() => {
+							clicked = !clicked
+						}}
+						id="heart"
+						class="border-0 p-0 pr-2 grey-text cursor-pointer text-base bg-transparent"
+						class:clicked>
+						<span class="grey-text">made with</span>
+						<fa fa-heart />
+					</button>
+				</span>
 			</div>
 		</div>
 	</div>
@@ -85,10 +90,10 @@
 		}
 	}
 
+	.clicked fa {
+		animation: heart 2s;
+	}
 	.clicked {
-		& fa {
-			animation: heart 2s;
-		}
 		& fa,
 		& span {
 			color: #f4b !important;

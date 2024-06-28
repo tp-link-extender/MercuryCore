@@ -107,6 +107,15 @@
 	onDestroy(() => client?.disconnect())
 
 	let tabData = TabData(data.url, ["Recommended", "Comments"])
+
+	const refreshReplies =
+		() =>
+		async ({ result }) => {
+			if (result.type === "success") await invalidateAll()
+			// Reload the asset with the data including the new comment, as the form that posted the comment didn't do that
+			$asset = data.asset
+			refresh++
+		}
 </script>
 
 <Head title={$asset.name} />
@@ -221,7 +230,7 @@
 	<Tab {tabData} />
 
 	<Tab {tabData}>
-		<PostReply {formData} comment />
+		<PostReply {formData} {refreshReplies} comment />
 		{#key refresh}
 			{#if $asset.replies.length > 0}
 				{#each $asset.replies as reply, num}
@@ -236,15 +245,7 @@
 						{repliesCollapsed}
 						topLevel={false}
 						pinnable
-						refreshReplies={() => {
-							return async ({ result }) => {
-								if (result.type === "success")
-									await invalidateAll()
-								// Reload the asset with the data including the new comment, as the form that posted the comment didn't do that
-								$asset = data.asset
-								refresh++
-							}
-						}} />
+						{refreshReplies} />
 				{/each}
 			{:else}
 				<h3 class="text-center pt-6">

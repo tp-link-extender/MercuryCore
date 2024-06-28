@@ -21,8 +21,7 @@
 		CoolMap.rbxl
 	</code>
 	will point to
-	<code>content\maps\CoolMap.rbxl</code>
-	.
+	<code>content/maps/CoolMap.rbxl</code>
 </p>
 <div class="input-group">
 	<input

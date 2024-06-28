@@ -20,13 +20,23 @@
 
 	let post = writable(data.post) // this is the svelte 4 thing ever
 	let replyingTo = writable("")
-	const repliesCollapsed = writable({})
-	const formData = superForm(data.form)
 
-	export const snapshot = formData
-
-	let refreshPost = 0
 	let refresh = 0
+
+	const repliesCollapsed = writable({})
+
+	async function onResult({
+		result
+	}: {
+		result: import("@sveltejs/kit").ActionResult
+	}) {
+		if (result.type === "success") await invalidateAll()
+		// Reload the post with the data including the new reply, as the form that posted the reply didn't do that
+		$post = data.post
+		refresh++
+	}
+	const formData = superForm(data.form, { onResult })
+	export const snapshot = formData
 
 	function searchReplies(
 		id: string,
@@ -34,7 +44,6 @@
 	): (typeof $post.replies)[0] | undefined {
 		for (const reply of replies) {
 			if (reply.id === id) return reply
-
 			if (reply.replies.length > 0) {
 				const found = searchReplies(id, reply.replies)
 				if (found) return found
@@ -131,14 +140,7 @@
 		return () => {}
 	}
 
-	const refreshReplies: import("./$types").SubmitFunction =
-		() =>
-		async ({ result }) => {
-			if (result.type === "success") await invalidateAll()
-			// Reload the post with the data including the new reply, as the form that posted the reply didn't do that
-			$post = data.post
-			refresh++
-		}
+	const refreshReplies: import("./$types").SubmitFunction = () => onResult
 </script>
 
 <Head title={$post.title} />
@@ -146,8 +148,7 @@
 <div class="ctnr max-w-280 light-text">
 	{#if !asComponent}
 		<!--
-			Breadcrumbs can give confusing behaviour if linking
-			to the same page the component is shallow-routed on
+			Breadcrumbs can give confusing behaviour if linking to the same page the component is shallow-routed on
 		-->
 		<Breadcrumbs
 			path={[
@@ -157,79 +158,77 @@
 			]} />
 	{/if}
 
-	{#key refreshPost}
-		<div
-			class="post card bg-darker flex-row overflow-hidden {$post.pinned
-				? 'border-(solid 1px green-5)!'
-				: ''}">
-			<form
-				use:enhance={likeEnhance}
-				class="bg-a p-1"
-				method="POST"
-				action="?/like&id={$post.id}">
-				<div class="flex flex-col">
-					<button
-						name="action"
-						value={$post.likes ? "unlike" : "like"}
-						aria-label={$post.likes ? "Unlike" : "Like"}
-						class="btn p-1">
-						<i
-							class="fa{$post.likes
-								? ' text-emerald-6 hover:text-emerald-3'
-								: 'r text-neutral-5 hover:text-neutral-3'}
+	<div
+		class="post card bg-darker flex-row overflow-hidden {$post.pinned
+			? 'border-(solid 1px green-5)!'
+			: ''}">
+		<form
+			use:enhance={likeEnhance}
+			class="bg-a p-1"
+			method="POST"
+			action="?/like&id={$post.id}">
+			<div class="flex flex-col">
+				<button
+					name="action"
+					value={$post.likes ? "unlike" : "like"}
+					aria-label={$post.likes ? "Unlike" : "Like"}
+					class="btn p-1">
+					<i
+						class="fa{$post.likes
+							? ' text-emerald-6 hover:text-emerald-3'
+							: 'r text-neutral-5 hover:text-neutral-3'}
 						fa-thumbs-up transition text-lg" />
-					</button>
-					<span
-						class="py-2 text-center {$post.likes
-							? 'text-emerald-6 font-bold'
-							: $post.dislikes
-								? 'text-red-5 font-bold'
-								: ''}">
-						{$post.score}
-					</span>
-					<button
-						name="action"
-						value={$post.dislikes ? "undislike" : "dislike"}
-						aria-label={$post.dislikes ? "Undislike" : "Dislike"}
-						class="btn p-1">
-						<i
-							class="fa{$post.dislikes
-								? ' text-red-5 hover:text-red-3'
-								: 'r text-neutral-5 hover:text-neutral-3'}
-						fa-thumbs-down transition text-lg" />
-					</button>
-				</div>
-			</form>
-			<div class="p-4 pl-6 no-underline light-text w-full">
-				<span class="flex justify-between">
-					<div class="flex">
-						<User user={$post.author} full />
-						<i class="pl-4 self-center">
-							{new Date($post.posted).toLocaleString()}
-						</i>
-					</div>
-					<span>
-						{#if user.permissionLevel >= 4}
-							<PinButton
-								{refreshReplies}
-								id={$post.id}
-								pinned={$post.pinned}
-								post />
-						{/if}
-						<ReportButton
-							user={$post.author.username}
-							url="/forum/{$post.categoryName}/{$post.id}" />
-					</span>
+				</button>
+				<span
+					class="py-2 text-center {$post.likes
+						? 'text-emerald-6 font-bold'
+						: $post.dislikes
+							? 'text-red-5 font-bold'
+							: ''}">
+					{$post.score}
 				</span>
-				<h2 class="text-xl pt-2">
-					{$post.title}
-				</h2>
-				<p class="break-all">
-					{$post.content[0].text || ""}
-				</p>
+				<button
+					name="action"
+					value={$post.dislikes ? "undislike" : "dislike"}
+					aria-label={$post.dislikes ? "Undislike" : "Dislike"}
+					class="btn p-1">
+					<i
+						class="fa{$post.dislikes
+							? ' text-red-5 hover:text-red-3'
+							: 'r text-neutral-5 hover:text-neutral-3'}
+						fa-thumbs-down transition text-lg" />
+				</button>
 			</div>
+		</form>
+		<div class="p-4 pl-6 no-underline light-text w-full">
+			<span class="flex justify-between">
+				<div class="flex">
+					<User user={$post.author} full />
+					<i class="pl-4 self-center">
+						{new Date($post.posted).toLocaleString()}
+					</i>
+				</div>
+				<span>
+					{#if user.permissionLevel >= 4}
+						<PinButton
+							{refreshReplies}
+							id={$post.id}
+							pinned={$post.pinned}
+							post />
+					{/if}
+					<ReportButton
+						user={$post.author.username}
+						url="/forum/{$post.categoryName}/{$post.id}" />
+				</span>
+			</span>
+			<h2 class="text-xl pt-2">
+				{$post.title}
+			</h2>
+			<p class="break-all">
+				{$post.content[0].text || ""}
+			</p>
 		</div>
-	{/key}
+	</div>
 
 	<PostReply {formData} />
 

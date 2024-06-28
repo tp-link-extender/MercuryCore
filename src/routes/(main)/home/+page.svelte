@@ -38,7 +38,7 @@
 		<div
 			class="card rounded-2 p-4 bg-darker overflow-x-hidden <lg:max-h-50vh">
 			<p>
-				Post your status - your friends and followers can view how
+				Post your status &ndash; your friends and followers can view how
 				you're doing!
 			</p>
 			<!-- fa-paper-plane-top (for unocss) -->

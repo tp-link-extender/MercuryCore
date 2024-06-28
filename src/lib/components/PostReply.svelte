@@ -4,7 +4,14 @@
 	export let comment = false
 	export let formData: import("sveltekit-superforms").SuperForm<any>
 
-	const { form, errors, message, constraints, enhance: enh, delayed } = formData
+	const {
+		form,
+		errors,
+		message,
+		constraints,
+		enhance: enh,
+		delayed
+	} = formData
 </script>
 
 <form use:enh class="py-2" method="POST" action="?/reply">
@@ -31,6 +38,6 @@
 		class="pb-4"
 		class:text-emerald-6={$page.status === 200}
 		class:text-red-5={$page.status >= 400}>
-		{$message || $errors["content"] || ""}
+		{$message || $errors.content || ""}
 	</p>
 </form>

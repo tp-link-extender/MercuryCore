@@ -38,7 +38,9 @@
 					</h2>
 				</span>
 				<a href={notification.link} class="light-text">
-					{notification.note}
+					<p>
+						{notification.note}
+					</p>
 				</a>
 			</div>
 		</div>

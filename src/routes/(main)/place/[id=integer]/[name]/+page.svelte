@@ -328,7 +328,7 @@
 
 	<Tab {tabData}>
 		{#if user?.permissionLevel === 5 || $place.ownerUser?.number === user?.number}
-			<h1 class="text-base">Hosting on Mercury</h1>
+			<h3 class="pb-2">Hosting on Mercury</h3>
 			<p>
 				To begin hosting your map for everybody to play, you need to
 				make sure that you are forwarding the port you wish to run the
@@ -347,15 +347,18 @@
 				{((tabData2.num = 0), "")}
 				<Tab tabData={tabData2}>
 					<p>
-						You can host your server by opening your map in <button
-							class="btn btn-sm btn-tertiary"
-							on:click={launch(
-								"mercury-player:1+launchmode:ide"
-							)}>
-							<fa fa-arrow-up-right-from-square />
-							Studio
-						</button>
-						and then in the command bar, paste this in:
+						You can host your server by opening your map in
+						<span class="px-1">
+							<button
+								class="btn btn-sm btn-tertiary"
+								on:click={launch(
+									"mercury-player:1+launchmode:ide"
+								)}>
+								<fa fa-arrow-up-right-from-square />
+								Studio
+							</button>
+						</span>
+						and then paste the following command into the command bar:
 					</p>
 					<code class="pr-2">{loadCommand}</code>
 					<button
@@ -413,9 +416,9 @@
 	<hr />
 	<div class="flex justify-around">
 		{#each statistics as [title, stat]}
-			<div>
-				<p class="text-center"><b>{title}</b></p>
-				<p class="text-center">{stat}</p>
+			<div class="text-center">
+				<div class="pb-4"><b>{title}</b></div>
+				<p>{stat}</p>
 			</div>
 		{/each}
 	</div>

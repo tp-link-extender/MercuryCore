@@ -2,17 +2,14 @@ import { building } from "$app/environment"
 import { type PreparedQuery, RecordId, Surreal, surql } from "surrealdb.js"
 import auditLogQuery from "./auditLog.surql"
 import initQuery from "./init.surql"
-import CustomHttpEngine from "./surrealEngine.ts"
+import CustomHttpEngine, { realUrl } from "./surrealEngine.ts"
 
 const db = new Surreal({ engines: { http: CustomHttpEngine } })
 
 async function reconnect() {
 	await db.close() // doesn't do anything if not connected
 	console.log("connecting")
-	await db.connect("http://localhost:8000", {
-		// namespace and database are configured in the engine
-		auth: { username: "root", password: "root" },
-	})
+	await db.connect(realUrl)
 	console.log("reloaded", await db.version())
 }
 
@@ -84,7 +81,7 @@ async function fixError<T>(q: () => Promise<T>) {
 	for (let i = 1; i <= 3; i++) {
 		try {
 			return await q()
-		} catch (err) {
+		} catch {
 			await reconnect()
 		}
 		console.log(`retrying query ${i} time${i > 1 ? "s" : ""}`)
@@ -155,30 +152,6 @@ export const findWhere = async (
 			{ ...params, table }
 		)
 	)[0]
-
-const errorRegex = /An error occurred: (.*)/
-/**
- * Returns an error if the query failed.
- * @param qResult The result of a query.
- * @example
- * try {
- * 	result = await query(surql`SELECT * FROM user WHERE username = "Heliodex"`)
- * } catch (err) {
- * 	const e = err as Error
- * 	getError(e.message)
- * }
- */
-export function getError(qResult: unknown) {
-	let res: unknown[] = qResult as unknown[]
-	if (!Array.isArray(res)) res = [qResult]
-
-	for (const result of res)
-		if (result === failed || length === 1)
-			// Every other result will be `failed` if the query failed
-			for (const result2 of res)
-				if (typeof result2 === "string" && result2 !== failed)
-					return result2.match(errorRegex)?.[1]
-}
 
 /**
  * Transfers currency from one user to another, and creates a transaction in the database.

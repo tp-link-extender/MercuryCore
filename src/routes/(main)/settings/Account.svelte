@@ -7,9 +7,7 @@
 	<label for="name" class="w-full md:w-1/3 text-md-right">Username</label>
 	<div class="w-full md:w-2/3">
 		<input type="text" readonly id="name" disabled value={user?.username} />
-		<small class="w-full grey-text pb-2">
-			You cannot change your username.
-		</small>
+		<small class="formhelp">You cannot change your username.</small>
 	</div>
 </div>
 <hr class="grey-text" />

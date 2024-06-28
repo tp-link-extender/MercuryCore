@@ -80,7 +80,7 @@
 			</small>
 		{/if}
 
-		<small class="grey-text">
+		<small class="formhelp">
 			Your private key can be used to access your account's assets outside
 			of Mercury or in the event of Mercury shutting down, via the
 			blockchain. <fa fa-gem />

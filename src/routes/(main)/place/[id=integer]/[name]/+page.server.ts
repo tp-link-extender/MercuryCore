@@ -7,16 +7,21 @@ import { couldMatch, encode } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
 import placeQuery from "./place.surql"
 
-type Place = {
+type FoundPlace = {
+	dislikeCount: number
+	likeCount: number
+	privateServer: boolean
+	privateTicket: string
+}
+
+type Place = FoundPlace & {
 	created: string
 	description: {
 		text: string
 		updated: string
 	}
-	dislikeCount: number
 	dislikes: boolean
 	id: string
-	likeCount: number
 	likes: boolean
 	maxPlayers: number
 	name: string
@@ -26,11 +31,17 @@ type Place = {
 		status: "Playing"
 		username: string
 	}[]
-	privateServer: boolean
-	privateTicket: string
 	serverPing: number
 	serverTicket: string
 	updated: string
+}
+
+type Session = {
+	id: string
+	in: string
+	out: string
+	ping: number
+	valid: boolean
 }
 
 export async function load({ url, locals, params }) {
@@ -56,10 +67,7 @@ export async function load({ url, locals, params }) {
 	if (!couldMatch(getPlace.name, params.name))
 		redirect(302, `/place/${id}/${slug}`)
 
-	return {
-		slug,
-		place: getPlace,
-	}
+	return { slug, place: getPlace }
 }
 
 export const actions: import("./$types").Actions = {}
@@ -70,14 +78,7 @@ actions.like = async ({ url, request, locals, params }) => {
 	const action = data.action as LikeActions
 	const privateTicket = url.searchParams.get("privateTicket")
 
-	const [[foundPlace]] = await equery<
-		{
-			privateServer: boolean
-			privateTicket: string
-			likeCount: number
-			dislikeCount: number
-		}[][]
-	>(
+	const [[foundPlace]] = await equery<FoundPlace[][]>(
 		surql`
 			SELECT
 				privateServer,
@@ -127,15 +128,7 @@ actions.join = async ({ request, locals }) => {
 	if (foundModerated) error(403, "You cannot currently play games")
 
 	// Invalidate all game sessions and create valid session
-	const [, [session]] = await equery<
-		{
-			id: string
-			in: string
-			out: string
-			ping: number
-			valid: boolean
-		}[][]
-	>(
+	const [, [session]] = await equery<Session[][]>(
 		surql`
 			UPDATE (SELECT * FROM $user->playing) SET valid = false;
 			RELATE $user->playing->$place CONTENT {

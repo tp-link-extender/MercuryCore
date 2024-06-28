@@ -59,8 +59,7 @@ actions.default = async ({ request, locals }) => {
 			["You can't have more than two places"]
 		)
 
-	const [id] = await equery<number[]>(surql`stuff:increment.place`)
-
+	const [id] = await equery<number[]>(surql`stuff:increment.place OR 1`)
 	const slug = encode(name)
 
 	try {

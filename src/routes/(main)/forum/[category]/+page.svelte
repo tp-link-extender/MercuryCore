@@ -62,7 +62,7 @@
 		]} />
 
 	<h1 class="pb-8">
-		{data.name} - Forum
+		{data.name} &ndash; Forum
 		<span class="pl-6">
 			<a
 				href="/forum/create?category={data.name}"

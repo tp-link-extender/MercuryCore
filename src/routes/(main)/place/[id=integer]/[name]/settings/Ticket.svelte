@@ -30,7 +30,7 @@
 					{/if}
 				</button>
 			</div>
-			<small class="grey-text">
+			<small class="formhelp">
 				The server ticket is required to host servers on Mercury. You
 				can regenerate the ticket at any time.
 			</small>

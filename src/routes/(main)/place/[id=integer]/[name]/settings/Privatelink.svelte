@@ -52,7 +52,7 @@
 				</small>
 			{/if}
 
-			<small class="grey-text">
+			<small class="formhelp">
 				This private server link will allow users to join your server.
 				Your server (if private) cannot be accessed by other players
 				without this link.

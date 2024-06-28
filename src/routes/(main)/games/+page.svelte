@@ -31,62 +31,34 @@
 <Head title="Discover" />
 
 <div class="ctnr">
-	<div class="flex pb-12">
-		<h1 class="w-1/3">
-			<span class="pr-6">Games</span>
+	<div class="flex pb-12 gap-4 <sm:flex-wrap">
+		<div class="flex w-full sm:w-1/2">
+			<h1 class="pr-6">Games</h1>
 			<a href="/games/create" class="btn btn-primary">
-				<fa fa-plus />
+				<fa fa-plus class="pr-2" />
 				Create
 			</a>
-		</h1>
-		<div class="w-2/3">
+		</div>
+		<div class="w-full sm:w-1/2">
 			<form
 				use:enhance
 				method="POST"
 				action="/search?c=places"
 				class="flex gap-4">
-				<div class="w-5/12">
-					<div class="input-group">
-						<input
-							bind:value={query}
-							type="text"
-							name="query"
-							placeholder="Search for a game"
-							aria-label="Search for a game"
-							aria-describedby="button-addon2" />
-						<button
-							class="btn btn-secondary"
-							aria-label="Search"
-							id="button-addon2">
-							<fa fa-magnifying-glass />
-						</button>
-					</div>
-				</div>
-				<div class="pl-4 w-7/24 flex">
-					<label for="genre" class="light-text py-1 pr-4">
-						Genre
-					</label>
-					<select
-						class="form-select light-text"
-						id="genre"
-						placeholder="Genre"
-						aria-label="genre">
-						<option value="Obby">Obby</option>
-						<option value="Horror">Horror</option>
-						<option value="Comedy">Comedy</option>
-					</select>
-				</div>
-				<div class="pl-4 w-7/24">
-					<div class="flex items-center light-text py-1">
-						<input
-							class="form-check-input"
-							type="checkbox"
-							value=""
-							id="flexCheckDefault" />
-						<label class="pl-2" for="flexCheckDefault">
-							Gears Allowed
-						</label>
-					</div>
+				<div class="input-group">
+					<input
+						bind:value={query}
+						type="text"
+						name="query"
+						placeholder="Search for a game"
+						aria-label="Search for a game"
+						aria-describedby="button-addon2" />
+					<button
+						class="btn btn-secondary"
+						aria-label="Search"
+						id="button-addon2">
+						<fa fa-magnifying-glass />
+					</button>
 				</div>
 			</form>
 		</div>
@@ -126,8 +98,7 @@
 {/if}
 
 <style>
-	input,
-	select {
+	input {
 		background-color: var(--accent);
 		border-color: var(--accent2);
 	}

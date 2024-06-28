@@ -13,18 +13,16 @@
 	in:fade|global={{ num, total, duration: 300 }}
 	{href}
 	class="light-text no-underline">
-	<div class=" card bg-a3 light-text px-0 text-center">
-		<div class="card-body bg-a rounded-1 p-6">
-			{#if emoji}
-				<span class="text-10">{emoji}</span>
-			{:else}
-				<i class="text-10 {iconClass}" />
-			{/if}
-			<div class="text-xl pt-4">
-				{name}
-			</div>
-			<slot />
+	<div class="card bg-a light-text p-4 py-6 text-center">
+		{#if emoji}
+			<span class="text-10">{emoji}</span>
+		{:else}
+			<i class="text-10 {iconClass}" />
+		{/if}
+		<div class="text-xl pt-4">
+			{name}
 		</div>
+		<slot />
 	</div>
 </a>
 

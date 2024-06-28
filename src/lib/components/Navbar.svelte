@@ -227,7 +227,9 @@
 				: 'text-black'}"
 			role="alert"
 			style="background: {banner.bgColour}">
-			{banner.body}
+			<p class="p-0">
+				{banner.body}
+			</p>
 		</div>
 	{/each}
 {/if}

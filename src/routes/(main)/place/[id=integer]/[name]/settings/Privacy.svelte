@@ -12,7 +12,7 @@
 
 <Form
 	{formData}
-	submit="<fa fa-save></fa> Save changes"
+	submit=" <fa fa-save class='pr-2'></fa> Save changes"
 	action="?/privacy&tab=Privacy">
 	<Input
 		{formData}

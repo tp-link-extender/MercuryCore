@@ -68,7 +68,7 @@
 		</YesScript>
 
 		{#if help}
-			<small class="grey-text">
+			<small class="formhelp">
 				{help}
 			</small>
 		{/if}
