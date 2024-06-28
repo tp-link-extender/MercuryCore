@@ -6,26 +6,35 @@
 @font-face {
 	font-family: Inter;
 	font-style: normal;
-	font-weight: 100 900;
 	font-display: swap;
-	src: url("/fonts/InterVariable.woff2") format("woff2");
+	src: url("/fonts/Inter.woff2") format("woff2"),
+		url("/fonts/Inter.ttf") format("truetype");
 }
-
 @font-face {
 	font-family: Inter;
 	font-style: italic;
-	font-weight: 100 900;
 	font-display: swap;
-	src: url("/fonts/InterVariable-Italic.woff2") format("woff2");
+	src: url("/fonts/Inter-Italic.woff2") format("woff2"),
+		url("/fonts/Inter-Italic.ttf") format("truetype");
 }
 
-:root,
-html,
-body,
-main {
-	background: var(--background);
+@font-face {
+	font-family: BDOgrotesk;
+	src: url("/fonts/BDOgrotesk.woff2") format("woff2");
+	font-display: swap;
+	font-style: normal;
+}
+@font-face {
+	font-family: BDOgrotesk;
+	src: url("/fonts/Inter-Italic.woff2") format("woff2"),
+		url("/fonts/Inter-Italic.ttf") format("truetype"); /* lies */
+	font-display: swap;
+	font-style: italic;
+}
+
+:root {
 	--hue: 260;
-	--mainaccent: #73f;
+	--mainaccent: hsl(var(--hue), 100%, 60%);
 	--rounding: 0.375rem;
 }
 
@@ -35,7 +44,13 @@ main {
 	font-feature-settings: "cv03", "cv04", "cv08", "cv09";
 }
 
+p {
+	font-family: BDOgrotesk, -apple-system, BlinkMacSystemFont, "Segoe UI",
+		Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
 body {
+	background: var(--background);
 	margin: 0;
 	display: flex;
 	flex-direction: column;
@@ -62,8 +77,12 @@ h4,
 h5,
 h6 {
 	margin: 0;
-	font-weight: 500;
+	font-weight: 550;
 	line-height: 1.2;
+}
+
+h1 {
+	font-weight: 300;
 }
 
 p {
@@ -94,12 +113,6 @@ code {
 	background-clip: border-box;
 	border-radius: var(--rounding);
 	/* border 1px solid var(--accent) */
-}
-
-.card-body {
-	/* Enable `flex-grow 1` for decks and groups so that card blocks take up as much space as possible, ensuring footers are aligned to the bottom. */
-	flex: 1 1 auto;
-	padding: 1rem;
 }
 
 textarea {
@@ -142,20 +155,20 @@ input {
 }
 
 .accent-text {
-	color: #8b52ff;
+	color: hsl(var(--hue), 100%, 66%);
 }
 
 a {
-	color: #8b52ff;
+	color: hsl(var(--hue), 100%, 66%);
 	transition: 0.2s color;
 }
 
 a:hover:not(.btn):not(.light-text) {
-	color: #73f;
+	color: hsl(var(--hue), 100%, 60%);
 }
 
 a:hover.light-text {
-	color: var(--grey-text);
+	color: var(--grey-text) !important;
 }
 
 .bg-background {
@@ -253,46 +266,46 @@ span {
 }
 
 .btn-primary {
-	background: #6826ed;
-	--un-ring-color: #7036e2;
+	background: hsl(var(--hue) 85 55);
+	--un-ring-color: hsl(var(--hue) 75 55);
 	&:hover:not(:disabled),
 	&:focus:not(:active):not(:disabled) {
-		background: #73f;
+		background: hsl(var(--hue) 100 60);
 	}
 }
 .btn-secondary {
-	background: #1c0c3b;
-	border-color: #73f;
-	--un-ring-color: #7036e2;
+	background: hsl(var(--hue) 66 15);
+	border-color: hsl(var(--hue) 100 60);
+	--un-ring-color: hsl(var(--hue) 75 55);
 	&:hover:not(:disabled),
 	&:focus:not(:active):not(:disabled) {
-		background: #2c145d;
-		border-color: #73f;
+		background: hsl(var(--hue) 65 20);
+		border-color: hsl(var(--hue) 100 60);
 	}
 }
 .input-group > .btn-secondary {
 	@apply border-l-0;
 }
 .btn-tertiary {
-	background: #1f1f1f;
-	color: #8b52ff;
-	--un-ring-color: #7036e2;
+	background: hsl(0 0 12%);
+	color: hsl(var(--hue) 100 66);
+	--un-ring-color: hsl(var(--hue) 75 55);
 	&:hover:not(:disabled),
 	&:focus:not(:active):not(:disabled) {
-		background: #251547;
-		color: #fff;
+		background: hsl(var(--hue) 55 20);
+		color: white;
 	}
 }
 .btn-quatenary {
-	color: #8b52ff;
-	--un-ring-color: #49288a;
+	color: hsl(var(--hue) 100 66);
+	--un-ring-color: hsl(var(--hue) 55 35);
 	&:hover:not(:disabled),
 	&:focus:not(:active):not(:disabled) {
-		background: #1a1a1a;
-		color: #96f;
+		background: hsl(0 0 10);
+		color: hsl(var(--hue) 100 70);
 	}
 	&:active:not(:disabled) {
-		background: #1e0d3f;
+		background: hsl(var(--hue) 66 15);
 	}
 }
 .btn-red-secondary {
@@ -451,7 +464,7 @@ thead th {
 }
 
 .is-invalid {
-	border-color: #dc3545 !important;
+	border-color: hsl(354, 70%, 55%) !important;
 	padding-right: 2.2rem;
 	background-image: url("/invalid.svg");
 	background-repeat: no-repeat;

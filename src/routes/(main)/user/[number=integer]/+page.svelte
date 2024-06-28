@@ -150,15 +150,15 @@
 					<p class="pl-2">{data.bio.text}</p>
 				</div>
 			{:else if data.username === user.username}
-				<div class="pt-6 text-center">
+				<p class="pt-6 text-center">
 					Add a bio in
 					<a href="/settings">Settings</a>
 					to tell others about yourself! It will display here.
-				</div>
+				</p>
 			{/if}
 			<div class="pt-6">
 				<h2>Avatar</h2>
-				<div class="card bg-darker card-body">
+				<div class="card bg-darker p-4">
 					<img
 						class="transition-opacity duration-300"
 						class:opacity-50={regenerating}

@@ -1,11 +1,10 @@
 :root {
-	--background: #100f0e;
-	--navbar: #201f1e;
-	--darker: #0b0a09;
-	--accent: #201e1d;
-	--accent1: #252322;
-	--accent2: #373534;
-	--accent3: #464443;
-	--light-text: #f2f4f7;
-	--grey-text: #898b8d;
+	--darker: hsl(var(--hue) 10 4);
+	--background: hsl(var(--hue) 10 6);
+	--accent: hsl(var(--hue) 5 12);
+	--accent1: hsl(var(--hue) 5 14);
+	--accent2: hsl(var(--hue) 5 21);
+	--accent3: hsl(var(--hue) 5 27);
+	--light-text: hsl(var(--hue) 25 96);
+	--grey-text: hsl(0 0 55);
 }

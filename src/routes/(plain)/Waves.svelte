@@ -30,12 +30,12 @@
 			animation: 11s cubic-bezier(0.36, 0.45, 0.63, 0.53) 0s infinite
 				normal none running waves;
 			transform: translate3d(0px, 0px, 0px);
-			&:nth-of-type(2) {
-				animation:
-					11s cubic-bezier(0.4, 0.2, 0.2, 0.2) -0.124s infinite normal
-						none running waves,
-					11s ease -1.24s infinite normal none running swell;
-			}
+		}
+		& div:nth-of-type(2) {
+			animation:
+				11s cubic-bezier(0.4, 0.2, 0.2, 0.2) -0.124s infinite normal none
+					running waves,
+				11s ease -1.24s infinite normal none running swell;
 		}
 	}
 </style>

@@ -45,7 +45,11 @@
 					return currentSearch.toString()
 				})()}"
 				on:click|preventDefault={() => {
-					colour = tweened("hsl(260, 100%, 60%)", {
+					// get css variable --hue
+					const hue = getComputedStyle(
+						document.body
+					).getPropertyValue("--hue")
+					colour = tweened(`hsl(${hue}, 100%, 60%)`, {
 						duration: 500,
 						interpolate: interpolateLab
 					})

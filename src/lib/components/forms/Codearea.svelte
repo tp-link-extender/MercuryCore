@@ -115,26 +115,26 @@
 	/* bad syntax highlighting fixes */
 	:global(.ͼb) {
 		/* var(), % */
-		color: hsl(var(--hue) - 60 100% 70%);
+		color: hsl(calc(var(--hue) - 60) 100 70);
 	}
 	:global(.ͼc) {
 		/* id (#test) */
-		color: hsl(var(--hue) + 20 100% 70%);
+		color: hsl(calc(var(--hue) + 20) 100 70);
 	}
 	:global(.ͼd) {
 		/* number (123) */
-		color: hsl(var(--hue) - 20 100% 70%);
+		color: hsl(calc(var(--hue) - 20) 100 70);
 	}
 	:global(.ͼe) {
 		/* string ("test") */
-		color: hsl(var(--hue) + 60 100% 60%);
+		color: hsl(calc(var(--hue) + 60) 100 60);
 	}
 	:global(.ͼi) {
 		/* element name (div) */
-		color: hsl(var(--hue) 100% 80%);
+		color: hsl(var(--hue) 100 80);
 	}
 	:global(.ͼj) {
 		/* property (.test) */
-		color: hsl(var(--hue) - 40 100% 80%);
+		color: hsl(calc(var(--hue) - 40) 100 80);
 	}
 </style>

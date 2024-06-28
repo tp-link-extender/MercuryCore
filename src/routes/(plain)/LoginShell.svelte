@@ -36,10 +36,8 @@
 
 <style>
 	#light {
-		background: radial-gradient(
-				rgba(53, 51, 46, 0.498) 1px,
-				rgba(0, 0, 0, 0) 1px
-			),
+		/* I had no idea hsla() worked like this */
+		background: radial-gradient(hsla(0, 0%, 100%, 12%) 1px, transparent 1px),
 			var(--background);
 		background-size: 2rem 2rem;
 		background-attachment: fixed;
@@ -51,7 +49,7 @@
 	#dark {
 		background: linear-gradient(
 			-20deg,
-			var(--darker) 50%,
+			hsl(calc(var(--hue) - 5) 74% 7%) 50%,
 			var(--mainaccent) 250%
 		);
 	}

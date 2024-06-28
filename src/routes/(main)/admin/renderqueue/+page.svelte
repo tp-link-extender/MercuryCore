@@ -29,58 +29,54 @@
 <SidebarShell bind:tabData class="max-w-280">
 	<Tab {tabData}>
 		<div class="<lg:flex flex-col lg:grid grid-cols-2 gap-4">
-			<div class="card light-text pb-1">
-				<div class="card-body">
-					<h2 class="text-xl mb-0">Render Server</h2>
-					<small class="pb-3">
-						is <b class="text-emerald-6">active</b>
-					</small>
+			<div class="card light-text p-4">
+				<h2 class="text-xl mb-0">Render Server</h2>
+				<small class="pb-3">
+					is <b class="text-emerald-6">active</b>
+				</small>
 
-					<div>
-						<fa fa-image class="text-emerald-6 pr-1" />
-						<b>0 renders</b>
-						Completed
-					</div>
-					<div>
-						<fa fa-bars-progress class="text-yellow-5 pr-1" />
-						<b>0 renders</b>
-						Pending
-					</div>
-					<div>
-						<fa fa-image-slash class="text-red-5 pr-1" />
-						<b>0 renders</b>
-						Failed
-					</div>
+				<div>
+					<fa fa-image class="text-emerald-6 pr-1" />
+					<b>0 renders</b>
+					Completed
+				</div>
+				<div>
+					<fa fa-bars-progress class="text-yellow-5 pr-1" />
+					<b>0 renders</b>
+					Pending
+				</div>
+				<div>
+					<fa fa-image-slash class="text-red-5 pr-1" />
+					<b>0 renders</b>
+					Failed
 				</div>
 			</div>
-			<div class="card light-text">
-				<div class="card-body">
-					<h2 class="text-xl">Currently Rendering</h2>
-					<table class="p-5 w-full bg-background rounded-2">
-						<thead>
-							<tr>
-								<th scope="col">Task ID</th>
-								<th scope="col">Render Type</th>
-								<th scope="col">User/Asset Requested</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<th scope="row">{current.id}</th>
-								<td>{current.type}</td>
-								<td>
-									{#if current.user}
-										<User user={current.user} full thin />
-									{:else if current.asset}
-										{current.asset.name}
-									{:else}
-										Unknown
-									{/if}
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
+			<div class="card light-text p-4">
+				<h2 class="text-xl">Currently Rendering</h2>
+				<table class="p-5 w-full bg-background rounded-2">
+					<thead>
+						<tr>
+							<th scope="col">Task ID</th>
+							<th scope="col">Render Type</th>
+							<th scope="col">User/Asset Requested</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th scope="row">{current.id}</th>
+							<td>{current.type}</td>
+							<td>
+								{#if current.user}
+									<User user={current.user} full thin />
+								{:else if current.asset}
+									{current.asset.name}
+								{:else}
+									Unknown
+								{/if}
+							</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</Tab>

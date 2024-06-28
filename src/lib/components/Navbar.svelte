@@ -99,16 +99,17 @@
 	}} />
 
 <nav class="py-0 justify-start z-11">
-	<div class="pt-1 px-2 sm:px-4 flex w-full pb-2px bg-[--navbar]">
-		<a class="brand light-text text-xl no-underline my-auto" href="/">
+	<div
+		class="pt-1 px-2 sm:px-4 flex items-center w-full pb-2px bg-[--accent]">
+		<a class="light-text text-xl no-underline" href="/">
 			<img src="/icon.svg" alt="Mercury logo" class="sm:hidden size-8" />
-			<span class="<sm:hidden fw-300">Mercury</span>
+			<span class="<sm:hidden fw-500">Mercury</span>
 		</a>
 		{#if user}
 			<div
 				class="<lg:hidden pl-6 pr-2 flex flex-row gap-4 pl-3 pt-0.19rem">
 				{#each nav1 as [title, href]}
-					<a class="btn px-1 light-text border-0" {href}>
+					<a class="btn light-text px-1 border-0" {href}>
 						{title}
 					</a>
 				{/each}
@@ -120,7 +121,7 @@
 				role="search"
 				class="mx-auto px-2 pb-1">
 				<div
-					class="input-group max-w-140 pt-3px xl:(absolute left-1/2 -translate-x-1/2 w-35vw) lg:w-76 md:w-100 sm:w-52">
+					class="input-group max-w-140 xl:(absolute left-1/2 top-2 -translate-x-1/2 w-35vw) lg:w-76 md:w-100 sm:w-52">
 					<input
 						bind:this={searchInput}
 						bind:value={search}

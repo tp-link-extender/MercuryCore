@@ -39,7 +39,7 @@
 
 <div class="ctnr pt-8 max-w-200">
 	<div class="card">
-		<div class="card-body light-text">
+		<div class="light-text p-4">
 			<h1>
 				{moderationAction[data.type]}{moderationAction[data.type] ==
 				"Ban"
