@@ -55,17 +55,15 @@ export async function handle({ event, resolve }) {
 		const res = await resolve(event)
 
 		// if it's html, add the user's custom css before the </body> tag
-		if (
-			res.headers.get("content-type")?.includes("text/html") &&
-			user?.css
-		) {
+		const css = user?.css
+		if (res.headers.get("content-type")?.includes("text/html") && css) {
 			// duplicate the response to avoid modifying the original
 			const text = await res.clone().text()
 
 			return new Response(
 				text.replace(
 					"</body>",
-					`<style id="custom-css">${user.css}</style></body>`
+					`<style id="custom-css">${css}</style></body>`
 				),
 				{
 					status: res.status,

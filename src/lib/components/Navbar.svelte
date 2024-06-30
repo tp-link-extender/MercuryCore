@@ -100,14 +100,16 @@
 
 <nav class="py-0 justify-start z-11">
 	<div
-		class="pt-1 px-2 sm:px-4 flex items-center w-full pb-2px bg-[--accent]">
-		<a class="light-text text-xl no-underline" href="/">
-			<img src="/icon.svg" alt="Mercury logo" class="sm:hidden size-8" />
-			<span class="<sm:hidden fw-500">Mercury</span>
+		class="pt-1 px-2 sm:px-4 flex items-center w-full pb-2px bg-[--accent] h-13.5">
+		<a class="light-text text-xl no-underline <sm:hidden fw-500" href="/">
+			Mercury
+		</a>
+		<a class="light-text text-xl no-underline sm:hidden size-8" href="/">
+			<img src="/icon.svg" alt="Mercury logo" />
 		</a>
 		{#if user}
 			<div
-				class="<lg:hidden pl-6 pr-2 flex flex-row gap-4 pl-3 pt-0.19rem">
+				class="<lg:hidden pl-6 pr-2 flex flex-row gap-4 pl-3">
 				{#each nav1 as [title, href]}
 					<a class="btn light-text px-1 border-0" {href}>
 						{title}

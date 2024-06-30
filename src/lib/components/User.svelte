@@ -5,7 +5,7 @@
 		// 8 months late lmao
 		Playing: "#238560",
 		Online: "#3459e6",
-		Offline: "#0000"
+		Offline: "blue"
 	})
 	const transitionBackgrounds = Object.freeze({
 		darker: "background",
@@ -34,29 +34,36 @@
 	export let size = "2rem"
 	export let bg: keyof typeof transitionBackgrounds = "accent2"
 
-	const style = `width: ${size}; max-width: ${size}; height: ${size}; min-height: ${size}; --status: ${statusColours[user.status]}`
-	const style2 = `background: var(--${bg})`
+	const style = `width: ${size}; max-width: ${size}; height: ${size}; min-height: ${size}`
+	const style2 = `${style}; background: var(--${bg})`
 </script>
 
 {#if image}
-	<div class="flex {$$restProps.class}" class:items-center={full}>
-		<span class="rounded-full" style="{style};{style2}">
-			{#if rerender}
-				<img
-					class="transition-opacity duration-300 rounded-full rounded-t-0"
-					class:opacity-50={rerender.regenerating}
-					src={rerender.form?.avatar ||
-						`/api/avatar/${user.username}`}
-					alt={user.username}
-					{style} />
-			{:else}
-				<img
-					src="/api/avatar/{user.username}"
-					alt={user.username}
-					class="rounded-full rounded-t-0"
-					{style} />
-			{/if}
-		</span>
+	<div
+		class="flex {$$restProps.class}"
+		class:items-center={full}
+		style="--status: {statusColours[user.status]}">
+		<div class="relative">
+			<!-- css hell -->
+			<div class="status"></div>
+			<div class="rounded-full" style={style2}>
+				{#if rerender}
+					<img
+						class="transition-opacity duration-300 rounded-full rounded-t-0"
+						class:opacity-50={rerender.regenerating}
+						src={rerender.form?.avatar ||
+							`/api/avatar/${user.username}`}
+						alt={user.username}
+						{style} />
+				{:else}
+					<img
+						src="/api/avatar/{user.username}"
+						alt={user.username}
+						class="rounded-full rounded-t-0"
+						{style} />
+				{/if}
+			</div>
+		</div>
 		{#if full}
 			<span class="username {thin ? 'pl-2 text-base' : 'font-bold pl-4'}">
 				{user.username}
@@ -68,17 +75,20 @@
 		href="/user/{user.number}"
 		class="flex no-underline {$$restProps.class}"
 		class:flex-col={bottom}
-		class:items-center={full}>
-		<span
-			class="pfp rounded-full"
-			style="{style};{style2};
-			--hover: var(--{transitionBackgrounds[bg]})">
-			<img
-				src="/api/avatar/{user.username}"
-				alt={user.username}
-				class="rounded-full rounded-t-0"
-				{style} />
-		</span>
+		class:items-center={full}
+		style="--status: {statusColours[user.status]}">
+		<div class="relative">
+			<div class="status"></div>
+			<div
+				class="pfp rounded-full"
+				style="{style2}; --hover: var(--{transitionBackgrounds[bg]})">
+				<img
+					src="/api/avatar/{user.username}"
+					alt={user.username}
+					class="rounded-full rounded-t-0"
+					{style} />
+			</div>
+		</div>
 		{#if full}
 			<span class="username {thin ? 'pl-2 text-base' : 'font-bold pl-4'}">
 				{user.username}
@@ -107,8 +117,17 @@
 		}
 	}
 
-	span.rounded-full {
-		box-shadow: inset 0 0 0rem 1.5px var(--status);
+	img,
+	.status {
+		position: absolute;
+	}
+	.status {
+		border-radius: 50%;
+		bottom: 4%;
+		right: 5%;
+		width: 20%;
+		height: 20%;
+		background: var(--status);
 	}
 
 	.bottom {
