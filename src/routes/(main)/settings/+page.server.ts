@@ -66,12 +66,16 @@ actions.password = async ({ request, locals }) => {
 			["New password cannot be the same as the current password", ""]
 		)
 
-	if (!Bun.password.verifySync(cpassword, user.hashedPassword))
+	const userId = Record("user", user.id)
+	const [[{ hashedPassword }]] = await equery<{ hashedPassword: string }[][]>(
+		surql`SELECT hashedPassword FROM ${userId}`
+	)
+
+	if (!Bun.password.verifySync(cpassword, hashedPassword))
 		return formError(form, ["cpassword"], ["Incorrect password"])
 
 	await equery(
-		surql`UPDATE $user SET hashedPassword = ${Bun.password.hashSync(npassword)}`,
-		{ user: Record("user", user.id) }
+		surql`UPDATE ${userId} SET hashedPassword = ${Bun.password.hashSync(npassword)}`
 	)
 
 	// Don't send the password back to the client

@@ -30,7 +30,6 @@ declare module "lucia" {
 			currencyCollected: string
 			created: string
 			email: string
-			hashedPassword: string
 			lastOnline: string
 			permissionLevel: number
 			css: string
