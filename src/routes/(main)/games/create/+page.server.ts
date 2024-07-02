@@ -63,7 +63,8 @@ actions.default = async ({ request, locals }) => {
 	const slug = encode(name)
 
 	try {
-		await transaction(user, { number: 1 }, 0, {
+		// todo: uhh
+		await transaction(user, { id: "" }, 0, {
 			note: `Created place ${name}`,
 			link: `/place/${id + 1}/${slug}`,
 		})

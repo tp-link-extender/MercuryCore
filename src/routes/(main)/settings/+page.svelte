@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Head from "$lib/components/Head.svelte"
-	import TabNav from "$lib/components/TabNav.svelte"
-	import TabData from "$lib/components/TabData"
 	import Tab from "$lib/components/Tab.svelte"
+	import TabData from "$lib/components/TabData"
+	import TabNav from "$lib/components/TabNav.svelte"
 	import Account from "./Account.svelte"
 	import Profile from "./Profile.svelte"
 	import Security from "./Security.svelte"
@@ -23,7 +23,7 @@
 <div class="ctnr max-w-220 light-text">
 	<div class="pb-4">
 		<h1>User settings</h1>
-		<a href="/user/{user.number}" class="no-underline">
+		<a href="/user/{user.username}" class="no-underline">
 			<fa fa-caret-left />
 			View profile
 		</a>

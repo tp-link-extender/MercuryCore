@@ -65,7 +65,7 @@
 	<div class="w-full">
 		<div class="flex items-center pt-2">
 			<a
-				href="/user/{reply.author.number}"
+				href="/user/{reply.author.username}"
 				class="userlink items-center no-underline"
 				class:light-text={reply.author.username !== postAuthorName}
 				class:opacity-33={hidden}>

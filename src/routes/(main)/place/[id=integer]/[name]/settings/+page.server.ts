@@ -64,8 +64,7 @@ export async function load({ locals, params }) {
 	if (!getPlace) error(404, "Place not found")
 
 	const { user } = await authorise(locals)
-
-	if (user.number !== getPlace.owner.number && user.permissionLevel < 4)
+	if (user.username !== getPlace.owner.username && user.permissionLevel < 4)
 		error(403, "You do not have permission to view this page.")
 
 	return {
@@ -83,8 +82,7 @@ async function getData(e: RequestEvent) {
 	const id = +e.params.id
 	const { user } = await authorise(e.locals)
 	const getPlace = await placeQuery(id)
-
-	if (user.number !== getPlace.owner.number && user.permissionLevel < 4)
+	if (user.username !== getPlace.owner.username && user.permissionLevel < 4)
 		error(403, "You do not have permission to update this page.")
 
 	return id
@@ -93,9 +91,8 @@ async function getData(e: RequestEvent) {
 export const actions: import("./$types").Actions = {}
 actions.view = async e => {
 	const id = await getData(e)
-	const { request } = e
 
-	const formData = await request.formData()
+	const formData = await e.request.formData()
 	const form = await superValidate(formData, zod(viewSchema))
 	if (!form.valid) return formError(form)
 
@@ -128,22 +125,20 @@ actions.view = async e => {
 }
 actions.ticket = async e => {
 	const id = await getData(e)
-	const { request } = e
 
 	await equery(surql`UPDATE $place SET serverTicket = rand::guid()`, {
 		place: Record("place", id),
 	})
 
 	return message(
-		await superValidate(request, zod(ticketSchema)),
+		await superValidate(e.request, zod(ticketSchema)),
 		"Regenerated!"
 	)
 }
 actions.network = async e => {
 	const id = await getData(e)
-	const { request } = e
 
-	const form = await superValidate(request, zod(networkSchema))
+	const form = await superValidate(e.request, zod(networkSchema))
 	if (!form.valid) return formError(form)
 
 	const { serverIP, serverPort, maxPlayers } = form.data
@@ -161,9 +156,8 @@ actions.network = async e => {
 }
 actions.privacy = async e => {
 	const id = await getData(e)
-	const { request } = e
 
-	const form = await superValidate(request, zod(privacySchema))
+	const form = await superValidate(e.request, zod(privacySchema))
 	if (!form.valid) return formError(form)
 
 	const { privateServer } = form.data
@@ -176,14 +170,13 @@ actions.privacy = async e => {
 }
 actions.privatelink = async e => {
 	const id = await getData(e)
-	const { url, request } = e
 
 	await equery(surql`UPDATE $place SET privateTicket = rand::guid()`, {
 		place: Record("place", id),
 	})
 
 	return message(
-		await superValidate(request, zod(privatelinkSchema)),
+		await superValidate(e.request, zod(privatelinkSchema)),
 		"Regenerated!"
 	)
 }

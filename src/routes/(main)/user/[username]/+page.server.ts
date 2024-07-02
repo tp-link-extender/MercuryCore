@@ -49,29 +49,21 @@ type User = {
 } & BasicUser
 
 export async function load({ locals, params }) {
-	const number = +params.number
 	const { user } = await authorise(locals)
 	const [[userExists]] = await equery<User[][]>(userQuery, {
-		number,
+		...params,
 		user: Record("user", user.id),
 	})
-
 	if (!userExists) error(404, "Not found")
 	return userExists
 }
 
 async function getData({ params }: RequestEvent) {
-	const [[user2]] = await equery<
-		{
-			id: string
-			username: string
-		}[][]
-	>(
+	const [[user2]] = await equery<{ id: string }[][]>(
 		surql`
-			SELECT meta::id(id) AS id, username
-			FROM user WHERE number = ${+params.number}`
+			SELECT meta::id(id) AS id FROM user
+			WHERE username = ${params.username}`
 	)
-
 	if (!user2) error(404, "User not found")
 	return { user2 }
 }
@@ -127,10 +119,10 @@ async function rerender(e: RequestEvent) {
 	const { user2 } = await getData(e)
 
 	try {
-		await requestRender("Avatar", +params.number, true)
+		await requestRender("Avatar", user2.id, true)
 		return {
-			avatarBody: `/api/avatar/${user2.username}-body?r=${Math.random()}`,
-			avatar: `/api/avatar/${user2.username}?r=${Math.random()}`,
+			avatarBody: `/api/avatar/${params.username}-body?r=${Math.random()}`,
+			avatar: `/api/avatar/${params.username}?r=${Math.random()}`,
 		}
 	} catch (e) {
 		console.error(e)

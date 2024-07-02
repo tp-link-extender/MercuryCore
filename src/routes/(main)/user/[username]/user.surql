@@ -38,4 +38,4 @@ SELECT
 	FROM ->member->group) AS groups,
 	(SELECT name, count(<-member) AS memberCount
 	FROM ->owns->group) AS groupsOwned
-FROM user WHERE number = $number;
+FROM user WHERE username = $username;

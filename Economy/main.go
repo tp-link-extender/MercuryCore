@@ -35,9 +35,9 @@ func Assert(err error, txt string) {
 
 type (
 	// uint64 is overkill? idgaf
-	userNumber uint64
-	currency   uint64
-	asset      uint64
+	user     string
+	currency uint64
+	asset    uint64
 )
 
 const (
@@ -68,8 +68,8 @@ func toReadable(c currency) string {
 // Since fees are stored as a separate value and are burned, I can't see a reason for them to exist for now
 // UTXOs lmao
 type SentTx struct {
-	From       userNumber
-	To         userNumber
+	From       user
+	To         user
 	Amount     currency
 	Link, Note string // Transaction links might be a bit of an ass backwards concept for now but ion care
 	Returns    []asset
@@ -82,7 +82,7 @@ type Tx struct {
 }
 
 type SentMint struct {
-	To     userNumber
+	To     user
 	Amount currency
 	Note   string
 }
@@ -93,7 +93,7 @@ type Mint struct {
 }
 
 type SentBurn struct {
-	From       userNumber
+	From       user
 	Amount     currency
 	Note, Link string
 	Returns    []asset
@@ -106,19 +106,19 @@ type Burn struct {
 
 var (
 	file         *os.File
-	balances     = map[userNumber]currency{}
-	prevStipends = map[userNumber]uint64{}
+	balances     = map[user]currency{}
+	prevStipends = map[user]uint64{}
 )
 
 func validateTx(sent SentTx, fee currency) (e error) {
 	if sent.Amount == 0 {
 		e = fmt.Errorf("transaction must have an amount")
-	} else if sent.From == 0 {
+	} else if sent.From == "" {
 		e = fmt.Errorf("transaction must have a sender")
-	} else if sent.To == 0 {
+	} else if sent.To == "" {
 		e = fmt.Errorf("transaction must have a recipient")
 	} else if sent.From == sent.To {
-		e = fmt.Errorf("circular transaction: %d -> %d", sent.From, sent.To)
+		e = fmt.Errorf("circular transaction: %s -> %s", sent.From, sent.To)
 	} else if sent.Note == "" {
 		e = fmt.Errorf("transaction must have a note")
 	} else if sent.Link == "" {
@@ -132,7 +132,7 @@ func validateTx(sent SentTx, fee currency) (e error) {
 func validateMint(sent SentMint) (e error) {
 	if sent.Amount == 0 {
 		e = fmt.Errorf("mint must have an amount")
-	} else if sent.To == 0 {
+	} else if sent.To == "" {
 		e = fmt.Errorf("mint must have a recipient")
 	} else if sent.Note == "" {
 		e = fmt.Errorf("mint must have a note")
@@ -143,7 +143,7 @@ func validateMint(sent SentMint) (e error) {
 func validateBurn(sent SentBurn) (e error) {
 	if sent.Amount == 0 {
 		e = fmt.Errorf("burn must have an amount")
-	} else if sent.From == 0 {
+	} else if sent.From == "" {
 		e = fmt.Errorf("burn must have a sender")
 	} else if sent.Amount > balances[sent.From] {
 		e = fmt.Errorf("insufficient balance: balance was %s, at least %s is required", toReadable(balances[sent.From]), toReadable(sent.Amount))
@@ -274,7 +274,7 @@ func burn(sent SentBurn) error {
 	return nil
 }
 
-func stipend(to userNumber) error {
+func stipend(to user) error {
 	time := uint64(time.Now().UnixMilli())
 	if err := mint(SentMint{to, currentStipend(), "Stipend"}, time); err != nil {
 		return err
@@ -297,7 +297,7 @@ func currentStipendRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 func balanceRoute(w http.ResponseWriter, r *http.Request) {
-	var user userNumber
+	var user user
 
 	if _, err := fmt.Sscanf(r.PathValue("id"), "%d", &user); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -318,7 +318,7 @@ func transactRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Log(c.InGreen(fmt.Sprintf("Transaction successful  %d -[%s]-> %d", sentTx.From, toReadable(sentTx.Amount), sentTx.To)))
+	Log(c.InGreen(fmt.Sprintf("Transaction successful  %s -[%s]-> %s", sentTx.From, toReadable(sentTx.Amount), sentTx.To)))
 }
 
 func mintRoute(w http.ResponseWriter, r *http.Request) {
@@ -332,7 +332,7 @@ func mintRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Log(c.InGreen(fmt.Sprintf("Mint successful         %d <-[%s]-", sentMint.To, toReadable(sentMint.Amount))))
+	Log(c.InGreen(fmt.Sprintf("Mint successful         %s <-[%s]-", sentMint.To, toReadable(sentMint.Amount))))
 }
 
 func burnRoute(w http.ResponseWriter, r *http.Request) {
@@ -346,11 +346,11 @@ func burnRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Log(c.InGreen(fmt.Sprintf("Burn successful         %d -[%s]->", sentBurn.From, toReadable(sentBurn.Amount))))
+	Log(c.InGreen(fmt.Sprintf("Burn successful         %s -[%s]->", sentBurn.From, toReadable(sentBurn.Amount))))
 }
 
 func stipendRoute(w http.ResponseWriter, r *http.Request) {
-	var to userNumber
+	var to user
 
 	if _, err := fmt.Sscanf(r.PathValue("id"), "%d", &to); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -363,7 +363,7 @@ func stipendRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Log(c.InGreen(fmt.Sprintf("Stipend successful      %d", to)))
+	Log(c.InGreen(fmt.Sprintf("Stipend successful      %s", to)))
 }
 
 func main() {

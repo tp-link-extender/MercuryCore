@@ -27,7 +27,6 @@ type Place = FoundPlace & {
 	name: string
 	ownerUser: BasicUser
 	players: {
-		number: number
 		status: "Playing"
 		username: string
 	}[]
@@ -55,7 +54,7 @@ export async function load({ url, locals, params }) {
 
 	if (
 		!getPlace ||
-		(user.number !== getPlace.ownerUser.number &&
+		(user.username !== getPlace.ownerUser.username &&
 			getPlace.privateServer &&
 			privateServerCode !== getPlace.privateTicket)
 	)

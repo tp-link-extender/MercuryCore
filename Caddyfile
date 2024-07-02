@@ -2,8 +2,6 @@ mercury2.com {
 	rewrite /Asset /asset
 	rewrite /Asset/ /asset
 	rewrite /Asset/Default.ashx /asset
-	rewrite /Asset/CharacterFetch.ashx /asset/characterfetch
-	rewrite /Asset/BodyColors.ashx /asset/bodycolors
 
 	rewrite /Game/Studio.ashx /game/studio
 	rewrite /Game/Visit.ashx /game/visit

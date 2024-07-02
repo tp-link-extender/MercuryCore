@@ -10,12 +10,11 @@ SELECT
 	created,
 	updated,
 	maxPlayers,
-	(SELECT username, status, number
+	(SELECT username, status
 	FROM <-owns<-user)[0] AS ownerUser,
 	(SELECT
 		in.username AS username,
-		"Playing" AS status, # duh
-		in.number AS number
+		"Playing" AS status # duh
 	FROM <-playing
 	WHERE valid AND ping > time::now() - 35s) AS players,
 

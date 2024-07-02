@@ -3,8 +3,8 @@ SELECT
 		meta::id(id) AS id,
 		serverIP,
 		serverPort,
-		(SELECT number FROM <-owns<-user)[0] AS ownerUser
+		(SELECT username FROM <-owns<-user)[0] AS ownerUser
 	FROM ->place)[0] AS place,
-	(SELECT username, number, permissionLevel
+	(SELECT permissionLevel, username
 	FROM <-user)[0] AS user
 FROM $playing;

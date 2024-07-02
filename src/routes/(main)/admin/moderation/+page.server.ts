@@ -39,12 +39,11 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	const [[getModeratee]] = await equery<
 		{
 			id: string
-			number: number
 			permissionLevel: number
 		}[][]
 	>(
 		surql`
-			SELECT meta::id(id) AS id, number, permissionLevel
+			SELECT meta::id(id) AS id, permissionLevel
 			FROM user WHERE username = ${username}`
 	)
 

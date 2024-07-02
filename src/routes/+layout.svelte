@@ -92,7 +92,7 @@
 			aria-atomic="true">
 			<div class="flex bg-a light-text p-2 rounded-t-2">
 				<a
-					href="/user/{notification.sender.number}"
+					href="/user/{notification.sender.username}"
 					class="flex gap-3 items-center w-full light-text no-underline">
 					<User
 						user={notification.sender}

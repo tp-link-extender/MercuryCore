@@ -11,14 +11,14 @@
 		followers: () => `${data.username}'s followers`,
 		following: () => `Followed by ${data.username}`
 	}
-	let title = titles[data.type]()
+	let title = titles[data.f]()
 </script>
 
 <Head {title} />
 
 <div class="text-center">
 	<h1>{title} ({data.count})</h1>
-	<a href="/user/{data.number}" class="no-underline accent-text">
+	<a href="/user/{data.username}" class="no-underline accent-text">
 		<fa fa-caret-left />
 		Back to {data.username}'s profile
 	</a>

@@ -3,5 +3,5 @@ import { authorise } from "$lib/server/lucia"
 
 export async function load({ locals }) {
 	const { user } = await authorise(locals)
-	return { balance: await getBalance(user.number) }
+	return { balance: await getBalance(user.id) }
 }

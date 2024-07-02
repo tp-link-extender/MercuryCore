@@ -58,7 +58,8 @@ actions.default = async ({ request, locals }) => {
 		)
 
 	try {
-		await transaction(user, { number: 1 }, 10, {
+		// todo: wearenumberwhan
+		await transaction(user, { id: "" }, 10, {
 			note: `Created group ${name}`,
 			link: `/groups/${name}`,
 		})

@@ -7,13 +7,12 @@ type Session = {
 	place: {
 		id: number
 		ownerUser: {
-			number: number
+			username: string
 		}
 		serverIP: string
 		serverPort: number
 	}
 	user: {
-		number: number
 		permissionLevel: number
 		username: string
 	}
@@ -27,7 +26,6 @@ export async function GET({ url }) {
 
 	const playing = Record("playing", clientTicket)
 	const [[gameSession]] = await equery<Session[][]>(joinQuery, { playing })
-
 	if (!gameSession) error(400, "Invalid Game Session")
 
 	const foundPrivatePlace = await findWhere(
@@ -40,10 +38,9 @@ export async function GET({ url }) {
 
 	await equery(surql`UPDATE ${playing} SET valid = false`)
 
-	const userNumber = gameSession.user.number
 	const placeId = gameSession.place.id
-	const creatorId = gameSession.place.ownerUser?.number || 0
-	const charApp = `http://${process.env.DOMAIN}/asset/characterfetch?userID=${userNumber}`
+	const creatorUsername = gameSession.place.ownerUser?.username
+	const charApp = `http://${process.env.DOMAIN}/asset/characterfetch/${gameSession.user.username}`
 	const pingUrl = `http://${process.env.DOMAIN}/game/clientpresence?ticket=${clientTicket}`
 	const membershipType =
 		gameSession.user.permissionLevel >= 2
@@ -54,8 +51,8 @@ export async function GET({ url }) {
 		.replaceAll("_PLACE_ID", placeId.toString())
 		.replaceAll("_SERVER_ADDRESS", gameSession.place.serverIP)
 		.replaceAll("_SERVER_PORT", gameSession.place.serverPort.toString())
-		.replaceAll("_CREATOR_ID", creatorId.toString())
-		.replaceAll("_USER_ID", userNumber.toString())
+		.replaceAll("_CREATOR_ID", creatorUsername)
+		.replaceAll("_USER_ID", Math.floor(Math.random() * 1e9).toString()) // todo: tho not rly used 4 much atm
 		.replaceAll("_USER_NAME", gameSession.user.username)
 		.replaceAll("_MEMBERSHIP_TYPE", membershipType)
 		.replaceAll("_CHAR_APPEARANCE", charApp)

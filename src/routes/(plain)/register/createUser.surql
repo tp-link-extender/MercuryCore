@@ -1,5 +1,3 @@
-# Assign $number to a variable, otherwise when it's returned it will increment the number by 2 instead of 1 (?????????)
-LET $number = (UPDATE ONLY stuff:increment SET user += 1).user;
 UPDATE (CREATE user CONTENT $user)[0] MERGE {
 	theme: "standard",
 	created: time::now(),
@@ -24,12 +22,8 @@ UPDATE (CREATE user CONTENT $user)[0] MERGE {
 			"Offline"
 		END)
 	},
-	number: $number,
 };
 LET $u = (SELECT number, id FROM user
 	WHERE username = $user.username)[0];
 # Return some user data
-{
-	id: meta::id($u.id),
-	number: $number,
-};
+{ id: meta::id($u.id) };

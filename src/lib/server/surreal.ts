@@ -14,6 +14,7 @@ async function reconnect() {
 }
 
 export const failed = "The query was not executed due to a failed transaction"
+export const failedConn = "There is no connection available at this moment"
 
 export { surql, RecordId }
 
@@ -74,15 +75,16 @@ export const Record = <T extends keyof RecordIdTypes>(
 type Prepared = PreparedQuery<(result: unknown[]) => unknown>
 
 async function fixError<T>(q: () => Promise<T>) {
-	// WORST
-	// DATABASE
-	// ISSUE
-	// EVER
 	for (let i = 1; i <= 3; i++) {
 		try {
 			return await q()
-		} catch {
-			await reconnect()
+		} catch (err) {
+			const e = err as Error
+			if (
+				!e.message.startsWith(failed) &&
+				!e.message.startsWith(failedConn)
+			)
+				await reconnect()
 		}
 		console.log(`retrying query ${i} time${i > 1 ? "s" : ""}`)
 	}
@@ -104,7 +106,7 @@ export const equery = async <T>(
 		const final: unknown[] = []
 
 		for (const res of result) {
-			if (res.status === "ERR" && res.result !== failed)
+			if (res.status === "ERR" && !res.result.startsWith(failed))
 				throw new Error(res.result)
 			final.push(res.result)
 		}
@@ -139,7 +141,7 @@ export const find = <T extends keyof RecordIdTypes>(
  * @param params An object of parameters to pass to SurrealDB.
  * @returns Whether the record exists.
  * @example
- * await findWhere("user", surql`username = $username`, { username: "Heliodex" })
+ * await findWhere("user", "username = $username", { username: "Heliodex" })
  */
 export const findWhere = async (
 	table: keyof RecordIdTypes,
@@ -160,14 +162,14 @@ export const findWhere = async (
  * @param amountSent The amount of currency to send.
  * @param notelink An object containing a note for the transaction, as well as a link to what the transaction was for if possible.
  * @example
- * await transaction(user, { number: 1 }, 10, {
+ * await transaction(user, user2, 10, {
  * 	note: `Bought item ${name}`,
  * 	link: `/avatarshop/${id}/${name}`,
  * })
  */
 export async function transaction(
-	sender: { id?: string; number?: number },
-	receiver: { id?: string; number?: number },
+	sender: { id?: string },
+	receiver: { id?: string },
 	amountSent: number,
 	{ note, link }: { note?: string; link?: string }
 ) {

@@ -42,7 +42,6 @@ declare module "lucia" {
 
 declare global {
 	declare type BasicUser = {
-		number: number
 		status: "Playing" | "Online" | "Offline"
 		username: string
 	}

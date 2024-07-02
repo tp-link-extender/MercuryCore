@@ -1,6 +1,6 @@
 import formData from "$lib/server/formData"
 import { authorise } from "$lib/server/lucia"
-import { equery, surql } from "$lib/server/surreal"
+import { equery, findWhere } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import searchAssetsQuery from "./searchAssets.surql"
 import searchGroupsQuery from "./searchGroups.surql"
@@ -37,10 +37,10 @@ export const load = async ({ url }) => {
 	// TODO: make this full-text search because that would be much nicer
 	switch (category) {
 		case "users": {
-			const [[userExists]] = await equery<{ number: number }[][]>(
-				surql`SELECT number FROM user WHERE username = ${query}`
-			)
-			if (userExists) redirect(302, `/user/${userExists.number}`)
+			const foundUser = await findWhere("user", "username = $username", {
+				username: query,
+			})
+			if (foundUser) redirect(302, `/user/${query}`)
 
 			const [users] = await equery<BasicUser[][]>(searchUsersQuery, param)
 			return { query, category, users }

@@ -1,5 +1,5 @@
 import fs from "node:fs"
-import { equery, surql } from "$lib/server/surreal"
+import { equery, findWhere, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 export async function GET({ url, params }) {
@@ -14,12 +14,12 @@ export async function GET({ url, params }) {
 		shotType = "-body"
 	}
 
-	const [[user]] = await equery<{ number: number }[][]>(
-		surql`SELECT number FROM user WHERE username = ${username}`
-	)
-	if (!user) error(404, "User not found")
+	const foundUser = await findWhere("user", "username = $username", {
+		username,
+	})
+	if (!foundUser) error(404, "User not found")
 
-	const path = `data/avatars/${user.number}${shotType}.png`
+	const path = `data/avatars/${username}${shotType}.png`
 
 	try {
 		if (wait)

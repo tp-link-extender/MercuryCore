@@ -1,0 +1,16 @@
+<roblox version="4">
+	<External>null</External>
+	<External>nil</External>
+	<Item class="BodyColors">
+		<Properties>
+			<string name="Name">Body Colors</string>
+			<int name="HeadColor">_HEAD</int>
+			<int name="LeftArmColor">_LEFT_ARM</int>
+			<int name="LeftLegColor">_LEFT_LEG</int>
+			<int name="RightArmColor">_RIGHT_ARM</int>
+			<int name="RightLegColor">_RIGHT_LEG</int>
+			<int name="TorsoColor">_TORSO</int>
+			<bool name="archivable">true</bool>
+		</Properties>
+	</Item>
+</roblox>

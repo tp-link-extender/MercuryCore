@@ -89,7 +89,7 @@ export default async function (user: User | null) {
 			case "FriendRequest":
 			case "Follower":
 			case "NewFriend":
-				i.link = `/user/${i.sender.number}`
+				i.link = `/user/${i.sender.username}`
 				break
 
 			case "AssetComment":

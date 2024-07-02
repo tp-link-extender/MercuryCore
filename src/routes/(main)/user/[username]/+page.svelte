@@ -86,7 +86,7 @@
 				<div id="interactions" class="flex justify-between">
 					<div class="flex gap-6">
 						<a
-							href="/user/{data.number}/friends"
+							href="/user/{data.username}/friends"
 							class="light-text text-center no-underline">
 							Friends
 							<h2>
@@ -94,7 +94,7 @@
 							</h2>
 						</a>
 						<a
-							href="/user/{data.number}/followers"
+							href="/user/{data.username}/followers"
 							class="light-text text-center no-underline">
 							Followers
 							<h2>
@@ -102,7 +102,7 @@
 							</h2>
 						</a>
 						<a
-							href="/user/{data.number}/following"
+							href="/user/{data.username}/following"
 							class="light-text text-center no-underline">
 							Following
 							<h2>
@@ -121,7 +121,7 @@
 					<div class="float-right <lg:hidden">
 						<ReportButton
 							user={data.username}
-							url="/user/{data.number}" />
+							url="/user/{data.username}" />
 					</div>
 				{/if}
 			</div>

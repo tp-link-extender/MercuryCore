@@ -26,7 +26,7 @@
 	<div>
 		<h1 class="w-full flex px-10 pb-6 my-0 <sm:text-2xl">
 			<a
-				href="/user/{user?.number}"
+				href="/user/{user.username}"
 				class="no-underline flex items-center">
 				<User {user} size="6rem" bg="accent" image class="<sm:hidden" />
 				<User {user} size="4rem" bg="accent" image class="sm:hidden" />

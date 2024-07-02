@@ -16,11 +16,7 @@
 		accent3: "accent2"
 	})
 
-	export let user: {
-		number: number
-		status: "Playing" | "Online" | "Offline"
-		username: string
-	}
+	export let user: BasicUser
 	export let full = false
 	export let thin = false
 	export let image = false
@@ -72,7 +68,7 @@
 	</div>
 {:else}
 	<a
-		href="/user/{user.number}"
+		href="/user/{user.username}"
 		class="flex no-underline {$$restProps.class}"
 		class:flex-col={bottom}
 		class:items-center={full}

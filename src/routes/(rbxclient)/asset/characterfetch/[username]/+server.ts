@@ -1,4 +1,3 @@
-import { intRegex } from "$lib/paramTests"
 import { equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
@@ -14,24 +13,19 @@ type User = {
 	wearing: number[]
 }
 
-export async function GET({ url }) {
-	const userNumber = url.searchParams.get("userID")
-
-	if (!userNumber || !intRegex.test(userNumber))
-		error(400, "Missing userID parameter")
-
+export async function GET({ params }) {
+	const { username } = params
 	const [[user]] = await equery<User[][]>(
 		surql`
 			SELECT
 				bodyColours,
 				(SELECT meta::id(id) AS id
 				FROM ->wearing->asset).id AS wearing
-			FROM user WHERE number = ${+userNumber}`
+			FROM user WHERE username = ${username}`
 	)
-
 	if (!user) error(404, "User not found")
 
-	let charApp = `${process.env.DOMAIN}/asset/bodycolors?id=${userNumber}`
+	let charApp = `${process.env.DOMAIN}/asset/bodycolours/${username}`
 
 	for (const asset of user.wearing)
 		charApp += `;${process.env.DOMAIN}/asset?id=${asset}`

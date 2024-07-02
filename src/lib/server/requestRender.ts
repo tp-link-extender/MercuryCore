@@ -22,7 +22,7 @@ const selectRender = `
  */
 export default async function (
 	renderType: RenderType,
-	relativeId: number,
+	relativeId: string | number,
 	wait = false
 ) {
 	const [, , render] = await equery<Render[]>(

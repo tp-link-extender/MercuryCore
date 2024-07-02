@@ -20,7 +20,7 @@
 				<User {user} size="6rem" bg="accent" />
 				<a
 					class="pl-12 text-xl text-white no-underline"
-					href="/user/{user.number}">
+					href="/user/{user.username}">
 					{user.username}
 				</a>
 			</div>
@@ -29,14 +29,14 @@
 					class="w-full"
 					method="POST"
 					use:enhance
-					action="/user/{user.number}?/accept">
+					action="/user/{user.username}?/accept">
 					<button class="btn btn-info w-full">Accept</button>
 				</form>
 				<form
 					class="w-full"
 					method="POST"
 					use:enhance
-					action="/user/{user.number}?/decline">
+					action="/user/{user.username}?/decline">
 					<button class="btn btn-danger w-full">Decline</button>
 				</form>
 			</div>

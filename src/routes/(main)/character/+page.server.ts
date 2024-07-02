@@ -92,7 +92,7 @@ async function getEquipData(e: RequestEvent) {
 
 async function rerender(user: import("lucia").User) {
 	try {
-		await requestRender("Avatar", user.number, true)
+		await requestRender("Avatar", user.id, true)
 		return {
 			avatar: `/api/avatar/${user.username}-body?r=${Math.random()}`,
 		}

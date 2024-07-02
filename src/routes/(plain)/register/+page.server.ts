@@ -42,11 +42,11 @@ type CreatedUser = {
 }
 
 async function createUser(user: CreatedUser, keyUsed?: string) {
-	const q = await equery<{ number: number; id: string }[]>(
+	const q = await equery<{ id: string }[]>(
 		keyUsed ? createRegkeyUserQuery : createUserQuery,
 		{ user, key: keyUsed ? Record("regKey", keyUsed) : undefined }
 	)
-	return q[3]
+	return q[3].id
 }
 
 async function isAccountRegistered() {
@@ -75,7 +75,6 @@ actions.register = async ({ request, cookies }) => {
 	const userCheck = await findWhere("user", "username = $username", {
 		username,
 	})
-
 	if (userCheck)
 		return formError(
 			form,
@@ -84,14 +83,12 @@ actions.register = async ({ request, cookies }) => {
 		)
 
 	const emailCheck = await findWhere("user", "email = $email", { email })
-
 	if (emailCheck)
 		return formError(form, ["email"], ["This email is already in use"])
 
 	const [[regkeyCheck]] = await equery<{ usesLeft: number }[][]>(
 		surql`SELECT usesLeft FROM ${Record("regKey", regkey.split("-")[1])}`
 	)
-
 	if (!regkeyCheck)
 		return formError(form, ["regkey"], ["Registration key is invalid"])
 	if (regkeyCheck.usesLeft < 1)
@@ -101,7 +98,7 @@ actions.register = async ({ request, cookies }) => {
 			["This registration key has ran out of uses"]
 		)
 
-	const user = await createUser(
+	const userId = await createUser(
 		{
 			username,
 			email,
@@ -114,10 +111,10 @@ actions.register = async ({ request, cookies }) => {
 	)
 
 	try {
-		await requestRender("Avatar", user.number)
+		await requestRender("Avatar", userId)
 	} catch {}
 
-	const session = await auth.createSession(user.id, {})
+	const session = await auth.createSession(userId, {})
 	const sessionCookie = auth.createSessionCookie(session.id)
 
 	cookies.set(sessionCookie.name, sessionCookie.value, {
@@ -151,7 +148,7 @@ actions.initialAccount = async ({ request, cookies }) => {
 
 	// This is the kind of stuff that always breaks due to never getting tested
 	// Remember: untested === unworking
-	const user = await createUser({
+	const userId = await createUser({
 		username,
 		email: "",
 		hashedPassword: Bun.password.hashSync(password),
@@ -160,10 +157,10 @@ actions.initialAccount = async ({ request, cookies }) => {
 	})
 
 	try {
-		await requestRender("Avatar", user.number)
+		await requestRender("Avatar", userId)
 	} catch {}
 
-	const session = await auth.createSession(user.id, {})
+	const session = await auth.createSession(userId, {})
 	const sessionCookie = auth.createSessionCookie(session.id)
 
 	cookies.set(sessionCookie.name, sessionCookie.value, {
