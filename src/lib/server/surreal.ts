@@ -16,7 +16,7 @@ async function reconnect() {
 export const failed = "The query was not executed due to a failed transaction"
 export const failedConn = "There is no connection available at this moment"
 
-export { surql, RecordId }
+export { surql, RecordId } from "surrealdb.js"
 
 export type RecordIdTypes = {
 	asset: number

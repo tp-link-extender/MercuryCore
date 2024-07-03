@@ -2,7 +2,6 @@ import { authorise } from "$lib/server/lucia"
 import { type Replies, recurse } from "$lib/server/nestedReplies"
 import { Record, equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
-import { actions } from "../+page.server"
 import forumRepliesQuery from "./reply.surql"
 
 const SELECTREPLIES = recurse("<-replyToReply<-forumReply")
@@ -46,4 +45,4 @@ export async function load({ locals, params }) {
 	}
 }
 
-export { actions }
+export { actions } from "../+page.server"

@@ -202,7 +202,7 @@
 			<div class="card bg-darker p-4 pb-6 block">
 				<div class="flex justify-between">
 					<h1 class="text-2xl">{$place.name}</h1>
-					{#if $place.ownerUser?.number === user?.number || user?.permissionLevel >= 4}
+					{#if $place.ownerUser?.username === user?.username || user?.permissionLevel >= 4}
 						<div>
 							<a
 								aria-label="Place settings"
@@ -327,7 +327,7 @@
 	</Tab>
 
 	<Tab {tabData}>
-		{#if user?.permissionLevel === 5 || $place.ownerUser?.number === user?.number}
+		{#if user?.permissionLevel === 5 || $place.ownerUser?.username === user?.username}
 			<h3 class="pb-2">Hosting on Mercury</h3>
 			<p>
 				To begin hosting your map for everybody to play, you need to

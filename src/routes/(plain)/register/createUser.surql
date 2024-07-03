@@ -12,9 +12,7 @@ UPDATE (CREATE user CONTENT $user)[0] MERGE {
 		RightLeg: 119,
 	},
 	status: <future> {
-		(IF (SELECT 1 FROM ->playing
-			WHERE valid AND ping > time::now() - 35s
-		)[0] THEN
+		(IF ->playing[WHERE valid AND ping > time::now() - 35s] THEN
 			"Playing"
 		ELSE IF lastOnline > time::now() - 35s THEN
 			"Online"

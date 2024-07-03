@@ -35,11 +35,11 @@ type Place = FoundPlace & {
 	updated: string
 }
 
-type Session = {
+type Playing = {
 	id: string
 	in: string
 	out: string
-	ping: number
+	ping: string
 	valid: boolean
 }
 
@@ -126,12 +126,12 @@ actions.join = async ({ request, locals }) => {
 	)
 	if (foundModerated) error(403, "You cannot currently play games")
 
-	// Invalidate all game sessions and create valid session
-	const [, [session]] = await equery<Session[][]>(
+	// Invalidate all game sessions and create valid playing
+	const [, [playing]] = await equery<Playing[][]>(
 		surql`
 			UPDATE (SELECT * FROM $user->playing) SET valid = false;
 			RELATE $user->playing->$place CONTENT {
-				ping: 0,
+				ping: time::now(), # todo: check
 				valid: true,
 			}`,
 		{
@@ -142,7 +142,7 @@ actions.join = async ({ request, locals }) => {
 
 	return {
 		joinScriptUrl: `${process.env.ORIGIN}/game/join?ticket=${
-			session.id.split(":")[1]
+			playing.id.split(":")[1]
 		}`,
 	}
 }
