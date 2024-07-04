@@ -8,9 +8,6 @@
 	import TabNav from "$lib/components/TabNav.svelte"
 	import User from "$lib/components/User.svelte"
 	import fade from "$lib/fade"
-	import realtime, { type PlaceResponse } from "$lib/realtime"
-	import type { Centrifuge, PublicationContext } from "centrifuge"
-	import { onDestroy, onMount } from "svelte"
 	import { writable } from "svelte/store"
 	import Autopilot from "./Autopilot.svelte"
 	import customProtocol from "./customprotocol.ts"
@@ -19,39 +16,6 @@
 	const { user } = data
 
 	let place = writable(data.place)
-
-	function onPub(c: PublicationContext) {
-		const newData = c.data as PlaceResponse
-
-		if (!$place) return
-
-		$place.likeCount = newData.likeCount
-		$place.dislikeCount = newData.dislikeCount
-		if (newData.hash !== data.user.realtimeHash) return
-
-		switch (newData.action) {
-			case "like":
-				$place.likes = true
-				$place.dislikes = false
-				break
-			case "dislike":
-				$place.likes = false
-				$place.dislikes = true
-				break
-			case "unlike":
-			case "undislike":
-				$place.likes = false
-				$place.dislikes = false
-				break
-			default:
-		}
-	}
-
-	let client: Centrifuge | undefined
-	onMount(() => {
-		client = realtime(data.user.realtimeToken, `place:${$place.id}`, onPub)
-	})
-	onDestroy(() => client?.disconnect())
 
 	$: online = $place.serverPing > Date.now() / 1000 - 35
 

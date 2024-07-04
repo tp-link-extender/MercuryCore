@@ -5,7 +5,6 @@ import { type LikeActions, like, likeScoreActions } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
 import { type Replies, recurse } from "$lib/server/nestedReplies"
 import ratelimit from "$lib/server/ratelimit"
-import { publish } from "$lib/server/realtime"
 import requestRender from "$lib/server/requestRender"
 import {
 	Record,
@@ -272,20 +271,10 @@ actions.like = async ({ request, locals, url }) => {
 	if (foundAsset) error(400, "Asset likes not yet implemented")
 
 	const type = "assetComment" // commentId ? "assetComment" : "asset"
-	const likes = await likeScoreActions[action](
+	await likeScoreActions[action](
 		user.id,
 		Record(type, (id || commentId) as string)
 	)
-	const thing = foundComment
-
-	thing.score = likes
-	// ok, better than publishing likes on all assets to all users but whatever
-	await publish(`avatarshop:${thing.assetId}`, {
-		...thing,
-		action,
-		// type,
-		hash: user.realtimeHash,
-	})
 }
 actions.buy = async e => {
 	const { user, id } = await getBuyData(e)

@@ -8,9 +8,6 @@
 	import PostReply from "$lib/components/PostReply.svelte"
 	import ReportButton from "$lib/components/ReportButton.svelte"
 	import User from "$lib/components/User.svelte"
-	import realtime, { type ForumResponse } from "$lib/realtime"
-	import type { Centrifuge, PublicationContext } from "centrifuge"
-	import { onDestroy, onMount } from "svelte"
 	import { writable } from "svelte/store"
 	import { superForm } from "sveltekit-superforms/client"
 
@@ -37,82 +34,6 @@
 	}
 	const formData = superForm(data.form, { onResult })
 	export const snapshot = formData
-
-	function searchReplies(
-		id: string,
-		replies: typeof $post.replies
-	): (typeof $post.replies)[0] | undefined {
-		for (const reply of replies) {
-			if (reply.id === id) return reply
-			if (reply.replies.length > 0) {
-				const found = searchReplies(id, reply.replies)
-				if (found) return found
-			}
-		}
-	}
-
-	function setAction(
-		thing: {
-			likes: boolean
-			dislikes: boolean
-		},
-		action: ForumResponse["action"]
-	) {
-		switch (action) {
-			case "like":
-				thing.likes = true
-				thing.dislikes = false
-				break
-			case "dislike":
-				thing.likes = false
-				thing.dislikes = true
-				break
-			case "unlike":
-			case "undislike":
-				thing.likes = false
-				thing.dislikes = false
-				break
-			default:
-		}
-		return thing
-	}
-
-	function onPub(c: PublicationContext) {
-		const newData = c.data as ForumResponse
-
-		// We can do this more normally since we aren't updating nested data
-		if (newData.id !== $post.id) {
-			if (newData.type === "Reply") return
-
-			post.update(p => {
-				const reply = searchReplies(newData.id, p.replies)
-				if (!reply) return p
-
-				reply.score = newData.score
-				if (newData.hash === data.user.realtimeHash)
-					setAction(reply, newData.action)
-
-				return p
-			})
-			return
-		}
-		if (newData.type !== "Post") return
-
-		$post.score = newData.score
-		if (newData.hash !== data.user.realtimeHash) return
-
-		setAction($post, newData.action)
-	}
-
-	let client: Centrifuge | undefined
-	onMount(() => {
-		client = realtime(
-			data.user.realtimeToken,
-			`forum:${$post.categoryName}`,
-			onPub
-		)
-	})
-	onDestroy(() => client?.disconnect()) // lazy evaluation my beloved
 
 	const likeEnhance: import("./$types").SubmitFunction = ({ formData }) => {
 		const action = formData.get("action")

@@ -23,10 +23,6 @@ mercury2.com {
 	reverse_proxy localhost:4443
 }
 
-realtime.mercury2.com {
-	reverse_proxy localhost:7999
-}
-
 setup.mercury2.com {
 	root * /var/www/setup
 

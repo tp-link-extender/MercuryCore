@@ -37,7 +37,6 @@
     "@unocss/preset-tagify": "^0.61.0",
     "@unocss/transformer-directives": "^0.61.0",
     "@unocss/transformer-variant-group": "^0.61.0",
-    "centrifuge": "^5.2.2",
     "codemirror": "^6.0.1",
     "d3-interpolate": "^3.0.1",
     "jsonwebtoken": "^9.0.2",

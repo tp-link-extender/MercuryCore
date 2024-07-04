@@ -10,9 +10,6 @@
 	import TabData from "$lib/components/TabData"
 	import TabNav from "$lib/components/TabNav.svelte"
 	import User from "$lib/components/User.svelte"
-	import realtime, { type AssetResponse } from "$lib/realtime"
-	import type { Centrifuge, PublicationContext } from "centrifuge"
-	import { onDestroy, onMount } from "svelte"
 	import { writable } from "svelte/store"
 	import { superForm } from "sveltekit-superforms/client"
 
@@ -39,73 +36,6 @@
 	export const snapshot = formData
 
 	let refresh = 0
-
-	function searchComments(
-		id: string,
-		replies: typeof $asset.replies
-	): (typeof $asset.replies)[0] | undefined {
-		for (const reply of replies) {
-			if (reply.id === id) return reply
-
-			if (reply.replies.length > 0) {
-				const found = searchComments(id, reply.replies)
-				if (found) return found
-			}
-		}
-	}
-
-	function setAction(
-		thing: {
-			likes: boolean
-			dislikes: boolean
-		},
-		action: AssetResponse["action"]
-	) {
-		switch (action) {
-			case "like":
-				thing.likes = true
-				thing.dislikes = false
-				break
-			case "dislike":
-				thing.likes = false
-				thing.dislikes = true
-				break
-			case "unlike":
-			case "undislike":
-				thing.likes = false
-				thing.dislikes = false
-				break
-			default:
-		}
-		return thing
-	}
-
-	function onPub(c: PublicationContext) {
-		console.log("NEW")
-		const newData = c.data as AssetResponse
-
-		asset.update(p => {
-			const reply = searchComments(newData.id, p.replies)
-			if (!reply) return p
-
-			reply.score = newData.score
-			if (newData.hash === data.user.realtimeHash)
-				setAction(reply, newData.action)
-
-			return p
-		})
-	}
-
-	let client: Centrifuge | undefined
-	onMount(() => {
-		client = realtime(
-			data.user.realtimeToken,
-			`avatarshop:${$asset.id}`,
-			onPub
-		)
-	})
-	onDestroy(() => client?.disconnect())
-
 	let tabData = TabData(data.url, ["Recommended", "Comments"])
 
 	const refreshReplies =
@@ -230,7 +160,7 @@
 	<Tab {tabData} />
 
 	<Tab {tabData}>
-		<PostReply {formData} {refreshReplies} comment />
+		<PostReply {formData} comment />
 		{#key refresh}
 			{#if $asset.replies.length > 0}
 				{#each $asset.replies as reply, num}

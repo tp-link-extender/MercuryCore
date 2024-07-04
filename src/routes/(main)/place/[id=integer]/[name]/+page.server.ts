@@ -1,7 +1,6 @@
 import formData from "$lib/server/formData"
 import { type LikeActions, likeLikesActions } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
-import { publish } from "$lib/server/realtime"
 import { Record, equery, find, findWhere, surql } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
@@ -94,18 +93,7 @@ actions.like = async ({ url, request, locals, params }) => {
 	)
 		error(404, "Place not found")
 
-	const likes = await likeLikesActions[action](user.id, Record("place", id))
-
-	foundPlace.likeCount = likes.likeCount
-	foundPlace.dislikeCount = likes.dislikeCount
-	// don't worry, it's not a record id
-	await publish(`place:${id}`, {
-		// cant destructure foundPlace because it contains sensitive data
-		id,
-		...likes,
-		action,
-		hash: user.realtimeHash,
-	})
+	await likeLikesActions[action](user.id, Record("place", id))
 }
 actions.join = async ({ request, locals }) => {
 	const { user } = await authorise(locals)

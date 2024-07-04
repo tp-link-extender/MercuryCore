@@ -2,7 +2,6 @@ import { idRegex } from "$lib/paramTests"
 import formData from "$lib/server/formData"
 import { likeScoreActions } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
-import { publish } from "$lib/server/realtime"
 import { Record, type RecordIdTypes, equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import categoryQuery from "./category.surql"
@@ -54,7 +53,7 @@ async function select(table: keyof RecordIdTypes, id: string) {
 }
 
 export const actions: import("./$types").Actions = {}
-actions.like = async ({ request, locals, params, url }) => {
+actions.like = async ({ request, locals, url }) => {
 	const { user } = await authorise(locals)
 	const data = await formData(request)
 	const action = data.action as keyof typeof likeScoreActions
@@ -67,18 +66,8 @@ actions.like = async ({ request, locals, params, url }) => {
 	if (!foundPost || !foundReply) error(404)
 
 	const type = foundPost ? "Post" : "Reply"
-	const likes = await likeScoreActions[action](
+	await likeScoreActions[action](
 		user.id,
 		Record(`forum${type}`, (id || replyId) as string)
 	)
-
-	const thing = (foundPost || foundReply) as Thing
-
-	thing.score = likes
-	await publish(`forum:${params.category}`, {
-		...thing,
-		action,
-		type,
-		hash: user.realtimeHash,
-	})
 }

@@ -58,9 +58,6 @@ DEFINE TABLE user SCHEMAFULL;
 	DEFINE FIELD hashedPassword ON user TYPE string;
 	DEFINE FIELD lastOnline ON user TYPE datetime;
 	DEFINE FIELD permissionLevel ON user TYPE number;
-	DEFINE FIELD realtimeExpiry ON user TYPE number;
-	DEFINE FIELD realtimeHash ON user TYPE number;
-	DEFINE FIELD realtimeToken ON user TYPE string;
 	DEFINE FIELD status ON user TYPE any; # future ig
 	DEFINE FIELD username ON user TYPE string;
 DEFINE INDEX usernameI ON user COLUMNS username UNIQUE;

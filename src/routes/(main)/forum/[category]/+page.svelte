@@ -3,9 +3,6 @@
 	import Breadcrumbs from "$lib/components/Breadcrumbs.svelte"
 	import Head from "$lib/components/Head.svelte"
 	import fade from "$lib/fade"
-	import realtime, { type ForumResponse } from "$lib/realtime"
-	import type { Centrifuge, PublicationContext } from "centrifuge"
-	import { onDestroy, onMount } from "svelte"
 	import { writable } from "svelte/store"
 	import ForumPost from "./ForumPost.svelte"
 	import PostPage from "./[post=strid]/+page.svelte"
@@ -13,43 +10,6 @@
 	export let data
 
 	let posts = writable(data.posts)
-
-	function onPub(c: PublicationContext) {
-		const newData = c.data as ForumResponse
-
-		posts.update(p => {
-			const post = p.find(p => p.id === newData.id)
-			if (!post) return p
-
-			post.score = newData.score
-			if (newData.hash !== data.user.realtimeHash) return p
-
-			switch (newData.action) {
-				case "like":
-					post.likes = true
-					post.dislikes = false
-					break
-				case "dislike":
-					post.likes = false
-					post.dislikes = true
-					break
-				case "unlike":
-				case "undislike":
-					post.likes = false
-					post.dislikes = false
-					break
-				default:
-			}
-
-			return p
-		})
-	}
-
-	let client: Centrifuge | undefined
-	onMount(() => {
-		client = realtime(data.user.realtimeToken, `forum:${data.name}`, onPub)
-	})
-	onDestroy(() => client?.disconnect())
 </script>
 
 <Head title="{data.name} - Forum" />

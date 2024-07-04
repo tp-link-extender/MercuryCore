@@ -11,7 +11,6 @@ export const auth = new Lucia(new SurrealAdapter(), {
 	getUserAttributes: data => ({
 		// This is the data that will be available in data.user in a +page.svelte or +layout.svelte file, or authorise() in a +page.server.ts or +layout.server.ts file.
 		id: data.id,
-		number: data.number,
 		bio: data.bio,
 		email: data.email ? `*******@${data.email.split("@")[1]}` : undefined,
 		username: data.username,
@@ -21,9 +20,6 @@ export const auth = new Lucia(new SurrealAdapter(), {
 		accountCreated: data.created,
 		bodyColours: data.bodyColours,
 		css: data.css,
-		realtimeToken: data.realtimeToken,
-		realtimeExpiry: data.realtimeExpiry,
-		realtimeHash: data.realtimeHash,
 		// theme: data.theme,
 		// Types for this are defined in src/app.d.ts.
 	}),
