@@ -34,10 +34,9 @@ func Assert(err error, txt string) {
 }
 
 type (
-	// uint64 is overkill? idgaf
 	user     string
 	currency uint64
-	asset    uint64
+	asset    uint64 // uint64 is overkill? idgaf
 )
 
 const (
@@ -299,7 +298,7 @@ func currentStipendRoute(w http.ResponseWriter, r *http.Request) {
 func balanceRoute(w http.ResponseWriter, r *http.Request) {
 	var user user
 
-	if _, err := fmt.Sscanf(r.PathValue("id"), "%d", &user); err != nil {
+	if _, err := fmt.Sscanf(r.PathValue("id"), "%s", &user); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -312,13 +311,11 @@ func transactRoute(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&sentTx); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
 	} else if err := transact(sentTx); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+	} else {
+		Log(c.InGreen(fmt.Sprintf("Transaction successful  %s -[%s]-> %s", sentTx.From, toReadable(sentTx.Amount), sentTx.To)))
 	}
-
-	Log(c.InGreen(fmt.Sprintf("Transaction successful  %s -[%s]-> %s", sentTx.From, toReadable(sentTx.Amount), sentTx.To)))
 }
 
 func mintRoute(w http.ResponseWriter, r *http.Request) {
@@ -326,13 +323,11 @@ func mintRoute(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&sentMint); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
 	} else if err := mint(sentMint, uint64(time.Now().UnixMilli())); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+	} else {
+		Log(c.InGreen(fmt.Sprintf("Mint successful         %s <-[%s]-", sentMint.To, toReadable(sentMint.Amount))))
 	}
-
-	Log(c.InGreen(fmt.Sprintf("Mint successful         %s <-[%s]-", sentMint.To, toReadable(sentMint.Amount))))
 }
 
 func burnRoute(w http.ResponseWriter, r *http.Request) {
@@ -340,30 +335,25 @@ func burnRoute(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&sentBurn); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
 	} else if err := burn(sentBurn); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+	} else {
+		Log(c.InGreen(fmt.Sprintf("Burn successful         %s -[%s]->", sentBurn.From, toReadable(sentBurn.Amount))))
 	}
-
-	Log(c.InGreen(fmt.Sprintf("Burn successful         %s -[%s]->", sentBurn.From, toReadable(sentBurn.Amount))))
 }
 
 func stipendRoute(w http.ResponseWriter, r *http.Request) {
 	var to user
 
-	if _, err := fmt.Sscanf(r.PathValue("id"), "%d", &to); err != nil {
+	if _, err := fmt.Sscanf(r.PathValue("id"), "%s", &to); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
 	} else if prevStipends[to]+stipendTime > uint64(time.Now().UnixMilli()) {
 		http.Error(w, "Next stipend not available yet", http.StatusBadRequest)
-		return
 	} else if err := stipend(to); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+	} else {
+		Log(c.InGreen(fmt.Sprintf("Stipend successful      %s", to)))
 	}
-
-	Log(c.InGreen(fmt.Sprintf("Stipend successful      %s", to)))
 }
 
 func main() {

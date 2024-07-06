@@ -4,6 +4,7 @@
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
 import { dev } from "$app/environment"
+import { stipend } from "$lib/server/economy"
 import { auth } from "$lib/server/lucia"
 import { Record, equery, surql } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
@@ -111,15 +112,7 @@ export async function handle({ event, resolve }) {
 	)
 		redirect(302, "/moderation")
 
-	const stipendAvailable =
-		new Date(user.currencyCollected).getTime() -
-			(Date.now() - 3600e3 * 12) <
-		0
-	if (stipendAvailable)
-		await equery(
-			surql`UPDATE ${Record("user", user.id)} SET currencyCollected = time::now()`
-		)
-
+	if (await stipend(user.id)) console.log("Awarded stipend to", user.username)
 	return await finish()
 }
 
