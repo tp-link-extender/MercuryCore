@@ -119,18 +119,16 @@ export async function tShirt(file: File) {
  * save(id)
  */
 export async function tShirtThumbnail(file: File) {
+	const input = await sharp(await file.arrayBuffer())
+		.resize(250, 250, {
+			fit: "contain",
+			position: "top",
+			background: { r: 0, g: 0, b: 0, alpha: 0 },
+		})
+		.toBuffer()
+
 	const fileBuffer = await sharp("static/tShirtTemplate.webp")
-		.composite([
-			{
-				input: await sharp(await file.arrayBuffer())
-					.resize(250, 250, {
-						fit: "contain",
-						position: "top",
-						background: { r: 0, g: 0, b: 0, alpha: 0 },
-					})
-					.toBuffer(),
-			},
-		])
+		.composite([{ input }])
 		.webp()
 		.toBuffer()
 		.catch(() => {

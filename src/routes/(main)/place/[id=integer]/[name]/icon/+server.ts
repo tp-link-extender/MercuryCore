@@ -8,7 +8,7 @@ export async function GET({ params }) {
 	if (!(await find("place", id))) error(404, "Not found")
 
 	if (!(await Bun.file(filename).exists()))
-		redirect(302, `/place/placeholderIcon${1 + (id % 3)}.webp`)
+		redirect(302, "/place/placeholderIcon.webp")
 
 	return new Response(Bun.file(filename))
 }
