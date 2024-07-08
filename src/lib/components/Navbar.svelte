@@ -5,6 +5,8 @@
 	import { slide } from "svelte/transition"
 	import User from "./User.svelte"
 
+	export let data: import("../../routes/$types").LayoutData
+
 	let search = ""
 	let searchCompleted = true
 	let currentSearchFocus = -1
@@ -60,8 +62,6 @@
 		}
 	}
 
-	export let data: import("../../routes/$types").LayoutData
-
 	const { user } = data
 	const nav1 = [
 		// ["Home", "/", "fa-house-chimney"],
@@ -108,8 +108,7 @@
 			<img src="/icon.svg" alt="Mercury logo" />
 		</a>
 		{#if user}
-			<div
-				class="<lg:hidden pl-6 pr-2 flex flex-row gap-4 pl-3">
+			<div class="<lg:hidden pl-6 pr-2 flex flex-row gap-4 pl-3">
 				{#each nav1 as [title, href]}
 					<a class="btn light-text px-1 border-0" {href}>
 						{title}

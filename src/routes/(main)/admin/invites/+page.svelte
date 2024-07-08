@@ -11,10 +11,10 @@
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
-	const formData = superForm(data.form)
-	const { form } = formData
 
+	const formData = superForm(data.form)
 	export const snapshot = formData
+	const { form } = formData
 
 	const tomorrow = new Date(Date.now() + 86400e3).toISOString().slice(0, 10)
 

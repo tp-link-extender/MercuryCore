@@ -7,12 +7,8 @@
 	import Waves from "../Waves.svelte"
 
 	export let data
-	const formData = superForm(data.form, {
-		onResult: ({ result }) =>
-			// Reload to get the new session after redirecting to homepage
-			result.type === "redirect" ? window.location.reload() : null
-	})
 
+	const formData = superForm(data.form)
 	export const snapshot = formData
 
 	const descriptions = [

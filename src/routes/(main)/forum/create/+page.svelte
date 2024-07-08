@@ -6,8 +6,8 @@
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
-	const formData = superForm(data.form)
 
+	const formData = superForm(data.form)
 	export const snapshot = formData
 </script>
 

@@ -2,6 +2,7 @@
 	import Head from "$lib/components/Head.svelte"
 
 	export let data
+
 	const { balance } = data
 
 	const beforePoint = Math.floor(balance / 1e6).toString()

@@ -5,6 +5,7 @@
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data: import("./$types").PageData
+
 	const formData = superForm(data.passwordForm)
 
 	let copiedSuccess = false

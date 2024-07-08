@@ -14,8 +14,9 @@
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
-	const { user } = data
 	export let form // would be typed as null unless we do actions shenanigans
+	
+	const { user } = data
 
 	let regenerating = false
 
@@ -32,7 +33,6 @@
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({})
 	const formData = superForm(data.form)
-
 	export const snapshot = formData
 
 	let refresh = 0

@@ -10,6 +10,11 @@
 	import Interactions from "./Interactions.svelte"
 	import ProfilePlace from "./ProfilePlace.svelte"
 
+	export let data
+	export let form // ghoofy ahh types
+
+	const { user } = data
+
 	const permissions = [
 		[], // index from 1
 		["white", "fa-user", "User"],
@@ -19,9 +24,7 @@
 		["crimson", "fa-scale-balanced", "Administrator"]
 	]
 
-	export let data
-	const { user } = data
-	export let form // ghoofy ahh types
+
 
 	let regenerating = false
 
@@ -129,7 +132,7 @@
 		{#if data.username !== user.username}
 			<span class="lg:hidden flex justify-between items-end pt-2">
 				<Interactions {data} />
-				<ReportButton user={data.username} url="/user/{data.number}" />
+				<ReportButton user={data.username} url="/user/{data.username}" />
 			</span>
 		{/if}
 	</div>

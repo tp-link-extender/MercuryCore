@@ -9,9 +9,9 @@
 	import Status from "./Status.svelte"
 
 	export let data
+
 	const { user } = data
 	const formData = superForm(data.form)
-
 	export const snapshot = formData
 
 	$: sortedFeed = data.feed.sort(

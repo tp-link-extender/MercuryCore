@@ -6,6 +6,8 @@
 	import Head from "$lib/components/Head.svelte"
 	import Navbar from "$lib/components/Navbar.svelte"
 
+	export let data: import("./$types").LayoutData
+
 	const status = $page.status
 	const errors: { [k: number]: string } = {
 		401: "mStop",
@@ -16,8 +18,6 @@
 		451: "mBurn",
 		454: "mTick"
 	}
-
-	export let data: import("./$types").LayoutData
 </script>
 
 <Head title="Error {status}" />

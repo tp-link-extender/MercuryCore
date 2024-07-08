@@ -6,14 +6,14 @@
 	import TabData from "$lib/components/TabData"
 	import TabNav from "$lib/components/TabNav.svelte"
 
+	export let data
+
 	const assetTypes = [
 		["Shirts", "🧥", "11"],
 		["T-Shirts", "👕", "2"],
 		["Pants", "👖", "12"],
 		["Decals", "🖼️", "13"]
 	]
-
-	export let data
 
 	let tabData = TabData(data.url, ["Create", "Creations"])
 	let tabData2 = TabData(data.url, ["Shirts", "T-Shirts", "Pants", "Decals"])

@@ -7,8 +7,8 @@
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
-	const formData = superForm(data.form)
 
+	const formData = superForm(data.form)
 	export const snapshot = formData
 
 	let tabData = TabData(data.url, ["Change User Password"], ["far fa-key"])

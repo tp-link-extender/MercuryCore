@@ -5,6 +5,8 @@
 	import Tab from "$lib/components/Tab.svelte"
 	import TabData from "$lib/components/TabData"
 
+	export let data
+
 	const permissions = [
 		[], // index from 1
 		["white", "fa-user", "User"],
@@ -27,7 +29,6 @@
 		]
 	}
 
-	export let data
 	const { user, totalmem, freemem } = data
 
 	const perms = permissions[user.permissionLevel]

@@ -4,6 +4,7 @@
 	import fade from "$lib/fade"
 
 	export let data
+
 	const { user } = data
 </script>
 

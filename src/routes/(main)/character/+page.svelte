@@ -8,8 +8,9 @@
 	import AvatarItem from "./AvatarItem.svelte"
 
 	export let data
-	const { user } = data
 	export let form
+
+	const { user } = data
 
 	let query = data.query
 	let searchedData: typeof data.assets = []

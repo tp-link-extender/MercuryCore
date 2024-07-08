@@ -9,6 +9,7 @@
 	import Styling from "./Styling.svelte"
 
 	export let data
+
 	const { user } = data
 
 	let tabData = TabData(

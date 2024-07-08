@@ -12,8 +12,9 @@
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
-	const { user } = data
 	export let asComponent = false
+
+	const { user } = data
 
 	let post = writable(data.post) // this is the svelte 4 thing ever
 	let replyingTo = writable("")

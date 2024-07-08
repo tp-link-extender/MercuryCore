@@ -13,6 +13,7 @@
 	import Tab from "$lib/components/Tab.svelte"
 
 	export let data
+
 	const formDataManual = superForm(data.formManual)
 	const formDataAutopilot = superForm(data.formAuto)
 

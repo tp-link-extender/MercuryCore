@@ -32,6 +32,7 @@
 	}
 
 	const formData = superForm(data.form)
+	export const snapshot = formData
 	const { form, message, delayed } = formData
 	const viewBody = (newBannerData: typeof bannerData) => () => {
 		modal.set(true)
@@ -41,7 +42,6 @@
 		bannerData = newBannerData
 	}
 
-	export const snapshot = formData
 </script>
 
 <Head title="Banners - Admin" />

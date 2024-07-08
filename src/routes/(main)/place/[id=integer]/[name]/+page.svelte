@@ -13,6 +13,7 @@
 	import customProtocol from "./customprotocol.ts"
 
 	export let data
+
 	const { user } = data
 
 	let place = writable(data.place)

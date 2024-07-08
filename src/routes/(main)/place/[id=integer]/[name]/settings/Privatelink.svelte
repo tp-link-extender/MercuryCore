@@ -4,6 +4,7 @@
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data: import("./$types").PageData
+
 	const { message, enhance: enh, delayed } = superForm(data.privatelinkForm)
 
 	$: value = encodeURI(

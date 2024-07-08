@@ -5,11 +5,12 @@
 	import Head from "$lib/components/Head.svelte"
 	import { writable } from "svelte/store"
 
+	export let data
+
+	const { user } = data
+
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({})
-
-	export let data
-	const { user } = data
 
 	$: topReply = data.replies[0]
 

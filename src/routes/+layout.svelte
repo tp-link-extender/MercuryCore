@@ -17,6 +17,7 @@
 	import "uno.css"
 
 	export let data
+
 	$: user = data.user
 
 	// Settings for nprogress, the loading bar shown at the top of the page when navigating
