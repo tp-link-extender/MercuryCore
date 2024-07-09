@@ -26,29 +26,16 @@
 	}
 
 	// Run function whenever query changes
-	$: query &&
-		browser &&
-		(async () => {
-			if (query.trim().length === 0) {
-				searchedData = data.assets
-				return
-			}
+	async function search() {
+		if (query.trim().length === 0) {
+			searchedData = data.assets
+			return
+		}
 
-			const formdata = new FormData()
-			formdata.append("q", query)
-
-			const response = await fetch("/character?/search", {
-				method: "POST",
-				body: formdata
-			})
-			const result = deserialize(await response.text()) as {
-				data: {
-					assets: typeof data.assets
-				}
-			}
-
-			searchedData = result.data.assets
-		})()
+		const response = await fetch(`/character/search?q=${query}`)
+		searchedData = (await response.json()).data.assets as typeof data.assets
+	}
+	$: query && browser && search()
 
 	export const snapshot = {
 		capture: () => query,
@@ -227,25 +214,27 @@
 					<fa fa-magnifying-glass />
 				</button>
 			</form>
-			<div class="grid xl:grid-cols-6 sm:grid-cols-4 grid-cols-3 gap-4">
-				{#each assets || [] as asset, num}
-					<AvatarItem
-						{asset}
-						{num}
-						total={(assets || []).length}
-						currentTab={tabData.currentTab}
-						{enhanceRegen} />
-				{/each}
-				{#if query && assets.length === 0}
-					<h2 class="text-xs pt-12">
-						{#if tabData.currentTab === "Recent"}
-							No recently worn items found with search term {query}
-						{:else}
-							No {tabData.currentTab} found with search term {query}
-						{/if}
-					</h2>
-				{/if}
-			</div>
+			{#if query && assets.length === 0}
+				<h2 class="text-xs pt-12">
+					{#if tabData.currentTab === "Recent"}
+						No recently worn items found with search term {query}
+					{:else}
+						No {tabData.currentTab} found with search term {query}
+					{/if}
+				</h2>
+			{:else}
+				<div
+					class="grid xl:grid-cols-6 sm:grid-cols-4 grid-cols-3 gap-4">
+					{#each assets || [] as asset, num}
+						<AvatarItem
+							{asset}
+							{num}
+							total={(assets || []).length}
+							currentTab={tabData.currentTab}
+							{enhanceRegen} />
+					{/each}
+				</div>
+			{/if}
 		</div>
 	</div>
 </div>

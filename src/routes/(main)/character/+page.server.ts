@@ -16,7 +16,9 @@ const brickColours = [
 	1016, 1017, 1018, 1019, 1020, 1021, 1022, 1023, 1024, 1025, 1026, 1027,
 	1028, 1029, 1030, 1031, 1032,
 ]
-const select = `
+
+// boo kit
+export const _select = `
 	SELECT
 		meta::id(id) AS id,
 		name,
@@ -27,7 +29,7 @@ const select = `
 		AND type IN [${allowedTypes.join(", ")}]
 		AND visibility = "Visible"`
 
-type Asset = {
+export type Asset = {
 	name: string
 	price: number
 	id: number
@@ -36,21 +38,16 @@ type Asset = {
 }
 
 export const load = async ({ locals, url }) => {
-	const searchQ = url.searchParams.get("q")?.trim()
+	const { user } = await authorise(locals)
 
+	const query = url.searchParams.get("q")?.trim()
 	const [assets] = await equery<Asset[][]>(
-		`${select} ${
-			searchQ
-				? "AND string::lowercase($query) IN string::lowercase(name)"
-				: ""
-		}`,
-		{
-			user: Record("user", (await authorise(locals)).user.id),
-			query: searchQ,
-		}
+		query
+			? `${_select} AND string::lowercase($query) IN string::lowercase(name)`
+			: _select,
+		{ query, user: Record("user", user.id) }
 	)
-
-	return { query: searchQ, assets }
+	return { query, assets }
 }
 
 async function getEquipData(e: RequestEvent) {
@@ -191,7 +188,7 @@ actions.search = async ({ request, locals }) => {
 	const { user } = await authorise(locals)
 	const formData = await request.formData()
 	const [assets] = await equery<Asset[][]>(
-		`${select} AND string::lowercase($query) IN string::lowercase(name)`,
+		`${_select} AND string::lowercase($query) IN string::lowercase(name)`,
 		{
 			query: (formData.get("q") as string).trim(),
 			user: Record("user", user.id),
