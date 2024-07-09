@@ -54,7 +54,8 @@ DEFINE TABLE user SCHEMAFULL;
 	DEFINE FIELD created ON user TYPE string;
 	DEFINE FIELD css ON user TYPE string;
 	DEFINE FIELD currencyCollected ON user TYPE datetime;
-	DEFINE FIELD email ON user TYPE string;
+	DEFINE FIELD email ON user TYPE string
+		ASSERT string::is::email($value) OR $value == ""; # admin account uh yeah
 	DEFINE FIELD hashedPassword ON user TYPE string;
 	DEFINE FIELD lastOnline ON user TYPE datetime;
 	DEFINE FIELD permissionLevel ON user TYPE number;
@@ -63,8 +64,22 @@ DEFINE TABLE user SCHEMAFULL;
 DEFINE INDEX usernameI ON user COLUMNS username UNIQUE;
 DEFINE INDEX emailI ON user COLUMNS email UNIQUE;
 
+DEFINE FUNCTION fn::auditLog($action: string, $note: string, $user: record) {
+	CREATE auditLog CONTENT {
+		action: $action,
+		note: $note,
+		user: $user,
+		time: time::now()
+	}
+};
+
 DEFINE FUNCTION fn::id() {
 	RETURN function((UPDATE ONLY stuff:increment SET ids += 1).ids) {
 		return arguments[0].toString(36) // jar var script in muh dayta bayse
 	}
 };
+
+DEFINE EVENT bannerCreateLog ON TABLE banner WHEN $event = "CREATE" THEN
+	fn::auditLog("Administration", string::concat('Create banner "', $record.body, '"'), $after.creator);
+DEFINE EVENT bannerDeleteLog ON TABLE banner WHEN $event = "UPDATE" AND !$before.deleted AND $after.deleted THEN
+	fn::auditLog("Administration", string::concat('Delete banner "', $record.body, '"'), $after.creator);

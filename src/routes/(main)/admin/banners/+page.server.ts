@@ -86,26 +86,20 @@ actions.create = async e => {
 	const limit = ratelimit(form, "createBanner", getClientAddress, 30)
 	if (limit) return limit
 	const { bannerText, bannerColour, bannerTextLight } = form.data
-
 	if (!bannerText || !bannerColour)
 		return message(form, "Missing fields", { status: 400 })
-
 	if ((await bannerActiveCount()) >= 3)
 		return message(form, "Too many active banners", { status: 400 })
 
-	await Promise.all([
-		equery(surql`CREATE banner CONTENT $data`, {
-			data: {
-				active: true,
-				deleted: false,
-				body: bannerText,
-				bgColour: bannerColour,
-				textLight: !!bannerTextLight,
-				creator: Record("user", user.id),
-			},
-		}),
-		auditLog("Administration", `Create banner "${bannerText}"`, user.id),
-	])
+	const data = {
+		active: true,
+		deleted: false,
+		body: bannerText,
+		bgColour: bannerColour,
+		textLight: !!bannerTextLight,
+		creator: Record("user", user.id),
+	}
+	await equery(surql`CREATE banner CONTENT ${data}`)
 
 	return message(form, "Banner created successfully!")
 }
@@ -116,18 +110,7 @@ actions.delete = async e => {
 
 	if (!id) return message(form, "Missing fields", { status: 400 })
 
-	const [[deletedBanner]] = await equery<
-		{
-			body: string
-			creator: string
-		}[][]
-	>(surql`UPDATE ${Record("banner", id)} SET deleted = true`)
-
-	await auditLog(
-		"Administration",
-		`Delete banner "${deletedBanner.body}"`,
-		user.id
-	)
+	await equery(surql`UPDATE ${Record("banner", id)} SET deleted = true`)
 }
 actions.updateBody = async e => {
 	const { form, error } = await getData(e)
