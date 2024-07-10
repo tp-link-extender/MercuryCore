@@ -11,10 +11,10 @@ CREATE user CONTENT {
 	created: time::now(),
 	css: "",
 	currencyCollected: time::now(),
-	email: $user.email,
+	email: "",
 	hashedPassword: $user.hashedPassword,
 	lastOnline: time::now(),
-	permissionLevel: 1,
+	permissionLevel: 5,
 	status: <future> {
 		IF ->playing[WHERE valid AND ping > time::now() - 35s] THEN
 			"Playing"
@@ -29,5 +29,3 @@ CREATE user CONTENT {
 # Return some user data
 (SELECT meta::id(id) AS id FROM user WHERE username = $user.username)[0];
 
-UPDATE ONLY $key SET usesLeft -= 1;
-RELATE $u->used->$key

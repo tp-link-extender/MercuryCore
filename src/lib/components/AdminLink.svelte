@@ -27,16 +27,11 @@
 </a>
 
 <style>
-	a {
-		& .card-body {
-			transition: background-color 0.2s;
-		}
-		&:hover .card-body {
-			background-color: var(--background) !important;
-		}
-	}
-
-	.card {
+	a .card {
 		border: 1px solid var(--accent2);
+		transition: background-color 0.2s;
+	}
+	a:hover .card {
+		background-color: var(--background) !important;
 	}
 </style>

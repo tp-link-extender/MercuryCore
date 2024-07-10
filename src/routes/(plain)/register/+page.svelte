@@ -78,10 +78,6 @@
 				label="Registration Key"
 				placeholder="mercurkey-12311121123" />
 		</Form>
-
-		<p>
-			By signing up, you agree to our Terms of Service and Privacy Policy.
-		</p>
 	{:else}
 		<h2>Create the initial account</h2>
 

@@ -6,11 +6,8 @@ import { redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
+import createAdminQuery from "./createAdmin.surql"
 import createUserQuery from "./createUser.surql"
-
-const createRegkeyUserQuery = `${createUserQuery}
-	UPDATE ONLY $key SET usesLeft -= 1;
-	RELATE $u->used->$key`
 
 const schemaInitial = z.object({
 	username: z
@@ -32,22 +29,6 @@ const schema = z.object({
 	cpassword: z.string().min(1).max(6969),
 	regkey: z.string().min(1).max(6969),
 })
-
-type CreatedUser = {
-	username: string
-	email: string
-	hashedPassword: string
-	permissionLevel: number
-	currency: number
-}
-
-async function createUser(user: CreatedUser, keyUsed?: string) {
-	const q = await equery<{ id: string }[]>(
-		keyUsed ? createRegkeyUserQuery : createUserQuery,
-		{ user, key: keyUsed ? Record("regKey", keyUsed) : undefined }
-	)
-	return q[3].id
-}
 
 async function isAccountRegistered() {
 	const [userCount] = await equery<number[]>(surql`count(SELECT 1 FROM user)`)
@@ -98,17 +79,16 @@ actions.register = async ({ request, cookies }) => {
 			["This registration key has ran out of uses"]
 		)
 
-	const userId = await createUser(
-		{
+	const q = await equery<{ id: string }[]>(createUserQuery, {
+		user: {
 			username,
 			email,
 			// I still love scrypt, though argon2 is better supported
 			hashedPassword: Bun.password.hashSync(password),
-			permissionLevel: 1,
-			currency: 0,
 		},
-		regkey
-	)
+		key: Record("regKey", regkey),
+	})
+	const userId = q[2].id
 
 	try {
 		await requestRender("Avatar", userId)
@@ -136,7 +116,6 @@ actions.initialAccount = async ({ request, cookies }) => {
 			["password", "cpassword"],
 			[" ", "The specified passwords do not match"]
 		)
-
 	if (await isAccountRegistered())
 		return formError(
 			form,
@@ -144,17 +123,15 @@ actions.initialAccount = async ({ request, cookies }) => {
 			["There's already an account registered"]
 		)
 
-	await equery(surql`UPDATE ONLY stuff:increment SET user = 0`)
-
 	// This is the kind of stuff that always breaks due to never getting tested
 	// Remember: untested === unworking
-	const userId = await createUser({
-		username,
-		email: "",
-		hashedPassword: Bun.password.hashSync(password),
-		permissionLevel: 5,
-		currency: 0,
+	const q = await equery<{ id: string }[]>(createAdminQuery, {
+		user: {
+			username,
+			hashedPassword: Bun.password.hashSync(password),
+		},
 	})
+	const userId = q[2].id
 
 	try {
 		await requestRender("Avatar", userId)

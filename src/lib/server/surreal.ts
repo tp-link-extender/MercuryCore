@@ -75,18 +75,17 @@ export const Record = <T extends keyof RecordIdTypes>(
 type Prepared = PreparedQuery<(result: unknown[]) => unknown>
 
 async function fixError<T>(q: () => Promise<T>) {
-	for (let i = 1; i <= 3; i++) {
-		try {
-			return await q()
-		} catch (err) {
-			const e = err as Error
-			if (
-				!e.message.startsWith(failed) &&
-				!e.message.startsWith(failedConn)
-			)
-				await reconnect()
+	try {
+		return await q()
+	} catch (err) {
+		const e = err as Error
+		if (
+			!e.message.startsWith(failed) &&
+			!e.message.startsWith(failedConn)
+		) {
+			console.error(e)
+			await reconnect()
 		}
-		console.log(`retrying query ${i} time${i > 1 ? "s" : ""}`)
 	}
 	return undefined as unknown as T
 }
@@ -104,12 +103,14 @@ export const equery = async <T>(
 	await fixError(async () => {
 		const result = await db.query_raw(await query, bindings)
 		const final: unknown[] = []
+		const errors: string[] = []
 
 		for (const res of result) {
 			if (res.status === "ERR" && !res.result.startsWith(failed))
-				throw new Error(res.result)
+				errors.push(res.result)
 			final.push(res.result)
 		}
+		if (errors.length > 0) throw new Error(errors.join("\n"))
 
 		return final as T
 	})

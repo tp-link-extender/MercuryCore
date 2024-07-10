@@ -1,4 +1,3 @@
-import auditLogQuery from "$lib/server/auditLog.surql"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
@@ -29,7 +28,6 @@ export async function load({ locals }) {
 	await authorise(locals, 5)
 
 	const [invites] = await equery<Invite[][]>(invitesQuery)
-
 	return {
 		form: await superValidate(zod(schema)),
 		invites,
@@ -45,6 +43,14 @@ async function getData(e: RequestEvent) {
 		form,
 		error: !form.valid && formError(form),
 	}
+}
+
+const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
+function randomInvite() {
+	let key = ""
+	for (let i = 0; i < 20; i++)
+		key += chars[Math.floor(Math.random() * chars.length)]
+	return key
 }
 
 export const actions: import("./$types").Actions = {}
@@ -76,24 +82,13 @@ actions.create = async e => {
 		return formError(form, ["inviteExpiry"], ["Invalid date"])
 
 	const [log] = await equery<unknown[]>(
-		`
-			BEGIN TRANSACTION;
-			LET $key = CREATE ${enableInviteCustom ? "$" : ""}regKey CONTENT {
-				usesLeft: $inviteUses,
-				expiry: $expiry,
-				created: time::now()
-			};
-			RELATE $user->created->$key;
-			LET $note = string::concat("Created invite key ", meta::id($key[0].id));
-			${auditLogQuery};
-			COMMIT TRANSACTION`,
-		{
-			action: "Administration",
-			user: Record("user", user.id),
-			inviteUses,
-			expiry,
-			regKey: Record("regKey", inviteCustom || ""),
-		}
+		surql`
+			CREATE ${Record("regKey", inviteCustom || randomInvite())} CONTENT {
+				usesLeft: ${inviteUses},
+				expiry: ${expiry},
+				created: time::now(),
+				creator: ${Record("user", user.id)},
+			}`
 	)
 
 	return typeof log === "string"
@@ -115,14 +110,19 @@ actions.disable = async e => {
 	)
 
 	if (key && key.usesLeft === 0)
-		return message(form, "Invite key is already disabled", { status: 400 })
+		return message(
+			form,
+			"Invite key is already disabled or has already ran out of uses",
+			{ status: 400 }
+		)
 
-	await equery(`UPDATE $key SET usesLeft = 0; ${auditLogQuery}`, {
-		action: "Administration",
-		note: `Disable invite key ${id}`,
-		user: Record("user", user.id),
-		key: Record("regKey", id),
-	})
+	await equery(
+		surql`
+			UPDATE ${Record("regKey", id)} MERGE {
+				usesLeft: 0
+				disabledBy: ${Record("user", user.id)} # for logging for now
+			}`
+	)
 
 	return message(form, "Invite key disabled successfully")
 }
