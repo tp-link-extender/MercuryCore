@@ -27,5 +27,5 @@ CREATE user CONTENT {
 	username: $user.username,
 };
 # Return some user data
-(SELECT meta::id(id) AS id FROM user WHERE username = $user.username)[0];
-
+LET $u = (SELECT id FROM user WHERE username = $user.username)[0].id;
+meta::id($u);

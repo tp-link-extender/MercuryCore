@@ -9,9 +9,8 @@ import { auth } from "$lib/server/lucia"
 import { Record, equery, surql } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import type { Cookie } from "lucia"
-import pc from "picocolors"
+import { blue, green, gray as grey, magenta, red, yellow } from "picocolors"
 
-const { magenta, red, yellow, green, blue, gray: grey } = pc
 const methodColours = Object.freeze({
 	GET: green("GET"),
 	POST: yellow("POST"),

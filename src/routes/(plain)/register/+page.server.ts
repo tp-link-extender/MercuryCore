@@ -67,8 +67,9 @@ actions.register = async ({ request, cookies }) => {
 	if (emailCheck)
 		return formError(form, ["email"], ["This email is already in use"])
 
+	const key = Record("regKey", regkey.split("-")[1])
 	const [[regkeyCheck]] = await equery<{ usesLeft: number }[][]>(
-		surql`SELECT usesLeft FROM ${Record("regKey", regkey.split("-")[1])}`
+		surql`SELECT usesLeft FROM ${key}`
 	)
 	if (!regkeyCheck)
 		return formError(form, ["regkey"], ["Registration key is invalid"])
@@ -79,16 +80,15 @@ actions.register = async ({ request, cookies }) => {
 			["This registration key has ran out of uses"]
 		)
 
-	const q = await equery<{ id: string }[]>(createUserQuery, {
+	const [, , userId] = await equery<string[]>(createUserQuery, {
 		user: {
 			username,
 			email,
 			// I still love scrypt, though argon2 is better supported
 			hashedPassword: Bun.password.hashSync(password),
 		},
-		key: Record("regKey", regkey),
+		key,
 	})
-	const userId = q[2].id
 
 	try {
 		await requestRender("Avatar", userId)
@@ -125,13 +125,12 @@ actions.initialAccount = async ({ request, cookies }) => {
 
 	// This is the kind of stuff that always breaks due to never getting tested
 	// Remember: untested === unworking
-	const q = await equery<{ id: string }[]>(createAdminQuery, {
+	const [, , userId] = await equery<string[]>(createAdminQuery, {
 		user: {
 			username,
 			hashedPassword: Bun.password.hashSync(password),
 		},
 	})
-	const userId = q[2].id
 
 	try {
 		await requestRender("Avatar", userId)

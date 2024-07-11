@@ -1,5 +1,12 @@
 import { building } from "$app/environment"
-import { type PreparedQuery, RecordId, Surreal, surql } from "surrealdb.js"
+import { green, red } from "picocolors"
+import {
+	type PreparedQuery,
+	type QueryResult,
+	RecordId,
+	Surreal,
+	surql,
+} from "surrealdb.js"
 import auditLogQuery from "./auditLog.surql"
 import initQuery from "./init.surql"
 import CustomHttpEngine, { realUrl } from "./surrealEngine.ts"
@@ -90,6 +97,12 @@ async function fixError<T>(q: () => Promise<T>) {
 	return undefined as unknown as T
 }
 
+// Make the query error/return/watever more readable, so we can see which are errors and which statement of the query failed
+const makeReadable = (r: QueryResult<unknown>) =>
+	r.status === "ERR"
+		? red(r.result)
+		: green(JSON.stringify(r.result, null, 2))
+
 /**
  * Executes a query in SurrealDB and returns its results. Errors if the query failed.
  * @param query The query to execute.
@@ -103,14 +116,20 @@ export const equery = async <T>(
 	await fixError(async () => {
 		const result = await db.query_raw(await query, bindings)
 		const final: unknown[] = []
-		const errors: string[] = []
+		let hasErrors = false
 
 		for (const res of result) {
 			if (res.status === "ERR" && !res.result.startsWith(failed))
-				errors.push(res.result)
+				hasErrors = true
 			final.push(res.result)
 		}
-		if (errors.length > 0) throw new Error(errors.join("\n"))
+		if (hasErrors) {
+			const qerrors = result
+				// zero indexing booooo (whatevr)
+				.map((r, i) => `${i}  ${makeReadable(r)}`)
+				.join("\n")
+			throw new Error(`Query errors occurred\n${qerrors}`)
+		}
 
 		return final as T
 	})
