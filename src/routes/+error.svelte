@@ -12,7 +12,7 @@
 	const errors: { [k: number]: string } = {
 		401: "mStop",
 		403: "mStop",
-		404: "mQuestion",
+		404: "404",
 		409: "mDouble",
 		410: "mGone",
 		451: "mBurn",

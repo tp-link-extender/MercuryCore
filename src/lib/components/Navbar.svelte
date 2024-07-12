@@ -104,8 +104,8 @@
 		<a class="light-text text-xl no-underline <sm:hidden fw-500" href="/">
 			Mercury
 		</a>
-		<a class="light-text text-xl no-underline sm:hidden size-8" href="/">
-			<img src="/icon.svg" alt="Mercury logo" />
+		<a class="light-text text-xl no-underline sm:hidden" href="/">
+			<img src="/icon.svg" alt="Mercury logo" class=" size-8" />
 		</a>
 		{#if user}
 			<div class="<lg:hidden pl-6 pr-2 flex flex-row gap-4 pl-3">
