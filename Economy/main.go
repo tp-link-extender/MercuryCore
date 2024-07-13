@@ -283,10 +283,6 @@ func stipend(to user) error {
 	return nil
 }
 
-func pingRoute(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "pong")
-}
-
 func currentFeeRoute(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, currentFee())
 }
@@ -374,7 +370,6 @@ func main() {
 
 	router := http.NewServeMux()
 
-	router.HandleFunc("GET /ping", pingRoute)
 	router.HandleFunc("GET /currentFee", currentFeeRoute)
 	router.HandleFunc("GET /currentStipend", currentStipendRoute)
 	router.HandleFunc("GET /balance/{id}", balanceRoute)

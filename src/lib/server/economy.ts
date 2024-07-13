@@ -1,7 +1,22 @@
 const economyUrl = "localhost:2009"
 
-export const getBalance = async (userId: string) =>
-	+(await (await fetch(`${economyUrl}/balance/${userId}`)).text())
+export async function getBalance(userId: string) {
+	try {
+		const req = await fetch(`${economyUrl}/balance/${userId}`)
+		return { ok: true, value: +(await req.text()) }
+	} catch (err) {
+		return { ok: false, value: 0 }
+	}
+}
+
+export async function getStipend() {
+	try {
+		const req = await fetch(`${economyUrl}/currentStipend`)
+		return { ok: true, value: +(await req.text()) }
+	} catch (err) {
+		return { ok: false, value: 0 }
+	}
+}
 
 export async function stipend(userId: string) {
 	try {

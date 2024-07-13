@@ -1,19 +1,44 @@
 <script lang="ts">
+	import { dev } from "$app/environment"
+	import beautifyCurrency from "$lib/beautifyCurrency"
 	import Head from "$lib/components/Head.svelte"
+	import { VERSION } from "@sveltejs/kit"
 	import Waves from "./Waves.svelte"
 
+	export let data
+
+	const [, beforePoint, afterPoint, zerosAfter] = beautifyCurrency(
+		data.stipend.value
+	)
+
 	const systems = [
-		["Server", ["You are running", "DEVELOPMENT"]],
-		[
-			"Database",
-			["Connected to", "surrealdb-1.5.3", "with", "CustomHttpEngine"]
-		],
-		["Client API", ["Connected with", "200 OK"]],
-		["Economy Service", ["Current stipend size is", "10.000000", "unit"]],
-		["RCCService", ["Connected with", "0", "jobs running"]],
-		["Reverse proxy", ["Rewrite of", "setup", "subdomain successful"]],
-		["Asset cache", ["Connected with", "4", "assets cached"]],
-		["Hotel?", ["", "Trivago"]]
+		{
+			name: "Mercury Core",
+			ok: true,
+			success: [
+				"Running SvelteKit",
+				VERSION,
+				"in",
+				dev ? "DEVELOPMENT" : "PRODUCTION"
+			],
+			err: ""
+		},
+		{
+			name: "Database",
+			ok: true,
+			success: ["Connected to", data.database],
+			err: ""
+		},
+		{
+			name: "Economy Service",
+			ok: data.stipend.ok,
+			success: [
+				"Current stipend size is",
+				`${beforePoint}.${afterPoint}${zerosAfter}`,
+				"unit"
+			],
+			err: "Unable to connect to the service"
+		}
 	]
 </script>
 
@@ -29,34 +54,42 @@
 <Waves reverse />
 
 <div
-	class="grid grid-cols-2 absolute w-250 absolute left-1/2 -translate-x-1/2 pt-10vh">
+	class="grid grid-cols-2 absolute w-250 absolute left-1/2 -translate-x-1/2 pt-20vh">
 	<div class="flex flex-col justify-center">
 		<h1 class="font-bold text-14">
 			Mercury <span class="opacity-50">Core</span>
 		</h1>
 		<div class="py-6">
-			{#each systems as [name, status]}
+			{#each systems as { name, ok, success, err }}
 				<div class="flex items-center py-3">
-					<far class="text-4xl fa-check-circle text-emerald-6" />
+					<far
+						class="text-4xl {ok
+							? 'fa-check-circle text-emerald-6'
+							: 'fa-circle-ellipsis text-neutral-2'}" />
 					<div class="pl-4">
 						<div class="text-7 font-500 light-text line-height-5">
 							{name}
 						</div>
 						<p class="p-0">
-							{#each status as stat, i}
-								<small
-									class="text-3.5 font-500 {i % 2 == 0
-										? 'opacity-60'
-										: 'text-emerald-2'}">
-									{stat}
+							{#if ok}
+								{#each success as stat, i}
+									<small
+										class="text-3.5 font-500 {i % 2 == 0
+											? 'opacity-60'
+											: 'text-emerald-2'}">
+										{stat}
+									</small>
+								{/each}
+							{:else}
+								<small class="text-3.5 font-500 text-red-2">
+									{err}
 								</small>
-							{/each}
+							{/if}
 						</p>
 					</div>
 				</div>
 			{/each}
 		</div>
-		<p>Mercury core has successfully been set up!</p>
 		<div class="inline pb-2">
 			<a
 				type="button"
@@ -74,13 +107,14 @@
 			</a>
 		</div>
 	</div>
-	<div class="flex flex-col items-center justify-center">
-		<h1 class="font-normal text-8 mb--2">
-			<div class="underline-#5a8e99">if you can see this.</div>
-			<div class="underline-#caafa8">that means your installation</div>
-			<div class="underline-#dbdbe3">of Mercury Core is working!</div>
-		</h1>
-		<img src="/landing/working.svg" alt="Mercury" />
+	<div class="flex justify-center">
+		{#if systems.every(system => system.ok)}
+			<p class="font-normal text-6 pt-9">
+				If you can see this, that means your installation of Mercury
+				Core is working!
+			</p>
+			<img src="/landing/working.svg" alt="Mercury" class="w-50" />
+		{/if}
 	</div>
 </div>
 
@@ -94,8 +128,5 @@
 			#060e25 30%,
 			var(--darker) 80%
 		);
-	}
-	h1 div {
-		@apply underline underline-1.5px;
 	}
 </style>

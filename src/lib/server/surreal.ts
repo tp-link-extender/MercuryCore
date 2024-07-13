@@ -1,4 +1,5 @@
 import { building } from "$app/environment"
+import { error } from "@sveltejs/kit"
 import { green, red } from "picocolors"
 import {
 	type PreparedQuery,
@@ -13,11 +14,18 @@ import CustomHttpEngine, { realUrl } from "./surrealEngine.ts"
 
 const db = new Surreal({ engines: { http: CustomHttpEngine } })
 
+export const version = db.version.bind(db)
+
 async function reconnect() {
-	await db.close() // doesn't do anything if not connected
-	console.log("connecting")
-	await db.connect(realUrl)
-	console.log("reloaded", await db.version())
+	try {
+		await db.close() // doesn't do anything if not connected
+		console.log("connecting")
+		await db.connect(realUrl)
+		console.log("reloaded", await version())
+	} catch (e) {
+		console.error(e)
+		error(500, "Failed to reconnect to database")
+	}
 }
 
 export const failed = "The query was not executed due to a failed transaction"

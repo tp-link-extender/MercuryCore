@@ -1,17 +1,12 @@
 <script lang="ts">
+	import beautifyCurrency from "$lib/beautifyCurrency"
 	import Head from "$lib/components/Head.svelte"
 
 	export let data
 
-	const { balance } = data
-
-	const beforePoint = Math.floor(balance / 1e6).toString()
-	const zerosBefore = "0".repeat(Math.max(6 - beforePoint.length, 0))
-	const afterPoint = (balance % 1e6)
-		.toString()
-		.padStart(6, "0")
-		.replace(/0+$/, "")
-	const zerosAfter = "0".repeat(Math.max(6 - afterPoint.length, 0))
+	const [zerosBefore, beforePoint, afterPoint, zerosAfter] = beautifyCurrency(
+		data.balance
+	)
 </script>
 
 <Head title="Economy" />
