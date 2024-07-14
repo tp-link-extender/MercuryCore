@@ -59,8 +59,8 @@
 	{:else}
 		<h2>There are no users registered in the database yet!</h2>
 		<p class="pt-4">
-			Perhaps you've just set up the Mercury 2 source code. Perhaps you've
-			already set it up, and something has gone terribly wrong with your
+			Perhaps you've just set up Mercury Core. Perhaps you've already set
+			it up before, and something has gone terribly wrong with your
 			database.
 		</p>
 		<p class="pt-2">

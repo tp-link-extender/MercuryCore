@@ -1,21 +1,22 @@
-# Mercury monorepo
+# ![Mercury Core logo banner](./static/banner.png)
 
-![Logo banner](./static/banner.png)
+Mercury Core is the ultimate community-driven secure, flexible, and stable foundation for the future of your revival web platform, allowing for easy customisation or complete overhaul and possible integration with multiple clients and external services.
 
-Contents:
+> If you don’t know what any of those things are, Mercury Core is a build-your-own-Roblox.
 
--   [Mercury monorepo](#mercury-monorepo)
+## Contents
+
 -   [Recommended development setup](#recommended-development-setup)
--   [Editing the website](#editing-the-website)
--   [Hosting the website](#hosting-the-website)
--   [Mercury's stack](#mercurys-stack)
+-   [Editing the code](#editing-the-code)
+-   [Hosting](#hosting)
+-   [Mercury Core's stack](#mercury-cores-stack)
     -   [Route structure](#route-structure)
 
 # Recommended development setup
 
-We recommend using [Visual Studio Code](https://code.visualstudio.com) as your editor, as it has great support for TypeScript and allows for easier navigation of the codebase.
+We recommend using [Visual Studio Code](https://code.visualstudio.com) as your editor, as it has great support for languages like Typescript, Svelte, and Go, and allows for easier navigation of the codebase. Derivatives like [Insiders](https://code.visualstudio.com/insiders/) and [VSCodium](https://vscodium.com) are also recommended (all we're saying is something a little more than Notepad++).
 
-The following extensions are recommended:
+The following extensions are recommended as well:
 
 -   [Biome](https://marketplace.visualstudio.com/items?itemName=biomejs.biome)
 -   [Caddyfile Support](https://marketplace.visualstudio.com/items?itemName=matthewpi.caddyfile-support)
@@ -23,18 +24,20 @@ The following extensions are recommended:
 -   [Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens)
 -   [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot)
 -   [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
+-   [Go Nightly](https://marketplace.visualstudio.com/items?itemName=golang.go-nightly)
 -   [SurrealQL](https://marketplace.visualstudio.com/items?itemName=surrealdb.surrealql)
 -   [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
 -   [UnoCSS](https://marketplace.visualstudio.com/items?itemName=antfu.unocss)
 
-# Editing the website
+# Editing the code
 
 You will need:
 
--   Latest version of Bun installed
--   Latest version of Docker installed
+-   Latest version of Bun installed (expected as `bun`)
+-   Latest version of Docker installed (expected as `docker`)
 -   A terminal
--   A modern web browser
+-   A modern web browser (Mid 2023 onwards for most major browsers)
+-   A computer, as it would be painful to live without one, wouldn't it?
 
 Instructions:
 
@@ -56,18 +59,19 @@ After starting a local web server, navigate to /register and make an account.
 
 -   While in the browser, you can press ctrl-i to open the inspector, allowing you to select any element and show it in your editor.
 
-To build for production, run `bun run build`, then `bun preview` (or `bun buildview`) to preview the final site.
+To build for production, run `bun run build` then `bun preview` (or `bun buildview`) to preview the final site.
 
 Data from the database is stored in the /data/surreal directory.
 
-# Hosting the website
+# Hosting
 
 You will need:
 
--   Latest version of Bun installed
--   Latest version of Docker installed
+-   Latest version of Bun installed (expected as `bun`)
+-   Latest version of Docker installed (expected as `docker`)
+-   Latest version of Caddy server installed (expected as `caddy`)
 -   A terminal
--   Latest version of Caddy server installed
+-   Some sort of server hardware
 
 Instructions:
 
@@ -78,23 +82,21 @@ Instructions:
 -   Run `docker compose up -d` to start the database
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
 -   Open a terminal and navigate to the directory of the repository
--   Run `bun i -g pm2` to install pm2, the node process manager
--   Run `bun -b prod` to install dependencies and build the website
--   Run `pm2 start --interpreter ~/.bun/bin/bun build` to start the website as a background process.
+-   Run `bun -b prod` to install dependencies and begin building
+-   Run `bun ./build` (not to be confused with `bun build`) to start Mercury Core.
+    -   Several methods can be used to run it as a background process as well.
 
-You can run other commands to manage the process, see `pm2 --help` for more information.
-
-# Mercury's stack
+# Mercury Core's stack
 
 Mercury's frontent is built with [Svelte](https://svelte.dev), a UI framework that compiles to vanilla JS, and [SvelteKit](https://kit.svelte.dev), a powerful full-stack framework for building transitional apps.
 
-The site uses [Typescript](https://typescripts.org) throughout, a language that adds type extensions ontop of Javascript. An IDE that supports intellisense is recommended to make development easier.
+The site uses [Typescript](https://typescripts.org) throughout, a language that adds type extensions ontop of Javascript. Intellisense and type checking are used as well, as they help to prevent bugs and improve understanding of the codebase.
 
 [SurrealDB](https://surrealdb.com) is used as the database, a powerful multi-model database that easily allows for storing and querying the highly relational data used in Mercury.
 
 [Vite](https://vitejs.dev) brings the stack for the website together, giving an extremely fast and responsive development environment, as well as zero-downtime deployments.
 
-[Caddy](https://caddyserver.com) is used as a reverse proxy server, which allows for automatic HTTPS and TLS certificates, rewriting URLs, and provides a simpler configuration interface than nginx.
+[Caddy](https://caddyserver.com) is used as a reverse proxy server, which allows for automatic HTTPS and TLS certificates, rewriting URLs, and provides a simpler configuration interface than popular alternatives like Apache or nginx.
 
 ## Route structure
 

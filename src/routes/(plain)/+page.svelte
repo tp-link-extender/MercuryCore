@@ -40,6 +40,7 @@
 			err: "Unable to connect to the service"
 		}
 	]
+	const working = systems.every(s => s.ok)
 </script>
 
 <Head
@@ -54,8 +55,8 @@
 <Waves reverse />
 
 <div
-	class="grid grid-cols-2 absolute w-250 absolute left-1/2 -translate-x-1/2 pt-20vh">
-	<div class="flex flex-col justify-center">
+	class="flex justify-center absolute w-250 absolute left-1/2 -translate-x-1/2 pt-25vh">
+	<div class="flex flex-col justify-center w-1/2">
 		<h1 class="font-bold text-14">
 			Mercury <span class="opacity-50">Core</span>
 		</h1>
@@ -107,15 +108,15 @@
 			</a>
 		</div>
 	</div>
-	<div class="flex justify-center">
-		{#if systems.every(system => system.ok)}
+	{#if working}
+		<div class="flex justify-center w-1/2">
 			<p class="font-normal text-6 pt-9">
 				If you can see this, that means your installation of Mercury
 				Core is working!
 			</p>
 			<img src="/landing/working.svg" alt="Mercury" class="w-50" />
-		{/if}
-	</div>
+		</div>
+	{/if}
 </div>
 
 <style>
