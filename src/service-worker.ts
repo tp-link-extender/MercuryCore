@@ -32,7 +32,6 @@ self.addEventListener("fetch", event => {
 
 	// cannot be an anonymous function for some reason
 	async function respond() {
-		const url = new URL(event.request.url)
 		const cache = await caches.open(CACHE)
 
 		// `build`/`files` can always be served from the cache
@@ -42,7 +41,6 @@ self.addEventListener("fetch", event => {
 		// for everything else, try the network first, but fall back to the cache if we're offline
 		try {
 			const response = await fetch(event.request)
-
 			if (response.status === 200)
 				cache.put(event.request, response.clone())
 
