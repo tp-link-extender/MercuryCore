@@ -29,27 +29,25 @@
 	else if (timeout) {
 		clearTimeout(timeout)
 		timeout = null
-
 		nprogress.done()
 	}
 
-	onMount(() =>
-		setInterval(async () => {
-			// Keep the user's online status up to date
-			if (!user) return
+	async function ping() {
+		// Keep the user's online status up to date
+		if (!user) return
 
-			// Save to localStorage so we don't ping multiple times if the user has multiple tabs open
-			const lastPing = localStorage.getItem("lastPing")
-			if (lastPing && Date.now() - +lastPing < 30e3) return
-			await fetch("/api?/statusping", {
-				method: "POST",
-				body: new FormData()
-			})
-			localStorage.setItem("lastPing", Date.now().toString())
-		}, 30e3)
-	)
+		// Save to localStorage so we don't ping multiple times if the user has multiple tabs open
+		const lastPing = localStorage.getItem("lastPing")
+		if (lastPing && Date.now() - +lastPing < 30e3) return
+		await fetch("/api?/statusping", {
+			method: "POST",
+			body: new FormData()
+		})
+		localStorage.setItem("lastPing", Date.now().toString())
+	}
+	onMount(() => setInterval(ping, 30e3))
 
-	const notificationNotes: { [k: string]: string } = {
+	const notificationNotes: { [k: string]: string } = Object.freeze({
 		AssetApproved: "Asset approval",
 		FriendRequest: "Friend request",
 		Follower: "New follower",
@@ -62,7 +60,7 @@
 		ItemPurchase: "Item purchased",
 		Message: "New message",
 		NewFriend: "New friend"
-	}
+	})
 
 	$: notifications = data.notifications.filter(n => !n.read)
 </script>

@@ -58,7 +58,8 @@
 	font-display: block;
 	src: url("/fa/regular-400.woff2") format("woff2"),
 		url("/fa/regular-400.ttf") format("truetype");
-	unicode-range: u+f003, u+f006, u+f014, u+f016-f017, u+f01a-f01b, u+f01d,
+	/* The font is used basically all the time anyway... */
+	/* unicode-range: u+f003, u+f006, u+f014, u+f016-f017, u+f01a-f01b, u+f01d,
 		u+f022, u+f03e, u+f044, u+f046, u+f05c-f05d, u+f06e, u+f070, u+f087-f088,
 		u+f08a, u+f094, u+f096-f097, u+f09d, u+f0a0, u+f0a2, u+f0a4-f0a7, u+f0c5,
 		u+f0c7, u+f0e5-f0e6, u+f0eb, u+f0f6-f0f8, u+f10c, u+f114-f115,
@@ -67,5 +68,5 @@
 		u+f1e3, u+f1ea, u+f1f7, u+f1f9, u+f20a, u+f247-f248, u+f24a, u+f24d,
 		u+f255-f25b, u+f25d, u+f271-f274, u+f278, u+f27b, u+f28c, u+f28e, u+f29c,
 		u+f2b5, u+f2b7, u+f2ba, u+f2bc, u+f2be, u+f2c0-f2c1, u+f2c3, u+f2d0,
-		u+f2d2, u+f2d4, u+f2dc;
+		u+f2d2, u+f2d4, u+f2dc; */
 }

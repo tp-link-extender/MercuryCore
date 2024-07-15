@@ -29,7 +29,7 @@
 		<div
 			class="errimg light w-full h-24 bg-contain bg-no-repeat bg-center"
 			style="background-image: url(/error/{errors[status] ||
-				'm!'}.svg)" />
+				'500'}.svg)" />
 
 		<h1 class="pt-4">
 			<a
