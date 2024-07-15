@@ -1,7 +1,7 @@
 .DS_Store
-node_modules
-/build
-/.svelte-kit
+Site/node_modules
+Site/build
+Site/.svelte-kit
 .env
 .vscode
 /data
