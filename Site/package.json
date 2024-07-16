@@ -1,6 +1,5 @@
 {
-	"name": "mercury",
-	"version": "0.0.1",
+	"name": "mercurycore",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
@@ -41,6 +40,7 @@
 		"d3-interpolate": "^3.0.1",
 		"jsonwebtoken": "^9.0.2",
 		"lucia": "^3.2.0",
+		"mercurycore": ".",
 		"nprogress": "^0.2.0",
 		"picocolors": "^1.0.1",
 		"profane-words": "^1.5.11",

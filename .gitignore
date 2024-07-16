@@ -3,6 +3,5 @@ Site/node_modules
 Site/build
 Site/.svelte-kit
 .env
-.vscode
 /data
 /keys

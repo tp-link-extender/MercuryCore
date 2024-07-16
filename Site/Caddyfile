@@ -22,11 +22,3 @@ mercury2.com {
 
 	reverse_proxy localhost:4443
 }
-
-setup.mercury2.com {
-	root * /var/www/setup
-
-	uri path_regexp /version-(\w+)-(.*) /version-$1/$2
-
-	file_server browse
-}
