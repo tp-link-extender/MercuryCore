@@ -1,7 +1,4 @@
 .DS_Store
-Site/node_modules
-Site/build
-Site/.svelte-kit
 .env
 /data
 /keys
