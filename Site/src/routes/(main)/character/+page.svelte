@@ -44,7 +44,7 @@
 		}
 	}
 
-	const tabTypes: { [k: string]: number } = {
+	const tabTypes: { [k: string]: number } = Object.freeze({
 		Recent: 0,
 		Hats: 8,
 		Heads: 17,
@@ -53,26 +53,26 @@
 		Shirts: 11,
 		Pants: 12,
 		Gear: 19
-	}
+	})
 	let tabData = TabData(data.url, Object.keys(tabTypes))
 
 	const bodyParts: { [k: string]: number } = {
-		Head: user?.bodyColours.Head,
-		Torso: user?.bodyColours.Torso,
-		LeftArm: user?.bodyColours.LeftArm,
-		RightArm: user?.bodyColours.RightArm,
-		LeftLeg: user?.bodyColours.LeftLeg,
-		RightLeg: user?.bodyColours.RightLeg
+		Head: user.bodyColours.Head,
+		Torso: user.bodyColours.Torso,
+		LeftArm: user.bodyColours.LeftArm,
+		RightArm: user.bodyColours.RightArm,
+		LeftLeg: user.bodyColours.LeftLeg,
+		RightLeg: user.bodyColours.RightLeg
 	}
 	const bodyPartModals: { [k: string]: HTMLInputElement } = {}
-	const bodyColours = [
+	const bodyColours = Object.freeze([
 		1024, 11, 102, 23, 1010, 1012, 1011, 1027, 1018, 151, 1022, 135, 1019,
 		1013, 107, 1028, 29, 119, 37, 1021, 1020, 28, 141, 1029, 226, 1008, 24,
 		1017, 1009, 105, 1025, 125, 101, 1007, 1016, 1032, 1004, 21, 9, 1026,
 		1006, 153, 1023, 1015, 1031, 104, 5, 1030, 18, 106, 38, 1014, 217, 192,
 		1001, 1, 208, 1002, 194, 199, 26, 1003
-	]
-	const brickToHex: { [k: number]: string } = {
+	])
+	const brickToHex: { [k: number]: string } = Object.freeze({
 		1: "F2F3F3",
 		5: "D7C59A",
 		9: "E8BAC8",
@@ -135,15 +135,15 @@
 		1030: "FFCC99",
 		1031: "6225D1",
 		1032: "FF00BF"
-	}
-	const styles: { [k: string]: string } = {
+	})
+	const styles: { [k: string]: string } = Object.freeze({
 		Head: "left: 68px; height: 3rem; width: 3rem",
 		Torso: "left: 3rem; top: 54px; height: 88px; width: 88px",
 		LeftArm: "left: 1px; top: 54px; height: 88px; width: 40px",
 		RightArm: "left: 142px; top: 54px; height: 88px; width: 40px",
 		LeftLeg: "left: 3rem; top: 148px; height: 88px; width: 40px",
 		RightLeg: "left: 96px; top: 148px; height: 88px; width: 40px"
-	}
+	})
 
 	$: assets = (query && browser ? searchedData : data.assets || []).filter(
 		a =>

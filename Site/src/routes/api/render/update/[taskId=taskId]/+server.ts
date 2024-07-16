@@ -6,19 +6,16 @@ type Render = {
 	relativeId: number
 }
 
-const taskIdRegex = /^[\d\w]+$/
 export async function POST({ request, url, params }) {
 	const apiKey = url.searchParams.get("apiKey")
 	if (!apiKey || apiKey !== process.env.RCC_KEY) error(403, "Stfu")
 
 	const id = params.taskId
-	if (!taskIdRegex.test(id)) error(400, "Invalid taskId parameter")
 
 	const [[task]] = await equery<Render[][]>(
 		surql`SELECT type, relativeId FROM $render`,
 		{ render: Record("render", id) }
 	)
-
 	if (!task) error(404, "Task not found")
 
 	const buffer = await request.arrayBuffer()

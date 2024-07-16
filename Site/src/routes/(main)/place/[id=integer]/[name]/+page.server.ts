@@ -102,9 +102,6 @@ actions.join = async ({ request, locals }) => {
 	const serverId = +data.serverId
 
 	if (!requestType || !serverId) error(400, "Invalid Request")
-	if (requestType !== "RequestGame")
-		error(400, "Invalid Request (request type invalid)")
-
 	if (!(await find("place", serverId))) error(404, "Place not found")
 
 	const foundModerated = await findWhere(
@@ -121,7 +118,7 @@ actions.join = async ({ request, locals }) => {
 			RELATE $user->playing->$place CONTENT {
 				ping: time::now(), # todo: check
 				valid: true,
-			}`,
+			} RETURN meta::id(id) AS id`,
 		{
 			user: Record("user", user.id),
 			place: Record("place", serverId),
@@ -129,8 +126,6 @@ actions.join = async ({ request, locals }) => {
 	)
 
 	return {
-		joinScriptUrl: `${process.env.ORIGIN}/game/join?ticket=${
-			playing.id.split(":")[1]
-		}`,
+		joinScriptUrl: `${process.env.ORIGIN}/game/join?ticket=${playing.id}`,
 	}
 }

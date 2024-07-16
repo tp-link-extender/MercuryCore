@@ -9,7 +9,7 @@
 	export let data: import("./$types").LayoutData
 
 	const status = $page.status
-	const errors: { [k: number]: string } = {
+	const errors: { [k: number]: string } = Object.freeze({
 		401: "mStop",
 		403: "mStop",
 		404: "404",
@@ -17,7 +17,7 @@
 		410: "mGone",
 		451: "mBurn",
 		454: "mTick"
-	}
+	})
 </script>
 
 <Head title="Error {status}" />

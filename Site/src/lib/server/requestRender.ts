@@ -56,9 +56,9 @@ export default async function (
 
 	const scriptFile = Bun.file(`corescripts/processed/render${renderType}.lua`)
 	const script = (await scriptFile.text())
-		.replaceAll("_BASE_URL", `"${process.env.DOMAIN}"`)
-		.replaceAll("_THUMBNAIL_KEY", `"${process.env.RCC_KEY}"`)
-		.replaceAll("_RENDER_TYPE", `"${renderType}"`)
+		.replaceAll("_BASE_URL", process.env.DOMAIN)
+		.replaceAll("_THUMBNAIL_KEY", process.env.RCC_KEY)
+		.replaceAll("_RENDER_TYPE", renderType)
 		.replaceAll("_ASSET_ID", relativeId.toString())
 
 	// Send the script to the RCCService proxy

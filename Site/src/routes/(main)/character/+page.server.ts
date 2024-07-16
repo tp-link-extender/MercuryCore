@@ -16,6 +16,14 @@ const brickColours = [
 	1016, 1017, 1018, 1019, 1020, 1021, 1022, 1023, 1024, 1025, 1026, 1027,
 	1028, 1029, 1030, 1031, 1032,
 ]
+const bodyParts = [
+	"Head",
+	"LeftArm",
+	"LeftLeg",
+	"RightArm",
+	"RightLeg",
+	"Torso",
+]
 
 // boo kit
 export const _select = `
@@ -35,6 +43,12 @@ export type Asset = {
 	id: number
 	type: number
 	wearing: boolean
+}
+
+type AssetData = {
+	id: number
+	type: number
+	visibility: string
 }
 
 export const load = async ({ locals, url }) => {
@@ -60,13 +74,7 @@ async function getEquipData(e: RequestEvent) {
 	const limit = ratelimit(null, "equip", e.getClientAddress, 2)
 	if (limit) return { error: limit }
 
-	const [[asset]] = await equery<
-		{
-			id: number
-			type: number
-			visibility: string
-		}[][]
-	>(
+	const [[asset]] = await equery<AssetData[][]>(
 		surql`
 			SELECT meta::id(id) AS id, type, visibility
 			FROM $asset WHERE $user IN <-owns<-user`,
@@ -75,12 +83,9 @@ async function getEquipData(e: RequestEvent) {
 			user: Record("user", user.id),
 		}
 	)
-
 	if (!asset) error(404, "Item not found or not owned")
-
 	if (!allowedTypes.includes(asset.type))
 		error(400, "Can't equip this type of item")
-
 	if (asset.visibility !== "Visible")
 		error(400, "This item hasn't been approved yet")
 
@@ -108,14 +113,7 @@ async function paint({ locals, url }: RequestEvent) {
 		!bodyPartQuery ||
 		!bodyColour ||
 		!brickColours.includes(+bodyColour) ||
-		![
-			"Head",
-			"Torso",
-			"LeftArm",
-			"RightArm",
-			"LeftLeg",
-			"RightLeg",
-		].includes(bodyPartQuery)
+		!bodyParts.includes(bodyPartQuery)
 	)
 		return fail(400)
 
@@ -187,6 +185,7 @@ export const actions: import("./$types").Actions = {
 actions.search = async ({ request, locals }) => {
 	const { user } = await authorise(locals)
 	const formData = await request.formData()
+
 	const [assets] = await equery<Asset[][]>(
 		`${_select} AND string::lowercase($query) IN string::lowercase(name)`,
 		{
@@ -194,6 +193,5 @@ actions.search = async ({ request, locals }) => {
 			user: Record("user", user.id),
 		}
 	)
-
 	return { assets }
 }

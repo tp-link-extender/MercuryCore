@@ -68,8 +68,6 @@
 		modal.set(true)
 
 		const formdata = new FormData()
-
-		formdata.append("request", "RequestGame")
 		formdata.append("serverId", $place.id.toString())
 		formdata.append("privateTicket", $place.privateTicket)
 
@@ -80,9 +78,7 @@
 		})
 		const joinScriptData = deserialize(await response.text()) as {
 			status: number
-			data: {
-				joinScriptUrl: string
-			}
+			data: { joinScriptUrl: string }
 		}
 
 		if (joinScriptData.status !== 200) return

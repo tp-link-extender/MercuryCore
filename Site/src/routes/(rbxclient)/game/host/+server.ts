@@ -27,11 +27,11 @@ export async function GET({ url }) {
 	}
 
 	const script = (await Bun.file("corescripts/processed/host.lua").text())
-		.replaceAll("_BASE_URL", `"${process.env.DOMAIN}"`)
+		.replaceAll("_BASE_URL", process.env.DOMAIN)
 		.replaceAll("_MAP_LOCATION_EXISTS", (!!mapLocation).toString())
-		.replaceAll("_MAP_LOCATION", `"${mapLocation || ""}"`)
+		.replaceAll("_MAP_LOCATION", mapLocation || "")
 		.replaceAll("_SERVER_PORT", port.toString())
-		.replaceAll("_SERVER_PRESENCE_URL", `"${serverPresenceUrl}"`)
+		.replaceAll("_SERVER_PRESENCE_URL", serverPresenceUrl)
 
 	return new Response(await SignData(script))
 }
