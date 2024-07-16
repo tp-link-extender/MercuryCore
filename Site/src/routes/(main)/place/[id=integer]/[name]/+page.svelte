@@ -89,10 +89,8 @@
 
 		// JoinScript is my favourite programming language (-i mean scripting language)
 		const joinScript = encodeURIComponent(joinScriptData.data.joinScriptUrl)
-
-		launch(
-			`mercury-player:1+launchmode:play+joinscripturl:${joinScript}+gameinfo:test`
-		)()
+		const joinUri = `mercury-player:1+launchmode:play+joinscripturl:${joinScript}+gameinfo:test`
+		launch(joinUri)()
 	}
 
 	let tabData = TabData(data.url, ["Description", "Game"])
@@ -393,26 +391,14 @@
 <Modal {modal}>
 	<div class="flex flex-col px-6 pt-6 text-center">
 		{#key installed}
-			<div
-				in:fade={{ duration: 500 }}
-				class="self-center size-32 -translate-x-1/2">
+			<div class="self-center size-32 -translate-x-1/2">
 				<img
-					src="/innerlogo.svg"
-					alt="Mercury logo inner part (M)"
+					in:fade={{ duration: 500 }}
+					src="/icon.svg"
+					alt="Mercury logo"
 					class="absolute"
 					width="128"
 					height="128" />
-				<img
-					src="/outerlogo.svg"
-					alt="Mercury logo outer part (circle around M)"
-					class="absolute animate-[spin_1.5s_linear_infinite]"
-					width="128"
-					height="128"
-					style={installed ? "" : "animation: none"} />
-				<!--
-					Here's my ass going back in time 200 commits to see what that CSS variable did, only to find that it never did anything.
-					Hello, fellow time traveller!
-				-->
 			</div>
 		{/key}
 		{#if success}

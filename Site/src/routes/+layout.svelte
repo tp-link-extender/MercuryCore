@@ -67,11 +67,9 @@
 
 <svelte:head>
 	<meta charset="utf-8" />
-	<meta name="theme-color" content="#1f1d1c" />
+	<meta name="theme-color" content="#0f0e11" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="icon" href="/favicon.svg" />
-	<link rel="manifest" href="/manifest.json" />
-	<link rel="apple-touch-icon" href="/icon192.png" />
 
 	{#if !dev}
 		<script

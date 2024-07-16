@@ -5,7 +5,11 @@
 
 	export let data: import("./$types").PageData
 
-	const { message, enhance: enh, delayed } = superForm(data.privatelinkForm)
+	const {
+		message,
+		enhance: enh,
+		delayed
+	} = superForm(data.privatelinkForm, { id: "privatelink" })
 
 	$: value = encodeURI(
 		`https://${data.domain}/place/${data.id}/${data.slug}?privateServer=${data.privateTicket}`

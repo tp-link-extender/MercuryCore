@@ -4,7 +4,11 @@
 
 	export let data: import("./$types").PageData
 
-	const { message, enhance: enh, delayed } = superForm(data.ticketForm)
+	const {
+		message,
+		enhance: enh,
+		delayed
+	} = superForm(data.ticketForm, { id: "ticket" })
 </script>
 
 <form use:enh method="POST" action="?/ticket&tab=Network">

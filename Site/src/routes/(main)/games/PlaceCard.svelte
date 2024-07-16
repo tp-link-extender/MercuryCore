@@ -1,7 +1,6 @@
 <script lang="ts">
 	// Link to a place used on Games page.
 
-	import { goto, preloadData, pushState } from "$app/navigation"
 	import fade from "$lib/fade"
 	import { encode } from "$lib/urlName"
 
@@ -17,25 +16,13 @@
 	export let total: number
 
 	const slug = encode(place.name)
-	const ratio = Math.floor(
-		(place.likeCount / (place.likeCount + place.dislikeCount)) * 100
-	)
+	const ratio = place.likeCount / (place.likeCount + place.dislikeCount)
+	const percentage = Math.floor(ratio * 100)
 
 	$: online = place.serverPing > Date.now() / 1000 - 35
 </script>
 
 <a
-	on:click={async e => {
-		if (e.metaKey || innerWidth < 640) return
-		e.preventDefault()
-
-		const { href } = e.currentTarget
-		const result = await preloadData(href)
-
-		if (result.type === "loaded" && result.status === 200)
-			pushState(href, { openPlace: result.data })
-		else goto(href)
-	}}
 	in:fade|global={{ num, total }}
 	class="card text-center no-underline rounded-4 w-90 md:w-82 lg:w-78 light-text bg-darker"
 	href="/place/{place.id}/{slug}">
@@ -55,7 +42,7 @@
 			<div class="flex justify-between px-3">
 				<span>
 					<fa fa-thumbs-up class="opacity-75" />
-					{isNaN(ratio) ? "--" : ratio}%
+					{isNaN(percentage) ? "--" : percentage}%
 				</span>
 				<span>
 					<fa fa-user class="opacity-75" />

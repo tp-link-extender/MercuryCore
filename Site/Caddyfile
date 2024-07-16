@@ -18,7 +18,5 @@ mercury2.com {
 	rewrite /Setting/QuietGet/ClientSharedSettings/* /api/clientsharedsettings
 	rewrite /Setting/QuietGet/ClientAppSettings/* /api/clientappsettings
 
-	redir /download https://setup.mercury2.com/MercuryPlayerLauncher.exe
-
 	reverse_proxy localhost:4443
 }

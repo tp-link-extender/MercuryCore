@@ -98,7 +98,7 @@
 					</span>
 					<div class="flex rounded-2 bg-darker h-4">
 						<div
-							class="progress-bar-striped bg-emerald-6 rounded-2"
+							class="bg-emerald-6 rounded-2"
 							role="progressbar"
 							aria-valuenow={totalmem - freemem}
 							aria-valuemin={0}

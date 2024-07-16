@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
-	import { goto, preloadData, pushState } from "$app/navigation"
 	import User from "$lib/components/User.svelte"
 	import fade from "$lib/fade"
 
@@ -92,19 +91,6 @@
 			</em>
 		</div>
 		<a
-			on:click={async e => {
-				// Dude.
-				// Shallow routing is AWESOME
-				if (e.metaKey || innerWidth < 640) return
-				e.preventDefault()
-
-				const { href } = e.currentTarget
-				const result = await preloadData(href)
-
-				if (result.type === "loaded" && result.status === 200)
-					pushState(href, { openPost: result.data })
-				else goto(href)
-			}}
 			href="/forum/{categoryName.toLowerCase()}/{post.id}"
 			class="light-text px-4 pt-2 no-underline w-full">
 			<h2 class="pt-2">
