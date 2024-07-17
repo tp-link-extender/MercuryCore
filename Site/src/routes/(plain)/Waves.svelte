@@ -24,7 +24,7 @@
 	}
 
 	div div {
-		background: url("/landing/wave.svg") repeat-x;
+		background: url(/landing/wave.svg) repeat-x;
 		animation: 11s cubic-bezier(0.36, 0.45, 0.63, 0.53) 0s infinite normal
 			none running waves;
 		transform: translate3d(0px, 0px, 0px);

@@ -16,18 +16,7 @@ Mercury Core is the ultimate community-driven secure, flexible, and stable found
 
 We recommend using [Visual Studio Code](https://code.visualstudio.com) as your editor, as it has great support for languages like Typescript, Svelte, and Go, and allows for easier navigation of the codebase. Derivatives like [Insiders](https://code.visualstudio.com/insiders/) and [VSCodium](https://vscodium.com) are also recommended (all we're saying is something a little more than Notepad++).
 
-The following extensions are recommended as well:
-
--   [Biome](https://marketplace.visualstudio.com/items?itemName=biomejs.biome)
--   [Caddyfile Support](https://marketplace.visualstudio.com/items?itemName=matthewpi.caddyfile-support)
--   [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
--   [Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens)
--   [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot)
--   [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
--   [Go Nightly](https://marketplace.visualstudio.com/items?itemName=golang.go-nightly)
--   [SurrealQL](https://marketplace.visualstudio.com/items?itemName=surrealdb.surrealql)
--   [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
--   [UnoCSS](https://marketplace.visualstudio.com/items?itemName=antfu.unocss)
+The [Mercury Core development](https://marketplace.visualstudio.com/items?itemName=MercuryCore.mercurycoredevelopment) extension pack is also recommended, as it includes all the extensions needed to work with the codebase alongside a couple for general quality-of-life improvements.
 
 # Editing the code
 

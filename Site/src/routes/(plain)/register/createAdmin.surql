@@ -2,11 +2,11 @@ CREATE user CONTENT {
 	bio: [],
 	bodyColours: {
 		Head: 24,
-		Torso: 23,
 		LeftArm: 24,
-		RightArm: 24,
 		LeftLeg: 119,
+		RightArm: 24,
 		RightLeg: 119,
+		Torso: 23,
 	},
 	created: time::now(),
 	css: "",

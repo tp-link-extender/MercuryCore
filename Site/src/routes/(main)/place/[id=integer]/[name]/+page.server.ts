@@ -126,6 +126,6 @@ actions.join = async ({ request, locals }) => {
 	)
 
 	return {
-		joinScriptUrl: `${process.env.ORIGIN}/game/join?ticket=${playing.id}`,
+		joinScriptUrl: `${process.env.DOMAIN}/game/join?ticket=${playing.id}`,
 	}
 }

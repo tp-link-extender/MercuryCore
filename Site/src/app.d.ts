@@ -1,5 +1,4 @@
-// Contains types for Lucia to prevent TypeScript
-// from complaining about missing types.
+//  Prevents TypeScript from complaining about missing types.
 
 /// <reference types="lucia" />
 /// <reference types="@types/bun" />

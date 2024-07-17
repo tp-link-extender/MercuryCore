@@ -7,26 +7,26 @@
 	font-family: Inter;
 	font-style: normal;
 	font-display: swap;
-	src: url("/fonts/Inter.woff2") format("woff2");
+	src: url(/fonts/Inter.woff2) format("woff2");
 }
 @font-face {
 	font-family: Inter;
 	font-style: italic;
 	font-display: swap;
-	src: url("/fonts/Inter-Italic.woff2") format("woff2");
+	src: url(/fonts/Inter-Italic.woff2) format("woff2");
 }
 
 @font-face {
 	font-family: Azeret;
 	font-style: normal;
 	font-display: swap;
-	src: url("/fonts/Azeret.woff2") format("woff2");
+	src: url(/fonts/Azeret.woff2) format("woff2");
 }
 @font-face {
 	font-family: Azeret;
 	font-style: italic;
 	font-display: swap;
-	src: url("/fonts/Azeret-Italic.woff2") format("woff2");
+	src: url(/fonts/Azeret-Italic.woff2) format("woff2");
 }
 
 :root {
@@ -434,7 +434,7 @@ thead th {
 .is-invalid {
 	border-color: hsl(354 70 55) !important;
 	padding-right: 2.2rem;
-	background-image: url("/invalid.svg");
+	background-image: url(/invalid.svg);
 	background-repeat: no-repeat;
 	background-position: right 0.5rem center;
 	background-size: 1.2rem;
@@ -485,12 +485,12 @@ input[type="checkbox"] {
 	cursor: pointer;
 
 	&:checked {
-		background-image: url("/check.svg");
+		background-image: url(/check.svg);
 		animation: checkmark 0.15s ease-out;
 	}
 
 	&:indeterminate {
-		background-image: url("/indeterminate.svg");
+		background-image: url(/indeterminate.svg);
 		animation: checkmark 0.15s ease-out;
 	}
 }
@@ -503,7 +503,7 @@ input[type="radio"] {
 	cursor: pointer;
 
 	&:checked {
-		background-image: url("/radio.svg");
+		background-image: url(/radio.svg);
 	}
 }
 
@@ -511,7 +511,7 @@ select,
 .fakeselect {
 	width: 100%;
 	padding: 0.7rem 1rem;
-	background-image: url("/select.svg");
+	background-image: url(/select.svg);
 	background-repeat: no-repeat;
 	background-position: right 0.75rem center;
 	background-size: 1rem 0.75rem;

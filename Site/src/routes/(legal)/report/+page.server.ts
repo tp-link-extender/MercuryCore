@@ -29,7 +29,6 @@ async function getReportee(username: string) {
 	const [[reportee]] = await equery<{ id: RecordId }[][]>(
 		surql`SELECT id FROM user WHERE username = ${username}`
 	)
-
 	return reportee
 }
 

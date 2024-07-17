@@ -4,11 +4,11 @@ import { error } from "@sveltejs/kit"
 type User = {
 	bodyColours: {
 		Head: number
-		Torso: number
 		LeftArm: number
-		RightArm: number
 		LeftLeg: number
+		RightArm: number
 		RightLeg: number
+		Torso: number
 	}
 }
 
