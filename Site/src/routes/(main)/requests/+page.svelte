@@ -26,17 +26,17 @@
 			</div>
 			<div class="flex gap-2 px-2">
 				<form
-					class="w-full"
-					method="POST"
 					use:enhance
-					action="/user/{user.username}?/accept">
+					method="POST"
+					action="/user/{user.username}?/accept"
+					class="w-full">
 					<button class="btn btn-info w-full">Accept</button>
 				</form>
 				<form
-					class="w-full"
-					method="POST"
 					use:enhance
-					action="/user/{user.username}?/decline">
+					method="POST"
+					action="/user/{user.username}?/decline"
+					class="w-full">
 					<button class="btn btn-danger w-full">Decline</button>
 				</form>
 			</div>

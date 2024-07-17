@@ -18,10 +18,10 @@
 <form
 	use:enhance={enhanceRegen}
 	method="POST"
-	class="no-underline"
 	action="/character?/{asset.wearing
 		? 'un'
-		: ''}equip&tab={currentTab}&id={asset.id}">
+		: ''}equip&tab={currentTab}&id={asset.id}"
+	class="no-underline">
 	<button
 		in:fade|global={{ num, total }}
 		class="card bg-a assetcard size-full p-4 cursor-pointer">

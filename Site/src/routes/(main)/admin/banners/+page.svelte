@@ -41,7 +41,6 @@
 		$form.bannerBody = newBannerData.body
 		bannerData = newBannerData
 	}
-
 </script>
 
 <Head title="Banners - Admin" />
@@ -140,8 +139,8 @@
 								use:enhance
 								bind:this={textLightForms[banner.id]}
 								method="POST"
-								class="px-2"
-								action="?/updateTextLight&id={banner.id}">
+								action="?/updateTextLight&id={banner.id}"
+								class="px-2">
 								<input
 									on:change={async () => {
 										textLightForms[

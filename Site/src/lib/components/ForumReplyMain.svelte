@@ -99,9 +99,9 @@
 		{#if $replyingTo !== reply.id}
 			<form
 				use:enhance={likeEnhance}
-				class="inline pr-2 {hidden ? 'opacity-33' : ''}"
 				method="POST"
-				action="?/like&rid={reply.id}">
+				action="?/like&rid={reply.id}"
+				class="inline pr-2 {hidden ? 'opacity-33' : ''}">
 				<button
 					name="action"
 					value={reply.likes ? "unlike" : "like"}

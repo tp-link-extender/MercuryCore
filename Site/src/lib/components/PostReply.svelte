@@ -14,7 +14,7 @@
 	} = formData
 </script>
 
-<form use:enh class="py-2" method="POST" action="?/reply">
+<form use:enh method="POST" action="?/reply" class="py-2">
 	<label for="content" class="light-text py-2">
 		Post a {comment ? "comment" : "reply"}
 	</label>

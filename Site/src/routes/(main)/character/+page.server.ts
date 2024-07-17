@@ -1,3 +1,4 @@
+import { brickColours } from "$lib/brickColours.ts"
 import { intRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
@@ -7,23 +8,16 @@ import { error, fail } from "@sveltejs/kit"
 import type { RequestEvent } from "./$types.d.ts"
 
 // Heads, Faces, T-Shirts, Shirts, Pants, Gear, Hats
-const allowedTypes = [17, 18, 2, 11, 12, 19, 8]
-const oneEquippable = [2, 11, 12, 18]
-const brickColours = [
-	1, 5, 9, 11, 18, 21, 23, 24, 26, 28, 29, 37, 38, 101, 102, 104, 105, 106,
-	107, 119, 125, 135, 141, 151, 153, 192, 194, 199, 208, 217, 226, 1001, 1002,
-	1003, 1004, 1006, 1007, 1008, 1009, 1010, 1011, 1012, 1013, 1014, 1015,
-	1016, 1017, 1018, 1019, 1020, 1021, 1022, 1023, 1024, 1025, 1026, 1027,
-	1028, 1029, 1030, 1031, 1032,
-]
-const bodyParts = [
+const oneEquippable = Object.freeze([2, 11, 12, 18])
+const allowedTypes = Object.freeze(oneEquippable.concat([8, 17, 19]))
+const bodyParts = Object.freeze([
 	"Head",
 	"LeftArm",
 	"LeftLeg",
 	"RightArm",
 	"RightLeg",
 	"Torso",
-]
+])
 
 // boo kit
 export const _select = `

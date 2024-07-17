@@ -16,8 +16,8 @@
 <form
 	use:enhance={refreshReplies}
 	method="POST"
-	class="inline"
-	action="?/{text}{post ? 'post' : ''}&id={id}">
+	action="?/{text}{post ? 'post' : ''}&id={id}"
+	class="inline">
 	{#if clicked}
 		<small class="light-text pl-2 inline-flex items-center">
 			{text}?

@@ -8,6 +8,7 @@
 <div class="flex gap-2">
 	<form
 		use:enhance
+		in:fade
 		method="POST"
 		action="?/{data.friends
 			? 'unfriend'
@@ -16,7 +17,6 @@
 				: data.incomingRequest
 					? 'accept'
 					: 'request'}"
-		in:fade
 		class="flex gap-2">
 		<button
 			class="btn {data.friends || data.outgoingRequest
@@ -38,18 +38,18 @@
 	{#if data.incomingRequest}
 		<form
 			use:enhance
+			in:fade
 			method="POST"
 			action="?/decline"
-			in:fade
 			class="flex gap-2">
 			<button class="btn btn-red-secondary">Decline request</button>
 		</form>
 	{/if}
 	<form
 		use:enhance
+		in:fade
 		method="POST"
 		action="?/{data.following ? 'unfollow' : 'follow'}"
-		in:fade
 		class="flex gap-2">
 		<button
 			name="action"

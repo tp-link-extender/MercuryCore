@@ -171,9 +171,9 @@
 					{#if user?.permissionLevel >= 5}
 						<form
 							use:enhance={enhanceRegen}
+							in:fade
 							method="POST"
 							action="?/rerender"
-							in:fade
 							class="absolute text-right end-0 pr-4">
 							<button class="btn btn-sm btn-tertiary">
 								<fa fa-arrows-rotate />

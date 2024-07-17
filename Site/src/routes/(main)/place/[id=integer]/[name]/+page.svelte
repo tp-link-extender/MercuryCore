@@ -208,9 +208,9 @@
 
 				<form
 					use:enhance={likeEnhance}
-					class="w-full pt-4 px-0 pb-2"
 					method="POST"
-					action="?/like&privateTicket={$place.privateTicket}">
+					action="?/like&privateTicket={$place.privateTicket}"
+					class="w-full pt-4 px-0 pb-2">
 					<div class="flex justify-between pb-2">
 						<button
 							name="action"

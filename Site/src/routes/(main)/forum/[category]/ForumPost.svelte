@@ -45,9 +45,9 @@
 		: ''}">
 	<form
 		use:enhance={likeEnhance}
-		class="bg-a p-1 z-1"
 		method="POST"
-		action="?/like&id={post.id}">
+		action="?/like&id={post.id}"
+		class="bg-a p-1 z-1">
 		<div class="flex flex-col">
 			<button
 				name="action"

@@ -12,42 +12,35 @@
 		Termination: "Termination",
 		AccountDeleted: "Account Deleted"
 	}
+	const actionType = moderationAction[data.type]
 
-	function formatDateDifference(date1: number, date2: number) {
-		const diffInMilliseconds = Math.round(date2 - date1)
-		const millisecondsPerDay = 86400e3
-		const diffInDays = Math.floor(diffInMilliseconds / millisecondsPerDay)
+	const s = (n: number) => (n > 1 ? "s" : "")
+	function formatDateDiff(date: number) {
+		const millisDiff = Math.round(date - Date.now())
+		if (millisDiff < 0) return "0 minutes" // lmao
 
-		if (diffInMilliseconds < 0) return "0 minutes"
+		const daysDiff = Math.floor(millisDiff / 86400e3)
+		if (daysDiff >= 1) return `${daysDiff} day${s(daysDiff)}`
 
-		if (diffInDays >= 1)
-			return `${diffInDays} day${diffInDays > 1 ? "s" : ""}`
-
-		const diffInHours = Math.floor(diffInMilliseconds / 3600e3)
-		const diffInMinutes = Math.floor((diffInMilliseconds % 3600e3) / 60e3)
-
-		if (diffInHours >= 1)
-			return `${diffInHours} hour${
-				diffInHours > 1 ? "s" : ""
-			} ${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""}`
-
-		return `${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""}`
+		const hoursDiff = Math.floor(millisDiff / 3600e3)
+		const minsDiff = Math.floor((millisDiff % 3600e3) / 60e3)
+		const mins = `${minsDiff} minute${s(minsDiff)}`
+		if (hoursDiff < 1) return mins
+		return `${hoursDiff} hour${s(hoursDiff)} ${mins}`
 	}
 </script>
 
-<Head title={moderationAction[data.type]} />
+<Head title={actionType} />
 
 <div class="ctnr pt-8 max-w-200">
 	<div class="card">
 		<div class="light-text p-4">
 			<h1>
-				{moderationAction[data.type]}{moderationAction[data.type] ==
-				"Ban"
-					? `ned for ${formatDateDifference(
-							Date.now(),
+				{actionType == "Ban"
+					? `${actionType}ned for ${formatDateDiff(
 							new Date(data.timeEnds).getTime()
 						)}`
-					: ""}
+					: actionType}
 			</h1>
 
 			<p>
@@ -63,8 +56,8 @@
 				Moderator note: <code>{data.note}</code>
 			</p>
 
-			{#if moderationAction[data.type] === "Warning"}
-				<form method="POST" use:enhance>
+			{#if actionType === "Warning"}
+				<form use:enhance method="POST">
 					<p class="mb-12">
 						Please make sure to follow the Mercury's Terms of
 						Service to prevent further action to be taken on your
@@ -84,20 +77,19 @@
 							I understand
 						</label>
 					</div>
-					<button class="btn btn-primary {checked ? '' : 'disabled'}">
+					<button class="btn btn-primary" class:disabled={!checked}>
 						Reactivate
 					</button>
 				</form>
-			{:else if moderationAction[data.type] === "Ban"}
-				<form method="POST" use:enhance>
+			{:else if actionType === "Ban"}
+				<form use:enhance method="POST">
 					<p class="mb-12">
 						Please make sure to follow the Mercury's Terms of
 						Service to prevent further action to be taken on your
 						account.
 					</p>
 					<p>
-						You may reactivate your account after your ban ends in {formatDateDifference(
-							Date.now(),
+						You may reactivate your account after your ban ends in {formatDateDiff(
 							new Date(data.timeEnds).getTime()
 						)}.
 					</p>
@@ -110,7 +102,7 @@
 						Reactivate
 					</button>
 				</form>
-			{:else if moderationAction[data.type] === "Termination"}
+			{:else if actionType === "Termination"}
 				<p>You may not reactivate your account.</p>
 			{:else}
 				<p>
