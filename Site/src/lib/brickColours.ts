@@ -1,5 +1,5 @@
 // Names not needed for now but could be useful
-export const brickToHex: { [k: number]: string } = Object.freeze({
+export const brickHexes = Object.freeze({
 	1: "f2f3f3", // White
 	5: "d7c59a", // Brick yellow
 	9: "e8bac8", // Light reddish violet
@@ -64,4 +64,7 @@ export const brickToHex: { [k: number]: string } = Object.freeze({
 	1032: "ff00bf", // Hot pink
 })
 
+export const brickToHex: { [k: number]: string } = brickHexes
+
 export const brickColours = Object.keys(brickToHex).map(k => +k)
+export type BrickColour = keyof typeof brickHexes

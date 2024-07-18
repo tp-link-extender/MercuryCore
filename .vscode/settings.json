@@ -8,13 +8,7 @@
 		"Site/bun.lockb": true,
 		"Economy/go.sum": true
 	},
-	"json.schemas": [
-		{
-			"fileMatch": ["mercury.core"],
-			"url": "./Assets/schema.jsonc"
-		}
-	],
 	"files.associations": {
-		"mercury.core": "jsonc"
+		"mercury.core": "typescript"
 	}
 }

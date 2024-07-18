@@ -1,5 +1,5 @@
 {
-	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"$schema": "./Site/node_modules/@biomejs/biome/configuration_schema.json",
 	"formatter": {
 		"indentWidth": 4
 	},
@@ -38,6 +38,15 @@
 					},
 					"nursery": {
 						"noEvolvingTypes": "off"
+					}
+				}
+			}
+		}, {
+			"include": ["mercury.core.ts"],
+			"linter": {
+				"rules": {
+					"nursery": {
+						"useImportRestrictions": "off"
 					}
 				}
 			}
