@@ -24,7 +24,7 @@ const schema = z.object({
 		.min(3)
 		.max(21)
 		.regex(/^[A-Za-z0-9_]+$/),
-	email: z.string().email(),
+	email: z.string().regex(/^.+@.+$/), // https://youtu.be/mrGfahzt-4Q?t=1563
 	password: z.string().min(1).max(6969),
 	cpassword: z.string().min(1).max(6969),
 	regkey: z.string().min(1).max(6969),
