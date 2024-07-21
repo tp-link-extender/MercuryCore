@@ -1,5 +1,6 @@
 import fs from "node:fs"
 import { intRegex } from "$lib/paramTests"
+import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import requestRender from "$lib/server/requestRender"
@@ -266,7 +267,7 @@ actions.autopilot = async ({ request, locals }) => {
 		if (!newId) continue // same as above
 		cachedXml = cachedXml.replace(
 			url,
-			`<url>${process.env.DOMAIN}/asset?id=${newId}</url>`
+			`<url>${config.Domain}/asset?id=${newId}</url>`
 		)
 	}
 

@@ -1,3 +1,4 @@
+import config from "$lib/server/config"
 import { equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
@@ -25,9 +26,9 @@ export async function GET({ params }) {
 	)
 	if (!user) error(404, "User not found")
 
-	let charApp = `${process.env.DOMAIN}/asset/bodycolours/${username}`
+	let charApp = `${config.Domain}/asset/bodycolours/${username}`
 	for (const asset of user.wearing)
-		charApp += `;${process.env.DOMAIN}/asset?id=${asset}`
+		charApp += `;${config.Domain}/asset?id=${asset}`
 
 	return new Response(charApp, {
 		headers: {

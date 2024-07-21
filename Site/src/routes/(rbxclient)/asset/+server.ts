@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto"
 import { intRegex } from "$lib/paramTests"
+import config from "$lib/server/config"
 import { SignData } from "$lib/server/sign"
 import { Record, equery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
@@ -58,7 +59,7 @@ export async function GET({ url }) {
 
 		let file2 = file.replaceAll(
 			"roblox.com/asset",
-			`${process.env.DOMAIN}/asset`
+			`${config.Domain}/asset`
 		)
 
 		// please rewrite the health corescript

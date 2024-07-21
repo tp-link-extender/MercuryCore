@@ -1,6 +1,6 @@
 import { brickColours } from "$lib/brickColours"
 import { z } from "zod"
-import config from "../../../../mercury.core.ts"
+import rawconfig from "../../../../mercury.core.ts"
 
 const brickColourEnum = z.union([
 	z.literal(1), // br
@@ -29,7 +29,7 @@ const schema = z.object({
 	}),
 })
 
-const parseResult = schema.safeParse(config)
+const parseResult = schema.safeParse(rawconfig)
 if (!parseResult.success) {
 	console.error("Configuration error in mercury.core.ts:")
 	for (const error of parseResult.error.errors)
@@ -39,4 +39,5 @@ if (!parseResult.success) {
 
 console.log("Successfully loaded configuration file")
 
-export * from "../../../../mercury.core.ts"
+const config = rawconfig // lmfao
+export default config

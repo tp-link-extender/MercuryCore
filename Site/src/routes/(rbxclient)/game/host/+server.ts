@@ -1,3 +1,4 @@
+import config from "$lib/server/config"
 import { SignData } from "$lib/server/sign"
 import { equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
@@ -18,7 +19,7 @@ export async function GET({ url }) {
 
 	const port = placeData.serverPort
 	// const serverId = placeData.id.toString()
-	const serverPresenceUrl = `${process.env.DOMAIN}/game/serverpresence?ticket=${ticket}`
+	const serverPresenceUrl = `${config.Domain}/game/serverpresence?ticket=${ticket}`
 
 	if (mapLocation) {
 		mapLocation = Buffer.from(mapLocation, "base64").toString()
@@ -27,7 +28,7 @@ export async function GET({ url }) {
 	}
 
 	const script = (await Bun.file("corescripts/processed/host.lua").text())
-		.replaceAll("_BASE_URL", process.env.DOMAIN)
+		.replaceAll("_BASE_URL", config.Domain)
 		.replaceAll("_MAP_LOCATION_EXISTS", (!!mapLocation).toString())
 		.replaceAll("_MAP_LOCATION", mapLocation || "")
 		.replaceAll("_SERVER_PORT", port.toString())

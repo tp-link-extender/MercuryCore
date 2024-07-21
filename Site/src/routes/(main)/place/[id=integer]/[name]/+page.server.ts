@@ -1,3 +1,4 @@
+import config from "$lib/server/config"
 import formData from "$lib/server/formData"
 import { type LikeActions, likeLikesActions } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
@@ -126,6 +127,6 @@ actions.join = async ({ request, locals }) => {
 	)
 
 	return {
-		joinScriptUrl: `${process.env.DOMAIN}/game/join?ticket=${playing.id}`,
+		joinScriptUrl: `${config.Domain}/game/join?ticket=${playing.id}`,
 	}
 }

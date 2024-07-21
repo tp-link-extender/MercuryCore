@@ -1,5 +1,3 @@
-// Allows for a function to be ratelimited by a category, and returns a 429 failure if too many requests are sent
-
 import { fail } from "@sveltejs/kit"
 import type { SuperValidated } from "sveltekit-superforms"
 import { message } from "sveltekit-superforms/server"
@@ -8,7 +6,7 @@ const ratelimitTimewindow = new Map<string, number>()
 const ratelimitRequests = new Map<string, number>()
 const existingTimeouts = new Map<string, Timer>()
 
-/** Ratelimit a function by a category.
+/** Allows for a function to be ratelimited by a category, and returns a 429 failure if too many requests are sent.
  * @param form The superForm object sent by the client. Can be null, in which case a fail object is returned.
  * @param category The category to ratelimit by.
  * @param getClientAddress The client's IP address, set by the adapter.

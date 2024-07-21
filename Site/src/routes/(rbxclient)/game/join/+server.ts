@@ -1,3 +1,4 @@
+import config from "$lib/server/config"
 import { SignData } from "$lib/server/sign"
 import { Record, equery, findWhere, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
@@ -40,8 +41,8 @@ export async function GET({ url }) {
 
 	const placeId = gameSession.place.id
 	const creatorUsername = gameSession.place.ownerUser?.username
-	const charApp = `http://${process.env.DOMAIN}/asset/characterfetch/${gameSession.user.username}`
-	const pingUrl = `http://${process.env.DOMAIN}/game/clientpresence?ticket=${clientTicket}`
+	const charApp = `http://${config.Domain}/asset/characterfetch/${gameSession.user.username}`
+	const pingUrl = `http://${config.Domain}/game/clientpresence?ticket=${clientTicket}`
 	const membershipType =
 		gameSession.user.permissionLevel >= 2
 			? "Enum.MembershipType.BuildersClub"

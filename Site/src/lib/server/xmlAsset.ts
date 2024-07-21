@@ -1,3 +1,5 @@
+import config from "./config.ts"
+
 const strings = Object.freeze({
 	"T-Shirt": {
 		class: "ShirtGraphic",
@@ -41,7 +43,7 @@ export async function graphicAsset(
 		.replaceAll("_STRING_NAME", stringType.stringName)
 		.replaceAll(
 			"_ASSET_URL",
-			`${process.env.DOMAIN}/asset?id=${imageAssetId.toString()}`
+			`${config.Domain}/asset?id=${imageAssetId.toString()}`
 		)
 	await Bun.write(`data/assets/${graphicAssetId}`, asset)
 }
