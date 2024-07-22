@@ -1,6 +1,6 @@
 import fs from "node:fs"
 import config from "$lib/server/config"
-import { equery, surql } from "./surreal.ts"
+import { equery, surql } from "$lib/server/surreal"
 
 export type Status = "Pending" | "Rendering" | "Completed" | "Error"
 export type RenderType = "Clothing" | "Avatar" | "Model" | "Mesh"

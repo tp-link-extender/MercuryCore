@@ -1,7 +1,7 @@
 <script lang="ts">
+	import NoScript from "$lib/components/NoScript.svelte"
+	import YesScript from "$lib/components/YesScript.svelte"
 	import { createAccordion, melt } from "@melt-ui/svelte"
-	import NoScript from "./NoScript.svelte"
-	import YesScript from "./YesScript.svelte"
 
 	export let accordion = createAccordion()
 

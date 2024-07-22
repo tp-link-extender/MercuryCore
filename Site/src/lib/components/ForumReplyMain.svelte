@@ -1,12 +1,16 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
+	import DeleteButton from "$lib/components/DeleteButton.svelte"
+	import ForumReply from "$lib/components/ForumReply.svelte"
+	import type {
+		RepliesCollapsed,
+		Reply,
+		UserType
+	} from "$lib/components/ForumReply.svelte"
+	import PinButton from "$lib/components/PinButton.svelte"
+	import ReportButton from "$lib/components/ReportButton.svelte"
+	import User from "$lib/components/User.svelte"
 	import type { Writable } from "svelte/store"
-	import DeleteButton from "./DeleteButton.svelte"
-	import ForumReply from "./ForumReply.svelte"
-	import type { RepliesCollapsed, Reply, UserType } from "./ForumReply.svelte"
-	import PinButton from "./PinButton.svelte"
-	import ReportButton from "./ReportButton.svelte"
-	import User from "./User.svelte"
 
 	export let user: UserType
 	export let reply: Reply

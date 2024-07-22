@@ -1,4 +1,4 @@
-import config from "./config.ts"
+import config from "$lib/server/config.ts"
 
 const strings = Object.freeze({
 	"T-Shirt": {

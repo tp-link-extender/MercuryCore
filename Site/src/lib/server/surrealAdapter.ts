@@ -4,7 +4,7 @@ import type {
 	DatabaseUser,
 	RegisteredDatabaseUserAttributes,
 } from "lucia"
-import { Record, equery, surql } from "./surreal.ts"
+import { Record, equery, surql } from "$lib/server/surreal"
 
 async function deleteSession(sessionId: string) {
 	await equery(surql`DELETE ${Record("session", sessionId)}`)

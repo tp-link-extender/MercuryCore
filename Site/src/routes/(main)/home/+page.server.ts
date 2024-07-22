@@ -53,23 +53,13 @@ export async function load({ locals }) {
 		() => `Hi, ${user.username}!`,
 		() => `Hello, ${user.username}!`,
 	]
-	const facts = [
-		() =>
-			`You joined Mercury on ${user?.accountCreated
-				.toLocaleString()
-				.substring(0, 10)}!`,
-		() => `You are the ${ordinal(user?.number)} user to join Mercury!`,
-	]
 
 	const [places, friends, feed] = await equery<
 		[Place[], BasicUser[], FeedPost[]]
 	>(homeQuery, { user: Record("user", user.id) })
 
 	return {
-		stuff: {
-			greet: greets[Math.floor(Math.random() * greets.length)](),
-			fact: facts[Math.floor(Math.random() * facts.length)](),
-		},
+		greet: greets[Math.floor(Math.random() * greets.length)](),
 		form: await superValidate(zod(schema)),
 		places,
 		friends,

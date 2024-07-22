@@ -1,11 +1,11 @@
 <script lang="ts">
+	import NoScript from "$lib/components/NoScript.svelte"
+	import YesScript from "$lib/components/YesScript.svelte"
 	import { indentWithTab } from "@codemirror/commands"
 	import { css } from "@codemirror/lang-css"
 	import { keymap } from "@codemirror/view"
 	import { EditorView, basicSetup } from "codemirror"
 	import { onMount } from "svelte"
-	import NoScript from "../NoScript.svelte"
-	import YesScript from "../YesScript.svelte"
 
 	let code: HTMLDivElement
 

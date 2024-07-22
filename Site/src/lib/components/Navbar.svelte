@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 	import { goto } from "$app/navigation"
+	import User from "$lib/components/User.svelte"
 	import fade from "$lib/fade"
 	import { slide } from "svelte/transition"
-	import User from "./User.svelte"
 
 	export let data: import("../../routes/$types").LayoutData
 

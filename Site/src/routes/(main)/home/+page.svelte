@@ -31,7 +31,7 @@
 				<User {user} size="6rem" bg="accent" image class="<sm:hidden" />
 				<User {user} size="4rem" bg="accent" image class="sm:hidden" />
 				<span class="pl-6">
-					{data.stuff.greet}
+					{data.greet}
 				</span>
 			</a>
 		</h1>
@@ -108,11 +108,5 @@
 				</div>
 			</div>
 		{/if}
-		<div class="w-1/2 xl:w-2/3 lg:w-1/2 md:w-2/3">
-			<h2 class="pb-2">Random fact</h2>
-			<p class="card bg-darker rounded-2 p-4 text-base">
-				{data.stuff.fact}
-			</p>
-		</div>
 	</div>
 </div>

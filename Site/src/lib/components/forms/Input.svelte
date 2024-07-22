@@ -1,6 +1,6 @@
 <script lang="ts">
+	import SubInput from "$lib/components/forms/SubInput.svelte"
 	import type { HTMLInputTypeAttribute } from "svelte/elements"
-	import SubInput from "./SubInput.svelte"
 
 	export let name: string
 	export let label = ""

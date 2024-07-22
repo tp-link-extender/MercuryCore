@@ -15,10 +15,10 @@
 </script>
 
 <script lang="ts">
+	import ForumReplyMain from "$lib/components/ForumReplyMain.svelte"
+	import User from "$lib/components/User.svelte"
 	import fade from "$lib/fade"
-	import ForumReplyMain from "./ForumReplyMain.svelte"
 	import type { Writable } from "svelte/store"
-	import User from "./User.svelte"
 
 	// too many exports help
 	export let user: UserType

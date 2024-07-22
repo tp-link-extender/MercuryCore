@@ -1,4 +1,4 @@
-import { Record, type RecordId, equery } from "./surreal.ts"
+import { Record, type RecordId, equery } from "$lib/server/surreal"
 
 type ScoreResult = {
 	score: number

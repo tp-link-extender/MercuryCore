@@ -1,4 +1,7 @@
 import { building } from "$app/environment"
+import auditLogQuery from "$lib/server/auditLog.surql"
+import initQuery from "$lib/server/init.surql"
+import CustomHttpEngine, { realUrl } from "$lib/server/surrealEngine"
 import { error } from "@sveltejs/kit"
 import { green, red } from "picocolors"
 import {
@@ -8,9 +11,6 @@ import {
 	Surreal,
 	surql,
 } from "surrealdb.js"
-import auditLogQuery from "./auditLog.surql"
-import initQuery from "./init.surql"
-import CustomHttpEngine, { realUrl } from "./surrealEngine.ts"
 
 const db = new Surreal({ engines: { http: CustomHttpEngine } })
 
