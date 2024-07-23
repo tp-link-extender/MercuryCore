@@ -239,7 +239,7 @@
 					</div>
 					<div class="flex bg-a2 h-3px">
 						<div
-							class="bg-emerald-5"
+							class="bg-emerald-5 transition-width-300"
 							role="progressbar"
 							aria-label="Likes"
 							style="width: {($place.likeCount /
@@ -250,7 +250,7 @@
 							aria-valuemax={$place.dislikeCount +
 								$place.likeCount} />
 						<div
-							class="bg-red-5"
+							class="bg-red-5 transition-width-300"
 							role="progressbar"
 							aria-label="Dislikes"
 							style="width: {($place.dislikeCount /

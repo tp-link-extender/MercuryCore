@@ -79,8 +79,8 @@ export async function load({ locals, params }) {
 }
 
 async function getData(e: RequestEvent) {
-	const id = +e.params.id
 	const { user } = await authorise(e.locals)
+	const id = +e.params.id
 	const getPlace = await placeQuery(id)
 	if (user.username !== getPlace.owner.username && user.permissionLevel < 4)
 		error(403, "You do not have permission to update this page.")
@@ -126,9 +126,9 @@ actions.view = async e => {
 actions.ticket = async e => {
 	const id = await getData(e)
 
-	await equery(surql`UPDATE $place SET serverTicket = rand::guid()`, {
-		place: Record("place", id),
-	})
+	await equery(
+		surql`UPDATE ${Record("place", id)} SET serverTicket = rand::guid()`
+	)
 
 	return message(
 		await superValidate(e.request, zod(ticketSchema)),
@@ -141,16 +141,7 @@ actions.network = async e => {
 	const form = await superValidate(e.request, zod(networkSchema))
 	if (!form.valid) return formError(form)
 
-	const { serverIP, serverPort, maxPlayers } = form.data
-
-	await equery(
-		surql`
-			UPDATE ${Record("place", id)} MERGE {
-				serverIP: ${serverIP},
-				serverPort: ${serverPort},
-				maxPlayers: ${maxPlayers},
-			}`
-	)
+	await equery(surql`UPDATE ${Record("place", id)} MERGE ${form.data}`)
 
 	return message(form, "Network settings updated successfully!")
 }
@@ -162,18 +153,18 @@ actions.privacy = async e => {
 
 	const { privateServer } = form.data
 
-	await equery(surql`UPDATE $place SET privateServer = ${privateServer}`, {
-		place: Record("place", id),
-	})
+	await equery(
+		surql`UPDATE ${Record("place", id)} SET privateServer = ${privateServer}`
+	)
 
 	return message(form, "Privacy settings updated successfully!")
 }
 actions.privatelink = async e => {
 	const id = await getData(e)
 
-	await equery(surql`UPDATE $place SET privateTicket = rand::guid()`, {
-		place: Record("place", id),
-	})
+	await equery(
+		surql`UPDATE ${Record("place", id)} SET privateTicket = rand::guid()`
+	)
 
 	return message(
 		await superValidate(e.request, zod(privatelinkSchema)),
