@@ -18,3 +18,11 @@ services:
             - --pass=root
             - --allow-scripting
             - file:database
+
+    economy:
+        build: ./Economy
+        ports:
+            - 2009:2009
+        restart: unless-stopped
+        volumes:
+            - ./data/ledger:/usr/src/data/ledger

@@ -34,7 +34,7 @@ Instructions:
 -   Open a terminal and navigate to the directory of the repository
 -   Run `bun i` to install all dependencies
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
--   Run `docker compose up -d` to start the database
+-   Run `docker compose up -d` to start the database and economy service
 
 To start a local dev server, run `bun -b dev` and navigate to the link shown in the terminal (remember not to use HTTPS!). Upon saving a file, your changes will be shown in the web browser.
 
@@ -68,7 +68,7 @@ Instructions:
 -   Run `caddy start` to start the Caddy reverse proxy server
     -   You can also run `caddy reload` to reload the configuration file without restarting the server.
     -   If you're using Caddy with multiple configuration files, import the Caddyfile in the repository's root directory into a Caddyfile somewhere else, and run `caddy start` and `caddy reload` from there.
--   Run `docker compose up -d` to start the database
+-   Run `docker compose up -d` to start the database and economy service
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
 -   Open a terminal and navigate to the directory of the repository
 -   Run `bun -b prod` to install dependencies and begin building
