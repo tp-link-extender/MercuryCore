@@ -4,11 +4,12 @@
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
 import { dev } from "$app/environment"
+import config from "$lib/server/config"
 import { stipend } from "$lib/server/economy"
 import { auth } from "$lib/server/lucia"
 import { Record, equery, surql } from "$lib/server/surreal"
-import { redirect } from "@sveltejs/kit"
-import type { Cookie } from "lucia"
+import { type Handle, redirect } from "@sveltejs/kit"
+import type { Cookie, User } from "lucia"
 import { blue, green, gray as grey, magenta, red, yellow } from "picocolors"
 
 const methodColours = Object.freeze({
@@ -33,57 +34,63 @@ function pathnameColour(pathname: string) {
 	return pathname
 }
 
-// Ran every time a dynamic request is made.
-// Requests for prerendered pages do not trigger this hook.
-export async function handle({ event, resolve }) {
+const time = () =>
+	config.Logging.Time ? grey(new Date().toLocaleString()) : ""
+
+const userLog = (user: User | null) =>
+	user
+		? blue(user.username) + " ".repeat(21 - user.username.length)
+		: yellow("Logged-out user      ")
+
+async function finish({ event, resolve }: Parameters<Handle>[0]) {
 	const { pathname, search } = event.url
+	const { user } = event.locals
 
-	async function finish() {
+	if (config.Logging.Requests) {
+		// Fancy logging: time(?), user, method, and path
 		const method = event.request.method as keyof typeof methodColours
-		const { user } = event.locals // is this needed here?
-
-		// Fancy logging: time, user, method, and path
 		console.log(
-			`${grey(new Date().toLocaleString())} `,
-			user
-				? blue(user.username) + " ".repeat(21 - user.username.length)
-				: yellow("Logged-out user      "),
-			(methodColours[method] || method) + " ".repeat(7 - method.length),
+			time(),
+			userLog(user),
+			methodColours[method] || method,
+			" ".repeat(7 - method.length),
 			pathnameColour(decodeURI(pathname) + search)
 		)
-
-		const res = await resolve(event)
-
-		// if it's html, add the user's custom css before the </body> tag
-		const css = user?.css
-		if (res.headers.get("content-type")?.includes("text/html") && css) {
-			// duplicate the response to avoid modifying the original
-			const text = await res.clone().text()
-
-			return new Response(
-				text.replace(
-					"</body>",
-					`<style id="custom-css">${css}</style></body>`
-				),
-				{
-					status: res.status,
-					statusText: res.statusText,
-					headers: res.headers,
-				}
-			)
-		}
-		return res
 	}
+
+	const res = await resolve(event)
+
+	// if it's html, add the user's custom css before the </body> tag
+	const css = user?.css
+	if (!res.headers.get("content-type")?.includes("text/html") || !css)
+		return res
+
+	// duplicate the response to avoid modifying the original
+	const text = (await res.clone().text()).replace(
+		"</body>",
+		`<style id="custom-css">${css}</style></body>`
+	)
+	return new Response(text, {
+		status: res.status,
+		statusText: res.statusText,
+		headers: res.headers,
+	})
+}
+
+// Ran every time a dynamic request is made.
+// Requests for prerendered pages do not trigger this hook.
+export async function handle(e) {
+	const { event } = e
 
 	const sessionId = event.cookies.get(auth.sessionCookieName)
 	if (!sessionId) {
 		event.locals.session = null
 		event.locals.user = null
-		return await finish()
+		return await finish(e)
 	}
 
 	const { session, user } = await auth.validateSession(sessionId)
-	if (!session || !user) return await finish()
+	if (!session || !user) return await finish(e)
 
 	event.locals.session = session
 	event.locals.user = user
@@ -104,6 +111,7 @@ export async function handle({ event, resolve }) {
 		{ user: Record("user", user.id) }
 	)
 
+	const { pathname } = event.url
 	if (
 		moderated &&
 		!["/moderation", "/api"].includes(pathname) &&
@@ -111,21 +119,14 @@ export async function handle({ event, resolve }) {
 	)
 		redirect(302, "/moderation")
 
-	if (await stipend(user.id)) console.log("Awarded stipend to", user.username)
-	return await finish()
+	await stipend(user.id)
+	return await finish(e)
 }
 
-export const handleError = async ({ event, error }) => {
+export async function handleError({ event, error }) {
 	const user = event.locals.user
 
-	// Fancy error logging: time, user, and error
-	if (dev) console.error(error)
-	else
-		console.error(
-			`${grey(new Date().toLocaleString())} `,
-			user
-				? blue(user.username) + " ".repeat(21 - user.username.length)
-				: yellow("Logged-out user      "),
-			red(error as string)
-		)
+	// Fancy error logging: time(?), user, and error
+	if (!config.Logging.Requests) console.error(error)
+	else console.error(time(), userLog(user), red(error as string))
 }

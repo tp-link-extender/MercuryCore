@@ -20,15 +20,10 @@ func randId() (id string) {
 	return
 }
 
-func Log(txt string) {
-	// I HATE GO DATE FORMATTI- actually, F#'s isn't any better
-	fmt.Println(time.Now().Format("2006/01/02, 15:04:05 "), txt)
-}
-
 func Assert(err error, txt string) {
 	// so that I don't have to write this every time
 	if err != nil {
-		Log(c.InRed(txt+": ") + err.Error())
+		fmt.Println(c.InRed(txt+": ") + err.Error())
 		os.Exit(1)
 	}
 }
@@ -212,7 +207,7 @@ func readTx(txType string, remaining string) {
 		}
 		balances[burn.From] -= burn.Amount
 	default:
-		Log(c.InRed("Unknown transaction type in ledger"))
+		fmt.Println(c.InRed("Unknown transaction type in ledger"))
 	}
 }
 
@@ -310,7 +305,7 @@ func transactRoute(w http.ResponseWriter, r *http.Request) {
 	} else if err := transact(sentTx); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	} else {
-		Log(c.InGreen(fmt.Sprintf("Transaction successful  %s -[%s]-> %s", sentTx.From, toReadable(sentTx.Amount), sentTx.To)))
+		fmt.Println(c.InGreen(fmt.Sprintf("Transaction successful  %s -[%s]-> %s", sentTx.From, toReadable(sentTx.Amount), sentTx.To)))
 	}
 }
 
@@ -322,7 +317,7 @@ func mintRoute(w http.ResponseWriter, r *http.Request) {
 	} else if err := mint(sentMint, uint64(time.Now().UnixMilli())); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	} else {
-		Log(c.InGreen(fmt.Sprintf("Mint successful         %s <-[%s]-", sentMint.To, toReadable(sentMint.Amount))))
+		fmt.Println(c.InGreen(fmt.Sprintf("Mint successful         %s <-[%s]-", sentMint.To, toReadable(sentMint.Amount))))
 	}
 }
 
@@ -334,7 +329,7 @@ func burnRoute(w http.ResponseWriter, r *http.Request) {
 	} else if err := burn(sentBurn); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	} else {
-		Log(c.InGreen(fmt.Sprintf("Burn successful         %s -[%s]->", sentBurn.From, toReadable(sentBurn.Amount))))
+		fmt.Println(c.InGreen(fmt.Sprintf("Burn successful         %s -[%s]->", sentBurn.From, toReadable(sentBurn.Amount))))
 	}
 }
 
@@ -348,12 +343,12 @@ func stipendRoute(w http.ResponseWriter, r *http.Request) {
 	} else if err := stipend(to); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	} else {
-		Log(c.InGreen(fmt.Sprintf("Stipend successful      %s", to)))
+		fmt.Println(c.InGreen(fmt.Sprintf("Stipend successful      %s", to)))
 	}
 }
 
 func main() {
-	Log(c.InYellow("Loading ledger..."))
+	fmt.Println(c.InYellow("Loading ledger..."))
 	// create the file if it dont exist
 	var err error
 	file, err = os.OpenFile(filepath, os.O_CREATE|os.O_APPEND, 0o644)
@@ -378,6 +373,7 @@ func main() {
 	router.HandleFunc("POST /burn", burnRoute)
 	router.HandleFunc("POST /stipend/{id}", stipendRoute)
 
-	Log(c.InGreen("~ Economy service is up on port 2009 ~"))
-	http.ListenAndServe(":2009", router) // 03/Jan/2009 Chancellor on brink of second bailout for banks
+	fmt.Println(c.InGreen("~ Economy service is up on port 2009 ~"))
+	err = http.ListenAndServe(":2009", router) // 03/Jan/2009 Chancellor on brink of second bailout for banks
+	Assert(err, "Failed to start server")
 }

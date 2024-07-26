@@ -26,6 +26,7 @@ const schema = z.object({
 	Logging: z.object({
 		Requests: z.boolean(),
 		FormattedErrors: z.boolean(),
+		Time: z.boolean(),
 	}),
 })
 

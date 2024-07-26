@@ -64,5 +64,9 @@ export type Config = {
 		 * Whether to format errors in a more readable way. This does not provide a full stack trace.
 		 */
 		FormattedErrors: boolean
+		/**
+		 * Whether to log the time of each request.
+		 */
+		Time: boolean
 	}
 }
