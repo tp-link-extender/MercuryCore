@@ -41,7 +41,7 @@ export async function POST({ request, url, params }) {
 				`data/${typeAvatar ? "avatars" : "thumbnails"}/${
 					task.relativeId
 				}${name && "-"}${name}${typeAvatar ? ".png" : ""}`,
-				Buffer.from(input, "base64")
+				Buffer.from(input, "base64").toString()
 			)
 
 		// Convert base64 from proxy to an image

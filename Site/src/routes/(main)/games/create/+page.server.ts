@@ -1,8 +1,9 @@
+import { createPlace, getPlacePrice } from "$lib/server/economy"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
-import { Record, equery, surql, transaction } from "$lib/server/surreal"
+import { Record, equery, surql } from "$lib/server/surreal"
 import { encode } from "$lib/urlName"
-import { redirect } from "@sveltejs/kit"
+import { error, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -29,10 +30,15 @@ async function placeCount(id: string) {
 	return count
 }
 
-export const load = async () => ({
-	form: await superValidate(zod(schema)),
-	// placeCount: await placeCount((await authorise(locals)).user.id),
-})
+export async function load() {
+	const price = await getPlacePrice()
+	if (!price.ok) error(500, price.msg)
+	return {
+		form: await superValidate(zod(schema)),
+		// count: await placeCount((await authorise(locals)).user.id),
+		price: price.value,
+	}
+}
 
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ request, locals }) => {
@@ -51,31 +57,24 @@ actions.default = async ({ request, locals }) => {
 			["description"],
 			["Place must have a description"]
 		)
+	// if ((await placeCount(user.id)) >= 2)
+	// 	return formError(
+	// 		form,
+	// 		["other"],
+	// 		["You can't have more than two places"]
+	// 	)
 
-	if ((await placeCount(user.id)) >= 2)
-		return formError(
-			form,
-			["other"],
-			["You can't have more than two places"]
-		)
-
-	const [id] = await equery<number[]>(surql`stuff:increment.place OR 1`)
+	const [id] = await equery<number[]>(
+		surql`(UPDATE ONLY stuff:increment SET asset += 1).asset`
+	)
 	const slug = encode(name)
 
-	try {
-		// todo: uhh
-		await transaction(user, { id: "" }, 0, {
-			note: `Created place ${name}`,
-			link: `/place/${id + 1}/${slug}`,
-		})
-	} catch (err) {
-		const e = err as Error
-		console.log("error caught", e.message)
-		return formError(form, ["other"], [e.message])
-	}
+	const created = await createPlace(user.id, id, name, slug)
+	if (!created.ok) return formError(form, ["other"], [created.msg])
 
 	await equery(createQuery, {
 		user: Record("user", user.id),
+		id,
 		name,
 		description,
 		serverIP,
@@ -84,5 +83,5 @@ actions.default = async ({ request, locals }) => {
 		maxPlayers,
 	})
 
-	redirect(302, `/place/${id + 1}/${slug}`)
+	redirect(302, `/place/${id}/${slug}`)
 }

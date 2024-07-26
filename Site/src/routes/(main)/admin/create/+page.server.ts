@@ -88,7 +88,7 @@ async function fetchAssetVersion(id: number, version: number) {
 	// After all, they give the data in the response anyway. Why shouldn't I cache it?
 	await Bun.write(
 		`data/assetCache/${id}_${version}`,
-		Buffer.from(await data.arrayBuffer()) // todo: needed?
+		Buffer.from(await data.arrayBuffer()).toString() // todo: needed?
 	)
 
 	const type = meta.AssetTypeId

@@ -6,6 +6,5 @@ export async function GET({ url }) {
 	if (!apiKey || apiKey !== process.env.RCC_KEY) error(400, "Nerd")
 
 	await equery(surql`UPDATE stuff:ping SET render = time::now()`)
-
 	return new Response()
 }

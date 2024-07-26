@@ -1,4 +1,3 @@
-LET $id = (UPDATE ONLY stuff:increment SET place += 1).place;
 LET $place = CREATE place CONTENT {
 	id: $id,
 	name: $name,

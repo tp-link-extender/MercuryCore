@@ -5,15 +5,15 @@ import { SignData } from "$lib/server/sign"
 import { Record, equery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 
-const response = (file: Buffer | string) =>
-	new Response(file, {
-		headers: {
-			"Content-Type": "binary/octet-stream",
-			"Content-Disposition": `attachment; filename="${createHash("md5")
-				.update(file)
-				.digest("hex")}"`,
-		},
-	})
+const headers = (file: string | Uint8Array) => ({
+	"Content-Type": "binary/octet-stream",
+	"Content-Disposition": `attachment; filename="${createHash("md5")
+		.update(file)
+		.digest("hex")}"`,
+})
+
+const response = (file: string | Uint8Array) =>
+	new Response(file, { headers: headers(file) })
 
 type FoundAsset = {
 	id: number
@@ -41,11 +41,9 @@ export async function GET({ url }) {
 
 			// The asset is visible or pending
 			// (allow pending assets to be shown through the api)
-			console.log(`served asset #${id}`)
-
-			return response(
-				Buffer.from(await Bun.file(`data/assets/${id}`).arrayBuffer())
-			)
+			console.log(`serving asset #${id}`)
+			const file = await Bun.file(`data/assets/${id}`).arrayBuffer()
+			return response(new Uint8Array(file))
 		}
 
 		// Try loading as a corescript
@@ -65,8 +63,7 @@ export async function GET({ url }) {
 		// please rewrite the health corescript
 		if (!isHealthCorescript) file2 = await SignData(file2, +id)
 
-		console.log("served corescript", id)
-
+		console.log("serving corescript", id)
 		return response(file2)
 	} catch {
 		redirect(302, `https://assetdelivery.roblox.com/v1/asset?id=${id}`)

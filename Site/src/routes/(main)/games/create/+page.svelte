@@ -1,4 +1,5 @@
 <script lang="ts">
+	import beautifyCurrency from "$lib/beautifyCurrency.js"
 	import Head from "$lib/components/Head.svelte"
 	import Form from "$lib/components/forms/Form.svelte"
 	import Input from "$lib/components/forms/Input.svelte"
@@ -9,6 +10,8 @@
 
 	const formData = superForm(data.form)
 	export const snapshot = formData
+
+	const [, c1, c2] = beautifyCurrency(data.price)
 </script>
 
 <Head title="Create a place" />
@@ -19,7 +22,7 @@
 	{formData}
 	nopad
 	class="ctnr pt-12 max-w-200 light-text"
-	submit="Create ( <fa fa-gem></fa> Free )">
+	submit="Create ( <fa fa-gem></fa> {c1}.{c2} )">
 	<Input
 		{formData}
 		name="name"

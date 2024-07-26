@@ -3,7 +3,6 @@
 
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
-import { dev } from "$app/environment"
 import config from "$lib/server/config"
 import { stipend } from "$lib/server/economy"
 import { auth } from "$lib/server/lucia"

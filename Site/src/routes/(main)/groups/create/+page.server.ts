@@ -15,6 +15,15 @@ export const load = async () => ({
 	form: await superValidate(zod(schema)),
 })
 
+const errors: { [k: string]: string } = {
+	create: Buffer.from(
+		"RXJyb3IgMTY6IGR1bWIgbmlnZ2EgZGV0ZWN0ZWQ",
+		"base64"
+	).toString(),
+	changed: "Dickhead",
+	wisely: "GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!",
+}
+
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ request, locals }) => {
 	const { user } = await authorise(locals)
@@ -22,33 +31,14 @@ actions.default = async ({ request, locals }) => {
 	if (!form.valid) return formError(form)
 
 	const { name } = form.data
-
-	if (name.toLowerCase() === "create")
-		return formError(
-			form,
-			["name"],
-			[
-				Buffer.from(
-					"RXJyb3IgMTY6IGR1bWIgbmlnZ2EgZGV0ZWN0ZWQ",
-					"base64"
-				).toString("ascii"),
-			]
-		)
-
-	if (name.toLowerCase() === "changed")
-		return formError(form, ["name"], ["Dickhead"])
-
-	if (name.toLowerCase() === "wisely")
-		return formError(
-			form,
-			["name"],
-			["GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!"]
-		)
+	const lowercaseName = name.toLowerCase()
+	if (errors[lowercaseName])
+		return formError(form, ["name"], [errors[lowercaseName]])
 
 	const foundGroup = await findWhere(
 		"group",
-		"string::lowercase(name) = string::lowercase($name)",
-		{ name }
+		"string::lowercase(name) = $lowercaseName",
+		{ lowercaseName }
 	)
 	if (foundGroup)
 		return formError(
