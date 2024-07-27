@@ -123,7 +123,7 @@ export async function handle(e) {
 }
 
 export async function handleError({ event, error }) {
-	const user = event.locals.user
+	const { user } = event.locals
 
 	// Fancy error logging: time(?), user, and error
 	if (!config.Logging.Requests) console.error(error)

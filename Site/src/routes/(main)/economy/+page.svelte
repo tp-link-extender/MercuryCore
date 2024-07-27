@@ -20,7 +20,11 @@
 			<fa fa-gem class="pr-3 text-emerald-6" />
 			<span class="balancenum flex flex-row text-emerald-6">
 				<span class="text-emerald-9">{zerosBefore}</span>
-				{beforePoint}.{afterPoint}
+				{beforePoint}
+				<span class={afterPoint ? "text-emerald-6" : "text-emerald-9"}>
+					.
+				</span>
+				{afterPoint}
 				<span class="text-emerald-9">{zerosAfter}</span>
 			</span>
 		</div>

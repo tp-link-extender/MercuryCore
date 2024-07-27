@@ -81,7 +81,6 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 			case 12: // Pants
 				saveImages[0] = await clothingAsset(asset)
 				saveImages[1] = (id: number) => requestRender("Clothing", id)
-
 				break
 
 			case 13: // Decal

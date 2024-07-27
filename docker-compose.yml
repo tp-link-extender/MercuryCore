@@ -25,4 +25,4 @@ services:
             - 2009:2009
         restart: unless-stopped
         volumes:
-            - ./data/ledger:/usr/src/data/ledger
+            - ./data/economy:/economy/data

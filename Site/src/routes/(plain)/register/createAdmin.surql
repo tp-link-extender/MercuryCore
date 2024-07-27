@@ -10,7 +10,6 @@ CREATE user CONTENT {
 	},
 	created: time::now(),
 	css: "",
-	currencyCollected: time::now(),
 	email: "",
 	hashedPassword: $user.hashedPassword,
 	lastOnline: time::now(),

@@ -53,7 +53,6 @@ DEFINE TABLE user SCHEMAFULL;
 	DEFINE FIELD bodyColours ON user FLEXIBLE TYPE object;
 	DEFINE FIELD created ON user TYPE string;
 	DEFINE FIELD css ON user TYPE string;
-	DEFINE FIELD currencyCollected ON user TYPE datetime;
 	DEFINE FIELD email ON user TYPE string
 		ASSERT string::is::email($value) OR $value == ""; # admin account uh yeah
 	DEFINE FIELD hashedPassword ON user TYPE string;
