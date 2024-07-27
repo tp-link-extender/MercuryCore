@@ -157,7 +157,7 @@ actions.unfollow = async e => {
 			DELETE $user->follows WHERE out = $user2;
 			DELETE $user->notification WHERE out = $user2
 				AND type = "Follower"
-				AND read = false`,
+				AND !read`,
 		params
 	)
 }
@@ -169,7 +169,7 @@ actions.unfriend = async e => {
 			DELETE $user->friends WHERE out = $user2;
 			DELETE $user->notification WHERE out = $user2
 				AND type = "NewFriend"
-				AND read = false`,
+				AND !read`,
 		params
 	)
 }
@@ -216,7 +216,7 @@ actions.cancel = async e => {
 			DELETE $user->request WHERE out = $user2;
 			DELETE $user->notification WHERE out = $user2
 				AND type = "FriendRequest"
-				AND read = false`,
+				AND !read`,
 		params
 	)
 }

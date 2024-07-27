@@ -34,33 +34,20 @@ export async function load({ locals }) {
 			(SELECT number, status, username
 			FROM $parent.creator)[0] AS creator
 		OMIT deleted
-		FROM banner WHERE deleted = false`)
-
-	return {
-		form: await superValidate(zod(schema)),
-		banners,
-	}
+		FROM banner WHERE !deleted`)
+	return { banners, form: await superValidate(zod(schema)) }
 }
 
 async function bannerActiveCount() {
 	const [banners] = await equery<number[]>(surql`
-		count(
-			SELECT 1 FROM banner
-			WHERE active = true AND deleted = false
-		)`)
-
+		count(SELECT 1 FROM banner WHERE active AND !deleted)`)
 	return banners
 }
 
 async function getData({ request, locals }: RequestEvent) {
 	const { user } = await authorise(locals, 5)
 	const form = await superValidate(request, zod(schema))
-
-	return {
-		user,
-		form,
-		error: !form.valid && formError(form),
-	}
+	return { user, form, error: !form.valid && formError(form) }
 }
 
 const showHide = (action: string) => async (e: RequestEvent) => {

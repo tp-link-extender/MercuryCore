@@ -1,3 +1,4 @@
+import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import { auth } from "$lib/server/lucia"
 import requestRender from "$lib/server/requestRender"
@@ -86,6 +87,7 @@ actions.register = async ({ request, cookies }) => {
 			email,
 			// I still love scrypt, though argon2 is better supported
 			hashedPassword: Bun.password.hashSync(password),
+			bodyColours: config.DefaultBodyColors,
 		},
 		key,
 	})
@@ -129,6 +131,7 @@ actions.initialAccount = async ({ request, cookies }) => {
 		user: {
 			username,
 			hashedPassword: Bun.password.hashSync(password),
+			bodyColours: config.DefaultBodyColors,
 		},
 	})
 
@@ -136,12 +139,12 @@ actions.initialAccount = async ({ request, cookies }) => {
 		await requestRender("Avatar", userId)
 	} catch {}
 
-	const session = await auth.createSession(userId, {})
-	const sessionCookie = auth.createSessionCookie(session.id)
+	const { id } = await auth.createSession(userId, {})
+	const cookie = auth.createSessionCookie(id)
 
-	cookies.set(sessionCookie.name, sessionCookie.value, {
+	cookies.set(cookie.name, cookie.value, {
 		path: ".",
-		...sessionCookie.attributes,
+		...cookie.attributes,
 	})
 
 	redirect(302, "/home")

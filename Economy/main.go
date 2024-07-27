@@ -28,10 +28,9 @@ func Assert(err error, txt string) {
 	}
 }
 
-
 func isDockerised() bool {
-     _, err := os.Stat("/.dockerenv")
-    return err == nil 
+	_, err := os.Stat("/.dockerenv")
+	return err == nil
 }
 
 type (
@@ -42,7 +41,7 @@ type (
 
 const (
 	filepathDockerised = "./data/ledger" // jsonl file
-	filepath = "../data/economy/ledger"
+	filepath           = "../data/economy/ledger"
 
 	Micro currency = 1
 	Milli          = 1e3 * Micro
@@ -58,7 +57,7 @@ const (
 	TCU         = float64(100 * Unit)
 	baseStipend = float64(10 * Unit)
 	baseFee     = 0.1
-	stipendTime = 12
+	stipendTime = 12 * 60 * 60 * 1000
 )
 
 func toReadable(c currency) string {
@@ -367,7 +366,7 @@ func main() {
 		fmt.Println(c.InPurple("Running in Docker!"))
 		currentFilepath = filepathDockerised
 	}
-	file, err = os.OpenFile(currentFilepath, os.O_CREATE|os.O_RDWR, 0o644)
+	file, err = os.OpenFile(currentFilepath, os.O_RDWR, 0o644)
 	Assert(err, "Failed to open ledger. Make sure the ")
 	defer file.Close()
 	updateBalances()

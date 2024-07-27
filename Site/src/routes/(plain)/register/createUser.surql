@@ -1,13 +1,6 @@
 CREATE user CONTENT {
 	bio: [],
-	bodyColours: {
-		Head: 24,
-		LeftArm: 24,
-		LeftLeg: 119,
-		RightArm: 24,
-		RightLeg: 119,
-		Torso: 23,
-	},
+	bodyColours: $bodyColours,
 	created: time::now(),
 	css: "",
 	email: $user.email,

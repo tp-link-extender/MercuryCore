@@ -21,8 +21,7 @@ export async function load({ request, locals }) {
 			textLight,
 			meta::id(id) AS id
 		OMIT deleted
-		FROM banner WHERE deleted = false AND active = true`)
-
+		FROM banner WHERE !deleted AND active`)
 	return {
 		banners,
 		user,
