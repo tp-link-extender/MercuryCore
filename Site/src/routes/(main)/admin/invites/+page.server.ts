@@ -105,10 +105,8 @@ actions.disable = async e => {
 
 	if (!id) return message(form, "Missing fields", { status: 400 })
 
-	const [[key]] = await equery<{ usesLeft: number }[][]>(
-		surql`SELECT usesLeft FROM ${Record("regKey", id)}`
-	)
-
+	const [[key]] = await equery<{ usesLeft: number }[][]>(surql`
+		SELECT usesLeft FROM ${Record("regKey", id)}`)
 	if (key && key.usesLeft === 0)
 		return message(
 			form,

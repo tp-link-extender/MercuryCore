@@ -1,4 +1,4 @@
-import sharp from "sharp"
+import sharp, { type ResizeOptions } from "sharp"
 
 /**
  * Creates an image asset based off a file object
@@ -10,10 +10,7 @@ import sharp from "sharp"
  * const id = // Load from database
  * save(id)
  */
-export async function imageAsset(
-	file: File,
-	sharpOptions?: sharp.ResizeOptions
-) {
+export async function imageAsset(file: File, sharpOptions?: ResizeOptions) {
 	const fileBuffer = await sharp(await file.arrayBuffer())
 		.resize(256, 256, {
 			fit: "contain",
@@ -25,7 +22,7 @@ export async function imageAsset(
 			throw new Error("Image asset failed to upload")
 		})
 
-	return (id: number) => Bun.write(`data/assets/${id}`, fileBuffer)
+	return (id: number) => Bun.write(`data/assets/${id}`, fileBuffer.toString())
 }
 
 /**
@@ -38,10 +35,7 @@ export async function imageAsset(
  * const id = // Load from database
  * save(id)
  */
-export async function clothingAsset(
-	file: File,
-	sharpOptions?: sharp.ResizeOptions
-) {
+export async function clothingAsset(file: File, sharpOptions?: ResizeOptions) {
 	const fileBuffer = await sharp(await file.arrayBuffer())
 		.resize(585, 559, {
 			fit: "fill",
@@ -53,7 +47,7 @@ export async function clothingAsset(
 			throw new Error("Image asset failed to upload")
 		})
 
-	return (id: number) => Bun.write(`data/assets/${id}`, fileBuffer)
+	return (id: number) => Bun.write(`data/assets/${id}`, fileBuffer.toString())
 }
 
 /**
@@ -66,23 +60,27 @@ export async function clothingAsset(
  * const id = // Load from database
  * save(id)
  */
-export async function thumbnail(
-	file: File,
-	sharpOptions?: sharp.ResizeOptions
-) {
+export async function thumbnail(file: File, sharpOptions?: ResizeOptions) {
 	const fileBuffer = await sharp(await file.arrayBuffer())
 		.resize(420, 420, {
 			fit: "fill",
 			...sharpOptions,
 		})
-		.webp()
+		.avif()
 		.toBuffer()
 		.catch(() => {
 			throw new Error("Thumbnail failed to upload")
 		})
 
-	return (id: number) => Bun.write(`data/thumbnails/${id}`, fileBuffer)
+	return (id: number) =>
+		Bun.write(`data/thumbnails/${id}`, fileBuffer.toString())
 }
+
+const tShirtOpts = Object.freeze({
+	fit: "contain",
+	position: "top",
+	background: { r: 0, g: 0, b: 0, alpha: 0 },
+})
 
 /**
  * Creates an T-Shirt image asset based off a file object
@@ -95,18 +93,14 @@ export async function thumbnail(
  */
 export async function tShirt(file: File) {
 	const fileBuffer = await sharp(await file.arrayBuffer())
-		.resize(420, 420, {
-			fit: "contain",
-			position: "top",
-			background: { r: 0, g: 0, b: 0, alpha: 0 },
-		})
+		.resize(420, 420, tShirtOpts)
 		.png()
 		.toBuffer()
 		.catch(() => {
 			throw new Error("Image asset failed to upload")
 		})
 
-	return (id: number) => Bun.write(`data/assets/${id}`, fileBuffer)
+	return (id: number) => Bun.write(`data/assets/${id}`, fileBuffer.toString())
 }
 
 /**
@@ -120,20 +114,17 @@ export async function tShirt(file: File) {
  */
 export async function tShirtThumbnail(file: File) {
 	const input = await sharp(await file.arrayBuffer())
-		.resize(250, 250, {
-			fit: "contain",
-			position: "top",
-			background: { r: 0, g: 0, b: 0, alpha: 0 },
-		})
+		.resize(250, 250, tShirtOpts)
 		.toBuffer()
 
 	const fileBuffer = await sharp("static/tShirtTemplate.webp")
 		.composite([{ input }])
-		.webp()
+		.avif()
 		.toBuffer()
 		.catch(() => {
 			throw new Error("Thumbnail failed to upload")
 		})
 
-	return (id: number) => Bun.write(`data/thumbnails/${id}`, fileBuffer)
+	return (id: number) =>
+		Bun.write(`data/thumbnails/${id}`, fileBuffer.toString())
 }

@@ -24,9 +24,8 @@ const schema = z.object({
 })
 
 async function placeCount(id: string) {
-	const [[{ count }]] = await equery<{ count: number }[][]>(
-		surql`SELECT count(->owns->place) FROM ${Record("user", id)}`
-	)
+	const [[{ count }]] = await equery<{ count: number }[][]>(surql`
+		SELECT count(->owns->place) FROM ${Record("user", id)}`)
 	return count
 }
 
@@ -57,16 +56,15 @@ actions.default = async ({ request, locals }) => {
 			["description"],
 			["Place must have a description"]
 		)
-	// if ((await placeCount(user.id)) >= 2)
-	// 	return formError(
-	// 		form,
-	// 		["other"],
-	// 		["You can't have more than two places"]
-	// 	)
+	if ((await placeCount(user.id)) >= 2)
+		return formError(
+			form,
+			["other"],
+			["You can't have more than two places"]
+		)
 
-	const [id] = await equery<number[]>(
-		surql`(UPDATE ONLY stuff:increment SET asset += 1).asset`
-	)
+	const [id] = await equery<number[]>(surql`
+		(UPDATE ONLY stuff:increment SET asset += 1).asset`)
 	const slug = encode(name)
 
 	const created = await createPlace(user.id, id, name, slug)

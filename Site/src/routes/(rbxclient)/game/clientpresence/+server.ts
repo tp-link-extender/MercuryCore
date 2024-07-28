@@ -9,10 +9,8 @@ export async function GET({ url, request }) {
 	if (!ticket) error(400, "Invalid Request")
 	if (!(await find("playing", ticket))) error(400, "Ticket not found")
 
-	await equery(
-		surql`UPDATE ${Record("playing", ticket)} SET ping = time::now()`
-	)
-
+	await equery(surql`
+		UPDATE ${Record("playing", ticket)} SET ping = time::now()`)
 	return new Response("OK", {
 		headers: {
 			Pragma: "no-cache",

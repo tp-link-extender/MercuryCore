@@ -22,9 +22,8 @@ const numberQueries = Object.freeze({
 
 export async function load({ params }) {
 	const type = params.f as keyof typeof usersQueries
-	const [[user]] = await equery<{ id: RecordId<"user"> }[][]>(
-		surql`SELECT id FROM user WHERE username = ${params.username}`
-	)
+	const [[user]] = await equery<{ id: RecordId<"user"> }[][]>(surql`
+		SELECT id FROM user WHERE username = ${params.username}`)
 	if (!user) error(404, "Not found")
 
 	const [users] = await equery<BasicUser[][]>(usersQueries[type], user)

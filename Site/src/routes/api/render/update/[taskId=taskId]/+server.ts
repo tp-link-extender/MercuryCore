@@ -10,42 +10,29 @@ export async function POST({ request, url, params }) {
 	const apiKey = url.searchParams.get("apiKey")
 	if (!apiKey || apiKey !== process.env.RCC_KEY) error(403, "Stfu")
 
-	const id = params.taskId
-
-	const [[task]] = await equery<Render[][]>(
-		surql`SELECT type, relativeId FROM $render`,
-		{ render: Record("render", id) }
-	)
+	const render = Record("render", params.taskId)
+	const [[task]] = await equery<Render[][]>(surql`
+		SELECT type, relativeId FROM ${render}`)
 	if (!task) error(404, "Task not found")
 
-	const buffer = await request.arrayBuffer()
-
 	// More stuff is done with the proxy now, so we don't need to gunzip it
-	console.log("buffer", buffer)
-
 	const [status, clickBody, clickHead] = new TextDecoder()
-		.decode(buffer)
+		.decode(await request.arrayBuffer())
 		.split("\n")
-	const typeAvatar = task.type === "Avatar"
+
+	const getPath = (name: string) =>
+		task.type === "Avatar"
+			? `data/avatars/${task.relativeId}${name && "-"}${name}.png`
+			: `data/thumbnails/${task.relativeId}${name && "-"}${name}`
+	const write = (input: string, name = "") =>
+		Bun.write(getPath(name), Buffer.from(input, "base64").toString())
 
 	console.log("Render status update:", status)
-
 	if (status === "Rendering")
-		await equery(surql`UPDATE $render SET status = "Rendering"`, {
-			render: Record("render", id),
-		})
+		await equery(surql`
+			UPDATE ${render} SET status = "Rendering"`)
 	else if (status === "Completed") {
-		// Less repetitive and more readable
-		const write = (input: string, name = "") =>
-			Bun.write(
-				`data/${typeAvatar ? "avatars" : "thumbnails"}/${
-					task.relativeId
-				}${name && "-"}${name}${typeAvatar ? ".png" : ""}`,
-				Buffer.from(input, "base64").toString()
-			)
-
-		// Convert base64 from proxy to an image
-		// todo make it multipart/form-data or something for lower bandwidth
+		// todo make proxy return multipart/form-data or something for lower bandwidth than base64
 		if (clickHead && clickBody)
 			await Promise.all([
 				write(clickHead, "head"),
@@ -55,13 +42,11 @@ export async function POST({ request, url, params }) {
 
 		await equery(
 			surql`
-				UPDATE $render MERGE {
+				UPDATE ${render} MERGE {
 					status: "Completed",
 					completed: time::now(),
-				}`,
-			{ render: Record("render", id) }
+				}`
 		)
 	}
-
 	return new Response()
 }

@@ -11,6 +11,10 @@ export async function GET({ url }) {
 
 	if (!assetId || !width || !height) error(404, "Asset not found")
 
+	const [[cache]] = await equery<{ url: string }[][]>(surql`
+		SELECT url FROM ${Record("thumbnailCache", assetId)}`)
+	if (cache) redirect(302, cache.url)
+
 	const params = new URLSearchParams({
 		assetIds: stringAssetId,
 		returnPolicy: "Placeholder",
@@ -18,13 +22,6 @@ export async function GET({ url }) {
 		format: "Png",
 		isCircular: "false",
 	})
-	const [[cache]] = await equery<{ url: string }[][]>(
-		surql`SELECT url FROM $asset`,
-		{ asset: Record("thumbnailCache", assetId) }
-	)
-
-	if (cache) redirect(302, cache.url)
-
 	const thumb = await fetch(
 		`https://thumbnails.roblox.com/v1/assets?${params}`
 	)

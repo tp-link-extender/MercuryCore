@@ -13,9 +13,8 @@ type User = {
 }
 
 export async function GET({ params }) {
-	const [[user]] = await equery<User[][]>(
-		surql`SELECT bodyColours FROM user WHERE username = ${params.username}`
-	)
+	const [[user]] = await equery<User[][]>(surql`
+		SELECT bodyColours FROM user WHERE username = ${params.username}`)
 	if (!user) error(404, "User not found")
 
 	const colours = user.bodyColours

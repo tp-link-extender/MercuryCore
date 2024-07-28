@@ -91,7 +91,7 @@
 			</span>
 		{:else if bottom}
 			<span
-				class="username bottom pt-2 text-center"
+				class="username overflow-hidden max-h-12 pt-2 text-center"
 				class:small={user.username?.length || 0 > 15}
 				style="max-width: {size}">
 				{user.username}
@@ -124,10 +124,5 @@
 		width: 20%;
 		height: 20%;
 		background: var(--status);
-	}
-
-	.bottom {
-		overflow: hidden;
-		max-height: 3rem;
 	}
 </style>

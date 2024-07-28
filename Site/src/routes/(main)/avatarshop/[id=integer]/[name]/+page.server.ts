@@ -85,9 +85,8 @@ export async function load({ locals, params }) {
 async function getBuyData(e: RequestEvent) {
 	const { user } = await authorise(e.locals)
 	const id = +e.params.id
-	const [[assetExists]] = await equery<boolean[][]>(
-		surql`SELECT 1 FROM ${Record("asset", id)}`
-	)
+	const [[assetExists]] = await equery<boolean[][]>(surql`
+		SELECT 1 FROM ${Record("asset", id)}`)
 	if (!assetExists) error(404)
 
 	return { user, id }
@@ -123,9 +122,8 @@ const updateVisibility = (visibility: string, text: string, id: string) =>
 
 const pinComment = (pinned: boolean) => async (e: RequestEvent) => {
 	const { id } = await findComment(e, 4)
-	await equery(
-		surql`UPDATE ${Record("assetComment", id)} SET pinned = ${pinned}`
-	)
+	await equery(surql`
+		UPDATE ${Record("assetComment", id)} SET pinned = ${pinned}`)
 }
 
 type Thing = {

@@ -6,8 +6,7 @@ export type Group = {
 }
 
 export async function load() {
-	const [groups] = await equery<Group[][]>(
-		surql`SELECT name, count(<-member) AS memberCount FROM group`
-	)
+	const [groups] = await equery<Group[][]>(surql`
+		SELECT name, count(<-member) AS memberCount FROM group`)
 	return { groups }
 }

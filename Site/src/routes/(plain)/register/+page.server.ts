@@ -69,9 +69,8 @@ actions.register = async ({ request, cookies }) => {
 		return formError(form, ["email"], ["This email is already in use"])
 
 	const key = Record("regKey", regkey.split("-")[1])
-	const [[regkeyCheck]] = await equery<{ usesLeft: number }[][]>(
-		surql`SELECT usesLeft FROM ${key}`
-	)
+	const [[regkeyCheck]] = await equery<{ usesLeft: number }[][]>(surql`
+		SELECT usesLeft FROM ${key}`)
 	if (!regkeyCheck)
 		return formError(form, ["regkey"], ["Registration key is invalid"])
 	if (regkeyCheck.usesLeft < 1)

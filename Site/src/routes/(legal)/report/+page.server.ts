@@ -26,9 +26,8 @@ const schema = z.object({
 
 // const getReportee = (username: string) =>
 async function getReportee(username: string) {
-	const [[reportee]] = await equery<{ id: RecordId }[][]>(
-		surql`SELECT id FROM user WHERE username = ${username}`
-	)
+	const [[reportee]] = await equery<{ id: RecordId }[][]>(surql`
+		SELECT id FROM user WHERE username = ${username}`)
 	return reportee
 }
 

@@ -157,10 +157,7 @@ if (!building) {
 export const find = <T extends keyof RecordIdTypes>(
 	table: T,
 	id: RecordIdTypes[T]
-) =>
-	equery(
-		surql`!!SELECT 1 FROM ${Record(table, id)}`
-	) as unknown as Promise<boolean>
+): Promise<boolean> => equery(surql`!!SELECT 1 FROM ${Record(table, id)}`)
 
 /**
  * Finds whether a record exists in the database matching a given condition.

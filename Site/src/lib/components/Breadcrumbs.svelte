@@ -2,10 +2,11 @@
 	export let path: [string, string][]
 </script>
 
-<nav aria-label="breadcrumb" class="grey-text flex flex-wrap">
-	<ol class="text-base px-0">
+<nav aria-label="breadcrumb">
+	<ol
+		class="grey-text text-base px-0 flex flex-wrap list-none items-center justify-start">
 		{#each path as [name, href], num}
-			<li class="crumb" class:final={num === path.length - 1}>
+			<li>
 				{#if num === path.length - 1}
 					{name}
 				{:else}
@@ -17,18 +18,8 @@
 </nav>
 
 <style>
-	ol {
-		list-style: none;
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		justify-content: flex-start;
-	}
-
-	.crumb:not(:last-child)::after {
+	li:not(:last-child)::after {
 		content: "/";
-		margin: 0 0.5rem;
-		color: var(--grey-text);
-		text-decoration: none;
+		padding: 0 0.6rem 0 0.4rem; /* magic */
 	}
 </style>

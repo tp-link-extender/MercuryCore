@@ -9,23 +9,12 @@
 
 <a
 	in:fade|global={{ num, total, max: 12 }}
-	class="card light-text h-full w-full flex flex-row bg-darker"
+	class="card bg-darker light-text h-full w-full max-w-100 flex flex-row no-underline"
 	href="/user/{user.username}">
 	<div class="p-6 flex">
 		<User {user} image size="6rem" bg="accent" />
 	</div>
-	<p class="text-base p-6">
+	<p class="w-fit break-all text-base p-6">
 		{user.username}
 	</p>
 </a>
-
-<style>
-	.card {
-		max-width: 25rem;
-		text-decoration: none;
-		& p {
-			width: fit-content;
-			word-break: break-all;
-		}
-	}
-</style>

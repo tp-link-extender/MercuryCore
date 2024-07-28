@@ -126,9 +126,8 @@ actions.view = async e => {
 actions.ticket = async e => {
 	const id = await getData(e)
 
-	await equery(
-		surql`UPDATE ${Record("place", id)} SET serverTicket = rand::guid()`
-	)
+	await equery(surql`
+		UPDATE ${Record("place", id)} SET serverTicket = rand::guid()`)
 
 	return message(
 		await superValidate(e.request, zod(ticketSchema)),
@@ -153,19 +152,15 @@ actions.privacy = async e => {
 
 	const { privateServer } = form.data
 
-	await equery(
-		surql`UPDATE ${Record("place", id)} SET privateServer = ${privateServer}`
-	)
-
+	await equery(surql`
+		UPDATE ${Record("place", id)} SET privateServer = ${privateServer}`)
 	return message(form, "Privacy settings updated successfully!")
 }
 actions.privatelink = async e => {
 	const id = await getData(e)
 
-	await equery(
-		surql`UPDATE ${Record("place", id)} SET privateTicket = rand::guid()`
-	)
-
+	await equery(surql`
+		UPDATE ${Record("place", id)} SET privateTicket = rand::guid()`)
 	return message(
 		await superValidate(e.request, zod(privatelinkSchema)),
 		"Regenerated!"

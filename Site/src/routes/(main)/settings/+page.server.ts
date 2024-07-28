@@ -70,18 +70,14 @@ actions.password = async ({ request, locals }) => {
 	const [[{ hashedPassword }]] = await equery<{ hashedPassword: string }[][]>(
 		surql`SELECT hashedPassword FROM ${userId}`
 	)
-
 	if (!Bun.password.verifySync(cpassword, hashedPassword))
 		return formError(form, ["cpassword"], ["Incorrect password"])
 
-	await equery(
-		surql`UPDATE ${userId} SET hashedPassword = ${Bun.password.hashSync(npassword)}`
-	)
+	await equery(surql`
+		UPDATE ${userId} SET hashedPassword = ${Bun.password.hashSync(npassword)}`)
 
 	// Don't send the password back to the client
-	form.data.cpassword = ""
-	form.data.npassword = ""
-	form.data.cnpassword = ""
+	form.data.cpassword = form.data.npassword = form.data.cnpassword = ""
 
 	return message(form, "Password updated successfully!")
 }
