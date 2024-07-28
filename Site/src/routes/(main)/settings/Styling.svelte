@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Form from "$lib/components/forms/Form.svelte"
-	import Codearea from "$lib/components/forms/Codearea.svelte"
+	import Codearea from "$components/forms/Codearea.svelte"
+	import Form from "$components/forms/Form.svelte"
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data: import("./$types").PageData
@@ -13,7 +13,10 @@
 		user.css || "/* Enter your CSS here! Maximum 10 000 characters. */\n"
 </script>
 
-<Form {formData} action="?/styling" submit="<fa fa-save class='pr-2'></fa> Save changes">
+<Form
+	{formData}
+	action="?/styling"
+	submit="<fa fa-save class='pr-2'></fa> Save changes">
 	<Codearea
 		{formData}
 		rows={15}

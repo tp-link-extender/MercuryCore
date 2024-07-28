@@ -41,7 +41,8 @@
 					}
 				}
 			}
-		}, {
+		},
+		{
 			"include": ["mercury.core.ts"],
 			"linter": {
 				"rules": {

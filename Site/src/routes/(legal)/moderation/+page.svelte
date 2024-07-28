@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
-	import Head from "$lib/components/Head.svelte"
+	import Head from "$components/Head.svelte"
 
 	export let data
 

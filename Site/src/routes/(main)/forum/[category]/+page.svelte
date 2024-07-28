@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/stores"
-	import Breadcrumbs from "$lib/components/Breadcrumbs.svelte"
-	import Head from "$lib/components/Head.svelte"
+	import Breadcrumbs from "$components/Breadcrumbs.svelte"
+	import Head from "$components/Head.svelte"
 	import fade from "$lib/fade"
 	import { writable } from "svelte/store"
 	import ForumPost from "./ForumPost.svelte"

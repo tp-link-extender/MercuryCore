@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { applyAction, enhance } from "$app/forms"
 	import { invalidateAll } from "$app/navigation"
-	import Accordion from "$lib/components/Accordion.svelte"
-	import AccordionItem from "$lib/components/AccordionItem.svelte"
-	import Head from "$lib/components/Head.svelte"
-	import ReportButton from "$lib/components/ReportButton.svelte"
-	import User from "$lib/components/User.svelte"
+	import Accordion from "$components/Accordion.svelte"
+	import AccordionItem from "$components/AccordionItem.svelte"
+	import Head from "$components/Head.svelte"
+	import ReportButton from "$components/ReportButton.svelte"
+	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
 	import Interactions from "./Interactions.svelte"
 	import ProfilePlace from "./ProfilePlace.svelte"
@@ -23,8 +23,6 @@
 		["orange", "fa-shield-alt", "Moderator"],
 		["crimson", "fa-scale-balanced", "Administrator"]
 	]
-
-
 
 	let regenerating = false
 
@@ -132,7 +130,9 @@
 		{#if data.username !== user.username}
 			<span class="lg:hidden flex justify-between items-end pt-2">
 				<Interactions {data} />
-				<ReportButton user={data.username} url="/user/{data.username}" />
+				<ReportButton
+					user={data.username}
+					url="/user/{data.username}" />
 			</span>
 		{/if}
 	</div>

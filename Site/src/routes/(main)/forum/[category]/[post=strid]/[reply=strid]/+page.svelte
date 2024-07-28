@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { invalidateAll } from "$app/navigation"
-	import Breadcrumbs from "$lib/components/Breadcrumbs.svelte"
-	import ForumReply from "$lib/components/ForumReply.svelte"
-	import Head from "$lib/components/Head.svelte"
+	import Breadcrumbs from "$components/Breadcrumbs.svelte"
+	import ForumReply from "$components/ForumReply.svelte"
+	import Head from "$components/Head.svelte"
 	import { writable } from "svelte/store"
 
 	let replyingTo = writable("")

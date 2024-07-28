@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { browser } from "$app/environment"
-	import Asset from "$lib/components/Asset.svelte"
-	import Head from "$lib/components/Head.svelte"
-	import SidebarShell from "$lib/components/SidebarShell.svelte"
-	import TabData from "$lib/components/TabData"
+	import Asset from "$components/Asset.svelte"
+	import Head from "$components/Head.svelte"
+	import SidebarShell from "$components/SidebarShell.svelte"
+	import TabData from "$components/TabData"
 
 	export let data
 

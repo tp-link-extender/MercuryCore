@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Head from "$lib/components/Head.svelte"
-	import UserCard from "$lib/components/UserCard.svelte"
+	import Head from "$components/Head.svelte"
+	import UserCard from "$components/UserCard.svelte"
 
 	export let data
 </script>

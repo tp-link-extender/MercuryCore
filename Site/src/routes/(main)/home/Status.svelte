@@ -1,6 +1,6 @@
 <script lang="ts">
-	import ReportButton from "$lib/components/ReportButton.svelte"
-	import User from "$lib/components/User.svelte"
+	import ReportButton from "$components/ReportButton.svelte"
+	import User from "$components/User.svelte"
 
 	export let status: import("./$types").PageData["feed"][0]
 </script>

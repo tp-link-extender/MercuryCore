@@ -3,9 +3,9 @@
 	import { applyAction } from "$app/forms"
 	import { enhance } from "$app/forms"
 	import { invalidateAll } from "$app/navigation"
+	import TabData from "$components/TabData"
+	import TabNav from "$components/TabNav.svelte"
 	import { brickColours, brickToHex } from "$lib/brickColours"
-	import TabData from "$lib/components/TabData"
-	import TabNav from "$lib/components/TabNav.svelte"
 	import AvatarItem from "./AvatarItem.svelte"
 
 	export let data

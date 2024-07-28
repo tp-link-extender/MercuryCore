@@ -1,6 +1,6 @@
 <script lang="ts">
-	import NoScript from "$lib/components/NoScript.svelte"
-	import YesScript from "$lib/components/YesScript.svelte"
+	import NoScript from "$components/NoScript.svelte"
+	import YesScript from "$components/YesScript.svelte"
 	import { indentWithTab } from "@codemirror/commands"
 	import { css } from "@codemirror/lang-css"
 	import { keymap } from "@codemirror/view"

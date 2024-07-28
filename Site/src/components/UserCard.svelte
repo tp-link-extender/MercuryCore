@@ -1,5 +1,5 @@
 <script lang="ts">
-	import User from "$lib/components/User.svelte"
+	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
 
 	export let user: BasicUser

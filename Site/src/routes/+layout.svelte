@@ -2,7 +2,7 @@
 	import { dev } from "$app/environment"
 	import { enhance } from "$app/forms"
 	import { navigating } from "$app/stores"
-	import User from "$lib/components/User.svelte"
+	import User from "$components/User.svelte"
 	import nprogress from "nprogress"
 	import { onMount } from "svelte"
 

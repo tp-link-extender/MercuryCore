@@ -1,6 +1,6 @@
 <script lang="ts">
+	import Head from "$components/Head.svelte"
 	import beautifyCurrency from "$lib/beautifyCurrency"
-	import Head from "$lib/components/Head.svelte"
 
 	export let data
 

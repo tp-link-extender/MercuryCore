@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
-	import Asset from "$lib/components/Asset.svelte"
-	import Head from "$lib/components/Head.svelte"
-	import TabData from "$lib/components/TabData"
-	import TabNav from "$lib/components/TabNav.svelte"
+	import Asset from "$components/Asset.svelte"
+	import Head from "$components/Head.svelte"
+	import TabData from "$components/TabData"
+	import TabNav from "$components/TabNav.svelte"
 
 	export let data
 

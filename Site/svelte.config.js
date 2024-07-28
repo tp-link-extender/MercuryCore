@@ -6,6 +6,9 @@ import { vitePreprocess } from "@sveltejs/vite-plugin-svelte"
 export default {
 	// Consult https://github.com/sveltejs/svelte-preprocess for more information about preprocessors
 	preprocess: sequence([vitePreprocess(), preprocessMeltUI()]),
-	kit: { adapter: adapter() },
+	kit: {
+		adapter: adapter(),
+		alias: { $components: "./src/components" },
+	},
 	vitePlugin: { inspector: { toggleKeyCombo: "control-i" } },
 }

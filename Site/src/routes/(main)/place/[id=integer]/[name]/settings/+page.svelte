@@ -1,9 +1,9 @@
 <script lang="ts">
 	import "./settings.css"
-	import Head from "$lib/components/Head.svelte"
-	import Tab from "$lib/components/Tab.svelte"
-	import TabData from "$lib/components/TabData"
-	import TabNav from "$lib/components/TabNav.svelte"
+	import Head from "$components/Head.svelte"
+	import Tab from "$components/Tab.svelte"
+	import TabData from "$components/TabData"
+	import TabNav from "$components/TabNav.svelte"
 	import NetworkForm from "./Network.svelte"
 	import PrivacyForm from "./Privacy.svelte"
 	import PrivatelinkForm from "./Privatelink.svelte"

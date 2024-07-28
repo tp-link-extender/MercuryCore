@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Head from "$lib/components/Head.svelte"
-	import User from "$lib/components/User.svelte"
+	import Head from "$components/Head.svelte"
+	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
 
 	export let data

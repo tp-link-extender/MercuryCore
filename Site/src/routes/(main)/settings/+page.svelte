@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Head from "$lib/components/Head.svelte"
-	import Tab from "$lib/components/Tab.svelte"
-	import TabData from "$lib/components/TabData"
-	import TabNav from "$lib/components/TabNav.svelte"
+	import Head from "$components/Head.svelte"
+	import Tab from "$components/Tab.svelte"
+	import TabData from "$components/TabData"
+	import TabNav from "$components/TabNav.svelte"
 	import Account from "./Account.svelte"
 	import Profile from "./Profile.svelte"
 	import Security from "./Security.svelte"

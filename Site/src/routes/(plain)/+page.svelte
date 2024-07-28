@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { dev } from "$app/environment"
+	import Head from "$components/Head.svelte"
 	import beautifyCurrency from "$lib/beautifyCurrency"
-	import Head from "$lib/components/Head.svelte"
 	import { VERSION } from "@sveltejs/kit"
 	import Waves from "./Waves.svelte"
 

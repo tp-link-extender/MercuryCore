@@ -2,20 +2,20 @@
 	import { applyAction } from "$app/forms"
 	import { enhance } from "$app/forms"
 	import { invalidateAll } from "$app/navigation"
+	import ForumReply from "$components/ForumReply.svelte"
+	import Head from "$components/Head.svelte"
+	import PostReply from "$components/PostReply.svelte"
+	import Tab from "$components/Tab.svelte"
+	import TabData from "$components/TabData"
+	import TabNav from "$components/TabNav.svelte"
+	import User from "$components/User.svelte"
 	import types from "$lib/assetTypes"
-	import ForumReply from "$lib/components/ForumReply.svelte"
-	import Head from "$lib/components/Head.svelte"
-	import PostReply from "$lib/components/PostReply.svelte"
-	import Tab from "$lib/components/Tab.svelte"
-	import TabData from "$lib/components/TabData"
-	import TabNav from "$lib/components/TabNav.svelte"
-	import User from "$lib/components/User.svelte"
 	import { writable } from "svelte/store"
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
 	export let form // would be typed as null unless we do actions shenanigans
-	
+
 	const { user } = data
 
 	let regenerating = false

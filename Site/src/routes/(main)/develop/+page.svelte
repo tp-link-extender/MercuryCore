@@ -1,10 +1,10 @@
 <script lang="ts">
-	import AdminLink from "$lib/components/AdminLink.svelte"
-	import Head from "$lib/components/Head.svelte"
-	import SidebarShell from "$lib/components/SidebarShell.svelte"
-	import Tab from "$lib/components/Tab.svelte"
-	import TabData from "$lib/components/TabData"
-	import TabNav from "$lib/components/TabNav.svelte"
+	import AdminLink from "$components/AdminLink.svelte"
+	import Head from "$components/Head.svelte"
+	import SidebarShell from "$components/SidebarShell.svelte"
+	import Tab from "$components/Tab.svelte"
+	import TabData from "$components/TabData"
+	import TabNav from "$components/TabNav.svelte"
 
 	export let data
 
