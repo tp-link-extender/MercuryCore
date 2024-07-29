@@ -27,12 +27,12 @@ type Category = {
 
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
+
 	const [[category]] = await equery<Category[][]>(categoryQuery, {
 		...params,
 		user: Record("user", user.id),
 	})
 	if (!category) error(404, "Not found")
-
 	return category
 }
 

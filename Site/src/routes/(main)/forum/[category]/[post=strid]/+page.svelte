@@ -22,11 +22,8 @@
 
 	const repliesCollapsed = writable({})
 
-	async function onResult({
-		result
-	}: {
-		result: import("@sveltejs/kit").ActionResult
-	}) {
+	type ActionResult = import("@sveltejs/kit").ActionResult // I promise there's a reason
+	async function onResult({ result }: { result: ActionResult }) {
 		if (result.type === "success") await invalidateAll()
 		// Reload the post with the data including the new reply, as the form that posted the reply didn't do that
 		$post = data.post
@@ -124,18 +121,25 @@
 						{new Date($post.posted).toLocaleString()}
 					</i>
 				</div>
-				<span>
-					{#if user.permissionLevel >= 4}
-						<PinButton
-							{refreshReplies}
-							id={$post.id}
-							pinned={$post.pinned}
-							post />
-					{/if}
-					<ReportButton
-						user={$post.author.username}
-						url="/forum/{$post.categoryName}/{$post.id}" />
-				</span>
+				<div>
+					<span class="dropdown">
+						<fa fa-ellipsis-h class="dropdown-ellipsis" />
+						<div class="dropdown-content pt-2">
+							<ul class="p-2 rounded-3">
+								{#if user.permissionLevel >= 4}
+									<PinButton
+										{refreshReplies}
+										id={$post.id}
+										pinned={$post.pinned}
+										post />
+								{/if}
+								<ReportButton
+									user={$post.author.username}
+									url="/forum/{$post.categoryName}/{$post.id}" />
+							</ul>
+						</div>
+					</span>
+				</div>
 			</span>
 			<h2 class="text-xl pt-2">
 				{$post.title}

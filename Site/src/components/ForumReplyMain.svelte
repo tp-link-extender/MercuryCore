@@ -148,28 +148,32 @@
 				Reply
 			</a>
 			{#if !hidden}
-				{#if reply.author.username === user.username}
-					<DeleteButton id={reply.id} reverse {refreshReplies} />
-				{:else}
-					<ReportButton
-						user={reply.author.username}
-						url="/forum/{categoryName}/{postId}/{reply.id}"
-						reverse />
-					{#if user.permissionLevel >= 4}
-						<DeleteButton
-							id={reply.id}
-							moderate
-							reverse
-							{refreshReplies} />
-					{/if}
-				{/if}
-				{#if pinnable && user.permissionLevel >= 4}
-					<PinButton
-						{refreshReplies}
-						id={reply.id}
-						pinned={reply.pinned}
-						reverse />
-				{/if}
+				<span class="dropdown">
+					<fa fa-ellipsis-h class="dropdown-ellipsis" />
+					<div class="dropdown-content pt-2">
+						<ul class="p-2 rounded-3">
+							{#if reply.author.username === user.username}
+								<DeleteButton id={reply.id} {refreshReplies} />
+							{:else}
+								<ReportButton
+									user={reply.author.username}
+									url="/forum/{categoryName}/{postId}/{reply.id}" />
+								{#if user.permissionLevel >= 4}
+									<DeleteButton
+										id={reply.id}
+										moderate
+										{refreshReplies} />
+								{/if}
+							{/if}
+							{#if pinnable && user.permissionLevel >= 4}
+								<PinButton
+									{refreshReplies}
+									id={reply.id}
+									pinned={reply.pinned} />
+							{/if}
+						</ul>
+					</div>
+				</span>
 			{/if}
 		{:else}
 			<div class="card reply bg-darker mb-2 p-4 pt-2 max-w-3/4">

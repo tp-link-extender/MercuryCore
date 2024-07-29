@@ -2,72 +2,23 @@
 	import { enhance } from "$app/forms"
 
 	export let id: string
-	export let reverse = false
 	export let moderate = false
 	export let post = false
 	export let refreshReplies: import("@sveltejs/kit").SubmitFunction
 
 	const text = moderate ? "moderate" : "delete"
 	const colour = moderate ? "text-cyan-5" : "text-yellow-5"
-
-	let clicked = false
 </script>
 
-<form
-	use:enhance={refreshReplies}
-	method="POST"
-	action="?/{text}{post ? 'post' : ''}&id={id}"
-	class="inline">
-	{#if clicked}
-		<small class="light-text pl-2 inline-flex items-center">
-			{text}?
-			<button class="btn p-0 px-1 {colour}">yes</button>
-			/
-			<button
-				on:click={() => (clicked = false)}
-				class="btn p-0 px-1 {colour}">
-				no
-			</button>
-		</small>
-	{:else}
-		<button on:click={() => (clicked = true)} class="btn p-0 pl-2 {colour}">
-			<small>
-				{#if reverse}
-					<far class="{moderate ? 'fa-gavel' : 'fa-trash'} pr-2" />
-				{/if}
-				<span
-					class="{text} {colour} overflow-hidden align-middle w-0 -mt-0.4">
-					<!-- perfect alignment -->
-					{text.charAt(0).toUpperCase() + text.slice(1)}
-				</span>
-				{#if !reverse}
-					<far class="{moderate ? 'fa-gavel' : 'fa-trash'} pl-2" />
-				{/if}
-			</small>
+<li class="rounded-2">
+	<form
+		use:enhance={refreshReplies}
+		method="POST"
+		action="?/{text}{post ? 'post' : ''}&id={id}"
+		class="inline">
+		<button class="btn pl-4 pr-2 {colour}">
+			<far class="{moderate ? 'fa-gavel' : 'fa-trash'} pr-2" />
+			{text.charAt(0).toUpperCase() + text.slice(1)}
 		</button>
-	{/if}
-</form>
-
-<style>
-	small {
-		font-size: 0.9rem;
-	}
-
-	span {
-		transition: all 0.2s;
-		display: inline-block;
-		white-space: nowrap;
-	}
-
-	button:hover {
-		& far {
-			font-weight: 900;
-		}
-		& .delete {
-			width: 2.8rem;
-		}
-		& .moderate {
-			width: 4.1rem;
-		}
-	}
-</style>
+	</form>
+</li>
