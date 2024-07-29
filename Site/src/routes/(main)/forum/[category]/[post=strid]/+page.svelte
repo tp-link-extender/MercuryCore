@@ -12,7 +12,6 @@
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
-	export let asComponent = false
 
 	const { user } = data
 
@@ -68,17 +67,12 @@
 <Head title={$post.title} />
 
 <div class="ctnr max-w-280 light-text">
-	{#if !asComponent}
-		<!--
-			Breadcrumbs can give confusing behaviour if linking to the same page the component is shallow-routed on
-		-->
-		<Breadcrumbs
-			path={[
-				["Forum", "/forum"],
-				[$post.categoryName, `/forum/${$post.categoryName}`],
-				[$post.title, ""]
-			]} />
-	{/if}
+	<Breadcrumbs
+		path={[
+			["Forum", "/forum"],
+			[$post.categoryName, `/forum/${$post.categoryName}`],
+			[$post.title, ""]
+		]} />
 
 	<div
 		class="post card bg-darker flex-row overflow-hidden {$post.pinned

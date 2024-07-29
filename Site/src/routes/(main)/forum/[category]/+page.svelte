@@ -1,11 +1,8 @@
 <script lang="ts">
-	import { page } from "$app/stores"
 	import Breadcrumbs from "$components/Breadcrumbs.svelte"
 	import Head from "$components/Head.svelte"
-	import fade from "$lib/fade"
 	import { writable } from "svelte/store"
 	import ForumPost from "./ForumPost.svelte"
-	import PostPage from "./[post=strid]/+page.svelte"
 
 	export let data
 
@@ -46,20 +43,3 @@
 		</h2>
 	{/if}
 </div>
-
-{#if $page.state.openPost}
-	<div class="modal-static fixed h-full z-10 overflow-y-auto p-10 py-20">
-		<div
-			transition:fade={{ duration: 200 }}
-			role="button"
-			tabindex="0"
-			on:click={() => history.back()}
-			on:keypress={() => history.back()}
-			class="modal-backdrop" />
-		<div
-			transition:fade={{ duration: 100 }}
-			class="modal-box bg-background h-full w-full max-w-280 py-10 max-h-initial!">
-			<PostPage data={$page.state.openPost} asComponent />
-		</div>
-	</div>
-{/if}

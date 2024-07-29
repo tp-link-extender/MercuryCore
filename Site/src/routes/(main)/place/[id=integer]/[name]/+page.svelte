@@ -193,9 +193,16 @@
 					{online ? "Online" : "Offline"}
 				</small>
 				<span class="float-right">
-					<ReportButton
-						user={$place.ownerUser?.username || ""}
-						url="/place/{$place.id}/{data.slug}" />
+					<span class="dropdown">
+						<fa fa-ellipsis-h class="dropdown-ellipsis" />
+						<div class="dropdown-content pt-2">
+							<ul class="p-2 rounded-3">
+								<ReportButton
+									user={$place.ownerUser?.username || ""}
+									url="/place/{$place.id}/{data.slug}" />
+							</ul>
+						</div>
+					</span>
 				</span>
 			</div>
 			<div id="buttons" class="flex flex-col">

@@ -63,7 +63,7 @@
 		<div class="w-full light-text">
 			<div class="flex justify-between">
 				<h1>{$asset.name}</h1>
-				<li class="dropdown dropdown-hover dropdown-end pl-2 pt-2">
+				<li class="dropdown pl-2 pt-2">
 					<fa fa-ellipsis />
 					<div class="dropdown-content">
 						<ul class="p-2 rounded-3">

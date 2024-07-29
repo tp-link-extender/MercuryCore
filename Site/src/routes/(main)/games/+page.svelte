@@ -1,9 +1,6 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
-	import { page } from "$app/stores"
 	import Head from "$components/Head.svelte"
-	import fade from "$lib/fade"
-	import PlacePage from "../place/[id=integer]/[name]/+page.svelte"
 	import PlaceCard from "./PlaceCard.svelte"
 
 	export let data
@@ -79,30 +76,9 @@
 	{/if}
 </div>
 
-{#if $page.state.openPlace}
-	<div
-		class="modal-static fixed w-full h-full z-10 overflow-y-auto p-20 px-10">
-		<div
-			transition:fade={{ duration: 200 }}
-			role="button"
-			tabindex="0"
-			on:click={() => history.back()}
-			on:keypress={() => history.back()}
-			class="modal-backdrop" />
-		<div
-			transition:fade={{ duration: 100 }}
-			class="modal-box bg-background py-10">
-			<PlacePage data={$page.state.openPlace} />
-		</div>
-	</div>
-{/if}
-
 <style>
 	input {
 		background-color: var(--accent);
 		border-color: var(--accent2);
-	}
-	.modal-box {
-		max-height: initial !important;
 	}
 </style>

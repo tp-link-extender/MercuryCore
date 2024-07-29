@@ -51,10 +51,6 @@ declare global {
 			user: import("lucia").User | null
 			session: import("lucia").Session | null
 		}
-		interface PageState {
-			openPost?: import("./routes/(main)/forum/[category]/[post]/$types").PageData
-			openPlace?: import("./routes/(main)/place/[id]/[name]/$types").PageData
-		}
 	}
 }
 

@@ -5,7 +5,7 @@
 	import fade from "$lib/fade"
 	import { slide } from "svelte/transition"
 
-	export let data: import("../../routes/$types").LayoutData
+	export let data: import("../routes/$types").LayoutData
 
 	let search = ""
 	let searchCompleted = true
@@ -169,7 +169,7 @@
 					class="tooltip <lg:hidden font-bold light-text">
 					<fa fa-bell />
 				</a>
-				<div class="dropdown dropdown-hover dropdown-end">
+				<div class="dropdown">
 					<User
 						{user}
 						class="<sm:hidden"
