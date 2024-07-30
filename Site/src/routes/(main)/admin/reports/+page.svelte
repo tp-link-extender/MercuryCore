@@ -6,13 +6,13 @@
 
 	export let data
 
-	let tabData = TabData(data.url, ["Audit logs"], ["fa fa-list"])
+	let tabData = TabData(data.url, ["Abuse reports"], ["fa fa-list"])
 </script>
 
-<Head title="Audit logs - Admin" />
+<Head title="Abuse reports - Admin" />
 
 <div class="ctnr max-w-240 pb-6">
-	<h1>Audit logs &ndash; Admin</h1>
+	<h1>Abuse reports &ndash; Admin</h1>
 	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
 		Back to panel

@@ -46,7 +46,7 @@
 <Head title="Banners - Admin" />
 
 <div class="ctnr max-w-280 pb-6">
-	<h1>Admin - Banners</h1>
+	<h1>Banners &ndash; Admin</h1>
 	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
 		Back to panel

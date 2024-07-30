@@ -19,7 +19,7 @@
 	const panel: { [k: string]: [string, string, string][] } = {
 		Moderation: [
 			["Moderate User", "/admin/moderation", "fa fa-user-slash"],
-			// ["Report Abuse", "#", "fa fa-flag"],
+			["Abuse reports", "/admin/reports", "fa fa-flag"],
 			["Asset Approval", "/admin/asset", "fa fa-file-circle-check"],
 			["Render Queue", "/admin/renderqueue", "fa fa-file-image"]
 		],

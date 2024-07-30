@@ -76,3 +76,18 @@ export async function createPlace(
 		[id]
 	)
 }
+
+export async function createGroup(
+	To: string,
+	name: string
+): Promise<{ ok: true } | { ok: false; msg: string }> {
+	const price = await getGroupPrice()
+	if (!price.ok) return price
+	return await burn(
+		To,
+		price.value,
+		`Created place ${name}`,
+		`/groups/${name}`,
+		[]
+	)
+}

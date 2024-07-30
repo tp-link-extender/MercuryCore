@@ -22,10 +22,10 @@
 	})
 </script>
 
-<Head title="Develop" />
+<Head title="Develop - Create" />
 
 <div class="text-center">
-	<h1>Develop - Create</h1>
+	<h1>Develop &ndash; Create</h1>
 	<a href="/develop" class="no-underline accent-text">
 		<fa fa-caret-left />
 		Back to Develop

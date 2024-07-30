@@ -28,7 +28,7 @@
 <Head title="Invites - Admin" />
 
 <div class="ctnr max-w-240 pb-6">
-	<h1>Admin - Invites</h1>
+	<h1>Invites &ndash; Admin</h1>
 	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
 		Back to panel

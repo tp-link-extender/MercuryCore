@@ -25,13 +25,13 @@
 		["5", "Unban"]
 	]
 
-	let tabData = TabData(data.url, ["Moderate User"], ["fa fa-gavel"])
+	let tabData = TabData(data.url, ["Moderate user"], ["fa fa-gavel"])
 </script>
 
-<Head title="Moderate User - Admin" />
+<Head title="Moderate user - Admin" />
 
 <div class="ctnr max-w-280 pb-6">
-	<h1>Admin - Moderate User</h1>
+	<h1>Moderate user &ndash; Admin</h1>
 	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
 		Back to panel

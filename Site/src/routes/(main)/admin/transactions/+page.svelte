@@ -18,7 +18,7 @@
 <Head title="Transactions - Admin" />
 
 <div class="ctnr max-w-240 pb-6">
-	<h1>Admin - Transactions</h1>
+	<h1>Transactions &ndash; Admin</h1>
 	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
 		Back to panel

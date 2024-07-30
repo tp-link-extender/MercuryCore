@@ -1,7 +1,7 @@
-import { getGroupPrice } from "$lib/server/economy"
+import { createGroup, getGroupPrice } from "$lib/server/economy"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
-import { Record, equery, findWhere, transaction } from "$lib/server/surreal"
+import { Record, equery, findWhere } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
@@ -21,14 +21,14 @@ export async function load() {
 	}
 }
 
-const errors: { [k: string]: string } = {
+const errors: { [k: string]: string } = Object.freeze({
 	create: Buffer.from(
 		"RXJyb3IgMTY6IGR1bWIgbmlnZ2EgZGV0ZWN0ZWQ",
 		"base64"
 	).toString(),
 	changed: "Dickhead",
 	wisely: "GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!",
-}
+})
 
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ request, locals }) => {
@@ -53,16 +53,8 @@ actions.default = async ({ request, locals }) => {
 			["A group with this name already exists"]
 		)
 
-	try {
-		// todo: wearenumberwhan
-		await transaction(user, { id: "" }, 10, {
-			note: `Created group ${name}`,
-			link: `/groups/${name}`,
-		})
-	} catch (err) {
-		const e = err as Error
-		return formError(form, ["other"], [e.message])
-	}
+	const created = await createGroup(user.id, name)
+	if (!created.ok) return formError(form, ["other"], [created.msg])
 
 	await equery(createQuery, {
 		name,

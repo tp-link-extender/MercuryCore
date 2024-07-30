@@ -19,7 +19,7 @@
 	<div class="<lg:hidden w-75" />
 	<div class="flex w-full justify-center">
 		<div class="w-full max-w-240 <md:px-4">
-			<h1>Admin - Asset approval</h1>
+			<h1>Asset approval &ndash; Admin</h1>
 			<a href="/admin" class="no-underline">
 				<fa fa-caret-left />
 				Back to panel

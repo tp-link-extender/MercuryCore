@@ -16,10 +16,10 @@
 	const current = data.queue[0]
 </script>
 
-<Head title="Render Queue - Admin" />
+<Head title="Render queue - Admin" />
 
 <div class="ctnr max-w-280 pb-6">
-	<h1>Admin - Render Queue</h1>
+	<h1>Render queue &ndash; Admin</h1>
 	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
 		Back to panel
