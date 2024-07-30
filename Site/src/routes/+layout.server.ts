@@ -28,5 +28,6 @@ export async function load({ request, locals }) {
 		notifications: await getNotifications(user),
 		url: request.url,
 		domain: config.Domain,
+		currencySymbol: config.CurrencySymbol,
 	}
 }

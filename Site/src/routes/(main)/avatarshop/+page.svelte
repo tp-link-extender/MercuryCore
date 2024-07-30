@@ -151,7 +151,11 @@
 				<div
 					class="grid gap-4 grid-cols-2 xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3">
 					{#each assets as asset, num (asset.id)}
-						<Asset {asset} {num} total={data.assets.length} />
+						<Asset
+							{asset}
+							{num}
+							total={data.assets.length}
+							symbol={data.currencySymbol} />
 					{/each}
 				</div>
 			{:else}

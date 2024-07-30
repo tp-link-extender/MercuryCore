@@ -33,7 +33,7 @@
 	{formData}
 	nopad
 	enctype="multipart/form-data"
-	submit="Create ( <fa fa-gem></fa> 15 )"
+	submit="Create ({data.currencySymbol}15)"
 	class="ctnr pt-8 max-w-200 light-text">
 	<Select
 		{formData}

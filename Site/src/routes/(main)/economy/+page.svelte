@@ -4,9 +4,7 @@
 
 	export let data
 
-	const [zerosBefore, beforePoint, afterPoint, zerosAfter] = beautifyCurrency(
-		data.balance
-	)
+	const [c1, c2, c3, c4] = beautifyCurrency(data.balance)
 </script>
 
 <Head title="Economy" />
@@ -17,15 +15,13 @@
 	<div class="card bg-darker p-4">
 		Current balance
 		<div class="flex flex-row items-center text-2rem">
-			<fa fa-gem class="pr-3 text-emerald-6" />
+			<span class="pr-2 text-emerald-6">{data.currencySymbol}</span>
 			<span class="balancenum flex flex-row text-emerald-6">
-				<span class="text-emerald-9">{zerosBefore}</span>
-				{beforePoint}
-				<span class={afterPoint ? "text-emerald-6" : "text-emerald-9"}>
-					.
-				</span>
-				{afterPoint}
-				<span class="text-emerald-9">{zerosAfter}</span>
+				<span class="text-emerald-9">{c1}</span>
+				{c2}
+				<span class={c3 ? "text-emerald-6" : "text-emerald-9"}>.</span>
+				{c3}
+				<span class="text-emerald-9">{c4}</span>
 			</span>
 		</div>
 	</div>

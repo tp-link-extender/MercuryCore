@@ -17,7 +17,7 @@
 <Form
 	{formData}
 	action="?/password"
-	submit="<far fa-key class='pr-2'></far> Change password">
+	submit="<fa fa-key class='pr-2'></fa> Change password">
 	<div class="hidden">
 		<!-- for accessibility, allows password managers to better autofill etc -->
 		<Input
@@ -84,9 +84,8 @@
 		<small class="formhelp">
 			Your private key can be used to access your account's assets outside
 			of Mercury or in the event of Mercury shutting down, via the
-			blockchain. <fa fa-gem />
-			s are stored as Fungible Tokens (FTs) and assets are stored as Non-Fungible
-			Tokens (NFTs).
+			blockchain. {data.currencySymbol} are stored as Fungible Tokens (FTs)
+			and assets are stored as Non-Fungible Tokens (NFTs).
 			<br />
 			<span class="text-red-5">
 				Do not share this key with anyone! Mercury administrators will

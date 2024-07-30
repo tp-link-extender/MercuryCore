@@ -133,7 +133,7 @@
 					<div class="card p-4">
 						<p class="light-text text-center mb-0 pb-1">
 							Price: <span class="text-emerald-6">
-								<far fa-gem />
+								{data.currencySymbol}
 								{$asset.price}
 							</span>
 						</p>
@@ -195,7 +195,7 @@
 				Would you like to {$asset.price > 0 ? "buy" : "get"}
 				{$asset.name} for
 				{#if $asset.price > 0}
-					<far fa-gem />
+					{data.currencySymbol}
 					{$asset.price}
 				{:else}
 					<strong>FREE</strong>
@@ -212,8 +212,7 @@
 		{:else}
 			<h3 class="text-lg font-bold">Insufficient funds</h3>
 			<span>
-				You don't have enough <fa fa-gem />
-				s to buy this item.
+				You don't have enough {data.currencySymbol} to buy this item.
 			</span>
 			<p>
 				You'll need <strong>

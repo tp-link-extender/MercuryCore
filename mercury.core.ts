@@ -5,7 +5,9 @@ export default {
 	Domain: "mercury2.com",
 	DatabaseURL: "http://localhost:8000",
 	RCCServiceProxyURL: "http://localhost:64990",
+	CurrencySymbol: "屌",
 
+	// 'noob' colours
 	DefaultBodyColors: {
 		Head: 24,
 		LeftArm: 24,

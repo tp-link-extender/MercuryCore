@@ -7,9 +7,9 @@
 
 	export let data
 
-	const [, beforePoint, afterPoint, zerosAfter] = beautifyCurrency(
-		data.stipend.value
-	)
+	const [, c1, c2] = data.stipend.ok
+		? beautifyCurrency(data.stipend.value)
+		: ["", "", ""]
 
 	const systems = [
 		{
@@ -34,8 +34,7 @@
 			ok: data.stipend.ok,
 			success: [
 				"Current stipend size is",
-				`${beforePoint}.${afterPoint}${zerosAfter}`,
-				"unit"
+				`${data.currencySymbol}${c1}${c2 ? '.' : ''}${c2}`
 			],
 			err: "Unable to connect to the service"
 		}
@@ -63,10 +62,10 @@
 		<div class="py-6">
 			{#each systems as { name, ok, success, err }}
 				<div class="flex items-center py-3">
-					<far
+					<fa
 						class="text-4xl {ok
-							? 'fa-check-circle text-emerald-6'
-							: 'fa-circle-ellipsis text-neutral-2'}" />
+							? 'fa-check-circle text-emerald-5'
+							: 'fa-circle-ellipsis text-neutral-3'}" />
 					<div class="pl-4">
 						<div class="text-7 font-500 light-text line-height-5">
 							{name}

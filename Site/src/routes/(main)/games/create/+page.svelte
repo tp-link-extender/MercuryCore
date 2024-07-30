@@ -22,7 +22,7 @@
 	{formData}
 	nopad
 	class="ctnr pt-12 max-w-200 light-text"
-	submit="Create ( <fa fa-gem></fa> {c1}{c2 ? '.' : ''}{c2} )">
+	submit="Create ({data.currencySymbol}{c1}{c2 ? '.' : ''}{c2})">
 	<Input
 		{formData}
 		name="name"

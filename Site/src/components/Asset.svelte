@@ -11,6 +11,7 @@
 	}
 	export let num: number
 	export let total: number
+	export let symbol: string
 </script>
 
 <a
@@ -24,13 +25,8 @@
 					src="/avatarshop/{asset.id}/{asset.name}/icon"
 					alt={asset.name} />
 			</div>
-			<p class="m-0">
-				{asset.name}
-			</p>
-			<p class="m-0 text-emerald-6">
-				<far fa-gem />
-				{asset.price}
-			</p>
+			<p class="m-0">{asset.name}</p>
+			<p class="m-0 text-emerald-6">{symbol}{asset.price}</p>
 		</div>
 	</div>
 </a>

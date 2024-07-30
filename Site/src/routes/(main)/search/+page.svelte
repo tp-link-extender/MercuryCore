@@ -42,7 +42,11 @@
 		<div class="grid">
 			{#each data.assets as asset, num}
 				<div class="pb-4">
-					<Asset {asset} {num} total={data.assets.length} />
+					<Asset
+						{asset}
+						{num}
+						total={data.assets.length}
+						symbol={data.currencySymbol} />
 				</div>
 			{/each}
 		</div>

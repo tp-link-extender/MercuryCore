@@ -67,7 +67,11 @@
 		<div
 			class="grid gap-4 grid-cols-2 xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3">
 			{#each assets as asset, num}
-				<Asset {asset} {num} total={assets.length} />
+				<Asset
+					{asset}
+					{num}
+					total={assets.length}
+					symbol={data.currencySymbol} />
 			{/each}
 			{#if query && assets.length === 0}
 				<h2 class="text-xs pt-12">

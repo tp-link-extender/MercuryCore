@@ -49,7 +49,7 @@
 					<td class="flex justify-center gap-3">
 						<div class="text-base pt-2">
 							<span class="text-emerald-6">
-								<fa fa-gem />
+								{data.currencySymbol}
 								{transaction.amountSent}
 							</span>
 							{#if value}
@@ -68,7 +68,7 @@
 							<div class="text-base pt-2">
 								<fa fa-arrow-right class="mr-1" />
 								<span class="text-emerald-6">
-									<fa fa-gem />
+									{data.currencySymbol}
 									{Math.round(
 										(1 - transaction.taxRate / 100) *
 											transaction.amountSent

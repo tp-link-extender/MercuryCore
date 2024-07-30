@@ -19,6 +19,10 @@ export type Config = {
 	 * The URL of your RCC proxy server. Requires a URL scheme.
 	 */
 	RCCServiceProxyURL: string
+	/**
+	 * The symbol for your revival's currency. Placed before the amount.
+	 */
+	CurrencySymbol: string
 
 	/**
 	 * The default body colours for avatar creation, given to each new user on registration.
