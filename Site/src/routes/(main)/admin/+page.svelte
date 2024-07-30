@@ -19,7 +19,7 @@
 	const panel: { [k: string]: [string, string, string][] } = {
 		Moderation: [
 			["Moderate User", "/admin/moderation", "fa fa-user-slash"],
-			// ["Report Abuse", "#", "far fa-flag"],
+			// ["Report Abuse", "#", "fa fa-flag"],
 			["Asset Approval", "/admin/asset", "fa fa-file-circle-check"],
 			["Render Queue", "/admin/renderqueue", "fa fa-file-image"]
 		],
@@ -36,7 +36,7 @@
 	if (isAdmin)
 		panel.Administration = [
 			["Banners", "/admin/banners", "fa fa-bullhorn"],
-			["Accounts", "/admin/accounts", "far fa-user"],
+			["Accounts", "/admin/accounts", "fa fa-user"],
 			["Audit Logs", "/admin/audit", "fa fa-book"],
 			["Invites", "/admin/invites", "fa fa-envelopes"]
 		]
@@ -111,7 +111,7 @@
 			<div class="flex flex-col gap-4">
 				<div class="card bg-a p-4">
 					<h3>
-						<far fa-user class="pr-2" />
+						<fa fa-user class="pr-2" />
 						Users
 					</h3>
 					<span>
@@ -121,7 +121,7 @@
 				</div>
 				<div class="card bg-a p-4">
 					<h3>
-						<far fa-file class="pr-2" />
+						<fa fa-file class="pr-2" />
 						Assets
 					</h3>
 					<div>

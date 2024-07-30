@@ -25,7 +25,7 @@
 		["5", "Unban"]
 	]
 
-	let tabData = TabData(data.url, ["Moderate User"], ["far fa-gavel"])
+	let tabData = TabData(data.url, ["Moderate User"], ["fa fa-gavel"])
 </script>
 
 <Head title="Moderate User - Admin" />

@@ -11,7 +11,7 @@
 	const formData = superForm(data.form)
 	export const snapshot = formData
 
-	let tabData = TabData(data.url, ["Change User Password"], ["far fa-key"])
+	let tabData = TabData(data.url, ["Change User Password"], ["fa fa-key"])
 </script>
 
 <Head title="Accounts - Admin" />
@@ -28,7 +28,7 @@
 	<SidebarShell bind:tabData>
 		<Form
 			{formData}
-			submit="<far fa-key></far> Change password"
+			submit="<fa fa-key></fa> Change password"
 			action="?/changePassword">
 			<Input {formData} name="username" label="Username" />
 			<Input

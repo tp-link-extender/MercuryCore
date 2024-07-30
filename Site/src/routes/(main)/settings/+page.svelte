@@ -15,7 +15,7 @@
 	let tabData = TabData(
 		data.url,
 		["Profile", "Account", "Security", "Styling"],
-		["fa fa-id-card", "fa fa-user", "far fa-lock", "fa fa-paint-brush"]
+		["fa fa-id-card", "fa fa-user", "fa fa-lock", "fa fa-paint-brush"]
 	)
 </script>
 

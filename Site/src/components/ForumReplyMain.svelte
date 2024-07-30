@@ -111,12 +111,11 @@
 					value={reply.likes ? "unlike" : "like"}
 					aria-label={reply.likes ? "Unlike" : "Like"}
 					class="size-6 p-0 btn">
-					<i
-						class="fa{reply.likes
-							? ' text-emerald-6 hover:text-emerald-3'
-							: 'r text-neutral-5 hover:text-neutral-3'}
-							fa-thumbs-up transition">
-					</i>
+					<fa
+						class="{reply.likes
+							? 'text-emerald-6 hover:text-emerald-3'
+							: 'text-neutral-6 hover:text-neutral-4'}
+							fa-thumbs-up transition" />
 				</button>
 				<span
 					class="my-1 text-center {reply.likes
@@ -131,12 +130,11 @@
 					value={reply.dislikes ? "undislike" : "dislike"}
 					aria-label={reply.dislikes ? "Undislike" : "Dislike"}
 					class="size-6 p-0 btn">
-					<i
-						class="fa{reply.dislikes
-							? ' text-red-5 hover:text-red-3'
-							: 'r text-neutral-5 hover:text-neutral-3'}
-							fa-thumbs-down transition">
-					</i>
+					<fa
+						class="{reply.dislikes
+							? 'text-red-5 hover:text-red-3'
+							: 'text-neutral-6 hover:text-neutral-4'}
+							fa-thumbs-down transition" />
 				</button>
 			</form>
 			<a
@@ -144,7 +142,7 @@
 				on:click|preventDefault={() => replyingTo.set(reply.id)}
 				class="p-0 btn btn-sm px-1 text-neutral-5
 				hover:text-neutral-3 {hidden ? 'opacity-33' : ''}">
-				<far fa-message class="pr-2" />
+				<fa fa-message class="pr-2" />
 				Reply
 			</a>
 			{#if !hidden}
@@ -198,7 +196,7 @@
 							rows="4" />
 						<div class="flex gap-3">
 							<button class="btn btn-secondary">
-								<far fa-message class="pr-2" />
+								<fa fa-message class="pr-2" />
 								Reply
 							</button>
 							<button
@@ -235,7 +233,7 @@
 								rows="4" />
 							<div class="flex gap-3">
 								<button class="btn btn-secondary">
-									<far fa-message class="pr-2" />
+									<fa fa-message class="pr-2" />
 									Reply
 								</button>
 								<button

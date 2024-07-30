@@ -184,7 +184,7 @@
 					{/if}
 				</span>
 				<div>
-					Gears: <far fa-circle-xmark />
+					Gears: <fa fa-circle-xmark />
 				</div>
 				<small
 					class="text-white rounded-2 {online
@@ -224,10 +224,10 @@
 							value={$place.likes ? "unlike" : "like"}
 							aria-label={$place.likes ? "Unlike" : "Like"}
 							class="btn p-0 px-1 text-emerald-5">
-							<i
-								class="fa{$place.likes
-									? ' text-emerald-6 hover:text-emerald-3'
-									: 'r text-neutral-5 hover:text-neutral-3'}
+							<fa
+								class="{$place.likes
+									? 'text-emerald-6 hover:text-emerald-3'
+									: 'text-neutral-6 hover:text-neutral-4'}
 								fa-thumbs-up transition text-lg" />
 						</button>
 						<button
@@ -237,10 +237,10 @@
 								? "Undislike"
 								: "Dislike"}
 							class="btn p-0 px-1 text-red-5">
-							<i
-								class="fa{$place.dislikes
-									? ' text-red-5 hover:text-red-3'
-									: 'r text-neutral-5 hover:text-neutral-3'}
+							<fa
+								class="{$place.dislikes
+									? 'text-red-5 hover:text-red-3'
+									: 'text-neutral-6 hover:text-neutral-4'}
 								fa-thumbs-down transition text-lg" />
 						</button>
 					</div>
@@ -304,7 +304,7 @@
 			</p>
 			<p>
 				If you have port forwarded already, it's time to get your server
-				running. Below are two methods of hosting - we recommend using
+				running. Below are two methods of hosting &ndash; we recommend using
 				Autopilot to get started easily.
 			</p>
 			<div class="flex items-start mb-4">

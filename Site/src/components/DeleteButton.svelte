@@ -17,7 +17,7 @@
 		action="?/{text}{post ? 'post' : ''}&id={id}"
 		class="inline">
 		<button class="btn pl-4 pr-2 {colour}">
-			<far class="{moderate ? 'fa-gavel' : 'fa-trash'} pr-2" />
+			<fa class="{moderate ? 'fa-gavel' : 'fa-trash'} pr-2" />
 			{text.charAt(0).toUpperCase() + text.slice(1)}
 		</button>
 	</form>

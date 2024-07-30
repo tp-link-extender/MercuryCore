@@ -44,7 +44,7 @@
 		{((tabData2.num = 0), "")}
 		<Tab tabData={tabData2}>
 			<div class="alert alert-primary" role="alert">
-				<far class="pr-2" fa-circle-info />
+				<fa class="pr-2" fa-circle-info />
 				Manual uploading mode is for shared assets (ie. requires textures)
 			</div>
 			<Form
@@ -83,7 +83,7 @@
 		</Tab>
 		<Tab tabData={tabData2}>
 			<div class="alert alert-primary" role="alert">
-				<far class="pr-2" fa-circle-info />
+				<fa class="pr-2" fa-circle-info />
 				Use manual uploading mode for shared assets (ie. mesh)
 			</div>
 			{#if data.stage >= 2}

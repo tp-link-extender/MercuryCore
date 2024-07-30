@@ -55,10 +55,10 @@
 				aria-label={post.likes ? "Unlike" : "Like"}
 				disabled={likesDisabled}
 				class="btn p-1">
-				<i
-					class="fa{post.likes
-						? ' text-emerald-6 hover:text-emerald-3'
-						: 'r text-neutral-5 hover:text-neutral-3'}
+				<fa
+					class="{post.likes
+						? 'text-emerald-6 hover:text-emerald-3'
+						: 'text-neutral-6 hover:text-neutral-4'}
 					fa-thumbs-up transition text-lg" />
 			</button>
 			<span
@@ -75,10 +75,10 @@
 				aria-label={post.dislikes ? "Undislike" : "Dislike"}
 				disabled={dislikesDisabled}
 				class="btn p-1">
-				<i
-					class="fa{post.dislikes
-						? ' text-red-5 hover:text-red-3'
-						: 'r text-neutral-5 hover:text-neutral-3'}
+				<fa
+					class="{post.dislikes
+						? 'text-red-5 hover:text-red-3'
+						: 'text-neutral-6 hover:text-neutral-4'}
 					fa-thumbs-down transition text-lg" />
 			</button>
 		</div>

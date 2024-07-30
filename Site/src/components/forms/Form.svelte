@@ -45,8 +45,7 @@
 
 <style>
 	button:not(.nopad) {
-		& :global(fa),
-		& :global(far) {
+		& :global(fa) {
 			padding-right: 0.5rem;
 		}
 	}
