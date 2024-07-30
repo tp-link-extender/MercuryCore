@@ -1,4 +1,5 @@
 import fs from "node:fs"
+import { getAssetPrice } from "$lib/server/economy"
 import formError from "$lib/server/formError"
 import {
 	clothingAsset,
@@ -12,7 +13,7 @@ import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { Record, equery } from "$lib/server/surreal"
 import { graphicAsset } from "$lib/server/xmlAsset"
-import { redirect } from "@sveltejs/kit"
+import { error, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -27,10 +28,15 @@ const schema = z.object({
 	asset: z.any(),
 })
 
-export const load = async ({ request }) => ({
-	form: await superValidate(zod(schema)),
-	assettype: new URL(request.url).searchParams.get("asset"),
-})
+export async function load({ request }) {
+	const price = await getAssetPrice()
+	if (!price.ok) error(500, price.msg)
+	return {
+		form: await superValidate(zod(schema)),
+		assetType: new URL(request.url).searchParams.get("asset"),
+		price: price.value,
+	}
+}
 
 const assets: { [k: number]: string } = Object.freeze({
 	2: "T-Shirt",

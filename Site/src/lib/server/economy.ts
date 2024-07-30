@@ -47,16 +47,18 @@ export async function burn(
 	}
 }
 
-export async function getPlacePrice(): Promise<
-	{ ok: true; value: number } | { ok: false; msg: string }
-> {
+async function geFeeBasedPrice(
+	multiplier: number
+): Promise<{ ok: true; value: number } | { ok: false; msg: string }> {
 	const currentFee = await getCurrentFee()
 	if (!currentFee.ok) return { ok: false, msg: economyConnFailed }
-	return {
-		ok: true,
-		value: currentFee.value * 50 * 1e6, // increases when economy 2 large
-	}
+	const value = Math.round(currentFee.value * multiplier * 1e6) // increases when economy 2 large
+	return { ok: true, value }
 }
+
+export const getAssetPrice = () => geFeeBasedPrice(75)
+export const getGroupPrice = () => geFeeBasedPrice(50)
+export const getPlacePrice = () => geFeeBasedPrice(50)
 
 export async function createPlace(
 	To: string,

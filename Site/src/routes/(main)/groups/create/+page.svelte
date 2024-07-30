@@ -2,12 +2,15 @@
 	import Head from "$components/Head.svelte"
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
+	import beautifyCurrency from "$lib/beautifyCurrency"
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
 
 	const formData = superForm(data.form)
 	export const snapshot = formData
+
+	const [, c1, c2] = beautifyCurrency(data.price)
 </script>
 
 <Head title="Create a group" />
@@ -18,7 +21,7 @@
 	{formData}
 	nopad
 	class="ctnr pt-12 max-w-200 light-text"
-	submit="Create ({data.currencySymbol}10)">
+	submit="Create ({data.currencySymbol}{c1}{c2 ? '.' : ''}{c2})">
 	<Input
 		{formData}
 		name="name"

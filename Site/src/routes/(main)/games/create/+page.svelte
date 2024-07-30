@@ -3,7 +3,7 @@
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
 	import Textarea from "$components/forms/Textarea.svelte"
-	import beautifyCurrency from "$lib/beautifyCurrency.js"
+	import beautifyCurrency from "$lib/beautifyCurrency"
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data

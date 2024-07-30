@@ -35,7 +35,7 @@ export async function load() {
 	return {
 		form: await superValidate(zod(schema)),
 		// count: await placeCount((await authorise(locals)).user.id),
-		price: Math.round(price.value),
+		price: price.value,
 	}
 }
 

@@ -1,7 +1,8 @@
+import { getGroupPrice } from "$lib/server/economy"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import { Record, equery, findWhere, transaction } from "$lib/server/surreal"
-import { redirect } from "@sveltejs/kit"
+import { error, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -11,9 +12,14 @@ const schema = z.object({
 	name: z.string().min(3).max(40),
 })
 
-export const load = async () => ({
-	form: await superValidate(zod(schema)),
-})
+export async function load() {
+	const price = await getGroupPrice()
+	if (!price.ok) error(500, price.msg)
+	return {
+		form: await superValidate(zod(schema)),
+		price: price.value,
+	}
+}
 
 const errors: { [k: string]: string } = {
 	create: Buffer.from(

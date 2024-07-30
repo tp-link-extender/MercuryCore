@@ -4,6 +4,7 @@
 	import Input from "$components/forms/Input.svelte"
 	import Select from "$components/forms/Select.svelte"
 	import Textarea from "$components/forms/Textarea.svelte"
+	import beautifyCurrency from "$lib/beautifyCurrency"
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
@@ -11,12 +12,14 @@
 	const formData = superForm(data.form)
 	export const snapshot = formData
 
-	const assets: { [k: string]: string } = {
+	const [, c1, c2] = beautifyCurrency(data.price)
+
+	const assets: { [k: string]: string } = Object.freeze({
 		"2": "T-Shirt",
 		"11": "Shirt",
 		"12": "Pants",
 		"13": "Decal"
-	}
+	})
 </script>
 
 <Head title="Develop" />
@@ -33,12 +36,12 @@
 	{formData}
 	nopad
 	enctype="multipart/form-data"
-	submit="Create ({data.currencySymbol}15)"
+	submit="Create ({data.currencySymbol}{c1}{c2 ? '.' : ''}{c2})"
 	class="ctnr pt-8 max-w-200 light-text">
 	<Select
 		{formData}
 		options={Object.entries(assets)}
-		selected={data.assettype}
+		selected={data.assetType}
 		name="type"
 		label="Asset type" />
 	<Input
@@ -52,7 +55,7 @@
 		label="Asset description"
 		placeholder="Up to 1000 characters" />
 	<Input {formData} name="price" label="Asset price" type="number" />
-	{#if data.assettype !== "Hat"}
+	{#if data.assetType !== "Hat"}
 		<Input
 			{formData}
 			type="file"
