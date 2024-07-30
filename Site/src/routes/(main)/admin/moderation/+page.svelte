@@ -28,7 +28,7 @@
 	let tabData = TabData(data.url, ["Moderate user"], ["fa fa-gavel"])
 </script>
 
-<Head title="Moderate user - Admin" />
+<Head name={data.siteName} title="Moderate user - Admin" />
 
 <div class="ctnr max-w-280 pb-6">
 	<h1>Moderate user &ndash; Admin</h1>

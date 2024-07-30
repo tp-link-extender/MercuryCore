@@ -1,10 +1,12 @@
 <script lang="ts">
 	import Head from "$components/Head.svelte"
+
+	export let data
 </script>
 
-<Head title="Thank You" />
+<Head name={data.siteName} title="Thank You" />
 
-<h1 class="text-center">Welcome to Mercury</h1>
+<h1 class="text-center">Welcome to {data.siteName}</h1>
 
 <div class="ctnr pt-12 max-w-200">
 	<div class="light-text">

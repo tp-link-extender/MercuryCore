@@ -9,7 +9,7 @@
 	let tabData = TabData(data.url, ["Audit logs"], ["fa fa-list"])
 </script>
 
-<Head title="Audit logs - Admin" />
+<Head name={data.siteName} title="Audit logs - Admin" />
 
 <div class="ctnr max-w-240 pb-6">
 	<h1>Audit logs &ndash; Admin</h1>

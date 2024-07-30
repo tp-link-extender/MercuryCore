@@ -40,7 +40,7 @@
 	)
 </script>
 
-<Head title="Catalog" />
+<Head name={data.siteName} title="Catalog" />
 
 <div class="ctnr light-text">
 	<div class="grid lg:grid-cols-[1fr_2fr] md:grid-cols-[1fr_3fr] pb-4">
@@ -100,8 +100,8 @@
 					class="form-check-input"
 					type="radio"
 					name="sort"
-					id="mercury" />
-				<label for="mercury">By Mercury</label>
+					id="official" />
+				<label for="official">By {data.siteName}</label>
 				<input
 					class="form-check-input"
 					type="radio"

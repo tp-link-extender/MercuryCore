@@ -20,7 +20,7 @@
 	}
 </script>
 
-<Head title="Notifications" />
+<Head name={data.siteName} title="Notifications" />
 
 <h1 class="text-center">Notifications</h1>
 

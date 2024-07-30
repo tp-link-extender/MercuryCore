@@ -61,7 +61,7 @@
 	const refreshReplies: import("./$types").SubmitFunction = () => onResult
 </script>
 
-<Head title={$post.title} />
+<Head name={data.siteName} title={$post.title} />
 
 <div class="ctnr max-w-280 light-text">
 	<Breadcrumbs

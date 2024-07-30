@@ -7,7 +7,7 @@
 	const [c1, c2, c3, c4] = beautifyCurrency(data.balance)
 </script>
 
-<Head title="Economy" />
+<Head name={data.siteName} title="Economy" />
 
 <h1 class="text-center">Economy</h1>
 

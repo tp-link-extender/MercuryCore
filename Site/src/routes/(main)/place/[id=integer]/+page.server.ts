@@ -4,7 +4,7 @@ import { encode } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
 import placeIdQuery from "./placeId.surql"
 
-// these files r kinda like the no-man's land of the Mercury codebase
+// these files r kinda like the no-man's land of the Mercury Core codebase
 
 type Place = {
 	id: string

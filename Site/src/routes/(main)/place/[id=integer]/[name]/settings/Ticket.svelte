@@ -36,8 +36,8 @@
 				</button>
 			</div>
 			<small class="formhelp">
-				The server ticket is required to host servers on Mercury. You
-				can regenerate the ticket at any time.
+				The server ticket is required to host servers on {data.siteName}.
+				You can regenerate the ticket at any time.
 			</small>
 		</div>
 	</fieldset>

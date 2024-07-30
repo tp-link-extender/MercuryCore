@@ -8,7 +8,7 @@
 	const { user } = data
 </script>
 
-<Head title="Forum" />
+<Head name={data.siteName} title="Forum" />
 
 <div class="ctnr light-text max-w-280 flex flex-col gap-4">
 	<h1 class="pb-6">Forum</h1>

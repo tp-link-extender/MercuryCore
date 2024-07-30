@@ -1,4 +1,6 @@
 <script lang="ts">
+	export let data: import("../routes/$types").LayoutData
+
 	let clicked = false
 </script>
 
@@ -6,8 +8,11 @@
 	<div
 		class="flex <sm:flex-col justify-between items-start w-200 p-4 sm:pb-8">
 		<div>
-			<img src="/icon.svg" alt="Mercury logo" class="size-8 opacity-50" />
-			<a href="/" class="no-underline pl-2">Mercury</a>
+			<img
+				src="/icon.svg"
+				alt="{data.siteName} logo"
+				class="size-8 opacity-50" />
+			<a href="/" class="no-underline pl-2">{data.siteName}</a>
 			<span class="grey-text pl-1">
 				2021-{new Date().getFullYear()}
 			</span>
@@ -37,7 +42,7 @@
 	<div id="nojs" class="fixed bottom-0 block w-screen">
 		<p class="light-text text-center">
 			Javascript is disabled. You may have a diminished experience while
-			using Mercury.
+			using {data.siteName}.
 		</p>
 	</div>
 </noscript>

@@ -16,7 +16,7 @@
 	] = data.stats
 </script>
 
-<Head title="Statistics" />
+<Head name={data.siteName} title="Statistics" />
 
 <h1 class="text-center">Statistics</h1>
 

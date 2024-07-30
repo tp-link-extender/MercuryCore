@@ -24,14 +24,14 @@
 		}
 	}
 
-	const tabTypes: { [k: string]: number } = {
+	const tabTypes: { [k: string]: number } = Object.freeze({
 		Hats: 8,
 		"T-Shirts": 2,
 		Shirts: 11,
 		Pants: 12,
 		Decals: 13,
 		Faces: 18
-	}
+	})
 
 	let tabData = TabData(data.url, Object.keys(tabTypes))
 
@@ -40,7 +40,7 @@
 	)
 </script>
 
-<Head title="Inventory" />
+<Head name={data.siteName} title="Inventory" />
 
 <h1 class="text-center pb-4">Inventory</h1>
 

@@ -28,7 +28,7 @@
 		"aeiou".includes(word[0].toLowerCase()) ? "an" : "a"
 </script>
 
-<Head title="Create asset - Admin" />
+<Head name={data.siteName} title="Create asset - Admin" />
 
 <div class="ctnr max-w-280 pb-6">
 	<h1>Create asset &ndash; Admin</h1>

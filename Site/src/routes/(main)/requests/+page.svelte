@@ -7,7 +7,7 @@
 	export let data
 </script>
 
-<Head title="Friend requests" />
+<Head name={data.siteName} title="Friend requests" />
 
 <h1 class="text-center">Friend requests ({data.users.length})</h1>
 

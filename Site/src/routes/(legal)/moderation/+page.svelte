@@ -30,7 +30,7 @@
 	}
 </script>
 
-<Head title={actionType} />
+<Head name={data.siteName} title={actionType} />
 
 <div class="ctnr pt-8 max-w-200">
 	<div class="card">
@@ -45,7 +45,7 @@
 
 			<p>
 				Our moderators have determined that your behaviour has violated
-				the Mercury Terms of Service.
+				the {data.siteName} Terms of Service.
 			</p>
 
 			<p>
@@ -59,9 +59,8 @@
 			{#if actionType === "Warning"}
 				<form use:enhance method="POST">
 					<p class="mb-12">
-						Please make sure to follow the Mercury's Terms of
-						Service to prevent further action to be taken on your
-						account.
+						Please make sure to follow the {data.siteName} Terms of Service
+						to prevent further action to be taken on your account.
 					</p>
 					<p>
 						You may reactivate your account by agreeing to our Terms
@@ -84,9 +83,8 @@
 			{:else if actionType === "Ban"}
 				<form use:enhance method="POST">
 					<p class="mb-12">
-						Please make sure to follow the Mercury's Terms of
-						Service to prevent further action to be taken on your
-						account.
+						Please make sure to follow the {data.siteName} Terms of Service
+						to prevent further action to be taken on your account.
 					</p>
 					<p>
 						You may reactivate your account after your ban ends in {formatDateDiff(

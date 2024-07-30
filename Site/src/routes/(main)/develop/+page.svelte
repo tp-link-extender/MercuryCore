@@ -19,7 +19,7 @@
 	let tabData2 = TabData(data.url, ["Shirts", "T-Shirts", "Pants", "Decals"])
 </script>
 
-<Head title="Create" />
+<Head name={data.siteName} title="Create" />
 
 <h1 class="text-center pb-4">Create</h1>
 

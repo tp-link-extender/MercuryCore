@@ -15,7 +15,7 @@
 	)
 </script>
 
-<Head title="Transactions - Admin" />
+<Head name={data.siteName} title="Transactions - Admin" />
 
 <div class="ctnr max-w-240 pb-6">
 	<h1>Transactions &ndash; Admin</h1>

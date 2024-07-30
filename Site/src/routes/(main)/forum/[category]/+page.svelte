@@ -9,7 +9,7 @@
 	let posts = writable(data.posts)
 </script>
 
-<Head title="{data.name} - Forum" />
+<Head name={data.siteName} title="{data.name} - Forum" />
 
 <div class="ctnr max-w-200">
 	<Breadcrumbs

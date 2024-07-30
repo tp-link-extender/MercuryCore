@@ -13,7 +13,7 @@
 	)
 </script>
 
-<Head title="Asset approval - Admin" />
+<Head name={data.siteName} title="Asset approval - Admin" />
 
 <div class="flex px-4">
 	<div class="<lg:hidden w-75" />

@@ -19,7 +19,7 @@
 	)
 </script>
 
-<Head title="Home" />
+<Head name={data.siteName} title="Home" />
 
 <!-- Flex or Grid? what a dilemma -->
 <div class="ctnr lg:grid grid-cols-2 gap-4">

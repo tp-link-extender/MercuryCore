@@ -20,7 +20,7 @@
 	})
 </script>
 
-<Head title="Error {status}" />
+<Head name={data.siteName} title="Error {status}" />
 
 <Navbar {data} />
 
@@ -45,4 +45,4 @@
 	</div>
 </main>
 
-<Footer />
+<Footer {data} />

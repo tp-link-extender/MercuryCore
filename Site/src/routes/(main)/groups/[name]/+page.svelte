@@ -6,7 +6,7 @@
 	export let data
 </script>
 
-<Head title={data.name} />
+<Head name={data.siteName} title={data.name} />
 
 <div class="ctnr max-w-240">
 	<div class="px-6">

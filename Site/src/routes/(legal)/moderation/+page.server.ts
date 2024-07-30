@@ -1,3 +1,4 @@
+import config from "$lib/server/config"
 import { authorise } from "$lib/server/lucia"
 import { Record, equery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
@@ -19,7 +20,7 @@ async function getModeration(id: string) {
 
 	error(
 		454,
-		"Your ID has been sent to the Mercury Servers for moderation. Thank you!"
+		`Your ID has been sent to the ${config.Name} Servers for moderation. Thank you!`
 	)
 }
 

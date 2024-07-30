@@ -25,7 +25,7 @@
 	}
 </script>
 
-<Head title="Discover" />
+<Head name={data.siteName} title="Discover" />
 
 <div class="ctnr">
 	<div class="flex pb-12 gap-4 <sm:flex-wrap">

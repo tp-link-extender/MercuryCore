@@ -48,7 +48,7 @@
 		}
 </script>
 
-<Head title={$asset.name} />
+<Head name={data.siteName} title={$asset.name} />
 
 <div class="ctnr max-w-240">
 	<div class="flex <sm:flex-col">

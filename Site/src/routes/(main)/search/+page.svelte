@@ -9,7 +9,7 @@
 	export let data
 </script>
 
-<Head title="Search for {data.query}" />
+<Head name={data.siteName} title="Search for {data.query}" />
 
 {#if data.category}
 	<h1 class="text-center">

@@ -18,7 +18,7 @@
 		],
 		[
 			"Valid email",
-			"Mercury requires a valid email so you can reset your password at any time."
+			`${data.siteName} requires a valid email so you can reset your password at any time.`
 		],
 		[
 			"Secure password",
@@ -27,7 +27,10 @@
 	]
 </script>
 
-<Head title="Register" description="Create a Mercury account." />
+<Head
+	name={data.siteName}
+	title="Register"
+	description="Create a {data.siteName} account." />
 
 <Waves />
 
@@ -54,7 +57,7 @@
 				name="email"
 				label="Email Address"
 				type="email"
-				placeholder="Mercury@{data.domain}" />
+				placeholder="{data.siteName}@{data.domain}" />
 			<Input
 				{formData}
 				column
@@ -82,7 +85,7 @@
 		<h2>Create the initial account</h2>
 
 		<p class="pt-2">
-			This will be the first user account on this Mercury instance!
+			This will be the first user account on this Mercury Core instance!
 		</p>
 		<p>
 			It will automatically have the highest permission level. It will not
@@ -91,7 +94,7 @@
 		</p>
 		<p>
 			Pick the username and password carefully, and good luck on your
-			journey with Mercury!
+			journey with Mercury Core!
 		</p>
 
 		<Form

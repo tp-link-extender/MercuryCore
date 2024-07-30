@@ -102,10 +102,10 @@
 	<div
 		class="pt-1 px-2 sm:px-4 flex items-center w-full pb-2px bg-[--accent] h-13.5">
 		<a class="light-text text-xl no-underline <sm:hidden fw-500" href="/">
-			Mercury
+			{data.siteName}
 		</a>
 		<a class="light-text text-xl no-underline sm:hidden" href="/">
-			<img src="/icon.svg" alt="Mercury logo" class=" size-8" />
+			<img src="/icon.svg" alt="{data.siteName} logo" class=" size-8" />
 		</a>
 		{#if user}
 			<div class="<lg:hidden pl-6 pr-2 flex flex-row gap-4 pl-3">

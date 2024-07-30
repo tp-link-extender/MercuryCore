@@ -43,7 +43,7 @@
 	}
 </script>
 
-<Head title="Banners - Admin" />
+<Head name={data.siteName} title="Banners - Admin" />
 
 <div class="ctnr max-w-280 pb-6">
 	<h1>Banners &ndash; Admin</h1>

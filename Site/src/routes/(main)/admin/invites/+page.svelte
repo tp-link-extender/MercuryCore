@@ -25,7 +25,7 @@
 	)
 </script>
 
-<Head title="Invites - Admin" />
+<Head name={data.siteName} title="Invites - Admin" />
 
 <div class="ctnr max-w-240 pb-6">
 	<h1>Invites &ndash; Admin</h1>

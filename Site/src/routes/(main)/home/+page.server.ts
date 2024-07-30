@@ -12,17 +12,6 @@ const schema = z.object({
 	status: z.string().min(1).max(1000),
 })
 
-// for the "You are the 1st user to join Mercury!" fact
-const suffixes: { [k: string]: string } = Object.freeze({
-	one: "st",
-	two: "nd",
-	few: "rd",
-	other: "th",
-})
-const ordinals = new Intl.PluralRules("en", { type: "ordinal" })
-// Add "st", "nd", "rd", "th" to number
-const ordinal = (n: number) => `${n}${suffixes[ordinals.select(n)]}`
-
 type Place = {
 	id: number
 	name: string

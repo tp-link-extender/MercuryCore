@@ -2,6 +2,7 @@
 	export let launch: (joinscripturl: string) => () => void
 	export let serverTicket: string
 	export let domain: string
+	export let siteName: string
 
 	let filepath = ""
 
@@ -17,9 +18,8 @@
 	map that's in the map folder, and start the server.
 </p>
 <p>
-	Place your maps in Mercury Studio's maps folder. For example, entering <code>
-		CoolMap.rbxl
-	</code>
+	Place your maps in {siteName} Studio's maps folder. For example, entering
+	<code>CoolMap.rbxl</code>
 	will point to
 	<code>content/maps/CoolMap.rbxl</code>
 </p>

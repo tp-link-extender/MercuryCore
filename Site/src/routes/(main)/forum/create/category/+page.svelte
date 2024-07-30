@@ -10,7 +10,7 @@
 	export const snapshot = formData
 </script>
 
-<Head title="Create a forum category" />
+<Head name={data.siteName} title="Create a forum category" />
 
 <h1 class="text-center">Create a forum category</h1>
 

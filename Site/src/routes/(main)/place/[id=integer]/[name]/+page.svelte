@@ -120,7 +120,7 @@
 	}
 </script>
 
-<Head title={$place.name} />
+<Head name={data.siteName} title={$place.name} />
 
 <div class="ctnr max-w-240 light-text">
 	<div class="grid grid-cols-1 md:(grid-cols-3 gap-4)">
@@ -294,7 +294,7 @@
 
 	<Tab {tabData}>
 		{#if user?.permissionLevel === 5 || $place.ownerUser?.username === user?.username}
-			<h3 class="pb-2">Hosting on Mercury</h3>
+			<h3 class="pb-2">Hosting on {data.siteName}</h3>
 			<p>
 				To begin hosting your map for everybody to play, you need to
 				make sure that you are forwarding the port you wish to run the
@@ -304,8 +304,8 @@
 			</p>
 			<p>
 				If you have port forwarded already, it's time to get your server
-				running. Below are two methods of hosting &ndash; we recommend using
-				Autopilot to get started easily.
+				running. Below are two methods of hosting &ndash; we recommend
+				using Autopilot to get started easily.
 			</p>
 			<div class="flex items-start mb-4">
 				<TabNav bind:tabData={tabData2} vertical class="pr-4" />
@@ -350,7 +350,8 @@
 					<Autopilot
 						{launch}
 						serverTicket={$place.serverTicket}
-						domain={data.domain} />
+						domain={data.domain}
+						siteName={data.siteName} />
 				</Tab>
 			</div>
 		{/if}
@@ -398,7 +399,7 @@
 				<img
 					in:fade={{ duration: 500 }}
 					src="/icon.svg"
-					alt="Mercury logo"
+					alt="{data.siteName} logo"
 					class="absolute"
 					width="128"
 					height="128" />

@@ -16,7 +16,7 @@
 	let refresh = 0
 </script>
 
-<Head title="Replies to forum post" />
+<Head name={data.siteName} title="Replies to forum post" />
 
 <div class="ctnr max-w-280">
 	<Breadcrumbs

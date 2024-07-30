@@ -14,7 +14,7 @@
 	let title = titles[data.f]()
 </script>
 
-<Head {title} />
+<Head name={data.siteName} {title} />
 
 <div class="text-center">
 	<h1>{title} ({data.count})</h1>

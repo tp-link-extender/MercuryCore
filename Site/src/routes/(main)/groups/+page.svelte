@@ -25,7 +25,7 @@
 	}
 </script>
 
-<Head title="Groups" />
+<Head name={data.siteName} title="Groups" />
 
 <div class="ctnr">
 	<div class="flex pb-6">

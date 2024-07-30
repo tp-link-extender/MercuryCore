@@ -34,7 +34,7 @@
 			ok: data.stipend.ok,
 			success: [
 				"Current stipend size is",
-				`${data.currencySymbol}${c1}${c2 ? '.' : ''}${c2}`
+				`${data.currencySymbol}${c1}${c2 ? "." : ""}${c2}`
 			],
 			err: "Unable to connect to the service"
 		}
@@ -42,10 +42,7 @@
 	const working = systems.every(s => s.ok)
 </script>
 
-<Head
-	title="Mercury: Endless possibilities. New features. Same nostalgia."
-	description="Mercury: Endless possibilities. New features. Same nostalgia."
-	ogImage="/mercury.gif" />
+<Head name={data.siteName} title={data.siteName} description={data.siteName} />
 
 <div id="gradientbg" class="w-full h-full fixed" />
 
@@ -113,7 +110,7 @@
 				If you can see this, that means your installation of Mercury
 				Core is working!
 			</p>
-			<img src="/landing/working.svg" alt="Mercury" class="w-50" />
+			<img src="/landing/working.svg" alt="Alonso reference" class="w-50" />
 		</div>
 	{/if}
 </div>

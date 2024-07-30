@@ -11,7 +11,7 @@
 	export const snapshot = formData
 </script>
 
-<Head title="Create a post in {data.categoryName}" />
+<Head name={data.siteName} title="Create a post in {data.categoryName}" />
 
 <div class="text-center">
 	<h1>Create a post in {data.categoryName}</h1>

@@ -17,7 +17,7 @@
 	let refresh = 0
 </script>
 
-<Head title="Comments on asset" />
+<Head name={data.siteName} title="Comments on asset" />
 
 <div class="ctnr max-w-280 light-text">
 	<Breadcrumbs

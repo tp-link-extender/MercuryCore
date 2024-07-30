@@ -5,7 +5,7 @@
 	export let data
 </script>
 
-<Head title="Members of {data.name}" />
+<Head name={data.siteName} title="Members of {data.name}" />
 
 <h1 class="text-center">Members of {data.name} ({data.memberCount})</h1>
 

@@ -83,13 +83,13 @@
 
 		<small class="formhelp">
 			Your private key can be used to access your account's assets outside
-			of Mercury or in the event of Mercury shutting down, via the
-			blockchain. {data.currencySymbol} are stored as Fungible Tokens (FTs)
-			and assets are stored as Non-Fungible Tokens (NFTs).
+			of {data.siteName} or in the event of {data.siteName} shutting down,
+			via the blockchain. {data.currencySymbol} are stored as Fungible Tokens
+			(FTs) and assets are stored as Non-Fungible Tokens (NFTs).
 			<br />
 			<span class="text-red-5">
-				Do not share this key with anyone! Mercury administrators will
-				never ask for it.
+				Do not share this key with anyone! {data.siteName} administrators
+				will never ask for it.
 			</span>
 		</small>
 	</div>

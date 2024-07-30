@@ -29,5 +29,6 @@ export async function load({ request, locals }) {
 		url: request.url,
 		domain: config.Domain,
 		currencySymbol: config.CurrencySymbol,
+		siteName: config.Name,
 	}
 }

@@ -58,7 +58,7 @@
 	const gbTotal = totalmem / 1e3 ** 3
 </script>
 
-<Head title="Admin" />
+<Head name={data.siteName} title="Admin" />
 
 <div class="ctnr max-w-340">
 	<h1>Admin Panel</h1>

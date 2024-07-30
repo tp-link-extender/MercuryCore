@@ -19,7 +19,7 @@
 	)
 </script>
 
-<Head title="Settings" />
+<Head name={data.siteName} title="Settings" />
 
 <div class="ctnr max-w-220 light-text">
 	<div class="pb-4">

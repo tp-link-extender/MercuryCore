@@ -22,7 +22,7 @@
 	})
 </script>
 
-<Head title="Develop - Create" />
+<Head name={data.siteName} title="Develop - Create" />
 
 <div class="text-center">
 	<h1>Develop &ndash; Create</h1>

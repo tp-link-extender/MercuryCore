@@ -27,7 +27,10 @@
 	]
 </script>
 
-<Head title="Log in" description="Log into your Mercury account." />
+<Head
+	name={data.siteName}
+	title="Log in"
+	description="Log into your {data.siteName} account." />
 
 <Waves reverse />
 

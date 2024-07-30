@@ -13,7 +13,7 @@
 	const [, c1, c2] = beautifyCurrency(data.price)
 </script>
 
-<Head title="Create a group" />
+<Head name={data.siteName} title="Create a group" />
 
 <h1 class="text-center">Create a group</h1>
 

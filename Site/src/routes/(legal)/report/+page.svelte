@@ -28,7 +28,7 @@
 	]
 </script>
 
-<Head title="Report {data.reportee}" />
+<Head name={data.siteName} title="Report {data.reportee}" />
 
 <h1 class="text-center">Report</h1>
 

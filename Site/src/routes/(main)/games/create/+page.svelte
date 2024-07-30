@@ -14,7 +14,7 @@
 	const [, c1, c2] = beautifyCurrency(data.price)
 </script>
 
-<Head title="Create a place" />
+<Head name={data.siteName} title="Create a place" />
 
 <h1 class="text-center">Create a place</h1>
 

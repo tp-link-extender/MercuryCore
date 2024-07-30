@@ -14,7 +14,7 @@
 	let tabData = TabData(data.url, ["Change User Password"], ["fa fa-key"])
 </script>
 
-<Head title="Accounts - Admin" />
+<Head name={data.siteName} title="Accounts - Admin" />
 
 <div class="ctnr max-w-240">
 	<h1>Accounts &ndash; Admin</h1>

@@ -38,7 +38,7 @@
 	let accordion: import("@melt-ui/svelte").Accordion // Sometimes undefined for some probably crazy reason
 </script>
 
-<Head title={data.username} />
+<Head name={data.siteName} title={data.username} />
 
 <div class="ctnr max-w-240">
 	<div class="card bg-darker p-4 lg:p-6">
