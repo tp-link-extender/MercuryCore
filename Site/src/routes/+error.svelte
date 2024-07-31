@@ -9,15 +9,14 @@
 	export let data: import("./$types").LayoutData
 
 	const status = $page.status
-	const errors: { [k: number]: string } = Object.freeze({
-		401: "mStop",
-		403: "mStop",
-		404: "404",
-		409: "mDouble",
-		410: "mGone",
-		451: "mBurn",
-		454: "mTick"
-	})
+	function errors() {
+		if (status === 401 || status === 403) return "mStop"
+		if (status === 404) return "404"
+		if (status === 451) return "mBurn"
+		if (status === 454) return "mTick"
+		if (status < 500) return "400"
+		return "500"
+	}
 </script>
 
 <Head name={data.siteName} title="Error {status}" />
@@ -25,11 +24,10 @@
 <Navbar {data} />
 
 <main class="flex-1 flex justify-center items-center py-4">
-	<div class="ctnr flex flex-col items-center bg-a rounded-4 px-20 py-8">
+	<div class="ctnr bg-a flex flex-col items-center rounded-4 px-20 py-8">
 		<div
-			class="errimg light w-full h-24 bg-contain bg-no-repeat bg-center"
-			style="background-image: url(/error/{errors[status] ||
-				'500'}.svg)" />
+			class="w-full h-24 bg-contain bg-no-repeat bg-center"
+			style="background-image: url(/error/{errors()}.svg)" />
 
 		<h1 class="pt-4">
 			<a

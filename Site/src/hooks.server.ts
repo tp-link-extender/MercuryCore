@@ -1,6 +1,4 @@
-// "'Hooks' are app-wide functions you declare that SvelteKit will call in response to
-// specific events, giving you fine-grained control over the framework's behaviour."
-
+// "'Hooks' are app-wide functions you declare that SvelteKit will call in response to specific events, giving you fine-grained control over the framework's behaviour."
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
 import config from "$lib/server/config"

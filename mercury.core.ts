@@ -1,4 +1,5 @@
 // Configuration file for Mercury Core. Hover over a property to see its description!
+// If you're running in production, you'll need to rebuild Mercury Core to apply changes.
 
 export default {
 	Name: "Mercury",
