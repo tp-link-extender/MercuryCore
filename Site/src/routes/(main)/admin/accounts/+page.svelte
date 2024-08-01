@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Head from "$components/Head.svelte"
 	import SidebarShell from "$components/SidebarShell.svelte"
-	import TabData from "$components/TabData.ts"
+	import TabData from "$components/TabData"
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
 	import { superForm } from "sveltekit-superforms/client"

@@ -116,13 +116,3 @@
 		</table>
 	</Tab>
 </SidebarShell>
-
-<style>
-	table {
-		& tr,
-		& td,
-		& th {
-			color: var(--light-text) !important;
-		}
-	}
-</style>

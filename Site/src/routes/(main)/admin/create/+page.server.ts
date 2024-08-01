@@ -92,7 +92,6 @@ async function fetchAssetVersion(id: number, version: number) {
 	)
 
 	const type = meta.AssetTypeId
-
 	return {
 		id: [id, version] as [number, number], // typescript moment
 		assetModified: new Date(date).toISOString(),
@@ -124,26 +123,19 @@ async function getVersions(id: number, version?: number) {
 	// ported directly from polygon (real polygon, not polygon-foss lmao)
 	if (version) {
 		const fetched = await fetchAssetVersion(id, version)
-		if (typeof fetched === "string")
-			return {
-				cached: false,
-				list: [],
-			}
+		if (typeof fetched === "string") return { cached: false, list: [] }
 		versions.push(fetched)
 	} else
 		for (let v = 1; ; v++) {
 			const fetched = await fetchAssetVersion(id, v)
-
 			if (fetched === "skip") continue
 			if (fetched === "done") break
-
 			versions.push(fetched)
 		}
 
 	console.log("CACHE", versions)
 
 	await equery(getVersionsQuery, { versions })
-
 	return transformVersions(versions)
 }
 
@@ -186,7 +178,6 @@ async function getSharedAssets(id: number, version: number) {
 		// - Taskmanager, 21 March 2024
 		// ^^ Probably correct but I'm putting this here anyway (also it halves the number of database queries we have to do)
 	}
-
 	return dependencies
 }
 
@@ -206,7 +197,6 @@ export async function load({ locals, url }) {
 	if (version && !intRegex.test(version)) error(400, "Invalid version")
 
 	const stage = assetId ? (version ? 3 : 2) : 1
-
 	return {
 		formManual: await superValidate(zod(schemaManual)),
 		formAuto: await superValidate(zod(schemaAuto)),
@@ -253,9 +243,8 @@ actions.autopilot = async ({ request, locals }) => {
 		sharedId: number
 	}[]
 
-	let cachedXml = await Bun.file(
-		`data/assetCache/${data.assetId}_${data.version}`
-	).text()
+	const path = `data/assetCache/${data.assetId}_${data.version}`
+	let cachedXml = await Bun.file(path).text()
 
 	// Replace the shared asset URLs with the new asset IDs
 	for (const exec of cachedXml.matchAll(/(<url>.+<\/url>)/g)) {
@@ -265,10 +254,9 @@ actions.autopilot = async ({ request, locals }) => {
 
 		const newId = shared.find(s => s.sharedId === +id)?.id
 		if (!newId) continue // same as above
-		cachedXml = cachedXml.replace(
-			url,
-			`<url>${config.Domain}/asset?id=${newId}</url>`
-		)
+
+		const rep = `<url>${config.Domain}/asset?id=${newId}</url>`
+		cachedXml = cachedXml.replace(url, rep)
 	}
 
 	await Promise.all([
@@ -299,8 +287,6 @@ actions.autopilot = async ({ request, locals }) => {
 		const renderMesh = shared.find(s => s.type === 4)?.id
 		if (renderMesh) renders.push(requestRender("Mesh", renderMesh))
 	}
-
 	await Promise.all(renders)
-
 	redirect(302, `/avatarshop/${id}`)
 }

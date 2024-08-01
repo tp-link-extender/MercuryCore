@@ -10,8 +10,7 @@ SELECT
 FROM place WHERE !privateServer AND !deleted;
 
 # Friends
-SELECT number, status, username
-FROM $user->friends->user OR $user<-friends<-user;
+SELECT status, username FROM $user->friends->user OR $user<-friends<-user;
 
 # Feed
 SELECT
@@ -19,8 +18,7 @@ SELECT
 	meta::id(id) AS id,
 	(SELECT text, updated FROM $parent.content
 	ORDER BY updated DESC) AS content,
-	(SELECT number, status, username
-	FROM <-posted<-user)[0] as authorUser
+	(SELECT status, username FROM <-posted<-user)[0] as authorUser
 FROM statusPost 
 ORDER BY posted DESC
 LIMIT 40;

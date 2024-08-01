@@ -4,6 +4,6 @@ SELECT
 	note,
 	taxRate,
 	time,
-	(SELECT number, status, username FROM in.*)[0] AS sender,
-	(SELECT number, status, username FROM out.*)[0] AS receiver
+	(SELECT status, username FROM in.*)[0] AS sender,
+	(SELECT status, username FROM out.*)[0] AS receiver
 FROM transaction;

@@ -181,16 +181,7 @@ export const findWhere = async (
 	)[0]
 
 /**
- * Transfers currency from one user to another, and creates a transaction in the database.
- * @param sender An object containing the id or number of the user sending the currency.
- * @param receiver An object containing the id or number of the user receiving the currency.
- * @param amountSent The amount of currency to send.
- * @param notelink An object containing a note for the transaction, as well as a link to what the transaction was for if possible.
- * @example
- * await transaction(user, user2, 10, {
- * 	note: `Bought item ${name}`,
- * 	link: `/avatarshop/${id}/${name}`,
- * })
+ * Legacy
  */
 export async function transaction(
 	sender: { id?: string },
@@ -201,7 +192,7 @@ export async function transaction(
 	throw new Error("todo test dis its broke")
 }
 
-type Action = "Account" | "Administration" | "Moderation" | "Economy"
+export type Action = "Account" | "Administration" | "Moderation" | "Economy"
 
 /**
  * Creates a new audit log in the database.

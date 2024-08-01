@@ -141,7 +141,6 @@ async function select(thing: RecordId) {
 				meta::id((->replyToAsset->asset.id)[0]) AS assetId # remove if asset likes are implemented
 			FROM ${thing}`
 	)
-
 	return got
 }
 
@@ -150,14 +149,13 @@ async function rerender({ locals, params }: RequestEvent) {
 	await authorise(locals, 5)
 
 	const id = +params.id
-	const [[asset]] = await equery<
-		{
-			name: string
-			id: string
-			type: number
-			visibility: string
-		}[][]
-	>(
+	type FoundAsset = {
+		name: string
+		id: string
+		type: number
+		visibility: string
+	}
+	const [[asset]] = await equery<FoundAsset[][]>(
 		surql`
 			SELECT
 				name,
@@ -167,22 +165,19 @@ async function rerender({ locals, params }: RequestEvent) {
 			FROM ${Record("asset", id)}`
 	)
 	if (!asset) error(404, "Not found")
-
-	if (![11, 12, 8].includes(asset.type))
+	if (![8, 11, 12].includes(asset.type))
 		error(400, "Can't rerender this type of asset")
-
 	if (asset.visibility === "Moderated")
 		error(400, "Can't rerender a moderated asset")
 
 	try {
 		await requestRender(asset.type === 8 ? "Model" : "Clothing", id)
-		return {
-			icon: `/avatarshop/${asset.id}/${asset.name}/icon?r=${Math.random()}`,
-		}
+		const icon = `/avatarshop/${asset.id}/${asset.name}/icon?r=${Math.random()}`
+		return { icon }
 	} catch (e) {
 		console.error(e)
-		return fail(500, { msg: "Failed to request render" })
 	}
+	return fail(500, { msg: "Failed to request render" })
 }
 export const actions: Actions = { rerender }
 actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
@@ -199,10 +194,10 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	const content = form.data.content.trim()
 	if (!content)
 		return formError(form, ["content"], ["Comment cannot be empty"])
-
 	if (commentId && !idRegex.test(commentId)) error(400, "Invalid comment id")
 
 	const id = +params.id
+
 	const [[commentAuthor]] = await equery<{ id: string }[][]>(
 		commentId
 			? surql`SELECT meta::id(id) AS id FROM ${Record(
@@ -248,7 +243,6 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 					relativeId: newReplyId,
 				}
 			),
-
 		like(user.id, Record("assetComment", newReplyId)),
 	])
 }
@@ -264,7 +258,6 @@ actions.like = async ({ request, locals, url }) => {
 	const foundComment = commentId
 		? await select(Record("assetComment", commentId))
 		: null
-
 	if (!foundAsset || !foundComment) error(404)
 	if (foundAsset) error(400, "Asset likes not yet implemented")
 
@@ -277,18 +270,17 @@ actions.like = async ({ request, locals, url }) => {
 actions.buy = async e => {
 	const { user, id } = await getBuyData(e)
 
-	const [[asset]] = await equery<
-		{
-			creator: {
-				id: string
-				username: string
-			}
-			name: string
-			owned: boolean
-			price: number
-			visibility: string
-		}[][]
-	>(
+	type FoundAsset = {
+		creator: {
+			id: string
+			username: string
+		}
+		name: string
+		owned: boolean
+		price: number
+		visibility: string
+	}
+	const [[asset]] = await equery<FoundAsset[][]>(
 		surql`
 			SELECT
 				*,
@@ -325,20 +317,13 @@ actions.buy = async e => {
 		user.id === asset.creator.id ||
 			equery(
 				surql`
-					RELATE $sender->notification->$receiver CONTENT {
-						type: $type,
+					RELATE ${Record("user", user.id)}->notification->${Record("user", asset.creator.id)} CONTENT {
+						type: "ItemPurchase",
 						time: time::now(),
-						note: $note,
-						relativeId: $relativeId,
+						note: ${`${user.username} just purchased your item ${asset.name}`},
+						relativeId: ${e.params.id},
 						read: false,
-					}`,
-				{
-					type: "ItemPurchase",
-					sender: Record("user", user.id),
-					receiver: Record("user", asset.creator.id),
-					note: `${user.username} just purchased your item: ${asset.name}`,
-					relativeId: e.params.id,
-				}
+					}`
 			),
 	])
 }
@@ -355,11 +340,9 @@ actions.delete = async e => {
 				visibility
 			FROM $assetComment`
 	)
-
 	if (comment.authorId !== user.id)
 		error(403, "You cannot delete someone else's comment")
 	if (comment.visibility !== "Visible") error(400, "Comment already deleted")
-
 	await updateVisibility("Deleted", "[deleted]", id)
 }
 actions.moderate = async e => {

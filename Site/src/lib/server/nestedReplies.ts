@@ -25,8 +25,7 @@ const SELECTFROM = `
 		ORDER BY updated DESC) AS content,
 		meta::id(id) AS id,
 		NONE AS parentReplyId,
-		(SELECT number, status, username
-		FROM <-posted<-user)[0] AS author,
+		(SELECT status, username FROM <-posted<-user)[0] AS author,
 
 		count(<-likes) - count(<-dislikes) AS score,
 		$user IN <-likes<-user.id AS likes,
@@ -46,8 +45,8 @@ const asReplies = (from: string) => `(${from}) AS replies`
  * @returns
  */
 export function recurse(query: string, query2 = query) {
-	let rep = asReplies(`${SELECTFROM} ${query}`) 
-	const q = asReplies(`${SELECTFROM} ${query2}`) 
+	let rep = asReplies(`${SELECTFROM} ${query}`)
+	const q = asReplies(`${SELECTFROM} ${query2}`)
 	// On a comment page, the top comment is already selected
 	for (let i = 0; i < 9; i++) rep = rep.replace("# again #", q)
 

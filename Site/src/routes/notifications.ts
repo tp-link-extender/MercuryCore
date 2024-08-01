@@ -75,11 +75,9 @@ export default async function (user: User | null) {
 			SELECT
 				*,
 				meta::id(id) AS id,
-				(SELECT number, status, username
-				FROM <-user)[0] AS sender
+				(SELECT status, username FROM <-user)[0] AS sender
 			OMIT in, out
-			FROM notification
-			WHERE out = ${Record("user", user.id)}
+			FROM notification WHERE out = ${Record("user", user.id)}
 			ORDER BY time DESC`
 	)
 

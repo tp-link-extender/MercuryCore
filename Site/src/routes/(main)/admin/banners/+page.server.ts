@@ -31,8 +31,7 @@ export async function load({ locals }) {
 		SELECT
 			*,
 			meta::id(id) AS id,
-			(SELECT number, status, username
-			FROM $parent.creator)[0] AS creator
+			(SELECT status, username FROM $parent.creator)[0] AS creator
 		OMIT deleted
 		FROM banner WHERE !deleted`)
 	return { banners, form: await superValidate(zod(schema)) }

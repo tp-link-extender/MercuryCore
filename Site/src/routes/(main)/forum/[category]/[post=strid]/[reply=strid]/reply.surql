@@ -7,7 +7,7 @@ SELECT
 	(IF ->replyToReply->forumReply.id THEN
 		meta::id(->replyToReply[0]->forumReply[0].id)
 	END) AS parentReplyId,
-	(SELECT number, status, username FROM <-posted<-user)[0] AS author,
+	(SELECT status, username FROM <-posted<-user)[0] AS author,
 
 	count(<-likes) - count(<-dislikes) AS score,
 	$user IN <-likes<-user.id AS likes,

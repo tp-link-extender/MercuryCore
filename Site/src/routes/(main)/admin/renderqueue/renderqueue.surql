@@ -6,8 +6,7 @@ SELECT
 	completed,
 	relativeId,
 	IF $parent.type = "Avatar" THEN
-		SELECT number, status, username
-		FROM user WHERE number = $parent.relativeId
+		SELECT status, username FROM user WHERE number = $parent.relativeId
 	END[0] AS user,
 	IF $parent.type = "Clothing" THEN
 		SELECT

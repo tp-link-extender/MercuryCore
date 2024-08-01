@@ -1,7 +1,7 @@
 SELECT
 	*,
 	meta::id(id) AS id,
-	(SELECT number, status, username FROM <-created<-user)[0] AS creator,
+	(SELECT status, username FROM <-created<-user)[0] AS creator,
 	count(<-owns<-user) AS sold,
 	$user IN <-owns<-user.id AS owned,
 
