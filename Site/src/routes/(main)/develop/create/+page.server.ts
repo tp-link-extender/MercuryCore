@@ -1,5 +1,5 @@
 import fs from "node:fs"
-import { getAssetPrice } from "$lib/server/economy"
+import { createAsset, getAssetPrice } from "$lib/server/economy"
 import formError from "$lib/server/formError"
 import {
 	clothingAsset,
@@ -11,8 +11,9 @@ import {
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
-import { Record, equery } from "$lib/server/surreal"
+import { Record, equery, surql } from "$lib/server/surreal"
 import { graphicAsset } from "$lib/server/xmlAsset"
+import { encode } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
@@ -48,17 +49,16 @@ const assets: { [k: number]: string } = Object.freeze({
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ request, locals, getClientAddress }) => {
 	const { user } = await authorise(locals)
-	const formData = await request.formData()
-	const form = await superValidate(formData, zod(schema))
+	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
 
 	const { type, name, description, price } = form.data
 	const assetType = +type as keyof typeof assets
-	const asset = formData.get("asset") as File
+	const asset = form.data.asset as File
+	form.data.asset = null
 
 	if (!asset || asset.size === 0)
 		return formError(form, ["asset"], ["You must upload an asset"])
-
 	if (asset.size > 20e6)
 		return formError(
 			form,
@@ -69,8 +69,8 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	const limit = ratelimit(form, "assetCreation", getClientAddress, 30)
 	if (limit) return limit
 
-	if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
-	if (!fs.existsSync("data/thumbnails")) fs.mkdirSync("data/thumbnails")
+	if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
+	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
 
 	let saveImages: ((id: number) => Promise<number> | Promise<void>)[] = []
 
@@ -117,16 +117,26 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 		return formError(form, ["asset"], ["Asset failed to upload"])
 	}
 
-	const res = await equery<number[]>(createAssetQuery, {
+	const [id] = await equery<number[]>(surql`
+		(UPDATE ONLY stuff:increment SET asset += 2).asset`)
+	const imageAssetId = id - 1 // LOL, concurrency problems Solved!
+
+	const slug = encode(name)
+	const created = await createAsset(user.id, id, name, slug)
+	if (!created.ok) {
+		await equery(surql`UPDATE ONLY stuff:increment SET asset -= 2`)
+		return formError(form, ["other"], [created.msg])
+	}
+
+	await equery(createAssetQuery, {
 		name,
 		assetType,
 		price,
 		description,
 		user: Record("user", user.id),
+		imageAssetId,
+		id,
 	})
-
-	const imageAssetId = res[9]
-	const id = res[10] // concurrency issues fixed hopefully
 
 	await graphicAsset(assets[assetType], imageAssetId, id)
 

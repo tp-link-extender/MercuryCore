@@ -15,9 +15,7 @@ export default defineConfig({
 			/^fa-([a-zA-Z0-9-]+)$/,
 			([, c], { rawSelector }) =>
 				fa[c]
-					? `${e(rawSelector)}:before{content:"\\${
-							fa[c]
-						}"!important}`
+					? `${e(rawSelector)}:before{content:"\\${fa[c]}"!important}`
 					: "",
 		],
 	],

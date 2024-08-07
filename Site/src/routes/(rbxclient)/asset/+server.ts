@@ -29,7 +29,7 @@ export async function GET({ url }) {
 	try {
 		// Try loading as an asset
 
-		if (await Bun.file(`data/assets/${id}`).exists()) {
+		if (await Bun.file(`../data/assets/${id}`).exists()) {
 			const [[asset]] = await equery<FoundAsset[][]>(
 				surql`
 					SELECT meta::id(id) AS id, name, visibility
@@ -42,7 +42,7 @@ export async function GET({ url }) {
 			// The asset is visible or pending
 			// (allow pending assets to be shown through the api)
 			console.log(`serving asset #${id}`)
-			const file = await Bun.file(`data/assets/${id}`).arrayBuffer()
+			const file = await Bun.file(`../data/assets/${id}`).arrayBuffer()
 			return response(new Uint8Array(file))
 		}
 

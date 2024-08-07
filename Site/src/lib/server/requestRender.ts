@@ -58,8 +58,8 @@ export default async function (
 
 	const path =
 		renderType === "Avatar"
-			? `data/avatars/${relativeId}.png`
-			: `data/thumbnails/${relativeId}`
+			? `../data/avatars/${relativeId}.png`
+			: `../data/thumbnails/${relativeId}`
 
 	// If the file doesn't exist, wait for it to be created
 	// if it does exist, wait for it to be modified

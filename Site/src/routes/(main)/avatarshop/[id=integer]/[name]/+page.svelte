@@ -56,8 +56,7 @@
 			<img
 				class:opacity-50={regenerating}
 				class="image transition-opacity duration-300 aspect-1 w-80vw max-w-100"
-				src={form?.icon ||
-					`/avatarshop/${$asset.id}/${$asset.name}/icon`}
+				src={form?.icon || `/avatarshop/${$asset.id}/${data.slug}/icon`}
 				alt={$asset.name} />
 		</div>
 		<div class="w-full light-text">
@@ -170,7 +169,7 @@
 						{num}
 						{replyingTo}
 						postId={$asset.id.toString()}
-						assetName={$asset.name}
+						assetSlug={data.slug}
 						postAuthorName={$asset.creator.username || ""}
 						{repliesCollapsed}
 						topLevel={false}

@@ -7,8 +7,5 @@
 		// Files that aren't useful to see
 		"Site/bun.lockb": true,
 		"Economy/go.sum": true
-	},
-	"files.associations": {
-		"mercury.core": "typescript"
 	}
 }

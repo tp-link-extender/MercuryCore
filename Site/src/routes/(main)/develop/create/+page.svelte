@@ -61,6 +61,6 @@
 			type="file"
 			name="asset"
 			label="Asset"
-			help="Max image size: 20MB. Supported file types: .png, .jpg, .bmp" />
+			help="Max image size: 20MB. Supports most popular image formats." />
 	{/if}
 </Form>

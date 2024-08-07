@@ -82,12 +82,12 @@ async function fetchAssetVersion(id: number, version: number) {
 		await fetch(`https://economy.roblox.com/v2/assets/${id}/details`)
 	).json()
 
-	if (!fs.existsSync("data/assetCache")) fs.mkdirSync("data/assetCache")
+	if (!fs.existsSync("../data/assetCache")) fs.mkdirSync("../data/assetCache")
 
 	// write the data to a file
 	// After all, they give the data in the response anyway. Why shouldn't I cache it?
 	await Bun.write(
-		`data/assetCache/${id}_${version}`,
+		`../data/assetCache/${id}_${version}`,
 		Buffer.from(await data.arrayBuffer()).toString() // todo: needed?
 	)
 
@@ -157,7 +157,9 @@ async function getSharedAssets(id: number, version: number) {
 
 	let cachedData: string
 	try {
-		cachedData = await Bun.file(`data/assetCache/${id}_${version}`).text()
+		cachedData = await Bun.file(
+			`../data/assetCache/${id}_${version}`
+		).text()
 		console.log("cached data", cachedData.startsWith("<roblox "))
 		if (!cachedData.startsWith("<roblox ")) return []
 	} catch {
@@ -225,8 +227,8 @@ actions.autopilot = async ({ request, locals }) => {
 	if (!form.valid) return formError(form)
 	const { data } = form
 
-	if (!fs.existsSync("data/assets")) fs.mkdirSync("data/assets")
-	if (!fs.existsSync("data/thumbnails")) fs.mkdirSync("data/thumbnails")
+	if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
+	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
 
 	const res = await equery<unknown[]>(createAutopilotQuery, {
 		assets: form.data.shared.split(",").map(s => +s),
@@ -243,7 +245,7 @@ actions.autopilot = async ({ request, locals }) => {
 		sharedId: number
 	}[]
 
-	const path = `data/assetCache/${data.assetId}_${data.version}`
+	const path = `../data/assetCache/${data.assetId}_${data.version}`
 	let cachedXml = await Bun.file(path).text()
 
 	// Replace the shared asset URLs with the new asset IDs
@@ -260,12 +262,12 @@ actions.autopilot = async ({ request, locals }) => {
 	}
 
 	await Promise.all([
-		Bun.write(`data/assets/${id}`, cachedXml),
+		Bun.write(`../data/assets/${id}`, cachedXml),
 		...shared.map(s =>
 			// idiomatic much
 			Bun.write(
-				`data/assets/${s.id}`,
-				Bun.file(`data/assetCache/${s.sharedId}_1`)
+				`../data/assets/${s.id}`,
+				Bun.file(`../data/assetCache/${s.sharedId}_1`)
 			)
 		),
 	])
@@ -278,8 +280,8 @@ actions.autopilot = async ({ request, locals }) => {
 			// we want to move the imageasset from assets to thumbnails (don't render it)
 			renders.push(
 				Bun.write(
-					`data/thumbnails/${id}`,
-					Bun.file(`data/assets/${imageAsset}`)
+					`../data/thumbnails/${id}`,
+					Bun.file(`../data/assets/${imageAsset}`)
 				)
 			)
 	} else {

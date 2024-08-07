@@ -47,26 +47,25 @@ export async function load({ url, locals, params }) {
 	const { user } = await authorise(locals)
 	const id = +params.id
 	const privateServerCode = url.searchParams.get("privateServer")
-	const [[getPlace]] = await equery<Place[][]>(placeQuery, {
+	const [[place]] = await equery<Place[][]>(placeQuery, {
 		user: Record("user", user.id),
 		place: Record("place", id),
 	})
 
 	if (
-		!getPlace ||
-		(user.username !== getPlace.ownerUser.username &&
-			getPlace.privateServer &&
-			privateServerCode !== getPlace.privateTicket)
+		!place ||
+		(user.username !== place.ownerUser.username &&
+			place.privateServer &&
+			privateServerCode !== place.privateTicket)
 	)
 		error(404, "Place not found")
 
 	// ahh, reminds me of early Mercury 2
-	const slug = encode(getPlace.name)
-
-	if (!couldMatch(getPlace.name, params.name))
+	const slug = encode(place.name)
+	if (!couldMatch(place.name, params.name))
 		redirect(302, `/place/${id}/${slug}`)
 
-	return { slug, place: getPlace }
+	return { slug, place }
 }
 
 export const actions: import("./$types").Actions = {}

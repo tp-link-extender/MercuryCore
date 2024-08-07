@@ -124,6 +124,6 @@ export async function handleError({ event, error }) {
 	const { user } = event.locals
 
 	// Fancy error logging: time(?), user, and error
-	if (!config.Logging.Requests) console.error(error)
+	if (!config.Logging.FormattedErrors) console.error(error)
 	else console.error(time(), userLog(user), red(error as string))
 }

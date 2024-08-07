@@ -14,7 +14,8 @@ import {
 	surql,
 	transaction,
 } from "$lib/server/surreal"
-import { error, fail } from "@sveltejs/kit"
+import { couldMatch, encode } from "$lib/urlName"
+import { error, fail, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -64,20 +65,26 @@ const failTexts = Object.freeze(["Bruh", "Okay", "Aight", "Rip", "Aw man..."])
 
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
+	const id = +params.id
 	const [[asset]] = await equery<Asset[][]>(
 		assetQuery.replace("_SELECTCOMMENTS", SELECTCOMMENTS),
 		{
-			asset: Record("asset", +params.id),
+			asset: Record("asset", id),
 			user: Record("user", user.id),
 		}
 	)
 
 	if (!asset || !asset.creator) error(404, "Not found")
 
+	const slug = encode(asset.name)
+	if (!couldMatch(asset.name, params.name))
+		redirect(302, `/avatarshop/${id}/${slug}`)
+
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
 		failText: failTexts[Math.floor(Math.random() * failTexts.length)],
 		form: await superValidate(zod(schema)),
+		slug,
 		asset,
 	}
 }

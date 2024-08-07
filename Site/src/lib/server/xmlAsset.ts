@@ -21,7 +21,7 @@ const strings = Object.freeze({
 })
 
 /**
- * Creates a new XML graphic asset and saves it in data/assets
+ * Creates a new XML graphic asset and saves it in ../data/assets
  * @param type The type of asset to create
  * @param imageAssetId The ID of the image asset to link to
  * @param graphicAssetId The ID of the graphic asset to create
@@ -45,5 +45,5 @@ export async function graphicAsset(
 			"_ASSET_URL",
 			`${config.Domain}/asset?id=${imageAssetId.toString()}`
 		)
-	await Bun.write(`data/assets/${graphicAssetId}`, asset)
+	await Bun.write(`../data/assets/${graphicAssetId}`, asset)
 }

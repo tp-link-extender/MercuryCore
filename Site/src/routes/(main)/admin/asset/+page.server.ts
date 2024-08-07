@@ -118,8 +118,8 @@ actions.purge = async e => {
 				note: `Purge asset ${assetName} (id ${id})`,
 			}
 		),
-		fs.rm(`data/assets/${id}`),
-		fs.rm(`data/assets/${iaid}`),
-		fs.rm(`data/thumbnails/${id}`),
+		fs.rm(`../data/assets/${id}`),
+		fs.rm(`../data/assets/${iaid}`),
+		fs.rm(`../data/thumbnails/${id}`),
 	])
 }

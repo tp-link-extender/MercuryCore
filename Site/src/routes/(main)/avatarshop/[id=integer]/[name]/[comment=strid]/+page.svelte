@@ -35,7 +35,7 @@
 				{num}
 				{replyingTo}
 				postId={data.assetId.toString()}
-				assetName={data.assetName}
+				assetSlug={data.slug}
 				postAuthorName={data.creator || ""}
 				{repliesCollapsed}
 				pinnable={!reply.parentReplyId}

@@ -68,7 +68,10 @@ actions.default = async ({ request, locals }) => {
 	const slug = encode(name)
 
 	const created = await createPlace(user.id, id, name, slug)
-	if (!created.ok) return formError(form, ["other"], [created.msg])
+	if (!created.ok) {
+		await equery(surql`UPDATE ONLY stuff:increment SET asset -= 1`) // fuck, find a better way stat
+		return formError(form, ["other"], [created.msg])
+	}
 
 	await equery(createQuery, {
 		user: Record("user", user.id),

@@ -1,4 +1,5 @@
 // Mercury Economy service
+// "imagine a blockchain but without the blocks or the chain" - Heliodex
 
 package main
 
@@ -49,7 +50,7 @@ const (
 	Kilo           = 1e3 * Unit
 	Mega           = 1e6 * Unit
 	Giga           = 1e9 * Unit
-	Tera           = 1e12 * Unit // uint64 means ~18 tera is the economy limit
+	Tera           = 1e12 * Unit // uint64 means ~18 tera is the economy limit (we could use math/big but that would unleash horror)
 
 	// Target Currency per User, the economy size will try to be this * user count (len(balances))
 	// By "user", I mean every user who has ever transacted with the economy
@@ -366,8 +367,8 @@ func main() {
 		fmt.Println(c.InPurple("Running in Docker!"))
 		currentFilepath = filepathDockerised
 	}
-	file, err = os.OpenFile(currentFilepath, os.O_RDWR, 0o644)
-	Assert(err, "Failed to open ledger. Make sure the ")
+	file, err = os.OpenFile(currentFilepath, os.O_APPEND|os.O_RDWR, 0o644)
+	Assert(err, "Failed to open ledger.")
 	defer file.Close()
 	updateBalances()
 

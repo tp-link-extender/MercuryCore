@@ -1,6 +1,5 @@
-LET $id = (UPDATE ONLY stuff:increment SET asset += 1).asset;
 LET $imageAsset = CREATE asset CONTENT {
-	id: $id,
+	id: $imageAssetId,
 	name: $name,
 	type: 1,
 	price: 0,
@@ -12,9 +11,8 @@ LET $imageAsset = CREATE asset CONTENT {
 RELATE $user->owns->$imageAsset;
 RELATE $user->created->$imageAsset;
 
-LET $id2 = (UPDATE ONLY stuff:increment SET asset += 1).asset;
 LET $asset = CREATE asset CONTENT {
-	id: $id2,
+	id: $id,
 	name: $name,
 	type: $assetType,
 	price: $price,
@@ -29,5 +27,3 @@ LET $asset = CREATE asset CONTENT {
 RELATE $user->owns->$asset;
 RELATE $user->created->$asset;
 RELATE $asset->imageAsset->$imageAsset;
-$id; # return the idz
-$id2;

@@ -19,7 +19,7 @@ export async function GET({ url, params }) {
 	})
 	if (!foundUser) error(404, "User not found")
 
-	const path = `data/avatars/${username}${shotType}.png`
+	const path = `../data/avatars/${username}${shotType}.png`
 
 	try {
 		if (wait)

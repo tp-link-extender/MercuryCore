@@ -106,10 +106,10 @@ actions.view = async e => {
 				["Icon must be less than 1MB in size"]
 			)
 
-		if (!fs.existsSync("data/icons")) fs.mkdirSync("data/icons")
+		if (!fs.existsSync("../data/icons")) fs.mkdirSync("../data/icons")
 		sharp(await icon.arrayBuffer())
 			.resize(270, 270)
-			.toFile(`data/icons/${id}.webp`)
+			.toFile(`../data/icons/${id}.webp`)
 			.catch(() => formError(form, ["icon"], ["Icon failed to upload"]))
 	}
 

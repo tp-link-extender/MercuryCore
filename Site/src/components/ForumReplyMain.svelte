@@ -21,11 +21,11 @@
 	export let postAuthorName: string
 	export let categoryName = ""
 	export let postId: string
-	export let assetName = ""
+	export let assetSlug = ""
 
 	const baseUrl = categoryName
 		? `forum/${categoryName.toLowerCase()}/${postId}`
-		: `avatarshop/${postId}/${assetName}`
+		: `avatarshop/${postId}/${assetSlug}`
 
 	export let repliesCollapsed: RepliesCollapsed
 	export let topLevel = true
@@ -79,14 +79,14 @@
 					{/if}
 					<span
 						class="pl-4 {reply.author.username === postAuthorName
-							? assetName
+							? assetSlug
 								? 'text-yellow-5'
 								: 'text-blue-6'
 							: ''}">
 						{reply.author.username}
 						{#if reply.author.username === postAuthorName}
 							<fa
-								class="{assetName
+								class="{assetSlug
 									? 'fa-hammer'
 									: 'fa-microphone'} ml-2" />
 						{/if}
@@ -267,7 +267,7 @@
 		{replyingTo}
 		{categoryName}
 		{postId}
-		{assetName}
+		{assetSlug}
 		{postAuthorName}
 		{repliesCollapsed}
 		depth={depth + 1}

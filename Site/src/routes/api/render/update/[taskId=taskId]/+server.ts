@@ -22,8 +22,8 @@ export async function POST({ request, url, params }) {
 
 	const getPath = (name: string) =>
 		task.type === "Avatar"
-			? `data/avatars/${task.relativeId}${name && "-"}${name}.png`
-			: `data/thumbnails/${task.relativeId}${name && "-"}${name}`
+			? `../data/avatars/${task.relativeId}${name && "-"}${name}.png`
+			: `../data/thumbnails/${task.relativeId}${name && "-"}${name}`
 	const write = (input: string, name = "") =>
 		Bun.write(getPath(name), Buffer.from(input, "base64").toString())
 

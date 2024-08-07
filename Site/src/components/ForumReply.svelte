@@ -30,13 +30,13 @@
 	export let postAuthorName: string
 	export let categoryName = ""
 	export let postId: string
-	export let assetName = ""
+	export let assetSlug = ""
 	export let pinnable = false
 	export let refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any>
 
 	const baseUrl = categoryName
 		? `/forum/${categoryName.toLowerCase()}/${postId}`
-		: `/avatarshop/${postId}/${assetName}`
+		: `/avatarshop/${postId}/${assetSlug}`
 
 	export let repliesCollapsed: RepliesCollapsed
 	export let topLevel = true
@@ -47,9 +47,9 @@
 </script>
 
 {#if topLevel}
-	<a href="{baseUrl}{assetName ? '?tab=Comments' : ''}" class="no-underline">
+	<a href="{baseUrl}{assetSlug ? '?tab=Comments' : ''}" class="no-underline">
 		<fa fa-arrow-left class="pr-2" />
-		{#if assetName}
+		{#if assetSlug}
 			Back to asset
 		{:else}
 			Parent post
@@ -89,7 +89,7 @@
 						{reply.author.username}
 						{#if reply.author.username === postAuthorName}
 							<fa
-								class="{assetName
+								class="{assetSlug
 									? 'fa-hammer'
 									: 'fa-microphone'} pl-1" />
 						{/if}
@@ -108,7 +108,7 @@
 					{postAuthorName}
 					{categoryName}
 					{postId}
-					{assetName}
+					{assetSlug}
 					{repliesCollapsed}
 					{topLevel}
 					{pinnable}

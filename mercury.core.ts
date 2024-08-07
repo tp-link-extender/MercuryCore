@@ -20,7 +20,7 @@ export default {
 
 	Logging: {
 		Requests: true,
-		FormattedErrors: true,
+		FormattedErrors: false,
 		Time: true,
 	},
 } satisfies import("./Assets/schema.ts").Config

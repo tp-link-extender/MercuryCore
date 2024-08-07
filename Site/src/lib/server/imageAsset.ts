@@ -4,7 +4,7 @@ import sharp, { type ResizeOptions } from "sharp"
  * Creates an image asset based off a file object
  * @param file A File object for the image to save
  * @param sharpOptions Extra options to pass to sharp
- * @returns A function that saves the image to data/assets
+ * @returns A function that saves the image to ../data/assets
  * @example
  * const save = await imageAsset(image)
  * const id = // Load from database
@@ -22,14 +22,15 @@ export async function imageAsset(file: File, sharpOptions?: ResizeOptions) {
 			throw new Error("Image asset failed to upload")
 		})
 
-	return (id: number) => Bun.write(`data/assets/${id}`, fileBuffer.toString())
+	return (id: number) =>
+		Bun.write(`../data/assets/${id}`, fileBuffer.toString())
 }
 
 /**
  * Creates a clothing asset based off a file object
  * @param file A File object for the image to save
  * @param sharpOptions Extra options to pass to sharp
- * @returns A function that saves the image to data/assets
+ * @returns A function that saves the image to ../data/assets
  * @example
  * const save = await clothingAsset(image)
  * const id = // Load from database
@@ -47,7 +48,8 @@ export async function clothingAsset(file: File, sharpOptions?: ResizeOptions) {
 			throw new Error("Image asset failed to upload")
 		})
 
-	return (id: number) => Bun.write(`data/assets/${id}`, fileBuffer.toString())
+	return (id: number) =>
+		Bun.write(`../data/assets/${id}`, fileBuffer.toString())
 }
 
 /**
@@ -66,14 +68,14 @@ export async function thumbnail(file: File, sharpOptions?: ResizeOptions) {
 			fit: "fill",
 			...sharpOptions,
 		})
-		.avif()
+		.webp() // sorry avif, but webp is just magic
 		.toBuffer()
 		.catch(() => {
 			throw new Error("Thumbnail failed to upload")
 		})
 
 	return (id: number) =>
-		Bun.write(`data/thumbnails/${id}`, fileBuffer.toString())
+		Bun.write(`../data/thumbnails/${id}`, fileBuffer.toString())
 }
 
 const tShirtOpts = Object.freeze({
@@ -85,7 +87,7 @@ const tShirtOpts = Object.freeze({
 /**
  * Creates an T-Shirt image asset based off a file object
  * @param file A File object for the image to save
- * @returns A function that saves the image to data/assets
+ * @returns A function that saves the image to ../data/assets
  * @example
  * const save = await tShirt(image)
  * const id = // Load from database
@@ -100,7 +102,8 @@ export async function tShirt(file: File) {
 			throw new Error("Image asset failed to upload")
 		})
 
-	return (id: number) => Bun.write(`data/assets/${id}`, fileBuffer.toString())
+	return (id: number) =>
+		Bun.write(`../data/assets/${id}`, fileBuffer.toString())
 }
 
 /**
@@ -119,12 +122,12 @@ export async function tShirtThumbnail(file: File) {
 
 	const fileBuffer = await sharp("static/tShirtTemplate.webp")
 		.composite([{ input }])
-		.avif()
+		.webp()
 		.toBuffer()
 		.catch(() => {
 			throw new Error("Thumbnail failed to upload")
 		})
 
 	return (id: number) =>
-		Bun.write(`data/thumbnails/${id}`, fileBuffer.toString())
+		Bun.write(`../data/thumbnails/${id}`, fileBuffer.toString())
 }

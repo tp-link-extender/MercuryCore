@@ -1,4 +1,3 @@
-import { intRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/lucia"
 import { Record, equery, surql } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
@@ -9,16 +8,13 @@ type Asset = {
 	visibility: string
 }
 
-export async function GET({ locals, params }) {
-	if (!intRegex.test(params.id)) error(400, `Invalid asset id: ${params.id}`)
+const dirs = Object.freeze(["thumbnails", "assets"]) // simpler-ish
 
+export async function GET({ locals, params }) {
 	const id = +params.id
 	const [[asset]] = await equery<Asset[][]>(
 		surql`
-			SELECT
-				meta::id(id) AS id,
-				name,
-				visibility
+			SELECT meta::id(id) AS id, name, visibility
 			FROM ${Record("asset", id)}`
 	)
 
@@ -32,9 +28,9 @@ export async function GET({ locals, params }) {
 		// If the asset is pending review
 		redirect(302, "/error/mQuestion.svg")
 
-	for (const f of [() => `data/thumbnails/${id}`, () => `data/assets/${id}`])
+	for (const f of dirs.map(d => `../data/${d}/${id}`))
 		try {
-			const file = await Bun.file(f()).arrayBuffer()
+			const file = await Bun.file(f).arrayBuffer()
 			if (file) return new Response(Buffer.from(file))
 		} catch (e) {}
 

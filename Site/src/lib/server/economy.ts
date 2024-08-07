@@ -60,6 +60,23 @@ export const getAssetPrice = () => geFeeBasedPrice(75)
 export const getGroupPrice = () => geFeeBasedPrice(50)
 export const getPlacePrice = () => geFeeBasedPrice(50)
 
+export async function createAsset(
+	To: string,
+	id: number,
+	name: string,
+	slug: string
+): Promise<{ ok: true } | { ok: false; msg: string }> {
+	const price = await getPlacePrice()
+	if (!price.ok) return price
+	return await burn(
+		To,
+		price.value,
+		`Created place ${name}`,
+		`/avatarshop/${id}/${slug}`,
+		[id]
+	)
+}
+
 export async function createPlace(
 	To: string,
 	id: number,
@@ -86,7 +103,7 @@ export async function createGroup(
 	return await burn(
 		To,
 		price.value,
-		`Created place ${name}`,
+		`Created group ${name}`,
 		`/groups/${name}`,
 		[]
 	)
