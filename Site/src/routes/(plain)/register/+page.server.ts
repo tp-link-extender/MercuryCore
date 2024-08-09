@@ -81,13 +81,11 @@ actions.register = async ({ request, cookies }) => {
 		)
 
 	const [, , userId] = await equery<string[]>(createUserQuery, {
-		user: {
-			username,
-			email,
-			// I still love scrypt, though argon2 is better supported
-			hashedPassword: Bun.password.hashSync(password),
-			bodyColours: config.DefaultBodyColors,
-		},
+		username,
+		email,
+		// I still love scrypt, though argon2 is better supported
+		hashedPassword: Bun.password.hashSync(password),
+		bodyColours: config.DefaultBodyColors,
 		key,
 	})
 
@@ -127,11 +125,9 @@ actions.initialAccount = async ({ request, cookies }) => {
 	// This is the kind of stuff that always breaks due to never getting tested
 	// Remember: untested === unworking
 	const [, , userId] = await equery<string[]>(createAdminQuery, {
-		user: {
-			username,
-			hashedPassword: Bun.password.hashSync(password),
-			bodyColours: config.DefaultBodyColors,
-		},
+		username,
+		hashedPassword: Bun.password.hashSync(password),
+		bodyColours: config.DefaultBodyColors,
 	})
 
 	try {

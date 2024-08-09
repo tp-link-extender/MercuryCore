@@ -3,8 +3,8 @@ CREATE user CONTENT {
 	bodyColours: $bodyColours,
 	created: time::now(),
 	css: "",
-	email: $user.email,
-	hashedPassword: $user.hashedPassword,
+	email: $email,
+	hashedPassword: $hashedPassword,
 	lastOnline: time::now(),
 	permissionLevel: 1,
 	status: <future> {
@@ -16,10 +16,10 @@ CREATE user CONTENT {
 			"Offline"
 		END
 	},
-	username: $user.username,
+	username: $username,
 };
 # Return some user data
-LET $u = (SELECT id FROM user WHERE username = $user.username)[0].id;
+LET $u = (SELECT id FROM user WHERE username = $username)[0].id;
 meta::id($u);
 
 UPDATE ONLY $key SET usesLeft -= 1;
