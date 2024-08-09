@@ -367,7 +367,7 @@ func main() {
 		fmt.Println(c.InPurple("Running in Docker!"))
 		currentFilepath = filepathDockerised
 	}
-	file, err = os.OpenFile(currentFilepath, os.O_APPEND|os.O_RDWR, 0o644)
+	file, err = os.OpenFile(currentFilepath, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0o644)
 	Assert(err, "Failed to open ledger.")
 	defer file.Close()
 	updateBalances()

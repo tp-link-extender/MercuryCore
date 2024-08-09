@@ -11,7 +11,6 @@ COPY . .
 
 # create and give permissions to use ../data/ledger file
 RUN mkdir /economy/data
-RUN touch /economy/data/ledger
 RUN chmod 777 /economy/data/ledger
 
 RUN go build .
