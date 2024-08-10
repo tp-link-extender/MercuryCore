@@ -66,12 +66,12 @@ export async function createAsset(
 	name: string,
 	slug: string
 ): Promise<{ ok: true } | { ok: false; msg: string }> {
-	const price = await getPlacePrice()
+	const price = await getAssetPrice()
 	if (!price.ok) return price
 	return await burn(
 		To,
 		price.value,
-		`Created place ${name}`,
+		`Created asset ${name}`,
 		`/avatarshop/${id}/${slug}`,
 		[id]
 	)
