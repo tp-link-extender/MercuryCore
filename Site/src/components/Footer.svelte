@@ -118,6 +118,6 @@
 
 	#nojs {
 		background: rgba(0, 0, 0, 0.5);
-		transform: translate(0px, 1rem);
+		transform: translate(0, 1rem);
 	}
 </style>

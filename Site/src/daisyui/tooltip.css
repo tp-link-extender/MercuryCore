@@ -14,7 +14,7 @@
 		position: absolute;
 		font-weight: 500;
 		left: 50%;
-		bottom: -162%;
+		bottom: -160%; /* very magic */
 		transform: translateX(-50%);
 		background-color: rgba(255, 255, 255, 0.624);
 		color: #000;

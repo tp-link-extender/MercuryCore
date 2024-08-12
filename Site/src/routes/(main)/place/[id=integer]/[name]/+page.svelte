@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { deserialize, enhance } from "$app/forms"
 	import Head from "$components/Head.svelte"
-	import Modal from "$components/Modal.svelte"
 	import ReportButton from "$components/ReportButton.svelte"
 	import Tab from "$components/Tab.svelte"
 	import TabData from "$components/TabData"
@@ -43,7 +42,7 @@
 
 	// Place Launcher
 
-	const modal = writable(false)
+	let popover: HTMLDivElement
 	let installed = true
 	let success = false
 
@@ -53,7 +52,7 @@
 			joinscripturl,
 			() => {
 				success = true
-				setTimeout(() => modal.set(false), 16000)
+				setTimeout(() => popover.hidePopover(), 16000)
 			},
 			() => {
 				installed = false
@@ -65,7 +64,6 @@
 
 	async function placeLauncher() {
 		installed = true
-		modal.set(true)
 
 		const formdata = new FormData()
 		formdata.append("serverId", $place.id.toString())
@@ -206,7 +204,10 @@
 				</span>
 			</div>
 			<div id="buttons" class="flex flex-col">
-				<button on:click={placeLauncher} class="btn btn-primary">
+				<button
+					on:click={placeLauncher}
+					class="btn btn-primary"
+					popovertarget="ready">
 					<img
 						src="/place/join.svg"
 						alt="Play button icon"
@@ -392,7 +393,7 @@
 	<hr />
 </div>
 
-<Modal {modal}>
+<div id="ready" popover="auto" bind:this={popover}>
 	<div class="flex flex-col px-6 pt-6 text-center">
 		{#key installed}
 			<div class="self-center size-32 -translate-x-1/2">
@@ -425,4 +426,4 @@
 			</a>
 		{/if}
 	</div>
-</Modal>
+</div>

@@ -98,10 +98,9 @@ actions.like = async ({ url, request, locals, params }) => {
 actions.join = async ({ request, locals }) => {
 	const { user } = await authorise(locals)
 	const data = await formData(request)
-	const requestType = data.request
 	const serverId = +data.serverId
 
-	if (!requestType || !serverId) error(400, "Invalid Request")
+	if (!serverId) error(400, "Invalid Request")
 	if (!(await find("place", serverId))) error(404, "Place not found")
 
 	const foundModerated = await findWhere(
