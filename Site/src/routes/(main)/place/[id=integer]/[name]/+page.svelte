@@ -28,17 +28,14 @@
 		["Now Playing", $place.players.length]
 	]
 	const images = [
-		"/place/placeholderImage1.webp",
-		"/place/placeholderImage2.webp",
-		"/place/placeholderImage3.webp"
+		"/place/placeholderImage1.avif",
+		"/place/placeholderImage2.avif",
+		"/place/placeholderImage3.avif"
 	]
-	const scroll = (e: MouseEvent) =>
-		document
-			.getElementById(
-				new URL((e.target as HTMLAnchorElement)?.href).hash.slice(1)
-			)
-			// (false) prevents page scrolling to top of element
-			?.scrollIntoView(false)
+	function scroll(e: MouseEvent) {
+		const url = new URL((e.target as HTMLAnchorElement)?.href).hash.slice(1)
+		document.getElementById(url)?.scrollIntoView(false) // (false) prevents page scrolling to top of element
+	}
 
 	// Place Launcher
 

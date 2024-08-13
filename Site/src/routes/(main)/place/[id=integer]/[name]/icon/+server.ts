@@ -3,12 +3,10 @@ import { error, redirect } from "@sveltejs/kit"
 
 export async function GET({ params }) {
 	const id = +params.id
-	const filename = `../data/icons/${id}.webp`
-
 	if (!(await find("place", id))) error(404, "Not found")
 
-	if (!(await Bun.file(filename).exists()))
-		redirect(302, "/place/placeholderIcon.webp")
+	const file = Bun.file(`../data/icons/${id}.avif`)
+	if (!(await file.exists())) redirect(302, "/place/placeholderIcon.avif")
 
-	return new Response(Bun.file(filename))
+	return new Response(file)
 }

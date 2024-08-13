@@ -66,7 +66,7 @@ export async function thumbnail(file: File, sharpOptions?: ResizeOptions) {
 			fit: "fill",
 			...sharpOptions,
 		})
-		.webp() // sorry avif, but webp is just magic
+		.webp() // sorry avif, but webp is just magic (just here)
 		.toArray()
 		.catch(() => {
 			throw new Error("Thumbnail failed to upload")

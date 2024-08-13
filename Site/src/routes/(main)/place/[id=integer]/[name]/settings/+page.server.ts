@@ -109,8 +109,8 @@ actions.view = async e => {
 		if (!fs.existsSync("../data/icons")) fs.mkdirSync("../data/icons")
 		sharp(await icon.arrayBuffer())
 			.resize(270, 270)
-			.toFile(`../data/icons/${id}.webp`)
-			.catch(() => formError(form, ["icon"], ["Icon failed to upload"]))
+			.avif({ effort: 9 }) // not awaited, so this'll happen in the background (takes a sec or 2)
+			.toFile(`../data/icons/${id}.avif`) // also errors aren't caught but whatever
 	}
 
 	const { title, description } = form.data
@@ -120,7 +120,6 @@ actions.view = async e => {
 		title,
 		description: description || "",
 	})
-
 	return message(form, "View settings updated successfully!")
 }
 actions.ticket = async e => {
@@ -128,7 +127,6 @@ actions.ticket = async e => {
 
 	await equery(surql`
 		UPDATE ${Record("place", id)} SET serverTicket = rand::guid()`)
-
 	return message(
 		await superValidate(e.request, zod(ticketSchema)),
 		"Regenerated!"
@@ -141,7 +139,6 @@ actions.network = async e => {
 	if (!form.valid) return formError(form)
 
 	await equery(surql`UPDATE ${Record("place", id)} MERGE ${form.data}`)
-
 	return message(form, "Network settings updated successfully!")
 }
 actions.privacy = async e => {
