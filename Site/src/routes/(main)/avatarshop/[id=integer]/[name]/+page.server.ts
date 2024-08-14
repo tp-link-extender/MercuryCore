@@ -73,7 +73,6 @@ export async function load({ locals, params }) {
 			user: Record("user", user.id),
 		}
 	)
-
 	if (!asset || !asset.creator) error(404, "Not found")
 
 	const slug = encode(asset.name)
@@ -92,8 +91,7 @@ export async function load({ locals, params }) {
 async function getBuyData(e: RequestEvent) {
 	const { user } = await authorise(e.locals)
 	const id = +e.params.id
-	const [[assetExists]] = await equery<boolean[][]>(surql`
-		SELECT 1 FROM ${Record("asset", id)}`)
+	const assetExists = await find("asset", id)
 	if (!assetExists) error(404)
 
 	return { user, id }
@@ -133,24 +131,6 @@ const pinComment = (pinned: boolean) => async (e: RequestEvent) => {
 		UPDATE ${Record("assetComment", id)} SET pinned = ${pinned}`)
 }
 
-type Thing = {
-	id: string
-	score: number
-	assetId: string
-}
-
-async function select(thing: RecordId) {
-	const [[got]] = await equery<Thing[][]>(
-		surql`
-			SELECT
-				meta::id(id) AS id,
-				count(<-likes) - count(<-dislikes) AS score,
-				meta::id((->replyToAsset->asset.id)[0]) AS assetId # remove if asset likes are implemented
-			FROM ${thing}`
-	)
-	return got
-}
-
 // actions that return things are here because of sveltekit typescript limitations
 async function rerender({ locals, params }: RequestEvent) {
 	await authorise(locals, 5)
@@ -158,33 +138,27 @@ async function rerender({ locals, params }: RequestEvent) {
 	const id = +params.id
 	type FoundAsset = {
 		name: string
-		id: string
 		type: number
 		visibility: string
 	}
 	const [[asset]] = await equery<FoundAsset[][]>(
-		surql`
-			SELECT
-				name,
-				meta::id(id) AS id, 
-				type,
-				visibility
-			FROM ${Record("asset", id)}`
+		surql`SELECT name, type, visibility FROM ${Record("asset", id)}`
 	)
 	if (!asset) error(404, "Not found")
-	if (![8, 11, 12].includes(asset.type))
-		error(400, "Can't rerender this type of asset")
 	if (asset.visibility === "Moderated")
 		error(400, "Can't rerender a moderated asset")
 
-	try {
-		await requestRender(asset.type === 8 ? "Model" : "Clothing", id)
-		const icon = `/avatarshop/${asset.id}/${asset.name}/icon?r=${Math.random()}`
-		return { icon }
-	} catch (e) {
-		console.error(e)
-	}
-	return fail(500, { msg: "Failed to request render" })
+	if ([8, 11, 12].includes(asset.type))
+		try {
+			await requestRender(asset.type === 8 ? "Model" : "Clothing", id)
+			const icon = `/avatarshop/${id}/${asset.name}/icon?r=${Math.random()}`
+			return { icon }
+		} catch (e) {
+			console.error(e)
+			return fail(500, { msg: "Failed to request render" })
+		}
+
+	error(400, "Can't rerender this type of asset")
 }
 export const actions: Actions = { rerender }
 actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
@@ -253,26 +227,21 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 		like(user.id, Record("assetComment", newReplyId)),
 	])
 }
-actions.like = async ({ request, locals, url }) => {
+actions.like = async ({ request, locals, params, url }) => {
 	const { user } = await authorise(locals)
 	const data = await formData(request)
 	const action = data.action as LikeActions
-	const id = url.searchParams.get("id")
+	const id = +params.id
 	const commentId = url.searchParams.get("rid")
+	if (!commentId) error(400, "Missing comment id") // Asset likes not yet implemented
 	if (commentId && !idRegex.test(commentId)) error(400, "Invalid comment id")
 
-	const foundAsset = id ? await find("asset", +id) : null
-	const foundComment = commentId
-		? await select(Record("assetComment", commentId))
-		: null
+	const foundAsset = await find("asset", id)
+	const foundComment = await find("assetComment", commentId)
 	if (!foundAsset || !foundComment) error(404)
-	if (foundAsset) error(400, "Asset likes not yet implemented")
 
 	const type = "assetComment" // commentId ? "assetComment" : "asset"
-	await likeScoreActions[action](
-		user.id,
-		Record(type, (id || commentId) as string)
-	)
+	await likeScoreActions[action](user.id, Record(type, commentId as string))
 }
 actions.buy = async e => {
 	const { user, id } = await getBuyData(e)

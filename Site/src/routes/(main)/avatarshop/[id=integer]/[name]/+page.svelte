@@ -29,7 +29,6 @@
 		}
 	}
 
-	let asset = writable(data.asset)
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({})
 	const formData = superForm(data.form)
@@ -43,12 +42,12 @@
 		async ({ result }) => {
 			if (result.type === "success") await invalidateAll()
 			// Reload the asset with the data including the new comment, as the form that posted the comment didn't do that
-			$asset = data.asset
+			data.asset = data.asset
 			refresh++
 		}
 </script>
 
-<Head name={data.siteName} title={$asset.name} />
+<Head name={data.siteName} title={data.asset.name} />
 
 <div class="ctnr max-w-240">
 	<div class="flex <sm:flex-col">
@@ -56,12 +55,12 @@
 			<img
 				class:opacity-50={regenerating}
 				class="image transition-opacity duration-300 aspect-1 w-80vw max-w-100"
-				src={form?.icon || `/avatarshop/${$asset.id}/${data.slug}/icon`}
-				alt={$asset.name} />
+				src={form?.icon || `/avatarshop/${data.asset.id}/${data.slug}/icon`}
+				alt={data.asset.name} />
 		</div>
 		<div class="w-full light-text">
 			<div class="flex justify-between">
-				<h1>{$asset.name}</h1>
+				<h1>{data.asset.name}</h1>
 				<li class="dropdown pl-2 pt-2">
 					<fa fa-ellipsis />
 					<div class="dropdown-content">
@@ -78,7 +77,7 @@
 									Edit asset
 								</a>
 							</li> -->
-							{#if user.permissionLevel >= 5 && [11, 12, 8].includes($asset.type)}
+							{#if user.permissionLevel >= 5 && [11, 12, 8].includes(data.asset.type)}
 								<li class="rounded-2">
 									<form
 										use:enhance={enhanceRegen}
@@ -99,9 +98,9 @@
 			<div class="flex">
 				<strong class="pr-2">by:</strong>
 
-				{#if $asset.creator}
+				{#if data.asset.creator}
 					<User
-						user={$asset.creator}
+						user={data.asset.creator}
 						size="1.5rem"
 						full
 						thin
@@ -109,8 +108,8 @@
 				{/if}
 			</div>
 			<p class="mt-2">
-				{#if $asset.description}
-					{$asset.description.text}
+				{#if data.asset.description}
+					{data.asset.description.text}
 				{:else}
 					<em>No description available</em>
 				{/if}
@@ -120,12 +119,12 @@
 			<div class="flex flex-wrap mb-2">
 				<div class="w-full md:w-1/3">
 					<p class="mb-2">
-						<strong>{$asset.sold}</strong>
+						<strong>{data.asset.sold}</strong>
 						sold
 					</p>
 					<p>
 						<strong>Type</strong>
-						{types[$asset.type]}
+						{types[data.asset.type]}
 					</p>
 				</div>
 				<div class="w-full md:w-2/3 flex flex-row-reverse">
@@ -133,13 +132,13 @@
 						<p class="light-text text-center mb-0 pb-1">
 							Price: <span class="text-emerald-6">
 								{data.currencySymbol}
-								{$asset.price}
+								{data.asset.price}
 							</span>
 						</p>
-						{#if !$asset.owned}
+						{#if !data.asset.owned}
 							<label for="buy" class="btn btn-success">
 								<strong class="text-xl">
-									{$asset.price > 0 ? "Buy Now" : "Get"}
+									{data.asset.price > 0 ? "Buy Now" : "Get"}
 								</strong>
 							</label>
 						{:else}
@@ -161,16 +160,16 @@
 	<Tab {tabData}>
 		<PostReply {formData} comment />
 		{#key refresh}
-			{#if $asset.replies.length > 0}
-				{#each $asset.replies as reply, num}
+			{#if data.asset.replies.length > 0}
+				{#each data.asset.replies as reply, num}
 					<ForumReply
 						{user}
 						{reply}
 						{num}
 						{replyingTo}
-						postId={$asset.id.toString()}
+						postId={data.asset.id.toString()}
 						assetSlug={data.slug}
-						postAuthorName={$asset.creator.username || ""}
+						postAuthorName={data.asset.creator.username || ""}
 						{repliesCollapsed}
 						topLevel={false}
 						pinnable
@@ -188,14 +187,14 @@
 <input type="checkbox" id="buy" class="modal-toggle" />
 <div class="modal2">
 	<div class="modal-box">
-		{#if user.currency >= $asset.price}
-			<h3 class="text-lg font-bold">Purchase {$asset.name}</h3>
+		{#if user.currency >= data.asset.price}
+			<h3 class="text-lg font-bold">Purchase {data.asset.name}</h3>
 			<p class="pb-4">
-				Would you like to {$asset.price > 0 ? "buy" : "get"}
-				{$asset.name} for
-				{#if $asset.price > 0}
+				Would you like to {data.asset.price > 0 ? "buy" : "get"}
+				{data.asset.name} for
+				{#if data.asset.price > 0}
 					{data.currencySymbol}
-					{$asset.price}
+					{data.asset.price}
 				{:else}
 					<strong>FREE</strong>
 				{/if}
@@ -204,7 +203,7 @@
 
 			<form method="POST" action="?/buy" class="inline">
 				<button class="btn btn-success">
-					{$asset.price > 0 ? "Buy Now" : "Get"}
+					{data.asset.price > 0 ? "Buy Now" : "Get"}
 				</button>
 			</form>
 			<label for="buy" class="btn btn-dark ml-2">{data.noText}</label>
@@ -215,7 +214,7 @@
 			</span>
 			<p>
 				You'll need <strong>
-					{$asset.price - user.currency}
+					{data.asset.price - user.currency}
 				</strong>
 				more.
 			</p>

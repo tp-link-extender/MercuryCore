@@ -154,10 +154,15 @@ if (!building) {
  * @example
  * await find("user:1")
  */
-export const find = <T extends keyof RecordIdTypes>(
+export async function find<T extends keyof RecordIdTypes>(
 	table: T,
 	id: RecordIdTypes[T]
-): Promise<boolean> => equery(surql`!!SELECT 1 FROM ${Record(table, id)}`)
+) {
+	const [result] = await equery<boolean[]>(
+		surql`!!SELECT 1 FROM ${Record(table, id)}`
+	)
+	return result
+}
 
 /**
  * Finds whether a record exists in the database matching a given condition.
