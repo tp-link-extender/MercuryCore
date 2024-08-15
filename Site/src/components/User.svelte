@@ -81,7 +81,7 @@
 				<img
 					src="/api/avatar/{user.username}"
 					alt={user.username}
-					class="rounded-full rounded-t-0"
+					class="rounded-full rounded-t-0 left-0" 
 					{style} />
 			</div>
 		</div>

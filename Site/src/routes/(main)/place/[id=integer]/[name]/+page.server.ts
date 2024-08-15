@@ -86,7 +86,6 @@ actions.like = async ({ url, request, locals, params }) => {
 			FROM $place`,
 		{ place: Record("place", id) }
 	)
-
 	if (
 		!foundPlace ||
 		(foundPlace.privateServer && privateTicket !== foundPlace.privateTicket)

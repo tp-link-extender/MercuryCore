@@ -8,120 +8,116 @@
 	export let asset: import("./$types").PageData["assets"][0]
 	export let num: number
 	export let total: number
-
-	let modal: HTMLInputElement
 </script>
 
-<label
-	in:fade|global={{ num, total }}
-	for="modal{asset.id}"
-	class="card no-underline p-3 cursor-pointer duration-300">
-	<div class="text-center pb-4">
-		<img
-			src="/avatarshop/{asset.id}/{asset.name}/icon"
-			alt={asset.name}
-			class="w-85%" />
-	</div>
-	{asset.name}
-	<span class="flex pb-2">
-		<strong class="pr-2">by</strong>
-		<User user={asset.creator} size="1.5rem" thin full bg="background" />
-	</span>
-	<div>
+<div in:fade|global={{ num, total }} class="card duration-300">
+	<button
+		id="open"
+		class="bg-transparent p-0 border-0 cursor-pointer p-3"
+		popovertarget="modal{asset.id}">
+		<div class="text-center pb-2">
+			<img
+				src="/avatarshop/{asset.id}/{asset.name}/icon"
+				alt={asset.name}
+				class="w-85%" />
+		</div>
+		{asset.name}
+		<span class="flex">
+			<strong class="pr-2">by</strong>
+			<User
+				user={asset.creator}
+				size="1.5rem"
+				thin
+				full
+				bg="background" />
+		</span>
+	</button>
+	<div class="flex flex-col gap-1 p-3">
 		<form
 			use:enhance
 			method="POST"
 			action="/admin/asset?/approve&id={asset.id}">
-			<button class="w-full btn btn-sm btn-secondary">Approve</button>
+			<button class="btn btn-sm btn-secondary w-full">Approve</button>
 		</form>
 		<form
 			use:enhance
 			method="POST"
 			action="/admin/asset?/deny&id={asset.id}">
-			<button class="w-full btn btn-sm btn-red-secondary">Deny</button>
+			<button class="btn btn-sm btn-red-secondary w-full">Deny</button>
 		</form>
 	</div>
-</label>
-
-<input
-	type="checkbox"
-	id="modal{asset.id}"
-	class="modal-toggle"
-	bind:this={modal} />
-<div class="modal2 light-text">
-	<div class="modal-box flex flex-col p-4 text-center" style="width: 25rem">
-		<h2 class="text-base">Asset {asset.name}</h2>
-		{#if asset.imageAsset}
-			<div class="text-center pb-3">
-				<h3 class="text-xs">Image asset</h3>
-				<img
-					class="image aspect-1 md:w-80 w-60"
-					src="/avatarshop/{asset.imageAsset.id}/{asset.imageAsset
-						.name}/icon"
-					alt={asset.imageAsset.name} />
-			</div>
-
-			<form
-				use:enhance
-				method="POST"
-				action="/admin/asset?/rerender&id={asset.id}"
-				class="w-full pb-3">
-				<button class="btn btn-lg btn-primary w-full">
-					<fa fa-arrows-rotate class="pr-1" />
-					Rerender
-				</button>
-			</form>
-			<label for="purge{asset.id}" class="btn btn-lg btn-red-tertiary">
-				<fa fa-trash-xmark class="pr-1" />
-				Purge
-			</label>
-		{/if}
-	</div>
-	<label class="modal-backdrop" for="modal{asset.id}">Close</label>
 </div>
 
-<input
-	type="checkbox"
-	id="purge{asset.id}"
-	class="modal-toggle"
-	bind:this={modal} />
-<div class="modal2 light-text">
-	<div class="modal-box p-4 max-w-120">
-		<h2 class="text-base">Purge {asset.name}</h2>
-
-		<p>Are you sure you want to purge this asset?</p>
-		<p>
-			<strong>
-				This cannot be undone! It will permanently delete the asset, its
-				related image asset, and all thumbnails and data associated with
-				it.
-			</strong>
-			Treat this as a last resort &ndash; the nuclear option.
-		</p>
-
-		<div class="flex flex-wrap gap-3">
-			<form
-				use:enhance
-				method="POST"
-				action="/admin/asset?/purge&id={asset.id}">
-				<button class="btn btn-danger bg-red-9 border-red-9">
-					Yes, do as I say!
-				</button>
-			</form>
-			<label for="purge{asset.id}" class="btn btn-dark">
-				Misinput MISINPUT
-			</label>
+<div
+	id="modal{asset.id}"
+	class="light-text p-4 text-center w-100"
+	popover="auto">
+	<h2 class="text-base">Asset {asset.name}</h2>
+	{#if asset.imageAsset}
+		<div class="text-center pb-3">
+			<h3 class="text-xs pb-3">Image asset</h3>
+			<img
+				class="image aspect-1 md:w-80 w-60"
+				src="/avatarshop/{asset.imageAsset.id}/{asset.imageAsset
+					.name}/icon"
+				alt={asset.imageAsset.name} />
 		</div>
+
+		<form
+			use:enhance
+			method="POST"
+			action="/admin/asset?/rerender&id={asset.id}"
+			class="w-full pb-3">
+			<button class="btn btn-lg btn-primary w-full">
+				<fa fa-arrows-rotate class="pr-1" />
+				Rerender
+			</button>
+		</form>
+		<button
+			popovertarget="purge{asset.id}"
+			class="btn btn-lg btn-red-tertiary w-full">
+			<fa fa-trash-xmark class="pr-1" />
+			Purge
+		</button>
+	{/if}
+</div>
+
+<div id="purge{asset.id}" class="light-text p-4 max-w-120" popover="auto">
+	<h2 class="text-base">Purge {asset.name}</h2>
+
+	<p>Are you sure you want to purge this asset?</p>
+	<p>
+		<strong>
+			This cannot be undone! It will permanently delete the asset, its
+			related image asset, and all thumbnails and data associated with it.
+		</strong>
+		Treat this as a last resort &ndash; the nuclear option.
+	</p>
+
+	<div class="flex flex-wrap gap-3">
+		<form
+			use:enhance
+			method="POST"
+			action="/admin/asset?/purge&id={asset.id}">
+			<button class="btn btn-danger bg-red-9 border-red-9">
+				Yes, do as I say!
+			</button>
+		</form>
+		<button
+			class="btn btn-dark"
+			popovertarget="purge{asset.id}"
+			popovertargetaction="hide">
+			Misinput MISINPUT
+		</button>
 	</div>
-	<label class="modal-backdrop" for="purge{asset.id}">Close</label>
 </div>
 
 <style>
 	.card {
 		border: 1px solid var(--accent2);
-		&:hover {
-			background: var(--darker) !important;
-		}
+	}
+	.card:has(#open:hover) {
+		background: var(--darker);
 	}
 
 	.image {

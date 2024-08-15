@@ -6,7 +6,7 @@ export async function GET({ params }) {
 	if (!(await find("place", id))) error(404, "Not found")
 
 	const file = Bun.file(`../data/icons/${id}.avif`)
-	if (!(await file.exists())) redirect(302, "/place/placeholderIcon.avif")
+	if (await file.exists()) return new Response(file)
 
-	return new Response(file)
+	redirect(302, "/place/placeholderIcon.avif")
 }
