@@ -111,8 +111,8 @@ export async function tShirt(file: File) {
  * const id = // Load from database
  * save(id)
  */
-export async function tShirtThumbnail(file: File) {
-	const input = await sharp(await file.arrayBuffer())
+export async function tShirtThumbnail(buffer: ArrayBuffer) {
+	const input = await sharp(buffer)
 		.resize(250, 250, tShirtOpts)
 		.toBuffer() // ok
 	const array = await sharp("../Assets/tShirtTemplate.webp")

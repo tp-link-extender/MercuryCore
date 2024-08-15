@@ -79,7 +79,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 			case 2: // T-Shirt
 				saveImages = await Promise.all([
 					tShirt(asset),
-					tShirtThumbnail(asset),
+					tShirtThumbnail(await asset.arrayBuffer()),
 				])
 				break
 
