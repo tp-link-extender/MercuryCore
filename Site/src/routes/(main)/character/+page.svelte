@@ -65,14 +65,14 @@
 		LeftLeg: user.bodyColours.LeftLeg,
 		RightLeg: user.bodyColours.RightLeg
 	}
-	const bodyPartModals: { [k: string]: HTMLInputElement } = {}
+	const bodyPartModals: { [k: string]: HTMLDivElement } = {}
 	const styles: { [k: string]: string } = Object.freeze({
-		Head: "left: 68px; height: 3rem; width: 3rem",
-		Torso: "left: 3rem; top: 54px; height: 88px; width: 88px",
-		LeftArm: "left: 1px; top: 54px; height: 88px; width: 40px",
-		RightArm: "left: 142px; top: 54px; height: 88px; width: 40px",
-		LeftLeg: "left: 3rem; top: 148px; height: 88px; width: 40px",
-		RightLeg: "left: 96px; top: 148px; height: 88px; width: 40px"
+		Head: "left-17 size-12",
+		Torso: "left-12 top-14 size-22",
+		LeftArm: "left-0 top-14 h-22 w-10",
+		RightArm: "left-36 top-14 h-22 w-10",
+		LeftLeg: "left-12 top-38 h-22 w-10",
+		RightLeg: "left-24 top-38 h-22 w-10"
 	})
 
 	$: assets = (query && browser ? searchedData : data.assets || []).filter(
@@ -105,19 +105,17 @@
 			</div>
 			<div class="card w-full p-4">
 				Body Colours
-				<div
-					class="mx-auto"
-					style="height: 240px; width: 194px; text-align: center">
-					<div class="parts">
+				<div class="mx-auto h-240px w-194px text-center">
+					<div class="parts relative">
 						{#each Object.keys(bodyParts) as bodyPart}
-							<label
-								for={bodyPart}
-								style="{styles[
-									bodyPart
-								]};background-color: #{brickToHex[
+							<button
+								popovertarget={bodyPart}
+								style="background-color: #{brickToHex[
 									bodyParts[bodyPart]
 								]}"
-								class="btn bodyPart absolute p-0" />
+								class="btn bodyPart absolute p-0 {styles[
+									bodyPart
+								]}" />
 						{/each}
 					</div>
 				</div>
@@ -170,41 +168,35 @@
 </div>
 
 {#each Object.keys(bodyParts) as bodyPart}
-	<input
-		type="checkbox"
+	<div
+		bind:this={bodyPartModals[bodyPart]}
 		id={bodyPart}
-		class="modal-toggle"
-		bind:this={bodyPartModals[bodyPart]} />
-	<div class="modal2">
-		<div class="modal-box flex flex-col p-4">
-			<h1 class="text-base">Choose a {bodyPart} color</h1>
-			<div id="colourPicker" class="text-left mx-auto max-w-108">
-				{#each brickColours as colour}
-					<form
-						use:enhance={enhanceRegen}
-						method="POST"
-						action="?/paint&p={bodyPart}&c={colour}"
-						on:submit={() => {
-							bodyParts[bodyPart] = colour
-							bodyPartModals[bodyPart].checked = false
-						}}
-						class="inline">
-						<button
-							class="btn colour mx-0.5 my-1 size-10"
-							style="background-color: #{brickToHex[colour]}" />
-					</form>
-				{/each}
-			</div>
+		popover="auto"
+		class="light-text p-4">
+		<h1 class="text-lg pb-2">Choose a {bodyPart} color</h1>
+		<div class="text-left max-w-108 flex flex-wrap gap-2">
+			{#each brickColours as colour}
+				<form
+					use:enhance={enhanceRegen}
+					method="POST"
+					action="?/paint&p={bodyPart}&c={colour}"
+					on:submit={() => {
+						bodyParts[bodyPart] = colour
+						bodyPartModals[bodyPart].hidePopover()
+					}}
+					class="inline">
+					<button
+						class="btn colour size-10"
+						style="background-color: #{brickToHex[colour]}" />
+				</form>
+			{/each}
 		</div>
-		<label class="modal-backdrop" for={bodyPart}>Close</label>
 	</div>
 {/each}
 
 <style>
 	.card {
-		background: var(--accent);
-		border-width: 1px;
-		border-color: var(--accent2);
+		border: 1px solid var(--accent2);
 	}
 
 	.bodyPart {
@@ -214,15 +206,15 @@
 		}
 	}
 
+	.bodyPart,
 	.colour {
 		transition: filter 0.2s ease-out;
 		&:hover {
-			filter: brightness(50%);
+			filter: brightness(70%);
 		}
 	}
 
 	.parts {
-		position: relative;
 		margin: 11px 0px 0px 36px;
 		@media (max-width: 639.9px) {
 			margin: 11px 4px 0px 7px;

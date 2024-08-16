@@ -390,7 +390,7 @@
 	<hr />
 </div>
 
-<div id="ready" popover="auto" bind:this={popover}>
+<div bind:this={popover} id="ready" popover="auto">
 	<div class="flex flex-col px-6 pt-6 text-center">
 		{#key installed}
 			<div class="self-center size-32 -translate-x-1/2">
