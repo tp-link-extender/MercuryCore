@@ -22,5 +22,5 @@ CREATE user CONTENT {
 LET $u = (SELECT id FROM user WHERE username = $username)[0].id;
 meta::id($u);
 
-UPDATE ONLY $key SET usesLeft -= 1;
+UPDATE $key SET usesLeft -= 1;
 RELATE $u->used->$key;

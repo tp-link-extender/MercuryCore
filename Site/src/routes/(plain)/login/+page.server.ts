@@ -44,12 +44,11 @@ actions.default = async ({ request, cookies }) => {
 	const [[user]] = await equery<
 		{
 			id: string
-			username: string
 			hashedPassword: string
 		}[][]
 	>(
 		surql`
-			SELECT meta::id(id) AS id, username, hashedPassword FROM user
+			SELECT meta::id(id) AS id, hashedPassword FROM user
 			WHERE string::lowercase(username) = string::lowercase(${username})`
 	)
 

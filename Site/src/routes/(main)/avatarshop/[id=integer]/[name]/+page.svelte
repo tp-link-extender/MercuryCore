@@ -55,7 +55,8 @@
 			<img
 				class:opacity-50={regenerating}
 				class="image transition-opacity duration-300 aspect-1 w-80vw max-w-100"
-				src={form?.icon || `/avatarshop/${data.asset.id}/${data.slug}/icon`}
+				src={form?.icon ||
+					`/avatarshop/${data.asset.id}/${data.slug}/icon`}
 				alt={data.asset.name} />
 		</div>
 		<div class="w-full light-text">
@@ -107,7 +108,7 @@
 						bg="accent" />
 				{/if}
 			</div>
-			<p class="mt-2">
+			<p class="pt-2">
 				{#if data.asset.description}
 					{data.asset.description.text}
 				{:else}
@@ -116,9 +117,9 @@
 			</p>
 
 			<hr />
-			<div class="flex flex-wrap mb-2">
+			<div class="flex flex-wrap pb-2">
 				<div class="w-full md:w-1/3">
-					<p class="mb-2">
+					<p class="pb-2">
 						<strong>{data.asset.sold}</strong>
 						sold
 					</p>
@@ -136,11 +137,11 @@
 							</span>
 						</p>
 						{#if !data.asset.owned}
-							<label for="buy" class="btn btn-success">
+							<button popovertarget="buy" class="btn btn-success">
 								<strong class="text-xl">
 									{data.asset.price > 0 ? "Buy Now" : "Get"}
 								</strong>
-							</label>
+							</button>
 						{:else}
 							<strong
 								class="btn btn-dark bg-a3 pointer-events-none text-xl">
@@ -184,45 +185,51 @@
 	</Tab>
 </div>
 
-<input type="checkbox" id="buy" class="modal-toggle" />
-<div class="modal2">
-	<div class="modal-box">
-		{#if user.currency >= data.asset.price}
-			<h3 class="text-lg font-bold">Purchase {data.asset.name}</h3>
-			<p class="pb-4">
-				Would you like to {data.asset.price > 0 ? "buy" : "get"}
-				{data.asset.name} for
-				{#if data.asset.price > 0}
-					{data.currencySymbol}
-					{data.asset.price}
-				{:else}
-					<strong>FREE</strong>
-				{/if}
-				?
-			</p>
+<div id="buy" popover="auto" class="light-text p-4 min-w-120">
+	{#if user.currency >= data.asset.price}
+		<h3 class="text-lg font-bold">Purchase {data.asset.name}</h3>
+		<p class="pb-4">
+			Would you like to {data.asset.price > 0 ? "buy" : "get"}
+			{data.asset.name} for
+			{#if data.asset.price > 0}
+				{data.currencySymbol}
+				{data.asset.price}
+			{:else}
+				<strong>FREE</strong>
+			{/if}
+			?
+		</p>
 
-			<form method="POST" action="?/buy" class="inline">
-				<button class="btn btn-success">
-					{data.asset.price > 0 ? "Buy Now" : "Get"}
-				</button>
-			</form>
-			<label for="buy" class="btn btn-dark ml-2">{data.noText}</label>
-		{:else}
-			<h3 class="text-lg font-bold">Insufficient funds</h3>
-			<span>
-				You don't have enough {data.currencySymbol} to buy this item.
-			</span>
-			<p>
-				You'll need <strong>
-					{data.asset.price - user.currency}
-				</strong>
-				more.
-			</p>
+		<form method="POST" action="?/buy" class="inline">
+			<button class="btn btn-success">
+				{data.asset.price > 0 ? "Buy Now" : "Get"}
+			</button>
+		</form>
+		<button
+			popovertarget="buy"
+			popovertargetaction="hide"
+			class="btn btn-dark ml-2">
+			{data.noText}
+		</button>
+	{:else}
+		<h3 class="text-lg font-bold">Insufficient funds</h3>
+		<span>
+			You don't have enough {data.currencySymbol} to buy this item.
+		</span>
+		<p>
+			You'll need <strong>
+				{data.asset.price - user.currency}
+			</strong>
+			more.
+		</p>
 
-			<label for="buy" class="btn btn-danger">{data.failText}</label>
-		{/if}
-	</div>
-	<label class="modal-backdrop" for="buy">Close</label>
+		<button
+			popovertarget="buy"
+			popovertargetaction="hide"
+			class="btn btn-dark">
+			{data.failText}
+		</button>
+	{/if}
 </div>
 
 <style>
@@ -250,9 +257,5 @@
 
 	#buy {
 		z-index: 5;
-	}
-
-	.modal-box {
-		min-width: 30rem;
 	}
 </style>

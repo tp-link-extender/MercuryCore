@@ -65,7 +65,7 @@
 		LeftLeg: user.bodyColours.LeftLeg,
 		RightLeg: user.bodyColours.RightLeg
 	}
-	const bodyPartModals: { [k: string]: HTMLDivElement } = {}
+	const bodyPartPopovers: { [k: string]: HTMLDivElement } = {}
 	const styles: { [k: string]: string } = Object.freeze({
 		Head: "left-17 size-12",
 		Torso: "left-12 top-14 size-22",
@@ -169,7 +169,7 @@
 
 {#each Object.keys(bodyParts) as bodyPart}
 	<div
-		bind:this={bodyPartModals[bodyPart]}
+		bind:this={bodyPartPopovers[bodyPart]}
 		id={bodyPart}
 		popover="auto"
 		class="light-text p-4">
@@ -182,7 +182,7 @@
 					action="?/paint&p={bodyPart}&c={colour}"
 					on:submit={() => {
 						bodyParts[bodyPart] = colour
-						bodyPartModals[bodyPart].hidePopover()
+						bodyPartPopovers[bodyPart].hidePopover()
 					}}
 					class="inline">
 					<button
