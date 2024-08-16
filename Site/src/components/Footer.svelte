@@ -9,7 +9,7 @@
 		class="flex <sm:flex-col justify-between items-start w-200 p-4 sm:pb-8">
 		<div>
 			<img
-				src="/icon.svg"
+				src="/assets/icon"
 				alt="{data.siteName} logo"
 				class="size-8 opacity-50" />
 			<a href="/" class="no-underline pl-2">{data.siteName}</a>

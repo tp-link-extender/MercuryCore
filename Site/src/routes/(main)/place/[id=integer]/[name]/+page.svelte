@@ -396,7 +396,7 @@
 			<div class="self-center size-32 -translate-x-1/2">
 				<img
 					in:fade={{ duration: 500 }}
-					src="/icon.svg"
+					src="/assets/icon"
 					alt="{data.siteName} logo"
 					class="absolute"
 					width="128"

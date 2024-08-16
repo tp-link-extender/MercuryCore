@@ -23,4 +23,9 @@ export default {
 		FormattedErrors: false,
 		Time: true,
 	},
+
+	Branding: {
+		Favicon: "favicon.svg",
+		Icon: "icon.svg",
+	}
 } satisfies import("./Assets/schema.ts").Config

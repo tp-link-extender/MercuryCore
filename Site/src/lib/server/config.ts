@@ -29,6 +29,11 @@ const schema = z.object({
 		FormattedErrors: z.boolean(),
 		Time: z.boolean(),
 	}),
+
+	Branding: z.object({
+		Favicon: z.string().min(1),
+		Icon: z.string().min(1),
+	})
 })
 
 const parseResult = schema.safeParse(rawconfig)

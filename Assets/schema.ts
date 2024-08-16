@@ -73,4 +73,18 @@ export type Config = {
 		 */
 		Time: boolean
 	}
+
+	/**
+	 * Configuration for custom branding and image file paths in the Assets directory.
+	 */
+	Branding: {
+		/**
+		 * Path to your revival's favicon in the Assets directory.
+		 */
+		Favicon: string
+		/**
+		 * Path to your revival's logo icon in the Assets directory.
+		 */
+		Icon: string
+	}
 }
