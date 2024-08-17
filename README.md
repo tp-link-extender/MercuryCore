@@ -25,7 +25,7 @@ You will need:
 -   Latest version of Bun installed (expected as `bun`)
 -   Latest version of Docker installed (expected as `docker`)
 -   A terminal
--   A modern web browser (Mid 2023 onwards for most major browsers)
+-   A modern web browser (Early 2024 onwards for most major browsers)
 -   A computer, as it would be painful to live without one, wouldn't it?
 
 Instructions:
@@ -36,7 +36,7 @@ Instructions:
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
 -   Run `docker compose up -d` to start the database and economy service
 
-To start a local dev server, run `bun -b dev` and navigate to the link shown in the terminal (remember not to use HTTPS!). Upon saving a file, your changes will be shown in the web browser.
+To start a local dev server, go to the **/Site** directory, run `bun -b dev`, and navigate to the link shown in the terminal (remember not to use HTTPS!). Upon saving a file, your changes will be shown in the web browser.
 
 -   If you are using WSL2, the server may not correctly reflect the changes you make if the repository is stored on the Windows drive. To fix this, move the repository into a folder managed by WSL, or alternatively add the following to the default export of vite.config.ts:
 
@@ -50,7 +50,13 @@ After starting a local web server, navigate to /register and make an account.
 
 To build for production, run `bun run build` then `bun preview` (or `bun buildview`) to preview the final site.
 
-Data from the database is stored in the /data/surreal directory.
+The /data directory includes a number of subdirectories:
+
+-   **/data/assets** &ndash; binary files for assets: images, meshes, etc
+-   **/data/economy** &ndash; transaction ledger and other economy data
+-   **/data/icons** &ndash; place icons
+-   **/data/surreal** &ndash; database files
+-   **/data/thumbnails** &ndash; asset thumbnails
 
 # Hosting
 
@@ -64,13 +70,12 @@ You will need:
 
 Instructions:
 
--   Clone the repository to your server, and navigate to its directory
+-   Clone the repository to your server and navigate to the **/Site** directory
 -   Run `caddy start` to start the Caddy reverse proxy server
     -   You can also run `caddy reload` to reload the configuration file without restarting the server.
     -   If you're using Caddy with multiple configuration files, import the Caddyfile in the repository's root directory into a Caddyfile somewhere else, and run `caddy start` and `caddy reload` from there.
 -   Run `docker compose up -d` to start the database and economy service
 -   Copy the `.env.example` file to `.env` to set up the environment variables (if the containers are set up on localhost, likely nothing needs to be changed)
--   Open a terminal and navigate to the directory of the repository
 -   Run `bun -b prod` to install dependencies and begin building
 -   Run `bun ./build` (not to be confused with `bun build`) to start Mercury Core.
     -   Several methods can be used to run it as a background process as well.
@@ -89,7 +94,7 @@ The site uses [Typescript](https://typescripts.org) throughout, a language that 
 
 ## Route structure
 
-Actual pages for the site are stored in /src/routes. The structure for them might look crazy at first, but it makes it very simple to differentiate between clientside and serverside code, and layout groups help to heavily reduce boilerplate and code duplication.
+Actual pages for the site are stored in **/Site/src/routes**. The structure for them might look crazy at first, but it makes it very simple to differentiate between clientside and serverside code, and layout groups help to heavily reduce boilerplate and code duplication.
 
 See the [SvelteKit Routing docs](https://kit.svelte.dev/docs/routing) for more information.
 
