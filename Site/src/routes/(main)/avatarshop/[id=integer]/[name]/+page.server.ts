@@ -1,4 +1,5 @@
 import { idRegex } from "$lib/paramTests"
+import { getBalance } from "$lib/server/economy"
 import formData from "$lib/server/formData"
 import formError from "$lib/server/formError"
 import { type LikeActions, like, likeScoreActions } from "$lib/server/like"
@@ -6,14 +7,7 @@ import { authorise } from "$lib/server/lucia"
 import { type Replies, recurse } from "$lib/server/nestedReplies"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
-import {
-	Record,
-	type RecordId,
-	equery,
-	find,
-	surql,
-	transaction,
-} from "$lib/server/surreal"
+import { Record, equery, find, surql, transaction } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
 import { error, fail, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
@@ -79,12 +73,16 @@ export async function load({ locals, params }) {
 	if (!couldMatch(asset.name, params.name))
 		redirect(302, `/avatarshop/${id}/${slug}`)
 
+	const balance = await getBalance(user.id)
+	if (!balance.ok) error(500, "Cannot connect to economy service")
+
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
 		failText: failTexts[Math.floor(Math.random() * failTexts.length)],
 		form: await superValidate(zod(schema)),
 		slug,
 		asset,
+		balance: balance.value,
 	}
 }
 

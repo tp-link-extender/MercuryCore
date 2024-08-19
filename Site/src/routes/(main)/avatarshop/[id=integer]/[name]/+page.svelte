@@ -37,12 +37,10 @@
 	let refresh = 0
 	let tabData = TabData(data.url, ["Recommended", "Comments"])
 
-	const refreshReplies =
+	const refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any> =
 		() =>
 		async ({ result }) => {
 			if (result.type === "success") await invalidateAll()
-			// Reload the asset with the data including the new comment, as the form that posted the comment didn't do that
-			data.asset = data.asset
 			refresh++
 		}
 </script>
@@ -186,7 +184,7 @@
 </div>
 
 <div id="buy" popover="auto" class="light-text p-4 min-w-120">
-	{#if user.currency >= data.asset.price}
+	{#if data.balance >= data.asset.price}
 		<h3 class="text-lg font-bold">Purchase {data.asset.name}</h3>
 		<p class="pb-4">
 			Would you like to {data.asset.price > 0 ? "buy" : "get"}
@@ -218,7 +216,7 @@
 		</span>
 		<p>
 			You'll need <strong>
-				{data.asset.price - user.currency}
+				{data.asset.price - data.balance}
 			</strong>
 			more.
 		</p>
