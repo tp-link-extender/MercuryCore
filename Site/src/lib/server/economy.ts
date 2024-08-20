@@ -27,6 +27,27 @@ export async function stipend(To: string) {
 	} catch {}
 }
 
+export async function transact(
+	From: string,
+	To: string,
+	Amount: number,
+	Note: string,
+	Link: string,
+	Returns: number[]
+): Promise<{ ok: true } | { ok: false; msg: string }> {
+	try {
+		const res = await fetch(`${economyUrl}/transact`, {
+			method: "POST",
+			body: JSON.stringify({ From, To, Amount, Note, Link, Returns }),
+		})
+		if (res.status === 200) return { ok: true }
+		return { ok: false, msg: await res.text() }
+	} catch (err) {
+		const e = err as Error
+		return { ok: false, msg: e.message }
+	}
+}
+
 export async function burn(
 	From: string,
 	Amount: number,

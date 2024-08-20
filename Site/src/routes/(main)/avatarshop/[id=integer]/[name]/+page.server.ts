@@ -1,5 +1,10 @@
 import { idRegex } from "$lib/paramTests"
-import { getBalance } from "$lib/server/economy"
+import {
+	economyConnFailed,
+	getBalance,
+	getCurrentFee,
+	transact,
+} from "$lib/server/economy"
 import formData from "$lib/server/formData"
 import formError from "$lib/server/formError"
 import { type LikeActions, like, likeScoreActions } from "$lib/server/like"
@@ -7,7 +12,7 @@ import { authorise } from "$lib/server/lucia"
 import { type Replies, recurse } from "$lib/server/nestedReplies"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
-import { Record, equery, find, surql, transaction } from "$lib/server/surreal"
+import { Record, equery, find, surql } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
 import { error, fail, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
@@ -62,10 +67,7 @@ export async function load({ locals, params }) {
 	const id = +params.id
 	const [[asset]] = await equery<Asset[][]>(
 		assetQuery.replace("_SELECTCOMMENTS", SELECTCOMMENTS),
-		{
-			asset: Record("asset", id),
-			user: Record("user", user.id),
-		}
+		{ asset: Record("asset", id), user: Record("user", user.id) }
 	)
 	if (!asset || !asset.creator) error(404, "Not found")
 
@@ -74,7 +76,9 @@ export async function load({ locals, params }) {
 		redirect(302, `/avatarshop/${id}/${slug}`)
 
 	const balance = await getBalance(user.id)
-	if (!balance.ok) error(500, "Cannot connect to economy service")
+	if (!balance.ok) error(500, economyConnFailed)
+	const currentFee = await getCurrentFee()
+	if (!currentFee.ok) error(500, economyConnFailed)
 
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
@@ -83,6 +87,7 @@ export async function load({ locals, params }) {
 		slug,
 		asset,
 		balance: balance.value,
+		currentFee: currentFee.value,
 	}
 }
 
@@ -164,9 +169,6 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
 
-	const limit = ratelimit(form, "assetComment", getClientAddress, 5)
-	if (limit) return limit
-
 	const commentId = url.searchParams.get("rid")
 	// If there is a replyId, it is a reply to another comment
 
@@ -174,6 +176,9 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	if (!content)
 		return formError(form, ["content"], ["Comment cannot be empty"])
 	if (commentId && !idRegex.test(commentId)) error(400, "Invalid comment id")
+
+	const limit = ratelimit(form, "assetComment", getClientAddress, 5)
+	if (limit) return limit
 
 	const id = +params.id
 
@@ -274,10 +279,14 @@ actions.buy = async e => {
 		error(400, "This item hasn't been approved yet")
 
 	try {
-		await transaction(user, asset.creator, asset.price, {
-			note: `Purchased asset ${asset.name}`,
-			link: `/avatarshop/${e.params.id}/${asset.name}`,
-		})
+		await transact(
+			user.id,
+			asset.creator.id,
+			asset.price,
+			`Purchased asset ${asset.name}`,
+			`/avatarshop/${id}/${asset.name}`,
+			[id]
+		)
 	} catch (err) {
 		const e = err as Error
 		console.log(e.message)

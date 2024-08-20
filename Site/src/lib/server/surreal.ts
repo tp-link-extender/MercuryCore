@@ -1,5 +1,4 @@
 import { building } from "$app/environment"
-import auditLogQuery from "$lib/server/auditLog.surql"
 import initQuery from "$lib/server/init.surql"
 import CustomHttpEngine, { realUrl } from "$lib/server/surrealEngine"
 import { error } from "@sveltejs/kit"
@@ -173,42 +172,14 @@ export async function find<T extends keyof RecordIdTypes>(
  * @example
  * await findWhere("user", "username = $username", { username: "Heliodex" })
  */
-export const findWhere = async (
+export async function findWhere(
 	table: keyof RecordIdTypes,
 	where: string,
 	params?: { [k: string]: unknown }
-) =>
-	(
-		await equery<boolean[]>(
-			`!!SELECT 1 FROM type::table($table) WHERE ${where}`,
-			{ ...params, table }
-		)
-	)[0]
-
-/**
- * Legacy
- */
-export async function transaction(
-	sender: { id?: string },
-	receiver: { id?: string },
-	amountSent: number,
-	{ note, link }: { note?: string; link?: string }
 ) {
-	throw new Error("todo test dis its broke")
-}
-
-export type Action = "Account" | "Administration" | "Moderation" | "Economy"
-
-/**
- * Creates a new audit log in the database.
- * @param action The category of the action that was taken
- * @param note The note to be added to the audit log
- * @param userId The id of the user who took the action
- */
-export async function auditLog(action: Action, note: string, userId: string) {
-	await equery(auditLogQuery, {
-		action,
-		note,
-		user: Record("user", userId),
-	})
+	const [res] = await equery<boolean[]>(
+		`!!SELECT 1 FROM type::table($table) WHERE ${where}`,
+		{ ...params, table }
+	)
+	return res
 }

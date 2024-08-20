@@ -17,6 +17,9 @@
 	export let form // would be typed as null unless we do actions shenanigans
 
 	const { user } = data
+	const fee = (data.currentFee * data.asset.price).toFixed(2)
+	const totalPrice = (1 + data.currentFee) * data.asset.price
+	const itsFree = data.asset.price === 0 // IT'S FREEEEEEEEEEEEEE
 
 	let regenerating = false
 
@@ -127,17 +130,29 @@
 					</p>
 				</div>
 				<div class="w-full md:w-2/3 flex flex-row-reverse">
-					<div class="card p-4">
-						<p class="light-text text-center mb-0 pb-1">
-							Price: <span class="text-emerald-6">
-								{data.currencySymbol}
-								{data.asset.price}
-							</span>
-						</p>
+					<div class="card light-text p-4">
+						<table>
+							<tr>
+								<td>Price</td>
+								<td class="text-emerald-6">
+									{data.currencySymbol}
+									{data.asset.price}
+								</td>
+							</tr>
+							{#if !itsFree}
+								<tr>
+									<td>Fee</td>
+									<td class="text-yellow-5">
+										{data.currencySymbol}
+										{fee}
+									</td>
+								</tr>
+							{/if}
+						</table>
 						{#if !data.asset.owned}
 							<button popovertarget="buy" class="btn btn-success">
 								<strong class="text-xl">
-									{data.asset.price > 0 ? "Buy Now" : "Get"}
+									{itsFree ? "Get" : "Buy now"}
 								</strong>
 							</button>
 						{:else}
@@ -184,23 +199,23 @@
 </div>
 
 <div id="buy" popover="auto" class="light-text p-4 min-w-120">
-	{#if data.balance >= data.asset.price}
+	{#if data.balance >= totalPrice}
 		<h3 class="text-lg font-bold">Purchase {data.asset.name}</h3>
 		<p class="pb-4">
-			Would you like to {data.asset.price > 0 ? "buy" : "get"}
+			Would you like to {itsFree ? "get" : "buy"}
 			{data.asset.name} for
-			{#if data.asset.price > 0}
-				{data.currencySymbol}
-				{data.asset.price}
+			{#if itsFree}
+				<strong>FREE?</strong>
 			{:else}
-				<strong>FREE</strong>
+				{data.currencySymbol}
+				{totalPrice}
+				?
 			{/if}
-			?
 		</p>
 
 		<form method="POST" action="?/buy" class="inline">
 			<button class="btn btn-success">
-				{data.asset.price > 0 ? "Buy Now" : "Get"}
+				{itsFree ? "Get" : "Buy now"}
 			</button>
 		</form>
 		<button
@@ -216,7 +231,7 @@
 		</span>
 		<p>
 			You'll need <strong>
-				{data.asset.price - data.balance}
+				{totalPrice - data.balance}
 			</strong>
 			more.
 		</p>
@@ -253,7 +268,10 @@
 			10px 10px;
 	}
 
-	#buy {
-		z-index: 5;
+	td {
+		padding: 0;
+		&:first-child {
+			padding-right: 0.5rem;
+		}
 	}
 </style>

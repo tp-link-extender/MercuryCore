@@ -1,15 +1,11 @@
 <script lang="ts">
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
-	import fade from "$lib/fade"
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data: import("./$types").PageData
 
 	const formData = superForm(data.passwordForm)
-
-	let copiedSuccess = false
-	let value = data.privateKey
 </script>
 
 <h3 class="text-base pb-4">Change password</h3>
@@ -50,35 +46,3 @@
 		placeholder={"•".repeat(20)}
 		autocomplete="new-password" />
 </Form>
-
-<hr />
-
-<h3 class="text-base pb-4">Account assets</h3>
-
-<div class="flex flex-wrap pb-2">
-	<label for="privateKey" class="w-full md:w-1/4">Private key</label>
-	<div class="w-full md:w-3/4">
-		<div class="input-group">
-			<input id="privateKey" type="password" {value} disabled />
-			<button
-				on:click={() => {
-					navigator.clipboard.writeText(value)
-					copiedSuccess = true
-					setTimeout(() => (copiedSuccess = false), 4000)
-				}}
-				class="btn btn-tertiary border-[--accent2] border-l-0"
-				type="button">
-				<fa fa-copy />
-			</button>
-		</div>
-		{#if copiedSuccess}
-			<small
-				id="copiedSuccess"
-				transition:fade
-				class="block text-yellow-5">
-				Successfully copied key to clipboard. Store in a cool, dry
-				place.
-			</small>
-		{/if}
-	</div>
-</div>
