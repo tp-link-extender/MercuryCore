@@ -36,6 +36,9 @@ declare module "lucia" {
 }
 
 declare global {
+	/**
+	 * All that's needed to show a user's information/link to their profile.
+	 */
 	declare type BasicUser = {
 		status: "Playing" | "Online" | "Offline"
 		username: string

@@ -278,23 +278,18 @@ actions.buy = async e => {
 	if (asset.visibility !== "Visible")
 		error(400, "This item hasn't been approved yet")
 
-	try {
-		await transact(
-			user.id,
-			asset.creator.id,
-			asset.price,
-			`Purchased asset ${asset.name}`,
-			`/avatarshop/${id}/${asset.name}`,
-			[id]
-		)
-	} catch (err) {
-		const e = err as Error
-		console.log(e.message)
-		error(400, e.message)
-	}
+	const tx = await transact(
+		user.id,
+		asset.creator.id,
+		asset.price,
+		`Purchased asset ${asset.name}`,
+		`/avatarshop/${id}/${asset.name}`,
+		[id]
+	)
+	if (!tx.ok) error(400, tx.msg)
 
 	await Promise.all([
-		equery(surql`RELATE $user->owns->$asset`, {
+		equery(surql`RELATE $user->owns->$asset SET time = time::now()`, {
 			user: Record("user", user.id),
 			asset: Record("asset", id),
 		}),

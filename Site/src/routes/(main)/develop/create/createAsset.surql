@@ -8,7 +8,7 @@ LET $imageAsset = CREATE asset CONTENT {
 	updated: time::now(),
 	visibility: "Pending",
 };
-RELATE $user->owns->$imageAsset;
+RELATE $user->owns->$imageAsset SET time = time::now();
 RELATE $user->created->$imageAsset;
 
 LET $asset = CREATE asset CONTENT {
@@ -24,6 +24,6 @@ LET $asset = CREATE asset CONTENT {
 	updated: time::now(),
 	visibility: "Pending",
 };
-RELATE $user->owns->$asset;
+RELATE $user->owns->$asset SET time = time::now();
 RELATE $user->created->$asset;
 RELATE $asset->imageAsset->$imageAsset;

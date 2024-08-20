@@ -60,10 +60,11 @@ export const load = async ({ locals, url }) => {
 
 async function getEquipData(e: RequestEvent) {
 	const { user } = await authorise(e.locals)
-	const id = e.url.searchParams.get("id")
+	const strId = e.url.searchParams.get("id")
+	if (!strId) error(400, "Missing asset id")
+	if (!intRegex.test(strId)) error(400, `Invalid asset id: ${strId}`)
 
-	if (!id) error(400, "Missing asset id")
-	if (!intRegex.test(id)) error(400, `Invalid asset id: ${id}`)
+	const id = +strId
 
 	const limit = ratelimit(null, "equip", e.getClientAddress, 2)
 	if (limit) return { error: limit }
@@ -73,7 +74,7 @@ async function getEquipData(e: RequestEvent) {
 			SELECT meta::id(id) AS id, type, visibility
 			FROM $asset WHERE $user IN <-owns<-user`,
 		{
-			asset: Record("asset", +id),
+			asset: Record("asset", id),
 			user: Record("user", user.id),
 		}
 	)
@@ -152,7 +153,7 @@ async function equip(e: RequestEvent) {
 			RELATE $user->recentlyWorn->$asset SET time = time::now()`,
 		{
 			user: Record("user", user.id),
-			asset: Record("asset", +id),
+			asset: Record("asset", id),
 			...(oneEquippable.includes(asset.type) ? asset : {}),
 		}
 	)
@@ -165,7 +166,7 @@ async function unequip(e: RequestEvent) {
 
 	await equery(surql`DELETE $user->wearing WHERE out = $asset`, {
 		user: Record("user", user.id),
-		asset: Record("asset", +id),
+		asset: Record("asset", id),
 	})
 
 	return await rerender(user)
