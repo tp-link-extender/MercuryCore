@@ -58,18 +58,15 @@ export async function load({ locals }) {
 
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ request, locals, getClientAddress }) => {
+	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
+
 	const limit = ratelimit(form, "statusPost", getClientAddress, 30)
 	if (limit) return limit
-
-	const { user } = await authorise(locals)
 
 	const content = form.data.status.trim()
 	if (!content) return formError(form, ["status"], ["Status cannot be empty"])
 
-	await equery(statusQuery, {
-		content,
-		user: Record("user", user.id),
-	})
+	await equery(statusQuery, { content, user: Record("user", user.id) })
 }

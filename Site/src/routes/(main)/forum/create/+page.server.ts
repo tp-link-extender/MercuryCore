@@ -36,17 +36,16 @@ export const actions: import("./$types").Actions = {}
 actions.default = async ({ request, locals, url, getClientAddress }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(schema))
-
 	if (!form.valid) return formError(form)
-
-	const limit = ratelimit(form, "forumPost", getClientAddress, 30)
-	if (limit) return limit
 
 	const category = url.searchParams.get("category")
 
 	const title = form.data.title.trim()
 	if (!title) return formError(form, ["title"], ["Post must have a title"])
 	const content = form.data.content?.trim()
+
+	const limit = ratelimit(form, "forumPost", getClientAddress, 30)
+	if (limit) return limit
 
 	if (
 		!category ||

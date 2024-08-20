@@ -1,4 +1,4 @@
-const types: { [k: string]: string } = Object.freeze({
+export default Object.freeze({
 	1: "Image",
 	2: "T-Shirt",
 	3: "Audio",
@@ -26,6 +26,4 @@ const types: { [k: string]: string } = Object.freeze({
 	37: "Code",
 	38: "Plugin",
 	42: "Face Accessory",
-})
-
-export default types
+} as { [k: string]: string })

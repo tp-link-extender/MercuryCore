@@ -1,7 +1,7 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, auditLog, equery, surql } from "$lib/server/surreal"
+import { Record, equery, surql } from "$lib/server/surreal"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -52,30 +52,30 @@ async function getData({ request, locals }: RequestEvent) {
 const showHide = (action: string) => async (e: RequestEvent) => {
 	const { form, error } = await getData(e)
 	if (error) return error
-	const id = e.url.searchParams.get("id")
 
+	const id = e.url.searchParams.get("id")
 	if (!id) return message(form, "Missing fields", { status: 400 })
-	if (action === "show" && (await bannerActiveCount()) >= 3)
+
+	const show = action === "show"
+	if (show && (await bannerActiveCount()) >= 3)
 		return message(form, "Too many active banners", { status: 400 })
 
-	await equery(surql`UPDATE $id SET active = ${action === "show"}`, {
-		id: Record("banner", id),
-	})
+	await equery(surql`UPDATE ${Record("banner", id)} SET active = ${show}`)
 }
 
 export const actions: import("./$types").Actions = {}
 actions.create = async e => {
 	const { user, form, error } = await getData(e)
 	if (error) return error
-	const { getClientAddress } = e
 
-	const limit = ratelimit(form, "createBanner", getClientAddress, 30)
-	if (limit) return limit
 	const { bannerText, bannerColour, bannerTextLight } = form.data
 	if (!bannerText || !bannerColour)
 		return message(form, "Missing fields", { status: 400 })
 	if ((await bannerActiveCount()) >= 3)
 		return message(form, "Too many active banners", { status: 400 })
+
+	const limit = ratelimit(form, "createBanner", e.getClientAddress, 30)
+	if (limit) return limit
 
 	const data = {
 		active: true,
@@ -90,10 +90,10 @@ actions.create = async e => {
 	return message(form, "Banner created successfully!")
 }
 actions.delete = async e => {
-	const { user, form, error } = await getData(e)
+	const { form, error } = await getData(e)
 	if (error) return error
-	const id = e.url.searchParams.get("id")
 
+	const id = e.url.searchParams.get("id")
 	if (!id) return message(form, "Missing fields", { status: 400 })
 
 	await equery(surql`UPDATE ${Record("banner", id)} SET deleted = true`)
@@ -101,9 +101,9 @@ actions.delete = async e => {
 actions.updateBody = async e => {
 	const { form, error } = await getData(e)
 	if (error) return error
+
 	const id = e.url.searchParams.get("id")
 	const { bannerBody } = form.data
-
 	if (!bannerBody || !id)
 		return message(form, "Missing fields", { status: 400 })
 
@@ -115,9 +115,9 @@ actions.updateBody = async e => {
 actions.updateTextLight = async e => {
 	const { form, error } = await getData(e)
 	if (error) return error
+
 	const id = e.url.searchParams.get("id")
 	const { bannerTextLight } = form.data
-
 	if (!id) return message(form, "Missing fields", { status: 400 })
 
 	// await banner.merge(id, { textLight: !!bannerTextLight })

@@ -21,8 +21,6 @@ export async function load({ locals }) {
 	return { form: await superValidate(zod(schema)) }
 }
 
-const moderationActions = ["Warning", "Ban", "Termination", "AccountDeleted"]
-
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ request, locals, getClientAddress }) => {
 	const { user } = await authorise(locals, 4)
@@ -32,7 +30,6 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	const { username, action, banDate, reason } = form.data
 	const date = banDate ? new Date(banDate) : null
 	const intAction = +action
-
 	if (intAction === 2 && (date?.getTime() || 0) < Date.now())
 		return formError(form, ["banDate"], ["Invalid date"])
 
@@ -46,29 +43,20 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 			SELECT meta::id(id) AS id, permissionLevel
 			FROM user WHERE username = ${username}`
 	)
-
 	if (!getModeratee)
 		return formError(form, ["username"], ["User does not exist"])
-
 	if (getModeratee.permissionLevel > 2)
 		return formError(
 			form,
 			["username"],
 			["You cannot moderate staff members"]
 		)
-
 	if (getModeratee.id === user.id)
 		return formError(form, ["username"], ["You cannot moderate yourself"])
 
 	const limit = ratelimit(form, "moderateUser", getClientAddress, 30)
 	if (limit) return limit
 
-	const moderationMessage = [
-		() => "warned",
-		() => `banned until ${date?.toLocaleDateString()}`,
-		() => "terminated",
-		() => "deleted",
-	]
 	const qParams = {
 		user: Record("user", user.id),
 		moderatee: Record("user", getModeratee.id),
@@ -123,7 +111,6 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 		"out = $moderatee AND active = true",
 		qParams
 	)
-
 	if (foundModeration)
 		return formError(
 			form,
@@ -131,12 +118,16 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 			["User has already been moderated"]
 		)
 
-	const notes = [
-		() => `Warn ${username}`,
-		() => `Ban ${username}`,
-		() => `Terminate ${username}`,
-		() => `Delete ${username}'s account`,
-	]
+	const [moderationAction, note, actioned] = [
+		() => ["Warning", `Warn ${username}`, "warned"],
+		() => [
+			"Ban",
+			`Ban ${username}`,
+			`banned until ${date?.toLocaleDateString()}`,
+		],
+		() => ["Termination", `Terminate ${username}`, "terminated"],
+		() => ["AccountDeletion", `Delete ${username}'s account`, "deleted"],
+	][intAction - 1]()
 
 	await equery(
 		`
@@ -149,16 +140,13 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 			};
 			${auditLogQuery}`,
 		{
-			note: `${notes[intAction - 1]()}: ${reason}`,
+			note: `${note}: ${reason}`,
 			reason,
-			moderationAction: moderationActions[intAction - 1],
+			moderationAction,
 			timeEnds: date || new Date(),
 			...qParams,
 		}
 	)
 
-	return message(
-		form,
-		`${username} has been ${moderationMessage[intAction - 1]()}`
-	)
+	return message(form, `${username} has been ${actioned}`)
 }

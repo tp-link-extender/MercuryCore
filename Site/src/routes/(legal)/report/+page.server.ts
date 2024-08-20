@@ -50,12 +50,10 @@ export async function load({ locals, url }) {
 
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ request, locals, url, getClientAddress }) => {
+	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
-	const limit = ratelimit(form, "report", getClientAddress, 120)
-	if (limit) return limit
 
-	const { user } = await authorise(locals)
 	const { category, note } = form.data
 	const username = url.searchParams.get("user")
 	const reportUrl = url.searchParams.get("url")
@@ -63,6 +61,9 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 
 	const reportee = await getReportee(username)
 	if (!reportee) return message(form, "Invalid user", { status: 400 })
+
+	const limit = ratelimit(form, "report", getClientAddress, 120)
+	if (limit) return limit
 
 	await equery(
 		surql`

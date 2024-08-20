@@ -1,8 +1,8 @@
 import { authorise } from "$lib/server/lucia"
-import { type Action, equery, surql } from "$lib/server/surreal"
+import { equery, surql } from "$lib/server/surreal"
 
 type Log = {
-	action: Action
+	action: "Account" | "Administration" | "Moderation" | "Economy"
 	note: string
 	time: Date
 	user: BasicUser

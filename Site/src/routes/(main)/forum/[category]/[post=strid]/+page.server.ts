@@ -114,12 +114,11 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
 
-	const replyId = url.searchParams.get("rid")
-	// If there is a replyId, it is a reply to another reply
-
 	const content = form.data.content.trim()
 	if (!content) return formError(form, ["content"], ["Reply cannot be empty"])
 
+	// If there is a replyId, it is a reply to another reply
+	const replyId = url.searchParams.get("rid")
 	if (replyId && !idRegex.test(replyId)) error(400, "Invalid reply id")
 
 	const limit = ratelimit(form, "forumReply", getClientAddress, 5)

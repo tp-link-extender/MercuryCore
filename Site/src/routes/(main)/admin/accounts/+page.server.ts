@@ -1,7 +1,7 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { auditLog, equery, surql } from "$lib/server/surreal"
+import { Record, equery, surql } from "$lib/server/surreal"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -45,10 +45,9 @@ actions.changePassword = async ({ request, locals, getClientAddress }) => {
 		})
 	}
 
-	await auditLog(
-		"Account",
-		`Change account password for ${username}`,
-		user.id
+	const note = `Change account password for ${username}`
+	await equery(
+		surql`fn::auditLog("Account", ${note}, ${Record("user", user.id)})`
 	)
 
 	return message(form, "Password changed successfully!")
