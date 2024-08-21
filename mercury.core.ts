@@ -27,5 +27,12 @@ export default {
 	Branding: {
 		Favicon: "favicon.svg",
 		Icon: "icon.svg",
-	}
+	},
+
+	Themes: [
+		{
+			Name: "Standard",
+			Path: "standard.css",
+		}
+	]
 } satisfies import("./Assets/schema.ts").Config

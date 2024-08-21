@@ -16,6 +16,7 @@ CREATE user CONTENT {
 			"Offline"
 		END
 	},
+	theme: 0,
 	username: $username,
 };
 # Return some user data

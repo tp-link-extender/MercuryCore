@@ -31,6 +31,7 @@ declare module "lucia" {
 			lastOnline: string
 			permissionLevel: number
 			css: string
+			theme: number
 		} & BasicUser
 	}
 }

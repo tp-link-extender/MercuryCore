@@ -29,12 +29,6 @@
 	src: url(/fonts/Azeret-Italic.woff2) format("woff2");
 }
 
-:root {
-	--hue: 260;
-	--mainaccent: hsl(var(--hue) 100 60);
-	--rounding: 0.375rem;
-}
-
 * {
 	font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
 	font-feature-settings: "cv03", "cv04", "cv08", "cv09";

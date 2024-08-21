@@ -12,7 +12,6 @@
 	import "/src/daisyui/carousel.css"
 	import "/src/daisyui/dropdown.css"
 	import "/src/daisyui/tooltip.css"
-	import "/src/themes/standard.css"
 	import "uno.css"
 
 	export let data

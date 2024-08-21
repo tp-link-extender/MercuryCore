@@ -19,7 +19,7 @@ export const auth = new Lucia(new SurrealAdapter(), {
 		accountCreated: data.created,
 		bodyColours: data.bodyColours,
 		css: data.css,
-		// theme: data.theme,
+		theme: data.theme,
 		// Types for this are defined in src/app.d.ts.
 	}),
 })

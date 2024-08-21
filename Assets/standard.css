@@ -1,4 +1,8 @@
 :root {
+	--hue: 260;
+	--mainaccent: hsl(var(--hue) 100 60);
+	--rounding: 0.375rem;
+
 	--darker: hsl(var(--hue) 10 4);
 	--background: hsl(var(--hue) 10 6);
 	--accent: hsl(var(--hue) 5 12);

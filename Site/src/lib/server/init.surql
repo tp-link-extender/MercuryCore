@@ -59,6 +59,7 @@ DEFINE TABLE user SCHEMAFULL;
 	DEFINE FIELD lastOnline ON user TYPE datetime;
 	DEFINE FIELD permissionLevel ON user TYPE number;
 	DEFINE FIELD status ON user TYPE any; # future ig
+	DEFINE FIELD theme ON user TYPE number;
 	DEFINE FIELD username ON user TYPE string;
 DEFINE INDEX usernameI ON user COLUMNS username UNIQUE;
 DEFINE INDEX emailI ON user COLUMNS email UNIQUE;

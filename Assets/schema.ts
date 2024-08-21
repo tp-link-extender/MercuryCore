@@ -87,4 +87,18 @@ export type Config = {
 		 */
 		Icon: string
 	}
+
+	/**
+	 * Configuration for the revival's available themes. The first theme in the array will be the default theme.
+	 */
+	Themes: {
+		/**
+		 * The name of the theme.
+		 */
+		Name: string
+		/**
+		 * Path to the theme's CSS file in the Assets directory.
+		 */
+		Path: string
+	}[]
 }
