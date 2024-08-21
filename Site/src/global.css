@@ -608,7 +608,8 @@ details[open] summary {
 	@apply border-none p-0 transition-all duration-300 ease-in-out overflow-y-auto rounded-2 py-6;
 	background: var(--darker);
 	outline: transparent;
-	box-shadow: rgba(0, 0, 0, 0.25) 0px 1.5rem 3rem -0.75rem;
+	filter: drop-shadow(0 20px 13px rgba(255, 255, 255, 0.02))
+		drop-shadow(0 8px 5px rgba(255, 255, 255, 0.05));
 	max-height: calc(100vh - 5rem);
 	border: 1px solid var(--accent);
 	@starting-style {

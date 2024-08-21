@@ -72,7 +72,7 @@
 		]} />
 
 	<div
-		class="post card bg-darker flex-row overflow-hidden {$post.pinned
+		class="post card bg-darker flex-row {$post.pinned
 			? 'border-(solid 1px green-5)!'
 			: ''}">
 		<form
@@ -113,7 +113,7 @@
 				</button>
 			</div>
 		</form>
-		<div class="p-4 pl-6 no-underline light-text w-full">
+		<div class="p-4 pl-6 no-underline w-full">
 			<span class="flex justify-between">
 				<div class="flex">
 					<User user={$post.author} full />
@@ -121,25 +121,23 @@
 						{new Date($post.posted).toLocaleString()}
 					</i>
 				</div>
-				<div>
-					<span class="dropdown">
-						<fa fa-ellipsis-h class="dropdown-ellipsis" />
-						<div class="dropdown-content pt-2">
-							<ul class="p-2 rounded-3">
-								{#if user.permissionLevel >= 4}
-									<PinButton
-										{refreshReplies}
-										id={$post.id}
-										pinned={$post.pinned}
-										post />
-								{/if}
-								<ReportButton
-									user={$post.author.username}
-									url="/forum/{$post.categoryName}/{$post.id}" />
-							</ul>
-						</div>
-					</span>
-				</div>
+				<span class="dropdown">
+					<fa fa-ellipsis-h class="dropdown-ellipsis" />
+					<div class="dropdown-content pt-2">
+						<ul class="p-2 rounded-3">
+							{#if user.permissionLevel >= 4}
+								<PinButton
+									{refreshReplies}
+									id={$post.id}
+									pinned={$post.pinned}
+									post />
+							{/if}
+							<ReportButton
+								user={$post.author.username}
+								url="/forum/{$post.categoryName}/{$post.id}" />
+						</ul>
+					</div>
+				</span>
 			</span>
 			<h2 class="text-xl pt-2">
 				{$post.title}

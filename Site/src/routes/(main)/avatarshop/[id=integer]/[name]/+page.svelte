@@ -64,7 +64,7 @@
 			<div class="flex justify-between">
 				<h1>{data.asset.name}</h1>
 				<li class="dropdown pl-2 pt-2">
-					<fa fa-ellipsis />
+					<fa fa-ellipsis class="dropdown-ellipsis" />
 					<div class="dropdown-content">
 						<ul class="p-2 rounded-3">
 							<button class="btn light-text pl-4 pr-0 text-start">
@@ -79,7 +79,7 @@
 									Edit asset
 								</a>
 							</li> -->
-							{#if user.permissionLevel >= 5 && [11, 12, 8].includes(data.asset.type)}
+							{#if user.permissionLevel >= 5 && [8, 11, 12].includes(data.asset.type)}
 								<li class="rounded-2">
 									<form
 										use:enhance={enhanceRegen}
