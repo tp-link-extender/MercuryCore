@@ -131,15 +131,17 @@
 				</div>
 				<div class="w-full md:w-2/3 flex flex-row-reverse">
 					<div class="card light-text p-4">
-						<table>
-							<tr>
-								<td>Price</td>
-								<td class="text-emerald-6">
-									{data.currencySymbol}
-									{data.asset.price}
-								</td>
-							</tr>
-							{#if !itsFree}
+						{#if itsFree}
+							<b class="pb-2">Free</b>
+						{:else}
+							<table>
+								<tr>
+									<td>Price</td>
+									<td class="text-emerald-6">
+										{data.currencySymbol}
+										{data.asset.price}
+									</td>
+								</tr>
 								<tr>
 									<td>Fee</td>
 									<td class="text-yellow-5">
@@ -147,8 +149,8 @@
 										{fee}
 									</td>
 								</tr>
-							{/if}
-						</table>
+							</table>
+						{/if}
 						{#if !data.asset.owned}
 							<button popovertarget="buy" class="btn btn-success">
 								<strong class="text-xl">
@@ -198,7 +200,7 @@
 	</Tab>
 </div>
 
-<div id="buy" popover="auto" class="light-text p-4 min-w-120">
+<div id="buy" class="light-text p-4 min-w-120" popover="auto">
 	{#if data.balance >= totalPrice}
 		<h3 class="text-lg font-bold">Purchase {data.asset.name}</h3>
 		<p class="pb-4">

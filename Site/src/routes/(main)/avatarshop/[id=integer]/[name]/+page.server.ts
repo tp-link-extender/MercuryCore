@@ -278,15 +278,17 @@ actions.buy = async e => {
 	if (asset.visibility !== "Visible")
 		error(400, "This item hasn't been approved yet")
 
-	const tx = await transact(
-		user.id,
-		asset.creator.id,
-		asset.price,
-		`Purchased asset ${asset.name}`,
-		`/avatarshop/${id}/${asset.name}`,
-		[id]
-	)
-	if (!tx.ok) error(400, tx.msg)
+	if (asset.price > 0) { // todo work out how free assets are supposed to work
+		const tx = await transact(
+			user.id,
+			asset.creator.id,
+			asset.price,
+			`Purchased asset ${asset.name}`,
+			`/avatarshop/${id}/${asset.name}`,
+			[id]
+		)
+		if (!tx.ok) error(400, tx.msg)
+	}
 
 	await Promise.all([
 		equery(surql`RELATE $user->owns->$asset SET time = time::now()`, {
