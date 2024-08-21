@@ -1,3 +1,7 @@
+# ⚠️ Warning: Top Sneaky repository ⚠️ 
+
+The repository you are looking at is public, but the project has not yet been publicly announced. If you're in the Mercury Core community, you didn't see anything. 🤫
+
 # ![Mercury Core logo banner](./Assets/banner.png)
 
 Mercury Core is the ultimate community-driven secure, flexible, and stable foundation for the future of your revival web platform, allowing for easy customisation or complete overhaul and possible integration with multiple clients and external services.
