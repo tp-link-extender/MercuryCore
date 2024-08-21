@@ -1,8 +1,8 @@
-import auditLogQuery from "$lib/server/auditLog.surql"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
 import { Record, equery, findWhere, surql } from "$lib/server/surreal"
+import { error } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -15,10 +15,21 @@ const schema = z.object({
 	reason: z.string().min(15).max(150),
 })
 
-export async function load({ locals }) {
+export async function load({ locals, url }) {
 	await authorise(locals, 4)
 
-	return { form: await superValidate(zod(schema)) }
+	const form = await superValidate(zod(schema))
+
+	const associatedReport = url.searchParams.get("report")
+	if (associatedReport) {
+		const [[report]] = await equery<{ username: string }[][]>(
+			surql`SELECT * FROM ${Record("report", associatedReport)}`
+		)
+		if (!report) error(400, "Invalid report id")
+		return { form }
+	}
+
+	return { form }
 }
 
 export const actions: import("./$types").Actions = {}
@@ -33,12 +44,11 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	if (intAction === 2 && (date?.getTime() || 0) < Date.now())
 		return formError(form, ["banDate"], ["Invalid date"])
 
-	const [[getModeratee]] = await equery<
-		{
-			id: string
-			permissionLevel: number
-		}[][]
-	>(
+	type Moderatee = {
+		id: string
+		permissionLevel: number
+	}
+	const [[getModeratee]] = await equery<Moderatee[][]>(
 		surql`
 			SELECT meta::id(id) AS id, permissionLevel
 			FROM user WHERE username = ${username}`
@@ -129,7 +139,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	][intAction - 1]()
 
 	await equery(
-		`
+		surql`
 			RELATE $moderator->moderation->$moderatee CONTENT {
 				note: $reason,
 				type: $moderationAction,

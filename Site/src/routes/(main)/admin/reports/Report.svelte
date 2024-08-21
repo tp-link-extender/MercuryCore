@@ -49,6 +49,9 @@
 			<td><a href={report.url}>{report.url}</a></td>
 		</tr>
 	</table>
+	<a href="/admin/moderation?report={report.id}" class="btn btn-secondary">
+		Moderate reportee
+	</a>
 </div>
 
 <style>
