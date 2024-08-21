@@ -23,8 +23,7 @@ export async function load({ locals }) {
 			meta::id(id) AS id,
 			(SELECT status, username FROM ->user)[0] AS reportee,
 			(SELECT status, username FROM <-user)[0] AS reporter
-		FROM report
-		ORDER BY time DESC
+		FROM report ORDER BY time DESC
 	`)
 	return { reports }
 }

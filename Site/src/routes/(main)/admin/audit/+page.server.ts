@@ -13,11 +13,11 @@ export async function load({ locals }) {
 
 	const [logs] = await equery<Log[][]>(surql`
 		SELECT
-			*,
-			meta::id(id) AS id,
+			action,
+			note,
+			time,
 			(SELECT status, username FROM user)[0] AS user
-		FROM auditLog
-		ORDER BY time DESC
+		FROM auditLog ORDER BY time DESC
 	`)
 	return { logs }
 }
