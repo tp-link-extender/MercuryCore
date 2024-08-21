@@ -1,6 +1,7 @@
 // Initialising Lucia, the authentication library
 
 import { dev } from "$app/environment"
+import config from "$lib/server/config"
 import { SurrealAdapter } from "$lib/server/surrealAdapter"
 import { error, redirect } from "@sveltejs/kit"
 import { Lucia, type Session, type User } from "lucia"
@@ -19,7 +20,7 @@ export const auth = new Lucia(new SurrealAdapter(), {
 		accountCreated: data.created,
 		bodyColours: data.bodyColours,
 		css: data.css,
-		theme: data.theme,
+		theme: data.theme < config.Themes.length ? data.theme : 0,
 		// Types for this are defined in src/app.d.ts.
 	}),
 })

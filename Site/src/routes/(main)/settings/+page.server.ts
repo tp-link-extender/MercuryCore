@@ -5,9 +5,10 @@ import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import updateProfileQuery from "./updateProfile.surql"
+import config from "$lib/server/config"
 
 const profileSchema = z.object({
-	// theme: z.enum(["standard", "darken", "storm", "solar"]),
+	theme: z.number().int().min(0).max(config.Themes.length - 1),
 	bio: z.string().max(1000).optional(),
 })
 const passwordSchema = z.object({
@@ -23,21 +24,21 @@ export const load = async () => ({
 	profileForm: await superValidate(zod(profileSchema)),
 	passwordForm: await superValidate(zod(passwordSchema)),
 	stylingForm: await superValidate(zod(stylingSchema)),
+	themes: config.Themes.map(t => t.Name),
 })
 
 export const actions: import("./$types").Actions = {}
 actions.profile = async ({ request, locals }) => {
 	const { user } = await authorise(locals)
-
 	const form = await superValidate(request, zod(profileSchema))
 	if (!form.valid) return formError(form)
 
-	const { bio } = form.data
+	const { bio, theme } = form.data
 
 	await equery(updateProfileQuery, {
 		user: Record("user", user.id),
 		bio,
-		// theme,
+		theme,
 	})
 
 	return message(form, "Profile updated successfully!")
@@ -48,10 +49,8 @@ actions.password = async ({ request, locals }) => {
 	if (!form.valid) return formError(form)
 
 	const { cpassword, npassword, cnpassword } = form.data
-
 	if (npassword !== cnpassword)
 		return formError(form, ["cnpassword"], ["Passwords do not match"])
-
 	if (npassword === cpassword)
 		return formError(
 			form,
@@ -76,7 +75,6 @@ actions.password = async ({ request, locals }) => {
 }
 actions.styling = async ({ request, locals }) => {
 	const { user } = await authorise(locals)
-
 	const form = await superValidate(request, zod(stylingSchema))
 	if (!form.valid) return formError(form)
 

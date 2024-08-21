@@ -33,7 +33,12 @@ const schema = z.object({
 	Branding: z.object({
 		Favicon: z.string().min(1),
 		Icon: z.string().min(1),
-	})
+	}),
+
+	Themes: z.array(z.object({
+		Name: z.string().min(1),
+		Path: z.string().min(1),
+	})).min(1),
 })
 
 const parseResult = schema.safeParse(rawconfig)

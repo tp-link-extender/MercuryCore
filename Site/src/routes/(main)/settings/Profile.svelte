@@ -10,7 +10,10 @@
 	const formData = superForm(data.profileForm)
 	const { form } = formData
 
-	const themes: [string, string][] = []
+	const themes: [string, string][] = data.themes.map((theme, i) => [
+		i.toString(),
+		theme
+	])
 
 	if (user.bio?.[0]) $form.bio = user.bio[user.bio.length - 1]?.text || ""
 </script>
@@ -19,13 +22,7 @@
 	{formData}
 	action="?/profile"
 	submit="<fa fa-save class='pr-2'></fa> Save changes">
-	<Select
-		{formData}
-		options={themes}
-		name="theme"
-		label="Theme"
-		disabled
-		help="Themes have been disabled while we focus on consolidating the site's design." />
+	<Select {formData} options={themes} name="theme" label="Theme" />
 
 	<hr class="grey-text pb-6" />
 

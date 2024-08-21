@@ -3,7 +3,7 @@ LET $og = SELECT
 	ORDER BY updated DESC)[0] AS bio
 FROM $user;
 
-# UPDATE $user SET theme = $theme;
+UPDATE $user SET theme = $theme;
 
 IF $og.bio.text != $bio {
 	UPDATE $user SET bio += {

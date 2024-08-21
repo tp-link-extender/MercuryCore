@@ -56,17 +56,20 @@ async function finish({ event, resolve }: Parameters<Handle>[0]) {
 	}
 
 	const res = await resolve(event)
+	if (!res.headers.get("content-type")?.includes("text/html")) return res
 
-	// if it's html, add the user's custom css before the </body> tag
-	const css = user?.css
-	if (!res.headers.get("content-type")?.includes("text/html") || !css)
-		return res
+	// if it's html, add the user's theme before the </body> tag
+	const file = Bun.file(`../Assets/${config.Themes[user?.theme || 0].Path}`)
+
+	// ...and the custom CSS
+	const css = user?.css ? `<style id="custom-css">${user.css}</style>` : ""
 
 	// duplicate the response to avoid modifying the original
 	const text = (await res.clone().text()).replace(
 		"</body>",
-		`<style id="custom-css">${css}</style></body>`
+		`<style>${await file.text()}</style>${css}</body>`
 	)
+
 	return new Response(text, {
 		status: res.status,
 		statusText: res.statusText,
