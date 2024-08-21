@@ -134,7 +134,6 @@ actions.ticket = async e => {
 }
 actions.network = async e => {
 	const id = await getData(e)
-
 	const form = await superValidate(e.request, zod(networkSchema))
 	if (!form.valid) return formError(form)
 
@@ -143,7 +142,6 @@ actions.network = async e => {
 }
 actions.privacy = async e => {
 	const id = await getData(e)
-
 	const form = await superValidate(e.request, zod(privacySchema))
 	if (!form.valid) return formError(form)
 

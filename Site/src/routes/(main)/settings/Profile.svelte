@@ -22,7 +22,12 @@
 	{formData}
 	action="?/profile"
 	submit="<fa fa-save class='pr-2'></fa> Save changes">
-	<Select {formData} options={themes} name="theme" label="Theme" />
+	<Select
+		{formData}
+		options={themes}
+		selected={user.theme.toString()}
+		name="theme"
+		label="Theme" />
 
 	<hr class="grey-text pb-6" />
 

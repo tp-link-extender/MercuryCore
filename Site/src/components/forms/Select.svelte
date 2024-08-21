@@ -17,7 +17,10 @@
 	export let options: string[][] // actually [string, string][] but whatever
 	export let selected: string | null = null
 
-	const mOptions = options.map(([value, label]) => ({ value, label }))
+	const mOptions = options.map(([value, label]) => ({
+		value: value.toString(),
+		label: label.toString()
+	}))
 	const mSelected = selected
 		? mOptions.find(o => o.value === selected)
 		: { value: "", label: "" }

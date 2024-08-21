@@ -17,7 +17,6 @@ const schema = z.object({
 
 export async function load({ locals, url }) {
 	await authorise(locals, 4)
-
 	const form = await superValidate(zod(schema))
 
 	const associatedReport = url.searchParams.get("report")

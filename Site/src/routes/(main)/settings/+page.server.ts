@@ -1,3 +1,4 @@
+import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import { Record, equery, surql } from "$lib/server/surreal"
@@ -5,10 +6,9 @@ import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import updateProfileQuery from "./updateProfile.surql"
-import config from "$lib/server/config"
 
 const profileSchema = z.object({
-	theme: z.number().int().min(0).max(config.Themes.length - 1),
+	theme: z.enum(["0", ...config.Themes.map((_, i) => i.toString())]),
 	bio: z.string().max(1000).optional(),
 })
 const passwordSchema = z.object({
@@ -38,7 +38,7 @@ actions.profile = async ({ request, locals }) => {
 	await equery(updateProfileQuery, {
 		user: Record("user", user.id),
 		bio,
-		theme,
+		theme: +(theme || 0),
 	})
 
 	return message(form, "Profile updated successfully!")

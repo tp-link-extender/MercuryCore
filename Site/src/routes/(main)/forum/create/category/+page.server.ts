@@ -20,12 +20,10 @@ export async function load({ locals }) {
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ request, locals, getClientAddress }) => {
 	await authorise(locals, 5)
-
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
 
 	const { name, description } = form.data
-
 	// Conflicts with /forum/create
 	if (name.toLowerCase() === "create")
 		return formError(form, ["name"], ["Can't park there mate"])
