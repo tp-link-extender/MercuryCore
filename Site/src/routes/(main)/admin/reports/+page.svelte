@@ -2,6 +2,7 @@
 	import Head from "$components/Head.svelte"
 	import SidebarShell from "$components/SidebarShell.svelte"
 	import TabData from "$components/TabData"
+	import User from "$components/User.svelte"
 	import Report from "./Report.svelte"
 
 	export let data
@@ -32,8 +33,24 @@
 		</thead>
 		<tbody>
 			{#each data.reports as report}
-				<Report {report} />
+				<tr>
+					<td class="max-w-35">
+						<button
+							class="btn btn-sm btn-tertiary"
+							popovertarget={report.id}>
+							{report.id}
+						</button>
+					</td>
+					<td class="max-w-35">{report.category}</td>
+					<td><User user={report.reporter} full thin /></td>
+					<td><User user={report.reportee} full thin /></td>
+					<td>{new Date(report.time).toLocaleString()}</td>
+				</tr>
 			{/each}
 		</tbody>
 	</table>
 </SidebarShell>
+
+{#each data.reports as report}
+	<Report {report} />
+{/each}
