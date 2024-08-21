@@ -1,23 +1,11 @@
 import config from "$lib/server/config.ts"
 
 const strings = Object.freeze({
-	"T-Shirt": {
-		class: "ShirtGraphic",
-		contentName: "Graphic",
-		stringName: "Shirt Graphic",
-	},
-	Shirt: {
-		class: "Shirt",
-		contentName: "ShirtTemplate",
-		stringName: "Shirt",
-	},
-	Pants: {
-		class: "Pants",
-		contentName: "PantsTemplate",
-		stringName: "Pants",
-	},
-	Decal: { class: "Decal", contentName: "Texture", stringName: "Decal" },
-	Face: { class: "Decal", contentName: "Texture", stringName: "face" },
+	"T-Shirt": ["ShirtGraphic", "Graphic", "Shirt Graphic"],
+	Shirt: ["Shirt", "ShirtTemplate", "Shirt"],
+	Pants: ["Pants", "PantsTemplate", "Pants"],
+	Decal: ["Decal", "Texture", "Decal"],
+	Face: ["Decal", "Texture", "face"],
 })
 
 /**
@@ -35,15 +23,12 @@ export async function graphicAsset(
 ) {
 	const stringType = strings[type as keyof typeof strings]
 	const assetType = type === "Face" || type === "Decal" ? "Image" : "Other"
-	const file = Bun.file(`xml/graphicAsset${assetType}.xml`)
+	const assetUrl = `${config.Domain}/asset?id=${imageAssetId.toString()}`
 
-	const asset = (await file.text())
-		.replaceAll("_CLASS", stringType.class)
-		.replaceAll("_CONTENT_NAME", stringType.contentName)
-		.replaceAll("_STRING_NAME", stringType.stringName)
-		.replaceAll(
-			"_ASSET_URL",
-			`${config.Domain}/asset?id=${imageAssetId.toString()}`
-		)
+	const asset = (await Bun.file(`xml/graphicAsset${assetType}.xml`).text())
+		.replaceAll("_CLASS", stringType[0])
+		// .replaceAll("_CONTENT_NAME", stringType[1]) // Unused at the moment
+		.replaceAll("_STRING_NAME", stringType[2])
+		.replaceAll("_ASSET_URL", assetUrl)
 	await Bun.write(`../data/assets/${graphicAssetId}`, asset)
 }

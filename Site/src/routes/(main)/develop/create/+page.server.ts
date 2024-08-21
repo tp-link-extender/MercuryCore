@@ -29,12 +29,12 @@ const schema = z.object({
 	asset: z.any(),
 })
 
-export async function load({ request }) {
+export async function load({ url }) {
 	const price = await getAssetPrice()
 	if (!price.ok) error(500, price.msg)
 	return {
 		form: await superValidate(zod(schema)),
-		assetType: new URL(request.url).searchParams.get("asset"),
+		assetType: url.searchParams.get("asset"),
 		price: price.value,
 	}
 }

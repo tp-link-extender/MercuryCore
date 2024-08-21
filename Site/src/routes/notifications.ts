@@ -55,14 +55,17 @@ async function getForumReply(relativeId: string) {
 	return result
 }
 
-type ForumPost = { category: { name: string } }
+type ForumPost = {
+	category: {
+		name: string
+	}
+}
 
 async function getForumPost(relativeId: string) {
 	const [[result]] = await equery<ForumPost[][]>(
 		surql`
 			SELECT
-				(SELECT name
-				FROM ->in->forumCategory) AS category
+				(SELECT name FROM ->in->forumCategory) AS category
 			FROM ${Record("forumPost", relativeId)}`
 	)
 	return result
