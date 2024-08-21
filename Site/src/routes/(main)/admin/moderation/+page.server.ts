@@ -60,7 +60,6 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	const qParams = {
 		user: Record("user", user.id),
 		moderatee: Record("user", getModeratee.id),
-		action: "Moderation",
 	}
 
 	if (intAction === 5) {
@@ -97,10 +96,10 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 			)
 
 		await equery(
-			`
+			surql`
 				UPDATE moderation SET active = false WHERE out = $moderatee;
-				${auditLogQuery}`,
-			{ ...qParams, note: `Unban ${username}` }
+				fn::auditLog("Moderation", ${`Unban ${username}`}, $user)`,
+			qParams
 		)
 
 		return message(form, `${username} has been unbanned`)
@@ -138,9 +137,8 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 				timeEnds: $timeEnds,
 				active: true,
 			};
-			${auditLogQuery}`,
+			fn::auditLog("Moderation", ${`${note}: ${reason}`}, $user)`,
 		{
-			note: `${note}: ${reason}`,
 			reason,
 			moderationAction,
 			timeEnds: date || new Date(),

@@ -1,6 +1,5 @@
 import fs from "node:fs/promises"
 import { intRegex } from "$lib/paramTests"
-import auditLog from "$lib/server/auditLog.surql"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
@@ -45,7 +44,6 @@ async function getData({ locals, url }: RequestEvent) {
 		surql`SELECT name FROM $asset`,
 		params
 	)
-
 	if (!asset) error(404, "Asset not found")
 
 	return { user, id, params, assetName: asset.name }
@@ -59,29 +57,21 @@ export const actions: import("./$types").Actions = {}
 actions.approve = async e => {
 	const { id, params, assetName } = await getData(e)
 	await equery(
-		`
+		surql`
 			UPDATE $asset SET visibility = "Visible";
 			UPDATE $asset->imageAsset->asset SET visibility = "Visible";
-			${auditLog}`,
-		{
-			...params,
-			action: "Moderation",
-			note: `Approve asset ${assetName} (id ${id})`,
-		}
+			fn::auditLog("Moderation", ${`Approve asset ${assetName} (id ${id})`}, $user)`,
+		params
 	)
 }
 actions.deny = async e => {
 	const { id, params, assetName } = await getData(e)
 	await equery(
-		`
+		surql`
 			UPDATE $asset SET visibility = "Moderated";
 			UPDATE $asset->imageAsset->asset SET visibility = "Moderated";
-			${auditLog}`,
-		{
-			...params,
-			action: "Moderation",
-			note: `Moderate asset ${assetName} (id ${id})`,
-		}
+			fn::auditLog("Moderation", ${`Moderate asset ${assetName} (id ${id})`}, $user)`,
+		params
 	)
 }
 actions.rerender = async e => {
@@ -107,16 +97,11 @@ actions.purge = async e => {
 
 	await Promise.all([
 		equery(
-			`
+			surql`
 				DELETE $asset;
-				DELETE $imageAsset;
-				${auditLog}`,
-			{
-				...params,
-				imageAsset: Record("asset", iaid),
-				action: "Moderation",
-				note: `Purge asset ${assetName} (id ${id})`,
-			}
+				DELETE ${Record("asset", iaid)};
+				fn::auditLog("Moderation", ${`Purge asset ${assetName} (id ${id})`}, $user)`,
+			params
 		),
 		fs.rm(`../data/assets/${id}`),
 		fs.rm(`../data/assets/${iaid}`),
