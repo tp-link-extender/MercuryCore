@@ -2,7 +2,7 @@
 	import Head from "$components/Head.svelte"
 	import SidebarShell from "$components/SidebarShell.svelte"
 	import TabData from "$components/TabData"
-	import User from "$components/User.svelte"
+	import Report from "./Report.svelte"
 
 	export let data
 
@@ -27,16 +27,12 @@
 				<th scope="col">Category</th>
 				<th scope="col">Reporter</th>
 				<th scope="col">Reportee</th>
+				<th scope="col">Time</th>
 			</tr>
 		</thead>
 		<tbody>
 			{#each data.reports as report}
-				<tr>
-					<td class="max-w-35">{report.id}</td>
-					<td class="max-w-35">{report.category}</td>
-					<td><User user={report.reporter} full thin /></td>
-					<td><User user={report.reportee} full thin /></td>
-				</tr>
+				<Report {report} />
 			{/each}
 		</tbody>
 	</table>
