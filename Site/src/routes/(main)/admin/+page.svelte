@@ -4,17 +4,13 @@
 	import SidebarShell from "$components/SidebarShell.svelte"
 	import Tab from "$components/Tab.svelte"
 	import TabData from "$components/TabData"
+	import permissionLevels from "$lib/permissionLevels"
 
 	export let data
 
-	const permissions = [
-		[], // index from 1
-		["white", "fa-user", "User"],
-		["aqua", "fa-check", "Verified"],
-		["violet", "fa-hammer", "Catalog Manager"],
-		["orange", "fa-shield-alt", "Moderator"],
-		["crimson", "fa-scale-balanced", "Administrator"]
-	]
+	const { user, totalmem, freemem } = data
+
+	const perms = permissionLevels(user.permissionLevel)
 
 	const panel: { [k: string]: [string, string, string][] } = {
 		Moderation: [
@@ -28,12 +24,9 @@
 			["Transactions", "/admin/transactions", "fa fa-money-bill-transfer"]
 		]
 	}
+	const tabNames = ["Moderation", "Catalog", "Economy", "Statistics"]
 
-	const { user, totalmem, freemem } = data
-
-	const perms = permissions[user.permissionLevel]
-	const isAdmin = user.permissionLevel === 5
-	if (isAdmin)
+	if (user.permissionLevel === 5) {
 		panel.Administration = [
 			["Banners", "/admin/banners", "fa fa-bullhorn"],
 			["Accounts", "/admin/accounts", "fa fa-user"],
@@ -41,8 +34,8 @@
 			["Invites", "/admin/invites", "fa fa-envelopes"]
 		]
 
-	const tabNames = ["Moderation", "Catalog", "Economy", "Statistics"]
-	if (isAdmin) tabNames.unshift("Administration")
+		tabNames.unshift("Administration")
+	}
 
 	let tabData = TabData(data.url, tabNames, [
 		"fa fa-diamond-half-stroke",

@@ -7,6 +7,7 @@
 	import ReportButton from "$components/ReportButton.svelte"
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
+	import permissionLevels from "$lib/permissionLevels"
 	import Interactions from "./Interactions.svelte"
 	import ProfilePlace from "./ProfilePlace.svelte"
 
@@ -15,14 +16,7 @@
 
 	const { user } = data
 
-	const permissions = [
-		[], // index from 1
-		["white", "fa-user", "User"],
-		["aqua", "fa-check", "Verified"],
-		["violet", "fa-hammer", "Catalog Manager"],
-		["orange", "fa-shield-alt", "Moderator"],
-		["crimson", "fa-scale-balanced", "Administrator"]
-	]
+	const perms = permissionLevels(user.permissionLevel)
 
 	let regenerating = false
 
@@ -72,15 +66,9 @@
 						{/if}
 					</div>
 					<div class="flex self-start">
-						<b
-							style="color: {permissions[
-								data.permissionLevel
-							][0]}">
-							<fa
-								class="{permissions[
-									data.permissionLevel
-								][1]} pr-1" />
-							{permissions[data.permissionLevel][2]}
+						<b style="color: {perms[0]}">
+							<fa class="{perms[1]} pr-1" />
+							{perms[2]}
 						</b>
 					</div>
 				</div>
