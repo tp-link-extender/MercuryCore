@@ -33,7 +33,6 @@
 			["Audit Logs", "/admin/audit", "fa fa-book"],
 			["Invites", "/admin/invites", "fa fa-envelopes"]
 		]
-
 		tabNames.unshift("Administration")
 	}
 

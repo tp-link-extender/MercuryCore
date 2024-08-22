@@ -617,3 +617,9 @@ details[open] summary {
 		opacity: 0.5;
 	}
 }
+
+img[src^="/icons"] {
+	/* hax */
+	height: calc(1rem + 2px);
+	padding-bottom: 2px;
+}

@@ -144,7 +144,7 @@
 						}}
 						class="btn btn-secondary h-10 <sm:px-3 rounded-r-1.5!"
 						title="Search (ctrl+k)">
-						<fa fa-search />
+						<img src="/icons/search.svg" alt="Search" />
 					</button>
 					{#if search.trim() && !searchCompleted}
 						<div

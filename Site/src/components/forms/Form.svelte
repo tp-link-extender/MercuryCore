@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 
+	export let submit: string | null = "Submit"
+	export let submitIcon = ""
 	export let working = "Working..."
-	export let submit = "Submit"
+	export let workingIcon = ""
 
 	export let inline = false
 	export let nopad = false // Don't pad the icon on the submit button
@@ -21,9 +23,19 @@
 <form use:use {method} {...$$restProps}>
 	<fieldset class={inline ? "input-group" : "pb-2"}>
 		<slot />
-		{#if submit}
+		{#if submit !== null}
 			<button class="btn btn-primary h-full" class:nopad>
-				{@html /* ecks ess ess moment */ $delayed ? working : submit}
+				{#if $delayed}
+					{#if workingIcon}
+						<img src="/icons/{workingIcon}.svg" alt={working} />
+					{/if}
+					{working}
+				{:else}
+					{#if submitIcon}
+						<img src="/icons/{submitIcon}.svg" alt={submit} />
+					{/if}
+					{submit}
+				{/if}
 			</button>
 		{/if}
 	</fieldset>

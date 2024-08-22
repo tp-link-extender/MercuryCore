@@ -185,7 +185,7 @@
 			</button>
 		</div>
 
-		<Form {formData} submit="" action="?/updateBody&id={bannerData.id}">
+		<Form {formData} submit={null} action="?/updateBody&id={bannerData.id}">
 			<Textarea
 				{formData}
 				name="bannerBody"
