@@ -4,6 +4,7 @@
 	import { invalidateAll } from "$app/navigation"
 	import ForumReply from "$components/ForumReply.svelte"
 	import Head from "$components/Head.svelte"
+	import Icon from "$components/Icon.svelte"
 	import PostReply from "$components/PostReply.svelte"
 	import Tab from "$components/Tab.svelte"
 	import TabData from "$components/TabData"
@@ -64,10 +65,7 @@
 			<div class="flex justify-between">
 				<h1>{data.asset.name}</h1>
 				<li class="dropdown pl-2 pt-2">
-					<img
-						src="/icons/ellipsis-h.svg"
-						alt="More options"
-						class="dropdown-ellipsis" />
+					<Icon icon="ellipsis-h" class="dropdown-ellipsis" />
 					<div class="dropdown-content">
 						<ul class="p-2 rounded-3">
 							<button class="btn light-text pl-4 pr-0 text-start">

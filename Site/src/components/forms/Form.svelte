@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { page } from "$app/stores"
+	import Icon from "$components/Icon.svelte"
+	import type { IconName } from "$components/icons/icons"
 
 	export let submit: string | null = "Submit"
-	export let submitIcon = ""
+	export let submitIcon: IconName | "" = ""
 	export let working = "Working..."
-	export let workingIcon = ""
+	export let workingIcon: IconName | "" = ""
 
 	export let inline = false
 	export let nopad = false // Don't pad the icon on the submit button
@@ -27,12 +29,12 @@
 			<button class="btn btn-primary h-full" class:nopad>
 				{#if $delayed}
 					{#if workingIcon}
-						<img src="/icons/{workingIcon}.svg" alt={working} />
+						<Icon icon={workingIcon} />
 					{/if}
 					{working}
 				{:else}
 					{#if submitIcon}
-						<img src="/icons/{submitIcon}.svg" alt={submit} />
+						<Icon icon={submitIcon} />
 					{/if}
 					{submit}
 				{/if}

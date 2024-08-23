@@ -2,6 +2,7 @@
 	import { enhance } from "$app/forms"
 	import { goto } from "$app/navigation"
 	import User from "$components/User.svelte"
+	import type { IconName } from "$components/icons/icons"
 	import fade from "$lib/fade"
 	import { slide } from "svelte/transition"
 	import Icon from "./Icon.svelte"
@@ -72,12 +73,12 @@
 		["Create", "/develop", "fa-plus"],
 		["Forum", "/forum", "fa-messages"]
 	]
-	const usernav = [
-		["fa-money-bill-transfer", "Economy", "/economy"],
-		["fa-user-group", "Friends", "/requests"],
-		["fa-box-open-full", "Inventory", "/inventory"],
-		["fa-user-pen", "Character", "/character"],
-		["fa-gears", "Settings", "/settings"]
+	const usernav: [IconName, string, string][] = [
+		["money-bill-transfer", "Economy", "/economy"],
+		["user-group", "Friends", "/requests"],
+		["box-open-full", "Inventory", "/inventory"],
+		["user-pen", "Character", "/character"],
+		["gears", "Settings", "/settings"]
 	]
 	const searchCategories = [
 		["Users", "users"],
@@ -87,7 +88,7 @@
 	]
 
 	if (user && user.permissionLevel >= 4)
-		usernav.unshift(["fa-diamond-half-stroke", "Admin", "/admin"])
+		usernav.unshift(["diamond-half-stroke", "Admin", "/admin"])
 </script>
 
 <svelte:window
@@ -145,7 +146,7 @@
 						}}
 						class="btn btn-secondary h-10 <sm:px-3 rounded-r-1.5!"
 						title="Search (ctrl+k)">
-						<img src="/icons/search.svg" alt="Search" />
+						<Icon icon="search" />
 					</button>
 					{#if search.trim() && !searchCompleted}
 						<div
@@ -192,7 +193,7 @@
 							{#each usernav as [icon, title, href]}
 								<li class="rounded-2">
 									<a class="btn light-text pl-4 pr-0" {href}>
-										<fa class="{icon} pr-2" />
+										<Icon {icon} fill="fill-white pr-2" />
 										{title}
 									</a>
 								</li>
@@ -203,10 +204,9 @@
 									method="POST"
 									action="/api?/logout">
 									<button class="btn text-red-5 pl-4 pr-0">
-										<img
-											src="/icons/arrow-right-from-bracket.svg"
-											alt="Log out"
-											class="pr-2 color-red-5" />
+										<Icon
+											icon="arrow-right-from-bracket"
+											fill="fill-red-5 pr-2" />
 										<b>Log out</b>
 									</button>
 								</form>

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { deserialize, enhance } from "$app/forms"
 	import Head from "$components/Head.svelte"
+	import Icon from "$components/Icon.svelte"
 	import ReportButton from "$components/ReportButton.svelte"
 	import Tab from "$components/Tab.svelte"
 	import TabData from "$components/TabData"
@@ -189,10 +190,7 @@
 				</small>
 				<span class="float-right">
 					<span class="dropdown">
-						<img
-							src="/icons/ellipsis-h.svg"
-							alt="More options"
-							class="dropdown-ellipsis" />
+						<Icon icon="ellipsis-h" class="dropdown-ellipsis" />
 						<div class="dropdown-content pt-2">
 							<ul class="p-2 rounded-3">
 								<ReportButton

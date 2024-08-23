@@ -4,6 +4,7 @@
 	import Breadcrumbs from "$components/Breadcrumbs.svelte"
 	import ForumReply from "$components/ForumReply.svelte"
 	import Head from "$components/Head.svelte"
+	import Icon from "$components/Icon.svelte"
 	import PinButton from "$components/PinButton.svelte"
 	import PostReply from "$components/PostReply.svelte"
 	import ReportButton from "$components/ReportButton.svelte"
@@ -122,10 +123,7 @@
 					</i>
 				</div>
 				<span class="dropdown">
-					<img
-						src="/icons/ellipsis-h.svg"
-						alt="More options"
-						class="dropdown-ellipsis" />
+					<Icon icon="ellipsis-h" class="dropdown-ellipsis" />
 					<div class="dropdown-content pt-2">
 						<ul class="p-2 rounded-3">
 							{#if user.permissionLevel >= 4}
