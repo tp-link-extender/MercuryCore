@@ -34,11 +34,11 @@
 		{place.name}
 	</p>
 	<span class="float-start pl-1 pt-1">
-		<fa fa-thumbs-up class="opacity-75" />
+		<img src="/icons/thumbs-up.svg" alt="Likes" class="opacity-75" />
 		{isNaN(ratio) ? "--" : ratio}%
 	</span>
 	<span class="float-right pr-1 pt-1">
-		<fa fa-user class="opacity-75" />
+		<img src="/icons/user.svg" alt="Players" class="opacity-75" />
 		{place.playerCount}
 	</span>
 </a>

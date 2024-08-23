@@ -4,6 +4,7 @@
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
 	import { slide } from "svelte/transition"
+	import Icon from "./Icon.svelte"
 
 	export let data: import("../routes/$types").LayoutData
 
@@ -170,7 +171,7 @@
 					href="/notifications"
 					aria-label="Notifications"
 					class="tooltip <lg:hidden font-bold light-text">
-					<fa fa-bell />
+					<Icon icon="bell" />
 				</a>
 				<div class="dropdown">
 					<User
@@ -202,9 +203,10 @@
 									method="POST"
 									action="/api?/logout">
 									<button class="btn text-red-5 pl-4 pr-0">
-										<fa
-											fa-arrow-right-from-bracket
-											class="pr-2" />
+										<img
+											src="/icons/arrow-right-from-bracket.svg"
+											alt="Log out"
+											class="pr-2 color-red-5" />
 										<b>Log out</b>
 									</button>
 								</form>
