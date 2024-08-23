@@ -122,7 +122,10 @@
 					</i>
 				</div>
 				<span class="dropdown">
-					<fa fa-ellipsis-h class="dropdown-ellipsis" />
+					<img
+						src="/icons/ellipsis-h.svg"
+						alt="More options"
+						class="dropdown-ellipsis" />
 					<div class="dropdown-content pt-2">
 						<ul class="p-2 rounded-3">
 							{#if user.permissionLevel >= 4}

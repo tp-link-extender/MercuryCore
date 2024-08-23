@@ -9,15 +9,13 @@
 
 	& .dropdown-content {
 		position: absolute;
-	}
-
-	&:is(:not(details)) .dropdown-content {
 		visibility: hidden;
 		opacity: 0;
 	}
 
 	&:focus-within .dropdown-content,
-	&.dropdown:hover .dropdown-content {
+	&:hover .dropdown-content,
+	&:hover .dropdown-ellipsis {
 		visibility: visible;
 		opacity: 1;
 	}
@@ -75,10 +73,7 @@
 
 .dropdown-ellipsis {
 	cursor: pointer;
-	padding: 0 0.2rem;
-	transition: color 0.2s;
-	color: var(--grey-text);
-	&:hover {
-		color: var(--light-text);
-	}
+	padding: 0;
+	transition: opacity 0.2s;
+	opacity: 0.5;
 }

@@ -54,7 +54,7 @@
 						class="btn btn-secondary"
 						aria-label="Search"
 						id="button-addon2">
-						<fa fa-search />
+						<img src="/icons/search.svg" alt="Search" />
 					</button>
 				</div>
 			</form>
