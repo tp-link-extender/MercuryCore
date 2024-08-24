@@ -6,7 +6,7 @@
 
 	export let data
 
-	let tabData = TabData(data.url, ["Audit logs"], ["fa fa-list"])
+	let tabData = TabData(data.url, ["Audit logs"], ["fa-list"])
 
 	const colours = Object.freeze({
 		Account: "text-sky-5",

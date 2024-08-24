@@ -7,7 +7,7 @@
 
 	export let data
 
-	let tabData = TabData(data.url, ["Abuse reports"], ["fa fa-list"])
+	let tabData = TabData(data.url, ["Abuse reports"], ["fa-list"])
 </script>
 
 <Head name={data.siteName} title="Abuse reports - Admin" />

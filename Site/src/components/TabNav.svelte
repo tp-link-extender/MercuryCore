@@ -57,7 +57,7 @@
 					$colour = "white"
 				}}>
 				{#if tabData.icons}
-					<i class="{tabData.icons[pos]} pr-2" />
+					<fa class="{tabData.icons[pos]} pr-2" />
 				{/if}
 				{tab}
 			</a>

@@ -14,34 +14,34 @@
 
 	const panel: { [k: string]: [string, string, string][] } = {
 		Moderation: [
-			["Moderate User", "/admin/moderation", "fa fa-user-slash"],
-			["Abuse reports", "/admin/reports", "fa fa-flag"],
-			["Asset Approval", "/admin/asset", "fa fa-file-circle-check"],
-			["Render Queue", "/admin/renderqueue", "fa fa-file-image"]
+			["Moderate User", "/admin/moderation", "fa-user-slash"],
+			["Abuse reports", "/admin/reports", "fa-flag"],
+			["Asset Approval", "/admin/asset", "fa-file-circle-check"],
+			["Render Queue", "/admin/renderqueue", "fa-file-image"]
 		],
-		Catalog: [["Create Asset", "/admin/create", "fa fa-file-circle-plus"]],
+		Catalog: [["Create Asset", "/admin/create", "fa-file-circle-plus"]],
 		Economy: [
-			["Transactions", "/admin/transactions", "fa fa-money-bill-transfer"]
+			["Transactions", "/admin/transactions", "fa-money-bill-transfer"]
 		]
 	}
 	const tabNames = ["Moderation", "Catalog", "Economy", "Statistics"]
 
 	if (user.permissionLevel === 5) {
 		panel.Administration = [
-			["Banners", "/admin/banners", "fa fa-bullhorn"],
-			["Accounts", "/admin/accounts", "fa fa-user"],
-			["Audit Logs", "/admin/audit", "fa fa-book"],
-			["Invites", "/admin/invites", "fa fa-envelopes"]
+			["Banners", "/admin/banners", "fa-bullhorn"],
+			["Accounts", "/admin/accounts", "fa-user"],
+			["Audit Logs", "/admin/audit", "fa-book"],
+			["Invites", "/admin/invites", "fa-envelopes"]
 		]
 		tabNames.unshift("Administration")
 	}
 
 	let tabData = TabData(data.url, tabNames, [
-		"fa fa-diamond-half-stroke",
-		"fa fa-stamp",
-		"fa fa-basket-shopping",
-		"fa fa-coins",
-		"fa fa-chart-mixed"
+		"fa-diamond-half-stroke",
+		"fa-stamp",
+		"fa-basket-shopping",
+		"fa-coins",
+		"fa-chart-mixed"
 	])
 
 	const mbUsed = (totalmem - freemem) / 1e3 ** 2

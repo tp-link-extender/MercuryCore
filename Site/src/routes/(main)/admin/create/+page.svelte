@@ -17,11 +17,7 @@
 	const formDataManual = superForm(data.formManual)
 	const formDataAutopilot = superForm(data.formAuto)
 
-	let tabData = TabData(
-		data.url,
-		["Create Asset"],
-		["fa fa-file-circle-plus"]
-	)
+	let tabData = TabData(data.url, ["Create Asset"], ["fa-file-circle-plus"])
 	let tabData2 = TabData(data.url, ["Manual", "Autopilot"], [], "tab2")
 
 	const aan = (word: string) =>

@@ -1,13 +1,12 @@
 @font-face {
-	font-family: FontAwesome;
+	font-family: Icons;
 	font-style: normal;
 	font-display: block;
-	src: url(/fa/solid-900.woff2) format("woff2");
+	src: url(/fonts/Icons.woff2) format("woff2");
 }
 
-fa,
-.fa {
-	font-family: FontAwesome;
+fa  {
+	font-family: Icons;
 	display: inline-block;
 	font-style: normal;
 	font-variant: normal;

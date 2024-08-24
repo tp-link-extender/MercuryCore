@@ -7,7 +7,7 @@ import {
 	presetAttributify,
 	presetUno,
 } from "unocss"
-import fa from "./src/fa.json"
+import fa from "./src/icons.json"
 
 export default defineConfig({
 	rules: [

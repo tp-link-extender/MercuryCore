@@ -21,7 +21,7 @@
 	let tabData = TabData(
 		data.url,
 		["Create Invite Key", "Invites"],
-		["fa fa-envelope-circle-check", "fa fa-envelopes-bulk"]
+		["fa-envelope-circle-check", "fa-envelopes-bulk"]
 	)
 </script>
 

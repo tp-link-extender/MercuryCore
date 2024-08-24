@@ -6,11 +6,7 @@
 
 	export let data
 
-	let tabData = TabData(
-		data.url,
-		["Asset queue"],
-		["fa fa-file-circle-xmark"]
-	)
+	let tabData = TabData(data.url, ["Asset queue"], ["fa-file-circle-xmark"])
 </script>
 
 <Head name={data.siteName} title="Asset approval - Admin" />

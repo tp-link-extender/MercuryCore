@@ -11,7 +11,7 @@
 	let tabData = TabData(
 		data.url,
 		["All transactions"],
-		["fa fa-money-bill-wave"]
+		["fa-money-bill-wave"]
 	)
 </script>
 

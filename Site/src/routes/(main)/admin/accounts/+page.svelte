@@ -11,7 +11,7 @@
 	const formData = superForm(data.form)
 	export const snapshot = formData
 
-	let tabData = TabData(data.url, ["Change User Password"], ["fa fa-key"])
+	let tabData = TabData(data.url, ["Change User Password"], ["fa-key"])
 </script>
 
 <Head name={data.siteName} title="Accounts - Admin" />

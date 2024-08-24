@@ -10,7 +10,7 @@
 	let tabData = TabData(
 		data.url,
 		["Status", "Render Queue"],
-		["fa fa-check-circle", "fa fa-bars-progress"]
+		["fa-check-circle", "fa-bars-progress"]
 	)
 
 	const current = data.queue[0]

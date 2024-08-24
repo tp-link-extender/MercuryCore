@@ -21,7 +21,7 @@
 	let tabData = TabData(
 		data.url,
 		["Create Banner", "Banner List"],
-		["fa fa-plus", "fa fa-list"]
+		["fa-plus", "fa-list"]
 	)
 	let textLightForms: { [k: string]: HTMLFormElement } = {}
 	let bannerData = {
