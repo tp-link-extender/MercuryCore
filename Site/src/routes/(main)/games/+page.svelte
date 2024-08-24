@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 	import Head from "$components/Head.svelte"
-	import Icon from "$components/Icon.svelte"
 	import PlaceCard from "./PlaceCard.svelte"
 
 	export let data
@@ -55,7 +54,7 @@
 						class="btn btn-secondary"
 						aria-label="Search"
 						id="button-addon2">
-						<Icon icon="search" />
+						<fa fa-search />
 					</button>
 				</div>
 			</form>

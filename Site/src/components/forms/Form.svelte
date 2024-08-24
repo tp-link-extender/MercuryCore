@@ -1,12 +1,8 @@
 <script lang="ts">
 	import { page } from "$app/stores"
-	import Icon from "$components/Icon.svelte"
-	import type { IconName } from "$components/icons/icons"
 
-	export let submit: string | null = "Submit"
-	export let submitIcon: IconName | "" = ""
 	export let working = "Working..."
-	export let workingIcon: IconName | "" = ""
+	export let submit = "Submit"
 
 	export let inline = false
 	export let nopad = false // Don't pad the icon on the submit button
@@ -25,19 +21,9 @@
 <form use:use {method} {...$$restProps}>
 	<fieldset class={inline ? "input-group" : "pb-2"}>
 		<slot />
-		{#if submit !== null}
+		{#if submit}
 			<button class="btn btn-primary h-full" class:nopad>
-				{#if $delayed}
-					{#if workingIcon}
-						<Icon icon={workingIcon} />
-					{/if}
-					{working}
-				{:else}
-					{#if submitIcon}
-						<Icon icon={submitIcon} />
-					{/if}
-					{submit}
-				{/if}
+				{@html /* ecks ess ess moment */ $delayed ? working : submit}
 			</button>
 		{/if}
 	</fieldset>

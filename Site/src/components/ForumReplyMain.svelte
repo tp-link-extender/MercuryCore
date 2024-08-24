@@ -11,7 +11,6 @@
 	import ReportButton from "$components/ReportButton.svelte"
 	import User from "$components/User.svelte"
 	import type { Writable } from "svelte/store"
-	import Icon from "./Icon.svelte"
 
 	export let user: UserType
 	export let reply: Reply
@@ -148,7 +147,7 @@
 			</a>
 			{#if !hidden}
 				<span class="dropdown">
-					<Icon icon="ellipsis-h" class="dropdown-ellipsis" />
+					<fa fa-ellipsis-h class="dropdown-ellipsis" />
 					<div class="dropdown-content pt-2">
 						<ul class="p-2 rounded-3">
 							{#if reply.author.username === user.username}

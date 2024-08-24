@@ -2,7 +2,6 @@
 	import { deserialize, enhance } from "$app/forms"
 	import Group from "$components/Group.svelte"
 	import Head from "$components/Head.svelte"
-	import Icon from "$components/Icon.svelte"
 
 	export let data
 
@@ -51,7 +50,7 @@
 					class="btn btn-secondary"
 					aria-label="Search"
 					id="button-addon2">
-					<Icon icon="search" />
+					<fa fa-search />
 				</button>
 			</form>
 		</div>

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import AdminLink from "$components/AdminLink.svelte"
 	import Head from "$components/Head.svelte"
-	import Icon from "$components/Icon.svelte"
 	import SidebarShell from "$components/SidebarShell.svelte"
 	import Tab from "$components/Tab.svelte"
 	import TabData from "$components/TabData"
@@ -59,7 +58,7 @@
 							class="btn btn-secondary"
 							aria-label="Search"
 							id="button-addon2">
-							<Icon icon="search" />
+							<fa fa-search />
 						</button>
 					</div>
 				</form>

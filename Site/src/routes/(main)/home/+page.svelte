@@ -46,10 +46,8 @@
 				{formData}
 				inline
 				nopad
-				submit=""
-				submitIcon="paper-plane-top"
-				working="..."
-				workingIcon="">
+				submit="<fa fa-paper-plane-top />"
+				working="...">
 				<Input
 					{formData}
 					inline

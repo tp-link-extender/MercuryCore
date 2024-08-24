@@ -2,7 +2,6 @@
 	import { browser } from "$app/environment"
 	import Asset from "$components/Asset.svelte"
 	import Head from "$components/Head.svelte"
-	import Icon from "$components/Icon.svelte"
 	import SidebarShell from "$components/SidebarShell.svelte"
 	import TabData from "$components/TabData"
 
@@ -62,7 +61,7 @@
 				class="btn btn-secondary"
 				aria-label="Search"
 				id="button-addon2">
-				<Icon icon="search" />
+					<fa fa-search />
 			</button>
 		</form>
 		<div

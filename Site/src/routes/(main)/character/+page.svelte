@@ -3,7 +3,6 @@
 	import { applyAction } from "$app/forms"
 	import { enhance } from "$app/forms"
 	import { invalidateAll } from "$app/navigation"
-	import Icon from "$components/Icon.svelte"
 	import TabData from "$components/TabData"
 	import TabNav from "$components/TabNav.svelte"
 	import { brickColours, brickToHex } from "$lib/brickColours"
@@ -140,7 +139,7 @@
 					class="btn btn-secondary"
 					aria-label="Search"
 					id="button-addon2">
-					<Icon icon="search" />
+					<fa fa-search />
 				</button>
 			</form>
 			{#if query && assets.length === 0}
