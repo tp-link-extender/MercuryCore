@@ -1,12 +1,21 @@
-import { equery, surql } from "$lib/server/surreal"
+import { equery } from "$lib/server/surreal"
+import { redirect } from "@sveltejs/kit"
+import groupsQuery from "./groups.surql"
 
 export type Group = {
 	name: string
 	memberCount: number
 }
 
-export async function load() {
-	const [groups] = await equery<Group[][]>(surql`
-		SELECT name, count(<-member) AS memberCount FROM group`)
-	return { groups }
+export async function load({ url }) {
+	const pageQ = url.searchParams.get("p") || "1"
+	const page = Number.isNaN(+pageQ) ? 1 : Math.round(+pageQ)
+	if (page < 1) redirect(303, "/groups?p=1")
+
+	const [groups, pages] = await equery<[Group[], number]>(groupsQuery, {
+		page: 1,
+	})
+	if (page > pages) redirect(303, `/groups?p=${pages}`)
+
+	return { groups, pages }
 }

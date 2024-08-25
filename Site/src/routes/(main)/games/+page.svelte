@@ -38,29 +38,25 @@
 				Create
 			</a>
 		</div>
-		<div class="w-full sm:w-1/2">
-			<form
-				use:enhance
-				method="POST"
-				action="/search?c=places"
-				class="flex gap-4">
-				<div class="input-group">
-					<input
-						bind:value={query}
-						type="text"
-						name="query"
-						placeholder="Search for a game"
-						aria-label="Search for a game"
-						aria-describedby="button-addon2" />
-					<button
-						class="btn btn-secondary"
-						aria-label="Search"
-						id="button-addon2">
-						<fa fa-search />
-					</button>
-				</div>
-			</form>
-		</div>
+		<form
+			use:enhance
+			method="POST"
+			action="/search?c=places"
+			class="input-group w-full sm:w-1/2">
+			<input
+				bind:value={query}
+				type="text"
+				name="query"
+				placeholder="Search for a game"
+				aria-label="Search for a game"
+				aria-describedby="button-addon2" />
+			<button
+				class="btn btn-secondary"
+				aria-label="Search"
+				id="button-addon2">
+				<fa fa-search />
+			</button>
+		</form>
 	</div>
 	{#if places.length > 0}
 		<div class="flex flex-wrap gap-4 justify-center">
@@ -73,13 +69,12 @@
 				</h2>
 			{/if}
 		</div>
+		{#key $page.url}
+			<Pagination totalPages={data.pages} />
+		{/key}
 	{:else}
 		<h2 class="text-center">No games yet. Be the first to create one!</h2>
 	{/if}
-
-	{#key $page.url}
-		<Pagination totalPages={data.pages} />
-	{/key}
 </div>
 
 <style>

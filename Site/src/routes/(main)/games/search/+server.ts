@@ -6,7 +6,7 @@ import gamesQuery from "../games.surql"
 export async function GET({ url }) {
 	const query = url.searchParams.get("q")?.trim() as string
 	const pageQ = url.searchParams.get("p") || "1"
-	const page = Number.isNaN(+pageQ) ? 1 : +pageQ
+	const page = Number.isNaN(+pageQ) ? 1 : Math.max(1, Math.round(+pageQ))
 
 	const [places] = await equery<Place[][]>(gamesQuery, { query, page })
 	return json(places)
