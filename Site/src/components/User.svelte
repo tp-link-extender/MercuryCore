@@ -35,13 +35,13 @@
 </script>
 
 {#if image}
-	<div
-		class="flex {$$restProps.class}"
-		class:items-center={full}
-		style="--status: {statusColours[user.status]}">
+	<div class="flex {$$restProps.class}" class:items-center={full}>
 		<div class="relative">
 			<!-- css hell -->
-			<div class="status"></div>
+			<div
+				class="status"
+				style="background: {statusColours[user.status]}">
+			</div>
 			<div class="rounded-full" style={style2}>
 				{#if rerender}
 					<img
@@ -61,7 +61,7 @@
 			</div>
 		</div>
 		{#if full}
-			<span class="username {thin ? 'pl-2 text-base' : 'font-bold pl-4'}">
+			<span class={thin ? "pl-2 text-base" : "pl-4 font-bold"}>
 				{user.username}
 			</span>
 		{/if}
@@ -71,27 +71,29 @@
 		href="/user/{user.username}"
 		class="flex no-underline {$$restProps.class}"
 		class:flex-col={bottom}
-		class:items-center={full}
-		style="--status: {statusColours[user.status]}">
+		class:items-center={full}>
 		<div class="relative">
-			<div class="status"></div>
+			<div
+				class="status"
+				style="background: {statusColours[user.status]}">
+			</div>
 			<div
 				class="pfp rounded-full"
 				style="{style2}; --hover: var(--{transitionBackgrounds[bg]})">
 				<img
 					src="/api/avatar/{user.username}"
 					alt={user.username}
-					class="rounded-full rounded-t-0 left-0" 
+					class="rounded-full rounded-t-0 left-0"
 					{style} />
 			</div>
 		</div>
 		{#if full}
-			<span class="username {thin ? 'pl-2 text-base' : 'font-bold pl-4'}">
+			<span class={thin ? "pl-2 text-base" : "pl-4 font-bold"}>
 				{user.username}
 			</span>
 		{:else if bottom}
 			<span
-				class="username overflow-hidden max-h-12 pt-2 text-center"
+				class="overflow-hidden max-h-12 pt-2 text-center"
 				class:small={user.username?.length || 0 > 15}
 				style="max-width: {size}">
 				{user.username}
@@ -123,6 +125,5 @@
 		right: 5%;
 		width: 20%;
 		height: 20%;
-		background: var(--status);
 	}
 </style>

@@ -20,7 +20,7 @@
 </script>
 
 <ul
-	class="nav min-w-28 mt-0 {vertical
+	class="flex flex-wrap list-none min-w-28 pl-0 {vertical
 		? 'vertical flex-col gap-2'
 		: 'pb-6'} {$$restProps.class || ''}"
 	class:justified={justify}
