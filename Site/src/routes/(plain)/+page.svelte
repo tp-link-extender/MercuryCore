@@ -64,7 +64,7 @@
 							? 'fa-check-circle text-emerald-5'
 							: 'fa-circle-ellipsis text-neutral-3'}" />
 					<div class="pl-4">
-						<div class="text-7 font-500 light-text line-height-5">
+						<div class=" light-text text-7 font-500 line-height-5">
 							{name}
 						</div>
 						<p class="p-0">
@@ -91,14 +91,14 @@
 			<a
 				type="button"
 				href="/login"
-				class="inline btn btn-sm btn-secondary">
+				class="btn btn-sm btn-secondary inline">
 				<b>Login</b>
 				<fa fa-right-to-bracket class="pl-1" />
 			</a>
 			<a
 				type="button"
 				href="/register"
-				class="inline btn btn-sm btn-primary">
+				class="btn btn-sm btn-primary inline">
 				<b>Register</b>
 				<fa fa-plus class="pl-1" />
 			</a>

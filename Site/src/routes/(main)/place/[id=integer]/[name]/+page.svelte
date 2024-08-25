@@ -57,7 +57,7 @@
 		)
 	}
 
-	const loadCommand = `LoadLibrary "RbxLoad".Start "${$place.serverTicket}"`
+	const loadCommand = `dofile "http://${data.domain}/game/host?ticket=${$place.serverTicket}"`
 
 	async function placeLauncher() {
 		installed = true
@@ -189,7 +189,7 @@
 				</small>
 				<span class="float-right">
 					<span class="dropdown">
-					<fa fa-ellipsis-h class="dropdown-ellipsis" />
+						<fa fa-ellipsis-h class="dropdown-ellipsis" />
 						<div class="dropdown-content pt-2">
 							<ul class="p-2 rounded-3">
 								<ReportButton
@@ -414,11 +414,11 @@
 			</span>
 		{:else}
 			<span class="text-xl pt-6">
-				Install the Mercury client and start playing now!
+				Install the {data.siteName} client and start playing now!
 			</span>
 			<a
 				class="btn btn-primary"
-				href="https://setup.{data.domain}/MercuryPlayerLauncher.exe">
+				href="https://setup.{data.domain}/PlayerLauncher.exe">
 				Download 2013
 			</a>
 		{/if}

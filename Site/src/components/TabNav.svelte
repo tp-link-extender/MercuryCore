@@ -89,15 +89,15 @@
 	.tab {
 		color: var(--light-text) !important;
 		border-width: 0px 0px 2px !important;
-		--un-ring-color: rgba(86, 29, 201, 0.5);
+		--un-ring-color: hsla(var(--hue), 75%, 45%, 0.5);
 	}
 
 	:not(.activetab) > .tab {
 		&:hover {
-			background: rgba(119, 51, 255, 0.5);
+			background: hsla(var(--hue), 100%, 60%, 0.5);
 		}
 		&:active {
-			background: rgba(102, 26, 255, 0.4);
+			background: hsla(var(--hue), 100%, 55%, 0.4);
 		}
 	}
 
