@@ -61,6 +61,8 @@ const (
 	stipendTime = 12 * 60 * 60 * 1000
 )
 
+var currentFilepath = filepath
+
 func toReadable(c currency) string {
 	return fmt.Sprintf("%d.%06d unit", c/Unit, c%Unit)
 }
@@ -288,6 +290,22 @@ func stipend(to user) error {
 	return nil
 }
 
+func readTransactions() ([]string, error) {
+	file, err := os.OpenFile(currentFilepath, os.O_RDONLY, 0o644)
+	if err != nil {
+		fmt.Println(c.InRed("Failed to open ledger:"), err)
+		return []string{}, err
+	}
+	defer file.Close()
+
+	bytes, err := io.ReadAll(file)
+	if err != nil {
+		fmt.Println(c.InRed("Failed to read transactions from ledger:"), err)
+		return []string{}, err
+	}
+	return strings.Split(string(bytes), "\n"), nil
+}
+
 func currentFeeRoute(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, currentFee())
 }
@@ -310,14 +328,19 @@ func balanceRoute(w http.ResponseWriter, r *http.Request) {
 func adminTransactionsRoute(w http.ResponseWriter, r *http.Request) {
 	var transactions []string
 
-	bytes, err := io.ReadAll(file)
+	lines, err := readTransactions()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	linesLen := len(lines) - 1
 
-	lines := strings.Split(string(bytes), "\n")
-	for _, line := range lines[:len(lines)-1] {
+	reversed := make([]string, linesLen)
+	for i, line := range lines[:linesLen] {
+		reversed[linesLen-i-1] = line
+	}
+
+	for _, line := range reversed[:min(100, linesLen)] { // Get the last 100 transactions
 		parts := strings.SplitN(line, " ", 2)
 		transactions = append(transactions, parts[1])
 	}
@@ -380,7 +403,6 @@ func main() {
 	// create the file if it dont exist
 	var err error
 
-	currentFilepath := filepath
 	if isDockerised() {
 		fmt.Println(c.InPurple("Running in Docker!"))
 		currentFilepath = filepathDockerised
