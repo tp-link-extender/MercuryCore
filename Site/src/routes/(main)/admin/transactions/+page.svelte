@@ -44,8 +44,7 @@
 						num,
 						total: data.transactions.length,
 						max: 12
-					}}
-					class="light-text">
+					}}>
 					<Transaction
 						{transaction}
 						users={data.users}

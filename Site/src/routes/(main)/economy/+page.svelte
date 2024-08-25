@@ -83,8 +83,7 @@
 						num,
 						total: data.transactions.length,
 						max: 12
-					}}
-					class="light-text">
+					}}>
 					<Transaction
 						{transaction}
 						users={data.users}
@@ -96,6 +95,10 @@
 </div>
 
 <style>
+	tr:nth-child(2n) {
+		background: var(--darker);
+	}
+
 	.balancenum,
 	.balancenum span {
 		font-feature-settings: "tnum", "calt", "zero";

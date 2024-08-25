@@ -2,3 +2,4 @@
 .env
 /data
 /keys
+/Assets/PrivateKey.pem

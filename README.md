@@ -104,7 +104,7 @@ They should be written in or compiled to Lua, and should aim to be as lightweigh
 If you're using original corescripts provided with the client instead of custom ones, it's common to encounter issues which may need heavy modification to fix or rewrite into your own custom corescripts. This requires a significant amount of internal client knowledge and maintenance effort, with very sparse documentation available for beginners.  
 If choosing to go down the route of using original corescripts, especially for older clients, we recommend taking a look at the scripts used for original Mercury 2 at [tp-link-extender/2013](https://github.com/tp-link-extender/2013) and wish you the best of luck.
 
-The private key for corescript signing is stored in **Assets/PrivateKey.pem**.
+The private key for corescript signing should be placed in **Assets/PrivateKey.pem**, with the corresponding public key patched into the client.
 
 Different client versions may try to access different endpoints on Mercury Core, so it's important to keep this in mind when modifying corescripts. You may also have to modify the Caddyfile at **Site/Caddyfile** to allow for requests to be rewritten to their corresponding endpoints.
 
@@ -122,7 +122,7 @@ The site uses [Typescript](https://typescripts.org) throughout, a language that 
 
 ## Route structure
 
-Actual pages for the site are stored in **/Site/src/routes**. The structure for them might look crazy at first, but it makes it very simple to differentiate between clientside and serverside code, and layout groups help to heavily reduce boilerplate and code duplication.
+Actual pages for the site are stored in **Site/src/routes**. The structure for them might look crazy at first if you're not familiar with SvelteKit, but it makes it very simple to differentiate between clientside and serverside code, and layout groups help to heavily reduce boilerplate and code duplication.
 
 See the [SvelteKit Routing docs](https://kit.svelte.dev/docs/routing) for more information.
 
