@@ -11,6 +11,9 @@ export type Place = {
 }
 
 export async function load() {
-	const [places] = await equery<Place[][]>(gamesQuery)
-	return { places }
+	const [places, pages] = await equery<[Place[], number]>(gamesQuery, {
+		page: 1,
+	})
+
+	return { places, pages }
 }

@@ -16,7 +16,7 @@
 <div class="ctnr pt-12 flex flex-col gap-4">
 	<div class="grid lg:grid-cols-[1fr_1fr] gap-4">
 		<div class="card bg-darker p-4">
-			Current balance
+			<h2>Current balance</h2>
 			<div class="flex flex-row items-center text-2rem">
 				<span class="pr-2 text-emerald-6">{data.currencySymbol}</span>
 				<span class="balancenum flex flex-row text-emerald-6">
@@ -64,39 +64,47 @@
 		</div>
 	</div>
 
-	<table class="w-full">
-		<thead>
-			<tr>
-				<th>Type</th>
-				<th>From</th>
-				<th>Time</th>
-				<th>Amount</th>
-				<th>Fee</th>
-				<th>To</th>
-				<th>Note & link</th>
-			</tr>
-		</thead>
-		<tbody>
-			{#each data.transactions as transaction, num}
-				<tr
-					in:fade={{
-						num,
-						total: data.transactions.length,
-						max: 12
-					}}>
-					<Transaction
-						{transaction}
-						users={data.users}
-						currencySymbol={data.currencySymbol} />
+	<h2>Your recent transactions</h2>
+
+	<div class="card bg-darker p-4">
+		<table class="w-full">
+			<thead>
+				<tr>
+					<th>Type</th>
+					<th>From</th>
+					<th>Time</th>
+					<th>Amount</th>
+					<th>Fee</th>
+					<th>To</th>
+					<th>Note & link</th>
 				</tr>
-			{/each}
-		</tbody>
-	</table>
+			</thead>
+			<tbody>
+				{#each data.transactions as transaction, num}
+					<tr
+						in:fade={{
+							num,
+							total: data.transactions.length,
+							max: 12
+						}}>
+						<Transaction
+							{transaction}
+							users={data.users}
+							currencySymbol={data.currencySymbol} />
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
 </div>
 
 <style>
-	tr:nth-child(2n) {
-		background: var(--darker);
+	tbody tr:nth-child(2n-1) {
+		background: var(--background);
+	}
+
+	h2 {
+		@apply text-xl font-500;
 	}
 
 	.balancenum,

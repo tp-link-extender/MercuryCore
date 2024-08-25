@@ -35,7 +35,7 @@
 	</p>
 	<span class="float-start pl-1 pt-1">
 		<fa fa-thumbs-up class="opacity-75" />
-		{isNaN(ratio) ? "--" : ratio}%
+		{Number.isNaN(ratio) ? "--" : ratio}%
 	</span>
 	<span class="float-end pr-1 pt-1">
 		<fa fa-user class="opacity-75" />

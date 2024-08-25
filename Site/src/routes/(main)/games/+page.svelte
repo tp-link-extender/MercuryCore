@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
+	import { page } from "$app/stores"
 	import Head from "$components/Head.svelte"
+	import Pagination from "$components/Pagination.svelte"
 	import PlaceCard from "./PlaceCard.svelte"
 
 	export let data
@@ -74,6 +76,10 @@
 	{:else}
 		<h2 class="text-center">No games yet. Be the first to create one!</h2>
 	{/if}
+
+	{#key $page.url}
+		<Pagination totalPages={data.pages} />
+	{/key}
 </div>
 
 <style>

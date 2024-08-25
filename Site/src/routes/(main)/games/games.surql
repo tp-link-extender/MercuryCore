@@ -15,5 +15,16 @@ FROM place WHERE !privateServer
 	ELSE
 		TRUE # whatever
 	END
-ORDER BY playerCount DESC, serverPing DESC;
+ORDER BY playerCount DESC, serverPing DESC
+LIMIT 50 START ($page - 1) * 50;
+
+math::ceil(
+	<float> count(SELECT 1 FROM place WHERE !privateServer
+		AND !deleted
+		AND IF $query THEN
+			string::lowercase($query) IN string::lowercase(name)
+		ELSE
+			TRUE # whatever
+		END) / 50
+);
 

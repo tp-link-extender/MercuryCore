@@ -28,7 +28,7 @@
 			<div class="flex justify-between px-3">
 				<span>
 					<fa fa-thumbs-up class="opacity-75" />
-					{isNaN(ratio) ? "--" : ratio}%
+					{Number.isNaN(ratio) ? "--" : ratio}%
 				</span>
 				<span>
 					<fa fa-user class="opacity-75" />

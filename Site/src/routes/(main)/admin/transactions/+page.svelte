@@ -57,7 +57,7 @@
 
 <style>
 	/* Change colour of every second row */
-	tr:nth-child(2n) {
+	tbody tr:nth-child(2n-1) {
 		background: var(--darker);
 	}
 </style>
