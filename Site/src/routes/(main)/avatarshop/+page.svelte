@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
+	import { page } from "$app/stores"
 	import Asset from "$components/Asset.svelte"
 	import Head from "$components/Head.svelte"
+	import Pagination from "$components/Pagination.svelte"
 	import TabData from "$components/TabData"
 	import TabNav from "$components/TabNav.svelte"
 
@@ -147,7 +149,7 @@
 		</div>
 		<div>
 			<TabNav bind:tabData justify />
-			{#if !query || assets.length > 0}
+			{#if !query && assets.length > 0}
 				<div
 					class="grid gap-4 grid-cols-2 xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3">
 					{#each assets as asset, num (asset.id)}
@@ -158,9 +160,16 @@
 							symbol={data.currencySymbol} />
 					{/each}
 				</div>
-			{:else}
-				<h2 class="pt-12">
+				{#key $page.url}
+					<Pagination totalPages={data.pages} />
+				{/key}
+			{:else if query}
+				<h2 class="pt-12 text-center">
 					No items found with search term {query}
+				</h2>
+			{:else}
+				<h2 class="pt-12 text-center">
+					No assets exist in this category yet.
 				</h2>
 			{/if}
 		</div>

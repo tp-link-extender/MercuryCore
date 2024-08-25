@@ -17,35 +17,23 @@
 <a
 	in:fade|global={{ num, total }}
 	href="/avatarshop/{asset.id}/{asset.name}"
-	class="no-underline">
-	<div class="card bg-a3 h-full">
-		<div class="card-body bg-a p-4 rounded-1">
-			<div class="text-center pb-4">
-				<img
-					src="/avatarshop/{asset.id}/{asset.name}/icon"
-					alt={asset.name} />
-			</div>
-			<p class="m-0">{asset.name}</p>
-			<p class="m-0 text-emerald-6">{symbol}{asset.price}</p>
-		</div>
+	class="card bg-a h-full p-4 no-underline">
+	<div class="text-center pb-4">
+		<img
+			src="/avatarshop/{asset.id}/{asset.name}/icon"
+			alt={asset.name}
+			class="w-85%" />
 	</div>
+	<p>{asset.name}</p>
+	<p class="text-emerald-6">{symbol}{asset.price}</p>
 </a>
 
 <style>
 	.card {
 		border: 1px solid var(--accent2);
-	}
-
-	a {
-		& .card-body {
-			transition: 0.3s;
-		}
-		&:hover .card-body {
+		transition: 0.3s;
+		&:hover {
 			background: var(--darker) !important;
 		}
-	}
-
-	img {
-		width: 85%;
 	}
 </style>

@@ -13,7 +13,7 @@ FROM place WHERE !privateServer
 	AND IF $query THEN
 		string::lowercase($query) IN string::lowercase(name)
 	ELSE
-		TRUE # whatever
+		TRUE
 	END
 ORDER BY playerCount DESC, serverPing DESC
 LIMIT 50 START ($page - 1) * 50;
@@ -24,7 +24,7 @@ math::max([
 		AND IF $query THEN
 			string::lowercase($query) IN string::lowercase(name)
 		ELSE
-			TRUE # whatever
+			TRUE
 		END) / 50),
 	1
 ]);
