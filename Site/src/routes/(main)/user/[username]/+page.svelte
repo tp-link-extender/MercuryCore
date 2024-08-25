@@ -107,20 +107,32 @@
 					{/if}
 				</div>
 				{#if data.username !== user.username}
-					<div class="float-right <lg:hidden">
-						<ReportButton
-							user={data.username}
-							url="/user/{data.username}" />
-					</div>
+					<span class="dropdown float-end">
+						<fa fa-ellipsis-h class="dropdown-ellipsis" />
+						<div class="dropdown-content pt-2">
+							<ul class="p-2 rounded-3">
+								<ReportButton
+									user={data.username}
+									url="/user/{data.username}" />
+							</ul>
+						</div>
+					</span>
 				{/if}
 			</div>
 		</div>
 		{#if data.username !== user.username}
 			<span class="lg:hidden flex justify-between items-end pt-2">
 				<Interactions {data} />
-				<ReportButton
-					user={data.username}
-					url="/user/{data.username}" />
+				<span class="dropdown float-end">
+					<fa fa-ellipsis-h class="dropdown-ellipsis" />
+					<div class="dropdown-content pt-2">
+						<ul class="p-2 rounded-3">
+							<ReportButton
+								user={data.username}
+								url="/user/{data.username}" />
+						</ul>
+					</div>
+				</span>
 			</span>
 		{/if}
 	</div>
@@ -208,7 +220,7 @@
 									<span class="float-start">
 										{group.name}
 									</span>
-									<span class="float-right">
+									<span class="float-end">
 										<fa fa-user class="opacity-75" />
 										{group.memberCount}
 									</span>
@@ -233,7 +245,7 @@
 									<span class="float-start">
 										{group.name}
 									</span>
-									<span class="float-right">
+									<span class="float-end">
 										<fa fa-user class="opacity-75" />
 										{group.memberCount}
 									</span>

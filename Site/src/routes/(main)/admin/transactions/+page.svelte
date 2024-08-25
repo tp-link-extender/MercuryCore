@@ -29,7 +29,6 @@
 	<Tab {tabData}>
 		<table class="w-full">
 			{#each data.transactions as transaction, num}
-				{@const value = transaction.Amount > 0}
 				<tr
 					in:fade={{
 						num,
@@ -49,23 +48,16 @@
 					</td>
 
 					<td class="flex justify-center gap-3">
-						<div class="flex flex-col justify-center">
-							<!-- {#if value}
-								{transaction.taxRate}% tax
-							{/if} -->
+						<div class="text-base pt-2 flex gap-3 items-center">
 							<small>
 								{new Date(transaction.Time).toLocaleString()}
 							</small>
+							<fa fa-arrow-right />
+							<span class="text-emerald-6">
+								{data.currencySymbol}
+								{Math.round(transaction.Amount)}
+							</span>
 						</div>
-						{#if value}
-							<div class="text-base pt-2">
-								<fa fa-arrow-right />
-								<span class="text-emerald-6">
-									{data.currencySymbol}
-									{Math.round(transaction.Amount)}
-								</span>
-							</div>
-						{/if}
 					</td>
 
 					<td>

@@ -17,8 +17,8 @@
 	href="/groups/{group.name}">
 	<div class="p-4 flex flex-col h-full">
 		{group.name}
-		<div class="mt-auto mb-1 float-right">
-			<span class="float-right">
+		<div class="mt-auto mb-1 float-end">
+			<span class="float-end">
 				<fa fa-user class="opacity-75" />
 				{group.memberCount}
 			</span>

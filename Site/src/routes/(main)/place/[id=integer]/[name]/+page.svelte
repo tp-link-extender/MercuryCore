@@ -187,7 +187,7 @@
 						: 'bg-red-5'} p-2 py-1">
 					{online ? "Online" : "Offline"}
 				</small>
-				<span class="float-right">
+				<span class="float-end">
 					<span class="dropdown">
 						<fa fa-ellipsis-h class="dropdown-ellipsis" />
 						<div class="dropdown-content pt-2">

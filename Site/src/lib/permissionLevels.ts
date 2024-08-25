@@ -1,3 +1,4 @@
+// warning: fa classes not scanned by unocss
 const permissions = Object.freeze([
 	["white", "fa-user", "User"],
 	["aqua", "fa-check", "Verified"],

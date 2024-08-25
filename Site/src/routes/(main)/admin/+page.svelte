@@ -11,6 +11,13 @@
 	const { user, totalmem, freemem } = data
 
 	const perms = permissionLevels(user.permissionLevel)
+	const _uno = [
+		"fa-user",
+		"fa-check",
+		"fa-hammer",
+		"fa-shield-alt",
+		"fa-scale-balanced"
+	]
 
 	const panel: { [k: string]: [string, string, string][] } = {
 		Moderation: [
