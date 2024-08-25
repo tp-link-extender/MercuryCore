@@ -1,7 +1,7 @@
 <script lang="ts">
 	export let name: string
 	export let tagline: string
-	export let descriptions: string[][]
+	export let descriptions: { [k: string]: string }
 	export let pad = false
 </script>
 
@@ -21,10 +21,10 @@
 		{/if}
 		<hr class="pt-6" />
 
-		{#each descriptions as [title, description]}
-			<div class="pl-4 w-full">
+		{#each Object.entries(descriptions) as [title, description]}
+			<div class="w-full">
 				<h2 class="font-semibold">{title}</h2>
-				<p class="opacity-75">{description}</p>
+				<p class="pl-4 opacity-75">{description}</p>
 			</div>
 		{/each}
 	</div>

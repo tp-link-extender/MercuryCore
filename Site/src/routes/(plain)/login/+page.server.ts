@@ -1,3 +1,4 @@
+import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import { auth } from "$lib/server/lucia"
 import { equery, surql } from "$lib/server/surreal"
@@ -31,6 +32,7 @@ export async function load() {
 	return {
 		form: await superValidate(zod(schema)),
 		users: users > 0,
+		descriptions: config.Branding.Descriptions,
 	}
 }
 

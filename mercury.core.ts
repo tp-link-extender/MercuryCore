@@ -28,6 +28,14 @@ export default {
 		Favicon: "favicon.svg",
 		Icon: "icon.svg",
 		Tagline: "Revival tagline",
+		Descriptions: {
+			"Endless possibilites":
+				"Create or play your favourite games and customise your character with items on our catalog.",
+			"New features":
+				"In addition to full client usability, additional features such as security fixes, QoL fixes and an easy to use website make your experience better.",
+			"Same nostalgia":
+				"All of our clients will remain as vanilla as possible, to make sure it's exactly as you remember it.",
+		},
 	},
 
 	Themes: [

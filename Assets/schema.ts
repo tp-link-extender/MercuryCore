@@ -92,6 +92,12 @@ export type Config = {
 		 * If set to an empty string, this does not display.
 		 */
 		Tagline: string
+		/**
+		 * Descriptions for your revival's features. These are displayed on the register page.
+		 *
+		 * Each description is a key-value pair, where the key is a feature's title and the value is its description.
+		 */
+		Descriptions: { [k: string]: string }
 	}
 
 	/**
