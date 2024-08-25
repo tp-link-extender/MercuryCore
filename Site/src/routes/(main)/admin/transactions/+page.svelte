@@ -17,7 +17,7 @@
 
 <Head name={data.siteName} title="Transactions - Admin" />
 
-<div class="ctnr max-w-240 pb-6">
+<div class="ctnr max-w-280 pb-6">
 	<h1>Transactions &ndash; Admin</h1>
 	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
@@ -25,11 +25,11 @@
 	</a>
 </div>
 
-<SidebarShell bind:tabData>
+<SidebarShell bind:tabData class="max-w-280">
 	<Tab {tabData}>
 		<table class="w-full">
 			{#each data.transactions as transaction, num}
-				{@const value = transaction.amountSent > 0}
+				{@const value = transaction.Amount > 0}
 				<tr
 					in:fade={{
 						num,
@@ -38,65 +38,57 @@
 					}}
 					class="light-text">
 					<td>
-						<User
-							user={transaction.sender}
-							full
-							thin
-							size="2.5rem"
-							bg="accent" />
+						{#if transaction.Type !== "Mint"}
+							<User
+								user={data.users[transaction.From]}
+								full
+								thin
+								size="2.5rem"
+								bg="accent" />
+						{/if}
 					</td>
 
 					<td class="flex justify-center gap-3">
-						<div class="text-base pt-2">
-							<span class="text-emerald-6">
-								{data.currencySymbol}
-								{transaction.amountSent}
-							</span>
-							{#if value}
-								<fa fa-arrow-right-1 />
-							{/if}
-						</div>
 						<div class="flex flex-col justify-center">
-							{#if value}
+							<!-- {#if value}
 								{transaction.taxRate}% tax
-							{/if}
+							{/if} -->
 							<small>
-								{new Date(transaction.time).toLocaleString()}
+								{new Date(transaction.Time).toLocaleString()}
 							</small>
 						</div>
 						{#if value}
 							<div class="text-base pt-2">
-								<fa fa-arrow-right class="mr-1" />
+								<fa fa-arrow-right />
 								<span class="text-emerald-6">
 									{data.currencySymbol}
-									{Math.round(
-										(1 - transaction.taxRate / 100) *
-											transaction.amountSent
-									)}
+									{Math.round(transaction.Amount)}
 								</span>
 							</div>
 						{/if}
 					</td>
 
 					<td>
-						<div class="flex justify-end">
-							<User
-								user={transaction.receiver}
-								full
-								thin
-								size="2.5rem"
-								bg="accent" />
-						</div>
+						{#if transaction.Type !== "Burn"}
+							<div class="flex justify-end">
+								<User
+									user={data.users[transaction.To]}
+									full
+									thin
+									size="2.5rem"
+									bg="accent" />
+							</div>
+						{/if}
 					</td>
 
 					<td>
-						{#if transaction.note && transaction.link}
-							<a href={transaction.link} class="light-text">
-								{transaction.note}
+						{#if transaction.Note && transaction.Type !== "Mint"}
+							<a href={transaction.Link} class="light-text">
+								{transaction.Note}
 							</a>
-						{:else if transaction.note}
+						{:else if transaction.Note}
 							<p>
-								{transaction.note}
+								{transaction.Note}
 							</p>
 						{:else}
 							<em>No transaction note</em>
