@@ -5,7 +5,7 @@
 		// 8 months late lmao
 		Playing: "#238560",
 		Online: "#3459e6",
-		Offline: "blue"
+		Offline: "transparent"
 	})
 	const transitionBackgrounds = Object.freeze({
 		darker: "background",
