@@ -10,11 +10,8 @@ import { createSign } from "node:crypto"
  */
 export async function SignData(data: string, assetId?: number) {
 	const signed = `${assetId ? `--rbxassetid%${assetId}%` : ""}\n${data}`
-
-	return `--rbxsig%${createSign("sha1")
+	const sig = createSign("sha1")
 		.update(signed)
-		.sign(
-			await Bun.file("./keys/PrivateKey.pem").text(),
-			"base64"
-		)}%${signed}`
+		.sign(await Bun.file("../Assets/PrivateKey.pem").text(), "base64")
+	return `--rbxsig%${sig}%${signed}`
 }
