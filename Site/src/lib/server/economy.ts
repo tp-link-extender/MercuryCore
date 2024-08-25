@@ -2,21 +2,63 @@ const economyUrl = "localhost:2009"
 
 export const economyConnFailed = "Cannot connect to economy service"
 
-async function tryFetchValue(
-	url: string
-): Promise<{ ok: true; value: number } | { ok: false }> {
-	try {
-		const req = await fetch(url)
-		return { ok: true, value: +(await req.text()) }
-	} catch {
-		return { ok: false }
+type ReturnValue<T> = Promise<{ ok: true; value: T } | { ok: false }>
+type ReturnErr = { ok: true } | { ok: false; msg: string }
+
+const tryFetch =
+	<T>(transform: (req: Response) => Promise<T>) =>
+	async (url: string): Promise<ReturnValue<T>> => {
+		try {
+			const req = await fetch(url)
+			return { ok: true, value: await transform(req) }
+		} catch {
+			return { ok: false }
+		}
 	}
-}
+
+const tryFetchValue = tryFetch(async req => +(await req.text()))
+const tryFetchJson = <T>() => tryFetch(async req => (await req.json()) as T) // type assertion much?¿
 
 export const getCurrentFee = () => tryFetchValue(`${economyUrl}/currentFee`)
 export const getStipend = () => tryFetchValue(`${economyUrl}/currentStipend`)
 export const getBalance = (user: string) =>
 	tryFetchValue(`${economyUrl}/balance/${user}`)
+
+type BaseTx = {
+	Note: string
+	Time: number
+	Id: string
+}
+
+type TxTypes =
+	| {
+			Type: "Transaction"
+			From: string
+			To: string
+			Amount: number
+			Link: string
+			Returns: number[]
+			Fee: number
+	  }
+	| {
+			Type: "Mint"
+			To: string
+			Amount: number
+	  }
+	| {
+			Type: "Burn"
+			From: string
+			Amount: number
+			Link: string
+			Returns: number[]
+	  }
+
+type ReceivedTx = BaseTx & TxTypes
+
+export const getTransactions = (user: string) =>
+	tryFetchJson<ReceivedTx[]>()(`${economyUrl}/transactions/${user}`)
+export const getAdminTransactions = () =>
+	tryFetchJson<ReceivedTx[]>()(`${economyUrl}/transactions`)
 
 // doin nothing with returns rn
 export async function stipend(To: string) {
@@ -34,7 +76,7 @@ export async function transact(
 	Note: string,
 	Link: string,
 	Returns: number[]
-): Promise<{ ok: true } | { ok: false; msg: string }> {
+): Promise<ReturnErr> {
 	try {
 		const res = await fetch(`${economyUrl}/transact`, {
 			method: "POST",
@@ -54,7 +96,7 @@ export async function burn(
 	Note: string,
 	Link: string,
 	Returns: number[]
-): Promise<{ ok: true } | { ok: false; msg: string }> {
+): Promise<ReturnErr> {
 	try {
 		const res = await fetch(`${economyUrl}/burn`, {
 			method: "POST",
@@ -86,7 +128,7 @@ export async function createAsset(
 	id: number,
 	name: string,
 	slug: string
-): Promise<{ ok: true } | { ok: false; msg: string }> {
+): Promise<ReturnErr> {
 	const price = await getAssetPrice()
 	if (!price.ok) return price
 	return await burn(
@@ -103,7 +145,7 @@ export async function createPlace(
 	id: number,
 	name: string,
 	slug: string
-): Promise<{ ok: true } | { ok: false; msg: string }> {
+): Promise<ReturnErr> {
 	const price = await getPlacePrice()
 	if (!price.ok) return price
 	return await burn(
@@ -118,7 +160,7 @@ export async function createPlace(
 export async function createGroup(
 	To: string,
 	name: string
-): Promise<{ ok: true } | { ok: false; msg: string }> {
+): Promise<ReturnErr> {
 	const price = await getGroupPrice()
 	if (!price.ok) return price
 	return await burn(

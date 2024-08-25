@@ -338,12 +338,24 @@ func adminTransactionsRoute(w http.ResponseWriter, r *http.Request) {
 		reversed[linesLen-i-1] = line
 	}
 
-	var transactions []string
+	var transactions []map[string]any
 	for _, line := range reversed[:min(100, linesLen)] { // Get the last 100 transactions
 		parts := strings.SplitN(line, " ", 2)
-		transactions = append(transactions, parts[1])
+
+		var tx any
+		if err := json.Unmarshal([]byte(parts[1]), &tx); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		casted := tx.(map[string]any)
+		casted["Type"] = parts[0]
+		transactions = append(transactions, casted)
 	}
-	fmt.Fprint(w, "["+strings.Join(transactions, ",")+"]") // No need to do json encoding here
+
+	if err := json.NewEncoder(w).Encode(transactions); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func transactionsRoute(w http.ResponseWriter, r *http.Request) {
