@@ -79,13 +79,19 @@ export type Config = {
 	 */
 	Branding: {
 		/**
-		 * Path to your revival's favicon in the Assets directory.
+		 * Path to your revival's favicon in the Assets directory. May be in any browser-supported format.
 		 */
 		Favicon: string
 		/**
-		 * Path to your revival's logo icon in the Assets directory.
+		 * Path to your revival's logo icon in the Assets directory. May be in any browser-supported format.
 		 */
 		Icon: string
+		/**
+		 * A very short tagline for your revival. This is displayed in the footer and on the login and register pages.
+		 *
+		 * If set to an empty string, this does not display.
+		 */
+		Tagline: string
 	}
 
 	/**

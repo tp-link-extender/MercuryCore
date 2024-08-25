@@ -1,4 +1,6 @@
 <script lang="ts">
+	export let name: string
+	export let tagline: string
 	export let descriptions: string[][]
 	export let pad = false
 </script>
@@ -11,9 +13,13 @@
 			<fa fa-arrow-left class="pr-2" />
 			Home
 		</a>
-		<h1 class="font-bold pb-6 text-14">
-			Mercury <span class="opacity-50">Core</span>
-		</h1>
+		<h1 class="font-bold text-14">{name}</h1>
+		{#if tagline}
+			<h2 class="font-semibold pb-3 text-12 opacity-50">
+				&ndash; {tagline}
+			</h2>
+		{/if}
+		<hr class="pt-6" />
 
 		{#each descriptions as [title, description]}
 			<div class="pl-4 w-full">

@@ -34,7 +34,11 @@
 
 <Waves reverse />
 
-<LoginShell {descriptions} pad>
+<LoginShell 
+	name={data.siteName}
+	tagline={data.tagline}
+	{descriptions} 
+	pad>
 	{#if data.users}
 		<h2>Log into your account</h2>
 		<p>

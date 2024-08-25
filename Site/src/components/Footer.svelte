@@ -13,8 +13,15 @@
 				alt="{data.siteName} logo"
 				class="size-8 opacity-50" />
 			<a href="/" class="no-underline pl-2">{data.siteName}</a>
+			{#if data.tagline}
+				<span class="grey-text pl-1">&ndash;</span>
+				<span class="grey-text pl-1">
+					{data.tagline}
+				</span>
+			{/if}
+			<span class="grey-text pl-1">|</span>
 			<span class="grey-text pl-1">
-				2021-{new Date().getFullYear()}
+				{new Date().getFullYear()}
 			</span>
 		</div>
 		<div class="sm:text-right <sm:pt-4">
@@ -27,7 +34,7 @@
 							clicked = !clicked
 						}}
 						id="heart"
-						class="border-0 p-0 pr-2 grey-text cursor-pointer text-base bg-transparent"
+						class="grey-text border-0 p-0 pl-1 cursor-pointer text-base bg-transparent"
 						class:clicked>
 						<span class="grey-text">made with</span>
 						<fa fa-heart />

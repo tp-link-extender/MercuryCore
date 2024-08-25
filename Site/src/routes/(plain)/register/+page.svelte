@@ -13,16 +13,16 @@
 
 	const descriptions = [
 		[
-			"Original username",
-			"Make sure it is appropriate and between 3-21 characters. Underscores are allowed."
+			"Unique username",
+			"Make sure it is appropriate and between 3-21 characters. Letters A-Z, numbers 0-9, and underscores are allowed."
 		],
 		[
 			"Valid email",
-			`${data.siteName} requires a valid email so you can reset your password at any time.`
+			`${data.siteName} requires a valid email so you can be contacted by administrators for critical account issues.`
 		],
 		[
 			"Secure password",
-			"Make sure your password has a mix of letters, numbers, and symbols to protect against hackers."
+			"Make sure your password is at least 16 characters long and may need a mix of letters, numbers, and symbols to defend against hackers."
 		]
 	]
 </script>
@@ -34,7 +34,7 @@
 
 <Waves />
 
-<LoginShell {descriptions}>
+<LoginShell name={data.siteName} tagline={data.tagline} {descriptions}>
 	{#if data.users}
 		<h2>Create a free account</h2>
 		<p>

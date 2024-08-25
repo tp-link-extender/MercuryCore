@@ -27,12 +27,13 @@ export default {
 	Branding: {
 		Favicon: "favicon.svg",
 		Icon: "icon.svg",
+		Tagline: "Revival tagline",
 	},
 
 	Themes: [
 		{
 			Name: "Standard",
 			Path: "standard.css",
-		}
-	]
+		},
+	],
 } satisfies import("./Assets/schema.ts").Config
