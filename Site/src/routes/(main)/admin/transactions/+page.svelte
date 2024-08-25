@@ -1,9 +1,9 @@
 <script lang="ts">
 	import Head from "$components/Head.svelte"
 	import SidebarShell from "$components/SidebarShell.svelte"
-	import Tab from "$components/Tab.svelte"
 	import TabData from "$components/TabData"
 	import User from "$components/User.svelte"
+	import beautifyCurrency from "$lib/beautifyCurrency"
 	import fade from "$lib/fade"
 
 	export let data
@@ -26,9 +26,22 @@
 </div>
 
 <SidebarShell bind:tabData class="max-w-280">
-	<Tab {tabData}>
-		<table class="w-full">
+	<table class="w-full">
+		<thead>
+			<tr>
+				<th>Type</th>
+				<th>From</th>
+				<th>Time</th>
+				<th>Amount</th>
+				<th>Fee</th>
+				<th>To</th>
+				<th>Note & link</th>
+			</tr>
+		</thead>
+		<tbody>
 			{#each data.transactions as transaction, num}
+				{@const [, c1, c2] = beautifyCurrency(transaction.Amount)}
+
 				<tr
 					in:fade={{
 						num,
@@ -36,6 +49,9 @@
 						max: 12
 					}}
 					class="light-text">
+					<td>
+						{transaction.Type}
+					</td>
 					<td>
 						{#if transaction.Type !== "Mint"}
 							<User
@@ -47,29 +63,37 @@
 						{/if}
 					</td>
 
-					<td class="flex justify-center gap-3">
-						<div class="text-base pt-2 flex gap-3 items-center">
-							<small>
-								{new Date(transaction.Time).toLocaleString()}
-							</small>
-							<fa fa-arrow-right />
-							<span class="text-emerald-6">
+					<td>
+						<small class="tnum">
+							{new Date(transaction.Time).toLocaleString()}
+						</small>
+					</td>
+					<td>
+						<span class="tnum text-emerald-6 tracking-tighter">
+							{data.currencySymbol}
+							{c1}{c2 ? "." : ""}{c2}
+						</span>
+					</td>
+					<td>
+						{#if transaction.Type === "Transaction"}
+							{@const [, f1, f2] = beautifyCurrency(
+								transaction.Fee
+							)}
+							<span class="tnum text-yellow-5 tracking-tighter">
 								{data.currencySymbol}
-								{Math.round(transaction.Amount)}
+								{f1}{f2 ? "." : ""}{f2}
 							</span>
-						</div>
+						{/if}
 					</td>
 
 					<td>
 						{#if transaction.Type !== "Burn"}
-							<div class="flex justify-end">
-								<User
-									user={data.users[transaction.To]}
-									full
-									thin
-									size="2.5rem"
-									bg="accent" />
-							</div>
+							<User
+								user={data.users[transaction.To]}
+								full
+								thin
+								size="2.5rem"
+								bg="accent" />
 						{/if}
 					</td>
 
@@ -88,8 +112,8 @@
 					</td>
 				</tr>
 			{/each}
-		</table>
-	</Tab>
+		</tbody>
+	</table>
 </SidebarShell>
 
 <style>
@@ -100,5 +124,9 @@
 
 	td {
 		height: 3.5rem;
+	}
+
+	.tnum {
+		font-feature-settings: "cv03", "cv04", "cv08", "cv09", "tnum";
 	}
 </style>
