@@ -48,23 +48,12 @@ export async function GET({ url }) {
 
 		// Try loading as a corescript
 
-		const isHealthCorescript = id === "38037265"
-		const file = await Bun.file(
-			isHealthCorescript
-				? "corescripts/38037265.xml"
-				: `corescripts/processed/${id}.lua` // shaggy removed
-		).text()
-
-		let file2 = file.replaceAll(
-			"roblox.com/asset",
-			`${config.Domain}/asset`
-		)
-
-		// please rewrite the health corescript
-		if (!isHealthCorescript) file2 = await SignData(file2, +id)
+		const file = (
+			await Bun.file(`../Corescripts/${id}.lua`).text()
+		).replaceAll("roblox.com/asset", `${config.Domain}/asset`)
 
 		console.log("serving corescript", id)
-		return response(file2)
+		return response(await SignData(file, +id))
 	} catch {
 		redirect(302, `https://assetdelivery.roblox.com/v1/asset?id=${id}`)
 	}

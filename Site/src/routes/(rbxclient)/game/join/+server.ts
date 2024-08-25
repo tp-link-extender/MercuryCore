@@ -48,7 +48,7 @@ export async function GET({ url }) {
 			? "Enum.MembershipType.BuildersClub"
 			: "Enum.MembershipType.None"
 
-	const file = (await Bun.file("corescripts/processed/join.lua").text())
+	const file = (await Bun.file("../Corescripts/join.lua").text())
 		.replaceAll("_PLACE_ID", placeId.toString())
 		.replaceAll("_SERVER_ADDRESS", gameSession.place.serverIP)
 		.replaceAll("_SERVER_PORT", gameSession.place.serverPort.toString())

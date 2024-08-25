@@ -49,7 +49,7 @@ export default async function (
 	)
 
 	// Tap in rcc
-	const scriptFile = Bun.file(`corescripts/processed/render${renderType}.lua`)
+	const scriptFile = Bun.file(`../Corescripts/render${renderType}.lua`)
 	const script = (await scriptFile.text())
 		.replaceAll("_BASE_URL", config.Domain)
 		.replaceAll("_THUMBNAIL_KEY", process.env.RCC_KEY)
