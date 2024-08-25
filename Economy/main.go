@@ -307,6 +307,24 @@ func balanceRoute(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, balances[user])
 }
 
+func adminTransactionsRoute(w http.ResponseWriter, r *http.Request) {
+	var transactions []string
+
+	bytes, err := io.ReadAll(file)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	lines := strings.Split(string(bytes), "\n")
+	for _, line := range lines[:len(lines)-1] {
+		parts := strings.SplitN(line, " ", 2)
+		transactions = append(transactions, parts[1])
+	}
+
+	fmt.Fprint(w, "["+strings.Join(transactions, ",")+"]")
+}
+
 func transactRoute(w http.ResponseWriter, r *http.Request) {
 	var sentTx SentTx
 
@@ -384,6 +402,8 @@ func main() {
 	router.HandleFunc("GET /currentFee", currentFeeRoute)
 	router.HandleFunc("GET /currentStipend", currentStipendRoute)
 	router.HandleFunc("GET /balance/{id}", balanceRoute)
+	router.HandleFunc("GET /transactions", adminTransactionsRoute)
+	// router.HandleFunc("GET /transactions/{id}", transactionsRoute)
 	router.HandleFunc("POST /transact", transactRoute)
 	router.HandleFunc("POST /mint", mintRoute)
 	router.HandleFunc("POST /burn", burnRoute)
