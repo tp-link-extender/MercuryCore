@@ -27,11 +27,6 @@
 		["Server Limit", $place.maxPlayers],
 		["Now Playing", $place.players.length]
 	]
-	const images = [
-		"/place/placeholderImage1.avif",
-		"/place/placeholderImage2.avif",
-		"/place/placeholderImage3.avif"
-	]
 	function scroll(e: MouseEvent) {
 		const url = new URL((e.target as HTMLAnchorElement)?.href).hash.slice(1)
 		document.getElementById(url)?.scrollIntoView(false) // (false) prevents page scrolling to top of element
@@ -121,25 +116,28 @@
 	<div class="grid grid-cols-1 md:(grid-cols-3 gap-4)">
 		<div class="col-span-2 pb-4">
 			<div in:fade class="carousel rounded-4">
-				{#each images as src, i}
+				{#each data.thumbnails as src, i}
 					<div
 						id="slide{i + 1}"
 						class="carousel-item relative w-full"
 						class:active={!i}>
 						<img
-							{src}
+							src="/place/{$place.id}/{data.slug}/thumbnail/{i +
+								1}"
 							class="w-full"
 							alt="Placeholder place thumbnail" />
 						<div
 							class="absolute flex justify-between top-1/2 -translate-y-1/2 left-4 right-4">
 							<a
-								href="#slide{i < 1 ? images.length : i}"
+								href="#slide{i < 1
+									? data.thumbnails.length
+									: i}"
 								class="carousel-button"
 								on:click|preventDefault={scroll}>
 								❮
 							</a>
 							<a
-								href="#slide{i === images.length - 1
+								href="#slide{i === data.thumbnails.length - 1
 									? 1
 									: i + 2}"
 								class="carousel-button"

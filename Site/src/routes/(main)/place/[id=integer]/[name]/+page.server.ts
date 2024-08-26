@@ -43,6 +43,8 @@ type Playing = {
 	valid: boolean
 }
 
+const thumbnails = config.Images.DefaultPlaceThumbnails
+
 export async function load({ url, locals, params }) {
 	const { user } = await authorise(locals)
 	const id = +params.id
@@ -65,7 +67,7 @@ export async function load({ url, locals, params }) {
 	if (!couldMatch(place.name, params.name))
 		redirect(302, `/place/${id}/${slug}`)
 
-	return { slug, place }
+	return { slug, place, thumbnails: [id % thumbnails.length] }
 }
 
 export const actions: import("./$types").Actions = {}
