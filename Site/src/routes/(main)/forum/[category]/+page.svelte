@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { page } from "$app/stores"
 	import Breadcrumbs from "$components/Breadcrumbs.svelte"
 	import Head from "$components/Head.svelte"
+	import Pagination from "$components/Pagination.svelte"
 	import { writable } from "svelte/store"
 	import ForumPost from "./ForumPost.svelte"
 
@@ -37,6 +39,9 @@
 				total={$posts.length}
 				categoryName={data.name} />
 		{/each}
+		{#key $page.url}
+			<Pagination totalPages={1} />
+		{/key}
 	{:else}
 		<h2 class="text-center">
 			No posts in this category yet. Be the first to create one!
