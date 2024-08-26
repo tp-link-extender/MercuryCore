@@ -120,7 +120,6 @@ actions.updateTextLight = async e => {
 	const { bannerTextLight } = form.data
 	if (!id) return message(form, "Missing fields", { status: 400 })
 
-	// await banner.merge(id, { textLight: !!bannerTextLight })
 	await equery(surql`UPDATE $id SET textLight = ${!!bannerTextLight}`, {
 		id: Record("banner", id),
 	})

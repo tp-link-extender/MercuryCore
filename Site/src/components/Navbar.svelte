@@ -226,12 +226,10 @@
 	{#each data.banners as banner (banner.id)}
 		<div
 			transition:slide
-			class="py-1 text-center {banner.textLight
-				? 'text-white'
-				: 'text-black'}"
+			class="py-1 text-center"
 			role="alert"
 			style="background: {banner.bgColour}">
-			<p class="p-0">
+			<p class="p-0 {banner.textLight ? 'text-white' : 'text-black'}">
 				{banner.body}
 			</p>
 		</div>

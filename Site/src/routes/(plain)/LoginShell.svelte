@@ -43,7 +43,7 @@
 <style>
 	#light {
 		/* I had no idea hsla() worked like this */
-		background: radial-gradient(hsla(0, 0%, 100%, 12%) 1px, transparent 1px),
+		background: radial-gradient(#ffffff1f 1px, transparent 1px),
 			var(--background);
 		background-size: 2rem 2rem;
 		background-attachment: fixed;

@@ -3,7 +3,6 @@
 	import { invalidate } from "$app/navigation"
 	import { page } from "$app/stores"
 	import Head from "$components/Head.svelte"
-	import Modal from "$components/Modal.svelte"
 	import SidebarShell from "$components/SidebarShell.svelte"
 	import Tab from "$components/Tab.svelte"
 	import TabData from "$components/TabData"
@@ -11,13 +10,10 @@
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
 	import Textarea from "$components/forms/Textarea.svelte"
-	import fade from "$lib/fade"
-	import { writable } from "svelte/store"
 	import { superForm } from "sveltekit-superforms/client"
 
 	export let data
 
-	let modal = writable(false)
 	let tabData = TabData(
 		data.url,
 		["Create Banner", "Banner List"],
@@ -33,14 +29,7 @@
 
 	const formData = superForm(data.form)
 	export const snapshot = formData
-	const { form, message, delayed } = formData
-	const viewBody = (newBannerData: typeof bannerData) => () => {
-		modal.set(true)
-
-		newBannerData.body = newBannerData.body.trim()
-		$form.bannerBody = newBannerData.body
-		bannerData = newBannerData
-	}
+	const { message } = formData
 </script>
 
 <Head name={data.siteName} title="Banners - Admin" />
@@ -122,7 +111,7 @@
 						<td>
 							<button
 								type="button"
-								on:click={viewBody(banner)}
+								popovertarget={banner.id}
 								class="btn btn-sm btn-tertiary">
 								View Body
 							</button>
@@ -172,45 +161,25 @@
 	</Tab>
 </SidebarShell>
 
-{#if $modal}
-	<Modal {modal}>
-		<div class="flex items-start">
-			<h1 class="text-base pr-4">Banner #{bannerData.id}</h1>
-			<button
-				type="button"
-				class="btn p-0 px-2"
-				on:click={() => modal.set(false)}
-				aria-label="Close">
-				<fa fa-xmark-large />
-			</button>
-		</div>
+{#each data.banners as banner}
+	<div id={banner.id} popover="auto" class="light-text p-4 pb-2 w-100">
+		<h1 class="text-lg pb-2">Banner #{banner.id}</h1>
 
-		<Form {formData} submit={null} action="?/updateBody&id={bannerData.id}">
+		<Form
+			{formData}
+			submit="<fa fa-save class='pr-2'></fa> Save changes"
+			action="?/updateBody&id={banner.id}">
 			<Textarea
 				{formData}
 				name="bannerBody"
 				rows={1}
 				placeholder="3-100 characters"
-				class="text-{bannerData.textLight ? 'light' : 'dark'}"
-				style="background: {bannerData.bgColour} !important" />
-			<div transition:fade class="grid my-0">
-				<button
-					on:click={() => modal.set(false)}
-					class="btn btn-primary"
-					disabled={!$form.bannerBody?.trim() ||
-						bannerData.body.trim() === $form.bannerBody?.trim()}
-					id="saveBannerBody">
-					{#if $delayed}
-						Working...
-					{:else}
-						<fa fa-save class="pr-1" />
-						Save changes
-					{/if}
-				</button>
-			</div>
+				lowpad
+				class="text-{banner.textLight ? 'light' : 'dark'}"
+				style="background: {banner.bgColour} !important" />
 		</Form>
-	</Modal>
-{/if}
+	</div>
+{/each}
 
 <style>
 	input[type="color"] {
