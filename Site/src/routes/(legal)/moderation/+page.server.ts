@@ -16,12 +16,9 @@ async function getModeration(id: string) {
 			SELECT * FROM moderation
 			WHERE out = ${Record("user", id)} AND active = true`
 	)
-	if (moderation) return moderation
+	if (!moderation) redirect(302, "/home")
 
-	error(
-		454,
-		`Your ID has been sent to the ${config.Name} Servers for moderation. Thank you!`
-	)
+	return moderation
 }
 
 // Make sure a user has been moderated before loading the page.

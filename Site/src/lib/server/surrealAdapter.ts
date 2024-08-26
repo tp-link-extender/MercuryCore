@@ -1,19 +1,18 @@
+import { Record, equery, surql } from "$lib/server/surreal"
 import type {
 	Adapter,
 	DatabaseSession,
 	DatabaseUser,
 	RegisteredDatabaseUserAttributes,
 } from "lucia"
-import { Record, equery, surql } from "$lib/server/surreal"
 
 async function deleteSession(sessionId: string) {
 	await equery(surql`DELETE ${Record("session", sessionId)}`)
 }
 
 async function deleteUserSessions(userId: string) {
-	await equery(surql`DELETE session WHERE $user IN <-hasSession<-user`, {
-		user: Record("user", userId),
-	})
+	await equery(surql`
+		DELETE session WHERE ${Record("user", userId)} IN <-hasSession<-user`)
 }
 
 async function getSessionAndUser(
@@ -41,8 +40,8 @@ async function setSession(session: DatabaseSession) {
 		surql`
 			LET $s = CREATE ${Record("session", session.id)}
 				SET expiresAt = time::unix($expiresAt);
-			RELATE $user->hasSession->$s`,
-		{ ...session, user: Record("user", session.userId) }
+			RELATE ${Record("user", session.userId)}->hasSession->$s`,
+		{ ...session } // types
 	)
 }
 

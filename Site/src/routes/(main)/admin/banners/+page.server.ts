@@ -107,10 +107,7 @@ actions.updateBody = async e => {
 	if (!bannerBody || !id)
 		return message(form, "Missing fields", { status: 400 })
 
-	// await banner.merge(id, { body: bannerBody })
-	await equery(surql`UPDATE $id SET body = ${bannerBody}`, {
-		id: Record("banner", id),
-	})
+	await equery(surql`UPDATE ${Record("banner", id)} SET body = ${bannerBody}`)
 }
 actions.updateTextLight = async e => {
 	const { form, error } = await getData(e)
@@ -120,9 +117,8 @@ actions.updateTextLight = async e => {
 	const { bannerTextLight } = form.data
 	if (!id) return message(form, "Missing fields", { status: 400 })
 
-	await equery(surql`UPDATE $id SET textLight = ${!!bannerTextLight}`, {
-		id: Record("banner", id),
-	})
+	await equery(surql`
+		UPDATE ${Record("banner", id)} SET textLight = ${!!bannerTextLight}`)
 }
 actions.show = showHide("show")
 actions.hide = showHide("hide")

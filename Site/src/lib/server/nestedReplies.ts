@@ -25,7 +25,7 @@ const SELECTFROM = `
 		ORDER BY updated DESC) AS content,
 		meta::id(id) AS id,
 		NONE AS parentReplyId,
-		(SELECT status, username FROM <-posted<-user)[0] AS author,
+		(SELECT status, username FROM <-created<-user)[0] AS author,
 
 		count(<-likes) - count(<-dislikes) AS score,
 		$user IN <-likes<-user.id AS likes,
