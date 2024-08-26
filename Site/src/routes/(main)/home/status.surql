@@ -6,4 +6,4 @@ LET $status = CREATE statusPost CONTENT {
 		updated: time::now(),
 	}],
 };
-RELATE $user->posted->$status;
+RELATE $user->created->$status;

@@ -6,7 +6,7 @@ SELECT
 	(IF ->replyToComment->assetComment.id THEN
 		meta::id(->replyToComment[0]->assetComment[0].id)
 	END) AS parentReplyId,
-	(SELECT number, username FROM <-posted<-user)[0] AS author,
+	(SELECT number, username FROM <-created<-user)[0] AS author,
 
 	count(<-likes) - count(<-dislikes) AS score,
 	$user IN <-likes<-user.id AS likes,

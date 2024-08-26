@@ -11,4 +11,4 @@ RELATE $comment->replyToAsset->$asset;
 IF $commentId {
 	RELATE $comment->replyToComment->$commentId;
 };
-RELATE $user->posted->$comment;
+RELATE $user->created->$comment;

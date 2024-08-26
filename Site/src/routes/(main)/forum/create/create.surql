@@ -9,4 +9,4 @@ LET $post = CREATE $postId CONTENT {
 	}],
 };
 RELATE $post->in->$category;
-RELATE $user->posted->$post;
+RELATE $user->created->$post;

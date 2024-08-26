@@ -20,7 +20,7 @@ export async function load({ locals, params }) {
 	const [[post]] = await equery<{ author: { username: string } }[][]>(
 		surql`
 			SELECT
-				(SELECT username FROM <-posted<-user)[0] AS author
+				(SELECT username FROM <-created<-user)[0] AS author
 			FROM ${Record("forumPost", params.post)}`
 	)
 

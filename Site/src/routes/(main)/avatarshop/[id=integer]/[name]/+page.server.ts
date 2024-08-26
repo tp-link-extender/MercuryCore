@@ -181,17 +181,11 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	if (limit) return limit
 
 	const id = +params.id
-
+	const assetOrComment = commentId
+		? Record("assetComment", commentId)
+		: Record("asset", id)
 	const [[commentAuthor]] = await equery<{ id: string }[][]>(
-		commentId
-			? surql`SELECT meta::id(id) AS id FROM ${Record(
-					"assetComment",
-					commentId
-				)}<-posted<-user`
-			: surql`SELECT meta::id(id) AS id FROM ${Record(
-					"asset",
-					id
-				)}<-created<-user`
+		surql`SELECT meta::id(id) AS id FROM ${assetOrComment}<-created<-user`
 	)
 	if (commentId && !commentAuthor) error(404)
 
@@ -234,11 +228,11 @@ actions.like = async ({ request, locals, params, url }) => {
 	const { user } = await authorise(locals)
 	const data = await formData(request)
 	const action = data.action as LikeActions
-	const id = +params.id
 	const commentId = url.searchParams.get("rid")
 	if (!commentId) error(400, "Missing comment id") // Asset likes not yet implemented
 	if (commentId && !idRegex.test(commentId)) error(400, "Invalid comment id")
 
+	const id = +params.id
 	const foundAsset = await find("asset", id)
 	if (!foundAsset) error(404, "Asset not found")
 	const foundComment = await find("assetComment", commentId)
@@ -266,19 +260,16 @@ actions.buy = async e => {
 				*,
 				(SELECT meta::id(id) AS id, username
 				FROM <-created<-user)[0] AS creator,
-				$user IN <-owns<-user.id AS owned
-			FROM $asset`,
-		{
-			asset: Record("asset", id),
-			user: Record("user", user.id),
-		}
+				${Record("user", user.id)} IN <-owns<-user.id AS owned
+			FROM ${Record("asset", id)}`
 	)
 	if (!asset) error(404, "Not found")
 	if (asset.owned) error(400, "You already own this item")
 	if (asset.visibility !== "Visible")
 		error(400, "This item hasn't been approved yet")
 
-	if (asset.price > 0) { // todo work out how free assets are supposed to work
+	if (asset.price > 0) {
+		// todo work out how free assets are supposed to work
 		const tx = await transact(
 			user.id,
 			asset.creator.id,
@@ -291,21 +282,18 @@ actions.buy = async e => {
 	}
 
 	await Promise.all([
-		equery(surql`RELATE $user->owns->$asset SET time = time::now()`, {
-			user: Record("user", user.id),
-			asset: Record("asset", id),
-		}),
+		equery(surql`
+			RELATE ${Record("user", user.id)}->owns->${Record("asset", id)}
+				SET time = time::now()`),
 		user.id === asset.creator.id ||
-			equery(
-				surql`
-					RELATE ${Record("user", user.id)}->notification->${Record("user", asset.creator.id)} CONTENT {
-						type: "ItemPurchase",
-						time: time::now(),
-						note: ${`${user.username} just purchased your item ${asset.name}`},
-						relativeId: ${e.params.id},
-						read: false,
-					}`
-			),
+			equery(surql`
+				RELATE ${Record("user", user.id)}->notification->${Record("user", asset.creator.id)} CONTENT {
+					type: "ItemPurchase",
+					time: time::now(),
+					note: ${`${user.username} just purchased your item ${asset.name}`},
+					relativeId: ${e.params.id},
+					read: false,
+				}`),
 	])
 }
 actions.delete = async e => {
@@ -317,13 +305,14 @@ actions.delete = async e => {
 		undefined,
 		`
 			SELECT
-				meta::id((<-posted<-user.id)[0]) AS authorId,
+				meta::id((<-created<-user.id)[0]) AS authorId,
 				visibility
 			FROM $assetComment`
 	)
 	if (comment.authorId !== user.id)
 		error(403, "You cannot delete someone else's comment")
 	if (comment.visibility !== "Visible") error(400, "Comment already deleted")
+
 	await updateVisibility("Deleted", "[deleted]", id)
 }
 actions.moderate = async e => {

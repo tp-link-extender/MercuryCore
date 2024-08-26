@@ -124,18 +124,14 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	const limit = ratelimit(form, "forumReply", getClientAddress, 5)
 	if (limit) return limit
 
+	const replypostId = replyId
+		? Record("forumReply", replyId)
+		: Record("forumPost", params.post)
 	const [[replypost]] = await equery<{ authorId: string }[][]>(
 		surql`
-			SELECT meta::id(<-posted[0]<-user[0].id) AS authorId
-			FROM $replypostId
-			WHERE visibility = "Visible"`,
-		{
-			replypostId: replyId
-				? Record("forumReply", replyId)
-				: Record("forumPost", params.post),
-		}
+			SELECT meta::id(<-created[0]<-user[0].id) AS authorId
+			FROM ${replypostId}  WHERE visibility = "Visible"`
 	)
-
 	if (!replypost) error(404, `${replyId ? "Reply" : "Post"} not found`)
 
 	const [newReplyId] = await equery<string[]>(surql`fn::id()`)
@@ -178,7 +174,7 @@ actions.delete = async e => {
 		undefined,
 		`
 			SELECT
-				meta::id((<-posted<-user.id)[0]) AS authorId,
+				meta::id((<-created<-user.id)[0]) AS authorId,
 				visibility
 			FROM $forumReply`
 	)

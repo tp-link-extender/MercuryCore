@@ -64,11 +64,10 @@ async function getEquipData(e: RequestEvent) {
 	if (!strId) error(400, "Missing asset id")
 	if (!intRegex.test(strId)) error(400, `Invalid asset id: ${strId}`)
 
-	const id = +strId
-
 	const limit = ratelimit(null, "equip", e.getClientAddress, 2)
 	if (limit) return { error: limit }
 
+	const id = +strId
 	const [[asset]] = await equery<AssetData[][]>(
 		surql`
 			SELECT meta::id(id) AS id, type, visibility

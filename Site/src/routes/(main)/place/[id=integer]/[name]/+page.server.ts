@@ -47,8 +47,8 @@ const thumbnails = config.Images.DefaultPlaceThumbnails
 
 export async function load({ url, locals, params }) {
 	const { user } = await authorise(locals)
-	const id = +params.id
 	const privateServerCode = url.searchParams.get("privateServer")
+	const id = +params.id
 	const [[place]] = await equery<Place[][]>(placeQuery, {
 		user: Record("user", user.id),
 		place: Record("place", id),
@@ -72,12 +72,12 @@ export async function load({ url, locals, params }) {
 
 export const actions: import("./$types").Actions = {}
 actions.like = async ({ url, request, locals, params }) => {
-	const id = +params.id
 	const { user } = await authorise(locals)
 	const data = await formData(request)
 	const action = data.action as LikeActions
 	const privateTicket = url.searchParams.get("privateTicket")
 
+	const id = +params.id
 	const [[foundPlace]] = await equery<FoundPlace[][]>(
 		surql`
 			SELECT

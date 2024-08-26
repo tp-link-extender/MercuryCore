@@ -11,7 +11,7 @@ SELECT
 		meta::id(id) AS id,
 		(SELECT text, updated FROM $parent.content
 		ORDER BY updated DESC) AS content
-	FROM ->posted->statusPost LIMIT 40) AS posts,
+	FROM ->created->statusPost LIMIT 40) AS posts,
 
 	(SELECT
 		meta::id(id) AS id,

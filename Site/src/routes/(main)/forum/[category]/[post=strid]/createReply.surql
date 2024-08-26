@@ -11,4 +11,4 @@ RELATE $reply->replyToPost->$post;
 IF $replyId {
 	RELATE $reply->replyToReply->$replyId;
 };
-RELATE $user->posted->$reply;
+RELATE $user->created->$reply;
