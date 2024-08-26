@@ -49,6 +49,12 @@ const schema = z.object({
 			})
 		)
 		.min(1),
+
+	Filtering: z.object({
+		FilteredWords: z.array(z.string().min(1)),
+		ReplaceWith: z.string(),
+		ReplaceType: z.enum(["Character", "Word"]),
+	}),
 })
 
 const parseResult = schema.safeParse(rawconfig)

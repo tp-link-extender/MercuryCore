@@ -53,4 +53,10 @@ export default {
 			Path: "Themes/Standard.css",
 		},
 	],
+
+	Filtering: {
+		FilteredWords: (await import("$lib/server/filter")).words,
+		ReplaceWith: "#",
+		ReplaceType: "Character",
+	},
 } satisfies import("./Assets/schema.ts").Config

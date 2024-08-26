@@ -127,4 +127,24 @@ export type Config = {
 		 */
 		Path: string
 	}[]
+
+	/**
+	 * Configuration for basic text filtering for profanity.
+	 */
+	Filtering: {
+		/**
+		 * Array of words to naively filter out of text (where surrounded by whitespace). You may wish to pass this in from a package or JSON file.
+		 *
+		 * Set to a blank array to disable filtering.
+		 */
+		FilteredWords: string[]
+		/**
+		 * The character of which to replace filtered words with.
+		 */
+		ReplaceWith: string
+		/**
+		 * How to replace filtered words, either by replacing each character or replacing the entire word with ReplaceWith.
+		 */
+		ReplaceType: "Character" | "Word"
+	}
 }
