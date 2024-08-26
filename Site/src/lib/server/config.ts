@@ -14,6 +14,7 @@ const schema = z.object({
 	DatabaseURL: z.string().min(1),
 	RCCServiceProxyURL: z.string().min(1),
 	CurrencySymbol: z.string().min(1),
+	Pages: z.array(z.enum(["Statistics", "Forum", "Groups"])),
 
 	DefaultBodyColors: z.object({
 		Head: brickColourEnum,

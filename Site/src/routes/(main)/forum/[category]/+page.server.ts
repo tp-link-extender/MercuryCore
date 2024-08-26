@@ -5,6 +5,7 @@ import { authorise } from "$lib/server/lucia"
 import { Record, type RecordIdTypes, equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import categoryQuery from "./category.surql"
+import config from "$lib/server/config"
 
 type Category = {
 	description: string

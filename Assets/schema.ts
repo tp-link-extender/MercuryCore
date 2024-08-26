@@ -23,6 +23,10 @@ export type Config = {
 	 * The symbol for your revival's currency. Placed before the amount.
 	 */
 	CurrencySymbol: string
+	/**
+	 * Controls which optional pages on the site are enabled. This allows you to turn off unnecessary features for your revival.
+	 */
+	Pages: ("Statistics" | "Forum" | "Groups")[]
 
 	/**
 	 * The default body colours for avatar creation, given to each new user on registration.

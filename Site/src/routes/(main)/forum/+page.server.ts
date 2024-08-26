@@ -1,4 +1,6 @@
+import config from "$lib/server/config"
 import { equery } from "$lib/server/surreal"
+import { error } from "@sveltejs/kit"
 import forumQuery from "./forum.surql"
 
 type Category = {

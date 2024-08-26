@@ -26,20 +26,20 @@
 		</div>
 		<div class="sm:text-right <sm:pt-4">
 			<div class="flex <sm:flex-col sm:gap-3">
-				<a class="light-text" href="/statistics">Statistics</a>
-				<span>
-					&ndash;
-					<button
-						on:mousedown={() => {
-							clicked = !clicked
-						}}
-						id="heart"
-						class="grey-text border-0 p-0 pl-1 cursor-pointer text-base bg-transparent"
-						class:clicked>
-						<span class="grey-text">made with</span>
-						<fa fa-heart />
-					</button>
-				</span>
+				{#if data.pages.includes("Statistics")}
+					<a class="light-text" href="/statistics">Statistics</a>
+					<span>&ndash;</span>
+				{/if}
+				<button
+					on:mousedown={() => {
+						clicked = !clicked
+					}}
+					id="heart"
+					class="grey-text border-0 p-0 cursor-pointer text-base bg-transparent"
+					class:clicked>
+					<span class="grey-text">made with</span>
+					<fa fa-heart />
+				</button>
 			</div>
 		</div>
 	</div>

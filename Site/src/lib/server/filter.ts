@@ -17,5 +17,3 @@ export default (text: string) =>
 	text.replaceAll(/\b(\w+)\b/g, (_, word) =>
 		FilteredWords.indexOf(word.toLowerCase()) !== -1 ? replace(word) : word
 	)
-
-export { default as words } from "profane-words"

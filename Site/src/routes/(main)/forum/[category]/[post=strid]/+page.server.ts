@@ -15,6 +15,7 @@ import type { RequestEvent } from "./$types.d.ts"
 import createReplyQuery from "./createReply.surql"
 import forumPostQuery from "./post.surql"
 import updateVisibilityQuery from "./updateVisibility.surql"
+import config from "$lib/server/config.ts"
 
 const schema = z.object({
 	content: z.string().min(1).max(1000),

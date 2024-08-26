@@ -7,6 +7,7 @@ export default {
 	DatabaseURL: "http://localhost:8000",
 	RCCServiceProxyURL: "http://localhost:64990",
 	CurrencySymbol: "屌",
+	Pages: ["Statistics", "Forum"],
 
 	// 'noob' colours
 	DefaultBodyColors: {
@@ -55,7 +56,7 @@ export default {
 	],
 
 	Filtering: {
-		FilteredWords: (await import("$lib/server/filter")).words,
+		FilteredWords: [],
 		ReplaceWith: "#",
 		ReplaceType: "Character",
 	},
