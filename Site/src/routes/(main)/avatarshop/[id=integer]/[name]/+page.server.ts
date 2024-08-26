@@ -5,6 +5,7 @@ import {
 	getCurrentFee,
 	transact,
 } from "$lib/server/economy"
+import filter from "$lib/server/filter"
 import formData from "$lib/server/formData"
 import formError from "$lib/server/formError"
 import { type LikeActions, like, likeScoreActions } from "$lib/server/like"
@@ -169,13 +170,13 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
 
+	// If there is a commentId, it is a reply to another comment
 	const commentId = url.searchParams.get("rid")
-	// If there is a replyId, it is a reply to another comment
-
-	const content = form.data.content.trim()
-	if (!content)
-		return formError(form, ["content"], ["Comment cannot be empty"])
 	if (commentId && !idRegex.test(commentId)) error(400, "Invalid comment id")
+
+	const unfiltered = form.data.content.trim()
+	if (!unfiltered)
+		return formError(form, ["content"], ["Comment cannot be empty"])
 
 	const limit = ratelimit(form, "assetComment", getClientAddress, 5)
 	if (limit) return limit
@@ -193,7 +194,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	const [newReplyId] = await equery<string[]>(surql`fn::id()`)
 
 	await equery(createCommentQuery, {
-		content,
+		content: filter(unfiltered),
 		user: Record("user", user.id),
 		assetComment: Record("assetComment", newReplyId),
 		asset: Record("asset", id),
@@ -216,8 +217,8 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 					sender: Record("user", user.id),
 					receiver: Record("user", receiverId),
 					note: commentId
-						? `${user.username} replied to your comment: ${content}`
-						: `${user.username} commented on your asset: ${content}`,
+						? `${user.username} replied to your comment: ${unfiltered}`
+						: `${user.username} commented on your asset: ${unfiltered}`,
 					relativeId: newReplyId,
 				}
 			),

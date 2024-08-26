@@ -1,3 +1,4 @@
+import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import { like } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
@@ -42,7 +43,7 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 
 	const title = form.data.title.trim()
 	if (!title) return formError(form, ["title"], ["Post must have a title"])
-	const content = form.data.content?.trim()
+	const unfiltered = form.data.content?.trim()
 
 	const limit = ratelimit(form, "forumPost", getClientAddress, 30)
 	if (limit) return limit
@@ -64,7 +65,7 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 		postId: Record("forumPost", newPostId),
 		category: Record("forumCategory", category),
 		title,
-		content,
+		content: unfiltered ? filter(unfiltered) : undefined,
 	})
 
 	await like(user.id, Record("forumPost", newPostId))

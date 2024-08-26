@@ -1,3 +1,4 @@
+import filter from "$lib/server/filter.js"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
@@ -65,8 +66,12 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	const limit = ratelimit(form, "statusPost", getClientAddress, 30)
 	if (limit) return limit
 
-	const content = form.data.status.trim()
-	if (!content) return formError(form, ["status"], ["Status cannot be empty"])
+	const unfiltered = form.data.status.trim()
+	if (!unfiltered)
+		return formError(form, ["status"], ["Status cannot be empty"])
 
-	await equery(statusQuery, { content, user: Record("user", user.id) })
+	await equery(statusQuery, {
+		content: filter(unfiltered),
+		user: Record("user", user.id),
+	})
 }

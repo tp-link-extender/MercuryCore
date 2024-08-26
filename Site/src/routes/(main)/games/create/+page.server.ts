@@ -1,4 +1,5 @@
 import { createPlace, getPlacePrice } from "$lib/server/economy"
+import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import { Record, equery, surql } from "$lib/server/surreal"
@@ -76,8 +77,8 @@ actions.default = async ({ request, locals }) => {
 	await equery(createQuery, {
 		user: Record("user", user.id),
 		id,
-		name,
-		description,
+		name: filter(name),
+		description: filter(description),
 		serverIP,
 		serverPort,
 		privateServer,

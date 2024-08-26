@@ -1,4 +1,5 @@
 import fs from "node:fs"
+import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import { Record, equery, surql } from "$lib/server/surreal"
@@ -117,8 +118,8 @@ actions.view = async e => {
 
 	await equery(updateSettingsQuery, {
 		place: Record("place", id),
-		title,
-		description: description || "",
+		title: filter(title),
+		description: filter(description || ""),
 	})
 	return message(form, "View settings updated successfully!")
 }

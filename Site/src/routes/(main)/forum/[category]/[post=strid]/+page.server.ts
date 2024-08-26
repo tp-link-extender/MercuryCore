@@ -1,4 +1,5 @@
 import { idRegex } from "$lib/paramTests"
+import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import { like } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
@@ -114,12 +115,13 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
 
-	const content = form.data.content.trim()
-	if (!content) return formError(form, ["content"], ["Reply cannot be empty"])
-
 	// If there is a replyId, it is a reply to another reply
 	const replyId = url.searchParams.get("rid")
 	if (replyId && !idRegex.test(replyId)) error(400, "Invalid reply id")
+
+	const unfiltered = form.data.content.trim()
+	if (!unfiltered)
+		return formError(form, ["content"], ["Reply cannot be empty"])
 
 	const limit = ratelimit(form, "forumReply", getClientAddress, 5)
 	if (limit) return limit
@@ -137,7 +139,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	const [newReplyId] = await equery<string[]>(surql`fn::id()`)
 
 	await equery(createReplyQuery, {
-		content,
+		content: filter(unfiltered),
 		user: Record("user", user.id),
 		forumReply: Record("forumReply", newReplyId),
 		post: Record("forumPost", params.post),
@@ -159,7 +161,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 				receiver: Record("user", replypost.authorId),
 				note: `${user.username} replied to your ${
 					replyId ? "reply" : "post"
-				}: ${content}`,
+				}: ${unfiltered}`,
 			}
 		)
 
