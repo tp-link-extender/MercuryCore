@@ -30,6 +30,11 @@ const schema = z.object({
 		Time: z.boolean(),
 	}),
 
+	Images: z.object({
+		DefaultPlaceIcons: z.array(z.string().min(1)),
+		DefaultPlaceThumbnails: z.array(z.string().min(1)),
+	}),
+
 	Branding: z.object({
 		Favicon: z.string().min(1),
 		Icon: z.string().min(1),

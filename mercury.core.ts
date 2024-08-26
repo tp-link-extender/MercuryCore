@@ -25,8 +25,8 @@ export default {
 	},
 
 	Branding: {
-		Favicon: "favicon.svg",
-		Icon: "icon.svg",
+		Favicon: "Branding/Favicon.svg",
+		Icon: "Branding/Icon.svg",
 		Tagline: "Revival tagline",
 		Descriptions: {
 			"Endless possibilites":
@@ -38,10 +38,19 @@ export default {
 		},
 	},
 
+	Images: {
+		DefaultPlaceIcons: ["Images/DefaultIcon1.avif"],
+		DefaultPlaceThumbnails: [
+			"Images/DefaultThumbnail1.avif",
+			"Images/DefaultThumbnail2.avif",
+			"Images/DefaultThumbnail3.avif",
+		],
+	},
+
 	Themes: [
 		{
 			Name: "Standard",
-			Path: "standard.css",
+			Path: "Themes/Standard.css",
 		},
 	],
 } satisfies import("./Assets/schema.ts").Config

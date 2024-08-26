@@ -75,7 +75,7 @@ export type Config = {
 	}
 
 	/**
-	 * Configuration for custom branding and image file paths in the Assets directory.
+	 * Configuration for custom branding and icon file paths in the Assets directory.
 	 */
 	Branding: {
 		/**
@@ -87,7 +87,7 @@ export type Config = {
 		 */
 		Icon: string
 		/**
-		 * A very short tagline for your revival. This is displayed in the footer and on the login and register pages.
+		 * A very short tagline for your revival. This is displayed in the footer as  well as on the login and register pages.
 		 *
 		 * If set to an empty string, this does not display.
 		 */
@@ -98,6 +98,20 @@ export type Config = {
 		 * Each description is a key-value pair, where the key is a feature's title and the value is its description.
 		 */
 		Descriptions: { [k: string]: string }
+	}
+
+	/**
+	 * Configuration for image file paths in the Assets directory.
+	 */
+	Images: {
+		/**
+		 * Array of paths for default place icons in the Assets directory. May be in any browser-supported format.
+		 */
+		DefaultPlaceIcons: string[]
+		/**
+		 * Array of paths for default place icons in the Assets directory. May be in any browser-supported format.
+		 */
+		DefaultPlaceThumbnails: string[]
 	}
 
 	/**
