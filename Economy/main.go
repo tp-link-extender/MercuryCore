@@ -4,6 +4,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -71,8 +72,8 @@ func toReadable(c currency) string {
 // Since fees are stored as a separate value and are burned, I can't see a reason for them to exist for now
 // UTXOs lmao
 type SentTx struct {
-	From       user
 	To         user
+	From       user
 	Amount     currency
 	Link, Note string // Transaction links might be a bit of an ass backwards concept for now but ion care
 	Returns    []asset
@@ -186,38 +187,56 @@ func currentFee() float64 {
 	return max((1+(CCU()*0.9-TCU)/TCU*4)*baseFee, baseFee)
 }
 
-func readTx(txType string, remaining string) {
-	switch txType {
-	case "Transaction":
-		var tx Tx
-		Assert(json.Unmarshal([]byte(remaining), &tx), "Failed to decode transaction from ledger")
+func handleTxTypes(lines []string, handleTx func(tx Tx), handleMint func(mint Mint), handleBurn func(burn Burn)) {
+	for _, line := range lines {
+		parts := strings.SplitN(line, " ", 2) // split line at first space, with the transaction type being the first part
 
-		if tx.Amount+tx.Fee > balances[tx.From] {
-			fmt.Println("Invalid transaction in ledger")
-			os.Exit(1)
-		}
-		balances[tx.From] -= tx.Amount + tx.Fee
-		balances[tx.To] += tx.Amount
-	case "Mint":
-		var mint Mint
-		Assert(json.Unmarshal([]byte(remaining), &mint), "Failed to decode mint from ledger")
+		switch parts[0] {
+		case "Transaction":
+			var tx Tx
+			Assert(json.Unmarshal([]byte(parts[1]), &tx), "Failed to decode transaction from ledger")
 
-		balances[mint.To] += mint.Amount
-		if mint.Note == "Stipend" {
-			prevStipends[mint.To] = mint.Time
-		}
-	case "Burn":
-		var burn Burn
-		Assert(json.Unmarshal([]byte(remaining), &burn), "Failed to decode burn from ledger")
+			if tx.Amount+tx.Fee > balances[tx.From] {
+				fmt.Println("Invalid transaction in ledger")
+				os.Exit(1)
+			}
 
-		if burn.Amount > balances[burn.From] {
-			fmt.Println("Invalid burn in ledger")
-			os.Exit(1)
+			handleTx(tx)
+		case "Mint":
+			var mint Mint
+			Assert(json.Unmarshal([]byte(parts[1]), &mint), "Failed to decode mint from ledger")
+
+			handleMint(mint)
+		case "Burn":
+			var burn Burn
+			Assert(json.Unmarshal([]byte(parts[1]), &burn), "Failed to decode burn from ledger")
+
+			if burn.Amount > balances[burn.From] {
+				fmt.Println("Invalid burn in ledger")
+				os.Exit(1)
+			}
+
+			handleBurn(burn)
+		default:
+			fmt.Println(c.InRed("Unknown transaction type in ledger"))
 		}
-		balances[burn.From] -= burn.Amount
-	default:
-		fmt.Println(c.InRed("Unknown transaction type in ledger"))
 	}
+}
+
+func loadTx(tx Tx) {
+	balances[tx.From] -= tx.Amount + tx.Fee
+	balances[tx.To] += tx.Amount
+}
+
+func loadMint(mint Mint) {
+	balances[mint.To] += mint.Amount
+	if mint.Note == "Stipend" {
+		prevStipends[mint.To] = mint.Time
+	}
+}
+
+func loadBurn(burn Burn) {
+	balances[burn.From] -= burn.Amount
 }
 
 func updateBalances() {
@@ -225,10 +244,7 @@ func updateBalances() {
 	Assert(err, "Failed to read from ledger")
 
 	lines := strings.Split(string(bytes), "\n")
-	for _, line := range lines[:len(lines)-1] { // remove last empty line
-		parts := strings.SplitN(line, " ", 2) // split line at first space, with the transaction type being the first part
-		readTx(parts[0], parts[1])
-	}
+	handleTxTypes(lines[:len(lines)-1] /* remove last empty line */, loadTx, loadMint, loadBurn)
 }
 
 func appendEvent(e any, eType string) error {
@@ -371,27 +387,35 @@ func transactionsRoute(w http.ResponseWriter, r *http.Request) {
 		reversed[linesLen-i-1] = line
 	}
 
-	id := r.PathValue("id")
-	var transactions []map[string]any
-	for _, line := range reversed[:min(100, linesLen)] {
-		parts := strings.SplitN(line, " ", 2)
+	id := user(r.PathValue("id"))
+	w.Write([]byte("["))
 
-		var tx any
-		if err := json.Unmarshal([]byte(parts[1]), &tx); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+	w2 := io.Writer(&bytes.Buffer{})
+
+	encoder := json.NewEncoder(w2)
+
+	handleTxTypes(reversed[:min(100, linesLen)], func(tx Tx) {
+		if tx.To == id || tx.From == id {
+			encoder.Encode(tx)
+			w2.Write([]byte(","))
 		}
-
-		casted := tx.(map[string]any) // dark magic
-		if casted["To"] == id || casted["From"] == id {
-			casted["Type"] = parts[0]
-			transactions = append(transactions, casted)
+	}, func(mint Mint) {
+		if mint.To == id {
+			encoder.Encode(mint)
+			w2.Write([]byte(","))
 		}
-	}
+	}, func(burn Burn) {
+		if burn.From == id {
+			encoder.Encode(burn)
+			w2.Write([]byte(","))
+		}
+	})
 
-	if err := json.NewEncoder(w).Encode(transactions); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	toWrite := w2.(*bytes.Buffer).String()
+	toWrite = toWrite[:len(toWrite)-1] // remove last comma
+
+	w.Write([]byte(toWrite))
+	w.Write([]byte("]"))
 }
 
 func transactRoute(w http.ResponseWriter, r *http.Request) {
