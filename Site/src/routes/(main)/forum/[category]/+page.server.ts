@@ -1,5 +1,4 @@
 import { idRegex } from "$lib/paramTests"
-import config from "$lib/server/config"
 import exclude from "$lib/server/exclude"
 import formData from "$lib/server/formData"
 import { likeScoreActions } from "$lib/server/like"
@@ -28,7 +27,7 @@ type Category = {
 }
 
 export async function load({ locals, params }) {
-	if (!config.Pages.includes("forum")) error(404, "Not Found")
+	exclude("Forum")
 	const { user } = await authorise(locals)
 
 	const [[category]] = await equery<Category[][]>(categoryQuery, {

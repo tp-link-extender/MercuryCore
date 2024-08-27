@@ -67,10 +67,13 @@
 		// ["Home", "/", "fa-house-chimney"],
 		["Games", "/games", "fa-mountain-sun"],
 		["Catalog", "/avatarshop", "fa-book-open-cover"],
-		// ["Groups", "/groups", "fa-people-group"],
-		["Create", "/develop", "fa-plus"],
-		["Forum", "/forum", "fa-messages"]
+		["Create", "/develop", "fa-plus"]
 	]
+	if (data.pages.includes("Groups"))
+		nav1.push(["Groups", "/groups", "fa-people-group"])
+	if (data.pages.includes("Forum"))
+		nav1.push(["Forum", "/forum", "fa-messages"])
+
 	const usernav = [
 		["fa-money-bill-transfer", "Economy", "/economy"],
 		["fa-user-group", "Friends", "/requests"],

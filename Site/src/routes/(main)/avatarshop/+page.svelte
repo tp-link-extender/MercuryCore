@@ -80,9 +80,9 @@
 		</div>
 	</div>
 
-	<div
-		class="grid gap-2 lg:grid-cols-[1fr_5fr] md:(grid-cols-[1fr_4fr] gap-4)">
-		<div>
+	<!-- <div class="grid gap-2 lg:grid-cols-[1fr_5fr] md:(grid-cols-[1fr_4fr] gap-4)"> -->
+	<div class="grid">
+		<!-- <div>
 			<h2>Filters</h2>
 			<div class="text-neutral-4 pt-4 pb-2">Sort by</div>
 			<div class="grid grid-cols-[1fr_9fr] items-center gap-1">
@@ -146,12 +146,13 @@
 					<button class="btn btn-tertiary btn-sm">Set</button>
 				</div>
 			</div>
-		</div>
+		</div> -->
 		<div>
-			<TabNav bind:tabData justify />
+			<TabNav bind:tabData justify class="<sm:hidden" />
+			<TabNav bind:tabData vertical class="sm:hidden pb-4" />
 			{#if !query && assets.length > 0}
 				<div
-					class="grid gap-4 grid-cols-2 xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3">
+					class="grid gap-4 grid-cols-2 xl:grid-cols-7 md:grid-cols-6 sm:grid-cols-3">
 					{#each assets as asset, num (asset.id)}
 						<Asset
 							{asset}

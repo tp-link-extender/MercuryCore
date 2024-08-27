@@ -13,10 +13,6 @@
 	const { user } = data
 	const formData = superForm(data.form)
 	export const snapshot = formData
-
-	$: sortedFeed = data.feed.sort(
-		(a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()
-	)
 </script>
 
 <Head name={data.siteName} title="Home" />
@@ -54,9 +50,9 @@
 					name="status"
 					placeholder="Post a status" />
 			</Form>
-			{#if sortedFeed.length > 0}
+			{#if data.feed.length > 0}
 				<div class="flex flex-col gap-3 pt-3">
-					{#each sortedFeed as status, num}
+					{#each data.feed as status, num (status.id)}
 						<div
 							in:fade|global={{
 								num,
