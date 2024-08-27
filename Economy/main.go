@@ -4,7 +4,6 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -341,81 +340,71 @@ func balanceRoute(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, balances[user])
 }
 
-func adminTransactionsRoute(w http.ResponseWriter, r *http.Request) {
+func readReversed() ([]string, int, error) {
 	lines, err := readTransactions()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return lines, 0, err
 	}
 
-	linesLen := len(lines) - 1
-	reversed := make([]string, linesLen)
-	for i, line := range lines[:linesLen] {
-		reversed[linesLen-i-1] = line
+	for i := range len(lines) / 2 {
+		j := len(lines) - i - 1
+		lines[i], lines[j] = lines[j], lines[i]
 	}
 
-	var transactions []map[string]any
-	for _, line := range reversed[:min(100, linesLen)] { // Get the last 100 transactions
+	return lines[1:], len(lines) - 1, nil
+}
+
+func enumerateTransactions(validate func(tx map[string]any) bool) (transactions []map[string]any, err error) {
+	lines, linesLen, err := readReversed()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, line := range lines[:min(100, linesLen)] { // Get the last 100 transactions
 		parts := strings.SplitN(line, " ", 2)
 
 		var tx any
-		if err := json.Unmarshal([]byte(parts[1]), &tx); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+		if err = json.Unmarshal([]byte(parts[1]), &tx); err != nil {
+			return nil, err
 		}
 
 		casted := tx.(map[string]any)
+		if !validate(casted) {
+			continue
+		}
 		casted["Type"] = parts[0]
 		transactions = append(transactions, casted)
 	}
 
+	return
+}
+
+func adminTransactionsRoute(w http.ResponseWriter, r *http.Request) {
+	transactions, err := enumerateTransactions(func(tx map[string]any) bool {
+		return true
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	if err := json.NewEncoder(w).Encode(transactions); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
 func transactionsRoute(w http.ResponseWriter, r *http.Request) {
-	lines, err := readTransactions()
+	id := user(r.PathValue("id"))
+
+	transactions, err := enumerateTransactions(func(tx map[string]any) bool {
+		return tx["From"] != nil && user(tx["From"].(string)) == id || tx["To"] != nil && user(tx["To"].(string)) == id
+	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	linesLen := len(lines) - 1
-
-	reversed := make([]string, linesLen)
-	for i, line := range lines[:linesLen] {
-		reversed[linesLen-i-1] = line
+	if err := json.NewEncoder(w).Encode(transactions); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-
-	id := user(r.PathValue("id"))
-	w.Write([]byte("["))
-
-	w2 := io.Writer(&bytes.Buffer{})
-
-	encoder := json.NewEncoder(w2)
-
-	handleTxTypes(reversed[:min(100, linesLen)], func(tx Tx) {
-		if tx.To == id || tx.From == id {
-			encoder.Encode(tx)
-			w2.Write([]byte(","))
-		}
-	}, func(mint Mint) {
-		if mint.To == id {
-			encoder.Encode(mint)
-			w2.Write([]byte(","))
-		}
-	}, func(burn Burn) {
-		if burn.From == id {
-			encoder.Encode(burn)
-			w2.Write([]byte(","))
-		}
-	})
-
-	toWrite := w2.(*bytes.Buffer).String()
-	toWrite = toWrite[:len(toWrite)-1] // remove last comma
-
-	w.Write([]byte(toWrite))
-	w.Write([]byte("]"))
 }
 
 func transactRoute(w http.ResponseWriter, r *http.Request) {
