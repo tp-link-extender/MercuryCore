@@ -1,4 +1,5 @@
 import { idRegex } from "$lib/paramTests"
+import exclude from "$lib/server/exclude"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import { like } from "$lib/server/like"
@@ -15,7 +16,6 @@ import type { RequestEvent } from "./$types.d.ts"
 import createReplyQuery from "./createReply.surql"
 import forumPostQuery from "./post.surql"
 import updateVisibilityQuery from "./updateVisibility.surql"
-import config from "$lib/server/config.ts"
 
 const schema = z.object({
 	content: z.string().min(1).max(1000),
@@ -49,6 +49,7 @@ type ForumPost = {
 }
 
 export async function load({ locals, params }) {
+	exclude("Forum")
 	const { user } = await authorise(locals)
 
 	const postQuery = forumPostQuery.replace("_SELECTREPLIES", SELECTREPLIES)
@@ -96,6 +97,7 @@ const pinThing = (pinned: boolean, thing: RecordId<string>) =>
 
 // wrapping this stuff in arrow functions just to prevent it from maybe returning god knows what to the client from an action
 const pinReply = (pinned: boolean) => async (e: RequestEvent) => {
+	exclude("Forum")
 	await pinThing(pinned, Record("forumReply", (await findReply(e, 4)).id))
 }
 
@@ -112,6 +114,7 @@ const pinPost = (pinned: boolean) => async (e: RequestEvent) => {
 
 export const actions: import("./$types").Actions = {}
 actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
+	exclude("Forum")
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
@@ -169,6 +172,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	await like(user.id, Record("forumReply", newReplyId))
 }
 actions.delete = async e => {
+	exclude("Forum")
 	const { user, reply, id } = await findReply<{
 		authorId: string
 		visibility: string
@@ -190,6 +194,7 @@ actions.delete = async e => {
 	await updateVisibility("Deleted", "[deleted]", id)
 }
 actions.moderate = async e => {
+	exclude("Forum")
 	await updateVisibility("Moderated", "[removed]", (await findReply(e, 4)).id)
 }
 actions.pin = pinReply(true)

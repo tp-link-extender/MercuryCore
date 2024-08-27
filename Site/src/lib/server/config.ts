@@ -8,13 +8,16 @@ const brickColourEnum = z.union([
 	...brickColours.map(c => z.literal(c)),
 ])
 
+export const optionalPages = ["Statistics", "Groups", "Forum"] as const
+export type OptionalPage = (typeof optionalPages)[number]
+
 const schema = z.object({
 	Name: z.string().min(1),
 	Domain: z.string().min(1),
 	DatabaseURL: z.string().min(1),
 	RCCServiceProxyURL: z.string().min(1),
 	CurrencySymbol: z.string().min(1),
-	Pages: z.array(z.enum(["Statistics", "Forum", "Groups"])),
+	Pages: z.array(z.enum(optionalPages)),
 
 	DefaultBodyColors: z.object({
 		Head: brickColourEnum,

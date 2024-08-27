@@ -1,11 +1,12 @@
 import { idRegex } from "$lib/paramTests"
+import config from "$lib/server/config"
+import exclude from "$lib/server/exclude"
 import formData from "$lib/server/formData"
 import { likeScoreActions } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
 import { Record, type RecordIdTypes, equery, surql } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import categoryQuery from "./category.surql"
-import config from "$lib/server/config"
 
 type Category = {
 	description: string
@@ -27,6 +28,7 @@ type Category = {
 }
 
 export async function load({ locals, params }) {
+	if (!config.Pages.includes("forum")) error(404, "Not Found")
 	const { user } = await authorise(locals)
 
 	const [[category]] = await equery<Category[][]>(categoryQuery, {
@@ -55,6 +57,7 @@ async function select(table: keyof RecordIdTypes, id: string) {
 
 export const actions: import("./$types").Actions = {}
 actions.like = async ({ request, locals, url }) => {
+	exclude("Forum")
 	const { user } = await authorise(locals)
 	const data = await formData(request)
 	const action = data.action as keyof typeof likeScoreActions

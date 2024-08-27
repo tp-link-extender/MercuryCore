@@ -1,3 +1,4 @@
+import exclude from "$lib/server/exclude"
 import { authorise } from "$lib/server/lucia"
 import { Record, type RecordId, equery, surql } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
@@ -12,6 +13,7 @@ type Group = {
 }
 
 export async function load({ locals, params }) {
+	exclude("Groups")
 	const { user } = await authorise(locals)
 	const [[group]] = await equery<Group[][]>(groupQuery, {
 		user: Record("user", user.id),
@@ -23,6 +25,7 @@ export async function load({ locals, params }) {
 }
 
 async function getData({ locals, params }: RequestEvent) {
+	exclude("Groups")
 	const { user } = await authorise(locals)
 	const [[group]] = await equery<{ id: RecordId }[][]>(
 		surql`

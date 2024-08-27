@@ -1,3 +1,4 @@
+import exclude from "$lib/server/exclude"
 import { authorise } from "$lib/server/lucia"
 import { type Replies, recurse } from "$lib/server/nestedReplies"
 import { Record, equery, surql } from "$lib/server/surreal"
@@ -15,6 +16,7 @@ type ForumReplies = Replies[number] & {
 }
 
 export async function load({ locals, params }) {
+	exclude("Forum")
 	const { user } = await authorise(locals)
 
 	const [[post]] = await equery<{ author: { username: string } }[][]>(

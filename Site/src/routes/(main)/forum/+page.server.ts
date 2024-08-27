@@ -1,6 +1,5 @@
-import config from "$lib/server/config"
+import exclude from "$lib/server/exclude"
 import { equery } from "$lib/server/surreal"
-import { error } from "@sveltejs/kit"
 import forumQuery from "./forum.surql"
 
 type Category = {
@@ -16,6 +15,7 @@ type Category = {
 }
 
 export async function load() {
+	exclude("Forum")
 	const [categories] = await equery<Category[][]>(forumQuery)
 	return { categories }
 }

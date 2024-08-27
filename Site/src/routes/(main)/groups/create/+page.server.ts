@@ -1,4 +1,5 @@
 import { createGroup, getGroupPrice } from "$lib/server/economy"
+import exclude from "$lib/server/exclude"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import { Record, equery, findWhere } from "$lib/server/surreal"
@@ -13,6 +14,7 @@ const schema = z.object({
 })
 
 export async function load() {
+	exclude("Groups")
 	const price = await getGroupPrice()
 	if (!price.ok) error(500, price.msg)
 	return {
@@ -32,6 +34,7 @@ const errors: { [k: string]: string } = Object.freeze({
 
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ request, locals }) => {
+	exclude("Groups")
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)

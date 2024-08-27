@@ -9,6 +9,7 @@ import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import createQuery from "./create.surql"
+import exclude from "$lib/server/exclude"
 
 const schema = z.object({
 	title: z.string().min(1).max(50),
@@ -16,6 +17,7 @@ const schema = z.object({
 })
 
 export async function load({ url }) {
+	exclude("Forum")
 	const categoryQuery = url.searchParams.get("category")
 	if (!categoryQuery) error(400, "Missing category")
 
@@ -35,6 +37,7 @@ export async function load({ url }) {
 
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ request, locals, url, getClientAddress }) => {
+	exclude("Forum")
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)

@@ -1,3 +1,4 @@
+import exclude from "$lib/server/exclude"
 import { equery } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import groupsQuery from "./groups.surql"
@@ -8,6 +9,7 @@ export type Group = {
 }
 
 export async function load({ url }) {
+	exclude("Groups")
 	const pageQ = url.searchParams.get("p") || "1"
 	const page = Number.isNaN(+pageQ) ? 1 : Math.round(+pageQ)
 	if (page < 1) redirect(303, "/groups?p=1")

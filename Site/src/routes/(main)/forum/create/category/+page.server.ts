@@ -1,3 +1,4 @@
+import exclude from "$lib/server/exclude"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
@@ -13,12 +14,14 @@ const schema = z.object({
 })
 
 export async function load({ locals }) {
+	exclude("Forum")
 	await authorise(locals, 5)
 	return { form: await superValidate(zod(schema)) }
 }
 
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ request, locals, getClientAddress }) => {
+	exclude("Forum")
 	await authorise(locals, 5)
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
