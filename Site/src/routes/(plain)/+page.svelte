@@ -16,8 +16,8 @@
 			name: "Mercury Core",
 			ok: true,
 			success: [
-				"Running SvelteKit",
-				VERSION,
+				"Running",
+				`SvelteKit ${VERSION}`,
 				"in",
 				dev ? "DEVELOPMENT" : "PRODUCTION"
 			],
@@ -33,7 +33,7 @@
 			name: "Economy Service",
 			ok: data.stipend.ok,
 			success: [
-				"Current stipend size is",
+				"Current stipend value is",
 				`${data.currencySymbol}${c1}${c2 ? "." : ""}${c2}`
 			],
 			err: "Unable to connect to the service"
@@ -51,8 +51,8 @@
 <Waves reverse />
 
 <div
-	class="flex justify-center absolute w-250 absolute left-1/2 -translate-x-1/2 pt-25vh">
-	<div class="flex flex-col justify-center w-1/2">
+	class="grid md:grid-cols-[3fr_2fr] justify-center px-6 absolute w-full max-w-250 absolute left-1/2 -translate-x-1/2 pt-25vh">
+	<div class="flex flex-col flex-wrap justify-center">
 		<h1 class="font-bold text-14">
 			Mercury <span class="opacity-50">Core</span>
 		</h1>
@@ -92,7 +92,7 @@
 				type="button"
 				href="/login"
 				class="btn btn-sm btn-secondary inline">
-				<b>Login</b>
+				<b>Log in</b>
 				<fa fa-right-to-bracket class="pl-1" />
 			</a>
 			<a
@@ -105,12 +105,15 @@
 		</div>
 	</div>
 	{#if working}
-		<div class="flex justify-center w-1/2">
-			<p class="font-normal text-6 pt-9">
+		<div class="flex justify-center pt-9">
+			<p class="font-normal text-4 pt-9 max-w-50">
 				If you can see this, that means your installation of Mercury
 				Core is working!
 			</p>
-			<img src="/landing/working.svg" alt="Alonso reference" class="w-50" />
+			<img
+				src="/landing/working.svg"
+				alt="Alonso reference"
+				class="w-35" />
 		</div>
 	{/if}
 </div>
