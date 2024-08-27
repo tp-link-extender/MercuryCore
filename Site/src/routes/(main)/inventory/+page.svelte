@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { browser } from "$app/environment"
+	import { page } from "$app/stores"
 	import Asset from "$components/Asset.svelte"
 	import Head from "$components/Head.svelte"
+	import Pagination from "$components/Pagination.svelte"
 	import SidebarShell from "$components/SidebarShell.svelte"
 	import TabData from "$components/TabData"
 
@@ -61,23 +63,30 @@
 				class="btn btn-secondary"
 				aria-label="Search"
 				id="button-addon2">
-					<fa fa-search />
+				<fa fa-search />
 			</button>
 		</form>
-		<div
-			class="grid gap-4 grid-cols-2 xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3">
-			{#each assets as asset, num}
-				<Asset
-					{asset}
-					{num}
-					total={assets.length}
-					symbol={data.currencySymbol} />
-			{/each}
-			{#if query && assets.length === 0}
-				<h2 class="text-xs pt-12">
-					No items found with search term {query}
-				</h2>
-			{/if}
-		</div>
+
+		{#if !query && assets.length > 0}
+			<div
+				class="grid gap-4 grid-cols-2 xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3">
+				{#each assets as asset, num}
+					<Asset
+						{asset}
+						{num}
+						total={assets.length}
+						symbol={data.currencySymbol} />
+				{/each}
+			</div>
+			{#key $page.url}
+				<Pagination totalPages={1} />
+			{/key}
+		{:else if query}
+			<h2 class="pt-12 text-center">
+				No items found with search term {query}
+			</h2>
+		{:else}
+			<h2 class="pt-12 text-center">No items found in this category</h2>
+		{/if}
 	</SidebarShell>
 </div>
