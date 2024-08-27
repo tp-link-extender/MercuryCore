@@ -29,13 +29,15 @@
 		</span>
 	</h1>
 	{#if data.posts.length > 0}
-		{#each data.posts as post, num (post.id)}
-			<ForumPost
-				{post}
-				{num}
-				total={data.posts.length}
-				categoryName={data.name} />
-		{/each}
+		<div class="flex flex-col gap-4">
+			{#each data.posts as post, num (post.id)}
+				<ForumPost
+					{post}
+					{num}
+					total={data.posts.length}
+					categoryName={data.name} />
+			{/each}
+		</div>
 		{#key $page.url}
 			<Pagination totalPages={data.pages} />
 		{/key}

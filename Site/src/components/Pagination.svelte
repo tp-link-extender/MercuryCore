@@ -25,7 +25,7 @@
 	const disabled = "opacity-50 pointer-events-none"
 </script>
 
-<nav class="flex justify-center gap-2 pt-4" aria-label="pagination">
+<nav class="flex justify-center gap-2 pt-6" aria-label="pagination">
 	<a
 		href={getNewUrl(prevPage)}
 		class="btn btn-secondary {prevPage >= 1 ? '' : disabled}">

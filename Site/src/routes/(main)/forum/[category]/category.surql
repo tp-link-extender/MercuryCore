@@ -18,7 +18,7 @@ WHERE string::lowercase(name) = string::lowercase($category))[0];
 
 math::max([
 	(SELECT
-		math::ceil(<float> count(SELECT 15 FROM $parent<-in.in) / 1) AS count
+		math::ceil(<float> count(SELECT 1 FROM $parent<-in.in) / 15) AS count
 	FROM forumCategory 
 	WHERE string::lowercase(name) = string::lowercase($category))[0].count,
 	1

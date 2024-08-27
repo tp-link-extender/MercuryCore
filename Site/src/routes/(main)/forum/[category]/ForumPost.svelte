@@ -40,7 +40,7 @@
 
 <div
 	in:fade|global={{ num, total }}
-	class="post card bg-darker flex-row overflow-hidden mb-4 h-40 {post.pinned
+	class="card bg-darker flex-row overflow-hidden h-40 {post.pinned
 		? 'border-(solid 1px green-5)!'
 		: ''}">
 	<form
@@ -106,7 +106,7 @@
 </div>
 
 <style>
-	.post {
+	.card {
 		border: 1px solid var(--accent2);
 		transition: all 0.3s ease-out;
 		&:hover {
