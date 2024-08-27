@@ -43,13 +43,6 @@ type QueryFunction<T> = (
 	queryString: string
 ) => Promise<T>
 
-const queryScore: QueryFunction<number> = async (userId, thing, queryString) =>
-	(
-		await equery<ScoreResult>(
-			queryString + countScore,
-			getParams(userId, thing)
-		)
-	).pop()?.score || 0
 const queryLikes: QueryFunction<{
 	likeCount: number
 	dislikeCount: number
@@ -63,6 +56,13 @@ const queryLikes: QueryFunction<{
 		likeCount: 0,
 		dislikeCount: 0,
 	}
+const queryScore: QueryFunction<number> = async (userId, thing, queryString) =>
+	(
+		await equery<ScoreResult>(
+			queryString + countScore,
+			getParams(userId, thing)
+		)
+	).pop()?.score || 0
 const queryNone: QueryFunction<void> = async (userId, thing, queryString) => {
 	await equery(queryString, getParams(userId, thing))
 }

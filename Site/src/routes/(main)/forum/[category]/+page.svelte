@@ -40,7 +40,7 @@
 				categoryName={data.name} />
 		{/each}
 		{#key $page.url}
-			<Pagination totalPages={1} />
+			<Pagination totalPages={data.pages} />
 		{/key}
 	{:else}
 		<h2 class="text-center">

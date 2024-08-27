@@ -69,8 +69,16 @@
 		["Catalog", "/avatarshop", "fa-book-open-cover"],
 		["Create", "/develop", "fa-plus"]
 	]
-	if (data.pages.includes("Groups"))
+	const searchCategories = [
+		["Users", "users"],
+		["Places", "places"],
+		["Catalog", "assets"]
+	]
+
+	if (data.pages.includes("Groups")) {
 		nav1.push(["Groups", "/groups", "fa-people-group"])
+		searchCategories.push(["Groups", "groups"])
+	}
 	if (data.pages.includes("Forum"))
 		nav1.push(["Forum", "/forum", "fa-messages"])
 
@@ -81,13 +89,6 @@
 		["fa-user-pen", "Character", "/character"],
 		["fa-gears", "Settings", "/settings"]
 	]
-	const searchCategories = [
-		["Users", "users"],
-		["Places", "places"],
-		["Catalog", "assets"]
-		// ["Groups", "groups"],
-	]
-
 	if (user && user.permissionLevel >= 4)
 		usernav.unshift(["fa-diamond-half-stroke", "Admin", "/admin"])
 </script>

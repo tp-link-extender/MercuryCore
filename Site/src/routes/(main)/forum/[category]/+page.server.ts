@@ -4,7 +4,7 @@ import formData from "$lib/server/formData"
 import { likeScoreActions } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
 import { Record, type RecordIdTypes, equery, surql } from "$lib/server/surreal"
-import { error } from "@sveltejs/kit"
+import { error, redirect } from "@sveltejs/kit"
 import categoryQuery from "./category.surql"
 
 type Category = {
@@ -26,16 +26,23 @@ type Category = {
 	}[]
 }
 
-export async function load({ locals, params }) {
+export async function load({ locals, params, url }) {
 	exclude("Forum")
 	const { user } = await authorise(locals)
+	const pageQ = url.searchParams.get("p") || "1"
+	const page = Number.isNaN(+pageQ) ? 1 : Math.round(+pageQ)
+	if (page < 1) redirect(303, `/forum/${params.category}?p=1`)
 
-	const [[category]] = await equery<Category[][]>(categoryQuery, {
+	const [category, pages] = await equery<[Category, number]>(categoryQuery, {
 		...params,
+		page: 1,
 		user: Record("user", user.id),
 	})
+	console.log(category, pages)
 	if (!category) error(404, "Not found")
-	return category
+	if (page > pages) redirect(303, `/forum/${params.category}?p=${pages}`)
+
+	return { ...category, pages }
 }
 
 type Thing = {
