@@ -329,20 +329,6 @@ span {
 		@apply bg-red-6;
 	}
 }
-.btn-warning {
-	@apply bg-yellow-5 ring-yellow-6/50;
-	&:hover:not(:disabled),
-	&:focus:not(:active):not(:disabled) {
-		@apply bg-yellow-4;
-	}
-}
-.btn-info {
-	@apply bg-cyan-5 ring-cyan-6/50;
-	&:hover:not(:disabled),
-	&:focus:not(:active):not(:disabled) {
-		@apply bg-cyan-4;
-	}
-}
 .btn-dark {
 	@apply bg-neutral-8 ring-neutral-6/50;
 	&:hover:not(:disabled),
@@ -359,8 +345,6 @@ span {
 .btn-red-tertiary,
 .btn-success,
 .btn-danger,
-.btn-warning,
-.btn-info,
 .btn-light,
 .btn-dark {
 	@apply border-1 ring-offset-neutral-9;

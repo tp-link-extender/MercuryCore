@@ -30,14 +30,16 @@
 					method="POST"
 					action="/user/{user.username}?/accept"
 					class="w-full">
-					<button class="btn btn-info w-full">Accept</button>
+					<button class="btn btn-secondary w-full">Accept</button>
 				</form>
 				<form
 					use:enhance
 					method="POST"
 					action="/user/{user.username}?/decline"
 					class="w-full">
-					<button class="btn btn-danger w-full">Decline</button>
+					<button class="btn btn-red-secondary w-full">
+						Decline
+					</button>
 				</form>
 			</div>
 		</div>
