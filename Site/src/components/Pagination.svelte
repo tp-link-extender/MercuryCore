@@ -5,7 +5,7 @@
 
 	function getNewUrl(page: number) {
 		const url = new URL($page.url) // clone?
-		url.searchParams.set("page", page.toString())
+		url.searchParams.set("p", page.toString())
 		return url.pathname + url.search
 	}
 	const pageQ = $page.url.searchParams.get("p") || "1"

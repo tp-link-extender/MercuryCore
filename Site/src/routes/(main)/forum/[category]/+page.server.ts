@@ -35,10 +35,9 @@ export async function load({ locals, params, url }) {
 
 	const [category, pages] = await equery<[Category, number]>(categoryQuery, {
 		...params,
-		page: 1,
+		page,
 		user: Record("user", user.id),
 	})
-	console.log(category, pages)
 	if (!category) error(404, "Not found")
 	if (page > pages) redirect(303, `/forum/${params.category}?p=${pages}`)
 
@@ -73,9 +72,11 @@ actions.like = async ({ request, locals, url }) => {
 
 	const foundPost = id ? await select("forumPost", id) : null
 	const foundReply = replyId ? await select("forumReply", replyId) : null
-	if (!foundPost || !foundReply) error(404)
+	if (!foundPost) error(404, "Post not found")
+	if (replyId && !foundReply) error(404, "Reply not found")
 
 	const type = foundPost ? "Post" : "Reply"
+	console.log(type, id || replyId)
 	await likeScoreActions[action](
 		user.id,
 		Record(`forum${type}`, (id || replyId) as string)

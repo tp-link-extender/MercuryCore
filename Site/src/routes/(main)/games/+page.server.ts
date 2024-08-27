@@ -17,7 +17,7 @@ export async function load({ url }) {
 	if (page < 1) redirect(303, "/games?p=1")
 
 	const [places, pages] = await equery<[Place[], number]>(gamesQuery, {
-		page: 1,
+		page,
 	})
 	if (page > pages) redirect(303, `/games?p=${pages}`)
 

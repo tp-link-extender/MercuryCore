@@ -3,12 +3,9 @@
 	import Breadcrumbs from "$components/Breadcrumbs.svelte"
 	import Head from "$components/Head.svelte"
 	import Pagination from "$components/Pagination.svelte"
-	import { writable } from "svelte/store"
 	import ForumPost from "./ForumPost.svelte"
 
 	export let data
-
-	let posts = writable(data.posts)
 </script>
 
 <Head name={data.siteName} title="{data.name} - Forum" />
@@ -31,12 +28,12 @@
 			</a>
 		</span>
 	</h1>
-	{#if $posts.length > 0}
-		{#each $posts as post, num}
+	{#if data.posts.length > 0}
+		{#each data.posts as post, num (post.id)}
 			<ForumPost
 				{post}
 				{num}
-				total={$posts.length}
+				total={data.posts.length}
 				categoryName={data.name} />
 		{/each}
 		{#key $page.url}

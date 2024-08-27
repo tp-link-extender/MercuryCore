@@ -1,4 +1,4 @@
-SELECT
+(SELECT
 	*,
 	(SELECT
 		*,
@@ -11,16 +11,15 @@ SELECT
 		($user IN <-dislikes<-user.id) AS dislikes
 	FROM $parent<-in.in
 	ORDER BY pinned DESC, score DESC
-	LIMIT 50 START ($page - 1) * 50) AS posts
+	LIMIT 15 START ($page - 1) * 15) AS posts
 OMIT id
 FROM forumCategory
-WHERE string::lowercase(name) = string::lowercase($category);
+WHERE string::lowercase(name) = string::lowercase($category))[0];
 
 math::max([
-	math::ceil(<float> 
-		(SELECT
-			count(SELECT 1 FROM parent<-in.in) AS count
-		FROM forumCategory 
-		WHERE string::lowercase(name) = string::lowercase($category)).count / 50),
+	(SELECT
+		math::ceil(<float> count(SELECT 15 FROM $parent<-in.in) / 1) AS count
+	FROM forumCategory 
+	WHERE string::lowercase(name) = string::lowercase($category))[0].count,
 	1
 ]);
