@@ -1,6 +1,6 @@
 import { equery } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
-import avatarshopQuery from "./avatarshop.surql"
+import catalogQuery from "./catalog.surql"
 
 export type Asset = {
 	name: string
@@ -14,7 +14,7 @@ export const load = async ({ url }) => {
 	const page = Number.isNaN(+pageQ) ? 1 : Math.round(+pageQ)
 	if (page < 1) redirect(303, "/avatarshop?p=1")
 
-	const [assets, pages] = await equery<[Asset[], number]>(avatarshopQuery, {
+	const [assets, pages] = await equery<[Asset[], number]>(catalogQuery, {
 		page: 1,
 	})
 	if (page > pages) redirect(303, `/avatarshop?p=${pages}`)

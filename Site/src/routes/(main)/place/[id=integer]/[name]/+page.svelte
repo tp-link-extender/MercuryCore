@@ -70,7 +70,6 @@
 			status: number
 			data: { joinScriptUrl: string }
 		}
-
 		if (joinScriptData.status !== 200) return
 
 		// JoinScript is my favourite programming language (-i mean scripting language)
