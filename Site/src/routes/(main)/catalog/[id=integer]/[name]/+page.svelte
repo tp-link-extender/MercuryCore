@@ -60,26 +60,14 @@
 					`/catalog/${data.asset.id}/${data.slug}/icon`}
 				alt={data.asset.name} />
 		</div>
-		<div class="w-full light-text">
+		<div class="light-text w-full">
 			<div class="flex justify-between">
 				<h1>{data.asset.name}</h1>
-				<li class="dropdown pl-2 pt-2">
-					<fa fa-ellipsis-h class="dropdown-ellipsis" />
-					<div class="dropdown-content">
-						<ul class="p-2 rounded-3">
-							<button class="btn light-text pl-4 pr-0 text-start">
-								<fa fa-pencil class="pr-2" />
-								nothing here
-							</button>
-							<!-- <li class="rounded-2">
-								<a
-									class="btn light-text pl-4 pr-0 text-start"
-									href="/requests">
-									<fa fa-pencil class="pr-2" />
-									Edit asset
-								</a>
-							</li> -->
-							{#if user.permissionLevel >= 5 && [8, 11, 12].includes(data.asset.type)}
+				{#if user.permissionLevel >= 5 && [8, 11, 12].includes(data.asset.type)}
+					<span class="dropdown pl-2 pt-2">
+						<fa fa-ellipsis-h class="dropdown-ellipsis" />
+						<div class="dropdown-content">
+							<ul class="p-2 rounded-3">
 								<li class="rounded-2">
 									<form
 										use:enhance={enhanceRegen}
@@ -92,10 +80,10 @@
 										</button>
 									</form>
 								</li>
-							{/if}
-						</ul>
-					</div>
-				</li>
+							</ul>
+						</div>
+					</span>
+				{/if}
 			</div>
 			<div class="flex">
 				<strong class="pr-2">by:</strong>

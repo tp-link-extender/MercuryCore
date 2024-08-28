@@ -70,28 +70,30 @@
 		<div class="flex items-center pt-2">
 			<a
 				href="/user/{reply.author.username}"
-				class="userlink items-center no-underline"
+				class="userlink items-center no-underline flex flex-row font-bold {reply
+					.author.username === postAuthorName
+					? assetSlug
+						? 'text-yellow-5'
+						: 'text-blue-6'
+					: ''}"
 				class:light-text={reply.author.username !== postAuthorName}
-				class:opacity-33={hidden}>
-				<span class="flex flex-row font-bold">
-					{#if topLevel}
-						<User user={reply.author} thin size="1.5rem" image />
-					{/if}
-					<span
-						class="pl-4 {reply.author.username === postAuthorName
-							? assetSlug
-								? 'text-yellow-5'
-								: 'text-blue-6'
-							: ''}">
-						{reply.author.username}
-						{#if reply.author.username === postAuthorName}
-							<fa
-								class="{assetSlug
-									? 'fa-hammer'
-									: 'fa-microphone'} ml-2" />
-						{/if}
-					</span>
-				</span>
+				class:opacity-33={hidden}
+				class:pl-4={!topLevel}>
+				{#if topLevel}
+					<User
+						user={reply.author}
+						thin
+						size="1.5rem"
+						image
+						class="pr-4" />
+				{/if}
+				{reply.author.username}
+				{#if reply.author.username === postAuthorName}
+					<fa
+						class="{assetSlug
+							? 'fa-hammer'
+							: 'fa-microphone'} pl-2" />
+				{/if}
 			</a>
 			<small class="light-text pl-6">
 				{new Date(reply.posted).toLocaleString()}
@@ -118,7 +120,7 @@
 							fa-thumbs-up transition" />
 				</button>
 				<span
-					class="my-1 text-center {reply.likes
+					class="text-center {reply.likes
 						? 'text-emerald-6 font-bold'
 						: reply.dislikes
 							? 'text-red-5 font-bold'
@@ -129,7 +131,7 @@
 					name="action"
 					value={reply.dislikes ? "undislike" : "dislike"}
 					aria-label={reply.dislikes ? "Undislike" : "Dislike"}
-					class="size-6 p-0 btn">
+					class="btn size-6 p-0">
 					<fa
 						class="{reply.dislikes
 							? 'text-red-5 hover:text-red-3'
@@ -140,7 +142,7 @@
 			<a
 				href="/forum/{categoryName}/{postId}/{reply.id}"
 				on:click|preventDefault={() => replyingTo.set(reply.id)}
-				class="p-0 btn btn-sm px-1 text-neutral-5
+				class="btn btn-sm p-0 px-1 text-neutral-5
 				hover:text-neutral-3 {hidden ? 'opacity-33' : ''}">
 				<fa fa-message class="pr-2" />
 				Reply
@@ -174,7 +176,7 @@
 				</span>
 			{/if}
 		{:else}
-			<div class="card reply bg-darker mb-2 p-4 pt-2 max-w-3/4">
+			<div class="card reply bg-darker p-4 pt-2 max-w-3/4">
 				<form
 					use:enhance={e => {
 						replyingTo.set("")
@@ -213,7 +215,7 @@
 		{#if topLevel}
 			<!-- Pls give snippets svelte -->
 			<noscript>
-				<div class="card reply bg-darker mb-2 p-4 pt-2 max-w-3/4">
+				<div class="card reply bg-darker p-4 pt-2 max-w-3/4">
 					<form
 						use:enhance
 						on:submit={() => replyingTo.set("")}
@@ -252,7 +254,7 @@
 </div>
 
 {#if depth > 8}
-	<a href="/{baseUrl}/{reply.id}" class="no-underline my-2">
+	<a href="/{baseUrl}/{reply.id}" class="no-underline py-2">
 		<fa fa-arrow-down class="pr-2" />
 		More replies
 	</a>
@@ -281,17 +283,9 @@
 	}
 
 	.userlink {
-		margin-top: 1px;
 		transition: color 0.2s;
-		/* &:hover {
-			color: var(--accent3);
-		} */
-
-		& span {
-			transition: color 0.2s;
-			&:hover {
-				color: var(--grey-text) !important;
-			}
+		&:hover {
+			color: var(--grey-text) !important;
 		}
 	}
 </style>

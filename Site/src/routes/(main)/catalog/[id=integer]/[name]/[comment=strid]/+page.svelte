@@ -19,7 +19,7 @@
 
 <Head name={data.siteName} title="Comments on asset" />
 
-<div class="ctnr max-w-280 light-text">
+<div class="ctnr light-text max-w-280">
 	<Breadcrumbs
 		path={[
 			["Catalog", "/catalog"],
