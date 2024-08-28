@@ -7,7 +7,7 @@
 
 	export type Reply =
 		| import("../routes/(main)/forum/[category]/[post=strid]/$types").PageData["post"]["replies"][number]
-		| import("../routes/(main)/avatarshop/[id=integer]/[name]/$types").PageData["asset"]["replies"][number]
+		| import("../routes/(main)/catalog/[id=integer]/[name]/$types").PageData["asset"]["replies"][number]
 
 	export type RepliesCollapsed = Writable<{
 		[id: string]: boolean
@@ -36,7 +36,7 @@
 
 	const baseUrl = categoryName
 		? `/forum/${categoryName.toLowerCase()}/${postId}`
-		: `/avatarshop/${postId}/${assetSlug}`
+		: `/catalog/${postId}/${assetSlug}`
 
 	export let repliesCollapsed: RepliesCollapsed
 	export let topLevel = true

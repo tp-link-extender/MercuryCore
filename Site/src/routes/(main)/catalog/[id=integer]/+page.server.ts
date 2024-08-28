@@ -7,5 +7,5 @@ export async function load({ params }) {
 		SELECT name FROM ${Record("asset", id)}`)
 	if (!asset) error(404, "Not found")
 
-	redirect(302, `/avatarshop/${id}/${asset.name}`)
+	redirect(302, `/catalog/${id}/${asset.name}`)
 }

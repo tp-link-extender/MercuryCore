@@ -22,8 +22,8 @@
 <div class="ctnr max-w-280 light-text">
 	<Breadcrumbs
 		path={[
-			["Avatar shop", "/avatarshop"],
-			[data.assetName, `/avatarshop/${data.assetId}/${data.assetName}`],
+			["Catalog", "/catalog"],
+			[data.assetName, `/catalog/${data.assetId}/${data.assetName}`],
 			[topReply.content[0].text, ""]
 		]} />
 

@@ -74,7 +74,7 @@ export async function load({ locals, params }) {
 
 	const slug = encode(asset.name)
 	if (!couldMatch(asset.name, params.name))
-		redirect(302, `/avatarshop/${id}/${slug}`)
+		redirect(302, `/catalog/${id}/${slug}`)
 
 	const balance = await getBalance(user.id)
 	if (!balance.ok) error(500, economyConnFailed)
@@ -155,7 +155,7 @@ async function rerender({ locals, params }: RequestEvent) {
 	if ([8, 11, 12].includes(asset.type))
 		try {
 			await requestRender(asset.type === 8 ? "Model" : "Clothing", id)
-			const icon = `/avatarshop/${id}/${asset.name}/icon?r=${Math.random()}`
+			const icon = `/catalog/${id}/${asset.name}/icon?r=${Math.random()}`
 			return { icon }
 		} catch (e) {
 			console.error(e)
@@ -276,7 +276,7 @@ actions.buy = async e => {
 			asset.creator.id,
 			asset.price,
 			`Purchased asset ${asset.name}`,
-			`/avatarshop/${id}/${asset.name}`,
+			`/catalog/${id}/${asset.name}`,
 			[id]
 		)
 		if (!tx.ok) error(400, tx.msg)

@@ -34,7 +34,7 @@
 		<div class="text-center w-full pb-4">
 			<img
 				class="w-85%"
-				src="/avatarshop/{asset.id}/{asset.name}/icon"
+				src="/catalog/{asset.id}/{asset.name}/icon"
 				alt={asset.name} />
 		</div>
 		<span class="text-base w-full">

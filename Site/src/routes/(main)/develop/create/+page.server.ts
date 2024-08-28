@@ -148,5 +148,5 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 		console.error(e)
 	}
 
-	redirect(302, `/avatarshop/${id}/${name}`)
+	redirect(302, `/catalog/${id}/${name}`)
 }

@@ -66,7 +66,7 @@
 	const nav1 = [
 		// ["Home", "/", "fa-house-chimney"],
 		["Games", "/games", "fa-mountain-sun"],
-		["Catalog", "/avatarshop", "fa-book-open-cover"],
+		["Catalog", "/catalog", "fa-book-open-cover"],
 		["Create", "/develop", "fa-plus"]
 	]
 	const searchCategories = [

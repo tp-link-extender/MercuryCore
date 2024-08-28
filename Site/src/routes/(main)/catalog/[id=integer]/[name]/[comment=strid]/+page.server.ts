@@ -45,7 +45,7 @@ export async function load({ locals, params }) {
 
 	const slug = encode(asset.name)
 	if (!couldMatch(asset.name, params.name))
-		redirect(302, `/avatarshop/${id}/${slug}/${params.comment}`)
+		redirect(302, `/catalog/${id}/${slug}/${params.comment}`)
 
 	return {
 		replies: assetComments,

@@ -290,5 +290,5 @@ actions.autopilot = async ({ request, locals }) => {
 		if (renderMesh) renders.push(requestRender("Mesh", renderMesh))
 	}
 	await Promise.all(renders)
-	redirect(302, `/avatarshop/${id}`)
+	redirect(302, `/catalog/${id}`)
 }

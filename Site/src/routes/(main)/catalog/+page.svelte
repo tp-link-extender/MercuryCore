@@ -14,7 +14,7 @@
 
 	// Run function whenever query changes
 	async function search() {
-		const response = await fetch(`/avatarshop/search?q=${query}`)
+		const response = await fetch(`/catalog/search?q=${query}`)
 		searchedData = (await response.json()) as typeof data.assets
 	}
 	$: query && search()

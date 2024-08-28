@@ -57,7 +57,7 @@
 				class:opacity-50={regenerating}
 				class="image transition-opacity duration-300 aspect-1 w-80vw max-w-100"
 				src={form?.icon ||
-					`/avatarshop/${data.asset.id}/${data.slug}/icon`}
+					`/catalog/${data.asset.id}/${data.slug}/icon`}
 				alt={data.asset.name} />
 		</div>
 		<div class="w-full light-text">

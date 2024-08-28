@@ -1,6 +1,4 @@
 <script lang="ts">
-	// An avatar shop item component, used in the avatar shop and inventory pages.
-
 	import { enhance } from "$app/forms"
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
@@ -17,7 +15,7 @@
 		popovertarget="modal{asset.id}">
 		<div class="text-center pb-2">
 			<img
-				src="/avatarshop/{asset.id}/{asset.name}/icon"
+				src="/catalog/{asset.id}/{asset.name}/icon"
 				alt={asset.name}
 				class="w-85%" />
 		</div>
@@ -58,7 +56,7 @@
 			<h3 class="text-xs pb-3">Image asset</h3>
 			<img
 				class="image aspect-1 md:w-80 w-60"
-				src="/avatarshop/{asset.imageAsset.id}/{asset.imageAsset
+				src="/catalog/{asset.imageAsset.id}/{asset.imageAsset
 					.name}/icon"
 				alt={asset.imageAsset.name} />
 		</div>

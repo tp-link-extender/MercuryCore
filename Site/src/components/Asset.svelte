@@ -1,5 +1,5 @@
 <script lang="ts">
-	// An avatar shop item component, used in the avatar shop and inventory pages.
+	// A catalog item component, used in the catalog and inventory pages.
 
 	import fade from "$lib/fade"
 
@@ -16,11 +16,11 @@
 
 <a
 	in:fade|global={{ num, total }}
-	href="/avatarshop/{asset.id}/{asset.name}"
+	href="/catalog/{asset.id}/{asset.name}"
 	class="card bg-a h-full p-4 no-underline">
 	<div class="text-center pb-4">
 		<img
-			src="/avatarshop/{asset.id}/{asset.name}/icon"
+			src="/catalog/{asset.id}/{asset.name}/icon"
 			alt={asset.name}
 			class="w-85%" />
 	</div>

@@ -99,7 +99,7 @@ export default async function (user: User | null) {
 				const comment = await getAssetComment(i.relativeId)
 				if (!comment) break
 
-				i.link = `/avatarshop/${comment.parentAsset.id}/${comment.parentAsset.name}/${comment.id}`
+				i.link = `/catalog/${comment.parentAsset.id}/${comment.parentAsset.name}/${comment.id}`
 				break
 			}
 			case "ForumPostReply":
@@ -125,7 +125,7 @@ export default async function (user: User | null) {
 				break
 			}
 			case "ItemPurchase":
-				i.link = `/avatarshop/${i.relativeId}`
+				i.link = `/catalog/${i.relativeId}`
 				break
 			default:
 				i.link = ""

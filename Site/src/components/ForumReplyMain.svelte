@@ -25,7 +25,7 @@
 
 	const baseUrl = categoryName
 		? `forum/${categoryName.toLowerCase()}/${postId}`
-		: `avatarshop/${postId}/${assetSlug}`
+		: `catalog/${postId}/${assetSlug}`
 
 	export let repliesCollapsed: RepliesCollapsed
 	export let topLevel = true

@@ -12,12 +12,12 @@ export type Asset = {
 export const load = async ({ url }) => {
 	const pageQ = url.searchParams.get("p") || "1"
 	const page = Number.isNaN(+pageQ) ? 1 : Math.round(+pageQ)
-	if (page < 1) redirect(303, "/avatarshop?p=1")
+	if (page < 1) redirect(303, "/catalog?p=1")
 
 	const [assets, pages] = await equery<[Asset[], number]>(catalogQuery, {
 		page: 1,
 	})
-	if (page > pages) redirect(303, `/avatarshop?p=${pages}`)
+	if (page > pages) redirect(303, `/catalog?p=${pages}`)
 
 	return { assets, pages }
 }

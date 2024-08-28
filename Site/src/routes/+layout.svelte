@@ -85,10 +85,10 @@
 			role="alert"
 			aria-live="assertive"
 			aria-atomic="true">
-			<div class="flex bg-a light-text p-2 rounded-t-2">
+			<div class="bg-a light-text flex p-2 rounded-t-2">
 				<a
 					href="/user/{notification.sender.username}"
-					class="flex gap-3 items-center w-full light-text no-underline">
+					class="light-text flex gap-3 items-center w-full no-underline">
 					<User
 						user={notification.sender}
 						size="1.6rem"
@@ -97,7 +97,7 @@
 					<strong>
 						{notificationNotes[notification.type]}
 					</strong>
-					<small class="grey-text">
+					<small class="grey-text pr-4">
 						{new Date(notification.time).toLocaleString()}
 					</small>
 				</a>
