@@ -13,7 +13,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.8.3",
-		"@types/bun": "^1.1.7",
+		"@types/bun": "^1.1.8",
 		"@types/d3-interpolate": "^3.0.4",
 		"@types/jsonwebtoken": "^9.0.6",
 		"@types/nprogress": "^0.2.3",
@@ -29,7 +29,7 @@
 		"@melt-ui/pp": "^0.3.2",
 		"@melt-ui/svelte": "^0.83.0",
 		"@sveltejs/adapter-node": "^5.2.2",
-		"@sveltejs/kit": "^2.5.24",
+		"@sveltejs/kit": "^2.5.25",
 		"@sveltejs/vite-plugin-svelte": "^3.1.2",
 		"@unocss/core": "^0.62.3",
 		"@unocss/extractor-svelte": "^0.62.3",
