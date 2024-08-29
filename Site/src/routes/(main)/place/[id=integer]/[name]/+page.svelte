@@ -20,12 +20,11 @@
 	$: online = $place.serverPing > Date.now() / 1000 - 35
 
 	const statistics = [
-		["Activity", "0 visits"],
-		["Creation", new Date($place.created).toLocaleDateString()],
+		// ["Activity", "0 visits"],
+		["Created", new Date($place.created).toLocaleDateString()],
 		["Updated", new Date($place.updated).toLocaleDateString()],
-		["Genre", "Horror"],
-		["Server Limit", $place.maxPlayers],
-		["Now Playing", $place.players.length]
+		["Server limit", $place.maxPlayers],
+		["Now playing", $place.players.length]
 	]
 	function scroll(e: MouseEvent) {
 		const url = new URL((e.target as HTMLAnchorElement)?.href).hash.slice(1)

@@ -17,17 +17,17 @@
 	const formDataManual = superForm(data.formManual)
 	const formDataAutopilot = superForm(data.formAuto)
 
-	let tabData = TabData(data.url, ["Create Asset"], ["fa-file-circle-plus"])
+	let tabData = TabData(data.url, ["Asset creation"], ["fa-file-circle-plus"])
 	let tabData2 = TabData(data.url, ["Manual", "Autopilot"], [], "tab2")
 
 	const aan = (word: string) =>
 		"aeiou".includes(word[0].toLowerCase()) ? "an" : "a"
 </script>
 
-<Head name={data.siteName} title="Create asset - Admin" />
+<Head name={data.siteName} title="Asset creation - Admin" />
 
 <div class="ctnr max-w-280 pb-6">
-	<h1>Create asset &ndash; Admin</h1>
+	<h1>Asset creation &ndash; Admin</h1>
 	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
 		Back to panel

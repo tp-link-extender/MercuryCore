@@ -21,14 +21,14 @@
 
 	const panel: { [k: string]: [string, string, string][] } = {
 		Moderation: [
-			["Moderate User", "/admin/moderation", "fa-user-slash"],
-			["Abuse reports", "/admin/reports", "fa-flag"],
-			["Asset Approval", "/admin/asset", "fa-file-circle-check"],
-			["Render Queue", "/admin/renderqueue", "fa-file-image"]
+			["User moderation", "moderation", "fa-user-slash"],
+			["Abuse reports", "reports", "fa-flag"],
+			["Asset approval", "asset", "fa-file-circle-check"],
+			["Render queue", "renderqueue", "fa-file-image"]
 		],
-		Catalog: [["Create Asset", "/admin/create", "fa-file-circle-plus"]],
+		Catalog: [["Asset creation", "create", "fa-file-circle-plus"]],
 		Economy: [
-			["Transactions", "/admin/transactions", "fa-money-bill-transfer"]
+			["Transactions", "transactions", "fa-money-bill-transfer"]
 		]
 	}
 	const tabNames = ["Moderation", "Catalog", "Economy", "Statistics"]
@@ -37,8 +37,8 @@
 		panel.Administration = [
 			["Banners", "banners", "fa-bullhorn"],
 			["Accounts", "accounts", "fa-user"],
-			["Audit Logs", "audit", "fa-book"],
-			["Registration Keys", "regkeys", "fa-key"]
+			["Audit logs", "audit", "fa-book"],
+			["Registration keys", "regkeys", "fa-key"]
 		]
 		tabNames.unshift("Administration")
 	}
