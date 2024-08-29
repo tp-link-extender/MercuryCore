@@ -20,6 +20,10 @@ export type Config = {
 	 */
 	RCCServiceProxyURL: string
 	/**
+	 * The URI scheme to pass to the launcher when joining a game.
+	 */
+	LauncherURI: string
+	/**
 	 * The symbol for your revival's currency. Placed before the amount.
 	 */
 	CurrencySymbol: string

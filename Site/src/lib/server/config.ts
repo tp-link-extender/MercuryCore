@@ -16,6 +16,7 @@ const schema = z.object({
 	Domain: z.string().min(1),
 	DatabaseURL: z.string().min(1),
 	RCCServiceProxyURL: z.string().min(1),
+	LauncherURI: z.string().min(1),
 	CurrencySymbol: z.string().min(1),
 	Pages: z.array(z.enum(optionalPages)),
 
