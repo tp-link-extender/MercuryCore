@@ -234,10 +234,9 @@ actions.like = async ({ request, locals, params, url }) => {
 	if (commentId && !idRegex.test(commentId)) error(400, "Invalid comment id")
 
 	const id = +params.id
-	const foundAsset = await find("asset", id)
-	if (!foundAsset) error(404, "Asset not found")
-	const foundComment = await find("assetComment", commentId)
-	if (!foundComment) error(404, "Asset coment not found")
+	if (!(await find("asset", id))) error(404, "Asset not found")
+	if (!(await find("assetComment", commentId)))
+		error(404, "Asset coment not found")
 
 	// const type = commentId ? "assetComment" : "asset"
 	await likeScoreActions[action](user.id, Record("assetComment", commentId))

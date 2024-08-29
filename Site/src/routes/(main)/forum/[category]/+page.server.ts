@@ -70,15 +70,11 @@ actions.like = async ({ request, locals, url }) => {
 	const replyId = url.searchParams.get("rid")
 	if (replyId && !idRegex.test(replyId)) error(400, "Invalid reply id")
 
-	const foundPost = id ? await select("forumPost", id) : null
-	const foundReply = replyId ? await select("forumReply", replyId) : null
-	if (!foundPost) error(404, "Post not found")
-	if (replyId && !foundReply) error(404, "Reply not found")
+	const ids = id || replyId
+	if (!ids) error(400, "Missing id")
 
-	const type = foundPost ? "Post" : "Reply"
-	console.log(type, id || replyId)
-	await likeScoreActions[action](
-		user.id,
-		Record(`forum${type}`, (id || replyId) as string)
-	)
+	const type = id ? "Post" : "Reply"
+	if (!(await select(`forum${type}`, ids))) error(404, `${type} not found`)
+
+	await likeScoreActions[action](user.id, Record(`forum${type}`, ids))
 }
