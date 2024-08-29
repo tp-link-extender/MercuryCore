@@ -20,15 +20,15 @@
 
 	let tabData = TabData(
 		data.url,
-		["Create Invite Key", "Invites"],
-		["fa-envelope-circle-check", "fa-envelopes-bulk"]
+		["Create Key", "Keys"],
+		["fa-key", "fa-envelopes-bulk"]
 	)
 </script>
 
-<Head name={data.siteName} title="Invites - Admin" />
+<Head name={data.siteName} title="Registration Keys - Admin" />
 
 <div class="ctnr max-w-240 pb-6">
-	<h1>Invites &ndash; Admin</h1>
+	<h1>Registration Keys &ndash; Admin</h1>
 	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
 		Back to panel
@@ -40,35 +40,35 @@
 		<Form {formData} action="?/create" submit="Create">
 			<Input
 				{formData}
-				name="enableInviteCustom"
-				label="Enable Custom Invite Key"
+				name="enableRegKeyCustom"
+				label="Enable custom key"
 				type="checkbox" />
-			{#if $form.enableInviteCustom}
+			{#if $form.enableRegKeyCustom}
 				<div transition:fade>
 					<Input
 						{formData}
-						name="inviteCustom"
-						label="Custom Invite Key"
+						name="regKeyCustom"
+						label="Custom registration key"
 						help="Instead of having a randomly generated key, this allows you to set the key." />
 				</div>
 			{/if}
 			<Input
 				{formData}
-				name="enableInviteExpiry"
-				label="Enable Expiry"
+				name="enableRegKeyExpiry"
+				label="Enable expiry"
 				type="checkbox" />
-			{#if $form.enableInviteExpiry}
+			{#if $form.enableRegKeyExpiry}
 				<div transition:fade>
 					<Input
 						{formData}
-						name="inviteExpiry"
-						label="Expiry Date"
+						name="regKeyExpiry"
+						label="Expiry date"
 						type="date"
 						min={tomorrow}
 						required />
 				</div>
 			{/if}
-			<Input {formData} name="inviteUses" label="Uses" type="number" />
+			<Input {formData} name="regKeyUses" label="Uses" type="number" />
 		</Form>
 	</Tab>
 
@@ -77,38 +77,38 @@
 			<thead>
 				<tr>
 					<th scope="col">Options</th>
-					<th scope="col">Invite</th>
-					<th scope="col">Uses Left</th>
+					<th scope="col">Registration key</th>
+					<th scope="col">Uses left</th>
 					<th scope="col">Creator</th>
 					<th scope="col">Creation Date</th>
 				</tr>
 			</thead>
 			<tbody>
-				{#each data.invites as invite}
+				{#each data.regKeys as regKey}
 					<tr>
 						<td>
 							<form
 								use:enhance
 								method="POST"
-								action="?/disable&id={invite.id}">
+								action="?/disable&id={regKey.id}">
 								<button
 									class="btn btn-sm no-underline text-red-5 my-0">
 									<fa fa-ban />
-									Disable Invite
+									Disable RegKey
 								</button>
 							</form>
 						</td>
-						<td>mercurkey-{invite.id}</td>
-						<td>{invite.usesLeft}</td>
+						<td>mercurkey-{regKey.id}</td>
+						<td>{regKey.usesLeft}</td>
 						<td>
-							{#if invite.creator}
-								<User user={invite.creator} full thin />
+							{#if regKey.creator}
+								<User user={regKey.creator} full thin />
 							{:else}
 								<em>Nobody</em>
 							{/if}
 						</td>
 						<td>
-							{new Date(invite.created).toLocaleString()}
+							{new Date(regKey.created).toLocaleString()}
 						</td>
 					</tr>
 				{/each}

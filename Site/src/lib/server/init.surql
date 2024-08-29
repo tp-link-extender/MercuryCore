@@ -84,6 +84,6 @@ DEFINE EVENT bannerCreateLog ON TABLE banner WHEN $event = "CREATE" THEN
 DEFINE EVENT bannerDeleteLog ON TABLE banner WHEN $event = "UPDATE" AND !$before.deleted AND $after.deleted THEN
 	fn::auditLog("Administration", string::concat('Delete banner "', $after.body, '"'), $after.creator);
 DEFINE EVENT regKeyCreateLog ON TABLE regKey WHEN $event = "CREATE" THEN
-	fn::auditLog("Administration", string::concat("Create invite key ", meta::id($after.id)), $after.creator);
+	fn::auditLog("Administration", string::concat("Create registration key ", meta::id($after.id)), $after.creator);
 DEFINE EVENT regKeyDisableLog ON TABLE regKey WHEN $event = "UPDATE" AND $after.usesLeft = 0 THEN
-	fn::auditLog("Administration", string::concat("Disable invite key ", meta::id($after.id)), $after.disabledBy);
+	fn::auditLog("Administration", string::concat("Disable registration key ", meta::id($after.id)), $after.disabledBy);

@@ -35,10 +35,10 @@
 
 	if (user.permissionLevel === 5) {
 		panel.Administration = [
-			["Banners", "/admin/banners", "fa-bullhorn"],
-			["Accounts", "/admin/accounts", "fa-user"],
-			["Audit Logs", "/admin/audit", "fa-book"],
-			["Invites", "/admin/invites", "fa-envelopes"]
+			["Banners", "banners", "fa-bullhorn"],
+			["Accounts", "accounts", "fa-user"],
+			["Audit Logs", "audit", "fa-book"],
+			["Registration Keys", "regkeys", "fa-key"]
 		]
 		tabNames.unshift("Administration")
 	}
@@ -75,7 +75,7 @@
 		<Tab {tabData} class="grid lg:grid-cols-4 gap-4">
 			{#each panel[key] as i, num}
 				<AdminLink
-					href={i[1]}
+					href="/admin/{i[1]}"
 					iconClass={i[2]}
 					{num}
 					total={panel[key].length}
