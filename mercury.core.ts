@@ -64,5 +64,6 @@ export default {
 
 	RegistrationKeys: {
 		Enabled: true,
+		Prefix: "mercurkey-",
 	},
 } satisfies import("./Assets/schema.ts").Config

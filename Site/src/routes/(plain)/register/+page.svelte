@@ -74,7 +74,7 @@
 					column
 					name="regkey"
 					label="Registration Key"
-					placeholder="{data.siteName.toLowerCase()}key-12311121123" />
+					placeholder="{data.prefix}r3g157r4ti0nk3yh3re1" />
 			{/if}
 		</Form>
 	{:else}

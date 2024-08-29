@@ -34,6 +34,7 @@ export async function load({ locals }) {
 	return {
 		form: await superValidate(zod(schema)),
 		regKeys,
+		prefix: config.RegistrationKeys.Prefix,
 	}
 }
 
@@ -120,8 +121,8 @@ actions.disable = async e => {
 	await equery(
 		surql`
 			UPDATE ${Record("regKey", id)} MERGE {
-				usesLeft: 0
-				disabledBy: ${Record("user", user.id)} # for logging for now
+				usesLeft: 0,
+				disabledBy: ${Record("user", user.id)}, # for logging for now
 			}`
 	)
 

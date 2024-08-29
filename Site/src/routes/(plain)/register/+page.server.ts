@@ -41,10 +41,14 @@ async function isAccountRegistered() {
 	return userCount > 0
 }
 
+const prefix = config.RegistrationKeys.Prefix
+const prefixRegex = new RegExp(`^${prefix}(.+)$`)
+
 export const load = async () => ({
 	form: await superValidate(zod(schema)),
 	users: await isAccountRegistered(),
 	regKeysEnabled: config.RegistrationKeys.Enabled,
+	prefix,
 })
 
 export const actions: import("./$types").Actions = {}
@@ -76,7 +80,11 @@ actions.register = async ({ request, cookies }) => {
 
 	let key: RecordId<"regKey"> | undefined
 	if (config.RegistrationKeys.Enabled) {
-		key = Record("regKey", form.data.regkey.split("-")[1])
+		const matched = form.data.regkey.match(prefixRegex)
+		if (!matched)
+			return formError(form, ["regkey"], ["Registration key is invalid"])
+
+		key = Record("regKey", matched[1])
 
 		const [[regkeyCheck]] = await equery<{ usesLeft: number }[][]>(surql`
 			SELECT usesLeft FROM ${key}`)

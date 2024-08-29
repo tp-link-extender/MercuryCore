@@ -27,7 +27,7 @@
 
 <Head name={data.siteName} title="Registration Keys - Admin" />
 
-<div class="ctnr max-w-240 pb-6">
+<div class="ctnr max-w-280 pb-6">
 	<h1>Registration Keys &ndash; Admin</h1>
 	<a href="/admin" class="no-underline">
 		<fa fa-caret-left />
@@ -35,7 +35,7 @@
 	</a>
 </div>
 
-<SidebarShell bind:tabData>
+<SidebarShell bind:tabData class="max-w-280">
 	<Tab {tabData}>
 		<Form {formData} action="?/create" submit="Create">
 			<Input
@@ -80,7 +80,7 @@
 					<th scope="col">Registration key</th>
 					<th scope="col">Uses left</th>
 					<th scope="col">Creator</th>
-					<th scope="col">Creation Date</th>
+					<th scope="col">Created</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -94,11 +94,11 @@
 								<button
 									class="btn btn-sm no-underline text-red-5 my-0">
 									<fa fa-ban />
-									Disable RegKey
+									Disable key
 								</button>
 							</form>
 						</td>
-						<td>mercurkey-{regKey.id}</td>
+						<td>{data.prefix}{regKey.id}</td>
 						<td>{regKey.usesLeft}</td>
 						<td>
 							{#if regKey.creator}
