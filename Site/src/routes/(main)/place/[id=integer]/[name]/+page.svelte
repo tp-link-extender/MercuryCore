@@ -9,6 +9,7 @@
 	import fade from "$lib/fade"
 	import { writable } from "svelte/store"
 	import Autopilot from "./Autopilot.svelte"
+	import Thumbnails from "./Thumbnails.svelte"
 	import customProtocol from "./customprotocol.ts"
 
 	export let data
@@ -26,10 +27,6 @@
 		["Server limit", $place.maxPlayers],
 		["Now playing", $place.players.length]
 	]
-	function scroll(e: MouseEvent) {
-		const url = new URL((e.target as HTMLAnchorElement)?.href).hash.slice(1)
-		document.getElementById(url)?.scrollIntoView(false) // (false) prevents page scrolling to top of element
-	}
 
 	// Place Launcher
 
@@ -113,38 +110,10 @@
 <div class="ctnr max-w-240 light-text">
 	<div class="grid grid-cols-1 md:(grid-cols-3 gap-4)">
 		<div class="col-span-2 pb-4">
-			<div in:fade class="carousel rounded-4">
-				{#each data.thumbnails as _, i}
-					{@const thumbs = data.thumbnails.length}
-					<div
-						id="slide{i + 1}"
-						class="carousel-item relative w-full"
-						class:active={!i}>
-						<img
-							src="/place/{$place.id}/{data.slug}/thumbnail/{i +
-								1}"
-							class="w-full"
-							alt="Placeholder place thumbnail" />
-						{#if thumbs > 1}
-							<div
-								class="absolute flex justify-between top-1/2 -translate-y-1/2 left-4 right-4">
-								<a
-									href="#slide{i < 1 ? thumbs : i}"
-									class="carousel-button"
-									on:click|preventDefault={scroll}>
-									❮
-								</a>
-								<a
-									href="#slide{i === thumbs - 1 ? 1 : i + 2}"
-									class="carousel-button"
-									on:click|preventDefault={scroll}>
-									❯
-								</a>
-							</div>
-						{/if}
-					</div>
-				{/each}
-			</div>
+			<Thumbnails
+				thumbnails={data.thumbnails}
+				id={$place.id}
+				slug={data.slug} />
 		</div>
 
 		<div class="flex flex-col justify-between gap-3">

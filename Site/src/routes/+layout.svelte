@@ -9,7 +9,6 @@
 	import "/src/nprogress.css"
 	import "/src/global.css"
 	import "/src/icons.css"
-	import "/src/daisyui/carousel.css"
 	import "/src/daisyui/dropdown.css"
 	import "/src/daisyui/tooltip.css"
 	import "uno.css"
