@@ -30,7 +30,7 @@ export type Config = {
 	/**
 	 * Controls which optional pages on the site are enabled. This allows you to turn off unnecessary features for your revival.
 	 */
-	Pages: ("Statistics" | "Groups" | "Forum")[] 
+	Pages: ("Statistics" | "Groups" | "Forum")[]
 
 	/**
 	 * The default body colours for avatar creation, given to each new user on registration.
@@ -154,5 +154,15 @@ export type Config = {
 		 * How to replace filtered words, either by replacing each character or replacing the entire word with ReplaceWith.
 		 */
 		ReplaceType: "Character" | "Word"
+	}
+
+	/**
+	 * Configuration for how registration keys are used and generated.
+	 */
+	RegistrationKeys: {
+		/**
+		 * Whether registration keys are enabled.
+		 */
+		Enabled: boolean
 	}
 }

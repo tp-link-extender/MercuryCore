@@ -60,6 +60,10 @@ const schema = z.object({
 		ReplaceWith: z.string(),
 		ReplaceType: z.enum(["Character", "Word"]),
 	}),
+
+	RegistrationKeys: z.object({
+		Enabled: z.boolean(),
+	}),
 })
 
 const parseResult = schema.safeParse(rawconfig)

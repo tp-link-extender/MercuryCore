@@ -61,4 +61,8 @@ export default {
 		ReplaceWith: "#",
 		ReplaceType: "Character",
 	},
+
+	RegistrationKeys: {
+		Enabled: true,
+	},
 } satisfies import("./Assets/schema.ts").Config
