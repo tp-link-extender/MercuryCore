@@ -8,7 +8,7 @@
 <div class="light-text flex <lg:flex-col min-h-screen h-full overflow-auto">
 	<div
 		id="dark"
-		class="lg:w-1/2 p-8vw pt-5vh {pad ? 'lg:pt-20vh' : 'lg:pt-11vh'}">
+		class="lg:w-1/2 p-8vw pt-5vh {pad ? 'lg:pt-20vh' : 'lg:pt-12vh'}">
 		<a href="/" class="btn btn-lg border-0 px-0 text-base">
 			<fa fa-arrow-left class="pr-2" />
 			Home
@@ -33,7 +33,7 @@
 		id="light"
 		class="lg:w-1/2 py-8vh px-8vw pt-5vh {pad
 			? 'lg:pt-20vh'
-			: 'lg:pt-11vh'} z-1">
+			: 'lg:pt-12vh'} z-1">
 		<div class="max-w-120 mx-auto">
 			<slot />
 		</div>

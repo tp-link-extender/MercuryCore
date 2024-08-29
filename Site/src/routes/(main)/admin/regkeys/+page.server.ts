@@ -7,6 +7,8 @@ import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import type { RequestEvent } from "./$types.ts"
 import regKeysQuery from "./regKeys.surql"
+import config from "$lib/server/config.ts"
+import { error } from "@sveltejs/kit"
 
 const schema = z.object({
 	enableRegKeyCustom: z.boolean().optional(),
@@ -25,6 +27,7 @@ type RegKey = {
 }
 
 export async function load({ locals }) {
+	if (!config.RegistrationKeys.Enabled) error(404, "Not Found")
 	await authorise(locals, 5)
 
 	const [regKeys] = await equery<RegKey[][]>(regKeysQuery)

@@ -2,12 +2,17 @@ import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import { auth } from "$lib/server/lucia"
 import requestRender from "$lib/server/requestRender"
-import { Record, equery, findWhere, surql } from "$lib/server/surreal"
+import {
+	Record,
+	type RecordId,
+	equery,
+	findWhere,
+	surql,
+} from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
-import createAdminQuery from "./createAdmin.surql"
 import createUserQuery from "./createUser.surql"
 
 const schemaInitial = z.object({
@@ -39,13 +44,14 @@ async function isAccountRegistered() {
 export const load = async () => ({
 	form: await superValidate(zod(schema)),
 	users: await isAccountRegistered(),
+	regKeysEnabled: config.RegistrationKeys.Enabled,
 })
 
 export const actions: import("./$types").Actions = {}
 actions.register = async ({ request, cookies }) => {
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
-	const { username, email, password, cpassword, regkey } = form.data
+	const { username, email, password, cpassword } = form.data
 
 	if (cpassword !== password)
 		return formError(
@@ -68,17 +74,21 @@ actions.register = async ({ request, cookies }) => {
 	if (emailCheck)
 		return formError(form, ["email"], ["This email is already in use"])
 
-	const key = Record("regKey", regkey.split("-")[1])
-	const [[regkeyCheck]] = await equery<{ usesLeft: number }[][]>(surql`
-		SELECT usesLeft FROM ${key}`)
-	if (!regkeyCheck)
-		return formError(form, ["regkey"], ["Registration key is invalid"])
-	if (regkeyCheck.usesLeft < 1)
-		return formError(
-			form,
-			["regkey"],
-			["This registration key has ran out of uses"]
-		)
+	let key: RecordId<"regKey"> | undefined
+	if (config.RegistrationKeys.Enabled) {
+		key = Record("regKey", form.data.regkey.split("-")[1])
+
+		const [[regkeyCheck]] = await equery<{ usesLeft: number }[][]>(surql`
+			SELECT usesLeft FROM ${key}`)
+		if (!regkeyCheck)
+			return formError(form, ["regkey"], ["Registration key is invalid"])
+		if (regkeyCheck.usesLeft < 1)
+			return formError(
+				form,
+				["regkey"],
+				["This registration key has ran out of uses"]
+			)
+	}
 
 	const [, , userId] = await equery<string[]>(createUserQuery, {
 		username,
@@ -124,7 +134,8 @@ actions.initialAccount = async ({ request, cookies }) => {
 
 	// This is the kind of stuff that always breaks due to never getting tested
 	// Remember: untested === unworking
-	const [, , userId] = await equery<string[]>(createAdminQuery, {
+	const [, , userId] = await equery<string[]>(createUserQuery, {
+		admin: true,
 		username,
 		hashedPassword: Bun.password.hashSync(password),
 		bodyColours: config.DefaultBodyColors,

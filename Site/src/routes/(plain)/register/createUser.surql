@@ -3,10 +3,10 @@ CREATE user CONTENT {
 	bodyColours: $bodyColours,
 	created: time::now(),
 	css: "",
-	email: $email,
+	email: IF $admin THEN "" ELSE $email END,
 	hashedPassword: $hashedPassword,
 	lastOnline: time::now(),
-	permissionLevel: 1,
+	permissionLevel: IF $admin THEN 5 ELSE 1 END,
 	status: <future> {
 		IF ->playing[WHERE valid AND ping > time::now() - 35s] THEN
 			"Playing"
@@ -23,5 +23,7 @@ CREATE user CONTENT {
 LET $u = (SELECT id FROM user WHERE username = $username)[0].id;
 meta::id($u);
 
-UPDATE $key SET usesLeft -= 1;
-RELATE $u->used->$key;
+IF $key {
+	UPDATE $key SET usesLeft -= 1;
+	RELATE $u->used->$key;
+};

@@ -68,12 +68,14 @@
 				label="Confirm Password"
 				type="password"
 				placeholder={"•".repeat(14)} />
-			<Input
-				{formData}
-				column
-				name="regkey"
-				label="Registration Key"
-				placeholder="mercurkey-12311121123" />
+			{#if data.regKeysEnabled}
+				<Input
+					{formData}
+					column
+					name="regkey"
+					label="Registration Key"
+					placeholder="{data.siteName.toLowerCase()}key-12311121123" />
+			{/if}
 		</Form>
 	{:else}
 		<h2>Create the initial account</h2>
