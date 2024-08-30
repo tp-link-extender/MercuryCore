@@ -1,8 +1,8 @@
+import pageQuery from "$lib/server/pageQuery"
 import { equery } from "$lib/server/surreal"
-import { redirect } from "@sveltejs/kit"
 import gamesQuery from "./games.surql"
 
-export type Place = {
+type Place = {
 	id: number
 	name: string
 	playerCount: number
@@ -12,14 +12,12 @@ export type Place = {
 }
 
 export async function load({ url }) {
-	const pageQ = url.searchParams.get("p") || "1"
-	const page = Number.isNaN(+pageQ) ? 1 : Math.round(+pageQ)
-	if (page < 1) redirect(303, "/games?p=1")
+	const { page, checkPages } = pageQuery(url)
 
 	const [places, pages] = await equery<[Place[], number]>(gamesQuery, {
 		page,
 	})
-	if (page > pages) redirect(303, `/games?p=${pages}`)
+	checkPages(pages)
 
 	return { places, pages }
 }
