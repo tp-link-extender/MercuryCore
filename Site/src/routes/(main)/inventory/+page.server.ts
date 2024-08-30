@@ -14,11 +14,11 @@ export type Q = [Asset[], number]
 
 export async function load({ locals, url }) {
 	const { user } = await authorise(locals)
-	const { pq, checkPages } = pageQuery(url)
+	const { page, checkPages } = pageQuery(url)
 
 	const [assets, pages] = await equery<Q>(inventoryQuery, {
 		user: Record("user", user.id),
-		...pq,
+		page
 	})
 	checkPages(pages)
 

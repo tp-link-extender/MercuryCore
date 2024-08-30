@@ -263,13 +263,12 @@
 		box-shadow: 0 0 1rem 0.2rem #000;
 	}
 
-	#results {
-		& a:hover {
-			background: var(--accent);
-		}
-		& :global(.pseudofocus) {
-			color: var(--grey-text) !important;
-			background: var(--accent);
-		}
+	#results a:hover {
+		background: var(--accent);
+	}
+
+	:global(.pseudofocus) {
+		color: var(--grey-text) !important;
+		background: var(--accent);
 	}
 </style>

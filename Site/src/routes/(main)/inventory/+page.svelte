@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { browser } from "$app/environment"
 	import { page } from "$app/stores"
 	import Asset from "$components/Asset.svelte"
 	import Head from "$components/Head.svelte"
@@ -8,39 +7,6 @@
 	import TabData from "$components/TabData"
 
 	export let data
-
-	let searchedData: typeof data.assets = []
-
-	const defaultQuery = $page.url.searchParams.get("q")?.trim() || ""
-	let query = defaultQuery
-
-	const searchCache = new Map<string, typeof data.assets>() // just for this session
-
-	async function search() {
-		const q = query.trim()
-		if (q) $page.url.searchParams.set("q", q)
-		else $page.url.searchParams.delete("q")
-		history.replaceState(null, "", $page.url)
-		if (q === defaultQuery) return
-
-		const cache = searchCache.get(q)
-		if (cache) {
-			searchedData = cache
-			return
-		}
-		const response = await fetch(`/inventory/search?q=${q}`)
-		searchedData = (await response.json()) as typeof data.assets
-		searchCache.set(q, searchedData)
-	}
-	// Run function whenever query changes
-	$: browser && (query || true) && search()
-
-	export const snapshot = {
-		capture: () => query,
-		restore: v => {
-			query = v
-		}
-	}
 
 	const tabTypes: { [k: string]: number } = Object.freeze({
 		Hats: 8,
@@ -53,9 +19,7 @@
 
 	let tabData = TabData(data.url, Object.keys(tabTypes))
 
-	$: assets = (
-		query !== defaultQuery && browser ? searchedData : data.assets || []
-	).filter(a => a.type === tabTypes[tabData.currentTab])
+	$: assets = data.assets.filter(a => a.type === tabTypes[tabData.currentTab])
 </script>
 
 <Head name={data.siteName} title="Inventory" />
@@ -64,26 +28,6 @@
 
 <div class="px-4 pt-6">
 	<SidebarShell bind:tabData space>
-		<form
-			on:submit|preventDefault
-			action="/inventory"
-			class="input-group pb-4">
-			<input
-				bind:value={query}
-				type="text"
-				name="q"
-				placeholder="Search for an item"
-				aria-label="Search for an item"
-				aria-describedby="button-addon2" />
-			<input type="hidden" name="tab" value={tabData.currentTab} />
-			<button
-				class="btn btn-secondary"
-				aria-label="Search"
-				id="button-addon2">
-				<fa fa-search />
-			</button>
-		</form>
-
 		{#if assets.length > 0}
 			<div
 				class="grid gap-4 grid-cols-2 xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3">
@@ -98,12 +42,8 @@
 			{#key $page.url}
 				<Pagination totalPages={1} />
 			{/key}
-		{:else if query}
-			<h2 class="pt-12 text-center">
-				No items found with search term {query}
-			</h2>
 		{:else}
-			<h2 class="pt-12 text-center">No items found in this category</h2>
+			<h2 class="pt-12 text-center">No {tabData.currentTab} found</h2>
 		{/if}
 	</SidebarShell>
 </div>

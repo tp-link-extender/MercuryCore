@@ -1,11 +1,11 @@
 import { redirect } from "@sveltejs/kit"
 
 /**
- * Helper function to parse the query and page from a URL object.
- * @param url The URL object to parse the query and page from
- * @returns An object containing the query and page, as well as a function to check if the current page exceeds the total number of pages.
+ * Helper function to parse the page number from a URL object.
+ * @param url The URL object to parse thepage from
+ * @returns An object containing the page, as well as a function to check if the current page exceeds the total number of pages.
  * @example
- * const { qp, checkPages } = pageQuery(url)
+ * const { page, checkPages } = pageQuery(url)
  * const [things, pages] = await equery<[Thing[], number]>(thingQuery, qp)
  * checkPages(pages)
  */
@@ -17,13 +17,11 @@ export default (url: URL) => {
 		redirect(303, url)
 	}
 
-	const query = url.searchParams.get("q")?.trim() || ""
-
 	function checkPages(pages: number) {
 		if (page <= pages) return
 		url.searchParams.set("p", pages.toString())
 		redirect(303, url)
 	}
 
-	return { pq: { page, query }, checkPages }
+	return { page, checkPages }
 }

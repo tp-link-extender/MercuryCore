@@ -94,12 +94,7 @@ DEFINE EVENT regKeyDisableLog ON TABLE regKey WHEN $event = "UPDATE" AND $after.
 
 # separation of concerns, maaaan
 
-DEFINE FUNCTION fn::filterInventory($thing: object, $user: record) {
+DEFINE FUNCTION fn::filterInventory($thing: object) {
 	RETURN $user IN $thing<-owns<-user
 		AND $thing.type IN [2, 8, 11, 12, 17, 18, 19]
-		AND IF $query THEN
-			string::lowercase($query) IN string::lowercase($thing.name)
-		ELSE
-			TRUE
-		END
 };
