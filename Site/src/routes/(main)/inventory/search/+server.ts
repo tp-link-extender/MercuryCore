@@ -10,7 +10,7 @@ export async function GET({ locals, url }) {
 	const pageQ = url.searchParams.get("p") || "1"
 	const page = Number.isNaN(+pageQ) ? 1 : Math.max(1, Math.round(+pageQ))
 
-	const [assets] = await equery<Asset[][]>(inventoryQuery, {
+	const [, assets] = await equery<[undefined, Asset[]]>(inventoryQuery, {
 		user: Record("user", user.id),
 		query,
 		page,

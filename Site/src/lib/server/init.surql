@@ -79,6 +79,10 @@ DEFINE FUNCTION fn::id() {
 	}
 };
 
+DEFINE FUNCTION fn::clampPages($count: number, $pages: number) {
+	RETURN math::max([math::ceil(<float> $count / 50), 1]);
+};
+
 DEFINE EVENT bannerCreateLog ON TABLE banner WHEN $event = "CREATE" THEN
 	fn::auditLog("Administration", string::concat('Create banner "', $after.body, '"'), $after.creator);
 DEFINE EVENT bannerDeleteLog ON TABLE banner WHEN $event = "UPDATE" AND !$before.deleted AND $after.deleted THEN

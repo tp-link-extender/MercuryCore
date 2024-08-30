@@ -12,19 +12,27 @@
 	let query = data.query
 	let searchedData: typeof data.assets = []
 
-	const defaultQuery = $page.url.searchParams.get("q") || ""
+	const defaultQuery = $page.url.searchParams.get("q")?.trim()
+	const searchCache = new Map<string, typeof data.assets>() // just for this session
 
-	// Run function whenever query changes
 	async function search() {
-		$page.url.searchParams.set("q", query)
+		const q = query.trim()
+		if (q) $page.url.searchParams.set("q", q)
+		else $page.url.searchParams.delete("q")
 		history.replaceState(null, "", $page.url)
-		console.log(query, defaultQuery)
-		if (query === defaultQuery) return
+		if (q === defaultQuery) return
 
-		const response = await fetch(`/inventory/search?q=${query}`)
+		const cache = searchCache.get(q)
+		if (cache) {
+			searchedData = cache
+			return
+		}
+		const response = await fetch(`/inventory/search?q=${q}`)
 		searchedData = (await response.json()) as typeof data.assets
+		searchCache.set(q, searchedData)
 	}
-	$: browser && query !== defaultQuery && search()
+	// Run function whenever query changes
+	$: browser && (query || true) && search()
 
 	export const snapshot = {
 		capture: () => query,

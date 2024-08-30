@@ -12,7 +12,7 @@ export type Asset = {
 
 export async function load({ locals, url }) {
 	const { user } = await authorise(locals)
-	const query = url.searchParams.get("q")?.trim() as string
+	const query = url.searchParams.get("q")?.trim() || ""
 	const pageQ = url.searchParams.get("p") || "1"
 	const page = Number.isNaN(+pageQ) ? 1 : Math.round(+pageQ)
 	if (page < 1) {
@@ -20,7 +20,8 @@ export async function load({ locals, url }) {
 		redirect(303, url)
 	}
 
-	const [assets, pages] = await equery<[Asset[], number]>(inventoryQuery, {
+	type Q = [undefined, Asset[], number]
+	const [, assets, pages] = await equery<Q>(inventoryQuery, {
 		user: Record("user", user.id),
 		query,
 		page,
