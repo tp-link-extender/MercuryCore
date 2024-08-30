@@ -12,13 +12,19 @@
 	let query = data.query
 	let searchedData: typeof data.assets = []
 
+	const defaultQuery = $page.url.searchParams.get("q") || ""
+
 	// Run function whenever query changes
 	async function search() {
 		$page.url.searchParams.set("q", query)
+		history.replaceState(null, "", $page.url)
+		console.log(query, defaultQuery)
+		if (query === defaultQuery) return
+
 		const response = await fetch(`/inventory/search?q=${query}`)
 		searchedData = (await response.json()) as typeof data.assets
 	}
-	$: query && browser && search()
+	$: browser && query !== defaultQuery && search()
 
 	export const snapshot = {
 		capture: () => query,
@@ -38,9 +44,9 @@
 
 	let tabData = TabData(data.url, Object.keys(tabTypes))
 
-	$: assets = (query && browser ? searchedData : data.assets || []).filter(
-		a => a.type === tabTypes[tabData.currentTab]
-	)
+	$: assets = (
+		query !== defaultQuery && browser ? searchedData : data.assets || []
+	).filter(a => a.type === tabTypes[tabData.currentTab])
 </script>
 
 <Head name={data.siteName} title="Inventory" />
