@@ -1,6 +1,6 @@
 import { authorise } from "$lib/server/lucia"
+import pageQuery from "$lib/server/pageQuery"
 import { Record, equery } from "$lib/server/surreal.ts"
-import { redirect } from "@sveltejs/kit"
 import inventoryQuery from "./inventory.surql"
 
 export type Asset = {
@@ -10,26 +10,17 @@ export type Asset = {
 	type: number
 }
 
+export type Q = [undefined, Asset[], number]
+
 export async function load({ locals, url }) {
 	const { user } = await authorise(locals)
-	const query = url.searchParams.get("q")?.trim() || ""
-	const pageQ = url.searchParams.get("p") || "1"
-	const page = Number.isNaN(+pageQ) ? 1 : Math.round(+pageQ)
-	if (page < 1) {
-		url.searchParams.set("p", "1")
-		redirect(303, url)
-	}
+	const { pq, checkPages } = pageQuery(url)
 
-	type Q = [undefined, Asset[], number]
 	const [, assets, pages] = await equery<Q>(inventoryQuery, {
 		user: Record("user", user.id),
-		query,
-		page,
+		...pq,
 	})
-	if (page > pages) {
-		url.searchParams.set("p", pages.toString())
-		redirect(303, url)
-	}
+	checkPages(pages)
 
-	return { query, assets }
+	return { assets }
 }

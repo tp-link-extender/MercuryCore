@@ -9,10 +9,11 @@
 
 	export let data
 
-	let query = data.query
 	let searchedData: typeof data.assets = []
 
-	const defaultQuery = $page.url.searchParams.get("q")?.trim()
+	const defaultQuery = $page.url.searchParams.get("q")?.trim() || ""
+	let query = defaultQuery
+
 	const searchCache = new Map<string, typeof data.assets>() // just for this session
 
 	async function search() {
