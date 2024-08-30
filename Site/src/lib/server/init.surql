@@ -98,3 +98,7 @@ DEFINE FUNCTION fn::filterInventory($thing: object) {
 	RETURN $user IN $thing<-owns<-user
 		AND $thing.type IN [2, 8, 11, 12, 17, 18, 19]
 };
+
+DEFINE FUNCTION fn::filterGames($thing: object) {
+	RETURN !$thing.privateServer AND !$thing.deleted
+};
