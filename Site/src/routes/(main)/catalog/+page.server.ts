@@ -15,7 +15,7 @@ export const load = async ({ url }) => {
 	if (page < 1) redirect(303, "/catalog?p=1")
 
 	const [assets, pages] = await equery<[Asset[], number]>(catalogQuery, {
-		page: 1,
+		page,
 	})
 	if (page > pages) redirect(303, `/catalog?p=${pages}`)
 

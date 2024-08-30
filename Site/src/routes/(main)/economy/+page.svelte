@@ -30,38 +30,6 @@
 				</span>
 			</div>
 		</div>
-		<div class="border-[--accent] border-solid">
-			<div class="p-4 bg-darker">
-				Darker
-				<span class="grey-text">Grey text</span>
-			</div>
-			<div class="p-4">
-				Background
-				<span class="grey-text">Grey text</span>
-			</div>
-			<div class="p-4 bg-a">
-				Accent
-				<span class="grey-text">Grey text</span>
-			</div>
-			<div class="p-4 bg-a1">
-				Accent1
-				<span class="grey-text">Grey text</span>
-			</div>
-			<div class="p-4 bg-a2">
-				Accent2
-				<span class="grey-text">Grey text</span>
-			</div>
-			<div class="p-4 bg-a3">
-				Accent3
-				<span class="grey-text">Grey text</span>
-			</div>
-			<div class="p-4 flex gap-4">
-				<button class="btn btn-primary">Primary</button>
-				<button class="btn btn-secondary">Secondary</button>
-				<button class="btn btn-tertiary">Tertiary</button>
-				<button class="btn btn-quatenary">Quatenary</button>
-			</div>
-		</div>
 	</div>
 
 	<h2>Your recent transactions</h2>

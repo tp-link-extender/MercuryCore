@@ -14,6 +14,7 @@
 
 	// Run function whenever query changes
 	async function search() {
+		$page.url.searchParams.set("q", query)
 		const response = await fetch(`/inventory/search?q=${query}`)
 		searchedData = (await response.json()) as typeof data.assets
 	}
@@ -50,7 +51,7 @@
 	<SidebarShell bind:tabData space>
 		<form
 			on:submit|preventDefault
-			action="/inventory?tab={tabData.currentTab}"
+			action="/inventory"
 			class="input-group pb-4">
 			<input
 				bind:value={query}
@@ -59,6 +60,7 @@
 				placeholder="Search for an item"
 				aria-label="Search for an item"
 				aria-describedby="button-addon2" />
+			<input type="hidden" name="tab" value={tabData.currentTab} />
 			<button
 				class="btn btn-secondary"
 				aria-label="Search"
@@ -67,10 +69,10 @@
 			</button>
 		</form>
 
-		{#if !query && assets.length > 0}
+		{#if assets.length > 0}
 			<div
 				class="grid gap-4 grid-cols-2 xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3">
-				{#each assets as asset, num}
+				{#each assets as asset, num (asset.id)}
 					<Asset
 						{asset}
 						{num}
