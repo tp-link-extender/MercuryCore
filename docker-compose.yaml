@@ -1,16 +1,20 @@
 # Config file for compose, a tool that allows for easily managing multiple docker containers.
 # https://docs.docker.com/compose/
 
+include:
+    - ./Services/Economy/docker-compose.yaml
+    - ./Services/TextFilter/docker-compose.yaml
+
 services:
-    surreal:
-        # not :nightly because doing that once caused failures when graph linking
-        # and also caused errors with query parameters (twice)
+    surreal-db:
         image: surrealdb/surrealdb:v1.5.4
+        container_name: surreal-db
+        #user: ":" uncomment if having issues when running locally
         ports:
             - 8000:8000
         restart: unless-stopped
         volumes:
-            - ./data/surreal:/database
+            - surrealdb-data:/database
         command:
             - start
             - --log=trace
@@ -19,10 +23,5 @@ services:
             - --allow-scripting
             - file:database
 
-    economy:
-        build: ./Economy
-        ports:
-            - 2009:2009
-        restart: unless-stopped
-        volumes:
-            - ./data/economy:/economy/data
+volumes:
+  surrealdb-data:
