@@ -91,3 +91,15 @@ DEFINE EVENT regKeyCreateLog ON TABLE regKey WHEN $event = "CREATE" THEN
 	fn::auditLog("Administration", string::concat("Create registration key ", meta::id($after.id)), $after.creator);
 DEFINE EVENT regKeyDisableLog ON TABLE regKey WHEN $event = "UPDATE" AND $after.usesLeft = 0 THEN
 	fn::auditLog("Administration", string::concat("Disable registration key ", meta::id($after.id)), $after.disabledBy);
+
+# separation of concerns, maaaan
+
+DEFINE FUNCTION fn::filterInventory($thing: object, $user: record) {
+	RETURN $user IN $thing<-owns<-user
+		AND $thing.type IN [2, 8, 11, 12, 17, 18, 19]
+		AND IF $query THEN
+			string::lowercase($query) IN string::lowercase($thing.name)
+		ELSE
+			TRUE
+		END
+};
