@@ -20,5 +20,5 @@ export async function load({ locals, url }) {
 	})
 	checkPages(pages)
 
-	return { assets }
+	return { assets, pages }
 }

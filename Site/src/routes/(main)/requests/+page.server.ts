@@ -1,14 +1,17 @@
 import { authorise } from "$lib/server/lucia"
-import { Record, equery, surql } from "$lib/server/surreal"
+import pageQuery from "$lib/server/pageQuery"
+import { Record, equery } from "$lib/server/surreal"
+import requestsQuery from "./requests.surql"
 
-export async function load({ locals }) {
+export async function load({ locals, url }) {
 	const { user } = await authorise(locals)
-	const [users] = await equery<BasicUser[][]>(
-		surql`
-			SELECT status, username
-			FROM user WHERE $user IN ->request->user`,
-		{ user: Record("user", user.id) }
-	)
+	const { page, checkPages } = pageQuery(url)
 
-	return { users }
+	const [users, pages] = await equery<[BasicUser[], number]>(requestsQuery, {
+		user: Record("user", user.id),
+		page,
+	})
+	checkPages(pages)
+
+	return { users, pages }
 }

@@ -52,7 +52,7 @@
 			{/each}
 		</div>
 		{#key $page.url}
-			<Pagination totalPages={1} />
+			<Pagination totalPages={data.pages} />
 		{/key}
 	{:else}
 		<h2 class="pt-12 text-center">No friend requests found</h2>
