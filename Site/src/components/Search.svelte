@@ -67,11 +67,10 @@
 
 <svelte:window
 	on:keydown={e => {
-		// the right way (actually works on different keyboard layouts)
-		if (e.ctrlKey && e.key === "k") {
-			e.preventDefault()
-			searchInput.focus()
-		}
+		// the right way (actually works on different keyboard layouts, lookin at you {insert several docs sites})
+		if (!e.ctrlKey || e.key !== "k") return
+		e.preventDefault()
+		searchInput.focus()
 	}} />
 
 <form
@@ -101,28 +100,40 @@
 			title="Search (ctrl+k)">
 			<fa fa-search />
 		</button>
-		{#if search.trim() && !searchCompleted}
-			<div
-				transition:fade={{ duration: 150 }}
-				id="results"
-				class="absolute flex flex-col bg-darker p-2 mt-12 rounded-3 z-5 min-w-25vw">
-				{#each searchCategories as [name, category], num}
-					<a
-						bind:this={searchResults[num]}
-						class="btn light-text py-2 text-start"
-						href="/search?q={search.trim()}&c={category}"
-						title="Search {name}">
-						Search <b>{search}</b>
-						in {name}
-					</a>
-				{/each}
-			</div>
-		{/if}
 	</div>
 </form>
+
+<div
+	popover="auto"
+	id="results"
+	class="bg-darker p-2 rounded-3 min-w-25vw transition-all duration-300 ease-in-out">
+	<div class="flex flex-col">
+		{#each searchCategories as [name, category], num}
+			<a
+				bind:this={searchResults[num]}
+				class="btn light-text py-2 text-start"
+				href="/search?q={search.trim()}&c={category}"
+				title="Search {name}">
+				Search <b>{search}</b>
+				in {name}
+			</a>
+		{/each}
+	</div>
+</div>
 
 <style>
 	#results a:hover {
 		background: var(--accent);
+	}
+
+	#results {
+		outline: transparent;
+		filter: drop-shadow(0 20px 13px rgba(255, 255, 255, 0.02))
+			drop-shadow(0 8px 5px rgba(255, 255, 255, 0.05));
+		border: 1px solid var(--accent);
+		@starting-style {
+			opacity: 0;
+			translate: 0 2rem;
+		}
 	}
 </style>

@@ -39,7 +39,7 @@
 
 <nav class="py-0 justify-start z-11">
 	<div
-		class="pt-1 px-2 sm:px-4 flex items-center w-full pb-2px bg-[--accent] h-13.5">
+		class="bg-a pt-1 px-2 sm:px-4 flex items-center w-full pb-2px h-13.5">
 		<a class="light-text text-xl no-underline <sm:hidden fw-500" href="/">
 			{data.siteName}
 		</a>
