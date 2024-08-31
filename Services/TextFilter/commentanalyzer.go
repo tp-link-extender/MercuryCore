@@ -35,20 +35,22 @@ func InitCommentAnalyzer() {
 	fmt.Println(c.InGreen("Comment Analyzer initialized successfully."))
 }
 
+// https://developers.perspectiveapi.com/s/about-the-api-score?language=en_US#:~:text=For%20social%20science%20researchers%20using,to%20typical%20moderation%20use%20cases.
+
 func AnalyzeComment(comment string) (*commentanalyzer.AnalyzeCommentResponse, error) {
 	analyzeReq := &commentanalyzer.AnalyzeCommentRequest{
 		Comment: &commentanalyzer.TextEntry{
 			Text: comment,
-		},
+		}, // lower score thresholds = more sensitive
 		RequestedAttributes: map[string]commentanalyzer.AttributeParameters{
-			"TOXICITY":          {ScoreThreshold: 0.35},
-			"SEVERE_TOXICITY":   {ScoreThreshold: 0.35},
-			"IDENTITY_ATTACK":   {ScoreThreshold: 0.35},
-			"INSULT":            {ScoreThreshold: 0.35},
-			"PROFANITY":         {ScoreThreshold: 0.35},
-			"THREAT":            {ScoreThreshold: 0.35},
-			"SEXUALLY_EXPLICIT": {ScoreThreshold: 0.35},
-			"FLIRTATION":        {ScoreThreshold: 0.35},
+			"TOXICITY":          {ScoreThreshold: 0.15},
+			"SEVERE_TOXICITY":   {ScoreThreshold: 0.10},
+			"IDENTITY_ATTACK":   {ScoreThreshold: 0.20},
+			"INSULT":            {ScoreThreshold: 0.20},
+			"PROFANITY":         {ScoreThreshold: 0.20},
+			"THREAT":            {ScoreThreshold: 0.10},
+			"SEXUALLY_EXPLICIT": {ScoreThreshold: 0.10},
+			"FLIRTATION":        {ScoreThreshold: 0.10},
 		},
 	}
 
@@ -71,4 +73,50 @@ func AnalyzeComment(comment string) (*commentanalyzer.AnalyzeCommentResponse, er
 	}
 
 	return nil, err
+}
+
+// TODO: perspectiveapi does not have an way to see what partions of words are profanity so this exists
+// this is not good at all though because stuff like 'you are xxxx' may not be detected
+func FilterText(text string, threshold float64) (string, bool, []string, []string) {
+	words := strings.Fields(text)
+	filtered := false
+
+	detectedLanguages := []string{}
+	usedLanguages := []string{}
+
+	for i, word := range words {
+		resp, err := AnalyzeComment(word)
+		Assert(err, "Failed to analyze word")
+
+		for _, lang := range resp.DetectedLanguages {
+			if !contains(detectedLanguages, lang) {
+				detectedLanguages = append(detectedLanguages, lang)
+			}
+		}
+		for _, lang := range resp.Languages {
+			if !contains(usedLanguages, lang) {
+				usedLanguages = append(usedLanguages, lang)
+			}
+		}
+
+		for _, attr := range resp.AttributeScores {
+			if attr.SummaryScore.Value > threshold {
+				words[i] = strings.Repeat("#", len(word)) // TODO: should the character # be configureable
+				filtered = true
+				break
+			}
+		}
+	}
+
+	return strings.Join(words, " "), filtered, detectedLanguages, usedLanguages
+}
+
+// TODO: make a library for stuff like this?
+func contains(slice []string, item string) bool {
+	for _, s := range slice {
+		if s == item {
+			return true
+		}
+	}
+	return false
 }
