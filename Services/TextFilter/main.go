@@ -19,8 +19,7 @@ func Assert(err error, txt string) {
 func main() {
 	InitCommentAnalyzer()
 
-	http.HandleFunc("/v1/get-text-filtered", GetTextFilteredRoute)
-	http.HandleFunc("/v1/get-text-filtered-unstable", GetTextFilteredUnstableRoute)
+	http.HandleFunc("/v1/get-text-filtered", GetTextFilteredUnstableRoute)
 
 	fmt.Println(c.InGreen("~ TextFilter service is up on port 3476 ~"))
 	err := http.ListenAndServe(":3476", nil)

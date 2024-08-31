@@ -2,8 +2,9 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
+
+	commentanalyzer "google.golang.org/api/commentanalyzer/v1alpha1"
 )
 
 type LanguageInfo struct {
@@ -12,49 +13,12 @@ type LanguageInfo struct {
 }
 
 type FilterResponse struct {
-	FilteredText string       `json:"filteredText"`
-	IsFiltered   bool         `json:"isFiltered"`
-	Languages    LanguageInfo `json:"languages"`
+	FilteredText string                                  `json:"filteredText"`
+	IsFiltered   bool                                    `json:"isFiltered"`
+	Languages    LanguageInfo                            `json:"languages"`
+	AnalyzerResp *commentanalyzer.AnalyzeCommentResponse `json:"analyzerResponse"` // helps debug thresholds
 }
 
-func GetTextFilteredRoute(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	text := r.URL.Query().Get("text")
-	if text == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"message": "Invalid Request"})
-		return
-	}
-
-	resp, err := AnalyzeComment(text)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to analyze comment: %v", err), http.StatusInternalServerError)
-		return
-	}
-
-	threshold := 0.7 // TODO: fine-tune this before integration or find a better way!
-	filtered := false
-
-	for _, attr := range resp.AttributeScores {
-		if attr.SummaryScore.Value > threshold {
-			filtered = true
-			break
-		}
-	}
-
-	response := FilterResponse{
-		IsFiltered: filtered,
-		Languages: LanguageInfo{
-			DetectedLanguages: resp.DetectedLanguages,
-			LanguagesUsed:     resp.Languages,
-		},
-	}
-
-	json.NewEncoder(w).Encode(response)
-}
-
-// "unstable" beause of the todo on FilterText
 func GetTextFilteredUnstableRoute(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -65,8 +29,8 @@ func GetTextFilteredUnstableRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	threshold := 0.7 // TODO: fine-tune this before integration or find a better way!
-	filteredText, isFiltered, detectedLanguages, usedLanguages := FilterText(text, threshold)
+	threshold := 0.6 // TODO: fine-tune this and score thresholds before integration
+	filteredText, isFiltered, detectedLanguages, usedLanguages, analyzerResp := FilterText(text, threshold)
 
 	response := FilterResponse{
 		FilteredText: filteredText,
@@ -75,6 +39,7 @@ func GetTextFilteredUnstableRoute(w http.ResponseWriter, r *http.Request) {
 			DetectedLanguages: detectedLanguages,
 			LanguagesUsed:     usedLanguages,
 		},
+		AnalyzerResp: analyzerResp,
 	}
 
 	json.NewEncoder(w).Encode(response)
