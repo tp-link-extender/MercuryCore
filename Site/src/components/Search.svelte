@@ -1,16 +1,23 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
+	import { browser } from "$app/environment"
 	import { goto } from "$app/navigation"
-	import fade from "$lib/fade"
+
+	export let pages: string[]
 
 	let search = ""
 	let searchCompleted = true
-	let currentSearchFocus = -1
-
+	let searchFocus = -1
 	$: if (search === "") {
 		searchCompleted = true
-		currentSearchFocus = -1
+		searchFocus = -1
 	}
+
+	let searchText = "Search"
+
+	// only show after JS loads to allow for ctrl+k to be detected
+	new Promise(r => r(0)).then(() => {
+		if (browser) searchText += " (ctrl+k)"
+	})
 
 	let searchInput: HTMLInputElement
 	const searchResults: HTMLElement[] = []
@@ -20,6 +27,7 @@
 		["Places", "places"],
 		["Catalog", "assets"]
 	]
+	if (pages.includes("Groups")) searchCategories.push(["Groups", "groups"])
 
 	function keydown(
 		e: KeyboardEvent & {
@@ -28,32 +36,26 @@
 	) {
 		switch (e.key) {
 			case "Enter":
-				if (!searchCompleted && currentSearchFocus >= 0) {
-					e.preventDefault()
-					searchResults[currentSearchFocus].click()
-				}
+				e.preventDefault()
+				if (!searchCompleted && searchFocus >= 0)
+					searchResults[searchFocus].click()
 
 				searchCompleted = true
-				currentSearchFocus = -1
+				searchFocus = -1
 				break
 			case "ArrowDown":
 			case "ArrowUp": {
 				e.preventDefault()
 
 				// Focus first result
-				const prevSearchFocus = currentSearchFocus
+				searchResults[searchFocus]?.classList.remove("pseudofocus")
 
-				currentSearchFocus += e.key === "ArrowDown" ? 1 : -1
-				currentSearchFocus =
-					currentSearchFocus >= searchCategories.length
-						? 0
-						: currentSearchFocus < 0
-							? searchCategories.length - 1
-							: currentSearchFocus
+				searchFocus += e.key === "ArrowDown" ? 1 : -1
+				if (searchFocus >= searchCategories.length) searchFocus = 0
+				else if (searchFocus < 0)
+					searchFocus = searchCategories.length - 1
 
-				searchResults[currentSearchFocus]?.classList.add("pseudofocus")
-				searchResults[prevSearchFocus]?.classList.remove("pseudofocus")
-
+				searchResults[searchFocus]?.classList.add("pseudofocus")
 				break
 			}
 			case "Escape":
@@ -73,67 +75,61 @@
 		searchInput.focus()
 	}} />
 
-<form
-	use:enhance
-	method="POST"
-	action="/search"
-	role="search"
-	class="mx-auto px-2 pb-1">
+<form action="/search" role="search" class="mx-auto px-2 pb-1">
 	<div
-		class="input-group max-w-140 xl:(absolute left-1/2 top-2 -translate-x-1/2 w-35vw) lg:w-76 md:w-100 sm:w-52">
+		class="max-w-140 xl:(absolute left-1/2 top-2 -translate-x-1/2 w-35vw) lg:w-76 md:w-100 sm:w-52">
 		<input
 			bind:this={searchInput}
 			bind:value={search}
 			on:keydown={keydown}
-			class="bg-background h-10 pl-4"
-			name="query"
+			class="bg-background h-10 pl-4 w-full"
+			name="q"
 			type="search"
-			placeholder="Search (ctrl+k)"
-			aria-label="Search (ctrl+k)"
+			placeholder={searchText}
+			aria-label={searchText}
 			autocomplete="off" />
-		<button
-			on:click|preventDefault={() => {
-				if (search.trim()) goto(`/search?q=${search.trim()}&c=users`)
-				searchCompleted = true
-			}}
-			class="btn btn-secondary h-10 <sm:px-3 rounded-r-1.5!"
-			title="Search (ctrl+k)">
-			<fa fa-search />
-		</button>
+		<div
+			id="results"
+			class="bg-darker absolute p-2 rounded-3 min-w-25vw max-w-full -translate-x-1/2 transition-all duration-300 ease-in-out z-10">
+			{#each searchCategories as [name, value], num}
+				<button
+					bind:this={searchResults[num]}
+					on:click|preventDefault={() =>
+						goto(`/search?q=${search}&c=${value}`)}
+					class="btn light-text block w-full py-2 text-start"
+					name="c"
+					{value}
+					title="Search {name}">
+					Search <b class="break-all">{search}</b>
+					in {name}
+				</button>
+			{/each}
+		</div>
 	</div>
 </form>
 
-<div
-	popover="auto"
-	id="results"
-	class="bg-darker p-2 rounded-3 min-w-25vw transition-all duration-300 ease-in-out">
-	<div class="flex flex-col">
-		{#each searchCategories as [name, category], num}
-			<a
-				bind:this={searchResults[num]}
-				class="btn light-text py-2 text-start"
-				href="/search?q={search.trim()}&c={category}"
-				title="Search {name}">
-				Search <b>{search}</b>
-				in {name}
-			</a>
-		{/each}
-	</div>
-</div>
-
 <style>
-	#results a:hover {
-		background: var(--accent);
-	}
-
 	#results {
+		top: 3.375rem;
+		left: 50%;
 		outline: transparent;
 		filter: drop-shadow(0 20px 13px rgba(255, 255, 255, 0.02))
 			drop-shadow(0 8px 5px rgba(255, 255, 255, 0.05));
 		border: 1px solid var(--accent);
-		@starting-style {
-			opacity: 0;
-			translate: 0 2rem;
+		opacity: 0;
+
+		& button:hover {
+			background: var(--accent);
 		}
+	}
+
+	:global(.pseudofocus) {
+		color: var(--grey-text) !important;
+		background: var(--accent);
+	}
+
+	/* not empty and focussed  */
+	input[type="search"]:not(:placeholder-shown):focus ~ #results {
+		opacity: 1;
 	}
 </style>

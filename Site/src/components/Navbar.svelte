@@ -13,16 +13,8 @@
 		["Catalog", "/catalog", "fa-book-open-cover"],
 		["Create", "/develop", "fa-plus"]
 	]
-	const searchCategories = [
-		["Users", "users"],
-		["Places", "places"],
-		["Catalog", "assets"]
-	]
-
-	if (data.pages.includes("Groups")) {
+	if (data.pages.includes("Groups"))
 		nav1.push(["Groups", "/groups", "fa-people-group"])
-		searchCategories.push(["Groups", "groups"])
-	}
 	if (data.pages.includes("Forum"))
 		nav1.push(["Forum", "/forum", "fa-messages"])
 
@@ -39,7 +31,7 @@
 
 <nav class="py-0 justify-start z-11">
 	<div
-		class="bg-a pt-1 px-2 sm:px-4 flex items-center w-full pb-2px h-13.5">
+		class="bg-a pt-1 px-2 sm:px-4 flex items-center w-full lg:pb-2px h-13.5">
 		<a class="light-text text-xl no-underline <sm:hidden fw-500" href="/">
 			{data.siteName}
 		</a>
@@ -57,7 +49,7 @@
 					</a>
 				{/each}
 			</div>
-			<Search />
+			<Search pages={data.pages} />
 			<div class="flex items-center gap-6">
 				<a
 					href="/notifications"
@@ -150,10 +142,5 @@
 	#bottomnav {
 		border-top: 1px solid var(--accent);
 		box-shadow: 0 0 1rem 0.2rem #000;
-	}
-
-	:global(.pseudofocus) {
-		color: var(--grey-text) !important;
-		background: var(--accent);
 	}
 </style>

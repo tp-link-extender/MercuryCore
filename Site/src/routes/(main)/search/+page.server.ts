@@ -27,7 +27,7 @@ type Group = {
 	memberCount: number
 }
 
-export const load = async ({ url }) => {
+export async function load({ url }) {
 	const query = url.searchParams.get("q") || ""
 	const category = url.searchParams.get("c")?.toLowerCase() || ""
 	if (!query) error(400, "Missing search query")
@@ -37,10 +37,13 @@ export const load = async ({ url }) => {
 	// TODO: make this full-text search because that would be much nicer
 	switch (category) {
 		case "users": {
-			const foundUser = await findWhere("user", "username = $username", {
-				username: query,
-			})
-			if (foundUser) redirect(302, `/user/${query}`)
+			// convenient, but easy to abuse
+			// const foundUser = await findWhere(
+			// 	"user",
+			// 	"username = $query",
+			// 	param
+			// )
+			// if (foundUser) redirect(302, `/user/${query}`)
 
 			const [users] = await equery<BasicUser[][]>(searchUsersQuery, param)
 			return { query, category, users }
@@ -60,15 +63,4 @@ export const load = async ({ url }) => {
 		default:
 			error(400, "Invalid category")
 	}
-}
-
-export const actions: import("./$types").Actions = {}
-actions.default = async ({ url, request, locals }) => {
-	await authorise(locals)
-
-	const { query } = await formData(request)
-	const category = url.searchParams.get("c")
-
-	console.log(`searching for ${query} in ${category}`)
-	redirect(302, `/search?q=${query}${category ? `&c=${category}` : ""}`)
 }
