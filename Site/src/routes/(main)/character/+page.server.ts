@@ -19,18 +19,6 @@ const bodyParts = Object.freeze([
 	"Torso",
 ])
 
-// boo kit
-export const _select = `
-	SELECT
-		meta::id(id) AS id,
-		name,
-		price,
-		type,
-		($user IN <-wearing<-user) AS wearing
-	FROM asset WHERE $user IN <-owns<-user
-		AND type IN [${allowedTypes.join(", ")}]
-		AND visibility = "Visible"`
-
 export type Asset = {
 	name: string
 	price: number
@@ -45,17 +33,23 @@ type AssetData = {
 	visibility: string
 }
 
-export const load = async ({ locals, url }) => {
+export const load = async ({ locals }) => {
 	const { user } = await authorise(locals)
 
-	const query = url.searchParams.get("q")?.trim()
 	const [assets] = await equery<Asset[][]>(
-		query
-			? `${_select} AND string::lowercase($query) IN string::lowercase(name)`
-			: _select,
-		{ query, user: Record("user", user.id) }
+		surql`
+		SELECT
+			meta::id(id) AS id,
+			name,
+			price,
+			type,
+			($user IN <-wearing<-user) AS wearing
+		FROM asset WHERE $user IN <-owns<-user
+			AND type IN ${allowedTypes}
+			AND visibility = "Visible"`,
+		{ user: Record("user", user.id) }
 	)
-	return { query, assets }
+	return { assets }
 }
 
 async function getEquipData(e: RequestEvent) {
@@ -175,17 +169,4 @@ export const actions: import("./$types").Actions = {
 	regen,
 	equip,
 	unequip,
-}
-actions.search = async ({ request, locals }) => {
-	const { user } = await authorise(locals)
-	const formData = await request.formData()
-
-	const [assets] = await equery<Asset[][]>(
-		`${_select} AND string::lowercase($query) IN string::lowercase(name)`,
-		{
-			query: (formData.get("q") as string).trim(),
-			user: Record("user", user.id),
-		}
-	)
-	return { assets }
 }
