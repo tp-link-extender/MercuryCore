@@ -19,7 +19,7 @@ import { error, fail, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
-import type { Actions, RequestEvent } from "./$types.d.ts"
+import type { RequestEvent } from "./$types.d.ts"
 import assetQuery from "./asset.surql"
 import createCommentQuery from "./createComment.surql"
 import updateVisibilityQuery from "./updateVisibility.surql"
@@ -164,7 +164,7 @@ async function rerender({ locals, params }: RequestEvent) {
 
 	error(400, "Can't rerender this type of asset")
 }
-export const actions: Actions = { rerender }
+export const actions: import("./$types").Actions = { rerender }
 actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(schema))

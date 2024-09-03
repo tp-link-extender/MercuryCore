@@ -18,6 +18,7 @@ async function deleteUserSessions(userId: string) {
 async function getSessionAndUser(
 	sessionId: string
 ): Promise<[session: DatabaseSession | null, user: DatabaseUser | null]> {
+	// TODO: this function is called a lot, see if we can select more optimally than just * for users
 	const [session, user] = await equery<
 		[DatabaseSession | null, RegisteredDatabaseUserAttributes | null]
 	>(
