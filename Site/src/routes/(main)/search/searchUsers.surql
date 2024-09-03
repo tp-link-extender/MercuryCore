@@ -1,2 +1,1 @@
-SELECT status, username FROM user
-WHERE string::lowercase($query) IN string::lowercase(username);
+SELECT status, username FROM user WHERE username ~ $query;

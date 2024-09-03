@@ -13,7 +13,7 @@ export async function load({ url }) {
 	const { page, checkPages } = pageQuery(url)
 
 	const [groups, pages] = await equery<[Group[], number]>(groupsQuery, {
-		page: 1,
+		page,
 	})
 	checkPages(pages)
 

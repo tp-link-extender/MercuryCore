@@ -36,7 +36,7 @@ actions.changePassword = async ({ request, locals, getClientAddress }) => {
 		await equery(
 			surql`
 				UPDATE user SET hashedPassword = $npassword
-				WHERE string::lowercase(username) = string::lowercase(${username})`,
+				WHERE ${username} ~ username`,
 			{ npassword: Bun.password.hashSync(password) }
 		)
 	} catch {
