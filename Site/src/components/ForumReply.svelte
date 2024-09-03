@@ -73,7 +73,7 @@
 					on:click={collapse(reply.id)}
 					aria-label="Collapse reply"
 					class="collapseBar {reply.pinned
-						? 'bg-green-5'
+						? 'bg-green-500'
 						: 'bg-a2'} p-0 border-0 h-full mt-4 cursor-pointer">
 				</button>
 			</span>

@@ -105,7 +105,7 @@
 					method="POST"
 					action="/notifications?s={notification.id}">
 					<button
-						class="btn p-0 px-1 text-white hover:text-neutral-5"
+						class="btn p-0 px-1 text-white hover:text-neutral-500"
 						aria-label="Close">
 						<fa fa-xmark-large />
 					</button>

@@ -29,7 +29,7 @@
 	</small>
 </td>
 <td>
-	<span class="tnum text-emerald-6 tracking-tighter">
+	<span class="tnum text-emerald-600 tracking-tighter">
 		{currencySymbol}
 		{c1}{c2 ? "." : ""}{c2}
 	</span>
@@ -37,7 +37,7 @@
 <td>
 	{#if transaction.Type === "Transaction"}
 		{@const [, f1, f2] = beautifyCurrency(transaction.Fee)}
-		<span class="tnum text-yellow-5 tracking-tighter">
+		<span class="tnum text-yellow-500 tracking-tighter">
 			{currencySymbol}
 			{f1}{f2 ? "." : ""}{f2}
 		</span>

@@ -94,7 +94,7 @@
 						Regenerate
 					</button>
 				</form>
-				<p class="text-red-5">
+				<p class="text-red-500">
 					{form?.msg || ""}
 				</p>
 				<img

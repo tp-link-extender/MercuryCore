@@ -61,8 +61,8 @@
 				<div class="flex items-center py-3">
 					<fa
 						class="text-4xl {ok
-							? 'fa-check-circle text-emerald-5'
-							: 'fa-circle-ellipsis text-neutral-3'}" />
+							? 'fa-check-circle text-emerald-500'
+							: 'fa-circle-ellipsis text-neutral-300'}" />
 					<div class="pl-4">
 						<div class=" light-text text-7 font-500 line-height-5">
 							{name}
@@ -73,12 +73,12 @@
 									<small
 										class="text-3.5 font-500 {i % 2 == 0
 											? 'opacity-60'
-											: 'text-emerald-2'}">
+											: 'text-emerald-200'}">
 										{stat}
 									</small>
 								{/each}
 							{:else}
-								<small class="text-3.5 font-500 text-red-2">
+								<small class="text-3.5 font-500 text-red-200">
 									{err}
 								</small>
 							{/if}

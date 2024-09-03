@@ -84,7 +84,7 @@
 								method="POST"
 								action="?/delete&id={banner.id}">
 								<button
-									class="btn py-0 no-underline text-red-5">
+									class="btn py-0 no-underline text-red-500">
 									<fa fa-trash class="pr-1" />
 									Delete Banner
 								</button>
@@ -97,8 +97,8 @@
 									: 'show'}&id={banner.id}">
 								<button
 									class="btn py-0 no-underline {banner.active
-										? 'text-yellow-5'
-										: 'text-emerald-5'}">
+										? 'text-yellow-500'
+										: 'text-emerald-500'}">
 									<fa
 										class={banner.active
 											? "fa-eye-slash"
@@ -154,8 +154,8 @@
 			</tbody>
 		</table>
 		<p
-			class:text-emerald-6={$page.status === 200}
-			class:text-red-5={$page.status >= 400}>
+			class:text-emerald-600={$page.status === 200}
+			class:text-red-500={$page.status >= 400}>
 			{$message || ""}
 		</p>
 	</Tab>

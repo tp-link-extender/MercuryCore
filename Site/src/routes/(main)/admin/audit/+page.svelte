@@ -9,10 +9,10 @@
 	let tabData = TabData(data.url, ["Audit logs"], ["fa-list"])
 
 	const colours = Object.freeze({
-		Account: "text-sky-5",
-		Administration: "text-red-5",
-		Moderation: "text-emerald-5",
-		Economy: "text-yellow-5"
+		Account: "text-sky-500",
+		Administration: "text-red-500",
+		Moderation: "text-emerald-500",
+		Economy: "text-yellow-500"
 	})
 </script>
 

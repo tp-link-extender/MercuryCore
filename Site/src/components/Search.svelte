@@ -77,7 +77,7 @@
 
 <form action="/search" role="search" class="mx-auto px-2 pb-1">
 	<div
-		class="max-w-140 xl:(absolute left-1/2 top-2 -translate-x-1/2 w-35vw) lg:w-76 md:w-100 sm:w-52">
+		class="max-w-140 2xl:(absolute left-1/2 top-2 -translate-x-1/2 w-30vw) xl:w-130 lg:w-76 md:w-100 sm:w-52">
 		<input
 			bind:this={searchInput}
 			bind:value={search}
@@ -117,6 +117,7 @@
 			drop-shadow(0 8px 5px rgba(255, 255, 255, 0.05));
 		border: 1px solid var(--accent);
 		opacity: 0;
+		visibility: hidden;
 
 		& button:hover {
 			background: var(--accent);
@@ -131,5 +132,6 @@
 	/* not empty and focussed  */
 	input[type="search"]:not(:placeholder-shown):focus ~ #results {
 		opacity: 1;
+		visibility: visible;
 	}
 </style>

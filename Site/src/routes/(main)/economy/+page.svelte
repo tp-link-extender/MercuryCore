@@ -18,15 +18,15 @@
 		<div class="card bg-darker p-4">
 			<h2>Current balance</h2>
 			<div class="flex flex-row items-center text-2rem">
-				<span class="pr-2 text-emerald-6">{data.currencySymbol}</span>
-				<span class="balancenum flex flex-row text-emerald-6">
-					<span class="text-emerald-9">{c1}</span>
+				<span class="pr-2 text-emerald-600">{data.currencySymbol}</span>
+				<span class="balancenum flex flex-row text-emerald-600">
+					<span class="text-emerald-900">{c1}</span>
 					{c2}
-					<span class={c3 ? "text-emerald-6" : "text-emerald-9"}>
+					<span class={c3 ? "text-emerald-600" : "text-emerald-900"}>
 						.
 					</span>
 					{c3}
-					<span class="text-emerald-9">{c4}</span>
+					<span class="text-emerald-900">{c4}</span>
 				</span>
 			</div>
 		</div>

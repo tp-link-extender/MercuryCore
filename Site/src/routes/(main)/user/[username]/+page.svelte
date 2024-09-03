@@ -179,7 +179,7 @@
 								<fa fa-arrows-rotate />
 								Rerender
 							</button>
-							<small class="text-red-5 block">
+							<small class="text-red-500 block">
 								{form?.msg || ""}
 							</small>
 						</form>

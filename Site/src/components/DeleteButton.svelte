@@ -7,7 +7,7 @@
 	export let refreshReplies: import("@sveltejs/kit").SubmitFunction
 
 	const text = moderate ? "moderate" : "delete"
-	const colour = moderate ? "text-cyan-5" : "text-yellow-5"
+	const colour = moderate ? "text-cyan-500" : "text-yellow-500"
 </script>
 
 <li class="rounded-2">

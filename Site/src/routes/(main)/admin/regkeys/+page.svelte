@@ -92,7 +92,7 @@
 								method="POST"
 								action="?/disable&id={regKey.id}">
 								<button
-									class="btn btn-sm no-underline text-red-5 my-0">
+									class="btn btn-sm no-underline text-red-500 my-0">
 									<fa fa-ban />
 									Disable key
 								</button>

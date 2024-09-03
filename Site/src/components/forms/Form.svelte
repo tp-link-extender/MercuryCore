@@ -28,7 +28,7 @@
 		{/if}
 	</fieldset>
 	{#if other}
-		<p class="text-red-5">
+		<p class="text-red-500">
 			{other}
 		</p>
 	{/if}
@@ -37,8 +37,8 @@
 {#if $message}
 	<p
 		class={inline ? "mb-0" : ""}
-		class:text-emerald-6={$page.status === 200}
-		class:text-red-5={$page.status >= 400}>
+		class:text-emerald-600={$page.status === 200}
+		class:text-red-500={$page.status >= 400}>
 		{$message}
 	</p>
 {/if}

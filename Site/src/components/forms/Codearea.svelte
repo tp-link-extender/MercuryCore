@@ -73,7 +73,7 @@
 			</small>
 		{/if}
 
-		<small class="pb-4 text-red-5">
+		<small class="pb-4 text-red-500">
 			{$errors[name] || ""}
 		</small>
 	</div>

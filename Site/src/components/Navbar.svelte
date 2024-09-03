@@ -13,10 +13,10 @@
 		["Catalog", "/catalog", "fa-book-open-cover"],
 		["Create", "/develop", "fa-plus"]
 	]
-	if (data.pages.includes("Groups"))
-		nav1.push(["Groups", "/groups", "fa-people-group"])
 	if (data.pages.includes("Forum"))
 		nav1.push(["Forum", "/forum", "fa-messages"])
+	if (data.pages.includes("Groups"))
+		nav1.push(["Groups", "/groups", "fa-people-group"])
 
 	const usernav = [
 		["fa-money-bill-transfer", "Economy", "/economy"],
@@ -42,7 +42,7 @@
 				class=" size-8" />
 		</a>
 		{#if user}
-			<div class="<lg:hidden pl-6 pr-2 flex flex-row gap-4 pl-3">
+			<div class="<lg:hidden pl-6 pr-2 flex flex-row pl-3">
 				{#each nav1 as [title, href]}
 					<a class="btn light-text px-1 border-0" {href}>
 						{title}
@@ -86,7 +86,7 @@
 									use:enhance
 									method="POST"
 									action="/api?/logout">
-									<button class="btn text-red-5 pl-4 pr-0">
+									<button class="btn text-red-500 pl-4 pr-0">
 										<fa
 											fa-arrow-right-from-bracket
 											class="pr-2" />

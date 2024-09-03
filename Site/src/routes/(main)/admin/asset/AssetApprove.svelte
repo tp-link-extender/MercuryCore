@@ -97,7 +97,7 @@
 			use:enhance
 			method="POST"
 			action="/admin/asset?/purge&id={asset.id}">
-			<button class="btn btn-danger bg-red-9 border-red-9">
+			<button class="btn btn-danger bg-red-900 border-red-900">
 				Yes, do as I say!
 			</button>
 		</form>

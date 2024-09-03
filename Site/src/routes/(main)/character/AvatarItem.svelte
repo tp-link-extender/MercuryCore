@@ -27,7 +27,7 @@
 		class="card bg-a assetcard size-full p-4 cursor-pointer">
 		{#if asset.wearing}
 			<small
-				class="top-0 end-0 absolute p-2 py-1 rounded-1.5 font-bold bg-blue-5">
+				class="top-0 end-0 absolute p-2 py-1 rounded-1.5 font-bold bg-blue-500">
 				Wearing
 			</small>
 		{/if}

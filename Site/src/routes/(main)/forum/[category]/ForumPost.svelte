@@ -57,15 +57,15 @@
 				class="btn p-1">
 				<fa
 					class="{post.likes
-						? 'text-emerald-6 hover:text-emerald-3'
-						: 'text-neutral-6 hover:text-neutral-4'}
+						? 'text-emerald-600 hover:text-emerald-300'
+						: 'text-neutral-600 hover:text-neutral-400'}
 					fa-thumbs-up transition text-lg" />
 			</button>
 			<span
 				class="py-2 text-center {post.likes
-					? 'text-emerald-6 font-bold'
+					? 'text-emerald-600 font-bold'
 					: post.dislikes
-						? 'text-red-5 font-bold'
+						? 'text-red-500 font-bold'
 						: ''}">
 				{post.score}
 			</span>
@@ -77,8 +77,8 @@
 				class="btn p-1">
 				<fa
 					class="{post.dislikes
-						? 'text-red-5 hover:text-red-3'
-						: 'text-neutral-6 hover:text-neutral-4'}
+						? 'text-red-500 hover:text-red-300'
+						: 'text-neutral-600 hover:text-neutral-400'}
 					fa-thumbs-down transition text-lg" />
 			</button>
 		</div>

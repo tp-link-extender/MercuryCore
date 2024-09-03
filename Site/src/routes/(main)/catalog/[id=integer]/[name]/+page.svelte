@@ -125,14 +125,14 @@
 							<table>
 								<tr>
 									<td>Price</td>
-									<td class="text-emerald-6">
+									<td class="text-emerald-600">
 										{data.currencySymbol}
 										{data.asset.price}
 									</td>
 								</tr>
 								<tr>
 									<td>Fee</td>
-									<td class="text-yellow-5">
+									<td class="text-yellow-500">
 										{data.currencySymbol}
 										{fee}
 									</td>

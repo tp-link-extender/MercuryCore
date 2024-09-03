@@ -52,7 +52,7 @@
 				<small
 					id="copiedSuccess"
 					transition:fade
-					class="block text-yellow-5">
+					class="block text-yellow-500">
 					Successfully copied link to clipboard
 				</small>
 			{/if}

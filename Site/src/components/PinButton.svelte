@@ -8,7 +8,7 @@
 	export let refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any>
 
 	$: text = pinned ? "unpin" : "pin"
-	$: colour = pinned ? "text-red-5" : "text-green-5"
+	$: colour = pinned ? "text-red-500" : "text-green-500"
 </script>
 
 <li class="rounded-2">

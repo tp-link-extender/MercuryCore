@@ -73,8 +73,8 @@
 				class="userlink items-center no-underline flex flex-row font-bold {reply
 					.author.username === postAuthorName
 					? assetSlug
-						? 'text-yellow-5'
-						: 'text-blue-6'
+						? 'text-yellow-500'
+						: 'text-blue-600'
 					: ''}"
 				class:light-text={reply.author.username !== postAuthorName}
 				class:opacity-33={hidden}
@@ -115,15 +115,15 @@
 					class="size-6 p-0 btn">
 					<fa
 						class="{reply.likes
-							? 'text-emerald-6 hover:text-emerald-3'
-							: 'text-neutral-6 hover:text-neutral-4'}
+							? 'text-emerald-600 hover:text-emerald-300'
+							: 'text-neutral-600 hover:text-neutral-400'}
 							fa-thumbs-up transition" />
 				</button>
 				<span
 					class="text-center {reply.likes
-						? 'text-emerald-6 font-bold'
+						? 'text-emerald-600 font-bold'
 						: reply.dislikes
-							? 'text-red-5 font-bold'
+							? 'text-red-500 font-bold'
 							: ''}">
 					{reply.score}
 				</span>
@@ -134,8 +134,8 @@
 					class="btn size-6 p-0">
 					<fa
 						class="{reply.dislikes
-							? 'text-red-5 hover:text-red-3'
-							: 'text-neutral-6 hover:text-neutral-4'}
+							? 'text-red-500 hover:text-red-300'
+							: 'text-neutral-600 hover:text-neutral-400'}
 							fa-thumbs-down transition" />
 				</button>
 			</form>
@@ -143,7 +143,7 @@
 				href="/forum/{categoryName}/{postId}/{reply.id}"
 				on:click|preventDefault={() => replyingTo.set(reply.id)}
 				class="btn btn-sm p-0 px-1 text-neutral-5
-				hover:text-neutral-3 {hidden ? 'opacity-33' : ''}">
+				hover:text-neutral-300 {hidden ? 'opacity-33' : ''}">
 				<fa fa-message class="pr-2" />
 				Reply
 			</a>

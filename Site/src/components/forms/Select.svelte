@@ -58,7 +58,7 @@
 				{name}
 				id={name}
 				{placeholder}
-				class={$errors[name] ? "is-invalid" : ""}>
+				class:is-invalid={$errors[name]}>
 				{#each mOptions as { value, label }}
 					<option {value} selected={$isSelected(value)}>
 						{label}
@@ -120,7 +120,7 @@
 			</small>
 		{/if}
 
-		<small class="pb-4 text-red-5">
+		<small class="pb-4 text-red-500">
 			{$errors[name] || ""}
 		</small>
 	</div>

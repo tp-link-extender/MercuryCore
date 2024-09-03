@@ -34,7 +34,7 @@
 	<div class="grid">
 		<!-- <div>
 			<h2>Filters</h2>
-			<div class="text-neutral-4 pt-4 pb-2">Sort by</div>
+			<div class="text-neutral-400 pt-4 pb-2">Sort by</div>
 			<div class="grid grid-cols-[1fr_9fr] items-center gap-1">
 				<input
 					class="form-check-input"
@@ -67,7 +67,7 @@
 					id="lowToHigh" />
 				<label for="lowToHigh">Price (low to high)</label>
 			</div>
-			<div class="text-neutral-4 pt-4 pb-2">Price</div>
+			<div class="text-neutral-400 pt-4 pb-2">Price</div>
 			<div class="grid grid-cols-[1fr_9fr] items-center gap-1">
 				<input
 					class="form-check-input"

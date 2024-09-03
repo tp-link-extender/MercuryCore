@@ -27,9 +27,7 @@
 			["Render queue", "renderqueue", "fa-file-image"]
 		],
 		Catalog: [["Asset creation", "create", "fa-file-circle-plus"]],
-		Economy: [
-			["Transactions", "transactions", "fa-money-bill-transfer"]
-		]
+		Economy: [["Transactions", "transactions", "fa-money-bill-transfer"]]
 	}
 	const tabNames = ["Moderation", "Catalog", "Economy", "Statistics"]
 
@@ -97,7 +95,7 @@
 					</span>
 					<div class="flex rounded-2 bg-darker h-4">
 						<div
-							class="bg-emerald-6 rounded-2"
+							class="bg-emerald-600 rounded-2"
 							role="progressbar"
 							aria-valuenow={totalmem - freemem}
 							aria-valuemin={0}
@@ -124,22 +122,24 @@
 						Assets
 					</h3>
 					<div>
-						<fa fa-file-circle-minus class="text-yellow-5 pr-2" />
+						<fa fa-file-circle-minus class="text-yellow-500 pr-2" />
 						<b>0 assets</b>
 						are currently pending
 					</div>
 					<div>
-						<fa fa-file-circle-check class="text-emerald-6 pr-2" />
+						<fa
+							fa-file-circle-check
+							class="text-emerald-600 pr-2" />
 						<b>0 assets</b>
 						have been approved
 					</div>
 					<div>
-						<fa fa-file-circle-xmark class="text-red-5 pr-2" />
+						<fa fa-file-circle-xmark class="text-red-500 pr-2" />
 						<b>0 assets</b>
 						have been denied
 					</div>
 					<div>
-						<fa fa-folder-closed class="text-cyan-5 pr-2" />
+						<fa fa-folder-closed class="text-cyan-500 pr-2" />
 						<b>0 assets</b>
 						in total
 					</div>
