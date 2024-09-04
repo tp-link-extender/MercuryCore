@@ -10,9 +10,8 @@
 
 	const status = $page.status
 	function errors() {
-		if (status === 401 || status === 403) return "mStop"
+		if (status === 401 || status === 403) return "403"
 		if (status === 404) return "404"
-		if (status === 451) return "mBurn"
 		if (status < 500) return "400"
 		return "500"
 	}

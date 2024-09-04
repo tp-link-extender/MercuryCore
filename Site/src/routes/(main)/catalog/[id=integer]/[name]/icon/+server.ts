@@ -24,7 +24,7 @@ export async function GET({ locals, params }) {
 	)
 	if (!asset) error(404, "Not found")
 
-	if (asset.visibility === "Moderated") redirect(302, "/mercurx.svg")
+	if (asset.visibility === "Moderated") redirect(302, "/moderated.svg")
 	// If the asset is pending review
 	if (asset.visibility !== "Visible" && user.permissionLevel < 4)
 		redirect(302, "/error/mQuestion.svg")
