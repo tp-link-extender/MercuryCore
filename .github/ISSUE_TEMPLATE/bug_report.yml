@@ -12,6 +12,7 @@ body:
           placeholder: Red, has seven spots, eats aphids
       validations:
           required: true
+
     - type: textarea
       id: reproduction
       attributes:
@@ -20,6 +21,7 @@ body:
           placeholder: "1. Step 1"
       validations:
           required: true
+
     - type: textarea
       id: expected-behaviour
       attributes:
@@ -28,11 +30,14 @@ body:
           placeholder: Show an appropriate success message and add content to the database
       validations:
           required: true
+
     - type: textarea
       id: logs
       attributes:
           label: Logs
           description: Please include applicable browser console or server logs around the time this bug occurred.
+          placeholder: "Segmentation fault (core dumped)"
+
     - type: textarea
       id: system-info
       attributes:
