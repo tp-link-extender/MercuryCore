@@ -49,6 +49,9 @@ actions.password = async ({ request, locals }) => {
 	if (!form.valid) return formError(form)
 
 	const { cpassword, npassword, cnpassword } = form.data
+	// Don't send the password back to the client
+	form.data.cpassword = form.data.npassword = form.data.cnpassword = ""
+
 	if (npassword !== cnpassword)
 		return formError(form, ["cnpassword"], ["Passwords do not match"])
 	if (npassword === cpassword)
@@ -67,9 +70,6 @@ actions.password = async ({ request, locals }) => {
 
 	await equery(surql`
 		UPDATE ${userId} SET hashedPassword = ${Bun.password.hashSync(npassword)}`)
-
-	// Don't send the password back to the client
-	form.data.cpassword = form.data.npassword = form.data.cnpassword = ""
 
 	return message(form, "Password updated successfully!")
 }

@@ -42,6 +42,7 @@ actions.default = async ({ request, cookies }) => {
 	if (!form.valid) return formError(form)
 
 	const { username, password } = form.data
+	form.data.password = ""
 
 	const [[user]] = await equery<
 		{

@@ -31,6 +31,7 @@ actions.changePassword = async ({ request, locals, getClientAddress }) => {
 	if (limit) return limit
 
 	const { username, password } = form.data
+	form.data.password = ""
 
 	try {
 		await equery(

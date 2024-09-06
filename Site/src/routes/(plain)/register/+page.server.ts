@@ -55,7 +55,9 @@ export const actions: import("./$types").Actions = {}
 actions.register = async ({ request, cookies }) => {
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
+
 	const { username, email, password, cpassword } = form.data
+	form.data.password = form.data.cpassword = ""
 
 	if (cpassword !== password)
 		return formError(
@@ -125,7 +127,9 @@ actions.register = async ({ request, cookies }) => {
 actions.initialAccount = async ({ request, cookies }) => {
 	const form = await superValidate(request, zod(schemaInitial))
 	if (!form.valid) return formError(form)
+
 	const { username, password, cpassword } = form.data
+	form.data.password = form.data.cpassword = ""
 
 	if (cpassword !== password)
 		return formError(
