@@ -79,9 +79,9 @@ export async function load({ locals, params }) {
 	}
 }
 
-async function getData(e: RequestEvent) {
-	const { user } = await authorise(e.locals)
-	const id = +e.params.id
+async function getData({ locals, params }: RequestEvent) {
+	const { user } = await authorise(locals)
+	const id = +params.id
 	const getPlace = await placeQuery(id)
 	if (user.username !== getPlace.owner.username && user.permissionLevel < 4)
 		error(403, "You do not have permission to update this page.")

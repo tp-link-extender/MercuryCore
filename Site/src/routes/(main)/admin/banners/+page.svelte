@@ -20,12 +20,6 @@
 		["fa-plus", "fa-list"]
 	)
 	let textLightForms: { [k: string]: HTMLFormElement } = {}
-	let bannerData = {
-		id: "",
-		bgColour: "",
-		textLight: false,
-		body: ""
-	}
 
 	const formData = superForm(data.form)
 	export const snapshot = formData

@@ -225,6 +225,7 @@ actions.autopilot = async ({ request, locals }) => {
 	await authorise(locals, 3)
 	const form = await superValidate(request, zod(schemaAuto))
 	if (!form.valid) return formError(form)
+
 	const { data } = form
 
 	if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
