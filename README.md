@@ -6,6 +6,7 @@ The repository you are looking at is public, but the project has not yet been pu
 
 Mercury Core is the ultimate community-driven secure, flexible, and stable foundation for the future of your revival web platform, allowing for easy customisation or complete overhaul and possible integration with multiple clients and external services.
 
+> [!NOTE]  
 > If you don’t know what any of those things are, Mercury Core is a build-your-own-Roblox.
 
 ## Contents
@@ -64,7 +65,8 @@ The data directory, which is hidden from source control and should be kept priva
 -   **data/surreal** &ndash; database files
 -   **data/thumbnails** &ndash; asset thumbnails
 
-It may be helpful to mount to an external volume or directory to keep this data safe, allow for easier backups, and to provide it with more space.
+> [!TIP]  
+> It may be helpful to mount to an external volume or directory to keep this data safe, allow for easier backups, and to provide it with more space.
 
 # Hosting
 
@@ -86,7 +88,9 @@ Instructions:
 -   Copy the `.env.example` file to `.env` to set up the environment variables
 -   Run `bun -b prod` to install dependencies and begin building
 -   Run `bun ./build` (not to be confused with `bun build`) to start Mercury Core.
-    -   Several methods can be used to run it as a background process as well.
+
+> [!TIP]  
+> Several methods can be used to run Mercury Core as a background process as well. Daemons, GNU Screen, Docker, and PM2 all work for this purpose.
 
 # Customisation
 
@@ -101,8 +105,9 @@ Client integration remains, by its nature, a difficult part of building any revi
 Corescripts for clients that support it should be placed in a newly created **Corescripts** directory. This includes host, join, studio, visit, and render scripts, as well as any external libraries you wish to use. Beyond this, corescripts are not in the scope of Mercury Core.  
 They should be written in or compiled to Lua, and should aim to be as lightweight and efficient as possible. Minification and removal of extraneous code is recommended to decrease load on both the server and clients, as well as the use of a module system to keep code organised and reduce duplication.
 
-If you're using original corescripts provided with the client instead of custom ones, it's common to encounter issues which may need heavy modification to fix or rewrite into your own custom corescripts. This requires a significant amount of internal client knowledge and maintenance effort, with very sparse documentation available for beginners.  
-If choosing to go down the route of using original corescripts, especially for older clients, we recommend taking a look at the scripts used for original Mercury 2 at [tp-link-extender/2013](https://github.com/tp-link-extender/2013) and wish you the best of luck.
+> [!CAUTION]  
+> If you're using original corescripts provided with the client instead of custom ones, it's common to encounter issues which may need heavy modification to fix or rewrite into your own custom corescripts. This requires a significant amount of internal client knowledge and maintenance effort, with very sparse documentation available for beginners.  
+> If choosing to go down the route of using original corescripts, especially for older clients, we recommend taking a look at the scripts used for original Mercury 2 at [tp-link-extender/2013](https://github.com/tp-link-extender/2013) and wish you the best of luck.
 
 The private key for corescript signing should be placed in **Assets/PrivateKey.pem**, with the corresponding public key patched into the client.
 
