@@ -1,14 +1,14 @@
+import config from "$lib/server/config.ts"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
 import { Record, equery, surql } from "$lib/server/surreal"
+import { error } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import type { RequestEvent } from "./$types.ts"
 import regKeysQuery from "./regKeys.surql"
-import config from "$lib/server/config.ts"
-import { error } from "@sveltejs/kit"
 
 const schema = z.object({
 	enableRegKeyCustom: z.boolean().optional(),
@@ -38,15 +38,11 @@ export async function load({ locals }) {
 	}
 }
 
-async function getData(e: RequestEvent) {
-	const { user } = await authorise(e.locals, 5)
-	const form = await superValidate(e.request, zod(schema))
+async function getData({ request, locals }: RequestEvent) {
+	const { user } = await authorise(locals, 5)
+	const form = await superValidate(request, zod(schema))
 
-	return {
-		user,
-		form,
-		error: !form.valid && formError(form),
-	}
+	return { user, form, error: !form.valid && formError(form) }
 }
 
 const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
