@@ -1,13 +1,11 @@
-FROM golang:latest
+FROM python:3.9-slim
 USER root
 
-WORKDIR /services/textfilter
+WORKDIR /services/text-filter
 
-# pre-copy/cache go.mod for pre-downloading dependencies and only redownloading them in subsequent builds if they change
-COPY go.mod go.sum ./
-RUN go mod download && go mod verify
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
 COPY . .
 
-RUN go build .
-CMD ["./TextFilter"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "3476"]

@@ -5,7 +5,7 @@ services:
     text-filter-service:
         build: .
         container_name: text-filter-service
-        env_file: .env
+        env_file: config/.env
         ports:
             - 3476:3476
         restart: unless-stopped
