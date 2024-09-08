@@ -7,8 +7,9 @@ import { auth } from "$lib/server/lucia"
 import { Record, equery, surql } from "$lib/server/surreal"
 import { type Handle, redirect } from "@sveltejs/kit"
 import type { Cookie, User } from "lucia"
-import { blue, green, gray as grey, magenta, red, yellow } from "picocolors"
+import pc from "picocolors"
 
+const { magenta, red, yellow, green, blue, gray } = pc
 const methodColours = Object.freeze({
 	GET: green("GET"),
 	POST: yellow("POST"),
@@ -32,7 +33,7 @@ function pathnameColour(pathname: string) {
 }
 
 const time = () =>
-	config.Logging.Time ? grey(new Date().toLocaleString()) : ""
+	config.Logging.Time ? gray(new Date().toLocaleString()) : ""
 
 const userLog = (user: User | null) =>
 	user

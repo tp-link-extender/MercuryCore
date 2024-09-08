@@ -3,7 +3,7 @@ import initQuery from "$lib/server/init.surql"
 import logo from "$lib/server/logo"
 import CustomHttpEngine, { realUrl } from "$lib/server/surrealEngine"
 import { error } from "@sveltejs/kit"
-import { green, red } from "picocolors"
+import pc from "picocolors"
 import {
 	type PreparedQuery,
 	type QueryResult,
@@ -12,6 +12,7 @@ import {
 	surql,
 } from "surrealdb.js"
 
+const { green, red } = pc
 const db = new Surreal({ engines: { http: CustomHttpEngine } })
 
 export const version = db.version.bind(db)

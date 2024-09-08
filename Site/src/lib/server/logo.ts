@@ -1,7 +1,8 @@
 // Fun Unicode art 'logo', inspired by HybridOS
 
-import { blue, green, magenta } from "picocolors"
+import pc from "picocolors"
 
+const { blue, green, magenta } = pc
 const logo = `
   ██▙    ▟██ ${blue("Started")}
   ███▙  ▟███ ▟████▙ ▗████▛▗█████▌██   ██ ▟████▙▝█▙    ▗█▛
