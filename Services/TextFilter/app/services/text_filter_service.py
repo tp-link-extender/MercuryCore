@@ -6,15 +6,16 @@ from transformers import pipeline, AutoTokenizer
 from app.models import TextFilterResponse
 
 # TODO: find better model, change labels
-# model: https://huggingface.co/cardiffnlp/twitter-roberta-base-offensive
-# model labels: https://huggingface.co/cardiffnlp/twitter-roberta-base-offensive/blob/main/config.json
+# model: https://huggingface.co/badmatr11x/distilroberta-base-offensive-hateful-speech-text-multiclassification
+# model labels: https://huggingface.co/badmatr11x/distilroberta-base-offensive-hateful-speech-text-multiclassification/blob/main/config.json
 class TextFilterService:
     def __init__(self):
-        self.classifier = pipeline("text-classification", model="cardiffnlp/twitter-roberta-base-offensive")
-        self.tokenizer = AutoTokenizer.from_pretrained("cardiffnlp/twitter-roberta-base-offensive")
+        self.classifier = pipeline("text-classification", model="badmatr11x/distilroberta-base-offensive-hateful-speech-text-multiclassification")
+        self.tokenizer = AutoTokenizer.from_pretrained("badmatr11x/distilroberta-base-offensive-hateful-speech-text-multiclassification")
         self.replacement_string = os.getenv("REPLACEMENT_STRING", "#")
         self.model_labels = {
-            "offensive"
+            "HATE-SPEECH",
+            "OFFENSIVE-LANGUAGE"
         }
     
     def is_profanity(self, text: str, threshold: float = 0.5) -> Dict[str, List[str]]:
