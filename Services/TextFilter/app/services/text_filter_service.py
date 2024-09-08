@@ -3,7 +3,7 @@ import os
 from typing import Dict, List
 from transformers import pipeline, AutoTokenizer
 
-from app.models import TextFilterResponse
+from app.models import TextFilter
 
 # TODO: find better model, change labels
 # model: https://huggingface.co/badmatr11x/distilroberta-base-offensive-hateful-speech-text-multiclassification
@@ -17,7 +17,7 @@ class TextFilterService:
             "HATE-SPEECH",
             "OFFENSIVE-LANGUAGE"
         }
-    
+
     def is_profanity(self, text: str, threshold: float = 0.5) -> Dict[str, List[str]]:
         result = self.classifier(text)
 
@@ -36,13 +36,13 @@ class TextFilterService:
             "reasons": reasons
         }
 
-    def filter_text(self, text: str) -> TextFilterResponse:
+    def filter_text(self, text: str) -> TextFilter.v1.FilterTextResponse:
         result = self.is_profanity(text)
 
         # TODO: filter only profanity and not the whole text if possible
         filtered_text = self.replacement_string * len(text) if result["is_profanity"] else text
         
-        return TextFilterResponse(
+        return TextFilter.v1.FilterTextResponse(
             filtered=result["is_profanity"],
             filtered_text=filtered_text,
             reasons=result["reasons"]

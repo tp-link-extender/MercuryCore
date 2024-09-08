@@ -3,3 +3,4 @@ tensorflow_hub
 fastapi
 uvicorn
 transformers
+redis
