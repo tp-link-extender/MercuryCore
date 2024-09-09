@@ -2,13 +2,15 @@ from fastapi import APIRouter, HTTPException
 
 from app.models import feedback
 from app.services.feedback_service import FeedbackService
+from app.enums.state import state
+
 
 router = APIRouter()
 feedback_service = FeedbackService()
 
 
 @router.get("/v1/review-queue")
-async def get_review_queue(state: str):
+async def get_review_queue(state: state):
 	items = feedback_service.get_queue(state=state)
 	return [item.model_dump() for item in items]
 

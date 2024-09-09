@@ -4,6 +4,7 @@ from typing import List, Optional, Callable
 
 from app.redis import RedisClient
 from app.models import feedback
+from app.enums.state import state
 
 
 class FeedbackService:
@@ -34,12 +35,12 @@ class FeedbackService:
 			text=text,
 			detected_score=detected_score,
 			detected_is_offensive=detected_is_offensive,
-			state="pending",
+			state=state.PENDING,
 		)
 		self.redis.rpush(self.queue_key, item.model_dump_json())
 		return item.id
 
-	def get_queue(self, state: str = "pending") -> List[feedback.v1.AISubmission]:
+	def get_queue(self, state: str = state.PENDING) -> List[feedback.v1.AISubmission]:
 		items = self.redis.lrange(self.queue_key, 0, -1)
 		return [
 			feedback.v1.AISubmission.model_validate_json(item)
@@ -61,7 +62,7 @@ class FeedbackService:
 				"detected_score": review_submission.new_score,
 				"detected_is_offensive": review_submission.new_is_offensive,
 				"offensive_parts": review_submission.offensive_parts,
-				"state": "closed",
+				"state": state.REVIEWED,
 			}
 		)
 

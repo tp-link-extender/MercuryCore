@@ -1,14 +1,13 @@
 from pydantic import BaseModel
 from typing import Optional, List
 
-
 class v1:
 	class AISubmission(BaseModel):
 		id: str
 		text: str
 		detected_score: float
 		detected_is_offensive: bool
-		state: str  # pending = awaiting review, closed = reviewed
+		state: str
 
 	class HumanReview(BaseModel):
 		id: str
