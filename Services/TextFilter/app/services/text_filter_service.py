@@ -1,8 +1,7 @@
-import os
-
 from typing import Dict, List
 from transformers import pipeline, AutoTokenizer
 
+from app.config import config
 from app.models import text_filter
 from app.services.feedback_service import FeedbackService
 
@@ -18,7 +17,7 @@ class TextFilterService:
 		self.tokenizer = AutoTokenizer.from_pretrained(
 			"badmatr11x/distilroberta-base-offensive-hateful-speech-text-multiclassification"
 		)
-		self.replacement_string = os.getenv("REPLACEMENT_STRING", "#")
+		self.replacement_string = config.REPLACEMENT_STRING
 		self.model_labels = {"HATE-SPEECH", "OFFENSIVE-LANGUAGE"}
 		self.feedback_service = FeedbackService()
 

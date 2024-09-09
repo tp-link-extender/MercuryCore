@@ -1,10 +1,6 @@
 import redis
-import os
 
-REDIS_HOST = os.getenv("REDIS_HOST")
-REDIS_PORT = os.getenv("REDIS_PORT")
-REDIS_DB = os.getenv("REDIS_DB")
-
+from app.config import config
 
 class RedisClient:
 	_instance = None
@@ -13,6 +9,6 @@ class RedisClient:
 	def singleton(cls) -> redis.Redis:
 		if cls._instance is None:
 			cls._instance = redis.Redis(
-				host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB, decode_responses=True
+				host=config.REDIS_HOST, port=config.REDIS_PORT, db=config.REDIS_DB, decode_responses=True
 			)
 		return cls._instance
