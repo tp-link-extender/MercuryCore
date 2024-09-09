@@ -52,11 +52,11 @@ class FeedbackService:
 		if index is None:
 			return False
 
-		aisubmission_item = feedback.v1.AISubmission.model_validate_json(
+		ai_submission_item = feedback.v1.AISubmission.model_validate_json(
 			self.redis.lrange(self.queue_key, index, index)[0]
 		)
 
-		humanreview_item = aisubmission_item.model_copy(
+		human_review_item = ai_submission_item.model_copy(
 			update={
 				"detected_score": review_submission.new_score,
 				"detected_is_offensive": review_submission.new_is_offensive,
@@ -65,9 +65,9 @@ class FeedbackService:
 			}
 		)
 
-		self.redis.lset(self.queue_key, index, humanreview_item.model_dump_json())
+		self.redis.lset(self.queue_key, index, human_review_item.model_dump_json())
 
-		self.train_model(humanreview_item)
+		self.train_model(human_review_item, ai_submission_item)
 		return True
 
 	def train_model(
