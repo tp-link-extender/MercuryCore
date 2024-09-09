@@ -1,13 +1,23 @@
 from fastapi import APIRouter, HTTPException
 
-# TODO: Implement feedback service to train the model based on moderator feedback
+from app.models import feedback
+from app.services.feedback_service import FeedbackService
 
 router = APIRouter()
+feedback_service = FeedbackService()
+
 
 @router.get("/v1/review-queue")
-async def feedback_queue():
-    raise HTTPException(status_code=501)
+async def get_review_queue(state: str):
+	items = feedback_service.get_queue(state=state)
+	return [item.model_dump() for item in items]
 
-@router.get("/v1/submit-feedback/{id}")
-async def feedback_queue(id: str):
-    raise HTTPException(status_code=501)
+
+@router.post("/v1/submit-review")
+async def submit_feedback(review: feedback.v1.HumanReview):
+	success = feedback_service.update_review_status(review_submission=review)
+	return (
+		{"detail": "Review submitted"}
+		if success
+		else HTTPException(status_code=400, detail="Unable to submit review")
+	)

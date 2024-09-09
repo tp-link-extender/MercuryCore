@@ -9,6 +9,7 @@ services:
     surreal-db:
         image: surrealdb/surrealdb:v1.5.4
         container_name: surreal-db
+        hostname: surrealdb
         #user: ":" uncomment if having issues when running locally
         ports:
             - 8000:8000
@@ -23,5 +24,21 @@ services:
             - --allow-scripting
             - file:database
 
+    redis:
+        image: docker.dragonflydb.io/dragonflydb/dragonfly:latest
+        container_name: redis
+        hostname: redis
+        ports:
+            - 6379:6379
+        restart: unless-stopped
+        volumes:
+            - dragonflydata:/data
+        healthcheck:
+            test: ["CMD-SHELL", "redis-cli ping"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
 volumes:
   surrealdb-data:
+  dragonflydata:

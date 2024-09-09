@@ -1,6 +1,6 @@
-tensorflow
-tensorflow_hub
+torch
+transformers
 fastapi
 uvicorn
-transformers
 redis
+ruff
