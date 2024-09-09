@@ -103,7 +103,7 @@ They should be written in or compiled to Lua, and should aim to be as lightweigh
 
 > [!CAUTION]  
 > If you're using original corescripts provided with the client instead of custom ones, it's common to encounter issues which may need heavy modification to fix or rewrite into your own custom corescripts. This requires a significant amount of internal client knowledge and maintenance effort, with very sparse documentation available for beginners.  
-> If choosing to go down the route of using original corescripts, especially for older clients, we recommend taking a look at the scripts used for original Mercury 2 at [tp-link-extender/2013](https://github.com/tp-link-extender/2013) and wish you the best of luck.
+> If choosing to go down the route of using original corescripts, especially for older clients, we recommend taking a look at the scripts used for original Mercury 2 at [MercuryCore/2013](https://github.com/MercuryCore/2013) and wish you the best of luck.
 
 The private key for corescript signing should be placed in **Assets/PrivateKey.pem**, with the corresponding public key patched into the client.
 
