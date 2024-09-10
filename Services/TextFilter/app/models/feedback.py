@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional, List
 
+
 class v1:
 	class AISubmission(BaseModel):
 		id: str
