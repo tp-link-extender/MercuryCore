@@ -19,7 +19,9 @@ jobs:
 
       # https://github.com/r-lib/actions/blob/33fce90191fd59fe45d6b3945b5ab3416359b1ea/pr-push/README.md?plain=1#L37
       - run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
           git add .
-          git commit -m "Ruff Format" --author "GitHub Actions <actions@github.com>"
+          git commit -m "Ruff Format"
           git push
         continue-on-error: true
