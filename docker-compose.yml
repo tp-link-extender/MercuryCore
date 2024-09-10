@@ -13,9 +13,9 @@ services:
             - ./data/surreal:/database
         command:
             - start
-            - --log=trace
-            - --user=root
-            - --pass=root
+            - -l trace
+            - -u root
+            - -p root
             - --allow-scripting
             - file:database
 
