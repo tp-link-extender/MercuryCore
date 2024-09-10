@@ -3,3 +3,4 @@
 /data
 /keys
 /Assets/PrivateKey.pem
+__pycache__

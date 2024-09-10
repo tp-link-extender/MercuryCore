@@ -1,0 +1,6 @@
+torch
+transformers
+fastapi
+uvicorn
+redis
+ruff
