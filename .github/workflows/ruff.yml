@@ -1,0 +1,25 @@
+name: Ruff
+on: [push, pull_request]
+
+jobs:
+  ruff-format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - run: pip install ruff
+      - run: ruff format
+
+      # https://github.com/r-lib/actions/blob/33fce90191fd59fe45d6b3945b5ab3416359b1ea/pr-push/README.md?plain=1#L37
+      - run: |
+          git add .
+          git commit -m "Ruff Format" --author "GitHub Actions <actions@github.com>"
+          git push
+        continue-on-error: true
