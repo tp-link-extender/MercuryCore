@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { ParaglideJS } from "@inlang/paraglide-sveltekit"
+	import { i18n } from "$lib/i18n"
+
 	import { dev } from "$app/environment"
 	import { enhance } from "$app/forms"
 	import { navigating } from "$app/stores"
@@ -76,48 +79,50 @@
 	{/if}
 </svelte:head>
 
-<!-- Toast notifications -->
-<div class="max-w-110 fixed bottom-0 end-0 p-4 flex flex-col gap-4 z-10">
-	{#each notifications as notification}
-		<div
-			class="show bg-darker light-text rounded-2"
-			role="alert"
-			aria-live="assertive"
-			aria-atomic="true">
-			<div class="bg-a light-text flex p-2 rounded-t-2">
+<ParaglideJS {i18n}>
+	<!-- Toast notifications -->
+	<div class="max-w-110 fixed bottom-0 end-0 p-4 flex flex-col gap-4 z-10">
+		{#each notifications as notification}
+			<div
+				class="show bg-darker light-text rounded-2"
+				role="alert"
+				aria-live="assertive"
+				aria-atomic="true">
+				<div class="bg-a light-text flex p-2 rounded-t-2">
+					<a
+						href="/user/{notification.sender.username}"
+						class="light-text flex gap-3 items-center w-full no-underline">
+						<User
+							user={notification.sender}
+							size="1.6rem"
+							bg="background"
+							image />
+						<strong>
+							{notificationNotes[notification.type]}
+						</strong>
+						<small class="grey-text pr-4">
+							{new Date(notification.time).toLocaleString()}
+						</small>
+					</a>
+					<form
+						use:enhance
+						method="POST"
+						action="/notifications?s={notification.id}">
+						<button
+							class="btn p-0 px-1 text-white hover:text-neutral-500"
+							aria-label="Close">
+							<fa fa-xmark-large />
+						</button>
+					</form>
+				</div>
 				<a
-					href="/user/{notification.sender.username}"
-					class="light-text flex gap-3 items-center w-full no-underline">
-					<User
-						user={notification.sender}
-						size="1.6rem"
-						bg="background"
-						image />
-					<strong>
-						{notificationNotes[notification.type]}
-					</strong>
-					<small class="grey-text pr-4">
-						{new Date(notification.time).toLocaleString()}
-					</small>
+					href={notification.link}
+					class="light-text p-3 no-underline block rounded-2">
+					{notification.note}
 				</a>
-				<form
-					use:enhance
-					method="POST"
-					action="/notifications?s={notification.id}">
-					<button
-						class="btn p-0 px-1 text-white hover:text-neutral-500"
-						aria-label="Close">
-						<fa fa-xmark-large />
-					</button>
-				</form>
 			</div>
-			<a
-				href={notification.link}
-				class="light-text p-3 no-underline block rounded-2">
-				{notification.note}
-			</a>
-		</div>
-	{/each}
-</div>
+		{/each}
+	</div>
 
-<slot />
+	<slot />
+</ParaglideJS>

@@ -1,11 +1,13 @@
 // "'Hooks' are app-wide functions you declare that SvelteKit will call in response to specific events, giving you fine-grained control over the framework's behaviour."
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
+import { i18n } from "$lib/i18n"
 import config from "$lib/server/config"
 import { stipend } from "$lib/server/economy"
 import { auth } from "$lib/server/lucia"
 import { Record, equery, surql } from "$lib/server/surreal"
 import { type Handle, redirect } from "@sveltejs/kit"
+import { sequence } from "@sveltejs/kit/hooks"
 import type { Cookie, User } from "lucia"
 import pc from "picocolors"
 
@@ -80,7 +82,7 @@ async function finish({ event, resolve }: Parameters<Handle>[0]) {
 
 // Ran every time a dynamic request is made.
 // Requests for prerendered pages do not trigger this hook.
-export async function handle(e) {
+async function handler(e) {
 	const { event } = e
 
 	const sessionId = event.cookies.get(auth.sessionCookieName)
@@ -131,3 +133,5 @@ export async function handleError({ event, error }) {
 	if (!config.Logging.FormattedErrors) console.error(error)
 	else console.error(time(), userLog(user), red(error as string))
 }
+
+export const handle = sequence(i18n.handle(), handler)

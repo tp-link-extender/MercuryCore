@@ -1,3 +1,5 @@
+import type { AvailableLanguageTag } from "$lib/paraglide/runtime"
+import type { ParaglideLocals } from "@inlang/paraglide-sveltekit"
 //  Prevents TypeScript from complaining about missing types.
 
 /// <reference types="lucia" />
@@ -52,6 +54,8 @@ declare global {
 
 	namespace App {
 		interface Locals {
+			paraglide: ParaglideLocals<AvailableLanguageTag>
+
 			user: import("lucia").User | null
 			session: import("lucia").Session | null
 		}
