@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { dev } from "$app/environment"
+	import { browser, dev } from "$app/environment"
 	import { enhance } from "$app/forms"
 	import { navigating } from "$app/stores"
 	import User from "$components/User.svelte"
@@ -22,12 +22,13 @@
 
 	let timeout: Timer | null
 	// 100ms is the minimum time the loading bar will be shown
-	$: if ($navigating && !timeout) timeout = setTimeout(nprogress.start, 100)
-	else if (timeout) {
-		clearTimeout(timeout)
-		timeout = null
-		nprogress.done()
-	}
+	$: if (browser)
+		if ($navigating && !timeout) timeout = setTimeout(nprogress.start, 100)
+		else if (timeout) {
+			clearTimeout(timeout)
+			timeout = null
+			nprogress.done()
+		}
 
 	async function ping() {
 		// Keep the user's online status up to date
