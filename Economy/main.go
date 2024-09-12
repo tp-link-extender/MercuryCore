@@ -5,6 +5,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -42,7 +43,8 @@ type (
 
 const (
 	filepathDockerised = "./data/ledger" // jsonl file
-	filepath           = "../data/economy/ledger"
+	folderpath         = "../data/economy"
+	filepath           = folderpath + "/ledger"
 
 	Micro currency = 1
 	Milli          = 1e3 * Micro
@@ -467,7 +469,17 @@ func main() {
 		currentFilepath = filepathDockerised
 	}
 	file, err = os.OpenFile(currentFilepath, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0o644)
-	Assert(err, "Failed to open ledger.")
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			fmt.Println(c.InPurple("Economy data folder not found, creating..."))
+			err = os.MkdirAll(folderpath, 0o644)
+			Assert(err, "Failed to create economy data folder")
+			file, err = os.Create(currentFilepath)
+			Assert(err, "Failed to create ledger")
+		} else {
+			Assert(err, "Failed to open ledger")
+		}
+	}
 	defer file.Close()
 	updateBalances()
 
@@ -478,19 +490,17 @@ func main() {
 	println("Fee percentage", int(currentFee()*100))
 	println("Stipend size  ", toReadable(currentStipend()))
 
-	router := http.NewServeMux()
-
-	router.HandleFunc("GET /currentFee", currentFeeRoute)
-	router.HandleFunc("GET /currentStipend", currentStipendRoute)
-	router.HandleFunc("GET /balance/{id}", balanceRoute)
-	router.HandleFunc("GET /transactions", adminTransactionsRoute)
-	router.HandleFunc("GET /transactions/{id}", transactionsRoute)
-	router.HandleFunc("POST /transact", transactRoute)
-	router.HandleFunc("POST /mint", mintRoute)
-	router.HandleFunc("POST /burn", burnRoute)
-	router.HandleFunc("POST /stipend/{id}", stipendRoute)
+	http.HandleFunc("GET /currentFee", currentFeeRoute)
+	http.HandleFunc("GET /currentStipend", currentStipendRoute)
+	http.HandleFunc("GET /balance/{id}", balanceRoute)
+	http.HandleFunc("GET /transactions", adminTransactionsRoute)
+	http.HandleFunc("GET /transactions/{id}", transactionsRoute)
+	http.HandleFunc("POST /transact", transactRoute)
+	http.HandleFunc("POST /mint", mintRoute)
+	http.HandleFunc("POST /burn", burnRoute)
+	http.HandleFunc("POST /stipend/{id}", stipendRoute)
 
 	fmt.Println(c.InGreen("~ Economy service is up on port 2009 ~"))
-	err = http.ListenAndServe(":2009", router) // 03/Jan/2009 Chancellor on brink of second bailout for banks
+	err = http.ListenAndServe(":2009", nil) // 03/Jan/2009 Chancellor on brink of second bailout for banks
 	Assert(err, "Failed to start server")
 }
