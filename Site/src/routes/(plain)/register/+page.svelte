@@ -110,14 +110,14 @@
 				name="password"
 				label="Password"
 				type="password"
-				placeholder={"•".repeat(14)} />
+				placeholder={"•".repeat(16)} />
 			<Input
 				{formData}
 				column
 				name="cpassword"
 				label="Confirm Password"
 				type="password"
-				placeholder={"•".repeat(14)} />
+				placeholder={"•".repeat(16)} />
 		</Form>
 		<p>
 			If you want to create more users, head to the Admin panel after
