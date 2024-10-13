@@ -5,12 +5,17 @@
 	},
 	"linter": {
 		"rules": {
+			"correctness": {
+				"noUndeclaredDependencies": "off"
+			},
+			"suspicious": {
+				"noEvolvingTypes": "off",
+				"noConsole": "off"
+			},
 			"nursery": {
 				"all": true,
-				"noUndeclaredDependencies": "off",
-				"noEvolvingTypes": "off",
-				"noConsole": "off",
-				"useDateNow": "off"
+				"useExplicitFunctionReturnType": "off",
+				"useConsistentMemberAccessibility": "off"
 			}
 		}
 	},
@@ -34,10 +39,8 @@
 					},
 					"suspicious": {
 						"noConfusingLabels": "off",
+						"noEvolvingTypes": "off",
 						"noImplicitAnyLet": "off"
-					},
-					"nursery": {
-						"noEvolvingTypes": "off"
 					}
 				}
 			}
