@@ -28,7 +28,7 @@
 <h3 class="text-base">Discord Verification</h3>
 <p>A Discord account has not been linked.</p>
 <button class="btn btn-tertiary">
-	<fa fa-link class="pr-2" />
+	<fa fa-link class="pr-2"></fa>
 	Link Discord
 </button>
 <hr class="grey-text" />
@@ -36,6 +36,6 @@
 <h3 class="text-base">Email Verification</h3>
 <p>You have not verified your email address.</p>
 <button class="btn btn-tertiary">
-	<fa fa-envelope-circle-check class="pr-2" />
+	<fa fa-envelope-circle-check class="pr-2"></fa>
 	Verify Email
 </button>

@@ -67,7 +67,7 @@
 			<div class="card w-full p-4">
 				<form use:enhance={enhanceRegen} method="POST" action="?/regen">
 					<button class="btn btn-secondary w-full">
-						<fa fa-rotate />
+						<fa fa-rotate></fa>
 						Regenerate
 					</button>
 				</form>
@@ -92,7 +92,9 @@
 								]}"
 								class="btn bodyPart absolute p-0 {styles[
 									bodyPart
-								]}" />
+								]}"
+								aria-label={bodyPart}>
+							</button>
 						{/each}
 					</div>
 				</div>
@@ -143,7 +145,9 @@
 					class="inline">
 					<button
 						class="btn colour size-10"
-						style="background-color: #{brickToHex[colour]}" />
+						style="background-color: #{brickToHex[colour]}"
+						aria-label={colour.toString()}>
+					</button>
 				</form>
 			{/each}
 		</div>

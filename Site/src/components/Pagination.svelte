@@ -3,9 +3,9 @@
 
 	export let totalPages: number
 
-	function getNewUrl(page: number) {
+	function getNewUrl(p: number) {
 		const url = new URL($page.url) // clone?
-		url.searchParams.set("p", page.toString())
+		url.searchParams.set("p", p.toString())
 		return url.pathname + url.search
 	}
 	const pageQ = $page.url.searchParams.get("p") || "1"
@@ -28,8 +28,9 @@
 <nav class="flex justify-center gap-2 pt-6" aria-label="pagination">
 	<a
 		href={getNewUrl(prevPage)}
-		class="btn btn-secondary {prevPage >= 1 ? '' : disabled}">
-		<fa fa-arrow-left />
+		class="btn btn-secondary {prevPage >= 1 ? '' : disabled}"
+		aria-label="Forward">
+		<fa fa-arrow-left></fa>
 	</a>
 	{#each pages as page}
 		{#if page}
@@ -44,7 +45,8 @@
 	{/each}
 	<a
 		href={getNewUrl(nextPage)}
-		class="btn btn-secondary {nextPage <= totalPages ? '' : disabled}">
-		<fa fa-arrow-right />
+		class="btn btn-secondary {nextPage <= totalPages ? '' : disabled}"
+		aria-label="Back">
+		<fa fa-arrow-right></fa>
 	</a>
 </nav>

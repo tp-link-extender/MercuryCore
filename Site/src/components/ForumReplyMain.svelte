@@ -92,7 +92,8 @@
 					<fa
 						class="{assetSlug
 							? 'fa-hammer'
-							: 'fa-microphone'} pl-2" />
+							: 'fa-microphone'} pl-2">
+					</fa>
 				{/if}
 			</a>
 			<small class="light-text pl-6">
@@ -114,10 +115,11 @@
 					aria-label={reply.likes ? "Unlike" : "Like"}
 					class="size-6 p-0 btn">
 					<fa
-						class="{reply.likes
+						fa-thumbs-up
+						class="transition {reply.likes
 							? 'text-emerald-600 hover:text-emerald-300'
-							: 'text-neutral-600 hover:text-neutral-400'}
-							fa-thumbs-up transition" />
+							: 'text-neutral-600 hover:text-neutral-400'}">
+					</fa>
 				</button>
 				<span
 					class="text-center {reply.likes
@@ -133,10 +135,11 @@
 					aria-label={reply.dislikes ? "Undislike" : "Dislike"}
 					class="btn size-6 p-0">
 					<fa
-						class="{reply.dislikes
+						fa-thumbs-down
+						class="transition {reply.dislikes
 							? 'text-red-500 hover:text-red-300'
-							: 'text-neutral-600 hover:text-neutral-400'}
-							fa-thumbs-down transition" />
+							: 'text-neutral-600 hover:text-neutral-400'}">
+					</fa>
 				</button>
 			</form>
 			<a
@@ -144,12 +147,12 @@
 				on:click|preventDefault={() => replyingTo.set(reply.id)}
 				class="btn btn-sm p-0 px-1 text-neutral-5
 				hover:text-neutral-300 {hidden ? 'opacity-33' : ''}">
-				<fa fa-message class="pr-2" />
+				<fa fa-message class="pr-2"></fa>
 				Reply
 			</a>
 			{#if !hidden}
 				<span class="dropdown">
-					<fa fa-ellipsis-h class="dropdown-ellipsis" />
+					<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
 					<div class="dropdown-content pt-2">
 						<ul class="p-2 rounded-3">
 							{#if reply.author.username === user.username}
@@ -195,16 +198,17 @@
 							maxlength="1000"
 							name="content"
 							placeholder="What are your thoughts?"
-							rows="4" />
+							rows="4">
+						</textarea>
 						<div class="flex gap-3">
 							<button class="btn btn-secondary">
-								<fa fa-message class="pr-2" />
+								<fa fa-message class="pr-2"></fa>
 								Reply
 							</button>
 							<button
 								on:click={() => replyingTo.set("")}
 								class="btn btn-tertiary grey-text">
-								<fa fa-cancel class="pr-2" />
+								<fa fa-cancel class="pr-2"></fa>
 								Cancel
 							</button>
 						</div>
@@ -232,16 +236,17 @@
 								maxlength="1000"
 								name="content"
 								placeholder="What are your thoughts?"
-								rows="4" />
+								rows="4">
+							</textarea>
 							<div class="flex gap-3">
 								<button class="btn btn-secondary">
-									<fa fa-message class="pr-2" />
+									<fa fa-message class="pr-2"></fa>
 									Reply
 								</button>
 								<button
 									on:click={() => replyingTo.set("")}
 									class="btn btn-tertiary grey-text">
-									<fa fa-cancel class="pr-2" />
+									<fa fa-cancel class="pr-2"></fa>
 									Cancel
 								</button>
 							</div>
@@ -255,7 +260,7 @@
 
 {#if depth > 8}
 	<a href="/{baseUrl}/{reply.id}" class="no-underline py-2">
-		<fa fa-arrow-down class="pr-2" />
+		<fa fa-arrow-down class="pr-2"></fa>
 		More replies
 	</a>
 {/if}

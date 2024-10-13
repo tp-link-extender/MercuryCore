@@ -14,7 +14,7 @@
 		<div class="flex w-full sm:w-1/2">
 			<h1 class="pr-6">Games</h1>
 			<a href="/games/create" class="btn btn-primary">
-				<fa fa-plus class="pr-2" />
+				<fa fa-plus class="pr-2"></fa>
 				Create
 			</a>
 		</div>

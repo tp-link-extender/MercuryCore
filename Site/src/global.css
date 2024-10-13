@@ -237,9 +237,6 @@ img[src^="/api/avatar"] {
 	font-size: 0.9rem;
 	border-radius: var(--rounding);
 	cursor: pointer;
-}
-
-.btn:not(.btn-sm) {
 	padding: 0.7rem 1rem;
 }
 

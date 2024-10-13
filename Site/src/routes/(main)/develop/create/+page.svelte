@@ -27,7 +27,7 @@
 <div class="text-center">
 	<h1>Develop &ndash; Create</h1>
 	<a href="/develop" class="no-underline accent-text">
-		<fa fa-caret-left />
+		<fa fa-caret-left></fa>
 		Back to Develop
 	</a>
 </div>

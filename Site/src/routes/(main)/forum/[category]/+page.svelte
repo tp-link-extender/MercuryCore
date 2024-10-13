@@ -23,7 +23,7 @@
 			<a
 				href="/forum/create?category={data.name}"
 				class="btn btn-primary">
-				<fa fa-file class="pr-2" />
+				<fa fa-file class="pr-2"></fa>
 				Create post
 			</a>
 		</span>

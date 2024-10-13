@@ -19,7 +19,7 @@
 		{group.name}
 		<div class="mt-auto mb-1 float-end">
 			<span class="float-end">
-				<fa fa-user class="opacity-75" />
+				<fa fa-user class="opacity-75"></fa>
 				{group.memberCount}
 			</span>
 		</div>

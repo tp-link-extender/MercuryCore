@@ -19,7 +19,7 @@
 <div class="text-center">
 	<h1>{title} ({data.count})</h1>
 	<a href="/user/{data.username}" class="no-underline accent-text">
-		<fa fa-caret-left />
+		<fa fa-caret-left></fa>
 		Back to {data.username}'s profile
 	</a>
 </div>

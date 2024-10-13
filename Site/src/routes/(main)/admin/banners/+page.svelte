@@ -31,7 +31,7 @@
 <div class="ctnr max-w-280 pb-6">
 	<h1>Banners &ndash; Admin</h1>
 	<a href="/admin" class="no-underline">
-		<fa fa-caret-left />
+		<fa fa-caret-left></fa>
 		Back to panel
 	</a>
 </div>
@@ -79,7 +79,7 @@
 								action="?/delete&id={banner.id}">
 								<button
 									class="btn py-0 no-underline text-red-500">
-									<fa fa-trash class="pr-1" />
+									<fa fa-trash class="pr-1"></fa>
 									Delete Banner
 								</button>
 							</form>
@@ -96,7 +96,7 @@
 									<fa
 										class={banner.active
 											? "fa-eye-slash"
-											: "fa-eye"} />
+											: "fa-eye"}></fa>
 									{banner.active ? "Deactivate" : "Activate"}
 								</button>
 							</form>

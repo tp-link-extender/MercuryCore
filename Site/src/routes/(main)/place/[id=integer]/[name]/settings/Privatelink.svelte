@@ -33,14 +33,14 @@
 						setTimeout(() => (copiedSuccess = false), 4000)
 					}}
 					class="btn btn-tertiary border-[--accent2] border-l-0"
-					type="button">
-					<fa fa-copy />
+					aria-label="Copy link to clipboard">
+					<fa fa-copy></fa>
 				</button>
 				<button
 					class="btn btn-{$message && $page.status === 200
 						? 'success'
 						: 'secondary'}">
-					<fa fa-rotate />
+					<fa fa-rotate></fa>
 					{#if $delayed}
 						Working...
 					{:else}

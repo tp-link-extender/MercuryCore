@@ -28,7 +28,7 @@
 	<div class="pb-4">
 		<h1>Configure {data.name}</h1>
 		<a href="/place/{data.id}/{data.slug}" class="no-underline">
-			<fa fa-caret-left />
+			<fa fa-caret-left></fa>
 			Back to place
 		</a>
 	</div>

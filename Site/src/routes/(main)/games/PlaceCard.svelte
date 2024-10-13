@@ -41,11 +41,11 @@
 			</span>
 			<div class="flex justify-between px-3">
 				<span>
-					<fa fa-thumbs-up class="opacity-75" />
+					<fa fa-thumbs-up class="opacity-75"></fa>
 					{Number.isNaN(percentage) ? "--" : percentage}%
 				</span>
 				<span>
-					<fa fa-user class="opacity-75" />
+					<fa fa-user class="opacity-75"></fa>
 					{place.playerCount}
 				</span>
 			</div>

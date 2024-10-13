@@ -58,7 +58,7 @@
 							class="btn btn-secondary"
 							aria-label="Search"
 							id="button-addon2">
-							<fa fa-search />
+							<fa fa-search></fa>
 						</button>
 					</div>
 				</form>

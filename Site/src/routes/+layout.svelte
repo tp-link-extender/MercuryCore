@@ -108,7 +108,7 @@
 					<button
 						class="btn p-0 px-1 text-white hover:text-neutral-500"
 						aria-label="Close">
-						<fa fa-xmark-large />
+						<fa fa-xmark-large></fa>
 					</button>
 				</form>
 			</div>

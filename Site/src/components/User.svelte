@@ -107,9 +107,6 @@
 		& span {
 			transition: all 0.2s;
 		}
-		&:hover .username {
-			color: var(--grey-text);
-		}
 		&:hover .pfp {
 			background: var(--hover) !important;
 		}

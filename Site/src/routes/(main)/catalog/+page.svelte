@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
 	import { page } from "$app/stores"
 	import Asset from "$components/Asset.svelte"
 	import Head from "$components/Head.svelte"

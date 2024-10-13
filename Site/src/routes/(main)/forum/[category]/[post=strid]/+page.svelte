@@ -87,10 +87,11 @@
 					aria-label={$post.likes ? "Unlike" : "Like"}
 					class="btn p-1">
 					<fa
-						class="{$post.likes
+						fa-thumbs-up
+						class="transition text-lg {$post.likes
 							? 'text-emerald-600 hover:text-emerald-300'
-							: 'text-neutral-600 hover:text-neutral-400'}
-						fa-thumbs-up transition text-lg" />
+							: 'text-neutral-600 hover:text-neutral-400'}">
+					</fa>
 				</button>
 				<span
 					class="py-2 text-center {$post.likes
@@ -106,10 +107,11 @@
 					aria-label={$post.dislikes ? "Undislike" : "Dislike"}
 					class="btn p-1">
 					<fa
-						class="{$post.dislikes
+						fa-thumbs-down
+						class="transition text-lg {$post.dislikes
 							? 'text-red-500 hover:text-red-300'
-							: 'text-neutral-600 hover:text-neutral-400'}
-						fa-thumbs-down transition text-lg" />
+							: 'text-neutral-600 hover:text-neutral-400'}">
+					</fa>
 				</button>
 			</div>
 		</form>
@@ -122,7 +124,7 @@
 					</i>
 				</div>
 				<span class="dropdown">
-					<fa fa-ellipsis-h class="dropdown-ellipsis" />
+					<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
 					<div class="dropdown-content pt-2">
 						<ul class="p-2 rounded-3">
 							{#if user.permissionLevel >= 4}

@@ -15,7 +15,7 @@
 <div class="ctnr max-w-280 pb-6">
 	<h1>Abuse reports &ndash; Admin</h1>
 	<a href="/admin" class="no-underline">
-		<fa fa-caret-left />
+		<fa fa-caret-left></fa>
 		Back to panel
 	</a>
 </div>

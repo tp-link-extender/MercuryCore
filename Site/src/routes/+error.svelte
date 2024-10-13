@@ -25,7 +25,8 @@
 	<div class="ctnr bg-a flex flex-col items-center rounded-4 px-20 py-8">
 		<div
 			class="w-full h-24 bg-contain bg-no-repeat bg-center"
-			style="background-image: url(/error/{errors()}.svg)" />
+			style="background-image: url(/error/{errors()}.svg)">
+		</div>
 
 		<h1 class="pt-4">
 			<a
