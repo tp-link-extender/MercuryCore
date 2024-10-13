@@ -105,11 +105,11 @@ export async function handle(e) {
 	if (!session) setSession(auth.createBlankSessionCookie())
 	else if (session.fresh) setSession(auth.createSessionCookie(session.id))
 
+	const userR = Record("user", user.id)
 	const [, [moderated]] = await equery<1[][]>(
 		surql`
-			UPDATE $user SET lastOnline = time::now();
-			SELECT 1 FROM moderation WHERE out = $user AND active`,
-		{ user: Record("user", user.id) }
+			UPDATE ${userR} SET lastOnline = time::now();
+			SELECT 1 FROM moderation WHERE out = ${userR} AND active`
 	)
 
 	const { pathname } = event.url

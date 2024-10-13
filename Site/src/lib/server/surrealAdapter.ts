@@ -18,14 +18,17 @@ async function deleteUserSessions(userId: string) {
 async function getSessionAndUser(
 	sessionId: string
 ): Promise<[session: DatabaseSession | null, user: DatabaseUser | null]> {
+	const sess = Record("session", sessionId)
+
 	// TODO: this function is called a lot, see if we can select more optimally than just * for users
 	const [session, user] = await equery<
 		[DatabaseSession | null, RegisteredDatabaseUserAttributes | null]
 	>(
 		surql`
-			(SELECT *, meta::id(id) AS id FROM $sess)[0];
-			(SELECT *, meta::id(id) AS id FROM $sess<-hasSession<-user)[0]`,
-		{ sess: Record("session", sessionId) }
+			(SELECT *, meta::id(id) AS id FROM ${sess}
+				WHERE ${sess})[0];
+			(SELECT *, meta::id(id) AS id FROM ${sess}<-hasSession<-user
+				WHERE ${sess})[0]`
 	)
 
 	if (session)
@@ -40,9 +43,8 @@ async function setSession(session: DatabaseSession) {
 	await equery(
 		surql`
 			LET $s = CREATE ${Record("session", session.id)}
-				SET expiresAt = time::unix($expiresAt);
-			RELATE ${Record("user", session.userId)}->hasSession->$s`,
-		{ ...session } // types
+				SET expiresAt = time::unix(${session.expiresAt});
+			RELATE ${Record("user", session.userId)}->hasSession->$s`
 	)
 }
 
