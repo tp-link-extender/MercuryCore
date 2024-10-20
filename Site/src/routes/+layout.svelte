@@ -69,12 +69,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="icon" href="/assets/favicon" />
 
-	{#if !dev}
+	<!-- todo: document analytics setup -->
+	<!-- {#if !dev}
 		<script
 			defer
 			data-domain={data.domain}
 			src="https://analytics.{data.domain}/js/script.js"></script>
-	{/if}
+	{/if} -->
 </svelte:head>
 
 <!-- Toast notifications -->
