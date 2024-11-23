@@ -43,11 +43,10 @@ export const load = async ({ locals }) => {
 			name,
 			price,
 			type,
-			($user IN <-wearing<-user) AS wearing
+			(${Record("user", user.id)} IN <-wearing<-user) AS wearing
 		FROM asset WHERE $user IN <-owns<-user
 			AND type IN ${allowedTypes}
-			AND visibility = "Visible"`,
-		{ user: Record("user", user.id) }
+			AND visibility = "Visible"`
 	)
 	return { assets }
 }
@@ -65,11 +64,8 @@ async function getEquipData(e: RequestEvent) {
 	const [[asset]] = await equery<AssetData[][]>(
 		surql`
 			SELECT meta::id(id) AS id, type, visibility
-			FROM $asset WHERE $user IN <-owns<-user`,
-		{
-			asset: Record("asset", id),
-			user: Record("user", user.id),
-		}
+			FROM ${Record("asset", id)}
+			WHERE ${Record("user", user.id)} IN <-owns<-user`,
 	)
 	if (!asset) error(404, "Item not found or not owned")
 	if (!allowedTypes.includes(asset.type))
@@ -110,9 +106,7 @@ async function paint({ locals, url }: RequestEvent) {
 
 	currentColours[bodyPart] = +bodyColour
 
-	await equery(surql`UPDATE $user SET bodyColours = ${currentColours}`, {
-		user: Record("user", user.id),
-	})
+	await equery(surql`UPDATE ${Record("user", user.id)} SET bodyColours = ${currentColours}`
 
 	return await rerender(user)
 }
