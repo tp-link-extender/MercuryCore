@@ -14,7 +14,7 @@
 			},
 			"nursery": {
 				"all": true,
-				"useExplicitFunctionReturnType": "off",
+				"useExplicitType": "off",
 				"useConsistentMemberAccessibility": "off"
 			}
 		}
