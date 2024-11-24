@@ -13,22 +13,24 @@
 	import "/src/daisyui/tooltip.css"
 	import "uno.css"
 
-	export let data
+	const { data, children } = $props()
 
-	$: user = data.user
+	let user = $derived(data.user)
 
 	// Settings for nprogress, the loading bar shown at the top of the page when navigating
 	nprogress.configure({ showSpinner: false })
 
 	let timeout: Timer | null
 	// 100ms is the minimum time the loading bar will be shown
-	$: if (browser)
+	$effect(() => {
+		if (!browser) return
 		if ($navigating && !timeout) timeout = setTimeout(nprogress.start, 100)
 		else if (timeout) {
 			clearTimeout(timeout)
 			timeout = null
 			nprogress.done()
 		}
+	})
 
 	async function ping() {
 		// Keep the user's online status up to date
@@ -60,7 +62,7 @@
 		NewFriend: "New friend"
 	})
 
-	$: notifications = data.notifications.filter(n => !n.read)
+	let notifications = $derived(data.notifications.filter(n => !n.read))
 </script>
 
 <svelte:head>
@@ -122,4 +124,4 @@
 	{/each}
 </div>
 
-<slot />
+{@render children()}

@@ -45,4 +45,7 @@
 			</div>
 		</div>
 	{/each}
+	{#if data.notifications.length === 0}
+		<h2 class="text-center">No notifications yet.</h2>
+	{/if}
 </div>

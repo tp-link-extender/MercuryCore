@@ -169,9 +169,8 @@
 					{refreshReplies} />
 			{/each}
 		{:else}
-			<h3 class="text-center pt-6">
-				No replies yet. Be the first to post one!
-			</h3>
+			<h3 class="text-center pt-6">No replies yet.</h3>
+			<h4 class="text-center pt-4">Be the first to post one!</h4>
 		{/if}
 	{/key}
 </div>

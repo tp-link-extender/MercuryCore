@@ -118,7 +118,7 @@
 				<h2 class="text-center">
 					No {tabData.currentTab === "Recent"
 						? "recently worn items"
-						: tabData.currentTab} found
+						: tabData.currentTab} found.
 				</h2>
 			{/if}
 		</div>

@@ -29,6 +29,7 @@
 			<Pagination totalPages={data.pages} />
 		{/key}
 	{:else}
-		<h2 class="text-center">No games yet. Be the first to create one!</h2>
+		<h2 class="text-center">No games yet.</h2>
+		<h3 class="pt-4 text-center">Be the first to create one!</h3>
 	{/if}
 </div>
