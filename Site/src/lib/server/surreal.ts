@@ -8,7 +8,6 @@ import {
 	type QueryResult,
 	RecordId,
 	Surreal,
-	surql,
 } from "surrealdb"
 
 const { green, red } = pc

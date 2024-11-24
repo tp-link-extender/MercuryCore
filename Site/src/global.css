@@ -557,9 +557,10 @@ input[type="file"] {
 summary {
 	cursor: pointer;
 	user-select: none;
-	&::before {
-		display: none;
-	}
+}
+
+summary::before {
+	display: none;
 }
 
 details[open] summary {

@@ -60,10 +60,12 @@
 				id={name}
 				{rows}
 				placeholder={placeholder || null}
-				class:is-invalid={$errors[name]} />
+				class:is-invalid={$errors[name]}>
+			</textarea>
 		</NoScript>
 		<YesScript>
-			<textarea class="hidden" {name} id={name} value={$form.css} />
+			<textarea class="hidden" {name} id={name} bind:value={$form.css}>
+			</textarea>
 			<div bind:this={code} style="--rows: {rows}"></div>
 		</YesScript>
 

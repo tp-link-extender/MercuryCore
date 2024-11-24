@@ -1,4 +1,4 @@
-import { Record, db, surql } from "$lib/server/surreal"
+import { Record, db } from "$lib/server/surreal"
 import usersQuery from "$lib/server/users.surql"
 
 const economyUrl = "localhost:2009"

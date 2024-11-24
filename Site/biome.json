@@ -1,5 +1,5 @@
 {
-	"$schema": "./Site/node_modules/@biomejs/biome/configuration_schema.json",
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
 	"formatter": {
 		"indentWidth": 4
 	},
@@ -15,7 +15,10 @@
 			"nursery": {
 				"all": true,
 				"useExplicitType": "off",
-				"useConsistentMemberAccessibility": "off"
+				"useConsistentMemberAccessibility": "off",
+				"noSecrets": "off",
+				"noProcessEnv": "off",
+				"noUnknownTypeSelector": "off"
 			}
 		}
 	},

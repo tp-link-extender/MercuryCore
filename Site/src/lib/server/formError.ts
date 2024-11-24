@@ -24,7 +24,8 @@ export default function (
 	form.valid = false
 	if (fields && messages && fields.length > 0 && messages.length > 0)
 		// add field and message to the errors object
-		for (const i in fields) form.errors[fields[i]] = [messages[i]]
+		for (let i = 0; i < fields.length; i++)
+			form.errors[fields[i]] = [messages[i]]
 
 	return fail(400, { form })
 }
