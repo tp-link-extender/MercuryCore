@@ -106,7 +106,7 @@ export async function handle(e) {
 	if (!session) setSession(auth.createBlankSessionCookie())
 	else if (session.fresh) setSession(auth.createSessionCookie(session.id))
 
-	const [, [moderated]] = await db.query<boolean[][]>(moderatedQuery, {
+	const [, moderated] = await db.query<boolean[][]>(moderatedQuery, {
 		user: Record("user", user.id),
 	})
 

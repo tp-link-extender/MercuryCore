@@ -73,7 +73,7 @@ actions.create = async e => {
 	const limit = ratelimit(form, "createBanner", e.getClientAddress, 30)
 	if (limit) return limit
 
-	await db.create("banner", {
+	await db.insert("banner", {
 		active: true,
 		deleted: false,
 		body: bannerText,

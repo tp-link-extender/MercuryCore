@@ -13,7 +13,7 @@ import { authorise } from "$lib/server/lucia"
 import { type Replies, recurse } from "$lib/server/nestedReplies"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
-import { Record, db, find } from "$lib/server/surreal"
+import { Record, db, find, incrementId } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
 import { error, fail, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
@@ -193,7 +193,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	if (commentId && !commentAuthor) error(404)
 
 	const receiverId = commentAuthor?.id || ""
-	const [newReplyId] = await db.query<string[]>("fn::id()")
+	const newReplyId = await incrementId()
 
 	await db.query(createCommentQuery, {
 		content: filter(unfiltered),

@@ -4,7 +4,7 @@ import formError from "$lib/server/formError"
 import { like } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, db, findWhere } from "$lib/server/surreal"
+import { Record, db, findWhere, incrementId } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
@@ -42,15 +42,13 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
 
-	const category = url.searchParams.get("category")
-
 	const title = form.data.title.trim()
 	if (!title) return formError(form, ["title"], ["Post must have a title"])
-	const unfiltered = form.data.content?.trim()
 
-	const limit = ratelimit(form, "forumPost", getClientAddress, 30)
-	if (limit) return limit
+	// const limit = ratelimit(form, "forumPost", getClientAddress, 30)
+	// if (limit) return limit
 
+	const category = url.searchParams.get("category")
 	if (
 		!category ||
 		!(await findWhere(
@@ -61,7 +59,10 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 	)
 		error(400, "Invalid category")
 
-	const [newPostId] = await db.query<string[]>("fn::id()")
+	const unfiltered = form.data.content?.trim()
+	console.log(unfiltered)
+	const newPostId = await incrementId()
+	console.log(newPostId)
 
 	await db.query(createQuery, {
 		user: Record("user", user.id),

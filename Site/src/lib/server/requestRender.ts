@@ -22,11 +22,12 @@ export default async function (
 	relativeId: string | number,
 	wait = false
 ) {
-	const [, , render] = await db.query<Render[]>(renderQuery)
+	const params = { renderType, relativeId }
+	const [, , render] = await db.query<Render[]>(renderQuery, params)
 	if (render && render.status !== "Error") return
 
 	// If the render doesn't exist or if the last one errored, create a new render
-	const [, renderId] = await db.query<string[]>(createRenderQuery)
+	const [, renderId] = await db.query<string[]>(createRenderQuery, params)
 
 	// Tap in rcc
 	const scriptFile = Bun.file(`../Corescripts/render${renderType}.lua`)

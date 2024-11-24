@@ -9,6 +9,7 @@ import {
 	RecordId,
 	Surreal,
 } from "surrealdb"
+import idQuery from "./id.surql"
 
 const { green, red } = pc
 export const db = new Surreal()
@@ -190,4 +191,9 @@ export async function findWhere(
 		{ ...params, table }
 	)
 	return res
+}
+
+export async function incrementId() {
+	const [id] = await db.query<number[]>(idQuery)
+	return id.toString(36)
 }

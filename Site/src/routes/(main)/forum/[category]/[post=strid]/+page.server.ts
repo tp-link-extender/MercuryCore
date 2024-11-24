@@ -6,7 +6,7 @@ import { like } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
 import { type Replies, recurse } from "$lib/server/nestedReplies"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, type RecordId, db } from "$lib/server/surreal"
+import { Record, type RecordId, db, incrementId } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
@@ -141,7 +141,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	)
 	if (!replypost) error(404, `${replyId ? "Reply" : "Post"} not found`)
 
-	const [newReplyId] = await db.query<string[]>("fn::id()")
+	const newReplyId = await incrementId()
 
 	await db.query(createReplyQuery, {
 		content: filter(unfiltered),

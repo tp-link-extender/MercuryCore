@@ -1,8 +1,8 @@
 LET $render = CREATE render CONTENT {
-	type: ${renderType},
+	type: $renderType,
 	status: "Pending",
 	created: time::now(),
 	completed: NONE, # hmm..
-	relativeId: ${relativeId}
+	relativeId: $relativeId,
 };
 meta::id($render[0].id);
