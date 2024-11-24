@@ -1,4 +1,5 @@
-import { Record, equery, surql } from "$lib/server/surreal"
+import { Record, db, surql } from "$lib/server/surreal"
+import usersQuery from "$lib/server/users.surql"
 
 const economyUrl = "localhost:2009"
 
@@ -182,9 +183,10 @@ export async function transformTransactions(list: ReceivedTx[]) {
 		if (tx.Type !== "Mint") users.add(tx.From)
 		if (tx.Type !== "Burn") users.add(tx.To)
 	}
-	const usersList = Array.from(users).map(u => Record("user", u))
-	const [queryUsers] = await equery<(BasicUser & { id: string })[][]>(surql`
-		SELECT meta::id(id) AS id, status, username FROM ${usersList}`)
+	const [queryUsers] = await db.query<(BasicUser & { id: string })[][]>(
+		usersQuery,
+		{ usersList: Array.from(users).map(u => Record("user", u)) }
+	)
 
 	const idsMap = new Map<string, BasicUser>()
 	const usersMap = new Map<string, BasicUser>()

@@ -1,5 +1,5 @@
 import fs from "node:fs"
-import { equery, findWhere, surql } from "$lib/server/surreal"
+import { findWhere } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 
 export async function GET({ url, params }) {

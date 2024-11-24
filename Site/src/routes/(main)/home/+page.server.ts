@@ -2,7 +2,7 @@ import filter from "$lib/server/filter.js"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, equery } from "$lib/server/surreal"
+import { db, Record } from "$lib/server/surreal"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -44,7 +44,7 @@ export async function load({ locals }) {
 		() => `Hello, ${user.username}!`,
 	]
 
-	const [places, friends, feed] = await equery<
+	const [places, friends, feed] = await db.query<
 		[Place[], BasicUser[], FeedPost[]]
 	>(homeQuery, { user: Record("user", user.id) })
 
@@ -70,7 +70,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	if (!unfiltered)
 		return formError(form, ["status"], ["Status cannot be empty"])
 
-	await equery(statusQuery, {
+	await db.query(statusQuery, {
 		content: filter(unfiltered),
 		user: Record("user", user.id),
 	})

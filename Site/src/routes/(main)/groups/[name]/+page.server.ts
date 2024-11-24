@@ -1,9 +1,12 @@
 import exclude from "$lib/server/exclude"
 import { authorise } from "$lib/server/lucia"
-import { Record, type RecordId, equery, surql } from "$lib/server/surreal"
+import { Record, type RecordId, db } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import type { RequestEvent } from "./$types.d.ts"
+import findGroupQuery from "./findGroup.surql"
 import groupQuery from "./group.surql"
+import joinQuery from "./join.surql"
+import leaveQuery from "./leave.surql"
 
 type Group = {
 	in: boolean
@@ -15,7 +18,7 @@ type Group = {
 export async function load({ locals, params }) {
 	exclude("Groups")
 	const { user } = await authorise(locals)
-	const [[group]] = await equery<Group[][]>(groupQuery, {
+	const [[group]] = await db.query<Group[][]>(groupQuery, {
 		user: Record("user", user.id),
 		...params,
 	})
@@ -27,13 +30,10 @@ export async function load({ locals, params }) {
 async function getData({ locals, params }: RequestEvent) {
 	exclude("Groups")
 	const { user } = await authorise(locals)
-	const [[group]] = await equery<{ id: RecordId }[][]>(
-		surql`
-			SELECT id FROM group
-			WHERE string::lowercase(name) = string::lowercase($name)`,
+	const [[group]] = await db.query<{ id: RecordId }[][]>(
+		findGroupQuery,
 		params
 	)
-
 	if (!group) fail(400, { msg: "Group not found" })
 
 	return {
@@ -44,14 +44,8 @@ async function getData({ locals, params }: RequestEvent) {
 
 export const actions: import("./$types").Actions = {}
 actions.join = async e => {
-	await equery(
-		surql`RELATE $user->member->$group SET time = time::now()`,
-		await getData(e)
-	)
+	await db.query(joinQuery, await getData(e))
 }
 actions.leave = async e => {
-	await equery(
-		surql`DELETE $user->member WHERE out = $group`,
-		await getData(e)
-	)
+	await db.query(leaveQuery, await getData(e))
 }

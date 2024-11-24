@@ -4,13 +4,15 @@ import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import requestRender from "$lib/server/requestRender"
-import { equery, surql } from "$lib/server/surreal"
+import { db } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import createAutopilotQuery from "./createAutopilot.surql"
 import getVersionsQuery from "./getVersions.surql"
+import sharedAssetsCacheQuery from "./sharedAssetsCache.surql"
+import typeQuery from "./type.surql"
 
 const schemaManual = z.object({
 	type: z.enum(["8", "18"]),
@@ -106,7 +108,7 @@ async function getVersions(id: number, version?: number) {
 
 	// Badass caching system
 	// todo make it invalidatable cuz if you want a version of the asset later than when cached, good luck lmao
-	const [cache] = await equery<Asset[][]>(
+	const [cache] = await db.query<Asset[][]>(
 		`
 			SELECT meta::id(id) AS id, assetModified
 			FROM assetCache:${
@@ -135,22 +137,17 @@ async function getVersions(id: number, version?: number) {
 
 	console.log("CACHE", versions)
 
-	await equery(getVersionsQuery, { versions })
+	await db.query(getVersionsQuery, { versions })
 	return transformVersions(versions)
 }
 
 async function getSharedAssets(id: number, version: number) {
-	const [[cache]] = await equery<
+	const [[cache]] = await db.query<
 		{
 			id: [number, number]
 			assetModified: string
 		}[][]
-	>(
-		surql`
-			SELECT meta::id(id) AS id, assetModified
-			FROM assetCache:[${id}, ${version}]`
-	)
-
+	>(sharedAssetsCacheQuery, { id, version })
 	if (!cache) return []
 
 	const dependencies: string[] = []
@@ -184,10 +181,7 @@ async function getSharedAssets(id: number, version: number) {
 }
 
 async function getType(id: number) {
-	const [[{ type }]] = await equery<{ type: number }[][]>(
-		surql`SELECT type FROM assetCache:[$id, 0]..[$id, 99]`, // gud enogh
-		{ id }
-	)
+	const [[{ type }]] = await db.query<{ type: number }[][]>(typeQuery, { id })
 	return type
 }
 
@@ -231,7 +225,7 @@ actions.autopilot = async ({ request, locals }) => {
 	if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
 	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
 
-	const res = await equery<unknown[]>(createAutopilotQuery, {
+	const res = await db.query<unknown[]>(createAutopilotQuery, {
 		assets: form.data.shared.split(",").map(s => +s),
 		...data,
 	})

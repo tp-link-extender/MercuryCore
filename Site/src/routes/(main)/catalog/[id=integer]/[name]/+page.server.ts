@@ -13,7 +13,7 @@ import { authorise } from "$lib/server/lucia"
 import { type Replies, recurse } from "$lib/server/nestedReplies"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
-import { Record, equery, find, surql } from "$lib/server/surreal"
+import { Record, db, find } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
 import { error, fail, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
@@ -21,7 +21,9 @@ import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import type { RequestEvent } from "./$types.d.ts"
 import assetQuery from "./asset.surql"
+import buyQuery from "./buy.surql"
 import createCommentQuery from "./createComment.surql"
+import findAssetQuery from "./findAsset.surql"
 import updateVisibilityQuery from "./updateVisibility.surql"
 
 const schema = z.object({
@@ -66,7 +68,7 @@ const failTexts = Object.freeze(["Bruh", "Okay", "Aight", "Rip", "Aw man..."])
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
 	const id = +params.id
-	const [[asset]] = await equery<Asset[][]>(
+	const [[asset]] = await db.query<Asset[][]>(
 		assetQuery.replace("_SELECTCOMMENTS", SELECTCOMMENTS),
 		{ asset: Record("asset", id), user: Record("user", user.id) }
 	)
@@ -114,7 +116,7 @@ async function findComment<T>(
 	// Prevents incorrect ids erroring the Surreal query as well
 	if (!idRegex.test(id)) error(400, "Invalid comment id")
 
-	const [[comment]] = await equery<T[][]>(input, {
+	const [[comment]] = await db.query<T[][]>(input, {
 		assetComment: Record("assetComment", id),
 	})
 	if (!comment) error(404, "Comment not found")
@@ -123,7 +125,7 @@ async function findComment<T>(
 }
 
 const updateVisibility = (visibility: string, text: string, id: string) =>
-	equery(updateVisibilityQuery, {
+	db.query(updateVisibilityQuery, {
 		assetComment: Record("assetComment", id),
 		text,
 		visibility,
@@ -131,8 +133,7 @@ const updateVisibility = (visibility: string, text: string, id: string) =>
 
 const pinComment = (pinned: boolean) => async (e: RequestEvent) => {
 	const { id } = await findComment(e, 4)
-	await equery(surql`
-		UPDATE ${Record("assetComment", id)} SET pinned = ${pinned}`)
+	db.merge(Record("assetComment", id), { pinned })
 }
 
 // actions that return things are here because of sveltekit typescript limitations
@@ -145,9 +146,9 @@ async function rerender({ locals, params }: RequestEvent) {
 		type: number
 		visibility: string
 	}
-	const [[asset]] = await equery<FoundAsset[][]>(
-		surql`SELECT name, type, visibility FROM ${Record("asset", id)}`
-	)
+	const [[asset]] = await db.query<FoundAsset[][]>(findAssetQuery, {
+		asset: Record("asset", id),
+	})
 	if (!asset) error(404, "Not found")
 	if (asset.visibility === "Moderated")
 		error(400, "Can't rerender a moderated asset")
@@ -185,15 +186,16 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	const assetOrComment = commentId
 		? Record("assetComment", commentId)
 		: Record("asset", id)
-	const [[commentAuthor]] = await equery<{ id: string }[][]>(
-		surql`SELECT meta::id(id) AS id FROM ${assetOrComment}<-created<-user`
+	const [[commentAuthor]] = await db.query<{ id: string }[][]>(
+		"SELECT meta::id(id) AS id FROM $assetOrComment<-created<-user",
+		{ assetOrComment }
 	)
 	if (commentId && !commentAuthor) error(404)
 
 	const receiverId = commentAuthor?.id || ""
-	const [newReplyId] = await equery<string[]>(surql`fn::id()`)
+	const [newReplyId] = await db.query<string[]>("fn::id()")
 
-	await equery(createCommentQuery, {
+	await db.query(createCommentQuery, {
 		content: filter(unfiltered),
 		user: Record("user", user.id),
 		assetComment: Record("assetComment", newReplyId),
@@ -203,19 +205,12 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 
 	await Promise.all([
 		user.id !== receiverId &&
-			equery(
-				surql`
-					RELATE $sender->notification->$receiver CONTENT {
-						type: $type,
-						time: time::now(),
-						note: $note,
-						relativeId: $relativeId,
-						read: false,
-					}`,
+			db.query(
+				"fn::notify($sender, $receiver, $type, $note, $relativeId)",
 				{
-					type: commentId ? "AssetCommentReply" : "AssetComment",
 					sender: Record("user", user.id),
 					receiver: Record("user", receiverId),
+					type: commentId ? "AssetCommentReply" : "AssetComment",
 					note: commentId
 						? `${user.username} replied to your comment: ${unfiltered}`
 						: `${user.username} commented on your asset: ${unfiltered}`,
@@ -254,15 +249,10 @@ actions.buy = async e => {
 		price: number
 		visibility: string
 	}
-	const [[asset]] = await equery<FoundAsset[][]>(
-		surql`
-			SELECT
-				*,
-				(SELECT meta::id(id) AS id, username
-				FROM <-created<-user)[0] AS creator,
-				${Record("user", user.id)} IN <-owns<-user.id AS owned
-			FROM ${Record("asset", id)}`
-	)
+	const [[asset]] = await db.query<FoundAsset[][]>(buyQuery, {
+		user: Record("user", user.id),
+		asset: Record("asset", id),
+	})
 	if (!asset) error(404, "Not found")
 	if (asset.owned) error(400, "You already own this item")
 	if (asset.visibility !== "Visible")
@@ -282,18 +272,20 @@ actions.buy = async e => {
 	}
 
 	await Promise.all([
-		equery(surql`
-			RELATE ${Record("user", user.id)}->owns->${Record("asset", id)}
-				SET time = time::now()`),
+		db.query("RELATE $user->owns->$asset SET time = time::now()", {
+			asset: Record("asset", id),
+			user: Record("user", user.id),
+		}),
 		user.id === asset.creator.id ||
-			equery(surql`
-				RELATE ${Record("user", user.id)}->notification->${Record("user", asset.creator.id)} CONTENT {
-					type: "ItemPurchase",
-					time: time::now(),
-					note: ${`${user.username} just purchased your item ${asset.name}`},
-					relativeId: ${e.params.id},
-					read: false,
-				}`),
+			db.query(
+				'fn::notify($user, $creator, "ItemPurchase", $note, $relativeId)',
+				{
+					user: Record("user", user.id),
+					creator: Record("user", asset.creator.id),
+					note: `${user.username} just purchased your item ${asset.name}`,
+					relativeId: e.params.id,
+				}
+			),
 	])
 }
 actions.delete = async e => {

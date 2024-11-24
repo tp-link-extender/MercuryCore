@@ -83,6 +83,18 @@ DEFINE FUNCTION OVERWRITE fn::clampPages($count: number, $pages: number) {
 	RETURN math::max([math::ceil(<float> $count / 50), 1]);
 };
 
+DEFINE FUNCTION OVERWRITE fn::notify($user: record, $user2: record, $type: string, $note: string, $relativeId: any) {
+	RETURN RELATE $user->notification->$user2 CONTENT {
+		type: $type,
+		time: time::now(),
+		note: $note,
+		relativeId: $relativeId,
+		read: false,
+	};
+};
+
+
+
 DEFINE EVENT OVERWRITE bannerCreateLog ON TABLE banner WHEN $event = "CREATE" THEN
 	fn::auditLog("Administration", string::concat('Create banner "', $after.body, '"'), $after.creator);
 DEFINE EVENT OVERWRITE bannerDeleteLog ON TABLE banner WHEN $event = "UPDATE" AND !$before.deleted AND $after.deleted THEN

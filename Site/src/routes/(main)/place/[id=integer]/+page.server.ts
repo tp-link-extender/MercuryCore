@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/lucia"
-import { Record, equery } from "$lib/server/surreal"
+import { Record, db } from "$lib/server/surreal"
 import { encode } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
 import placeIdQuery from "./placeId.surql"
@@ -17,7 +17,7 @@ type Place = {
 
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
-	const [[place]] = await equery<Place[][]>(placeIdQuery, {
+	const [[place]] = await db.query<Place[][]>(placeIdQuery, {
 		place: Record("place", +params.id),
 	})
 

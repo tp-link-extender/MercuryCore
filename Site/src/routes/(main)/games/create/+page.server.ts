@@ -2,12 +2,13 @@ import { createPlace, getPlacePrice } from "$lib/server/economy"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
-import { Record, equery, surql } from "$lib/server/surreal"
+import { Record, db } from "$lib/server/surreal"
 import { encode } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
+import countQuery from "./count.surql"
 import createQuery from "./create.surql"
 
 const schema = z.object({
@@ -25,8 +26,9 @@ const schema = z.object({
 })
 
 async function placeCount(id: string) {
-	const [[{ count }]] = await equery<{ count: number }[][]>(surql`
-		SELECT count(->owns->place) FROM ${Record("user", id)}`)
+	const [[{ count }]] = await db.query<{ count: number }[][]>(countQuery, {
+		user: Record("user", id),
+	})
 	return count
 }
 
@@ -64,17 +66,18 @@ actions.default = async ({ request, locals }) => {
 			["You can't have more than two places"]
 		)
 
-	const [id] = await equery<number[]>(surql`
-		(UPDATE ONLY stuff:increment SET asset += 1).asset`)
+	const [id] = await db.query<number[]>(
+		"(UPDATE ONLY stuff:increment SET asset += 1).asset"
+	)
 	const slug = encode(name)
 
 	const created = await createPlace(user.id, id, name, slug)
 	if (!created.ok) {
-		await equery(surql`UPDATE ONLY stuff:increment SET asset -= 1`) // fuck, find a better way stat
+		await db.query("UPDATE ONLY stuff:increment SET asset -= 1") // fuck, find a better way stat
 		return formError(form, ["other"], [created.msg])
 	}
 
-	await equery(createQuery, {
+	await db.query(createQuery, {
 		user: Record("user", user.id),
 		id,
 		name: filter(name),

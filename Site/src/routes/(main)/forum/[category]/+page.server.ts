@@ -3,9 +3,10 @@ import exclude from "$lib/server/exclude"
 import formData from "$lib/server/formData"
 import { likeScoreActions } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
-import { Record, type RecordIdTypes, equery, surql } from "$lib/server/surreal"
+import { Record, db } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import categoryQuery from "./category.surql"
+import replypostQuery from "./replypost.surql"
 
 type Category = {
 	description: string
@@ -33,11 +34,14 @@ export async function load({ locals, params, url }) {
 	const page = Number.isNaN(+pageQ) ? 1 : Math.round(+pageQ)
 	if (page < 1) redirect(303, `/forum/${params.category}?p=1`)
 
-	const [category, pages] = await equery<[Category, number]>(categoryQuery, {
-		...params,
-		page,
-		user: Record("user", user.id),
-	})
+	const [category, pages] = await db.query<[Category, number]>(
+		categoryQuery,
+		{
+			...params,
+			page,
+			user: Record("user", user.id),
+		}
+	)
 	if (!category) error(404, "Not found")
 	if (page > pages) redirect(303, `/forum/${params.category}?p=${pages}`)
 
@@ -49,14 +53,10 @@ type Thing = {
 	score: number
 }
 
-async function select(table: keyof RecordIdTypes, id: string) {
-	const [[thing]] = await equery<Thing[][]>(
-		surql`
-			SELECT
-				meta::id(id) AS id,
-				count(<-likes) - count(<-dislikes) AS score
-			FROM ${Record(table, id)}`
-	)
+async function select(replypost: "forumReply" | "forumPost", id: string) {
+	const [[thing]] = await db.query<Thing[][]>(replypostQuery, {
+		replypost: Record(replypost, id),
+	})
 	return thing
 }
 

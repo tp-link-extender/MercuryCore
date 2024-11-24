@@ -6,7 +6,7 @@ import { redirect } from "@sveltejs/kit"
  * @returns An object containing the page, as well as a function to check if the current page exceeds the total number of pages.
  * @example
  * const { page, checkPages } = pageQuery(url)
- * const [things, pages] = await equery<[Thing[], number]>(thingQuery, qp)
+ * const [things, pages] = await db.query<[Thing[], number]>(thingQuery, qp)
  * checkPages(pages)
  */
 export default (url: URL) => {

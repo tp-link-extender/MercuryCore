@@ -12,7 +12,7 @@ import {
 } from "surrealdb"
 
 const { green, red } = pc
-const db = new Surreal()
+export const db = new Surreal()
 
 export const version = db.version.bind(db)
 
@@ -28,7 +28,7 @@ async function reconnect() {
 			auth: {
 				username: "root",
 				password: "root",
-			}
+			},
 		})
 		console.log("reloaded", await version())
 		logo()
@@ -130,7 +130,7 @@ export const equery = async <T>(
 	bindings?: { [k: string]: unknown }
 ): Promise<T> =>
 	await fixError(async () => {
-		const result = await db.query_raw(await query, bindings)
+		const result = await db.queryRaw(await query, bindings)
 		const final: unknown[] = []
 		let hasErrors = false
 
@@ -166,9 +166,9 @@ export async function find<T extends keyof RecordIdTypes>(
 	table: T,
 	id: RecordIdTypes[T]
 ) {
-	const [result] = await equery<boolean[]>(
-		surql`!!SELECT 1 FROM ${Record(table, id)}`
-	)
+	const [result] = await db.query<boolean[]>("!!SELECT 1 FROM $thing", {
+		thing: Record(table, id),
+	})
 	return result
 }
 
@@ -186,7 +186,7 @@ export async function findWhere(
 	where: string,
 	params?: { [k: string]: unknown }
 ) {
-	const [res] = await equery<boolean[]>(
+	const [res] = await db.query<boolean[]>(
 		`!!SELECT 1 FROM type::table($table) WHERE ${where}`,
 		{ ...params, table }
 	)

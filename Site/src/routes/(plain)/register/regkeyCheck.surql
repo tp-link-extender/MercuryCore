@@ -1,0 +1,1 @@
+SELECT usesLeft FROM $key;

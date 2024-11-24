@@ -4,10 +4,11 @@
 import config from "$lib/server/config"
 import { stipend } from "$lib/server/economy"
 import { auth } from "$lib/server/lucia"
-import { Record, equery, surql } from "$lib/server/surreal"
+import { Record, db } from "$lib/server/surreal"
 import { type Handle, redirect } from "@sveltejs/kit"
 import type { Cookie, User } from "lucia"
 import pc from "picocolors"
+import moderatedQuery from "./moderated.surql"
 
 const { magenta, red, yellow, green, blue, gray } = pc
 const methodColours = Object.freeze({
@@ -105,12 +106,9 @@ export async function handle(e) {
 	if (!session) setSession(auth.createBlankSessionCookie())
 	else if (session.fresh) setSession(auth.createSessionCookie(session.id))
 
-	const userR = Record("user", user.id)
-	const [, [moderated]] = await equery<1[][]>(
-		surql`
-			UPDATE ${userR} SET lastOnline = time::now();
-			SELECT 1 FROM moderation WHERE out = ${userR} AND active`
-	)
+	const [, [moderated]] = await db.query<boolean[][]>(moderatedQuery, {
+		user: Record("user", user.id),
+	})
 
 	const { pathname } = event.url
 	if (

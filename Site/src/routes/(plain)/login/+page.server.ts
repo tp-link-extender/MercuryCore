@@ -1,11 +1,13 @@
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import { auth } from "$lib/server/lucia"
-import { equery, surql } from "$lib/server/surreal"
+import { db } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
+import accountRegistered from "../accountRegistered"
+import userQuery from "./user.surql"
 
 const schema = z.object({
 	username: z
@@ -27,11 +29,9 @@ const schema = z.object({
 })
 
 export async function load() {
-	const [users] = await equery<number[]>(surql`count(SELECT 1 FROM user)`)
-
 	return {
 		form: await superValidate(zod(schema)),
-		users: users > 0,
+		users: await accountRegistered(),
 		descriptions: config.Branding.Descriptions,
 	}
 }
@@ -44,16 +44,12 @@ actions.default = async ({ request, cookies }) => {
 	const { username, password } = form.data
 	form.data.password = ""
 
-	const [[user]] = await equery<
+	const [[user]] = await db.query<
 		{
 			id: string
 			hashedPassword: string
 		}[][]
-	>(
-		surql`
-			SELECT meta::id(id) AS id, hashedPassword FROM user
-			WHERE string::lowercase(username) = string::lowercase(${username})`
-	)
+	>(userQuery, { username })
 
 	// remove this statement and we'll end up like Mercury 1 💀
 	if (!user || !Bun.password.verifySync(password, user.hashedPassword))
