@@ -2,12 +2,13 @@ import config from "$lib/server/config.ts"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, db, equery, surql } from "$lib/server/surreal"
+import { Record, db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import type { RequestEvent } from "./$types.ts"
+import createQuery from "./create.surql"
 import disabledQuery from "./disabled.surql"
 import regKeysQuery from "./regKeys.surql"
 
@@ -82,17 +83,14 @@ actions.create = async e => {
 	if (!!enableRegKeyExpiry && (expiry?.getTime() || 0) < Date.now())
 		return formError(form, ["regKeyExpiry"], ["Invalid date"])
 
-	const [log] = await equery<unknown[]>(
-		surql`
-			CREATE ${Record("regKey", regKeyCustom || randomRegKey())} CONTENT {
-				usesLeft: ${regKeyUses},
-				expiry: ${expiry},
-				created: time::now(),
-				creator: ${Record("user", user.id)},
-			}`
-	)
+	const [result] = await db.queryRaw<unknown[]>(createQuery, {
+		regKey: Record("regKey", regKeyCustom || randomRegKey()),
+		regKeyUses,
+		expiry,
+		creator: Record("user", user.id),
+	})
 
-	return typeof log === "string"
+	return result.status === "ERR"
 		? message(form, "This registration key already exists", { status: 400 })
 		: message(
 				form,

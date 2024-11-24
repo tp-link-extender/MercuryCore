@@ -13,7 +13,7 @@
 	{transaction.Type}
 </td>
 <td>
-	{#if transaction.Type !== "Mint"}
+	{#if transaction.Type !== "Mint" && users[transaction.From]}
 		<User
 			user={users[transaction.From]}
 			full
@@ -45,7 +45,7 @@
 </td>
 
 <td>
-	{#if transaction.Type !== "Burn"}
+	{#if transaction.Type !== "Burn" && users[transaction.To]}
 		<User
 			user={users[transaction.To]}
 			full

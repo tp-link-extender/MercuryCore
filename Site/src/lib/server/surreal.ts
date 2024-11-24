@@ -2,16 +2,9 @@ import { building } from "$app/environment"
 import initQuery from "$lib/server/init.surql"
 import logo from "$lib/server/logo"
 import { error } from "@sveltejs/kit"
-import pc from "picocolors"
-import {
-	type PreparedQuery,
-	type QueryResult,
-	RecordId,
-	Surreal,
-} from "surrealdb"
+import { RecordId, Surreal } from "surrealdb"
 import idQuery from "./id.surql"
 
-const { green, red } = pc
 export const db = new Surreal()
 
 export const version = db.version.bind(db)
@@ -41,7 +34,7 @@ async function reconnect() {
 export const failed = "The query was not executed due to a failed transaction"
 export const failedConn = "There is no connection available at this moment"
 
-export { surql, RecordId } from "surrealdb"
+export type { RecordId } from "surrealdb"
 
 export type RecordIdTypes = {
 	asset: number
@@ -96,59 +89,6 @@ export const Record = <T extends keyof RecordIdTypes>(
 	table: T,
 	id: RecordIdTypes[T]
 ) => new RecordId(table, id)
-
-async function fixError<T>(q: () => Promise<T>) {
-	try {
-		return await q()
-	} catch (err) {
-		const e = err as Error
-		if (
-			!e.message.startsWith(failed) &&
-			!e.message.startsWith(failedConn)
-		) {
-			console.error(e)
-			await reconnect()
-		}
-	}
-	return undefined as unknown as T
-}
-
-// Make the query error/return/watever more readable, so we can see which are errors and which statement of the query failed
-const makeReadable = (r: QueryResult<unknown>) =>
-	r.status === "ERR"
-		? red(r.result)
-		: green(JSON.stringify(r.result, null, 2))
-
-/**
- * Executes a query in SurrealDB and returns its results. Errors if the query failed.
- * @param query The query to execute.
- * @param bindings An object of parameters to pass to SurrealDB.
- * @returns the result of the query. Errors if unsuccessful.
- */
-export const equery = async <T>(
-	query: string | Promise<string> | PreparedQuery,
-	bindings?: { [k: string]: unknown }
-): Promise<T> =>
-	await fixError(async () => {
-		const result = await db.queryRaw(await query, bindings)
-		const final: unknown[] = []
-		let hasErrors = false
-
-		for (const res of result) {
-			if (res.status === "ERR" && !res.result.startsWith(failed))
-				hasErrors = true
-			final.push(res.result)
-		}
-		if (hasErrors) {
-			const qerrors = result
-				// zero indexing booooo (whatevr)
-				.map((r, i) => `${i}  ${makeReadable(r)}`)
-				.join("\n")
-			throw new Error(`Query errors occurred\n${qerrors}`)
-		}
-
-		return final as T
-	})
 
 if (!building) {
 	await reconnect()

@@ -6,8 +6,8 @@ import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import type { RequestEvent } from "./$types.d.ts"
+import activeCountQuery from "./activeCount.surql"
 import bannersQuery from "./banners.surql"
-import activeCountQuery from "./bannersActiveCount.surql"
 
 const schema = z.object({
 	bannerText: z.string().max(100).optional(),

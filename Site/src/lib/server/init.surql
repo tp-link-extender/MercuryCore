@@ -87,8 +87,6 @@ DEFINE FUNCTION OVERWRITE fn::notify($user: record, $user2: record, $type: strin
 	};
 };
 
-
-
 DEFINE EVENT OVERWRITE bannerCreateLog ON TABLE banner WHEN $event = "CREATE" THEN
 	fn::auditLog("Administration", string::concat('Create banner "', $after.body, '"'), $after.creator);
 DEFINE EVENT OVERWRITE bannerDeleteLog ON TABLE banner WHEN $event = "UPDATE" AND !$before.deleted AND $after.deleted THEN
