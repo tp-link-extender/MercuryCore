@@ -29,7 +29,7 @@
 <div class="ctnr max-w-280 pb-6">
 	<h1>Asset creation &ndash; Admin</h1>
 	<a href="/admin" class="no-underline">
-		<fa fa-caret-left />
+		<fa fa-caret-left></fa>
 		Back to panel
 	</a>
 </div>
@@ -40,7 +40,7 @@
 		{((tabData2.num = 0), "")}
 		<Tab tabData={tabData2}>
 			<div class="alert alert-primary" role="alert">
-				<fa class="pr-2" fa-circle-info />
+				<fa class="pr-2" fa-circle-info></fa>
 				Manual uploading mode is for shared assets (ie. requires textures)
 			</div>
 			<Form
@@ -79,7 +79,7 @@
 		</Tab>
 		<Tab tabData={tabData2}>
 			<div class="alert alert-primary" role="alert">
-				<fa class="pr-2" fa-circle-info />
+				<fa class="pr-2" fa-circle-info></fa>
 				Use manual uploading mode for shared assets (ie. mesh)
 			</div>
 			{#if data.stage >= 2}

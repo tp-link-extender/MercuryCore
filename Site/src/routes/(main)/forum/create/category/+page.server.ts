@@ -2,11 +2,12 @@ import exclude from "$lib/server/exclude"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { equery, surql } from "$lib/server/surreal"
+import { db } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
+import createQuery from "./create.surql"
 
 const schema = z.object({
 	name: z.string().max(50),
@@ -34,15 +35,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	const limit = ratelimit(form, "forumCategory", getClientAddress, 30)
 	if (limit) return limit
 
-	await equery(
-		surql`
-			CREATE type::thing("forumCategory", $name) CONTENT {
-				name: $name,
-				description: $description,
-				created: time::now(),
-			}`,
-		{ name, description }
-	)
+	await db.query(createQuery, { name, description })
 
 	redirect(302, `/forum/${name}`)
 }

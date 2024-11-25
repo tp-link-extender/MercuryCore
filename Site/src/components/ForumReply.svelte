@@ -48,7 +48,7 @@
 
 {#if topLevel}
 	<a href="{baseUrl}{assetSlug ? '?tab=Comments' : ''}" class="no-underline">
-		<fa fa-arrow-left class="pr-2" />
+		<fa fa-arrow-left class="pr-2"></fa>
 		{#if assetSlug}
 			Back to asset
 		{:else}
@@ -58,7 +58,7 @@
 	{#if reply.parentReplyId}
 		<br />
 		<a href="{baseUrl}/{reply.parentReplyId}" class="no-underline">
-			<fa fa-arrow-up class="pr-2" />
+			<fa fa-arrow-up class="pr-2"></fa>
 			Parent reply
 		</a>
 	{/if}
@@ -91,7 +91,8 @@
 							<fa
 								class="{assetSlug
 									? 'fa-hammer'
-									: 'fa-microphone'} pl-1" />
+									: 'fa-microphone'} pl-1">
+							</fa>
 						{/if}
 					</span>
 					- {reply.content[0].text}

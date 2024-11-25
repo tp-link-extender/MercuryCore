@@ -5,8 +5,8 @@
 	src: url(/fonts/Icons.woff2) format("woff2");
 }
 
-fa  {
-	font-family: Icons;
+fa {
+	font-family: Icons, sans-serif;
 	display: inline-block;
 	font-style: normal;
 	font-variant: normal;

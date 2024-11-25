@@ -1,6 +1,6 @@
 import { authorise } from "$lib/server/lucia"
 import pageQuery from "$lib/server/pageQuery"
-import { Record, equery } from "$lib/server/surreal.ts"
+import { db, Record } from "$lib/server/surreal.ts"
 import inventoryQuery from "./inventory.surql"
 
 type Asset = {
@@ -14,7 +14,7 @@ export async function load({ locals, url }) {
 	const { user } = await authorise(locals)
 	const { page, checkPages } = pageQuery(url)
 
-	const [assets, pages] = await equery<[Asset[], number]>(inventoryQuery, {
+	const [assets, pages] = await db.query<[Asset[], number]>(inventoryQuery, {
 		user: Record("user", user.id),
 		page,
 	})

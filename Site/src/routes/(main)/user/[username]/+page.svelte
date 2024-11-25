@@ -67,7 +67,7 @@
 					</div>
 					<div class="flex self-start">
 						<b style="color: {perms[0]}">
-							<fa class="{perms[1]} pr-1" />
+							<fa class="{perms[1]} pr-1"></fa>
 							{perms[2]}
 						</b>
 					</div>
@@ -108,7 +108,7 @@
 				</div>
 				{#if data.username !== user.username}
 					<span class="dropdown float-end">
-						<fa fa-ellipsis-h class="dropdown-ellipsis" />
+						<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
 						<div class="dropdown-content pt-2">
 							<ul class="p-2 rounded-3">
 								<ReportButton
@@ -124,7 +124,7 @@
 			<span class="lg:hidden flex justify-between items-end pt-2">
 				<Interactions {data} />
 				<span class="dropdown float-end">
-					<fa fa-ellipsis-h class="dropdown-ellipsis" />
+					<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
 					<div class="dropdown-content pt-2">
 						<ul class="p-2 rounded-3">
 							<ReportButton
@@ -145,8 +145,9 @@
 						{#if data.username === user.username}
 							<a
 								href="/settings"
-								class="btn light-text text-lg p-0 px-2">
-								<fa fa-pencil />
+								class="btn light-text text-lg p-0 px-2"
+								aria-label="Edit bio">
+								<fa fa-pencil></fa>
 							</a>
 						{/if}
 					</div>
@@ -176,7 +177,7 @@
 							action="?/rerender"
 							class="absolute text-right end-0 pr-4">
 							<button class="btn btn-sm btn-tertiary">
-								<fa fa-arrows-rotate />
+								<fa fa-arrows-rotate></fa>
 								Rerender
 							</button>
 							<small class="text-red-500 block">
@@ -221,7 +222,7 @@
 										{group.name}
 									</span>
 									<span class="float-end">
-										<fa fa-user class="opacity-75" />
+										<fa fa-user class="opacity-75"></fa>
 										{group.memberCount}
 									</span>
 								</div>
@@ -246,7 +247,7 @@
 										{group.name}
 									</span>
 									<span class="float-end">
-										<fa fa-user class="opacity-75" />
+										<fa fa-user class="opacity-75"></fa>
 										{group.memberCount}
 									</span>
 								</div>

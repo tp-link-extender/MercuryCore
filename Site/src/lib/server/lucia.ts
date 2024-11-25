@@ -12,7 +12,7 @@ export const auth = new Lucia(new SurrealAdapter(), {
 	getUserAttributes: data => ({
 		// This is the data that will be available in data.user in a +page.svelte or +layout.svelte file, or authorise() in a +page.server.ts or +layout.server.ts file.
 		id: data.id,
-		bio: data.bio[data.bio.length - 1],
+		bio: data.bio.at(-1),
 		email: data.email ? `*******@${data.email.split("@")[1]}` : undefined,
 		username: data.username,
 		status: data.status,

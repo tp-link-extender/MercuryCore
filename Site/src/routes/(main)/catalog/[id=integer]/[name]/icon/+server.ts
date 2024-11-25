@@ -1,7 +1,8 @@
 import { tShirtThumbnail } from "$lib/server/imageAsset"
 import { authorise } from "$lib/server/lucia"
-import { Record, equery, surql } from "$lib/server/surreal"
+import { Record, db } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
+import assetQuery from "./asset.surql"
 
 type Asset = {
 	name: string
@@ -13,15 +14,9 @@ type Asset = {
 export async function GET({ locals, params }) {
 	const { user } = await authorise(locals)
 	const id = +params.id
-	const [[asset]] = await equery<Asset[][]>(
-		surql`
-			SELECT
-				name,
-				visibility,
-				type,
-				(SELECT meta::id(id) AS id FROM ->imageAsset->asset)[0].id AS imageAssetId
-			FROM ${Record("asset", id)}`
-	)
+	const [[asset]] = await db.query<Asset[][]>(assetQuery, {
+		asset: Record("asset", id),
+	})
 	if (!asset) error(404, "Not found")
 
 	if (asset.visibility === "Moderated") redirect(302, "/moderated.svg")

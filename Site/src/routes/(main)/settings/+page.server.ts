@@ -1,10 +1,11 @@
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
-import { Record, equery, surql } from "$lib/server/surreal"
+import { Record, db } from "$lib/server/surreal"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
+import passwordQuery from "./password.surql"
 import updateProfileQuery from "./updateProfile.surql"
 
 const profileSchema = z.object({
@@ -35,7 +36,7 @@ actions.profile = async ({ request, locals }) => {
 
 	const { bio, theme } = form.data
 
-	await equery(updateProfileQuery, {
+	await db.query(updateProfileQuery, {
 		user: Record("user", user.id),
 		bio,
 		theme: +(theme || 0),
@@ -61,15 +62,14 @@ actions.password = async ({ request, locals }) => {
 			["New password cannot be the same as the current password", ""]
 		)
 
-	const userId = Record("user", user.id)
-	const [[{ hashedPassword }]] = await equery<{ hashedPassword: string }[][]>(
-		surql`SELECT hashedPassword FROM ${userId}`
-	)
+	const userR = Record("user", user.id)
+	const [[{ hashedPassword }]] = await db.query<
+		{ hashedPassword: string }[][]
+	>(passwordQuery, { user: userR })
 	if (!Bun.password.verifySync(cpassword, hashedPassword))
 		return formError(form, ["cpassword"], ["Incorrect password"])
 
-	await equery(surql`
-		UPDATE ${userId} SET hashedPassword = ${Bun.password.hashSync(npassword)}`)
+	await db.merge(userR, { hashedPassword: Bun.password.hashSync(npassword) })
 
 	return message(form, "Password updated successfully!")
 }
@@ -81,7 +81,7 @@ actions.styling = async ({ request, locals }) => {
 	const { css } = form.data
 	if (css === "undefined") return message(form, "Styling already saved!")
 
-	await equery(surql`UPDATE ${Record("user", user.id)} SET css = ${css}`)
+	await db.merge(Record("user", user.id), { css })
 
 	return message(form, "Styling updated successfully!")
 }

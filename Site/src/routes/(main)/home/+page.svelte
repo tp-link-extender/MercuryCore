@@ -42,7 +42,7 @@
 				{formData}
 				inline
 				nopad
-				submit="<fa fa-paper-plane-top />"
+				submit="<fa fa-paper-plane-top></fa>"
 				working="...">
 				<Input
 					{formData}

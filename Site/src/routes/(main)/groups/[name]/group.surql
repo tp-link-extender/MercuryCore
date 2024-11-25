@@ -5,5 +5,4 @@ SELECT
 	$user IN <-member<-user.id AS in
 	# [] AS places,
 	# [] AS feed
-FROM group
-WHERE string::lowercase(name) = string::lowercase($name);
+FROM group WHERE string::lowercase(name) = string::lowercase($name);

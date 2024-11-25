@@ -1,5 +1,9 @@
-import { Record, equery, surql } from "$lib/server/surreal"
+import { Record, db } from "$lib/server/surreal"
 import type { User } from "lucia"
+import getAssetCommentQuery from "./getAssetComment.surql"
+import getForumPostQuery from "./getForumPost.surql"
+import getForumReplyQuery from "./getForumReply.surql"
+import notificationsQuery from "./notifications.surql"
 
 type Notification = {
 	id: string
@@ -21,15 +25,9 @@ type AssetComment = {
 }
 
 async function getAssetComment(relativeId: string) {
-	const [[result]] = await equery<AssetComment[][]>(
-		surql`
-			SELECT
-				*,
-				meta::id(id) AS id,
-				(SELECT meta::id(id) AS id, name
-				FROM ->replyToAsset->asset)[0] AS parentAsset
-			FROM ${Record("assetComment", relativeId)}`
-	)
+	const [[result]] = await db.query<AssetComment[][]>(getAssetCommentQuery, {
+		assetComment: Record("assetComment", relativeId),
+	})
 	return result
 }
 
@@ -42,16 +40,9 @@ type ForumReply = {
 }
 
 async function getForumReply(relativeId: string) {
-	const [[result]] = await equery<ForumReply[][]>(
-		surql`
-			SELECT
-				meta::id(id) AS id,
-				(SELECT
-					meta::id(id) AS id,
-					(->in->forumCategory)[0].name as categoryName
-				FROM ->replyToPost[0]->forumPost)[0] AS parentPost
-			FROM ${Record("forumReply", relativeId)}`
-	)
+	const [[result]] = await db.query<ForumReply[][]>(getForumReplyQuery, {
+		forumReply: Record("forumReply", relativeId),
+	})
 	return result
 }
 
@@ -62,26 +53,17 @@ type ForumPost = {
 }
 
 async function getForumPost(relativeId: string) {
-	const [[result]] = await equery<ForumPost[][]>(
-		surql`
-			SELECT
-				(SELECT name FROM ->in->forumCategory) AS category
-			FROM ${Record("forumPost", relativeId)}`
-	)
+	const [[result]] = await db.query<ForumPost[][]>(getForumPostQuery, {
+		forumPost: Record("forumPost", relativeId),
+	})
 	return result
 }
 
 export default async function (user: User | null) {
 	if (!user) return []
-	const [notifications] = await equery<Notification[][]>(
-		surql`
-			SELECT
-				*,
-				meta::id(id) AS id,
-				(SELECT status, username FROM <-user)[0] AS sender
-			OMIT in, out
-			FROM notification WHERE out = ${Record("user", user.id)}
-			ORDER BY time DESC`
+	const [notifications] = await db.query<Notification[][]>(
+		notificationsQuery,
+		{ user: Record("user", user.id) }
 	)
 
 	for (const i of notifications)

@@ -44,9 +44,9 @@
 
 <Head name={data.siteName} title={data.siteName} description={data.siteName} />
 
-<div id="gradientbg" class="w-full h-full fixed" />
+<div id="gradientbg" class="w-full h-full fixed"></div>
 
-<canvas id="gradientcanvas" class="w-full h-full fixed" />
+<canvas id="gradientcanvas" class="w-full h-full fixed"></canvas>
 
 <Waves reverse />
 
@@ -62,7 +62,8 @@
 					<fa
 						class="text-4xl {ok
 							? 'fa-check-circle text-emerald-500'
-							: 'fa-circle-ellipsis text-neutral-300'}" />
+							: 'fa-circle-ellipsis text-neutral-300'}">
+					</fa>
 					<div class="pl-4">
 						<div class=" light-text text-7 font-500 line-height-5">
 							{name}
@@ -71,7 +72,7 @@
 							{#if ok}
 								{#each success as stat, i}
 									<small
-										class="text-3.5 font-500 {i % 2 == 0
+										class="text-3.5 font-500 pr-1 {i % 2 == 0
 											? 'opacity-60'
 											: 'text-emerald-200'}">
 										{stat}
@@ -93,14 +94,14 @@
 				href="/login"
 				class="btn btn-sm btn-secondary inline">
 				<b>Log in</b>
-				<fa fa-right-to-bracket class="pl-1" />
+				<fa fa-right-to-bracket class="pl-1"></fa>
 			</a>
 			<a
 				type="button"
 				href="/register"
 				class="btn btn-sm btn-primary inline">
 				<b>Register</b>
-				<fa fa-plus class="pl-1" />
+				<fa fa-plus class="pl-1"></fa>
 			</a>
 		</div>
 	</div>

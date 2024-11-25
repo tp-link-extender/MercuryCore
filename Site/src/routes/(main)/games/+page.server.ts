@@ -1,5 +1,5 @@
 import pageQuery from "$lib/server/pageQuery"
-import { equery } from "$lib/server/surreal"
+import { db } from "$lib/server/surreal"
 import gamesQuery from "./games.surql"
 
 type Place = {
@@ -14,7 +14,7 @@ type Place = {
 export async function load({ url }) {
 	const { page, checkPages } = pageQuery(url)
 
-	const [places, pages] = await equery<[Place[], number]>(gamesQuery, {
+	const [places, pages] = await db.query<[Place[], number]>(gamesQuery, {
 		page,
 	})
 	checkPages(pages)

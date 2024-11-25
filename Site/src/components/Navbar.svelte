@@ -44,7 +44,7 @@
 		{#if user}
 			<div class="<lg:hidden pl-6 pr-2 flex flex-row pl-3">
 				{#each nav1 as [title, href]}
-					<a class="btn light-text px-1 border-0" {href}>
+					<a class="btn light-text border-0" {href}>
 						{title}
 					</a>
 				{/each}
@@ -55,7 +55,7 @@
 					href="/notifications"
 					aria-label="Notifications"
 					class="tooltip <lg:hidden font-bold light-text">
-					<fa fa-bell />
+					<fa fa-bell></fa>
 				</a>
 				<div class="dropdown">
 					<User
@@ -76,7 +76,7 @@
 							{#each usernav as [icon, title, href]}
 								<li class="rounded-2">
 									<a class="btn light-text pl-4 pr-0" {href}>
-										<fa class="{icon} pr-2" />
+										<fa class="{icon} pr-2"></fa>
 										{title}
 									</a>
 								</li>
@@ -89,7 +89,8 @@
 									<button class="btn text-red-500 pl-4 pr-0">
 										<fa
 											fa-arrow-right-from-bracket
-											class="pr-2" />
+											class="pr-2">
+										</fa>
 										<b>Log out</b>
 									</button>
 								</form>
@@ -130,7 +131,7 @@
 				<a
 					{href}
 					class="btn light-text border-0 flex flex-col items-center text-0.9rem px-0.2rem sm:(text-base px-2)">
-					<fa class="{icon} pb-1 text-1.2rem sm:text-1.5rem" />
+					<fa class="{icon} pb-1 text-1.2rem sm:text-1.5rem"></fa>
 					{title}
 				</a>
 			{/each}

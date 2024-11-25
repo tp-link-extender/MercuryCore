@@ -2,12 +2,14 @@ import config from "$lib/server/config.ts"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, equery, surql } from "$lib/server/surreal"
+import { Record, db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import type { RequestEvent } from "./$types.ts"
+import createQuery from "./create.surql"
+import disabledQuery from "./disabled.surql"
 import regKeysQuery from "./regKeys.surql"
 
 const schema = z.object({
@@ -30,7 +32,7 @@ export async function load({ locals }) {
 	if (!config.RegistrationKeys.Enabled) error(404, "Not Found")
 	await authorise(locals, 5)
 
-	const [regKeys] = await equery<RegKey[][]>(regKeysQuery)
+	const [regKeys] = await db.query<RegKey[][]>(regKeysQuery)
 	return {
 		form: await superValidate(zod(schema)),
 		regKeys,
@@ -81,17 +83,14 @@ actions.create = async e => {
 	if (!!enableRegKeyExpiry && (expiry?.getTime() || 0) < Date.now())
 		return formError(form, ["regKeyExpiry"], ["Invalid date"])
 
-	const [log] = await equery<unknown[]>(
-		surql`
-			CREATE ${Record("regKey", regKeyCustom || randomRegKey())} CONTENT {
-				usesLeft: ${regKeyUses},
-				expiry: ${expiry},
-				created: time::now(),
-				creator: ${Record("user", user.id)},
-			}`
-	)
+	const [result] = await db.queryRaw<unknown[]>(createQuery, {
+		regKey: Record("regKey", regKeyCustom || randomRegKey()),
+		regKeyUses,
+		expiry,
+		creator: Record("user", user.id),
+	})
 
-	return typeof log === "string"
+	return result.status === "ERR"
 		? message(form, "This registration key already exists", { status: 400 })
 		: message(
 				form,
@@ -102,25 +101,19 @@ actions.disable = async e => {
 	const { user, form, error } = await getData(e)
 	if (error) return error
 	const id = e.url.searchParams.get("id")
-
 	if (!id) return message(form, "Missing fields", { status: 400 })
 
-	const [[key]] = await equery<{ usesLeft: number }[][]>(surql`
-		SELECT usesLeft FROM ${Record("regKey", id)}`)
-	if (key && key.usesLeft === 0)
+	const [[key]] =
+		await db.query<({ disabled: boolean } | null)[][]>(disabledQuery)
+	if (key?.disabled)
 		return message(
 			form,
 			"Registration key is already disabled or has already ran out of uses",
 			{ status: 400 }
 		)
 
-	await equery(
-		surql`
-			UPDATE ${Record("regKey", id)} MERGE {
-				usesLeft: 0,
-				disabledBy: ${Record("user", user.id)}, # for logging for now
-			}`
-	)
+	// disabledBy for logging for now
+	await db.merge(Record("regKey", id), { usesLeft: 0, disabledBy: user.id })
 
 	return message(form, "Registration key disabled successfully")
 }

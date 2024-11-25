@@ -106,7 +106,7 @@
 							<fa
 								fa-check
 								class:hidden={!$isSelected(value)}
-								class="pr-2" />
+								class="pr-2" ></fa>
 							{label}
 						</button>
 					{/each}

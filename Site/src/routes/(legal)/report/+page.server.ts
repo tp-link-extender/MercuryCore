@@ -1,11 +1,13 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, type RecordId, equery, surql } from "$lib/server/surreal"
+import { Record, type RecordId, db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
+import getReporteeQuery from "./getReportee.surql"
+import reportQuery from "./report.surql"
 
 const schema = z.object({
 	category: z.enum([
@@ -24,11 +26,12 @@ const schema = z.object({
 	note: z.string().optional(),
 })
 
-// const getReportee = (username: string) =>
 async function getReportee(username: string) {
-	const [[reportee]] = await equery<{ id: RecordId }[][]>(surql`
-		SELECT id FROM user WHERE username = ${username}`)
-	return reportee
+	const [[reportee]] = await db.query<{ id: RecordId }[][]>(
+		getReporteeQuery,
+		{ username }
+	)
+	return reportee.id
 }
 
 export async function load({ locals, url }) {
@@ -65,15 +68,13 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 	const limit = ratelimit(form, "report", getClientAddress, 120)
 	if (limit) return limit
 
-	await equery(
-		surql`
-			RELATE ${Record("user", user.id)}->report->${reportee.id} CONTENT {
-				time: time::now(),
-				note: ${note},
-				url: ${reportUrl},
-				category: ${category},
-			}`
-	)
+	await db.query(reportQuery, {
+		user: Record("user", user.id),
+		reportee,
+		note,
+		reportUrl,
+		category,
+	})
 
 	return message(form, "Report sent successfully.")
 }

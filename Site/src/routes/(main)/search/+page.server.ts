@@ -1,7 +1,5 @@
-import formData from "$lib/server/formData"
-import { authorise } from "$lib/server/lucia"
-import { equery, findWhere } from "$lib/server/surreal"
-import { error, redirect } from "@sveltejs/kit"
+import { db } from "$lib/server/surreal"
+import { error } from "@sveltejs/kit"
 import searchAssetsQuery from "./searchAssets.surql"
 import searchGroupsQuery from "./searchGroups.surql"
 import searchPlacesQuery from "./searchPlaces.surql"
@@ -45,19 +43,22 @@ export async function load({ url }) {
 			// )
 			// if (foundUser) redirect(302, `/user/${query}`)
 
-			const [users] = await equery<BasicUser[][]>(searchUsersQuery, param)
+			const [users] = await db.query<BasicUser[][]>(
+				searchUsersQuery,
+				param
+			)
 			return { query, category, users }
 		}
 		case "places": {
-			const [places] = await equery<Place[][]>(searchPlacesQuery, param)
+			const [places] = await db.query<Place[][]>(searchPlacesQuery, param)
 			return { query, category, places }
 		}
 		case "assets": {
-			const [assets] = await equery<Asset[][]>(searchAssetsQuery, param)
+			const [assets] = await db.query<Asset[][]>(searchAssetsQuery, param)
 			return { query, category, assets }
 		}
 		case "groups": {
-			const [groups] = await equery<Group[][]>(searchGroupsQuery, param)
+			const [groups] = await db.query<Group[][]>(searchGroupsQuery, param)
 			return { query, category, groups }
 		}
 		default:

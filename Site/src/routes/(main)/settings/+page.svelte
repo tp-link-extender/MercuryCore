@@ -25,7 +25,7 @@
 	<div class="pb-4">
 		<h1>User settings</h1>
 		<a href="/user/{user.username}" class="no-underline">
-			<fa fa-caret-left />
+			<fa fa-caret-left></fa>
 			View profile
 		</a>
 	</div>

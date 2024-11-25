@@ -65,7 +65,7 @@
 				<h1>{data.asset.name}</h1>
 				{#if user.permissionLevel >= 5 && [8, 11, 12].includes(data.asset.type)}
 					<span class="dropdown pl-2 pt-2">
-						<fa fa-ellipsis-h class="dropdown-ellipsis" />
+						<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
 						<div class="dropdown-content">
 							<ul class="p-2 rounded-3">
 								<li class="rounded-2">
@@ -75,7 +75,8 @@
 										action="?/rerender">
 										<button
 											class="btn accent-text pl-4 pr-0 text-start">
-											<fa fa-arrows-rotate class="pr-2" />
+											<fa fa-arrows-rotate class="pr-2">
+											</fa>
 											<b>Rerender</b>
 										</button>
 									</form>
@@ -123,20 +124,22 @@
 							<b class="pb-2">Free</b>
 						{:else}
 							<table>
-								<tr>
-									<td>Price</td>
-									<td class="text-emerald-600">
-										{data.currencySymbol}
-										{data.asset.price}
-									</td>
-								</tr>
-								<tr>
-									<td>Fee</td>
-									<td class="text-yellow-500">
-										{data.currencySymbol}
-										{fee}
-									</td>
-								</tr>
+								<tbody>
+									<tr>
+										<td>Price</td>
+										<td class="text-emerald-600">
+											{data.currencySymbol}
+											{data.asset.price}
+										</td>
+									</tr>
+									<tr>
+										<td>Fee</td>
+										<td class="text-yellow-500">
+											{data.currencySymbol}
+											{fee}
+										</td>
+									</tr>
+								</tbody>
 							</table>
 						{/if}
 						{#if !data.asset.owned}

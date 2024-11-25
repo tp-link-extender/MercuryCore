@@ -38,7 +38,7 @@
 					class="grey-text border-0 p-0 cursor-pointer text-base bg-transparent"
 					class:clicked>
 					<span class="grey-text">made with</span>
-					<fa fa-heart />
+					<fa fa-heart></fa>
 				</button>
 			</div>
 		</div>

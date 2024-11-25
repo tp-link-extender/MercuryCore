@@ -55,7 +55,7 @@
 			<Pagination totalPages={data.pages} />
 		{/key}
 	{:else}
-		<h2 class="pt-12 text-center">No friend requests found</h2>
+		<h2 class="pt-12 text-center">No friend requests.</h2>
 	{/if}
 </div>
 

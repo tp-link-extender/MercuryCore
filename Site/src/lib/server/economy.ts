@@ -1,4 +1,5 @@
-import { Record, equery, surql } from "$lib/server/surreal"
+import { Record, db } from "$lib/server/surreal"
+import usersQuery from "$lib/server/users.surql"
 
 const economyUrl = "localhost:2009"
 
@@ -112,7 +113,7 @@ export async function burn(
 	}
 }
 
-async function geFeeBasedPrice(
+async function getFeeBasedPrice(
 	multiplier: number
 ): Promise<{ ok: true; value: number } | { ok: false; msg: string }> {
 	const currentFee = await getCurrentFee()
@@ -121,9 +122,9 @@ async function geFeeBasedPrice(
 	return { ok: true, value }
 }
 
-export const getAssetPrice = () => geFeeBasedPrice(75)
-export const getGroupPrice = () => geFeeBasedPrice(50)
-export const getPlacePrice = () => geFeeBasedPrice(50)
+export const getAssetPrice = () => getFeeBasedPrice(75)
+export const getGroupPrice = () => getFeeBasedPrice(50)
+export const getPlacePrice = () => getFeeBasedPrice(50)
 
 export async function createAsset(
 	To: string,
@@ -182,9 +183,10 @@ export async function transformTransactions(list: ReceivedTx[]) {
 		if (tx.Type !== "Mint") users.add(tx.From)
 		if (tx.Type !== "Burn") users.add(tx.To)
 	}
-	const usersList = Array.from(users).map(u => Record("user", u))
-	const [queryUsers] = await equery<(BasicUser & { id: string })[][]>(surql`
-		SELECT meta::id(id) AS id, status, username FROM ${usersList}`)
+	const [queryUsers] = await db.query<(BasicUser & { id: string })[][]>(
+		usersQuery,
+		{ usersList: Array.from(users).map(u => Record("user", u)) }
+	)
 
 	const idsMap = new Map<string, BasicUser>()
 	const usersMap = new Map<string, BasicUser>()

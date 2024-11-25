@@ -1,10 +1,11 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, equery, surql } from "$lib/server/surreal"
+import { Record, db } from "$lib/server/surreal"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
+import updatePasswordQuery from "./updatePassword.surql"
 
 const schema = z.object({
 	username: z
@@ -34,22 +35,20 @@ actions.changePassword = async ({ request, locals, getClientAddress }) => {
 	form.data.password = ""
 
 	try {
-		await equery(
-			surql`
-				UPDATE user SET hashedPassword = $npassword
-				WHERE ${username} ~ username`,
-			{ npassword: Bun.password.hashSync(password) }
-		)
+		await db.query(updatePasswordQuery, {
+			npassword: Bun.password.hashSync(password),
+			username: username,
+		})
 	} catch {
 		return message(form, "Invalid credentials", {
 			status: 400,
 		})
 	}
 
-	const note = `Change account password for ${username}`
-	await equery(
-		surql`fn::auditLog("Account", ${note}, ${Record("user", user.id)})`
-	)
+	await db.query('fn::auditLog("Account", $note, $user)', {
+		note: `Change account password for ${username}`,
+		user: Record("user", user.id),
+	})
 
 	return message(form, "Password changed successfully!")
 }

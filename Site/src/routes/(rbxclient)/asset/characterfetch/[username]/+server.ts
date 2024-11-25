@@ -1,6 +1,7 @@
 import config from "$lib/server/config"
-import { equery, surql } from "$lib/server/surreal"
+import { db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
+import userQuery from "./user.surql"
 
 type User = {
 	bodyColours: {
@@ -16,14 +17,7 @@ type User = {
 
 export async function GET({ params }) {
 	const { username } = params
-	const [[user]] = await equery<User[][]>(
-		surql`
-			SELECT
-				bodyColours,
-				(SELECT meta::id(id) AS id
-				FROM ->wearing->asset).id AS wearing
-			FROM user WHERE username = ${username}`
-	)
+	const [[user]] = await db.query<User[][]>(userQuery, { username })
 	if (!user) error(404, "User not found")
 
 	let charApp = `${config.Domain}/asset/bodycolours/${username}`

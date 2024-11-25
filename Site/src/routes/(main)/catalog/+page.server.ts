@@ -1,8 +1,8 @@
 import pageQuery from "$lib/server/pageQuery"
-import { equery } from "$lib/server/surreal"
+import { db } from "$lib/server/surreal"
 import catalogQuery from "./catalog.surql"
 
-type Asset = {
+export type Asset = {
 	name: string
 	price: number
 	id: number
@@ -12,7 +12,7 @@ type Asset = {
 export const load = async ({ url }) => {
 	const { page, checkPages } = pageQuery(url)
 
-	const [assets, pages] = await equery<[Asset[], number]>(catalogQuery, {
+	const [assets, pages] = await db.query<[Asset[], number]>(catalogQuery, {
 		page,
 	})
 	checkPages(pages)

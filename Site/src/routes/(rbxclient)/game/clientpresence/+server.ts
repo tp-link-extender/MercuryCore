@@ -1,5 +1,6 @@
-import { Record, equery, find, surql } from "$lib/server/surreal"
+import { Record, db, find } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
+import pingQuery from "./ping.surql"
 
 export async function GET({ url, request }) {
 	if (request.headers.get("user-agent") !== "Roblox/WinInet")
@@ -9,8 +10,8 @@ export async function GET({ url, request }) {
 	if (!ticket) error(400, "Invalid Request")
 	if (!(await find("playing", ticket))) error(400, "Ticket not found")
 
-	await equery(surql`
-		UPDATE ${Record("playing", ticket)} SET ping = time::now()`)
+	await db.query(pingQuery, { playing: Record("playing", ticket) })
+
 	return new Response("OK", {
 		headers: {
 			Pragma: "no-cache",

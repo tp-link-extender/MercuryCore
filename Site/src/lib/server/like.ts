@@ -1,4 +1,4 @@
-import { Record, type RecordId, equery } from "$lib/server/surreal"
+import { Record, type RecordId, db } from "$lib/server/surreal"
 
 type ScoreResult = {
 	score: number
@@ -48,7 +48,7 @@ const queryLikes: QueryFunction<{
 	dislikeCount: number
 }> = async (userId, thing, queryString) =>
 	(
-		await equery<LikesResult>(
+		await db.query<LikesResult>(
 			queryString + countLikes,
 			getParams(userId, thing)
 		)
@@ -58,13 +58,13 @@ const queryLikes: QueryFunction<{
 	}
 const queryScore: QueryFunction<number> = async (userId, thing, queryString) =>
 	(
-		await equery<ScoreResult>(
+		await db.query<ScoreResult>(
 			queryString + countScore,
 			getParams(userId, thing)
 		)
 	).pop()?.score || 0
 const queryNone: QueryFunction<void> = async (userId, thing, queryString) => {
-	await equery(queryString, getParams(userId, thing))
+	await db.query(queryString, getParams(userId, thing))
 }
 
 // the things we do for those sweet sweet type definitions

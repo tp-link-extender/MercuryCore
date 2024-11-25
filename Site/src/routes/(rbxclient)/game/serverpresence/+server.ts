@@ -1,5 +1,6 @@
-import { equery, surql } from "$lib/server/surreal"
+import { db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
+import pingQuery from "./ping.surql"
 
 export async function GET({ url, request }) {
 	const ticket = url.searchParams.get("ticket") as string
@@ -8,11 +9,7 @@ export async function GET({ url, request }) {
 	if (request.headers.get("user-agent") !== "Roblox/WinInet")
 		error(400, "Good one")
 
-	await equery(
-		surql`
-			UPDATE place SET serverPing = time::unix()
-			WHERE serverTicket = ${ticket}`
-	)
+	await db.query(pingQuery, { ticket })
 
 	return new Response("OK", {
 		headers: {

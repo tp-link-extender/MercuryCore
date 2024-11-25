@@ -17,7 +17,7 @@
 		{#if emoji}
 			<span class="text-10">{emoji}</span>
 		{:else}
-			<fa class="text-10 {iconClass}" />
+			<fa class="text-10 {iconClass}"></fa>
 		{/if}
 		<div class="text-xl pt-4">
 			{name}

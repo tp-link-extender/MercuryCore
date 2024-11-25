@@ -1,5 +1,6 @@
 import { authorise } from "$lib/server/lucia"
-import { equery, surql } from "$lib/server/surreal"
+import { db } from "$lib/server/surreal"
+import logsQuery from "./logs.surql"
 
 type Log = {
 	action: "Account" | "Administration" | "Moderation" | "Economy"
@@ -11,13 +12,6 @@ type Log = {
 export async function load({ locals }) {
 	await authorise(locals, 5)
 
-	const [logs] = await equery<Log[][]>(surql`
-		SELECT
-			action,
-			note,
-			time,
-			(SELECT status, username FROM user)[0] AS user
-		FROM auditLog ORDER BY time DESC
-	`)
+	const [logs] = await db.query<Log[][]>(logsQuery)
 	return { logs }
 }

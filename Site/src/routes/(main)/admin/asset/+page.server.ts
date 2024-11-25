@@ -3,10 +3,13 @@ import { intRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
-import { Record, equery, surql } from "$lib/server/surreal"
+import { Record, db } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import type { RequestEvent } from "./$types.d.ts"
 import assetsQuery from "./asset.surql"
+import iaidQuery from "./iaid.surql"
+import purgeQuery from "./purge.surql"
+import visibilityQuery from "./visibility.surql"
 
 type Asset = {
 	name: string
@@ -22,7 +25,7 @@ type Asset = {
 
 export async function load({ locals }) {
 	const { user } = await authorise(locals, 3)
-	const [assets] = await equery<Asset[][]>(assetsQuery, {
+	const [assets] = await db.query<Asset[][]>(assetsQuery, {
 		user: Record("user", user.id),
 	})
 
@@ -40,8 +43,8 @@ async function getData({ locals, url }: RequestEvent) {
 		user: Record("user", user.id),
 		asset: Record("asset", +id),
 	}
-	const [[asset]] = await equery<{ name: string }[][]>(
-		surql`SELECT name FROM $asset`,
+	const [[asset]] = await db.query<{ name: string }[][]>(
+		"SELECT name FROM $asset",
 		params
 	)
 	if (!asset) error(404, "Asset not found")
@@ -56,23 +59,19 @@ async function getData({ locals, url }: RequestEvent) {
 export const actions: import("./$types").Actions = {}
 actions.approve = async e => {
 	const { id, params, assetName } = await getData(e)
-	await equery(
-		surql`
-			UPDATE $asset SET visibility = "Visible";
-			UPDATE $asset->imageAsset->asset SET visibility = "Visible";
-			fn::auditLog("Moderation", ${`Approve asset ${assetName} (id ${id})`}, $user)`,
-		params
-	)
+	await db.query(visibilityQuery, {
+		...params,
+		visibility: "Visible",
+		note: `Approve asset ${assetName} (id ${id})`,
+	})
 }
 actions.deny = async e => {
 	const { id, params, assetName } = await getData(e)
-	await equery(
-		surql`
-			UPDATE $asset SET visibility = "Moderated";
-			UPDATE $asset->imageAsset->asset SET visibility = "Moderated";
-			fn::auditLog("Moderation", ${`Moderate asset ${assetName} (id ${id})`}, $user)`,
-		params
-	)
+	await db.query(visibilityQuery, {
+		...params,
+		visibility: "Moderated",
+		note: `Moderate asset ${assetName} (id ${id})`,
+	})
 }
 actions.rerender = async e => {
 	const { id } = await getData(e)
@@ -89,20 +88,16 @@ actions.rerender = async e => {
 actions.purge = async e => {
 	// Nuclear option
 	const { id, params, assetName } = await getData(e)
-	const [[{ iaid }]] = await equery<{ iaid: number }[][]>(
-		surql`
-			SELECT meta::id((->imageAsset->asset.id)[0]) AS iaid
-			FROM ${Record("asset", +id)}`
-	)
+	const [[{ iaid }]] = await db.query<{ iaid: number }[][]>(iaidQuery, {
+		asset: Record("asset", +id),
+	})
 
 	await Promise.all([
-		equery(
-			surql`
-				DELETE $asset;
-				DELETE ${Record("asset", iaid)};
-				fn::auditLog("Moderation", ${`Purge asset ${assetName} (id ${id})`}, $user)`,
-			params
-		),
+		db.query(purgeQuery, {
+			...params,
+			note: `Purge asset ${assetName} (id ${id})`,
+			imageAsset: Record("asset", iaid),
+		}),
 		fs.rm(`../data/assets/${id}`),
 		fs.rm(`../data/assets/${iaid}`),
 		fs.rm(`../data/thumbnails/${id}`),

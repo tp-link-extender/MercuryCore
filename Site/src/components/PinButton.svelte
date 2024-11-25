@@ -21,7 +21,7 @@
 		action="?/{text}{post ? 'post' : ''}&id={id}"
 		class="inline">
 		<button class="btn pl-4 pr-2 {colour}">
-			<fa fa-thumbtack class="pr-2" />
+			<fa fa-thumbtack class="pr-2"></fa>
 			{text.charAt(0).toUpperCase() + text.slice(1)}
 		</button>
 	</form>

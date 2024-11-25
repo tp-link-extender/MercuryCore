@@ -2,7 +2,7 @@ import { createGroup, getGroupPrice } from "$lib/server/economy"
 import exclude from "$lib/server/exclude"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
-import { Record, equery, findWhere } from "$lib/server/surreal"
+import { Record, db, findWhere } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
@@ -59,7 +59,7 @@ actions.default = async ({ request, locals }) => {
 	const created = await createGroup(user.id, name)
 	if (!created.ok) return formError(form, ["other"], [created.msg])
 
-	await equery(createQuery, {
+	await db.query(createQuery, {
 		name,
 		user: Record("user", user.id),
 	})
