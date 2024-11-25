@@ -2,7 +2,7 @@ SELECT
 	meta::id(id) AS id,
 	name,
 	(SELECT text, updated FROM $parent.description
-	ORDER BY updated DESC)[0] AS description,
+	ORDER BY updated)[$] AS description,
 	serverPing,
 	serverTicket,
 	privateServer,

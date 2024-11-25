@@ -1,12 +1,10 @@
 import exclude from "$lib/server/exclude"
 import { authorise } from "$lib/server/lucia"
-import { type Replies, recurse } from "$lib/server/nestedReplies"
+import type { Replies } from "$lib/server/nestedReplies"
 import { Record, db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import postQuery from "./post.surql"
 import repliesQuery from "./replies.surql"
-
-const SELECTREPLIES = recurse("<-replyToReply<-forumReply")
 
 type ForumReplies = Replies[number] & {
 	parentPost: {
@@ -26,14 +24,11 @@ export async function load({ locals, params }) {
 	)
 	if (!post) error(404, "Post not found")
 
-	const [forumReplies] = await db.query<ForumReplies[][]>(
-		repliesQuery.replace("_SELECTREPLIES", SELECTREPLIES),
-		{
-			forumReply: Record("forumReply", params.reply),
-			forumPost: Record("forumPost", params.post),
-			user: Record("user", user.id),
-		}
-	)
+	const [forumReplies] = await db.query<ForumReplies[][]>(repliesQuery, {
+		forumReply: Record("forumReply", params.reply),
+		forumPost: Record("forumPost", params.post),
+		user: Record("user", user.id),
+	})
 	if (!forumReplies[0]) error(404, "Reply not found")
 
 	return {

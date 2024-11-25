@@ -19,5 +19,5 @@ SELECT
 		->in[0]->forumCategory[0].name as forumCategoryName
 	FROM $forumPost)[0] AS parentPost,
 
-	_SELECTREPLIES
+    fn::getReplies(id, 1, $user) AS replies
 FROM $forumReply;

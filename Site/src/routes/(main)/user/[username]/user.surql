@@ -5,7 +5,7 @@ SELECT
 	number,
 	permissionLevel,
 	status,
-	(SELECT text, updated FROM $parent.bio ORDER BY updated DESC)[0] AS bio,
+	(SELECT text, updated FROM $parent.bio ORDER BY updated)[$] AS bio,
 	(SELECT
 		*,
 		meta::id(id) AS id,

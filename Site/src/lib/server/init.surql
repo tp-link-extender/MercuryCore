@@ -87,6 +87,50 @@ DEFINE FUNCTION OVERWRITE fn::notify($user: record, $user2: record, $type: strin
 	};
 };
 
+# not very dry
+DEFINE FUNCTION OVERWRITE fn::getReplies($reply: record, $depth: number, $user: record) {
+    IF $depth > 9 {
+        RETURN [];
+    };
+    
+    RETURN SELECT
+		*,
+		(SELECT text, updated FROM $parent.content
+		ORDER BY updated DESC) AS content,
+		meta::id(id) AS id,
+		NONE AS parentReplyId,
+		(SELECT status, username FROM <-created<-user)[0] AS author,
+
+		count(<-likes) - count(<-dislikes) AS score,
+		$user IN <-likes<-user.id AS likes,
+		$user IN <-dislikes<-user.id AS dislikes,
+
+        fn::getReplies(id, $depth + 1, $user) AS replies
+    FROM $reply<-replyToReply<-forumReply;
+};
+
+DEFINE FUNCTION OVERWRITE fn::getComments($comment: record, $depth: number, $user: record) {
+    IF $depth > 9 {
+        RETURN [];
+    };
+    
+    RETURN SELECT
+		*,
+		(SELECT text, updated FROM $parent.content
+		ORDER BY updated DESC) AS content,
+		meta::id(id) AS id,
+		NONE AS parentReplyId,
+		(SELECT status, username FROM <-created<-user)[0] AS author,
+
+		count(<-likes) - count(<-dislikes) AS score,
+		$user IN <-likes<-user.id AS likes,
+		$user IN <-dislikes<-user.id AS dislikes,
+
+        fn::getComments(id, $depth + 1, $user) AS replies
+    FROM $comment<-replyToComment<-assetComment
+	ORDER BY score DESC; 
+};
+
 DEFINE EVENT OVERWRITE bannerCreateLog ON TABLE banner WHEN $event = "CREATE" THEN
 	fn::auditLog("Administration", string::concat('Create banner "', $after.body, '"'), $after.creator);
 DEFINE EVENT OVERWRITE bannerDeleteLog ON TABLE banner WHEN $event = "UPDATE" AND !$before.deleted AND $after.deleted THEN

@@ -10,7 +10,7 @@ import formData from "$lib/server/formData"
 import formError from "$lib/server/formError"
 import { type LikeActions, like, likeScoreActions } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
-import { type Replies, recurse } from "$lib/server/nestedReplies"
+import type { Replies } from "$lib/server/nestedReplies"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { Record, db, find, incrementId } from "$lib/server/surreal"
@@ -30,14 +30,6 @@ const schema = z.object({
 	content: z.string().min(1).max(1000),
 	replyId: z.string().optional(),
 })
-
-const SELECTCOMMENTS = recurse(
-	// Make sure it's not a reply to a comment
-	`<-replyToAsset<-assetComment
-		WHERE !->replyToComment
-		ORDER BY pinned DESC, score DESC`,
-	"<-replyToComment<-assetComment"
-)
 
 type Asset = {
 	creator: BasicUser
@@ -68,10 +60,10 @@ const failTexts = Object.freeze(["Bruh", "Okay", "Aight", "Rip", "Aw man..."])
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
 	const id = +params.id
-	const [[asset]] = await db.query<Asset[][]>(
-		assetQuery.replace("_SELECTCOMMENTS", SELECTCOMMENTS),
-		{ asset: Record("asset", id), user: Record("user", user.id) }
-	)
+	const [[asset]] = await db.query<Asset[][]>(assetQuery, {
+		asset: Record("asset", id),
+		user: Record("user", user.id),
+	})
 	if (!asset || !asset.creator) error(404, "Not found")
 
 	const slug = encode(asset.name)

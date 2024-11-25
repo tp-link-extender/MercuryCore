@@ -113,7 +113,7 @@ export async function burn(
 	}
 }
 
-async function geFeeBasedPrice(
+async function getFeeBasedPrice(
 	multiplier: number
 ): Promise<{ ok: true; value: number } | { ok: false; msg: string }> {
 	const currentFee = await getCurrentFee()
@@ -122,9 +122,9 @@ async function geFeeBasedPrice(
 	return { ok: true, value }
 }
 
-export const getAssetPrice = () => geFeeBasedPrice(75)
-export const getGroupPrice = () => geFeeBasedPrice(50)
-export const getPlacePrice = () => geFeeBasedPrice(50)
+export const getAssetPrice = () => getFeeBasedPrice(75)
+export const getGroupPrice = () => getFeeBasedPrice(50)
+export const getPlacePrice = () => getFeeBasedPrice(50)
 
 export async function createAsset(
 	To: string,

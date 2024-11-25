@@ -4,7 +4,7 @@ import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import { like } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
-import { type Replies, recurse } from "$lib/server/nestedReplies"
+import type { Replies } from "$lib/server/nestedReplies"
 import ratelimit from "$lib/server/ratelimit"
 import { Record, type RecordId, db, incrementId } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
@@ -14,21 +14,13 @@ import { z } from "zod"
 import { actions as categoryActions } from "../+page.server"
 import type { RequestEvent } from "./$types.d.ts"
 import createReplyQuery from "./createReply.surql"
-import forumPostQuery from "./post.surql"
+import postQuery from "./post.surql"
 import updateVisibilityQuery from "./updateVisibility.surql"
 
 const schema = z.object({
 	content: z.string().min(1).max(1000),
 	replyId: z.string().optional(),
 })
-
-const SELECTREPLIES = recurse(
-	// Make sure it's not a reply to another reply
-	`<-replyToPost<-forumReply
-		WHERE !->replyToReply
-		ORDER BY pinned DESC, score DESC`,
-	"<-replyToReply<-forumReply"
-)
 
 type ForumPost = {
 	author: BasicUser
@@ -52,16 +44,17 @@ export async function load({ locals, params }) {
 	exclude("Forum")
 	const { user } = await authorise(locals)
 
-	const postQuery = forumPostQuery.replace("_SELECTREPLIES", SELECTREPLIES)
-	const [[forumPost]] = await db.query<ForumPost[][]>(postQuery, {
+	const [[post]] = await db.query<ForumPost[][]>(postQuery, {
 		forumPost: Record("forumPost", params.post),
 		user: Record("user", user.id),
 	})
-	if (!forumPost) error(404, "Not found")
+	if (!post) error(404, "Not found")
+
+	console.log(post.replies[0].replies)
 
 	return {
 		form: await superValidate(zod(schema)),
-		post: forumPost,
+		post,
 	}
 }
 

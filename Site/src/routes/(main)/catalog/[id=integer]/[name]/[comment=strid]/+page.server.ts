@@ -1,16 +1,10 @@
 import { authorise } from "$lib/server/lucia"
-import { type Replies, recurse } from "$lib/server/nestedReplies"
+import type { Replies } from "$lib/server/nestedReplies"
 import { Record, db } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
 import assetQuery from "./asset.surql"
 import assetCommentsQuery from "./comments.surql"
-
-const SELECTCOMMENTS = recurse("<-replyToComment<-assetComment")
-const commentsQuery = assetCommentsQuery.replace(
-	"_SELECTCOMMENTS",
-	SELECTCOMMENTS
-)
 
 type Asset = {
 	name: string
@@ -33,11 +27,14 @@ export async function load({ locals, params }) {
 	})
 	if (!asset) error(404, "Asset not found")
 
-	const [assetComments] = await db.query<AssetComment[][]>(commentsQuery, {
-		assetComment: Record("assetComment", params.comment),
-		asset: Record("asset", id),
-		user: Record("user", user.id),
-	})
+	const [assetComments] = await db.query<AssetComment[][]>(
+		assetCommentsQuery,
+		{
+			assetComment: Record("assetComment", params.comment),
+			asset: Record("asset", id),
+			user: Record("user", user.id),
+		}
+	)
 	if (!assetComments) error(404, "Comment not found")
 
 	const slug = encode(asset.name)
