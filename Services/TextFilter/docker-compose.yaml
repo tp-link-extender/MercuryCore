@@ -1,10 +1,6 @@
-# Config file for compose, a tool that allows for easily managing multiple docker containers.
-# https://docs.docker.com/compose/
-
 services:
     text-filter-service:
         build: .
-        container_name: text-filter-service
         env_file: .env
         ports:
             - 3476:3476

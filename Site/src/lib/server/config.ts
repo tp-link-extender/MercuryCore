@@ -66,7 +66,7 @@ const schema = z.object({
 	Filtering: z.object({
 		FilteredWords: z.array(z.string().min(1)),
 		ReplaceWith: z.string(),
-		ReplaceType: z.enum(["Character", "Word"]),
+		ReplaceType: z.enum(["Character", "Word", "ML"]),
 	}),
 
 	RegistrationKeys: z.object({

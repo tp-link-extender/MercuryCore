@@ -1,10 +1,6 @@
-# Config file for compose, a tool that allows for easily managing multiple docker containers.
-# https://docs.docker.com/compose/
-
 services:
     economy-service:
         build: .
-        container_name: economy-service
         ports:
             - 2009:2009
         restart: unless-stopped
