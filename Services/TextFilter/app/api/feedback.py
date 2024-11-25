@@ -9,14 +9,14 @@ router = APIRouter()
 feedback_service = FeedbackService()
 
 
-@router.get("/v1/review-queue")
+@router.get("/review-queue")
 async def get_review_queue(state: state):
 	items = feedback_service.get_queue(state=state)
 	return [item.model_dump() for item in items]
 
 
-@router.post("/v1/submit-review")
-async def submit_feedback(review: feedback.v1.HumanReview):
+@router.post("/submit-review")
+async def submit_feedback(review: feedback.HumanReview):
 	success = feedback_service.update_review_status(review_submission=review)
 	return (
 		{"detail": "Review submitted"}

@@ -49,7 +49,7 @@ class TextFilterService:
 
 		return {"is_profanity": profanity, "reasons": reasons}
 
-	def filter_text(self, text: str) -> text_filter.v1.FilterTextResponse:
+	def filter_text(self, text: str) -> text_filter.FilterTextResponse:
 		result = self.is_profanity(text)
 
 		# TODO: filter only profanity and not the whole text if possible
@@ -57,7 +57,7 @@ class TextFilterService:
 			self.replacement_string * len(text) if result["is_profanity"] else text
 		)
 
-		return text_filter.v1.FilterTextResponse(
+		return text_filter.FilterTextResponse(
 			filtered=result["is_profanity"],
 			filtered_text=filtered_text,
 			reasons=result["reasons"],

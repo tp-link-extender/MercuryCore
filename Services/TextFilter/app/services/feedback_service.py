@@ -13,10 +13,10 @@ class FeedbackService:
 		self.queue_key = "feedback_queue"
 
 	def _find_feedback(
-		self, condition: Callable[[feedback.v1.AISubmission], bool]
+		self, condition: Callable[[feedback.AISubmission], bool]
 	) -> Optional[int]:
 		for idx, item in enumerate(self.redis.lrange(self.queue_key, 0, -1)):
-			model = feedback.v1.AISubmission.model_validate_json(item)
+			model = feedback.AISubmission.model_validate_json(item)
 			if condition(model):
 				return idx
 		return None
@@ -30,7 +30,7 @@ class FeedbackService:
 		if self._is_duplicate(text):
 			return None
 
-		item = feedback.v1.AISubmission(
+		item = feedback.AISubmission(
 			id=str(uuid.uuid4()),
 			text=text,
 			detected_score=detected_score,
@@ -40,20 +40,20 @@ class FeedbackService:
 		self.redis.rpush(self.queue_key, item.model_dump_json())
 		return item.id
 
-	def get_queue(self, state: str = state.PENDING) -> List[feedback.v1.AISubmission]:
+	def get_queue(self, state: str = state.PENDING) -> List[feedback.AISubmission]:
 		items = self.redis.lrange(self.queue_key, 0, -1)
 		return [
-			feedback.v1.AISubmission.model_validate_json(item)
+			feedback.AISubmission.model_validate_json(item)
 			for item in items
-			if feedback.v1.AISubmission.model_validate_json(item).state == state
+			if feedback.AISubmission.model_validate_json(item).state == state
 		]
 
-	def update_review_status(self, review_submission: feedback.v1.HumanReview) -> bool:
+	def update_review_status(self, review_submission: feedback.HumanReview) -> bool:
 		index = self._find_feedback(lambda model: model.id == review_submission.id)
 		if index is None:
 			return False
 
-		ai_submission_item = feedback.v1.AISubmission.model_validate_json(
+		ai_submission_item = feedback.AISubmission.model_validate_json(
 			self.redis.lrange(self.queue_key, index, index)[0]
 		)
 
@@ -73,8 +73,8 @@ class FeedbackService:
 
 	def train_model(
 		self,
-		reviewed_item: feedback.v1.HumanReview,
-		previous_item: feedback.v1.AISubmission,
+		reviewed_item: feedback.HumanReview,
+		previous_item: feedback.AISubmission,
 	):
 		# TODO
 		pass
