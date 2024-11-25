@@ -6,6 +6,6 @@
 		".gitattributes": true,
 		// Files that aren't useful to see
 		"Site/bun.lockb": true,
-		"Economy/go.sum": true
+		"Services/Economy/go.sum": true
 	}
 }

@@ -15,7 +15,7 @@ services:
             - 8000:8000
         restart: unless-stopped
         volumes:
-            - surrealdb-data:/database
+            - /data/surreal:/database
         command:
             - start
             - -l=trace
@@ -31,13 +31,10 @@ services:
             - 6379:6379
         restart: unless-stopped
         volumes:
-            - dragonflydata:/data
+            - /data/dragonfly:/data
         healthcheck:
             test: ["CMD-SHELL", "redis-cli ping"]
             interval: 10s
             timeout: 5s
             retries: 5
-
-volumes:
-  surrealdb-data:
-  dragonflydata:
+  

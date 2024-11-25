@@ -9,7 +9,7 @@ services:
             - 2009:2009
         restart: unless-stopped
         volumes:
-            - economy-data:/economy/data
+            - /data/economy:/economy/data
 
 volumes:
-  economy-data:
+    economy-data:
