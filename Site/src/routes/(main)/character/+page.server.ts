@@ -3,9 +3,14 @@ import { intRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
-import { Record, equery, surql } from "$lib/server/surreal"
+import { Record, db } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import type { RequestEvent } from "./$types.d.ts"
+import assetsQuery from "./assets.surql"
+import equipQuery from "./equip.surql"
+import equipDataQuery from "./equipData.surql"
+import hatsEquippedQuery from "./hatsEquipped.surql"
+import unequipQuery from "./unequip.surql"
 
 // Heads, Faces, T-Shirts, Shirts, Pants, Gear, Hats
 const oneEquippable = Object.freeze([2, 11, 12, 18])
@@ -18,18 +23,6 @@ const bodyParts = Object.freeze([
 	"RightLeg",
 	"Torso",
 ])
-
-// boo kit
-export const _select = `
-	SELECT
-		meta::id(id) AS id,
-		name,
-		price,
-		type,
-		($user IN <-wearing<-user) AS wearing
-	FROM asset WHERE $user IN <-owns<-user
-		AND type IN [${allowedTypes.join(", ")}]
-		AND visibility = "Visible"`
 
 export type Asset = {
 	name: string
@@ -45,17 +38,14 @@ type AssetData = {
 	visibility: string
 }
 
-export const load = async ({ locals, url }) => {
+export const load = async ({ locals }) => {
 	const { user } = await authorise(locals)
 
-	const query = url.searchParams.get("q")?.trim()
-	const [assets] = await equery<Asset[][]>(
-		query
-			? `${_select} AND string::lowercase($query) IN string::lowercase(name)`
-			: _select,
-		{ query, user: Record("user", user.id) }
-	)
-	return { query, assets }
+	const [assets] = await db.query<Asset[][]>(assetsQuery, {
+		user: Record("user", user.id),
+		allowedTypes,
+	})
+	return { assets }
 }
 
 async function getEquipData(e: RequestEvent) {
@@ -68,15 +58,10 @@ async function getEquipData(e: RequestEvent) {
 	if (limit) return { error: limit }
 
 	const id = +strId
-	const [[asset]] = await equery<AssetData[][]>(
-		surql`
-			SELECT meta::id(id) AS id, type, visibility
-			FROM $asset WHERE $user IN <-owns<-user`,
-		{
-			asset: Record("asset", id),
-			user: Record("user", user.id),
-		}
-	)
+	const [[asset]] = await db.query<AssetData[][]>(equipDataQuery, {
+		asset: Record("asset", id),
+		user: Record("user", user.id),
+	})
 	if (!asset) error(404, "Item not found or not owned")
 	if (!allowedTypes.includes(asset.type))
 		error(400, "Can't equip this type of item")
@@ -116,9 +101,7 @@ async function paint({ locals, url }: RequestEvent) {
 
 	currentColours[bodyPart] = +bodyColour
 
-	await equery(surql`UPDATE $user SET bodyColours = ${currentColours}`, {
-		user: Record("user", user.id),
-	})
+	db.merge(Record("user", user.id), { bodyColours: currentColours })
 
 	return await rerender(user)
 }
@@ -135,27 +118,19 @@ async function equip(e: RequestEvent) {
 	if (error) return error
 
 	// Find if there's more than 3 hats equipped, throw an error if there is
-	const [hatsEquipped] = await equery<number[]>(
-		surql`count(SELECT 1 FROM $user->wearing WHERE out.type = 8)`,
-		{ user: Record("user", user.id) }
-	)
-	if (asset.type === 8 && hatsEquipped >= 3)
-		return fail(400, { msg: "You can only wear 3 hats" })
-
-	await equery(
-		surql`
-			# Unequip if there's already a T-Shirt/Shirt/Pants/Face equipped
-			IF $type {
-				DELETE $user->wearing WHERE out.type = $type;
-			};
-			RELATE $user->wearing->$asset SET time = time::now();
-			RELATE $user->recentlyWorn->$asset SET time = time::now()`,
-		{
+	if (asset.type === 8) {
+		const [hatsEquipped] = await db.query<number[]>(hatsEquippedQuery, {
 			user: Record("user", user.id),
-			asset: Record("asset", id),
-			...(oneEquippable.includes(asset.type) ? asset : {}),
-		}
-	)
+		})
+		if (hatsEquipped >= 3)
+			return fail(400, { msg: "You can only wear 3 hats" })
+	}
+
+	await db.query(equipQuery, {
+		user: Record("user", user.id),
+		asset: Record("asset", id),
+		...(oneEquippable.includes(asset.type) ? asset : {}),
+	})
 
 	return await rerender(user)
 }
@@ -163,7 +138,7 @@ async function unequip(e: RequestEvent) {
 	const { user, id, error } = await getEquipData(e)
 	if (error) return error
 
-	await equery(surql`DELETE $user->wearing WHERE out = $asset`, {
+	await db.query(unequipQuery, {
 		user: Record("user", user.id),
 		asset: Record("asset", id),
 	})
@@ -175,17 +150,4 @@ export const actions: import("./$types").Actions = {
 	regen,
 	equip,
 	unequip,
-}
-actions.search = async ({ request, locals }) => {
-	const { user } = await authorise(locals)
-	const formData = await request.formData()
-
-	const [assets] = await equery<Asset[][]>(
-		`${_select} AND string::lowercase($query) IN string::lowercase(name)`,
-		{
-			query: (formData.get("q") as string).trim(),
-			user: Record("user", user.id),
-		}
-	)
-	return { assets }
 }

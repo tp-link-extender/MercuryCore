@@ -2,9 +2,11 @@ import config from "$lib/server/config"
 import formData from "$lib/server/formData"
 import { type LikeActions, likeLikesActions } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
-import { Record, equery, find, findWhere, surql } from "$lib/server/surreal"
+import { Record, db, find, findWhere } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
+import findPlaceQuery from "./findPlace.surql"
+import invalidateSessionsQuery from "./invalidateSessions.surql"
 import placeQuery from "./place.surql"
 
 type FoundPlace = {
@@ -49,7 +51,7 @@ export async function load({ url, locals, params }) {
 	const { user } = await authorise(locals)
 	const privateServerCode = url.searchParams.get("privateServer")
 	const id = +params.id
-	const [[place]] = await equery<Place[][]>(placeQuery, {
+	const [[place]] = await db.query<Place[][]>(placeQuery, {
 		user: Record("user", user.id),
 		place: Record("place", id),
 	})
@@ -78,19 +80,12 @@ actions.like = async ({ url, request, locals, params }) => {
 	const privateTicket = url.searchParams.get("privateTicket")
 
 	const id = +params.id
-	const [[foundPlace]] = await equery<FoundPlace[][]>(
-		surql`
-			SELECT
-				privateServer,
-				privateTicket,
-				count(SELECT 1 FROM $parent<-likes) AS likeCount,
-				count(SELECT 1 FROM $parent<-dislikes) AS dislikeCount
-			FROM $place`,
-		{ place: Record("place", id) }
-	)
+	const [[place]] = await db.query<FoundPlace[][]>(findPlaceQuery, {
+		place: Record("place", id),
+	})
 	if (
-		!foundPlace ||
-		(foundPlace.privateServer && privateTicket !== foundPlace.privateTicket)
+		!place ||
+		(place.privateServer && privateTicket !== place.privateTicket)
 	)
 		error(404, "Place not found")
 
@@ -112,18 +107,10 @@ actions.join = async ({ request, locals }) => {
 	if (foundModerated) error(403, "You cannot currently play games")
 
 	// Invalidate all game sessions and create valid playing
-	const [, [playing]] = await equery<Playing[][]>(
-		surql`
-			UPDATE (SELECT * FROM $user->playing) SET valid = false;
-			RELATE $user->playing->$place CONTENT {
-				ping: time::now(), # todo: check
-				valid: true,
-			} RETURN meta::id(id) AS id`,
-		{
-			user: Record("user", user.id),
-			place: Record("place", serverId),
-		}
-	)
+	const [, [playing]] = await db.query<Playing[][]>(invalidateSessionsQuery, {
+		user: Record("user", user.id),
+		place: Record("place", serverId),
+	})
 
 	return {
 		joinScriptUrl: `${config.Domain}/game/join?ticket=${playing.id}`,

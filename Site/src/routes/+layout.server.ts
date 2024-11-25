@@ -1,5 +1,6 @@
 import config from "$lib/server/config.ts"
-import { equery, surql } from "$lib/server/surreal"
+import { db } from "$lib/server/surreal"
+import bannersQuery from "./banners.surql"
 import getNotifications from "./notifications.ts"
 
 type Banner = {
@@ -14,14 +15,7 @@ export async function load({ request, locals }) {
 	const { user } = locals
 	// No authorise() function call, as we don't want to redirect to login page if not logged in
 
-	const [banners] = await equery<Banner[][]>(surql`
-		SELECT
-			body,
-			bgColour,
-			textLight,
-			meta::id(id) AS id
-		OMIT deleted
-		FROM banner WHERE !deleted AND active`)
+	const [banners] = await db.query<Banner[][]>(bannersQuery)
 	return {
 		banners,
 		user,

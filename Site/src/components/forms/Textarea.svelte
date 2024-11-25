@@ -25,7 +25,8 @@
 			id={name}
 			{rows}
 			placeholder={placeholder || null}
-			class:is-invalid={$errors[name]} />
+			class:is-invalid={$errors[name]}>
+		</textarea>
 
 		{#if help}
 			<small class="formhelp">
@@ -33,7 +34,7 @@
 			</small>
 		{/if}
 
-		<small class="pb-4 text-red-5">
+		<small class="pb-4 text-red-500">
 			{$errors[name] || ""}
 		</small>
 	</div>

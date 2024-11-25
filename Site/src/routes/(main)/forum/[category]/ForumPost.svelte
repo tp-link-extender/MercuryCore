@@ -56,16 +56,17 @@
 				disabled={likesDisabled}
 				class="btn p-1">
 				<fa
-					class="{post.likes
-						? 'text-emerald-6 hover:text-emerald-3'
-						: 'text-neutral-6 hover:text-neutral-4'}
-					fa-thumbs-up transition text-lg" />
+					fa-thumbs-up
+					class="transition text-lg {post.likes
+						? 'text-emerald-600 hover:text-emerald-300'
+						: 'text-neutral-600 hover:text-neutral-400'}">
+				</fa>
 			</button>
 			<span
 				class="py-2 text-center {post.likes
-					? 'text-emerald-6 font-bold'
+					? 'text-emerald-600 font-bold'
 					: post.dislikes
-						? 'text-red-5 font-bold'
+						? 'text-red-500 font-bold'
 						: ''}">
 				{post.score}
 			</span>
@@ -76,10 +77,11 @@
 				disabled={dislikesDisabled}
 				class="btn p-1">
 				<fa
-					class="{post.dislikes
-						? 'text-red-5 hover:text-red-3'
-						: 'text-neutral-6 hover:text-neutral-4'}
-					fa-thumbs-down transition text-lg" />
+					fa-thumbs-down
+					class="transition text-lg {post.dislikes
+						? 'text-red-500 hover:text-red-300'
+						: 'text-neutral-600 hover:text-neutral-400'}">
+				</fa>
 			</button>
 		</div>
 	</form>
@@ -97,7 +99,7 @@
 				{post.title}
 			</h2>
 
-			<div class="gradient w-full h-20 absolute bottom-0 left-0" />
+			<div class="gradient w-full h-20 absolute bottom-0 left-0"></div>
 			<p class="break-all">
 				{post.content[0].text || ""}
 			</p>

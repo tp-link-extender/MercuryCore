@@ -2,18 +2,15 @@ import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import { auth } from "$lib/server/lucia"
 import requestRender from "$lib/server/requestRender"
-import {
-	Record,
-	type RecordId,
-	equery,
-	findWhere,
-	surql,
-} from "$lib/server/surreal"
+import { Record, type RecordId, db, findWhere } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
+import accountRegistered from "../accountRegistered"
+import accountRegisteredQuery from "../accountRegistered.surql"
 import createUserQuery from "./createUser.surql"
+import regkeyCheckQuery from "./regkeyCheck.surql"
 
 const schemaInitial = z.object({
 	username: z
@@ -36,17 +33,12 @@ const schema = z.object({
 	regkey: z.string().min(1).max(6969),
 })
 
-async function isAccountRegistered() {
-	const [userCount] = await equery<number[]>(surql`count(SELECT 1 FROM user)`)
-	return userCount > 0
-}
-
 const prefix = config.RegistrationKeys.Prefix
 const prefixRegex = new RegExp(`^${prefix}(.+)$`)
 
 export const load = async () => ({
 	form: await superValidate(zod(schema)),
-	users: await isAccountRegistered(),
+	users: await accountRegistered(),
 	regKeysEnabled: config.RegistrationKeys.Enabled,
 	prefix,
 })
@@ -55,7 +47,9 @@ export const actions: import("./$types").Actions = {}
 actions.register = async ({ request, cookies }) => {
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
+
 	const { username, email, password, cpassword } = form.data
+	form.data.password = form.data.cpassword = ""
 
 	if (cpassword !== password)
 		return formError(
@@ -86,8 +80,10 @@ actions.register = async ({ request, cookies }) => {
 
 		key = Record("regKey", matched[1])
 
-		const [[regkeyCheck]] = await equery<{ usesLeft: number }[][]>(surql`
-			SELECT usesLeft FROM ${key}`)
+		const [[regkeyCheck]] = await db.query<{ usesLeft: number }[][]>(
+			regkeyCheckQuery,
+			{ key }
+		)
 		if (!regkeyCheck)
 			return formError(form, ["regkey"], ["Registration key is invalid"])
 		if (regkeyCheck.usesLeft < 1)
@@ -98,7 +94,7 @@ actions.register = async ({ request, cookies }) => {
 			)
 	}
 
-	const [, , userId] = await equery<string[]>(createUserQuery, {
+	const [, , userId] = await db.query<string[]>(createUserQuery, {
 		username,
 		email,
 		// I still love scrypt, though argon2 is better supported
@@ -125,7 +121,9 @@ actions.register = async ({ request, cookies }) => {
 actions.initialAccount = async ({ request, cookies }) => {
 	const form = await superValidate(request, zod(schemaInitial))
 	if (!form.valid) return formError(form)
+
 	const { username, password, cpassword } = form.data
+	form.data.password = form.data.cpassword = ""
 
 	if (cpassword !== password)
 		return formError(
@@ -133,7 +131,7 @@ actions.initialAccount = async ({ request, cookies }) => {
 			["password", "cpassword"],
 			[" ", "The specified passwords do not match"]
 		)
-	if (await isAccountRegistered())
+	if (await accountRegistered())
 		return formError(
 			form,
 			["username"],
@@ -142,7 +140,7 @@ actions.initialAccount = async ({ request, cookies }) => {
 
 	// This is the kind of stuff that always breaks due to never getting tested
 	// Remember: untested === unworking
-	const [, , userId] = await equery<string[]>(createUserQuery, {
+	const [, , userId] = await db.query<string[]>(createUserQuery, {
 		admin: true,
 		username,
 		hashedPassword: Bun.password.hashSync(password),

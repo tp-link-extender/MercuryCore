@@ -1,0 +1,1 @@
+UPDATE stuff:ping SET render = time::now()

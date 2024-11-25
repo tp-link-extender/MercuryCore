@@ -34,11 +34,11 @@
 		class="btn btn-secondary"
 		on:click={launch("mercury-player:1+launchmode:maps")}
 		type="button">
-		<fa fa-arrow-up-right-from-square />
+		<fa fa-arrow-up-right-from-square></fa>
 		Map Folder
 	</button>
 	<button class="btn btn-primary" on:click={host} type="button">
-		<fa fa-wifi />
+		<fa fa-wifi></fa>
 		Begin Hosting
 	</button>
 

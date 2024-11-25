@@ -7,7 +7,7 @@ include:
 
 services:
     surreal-db:
-        image: surrealdb/surrealdb:v1.5.4
+        image: surrealdb/surrealdb:v2.1.0
         container_name: surreal-db
         hostname: surrealdb
         #user: ":" uncomment if having issues when running locally
@@ -18,11 +18,10 @@ services:
             - surrealdb-data:/database
         command:
             - start
-            - --log=trace
-            - --user=root
-            - --pass=root
-            - --allow-scripting
-            - file:database
+            - -l=trace
+            - -u=root
+            - -p=root
+            - surrealkv://database
 
     redis:
         image: docker.dragonflydb.io/dragonflydb/dragonfly:latest

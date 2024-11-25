@@ -1,6 +1,6 @@
 LET $og = SELECT
 	(SELECT text, updated FROM $parent.bio
-	ORDER BY updated DESC)[0] AS bio
+	ORDER BY updated)[$] AS bio
 FROM $user;
 
 UPDATE $user SET theme = $theme;

@@ -1,15 +1,15 @@
+import exclude from "$lib/server/exclude"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import { like } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, equery, findWhere, surql } from "$lib/server/surreal"
+import { Record, db, findWhere, incrementId } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import createQuery from "./create.surql"
-import exclude from "$lib/server/exclude"
 
 const schema = z.object({
 	title: z.string().min(1).max(50),
@@ -18,15 +18,15 @@ const schema = z.object({
 
 export async function load({ url }) {
 	exclude("Forum")
-	const categoryQuery = url.searchParams.get("category")
-	if (!categoryQuery) error(400, "Missing category")
+	const categoryParam = url.searchParams.get("category")
+	if (!categoryParam) error(400, "Missing category")
 
-	const [[category]] = await equery<{ name: string }[][]>(
-		surql`
+	const [[category]] = await db.query<{ name: string }[][]>(
+		`
 			SELECT name FROM forumCategory
-			WHERE string::lowercase(name) = string::lowercase(${categoryQuery})`
+			WHERE string::lowercase(name) = string::lowercase($categoryParam)`,
+		{ categoryParam }
 	)
-
 	if (!category) error(404, "Category not found")
 
 	return {
@@ -42,15 +42,13 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
 
-	const category = url.searchParams.get("category")
-
 	const title = form.data.title.trim()
 	if (!title) return formError(form, ["title"], ["Post must have a title"])
-	const unfiltered = form.data.content?.trim()
 
-	const limit = ratelimit(form, "forumPost", getClientAddress, 30)
-	if (limit) return limit
+	// const limit = ratelimit(form, "forumPost", getClientAddress, 30)
+	// if (limit) return limit
 
+	const category = url.searchParams.get("category")
 	if (
 		!category ||
 		!(await findWhere(
@@ -61,9 +59,12 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 	)
 		error(400, "Invalid category")
 
-	const [newPostId] = await equery<string[]>(surql`fn::id()`)
+	const unfiltered = form.data.content?.trim()
+	console.log(unfiltered)
+	const newPostId = await incrementId()
+	console.log(newPostId)
 
-	await equery(createQuery, {
+	await db.query(createQuery, {
 		user: Record("user", user.id),
 		postId: Record("forumPost", newPostId),
 		category: Record("forumCategory", category),

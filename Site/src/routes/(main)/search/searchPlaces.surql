@@ -8,6 +8,4 @@ SELECT
 	count(<-likes) AS likeCount,
 	count(<-dislikes) AS dislikeCount
 FROM place
-WHERE !privateServer
-	AND !deleted
-	AND string::lowercase($query) IN string::lowercase(name);
+WHERE name ~ $query AND !privateServer AND !deleted;

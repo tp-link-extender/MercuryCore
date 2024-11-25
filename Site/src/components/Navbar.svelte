@@ -13,18 +13,10 @@
 		["Catalog", "/catalog", "fa-book-open-cover"],
 		["Create", "/develop", "fa-plus"]
 	]
-	const searchCategories = [
-		["Users", "users"],
-		["Places", "places"],
-		["Catalog", "assets"]
-	]
-
-	if (data.pages.includes("Groups")) {
-		nav1.push(["Groups", "/groups", "fa-people-group"])
-		searchCategories.push(["Groups", "groups"])
-	}
 	if (data.pages.includes("Forum"))
 		nav1.push(["Forum", "/forum", "fa-messages"])
+	if (data.pages.includes("Groups"))
+		nav1.push(["Groups", "/groups", "fa-people-group"])
 
 	const usernav = [
 		["fa-money-bill-transfer", "Economy", "/economy"],
@@ -39,7 +31,7 @@
 
 <nav class="py-0 justify-start z-11">
 	<div
-		class="bg-a pt-1 px-2 sm:px-4 flex items-center w-full pb-2px h-13.5">
+		class="bg-a pt-1 px-2 sm:px-4 flex items-center w-full lg:pb-2px h-13.5">
 		<a class="light-text text-xl no-underline <sm:hidden fw-500" href="/">
 			{data.siteName}
 		</a>
@@ -50,20 +42,20 @@
 				class=" size-8" />
 		</a>
 		{#if user}
-			<div class="<lg:hidden pl-6 pr-2 flex flex-row gap-4 pl-3">
+			<div class="<lg:hidden pl-6 pr-2 flex flex-row pl-3">
 				{#each nav1 as [title, href]}
-					<a class="btn light-text px-1 border-0" {href}>
+					<a class="btn light-text border-0" {href}>
 						{title}
 					</a>
 				{/each}
 			</div>
-			<Search />
+			<Search pages={data.pages} />
 			<div class="flex items-center gap-6">
 				<a
 					href="/notifications"
 					aria-label="Notifications"
 					class="tooltip <lg:hidden font-bold light-text">
-					<fa fa-bell />
+					<fa fa-bell></fa>
 				</a>
 				<div class="dropdown">
 					<User
@@ -84,7 +76,7 @@
 							{#each usernav as [icon, title, href]}
 								<li class="rounded-2">
 									<a class="btn light-text pl-4 pr-0" {href}>
-										<fa class="{icon} pr-2" />
+										<fa class="{icon} pr-2"></fa>
 										{title}
 									</a>
 								</li>
@@ -94,10 +86,11 @@
 									use:enhance
 									method="POST"
 									action="/api?/logout">
-									<button class="btn text-red-5 pl-4 pr-0">
+									<button class="btn text-red-500 pl-4 pr-0">
 										<fa
 											fa-arrow-right-from-bracket
-											class="pr-2" />
+											class="pr-2">
+										</fa>
 										<b>Log out</b>
 									</button>
 								</form>
@@ -138,7 +131,7 @@
 				<a
 					{href}
 					class="btn light-text border-0 flex flex-col items-center text-0.9rem px-0.2rem sm:(text-base px-2)">
-					<fa class="{icon} pb-1 text-1.2rem sm:text-1.5rem" />
+					<fa class="{icon} pb-1 text-1.2rem sm:text-1.5rem"></fa>
 					{title}
 				</a>
 			{/each}
@@ -150,10 +143,5 @@
 	#bottomnav {
 		border-top: 1px solid var(--accent);
 		box-shadow: 0 0 1rem 0.2rem #000;
-	}
-
-	:global(.pseudofocus) {
-		color: var(--grey-text) !important;
-		background: var(--accent);
 	}
 </style>

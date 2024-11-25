@@ -8,8 +8,8 @@
 		? -1600
 		: 0}px">
 	<div class="w-full fixed bottom-0 z-1">
-		<div class="absolute -top-198px h-198px w-1536" />
-		<div class="absolute -top-174px h-198px w-1536" />
+		<div class="absolute -top-198px h-198px w-1536"></div>
+		<div class="absolute -top-174px h-198px w-1536"></div>
 	</div>
 </span>
 

@@ -48,7 +48,7 @@
 
 {#if topLevel}
 	<a href="{baseUrl}{assetSlug ? '?tab=Comments' : ''}" class="no-underline">
-		<fa fa-arrow-left class="pr-2" />
+		<fa fa-arrow-left class="pr-2"></fa>
 		{#if assetSlug}
 			Back to asset
 		{:else}
@@ -58,7 +58,7 @@
 	{#if reply.parentReplyId}
 		<br />
 		<a href="{baseUrl}/{reply.parentReplyId}" class="no-underline">
-			<fa fa-arrow-up class="pr-2" />
+			<fa fa-arrow-up class="pr-2"></fa>
 			Parent reply
 		</a>
 	{/if}
@@ -73,7 +73,7 @@
 					on:click={collapse(reply.id)}
 					aria-label="Collapse reply"
 					class="collapseBar {reply.pinned
-						? 'bg-green-5'
+						? 'bg-green-500'
 						: 'bg-a2'} p-0 border-0 h-full mt-4 cursor-pointer">
 				</button>
 			</span>
@@ -91,7 +91,8 @@
 							<fa
 								class="{assetSlug
 									? 'fa-hammer'
-									: 'fa-microphone'} pl-1" />
+									: 'fa-microphone'} pl-1">
+							</fa>
 						{/if}
 					</span>
 					- {reply.content[0].text}

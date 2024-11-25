@@ -1,7 +1,8 @@
 import config from "$lib/server/config"
 import { SignData } from "$lib/server/sign"
-import { equery, surql } from "$lib/server/surreal"
+import { db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
+import placeQuery from "./place.surql"
 
 export async function GET({ url }) {
 	const ticket = url.searchParams.get("ticket")
@@ -9,15 +10,12 @@ export async function GET({ url }) {
 
 	if (!ticket) error(400, "Invalid Request")
 
-	const [[placeData]] = await equery<{ serverPort: number }[][]>(
-		surql`
-			SELECT serverPort FROM place
-			WHERE serverTicket = ${ticket}`
-	)
+	const [[place]] = await db.query<{ serverPort: number }[][]>(placeQuery, {
+		ticket,
+	})
+	if (!place) error(400, "Invalid Server ticket")
 
-	if (!placeData) error(400, "Invalid Server ticket")
-
-	const port = placeData.serverPort
+	const port = place.serverPort
 	// const serverId = placeData.id.toString()
 	const serverPresenceUrl = `${config.Domain}/game/serverpresence?ticket=${ticket}`
 

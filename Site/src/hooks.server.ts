@@ -4,11 +4,13 @@
 import config from "$lib/server/config"
 import { stipend } from "$lib/server/economy"
 import { auth } from "$lib/server/lucia"
-import { Record, equery, surql } from "$lib/server/surreal"
+import { Record, db } from "$lib/server/surreal"
 import { type Handle, redirect } from "@sveltejs/kit"
 import type { Cookie, User } from "lucia"
-import { blue, green, gray as grey, magenta, red, yellow } from "picocolors"
+import pc from "picocolors"
+import moderatedQuery from "./moderated.surql"
 
+const { magenta, red, yellow, green, blue, gray } = pc
 const methodColours = Object.freeze({
 	GET: green("GET"),
 	POST: yellow("POST"),
@@ -32,7 +34,7 @@ function pathnameColour(pathname: string) {
 }
 
 const time = () =>
-	config.Logging.Time ? grey(new Date().toLocaleString()) : ""
+	config.Logging.Time ? gray(new Date().toLocaleString()) : ""
 
 const userLog = (user: User | null) =>
 	user
@@ -104,12 +106,9 @@ export async function handle(e) {
 	if (!session) setSession(auth.createBlankSessionCookie())
 	else if (session.fresh) setSession(auth.createSessionCookie(session.id))
 
-	const [, [moderated]] = await equery<1[][]>(
-		surql`
-			UPDATE $user SET lastOnline = time::now();
-			SELECT 1 FROM moderation WHERE out = $user AND active`,
-		{ user: Record("user", user.id) }
-	)
+	const [, moderated] = await db.query<boolean[][]>(moderatedQuery, {
+		user: Record("user", user.id),
+	})
 
 	const { pathname } = event.url
 	if (

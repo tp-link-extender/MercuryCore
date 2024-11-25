@@ -30,7 +30,7 @@
 <div class="ctnr max-w-280 pb-6">
 	<h1>Registration Keys &ndash; Admin</h1>
 	<a href="/admin" class="no-underline">
-		<fa fa-caret-left />
+		<fa fa-caret-left></fa>
 		Back to panel
 	</a>
 </div>
@@ -92,8 +92,8 @@
 								method="POST"
 								action="?/disable&id={regKey.id}">
 								<button
-									class="btn btn-sm no-underline text-red-5 my-0">
-									<fa fa-ban />
+									class="btn btn-sm no-underline text-red-500 my-0">
+									<fa fa-ban></fa>
 									Disable key
 								</button>
 							</form>

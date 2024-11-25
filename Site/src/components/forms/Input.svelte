@@ -41,7 +41,7 @@
 		{/if}
 
 		{#if $errors[name]}
-			<small class="block text-red-5">
+			<small class="block text-red-500">
 				{$errors[name]}
 			</small>
 		{/if}

@@ -1,3 +1,5 @@
+// TODO: Possibly move this to the database instead of server state
+
 import { fail } from "@sveltejs/kit"
 import type { SuperValidated } from "sveltekit-superforms"
 import { message } from "sveltekit-superforms/server"

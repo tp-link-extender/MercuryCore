@@ -10,9 +10,8 @@
 
 	const status = $page.status
 	function errors() {
-		if (status === 401 || status === 403) return "mStop"
+		if (status === 401 || status === 403) return "403"
 		if (status === 404) return "404"
-		if (status === 451) return "mBurn"
 		if (status < 500) return "400"
 		return "500"
 	}
@@ -26,7 +25,8 @@
 	<div class="ctnr bg-a flex flex-col items-center rounded-4 px-20 py-8">
 		<div
 			class="w-full h-24 bg-contain bg-no-repeat bg-center"
-			style="background-image: url(/error/{errors()}.svg)" />
+			style="background-image: url(/error/{errors()}.svg)">
+		</div>
 
 		<h1 class="pt-4">
 			<a

@@ -27,9 +27,7 @@
 			["Render queue", "renderqueue", "fa-file-image"]
 		],
 		Catalog: [["Asset creation", "create", "fa-file-circle-plus"]],
-		Economy: [
-			["Transactions", "transactions", "fa-money-bill-transfer"]
-		]
+		Economy: [["Transactions", "transactions", "fa-money-bill-transfer"]]
 	}
 	const tabNames = ["Moderation", "Catalog", "Economy", "Statistics"]
 
@@ -63,7 +61,7 @@
 	<h1>Admin Panel</h1>
 	<h2 class="text-xl pb-4">
 		Your permission level is <span style="color: {perms[0]}">
-			<fa class="{perms[1]} px-1" />
+			<fa class="{perms[1]} px-1"></fa>
 			{perms[2]}
 		</span>
 	</h2>
@@ -89,7 +87,7 @@
 			<div class="flex flex-col gap-4">
 				<div class="card bg-a p-4">
 					<h3>
-						<fa fa-memory />
+						<fa fa-memory></fa>
 						{gbUsed.toFixed(2)} / {gbTotal.toFixed(2)} GB
 					</h3>
 					<span class="pb-2">
@@ -97,20 +95,21 @@
 					</span>
 					<div class="flex rounded-2 bg-darker h-4">
 						<div
-							class="bg-emerald-6 rounded-2"
+							class="bg-emerald-600 rounded-2"
 							role="progressbar"
 							aria-valuenow={totalmem - freemem}
 							aria-valuemin={0}
 							aria-valuemax={totalmem}
 							style="width: {((totalmem - freemem) / totalmem) *
-								100}%;" />
+								100}%;">
+						</div>
 					</div>
 				</div>
 			</div>
 			<div class="flex flex-col gap-4">
 				<div class="card bg-a p-4">
 					<h3>
-						<fa fa-user class="pr-2" />
+						<fa fa-user class="pr-2"></fa>
 						Users
 					</h3>
 					<span>
@@ -120,26 +119,28 @@
 				</div>
 				<div class="card bg-a p-4">
 					<h3>
-						<fa fa-file class="pr-2" />
+						<fa fa-file class="pr-2"></fa>
 						Assets
 					</h3>
 					<div>
-						<fa fa-file-circle-minus class="text-yellow-5 pr-2" />
+						<fa fa-file-circle-minus class="text-yellow-500 pr-2">
+						</fa>
 						<b>0 assets</b>
 						are currently pending
 					</div>
 					<div>
-						<fa fa-file-circle-check class="text-emerald-6 pr-2" />
+						<fa fa-file-circle-check class="text-emerald-600 pr-2">
+						</fa>
 						<b>0 assets</b>
 						have been approved
 					</div>
 					<div>
-						<fa fa-file-circle-xmark class="text-red-5 pr-2" />
+						<fa fa-file-circle-xmark class="text-red-500 pr-2"></fa>
 						<b>0 assets</b>
 						have been denied
 					</div>
 					<div>
-						<fa fa-folder-closed class="text-cyan-5 pr-2" />
+						<fa fa-folder-closed class="text-cyan-500 pr-2"></fa>
 						<b>0 assets</b>
 						in total
 					</div>

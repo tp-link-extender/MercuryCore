@@ -67,14 +67,14 @@
 			action="/admin/asset?/rerender&id={asset.id}"
 			class="w-full pb-3">
 			<button class="btn btn-lg btn-primary w-full">
-				<fa fa-arrows-rotate class="pr-1" />
+				<fa fa-arrows-rotate class="pr-1"></fa>
 				Rerender
 			</button>
 		</form>
 		<button
 			popovertarget="purge{asset.id}"
 			class="btn btn-lg btn-red-tertiary w-full">
-			<fa fa-trash-xmark class="pr-1" />
+			<fa fa-trash-xmark class="pr-1"></fa>
 			Purge
 		</button>
 	{/if}
@@ -97,7 +97,7 @@
 			use:enhance
 			method="POST"
 			action="/admin/asset?/purge&id={asset.id}">
-			<button class="btn btn-danger bg-red-9 border-red-9">
+			<button class="btn btn-danger bg-red-900 border-red-900">
 				Yes, do as I say!
 			</button>
 		</form>

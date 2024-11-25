@@ -25,7 +25,8 @@
 			class:is-invalid={$errors.content}
 			name="content"
 			placeholder="What are your thoughts?"
-			rows="4" />
+			rows="4">
+		</textarea>
 		<button class="btn btn-secondary">
 			{#if $delayed}
 				Working...
@@ -36,8 +37,8 @@
 	</fieldset>
 	<p
 		class="pb-4"
-		class:text-emerald-6={$page.status === 200}
-		class:text-red-5={$page.status >= 400}>
+		class:text-emerald-600={$page.status === 200}
+		class:text-red-500={$page.status >= 400}>
 		{$message || $errors.content || ""}
 	</p>
 </form>

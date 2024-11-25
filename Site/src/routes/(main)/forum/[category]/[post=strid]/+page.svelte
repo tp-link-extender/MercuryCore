@@ -87,16 +87,17 @@
 					aria-label={$post.likes ? "Unlike" : "Like"}
 					class="btn p-1">
 					<fa
-						class="{$post.likes
-							? 'text-emerald-6 hover:text-emerald-3'
-							: 'text-neutral-6 hover:text-neutral-4'}
-						fa-thumbs-up transition text-lg" />
+						fa-thumbs-up
+						class="transition text-lg {$post.likes
+							? 'text-emerald-600 hover:text-emerald-300'
+							: 'text-neutral-600 hover:text-neutral-400'}">
+					</fa>
 				</button>
 				<span
 					class="py-2 text-center {$post.likes
-						? 'text-emerald-6 font-bold'
+						? 'text-emerald-600 font-bold'
 						: $post.dislikes
-							? 'text-red-5 font-bold'
+							? 'text-red-500 font-bold'
 							: ''}">
 					{$post.score}
 				</span>
@@ -106,10 +107,11 @@
 					aria-label={$post.dislikes ? "Undislike" : "Dislike"}
 					class="btn p-1">
 					<fa
-						class="{$post.dislikes
-							? 'text-red-5 hover:text-red-3'
-							: 'text-neutral-6 hover:text-neutral-4'}
-						fa-thumbs-down transition text-lg" />
+						fa-thumbs-down
+						class="transition text-lg {$post.dislikes
+							? 'text-red-500 hover:text-red-300'
+							: 'text-neutral-600 hover:text-neutral-400'}">
+					</fa>
 				</button>
 			</div>
 		</form>
@@ -122,7 +124,7 @@
 					</i>
 				</div>
 				<span class="dropdown">
-					<fa fa-ellipsis-h class="dropdown-ellipsis" />
+					<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
 					<div class="dropdown-content pt-2">
 						<ul class="p-2 rounded-3">
 							{#if user.permissionLevel >= 4}
@@ -167,9 +169,8 @@
 					{refreshReplies} />
 			{/each}
 		{:else}
-			<h3 class="text-center pt-6">
-				No replies yet. Be the first to post one!
-			</h3>
+			<h3 class="text-center pt-6">No replies yet.</h3>
+			<h4 class="text-center pt-4">Be the first to post one!</h4>
 		{/if}
 	{/key}
 </div>

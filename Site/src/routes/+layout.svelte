@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { dev } from "$app/environment"
+	import { browser, dev } from "$app/environment"
 	import { enhance } from "$app/forms"
 	import { navigating } from "$app/stores"
 	import User from "$components/User.svelte"
@@ -13,21 +13,24 @@
 	import "/src/daisyui/tooltip.css"
 	import "uno.css"
 
-	export let data
+	const { data, children } = $props()
 
-	$: user = data.user
+	let user = $derived(data.user)
 
 	// Settings for nprogress, the loading bar shown at the top of the page when navigating
 	nprogress.configure({ showSpinner: false })
 
 	let timeout: Timer | null
 	// 100ms is the minimum time the loading bar will be shown
-	$: if ($navigating && !timeout) timeout = setTimeout(nprogress.start, 100)
-	else if (timeout) {
-		clearTimeout(timeout)
-		timeout = null
-		nprogress.done()
-	}
+	$effect(() => {
+		if (!browser) return
+		if ($navigating && !timeout) timeout = setTimeout(nprogress.start, 100)
+		else if (timeout) {
+			clearTimeout(timeout)
+			timeout = null
+			nprogress.done()
+		}
+	})
 
 	async function ping() {
 		// Keep the user's online status up to date
@@ -59,7 +62,7 @@
 		NewFriend: "New friend"
 	})
 
-	$: notifications = data.notifications.filter(n => !n.read)
+	let notifications = $derived(data.notifications.filter(n => !n.read))
 </script>
 
 <svelte:head>
@@ -68,12 +71,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="icon" href="/assets/favicon" />
 
-	{#if !dev}
+	<!-- todo: document analytics setup -->
+	<!-- {#if !dev}
 		<script
 			defer
 			data-domain={data.domain}
 			src="https://analytics.{data.domain}/js/script.js"></script>
-	{/if}
+	{/if} -->
 </svelte:head>
 
 <!-- Toast notifications -->
@@ -105,9 +109,9 @@
 					method="POST"
 					action="/notifications?s={notification.id}">
 					<button
-						class="btn p-0 px-1 text-white hover:text-neutral-5"
+						class="btn p-0 px-1 text-white hover:text-neutral-500"
 						aria-label="Close">
-						<fa fa-xmark-large />
+						<fa fa-xmark-large></fa>
 					</button>
 				</form>
 			</div>
@@ -120,4 +124,4 @@
 	{/each}
 </div>
 
-<slot />
+{@render children()}

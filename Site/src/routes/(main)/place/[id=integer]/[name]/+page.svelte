@@ -126,7 +126,7 @@
 								aria-label="Place settings"
 								href="/place/{$place.id}/{data.slug}/settings"
 								class="btn btn-sm btn-secondary">
-								<fa fa-sliders />
+								<fa fa-sliders></fa>
 							</a>
 						</div>
 					{/if}
@@ -143,17 +143,17 @@
 					{/if}
 				</span>
 				<div>
-					Gears: <fa fa-circle-xmark />
+					Gears: <fa fa-circle-xmark></fa>
 				</div>
 				<small
 					class="text-white rounded-2 {online
-						? 'bg-emerald-6'
-						: 'bg-red-5'} p-2 py-1">
+						? 'bg-emerald-600'
+						: 'bg-red-500'} p-2 py-1">
 					{online ? "Online" : "Offline"}
 				</small>
 				<span class="float-end">
 					<span class="dropdown">
-						<fa fa-ellipsis-h class="dropdown-ellipsis" />
+						<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
 						<div class="dropdown-content pt-2">
 							<ul class="p-2 rounded-3">
 								<ReportButton
@@ -185,12 +185,13 @@
 							name="action"
 							value={$place.likes ? "unlike" : "like"}
 							aria-label={$place.likes ? "Unlike" : "Like"}
-							class="btn p-0 px-1 text-emerald-5">
+							class="btn p-0 px-1 text-emerald-500">
 							<fa
-								class="{$place.likes
-									? 'text-emerald-6 hover:text-emerald-3'
-									: 'text-neutral-6 hover:text-neutral-4'}
-								fa-thumbs-up transition text-lg" />
+								fa-thumbs-up
+								class="transition text-lg {$place.likes
+									? 'text-emerald-600 hover:text-emerald-300'
+									: 'text-neutral-600 hover:text-neutral-400'}">
+							</fa>
 						</button>
 						<button
 							name="action"
@@ -198,17 +199,18 @@
 							aria-label={$place.dislikes
 								? "Undislike"
 								: "Dislike"}
-							class="btn p-0 px-1 text-red-5">
+							class="btn p-0 px-1 text-red-500">
 							<fa
-								class="{$place.dislikes
-									? 'text-red-5 hover:text-red-3'
-									: 'text-neutral-6 hover:text-neutral-4'}
-								fa-thumbs-down transition text-lg" />
+								fa-thumbs-down
+								class="transition text-lg {$place.dislikes
+									? 'text-red-500 hover:text-red-300'
+									: 'text-neutral-600 hover:text-neutral-400'}">
+							</fa>
 						</button>
 					</div>
 					<div class="flex bg-a2 h-3px">
 						<div
-							class="bg-emerald-5 transition-width-300"
+							class="bg-emerald-500 transition-width-300"
 							role="progressbar"
 							aria-label="Likes"
 							style="width: {($place.likeCount /
@@ -217,9 +219,10 @@
 							aria-valuenow={$place.likeCount}
 							aria-valuemin={0}
 							aria-valuemax={$place.dislikeCount +
-								$place.likeCount} />
+								$place.likeCount}>
+						</div>
 						<div
-							class="bg-red-5 transition-width-300"
+							class="bg-red-500 transition-width-300"
 							role="progressbar"
 							aria-label="Dislikes"
 							style="width: {($place.dislikeCount /
@@ -228,7 +231,8 @@
 							aria-valuenow={$place.dislikeCount}
 							aria-valuemin={0}
 							aria-valuemax={$place.dislikeCount +
-								$place.likeCount} />
+								$place.likeCount}>
+						</div>
 					</div>
 					<div class="flex justify-between">
 						<span class="px-2">
@@ -282,7 +286,7 @@
 								on:click={launch(
 									"mercury-player:1+launchmode:ide"
 								)}>
-								<fa fa-arrow-up-right-from-square />
+								<fa fa-arrow-up-right-from-square></fa>
 								Studio
 							</button>
 						</span>
@@ -296,14 +300,14 @@
 							setTimeout(() => (copiedSuccess = false), 4000)
 						}}
 						class="btn btn-sm btn-secondary py-1.5!"
-						type="button">
-						<fa fa-copy />
+						aria-label="Copy command to clipboard">
+						<fa fa-copy></fa>
 					</button>
 					{#if copiedSuccess}
 						<small
 							id="copiedSuccess"
 							transition:fade
-							class="block text-yellow-5">
+							class="block text-yellow-500">
 							Successfully copied command to clipboard
 						</small>
 					{/if}

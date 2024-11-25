@@ -16,7 +16,7 @@
 <div class="text-center">
 	<h1>Create a post in {data.categoryName}</h1>
 	<a href="/forum/{data.categoryName}" class="no-underline accent-text">
-		<fa fa-caret-left />
+		<fa fa-caret-left></fa>
 		Back to forum
 	</a>
 </div>

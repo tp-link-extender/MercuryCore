@@ -65,9 +65,9 @@
 			There are no categories available in the forum yet.
 		</h2>
 		{#if user.permissionLevel === 5}
-			<div class="text-center">
+			<h3 class="text-center">
 				Why not <a href="/forum/create/category">create one?</a>
-			</div>
+			</h3>
 		{/if}
 	{/if}
 </div>

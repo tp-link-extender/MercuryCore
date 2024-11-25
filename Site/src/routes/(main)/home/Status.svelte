@@ -15,7 +15,7 @@
 				<em>{new Date(status.posted).toLocaleString()}</em>
 			</small>
 			<span class="dropdown">
-				<fa fa-ellipsis-h class="dropdown-ellipsis" />
+				<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
 				<div class="dropdown-content pt-2">
 					<ul class="p-2 rounded-3">
 						<ReportButton

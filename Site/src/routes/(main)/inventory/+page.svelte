@@ -43,7 +43,18 @@
 				<Pagination totalPages={data.pages} />
 			{/key}
 		{:else}
-			<h2 class="pt-12 text-center">No {tabData.currentTab} found</h2>
+			<h2 class="pt-12 text-center">
+				You don't have any {tabData.currentTab} yet.
+			</h2>
+			<h3 class="pt-4 text-center">
+				Head to the
+				<!--
+					?tab= works questionably due to url/local state mismatch...
+					eh, I signed up for that	
+				--> 
+				<a href="/catalog?tab={tabData.currentTab}">Catalog</a>
+				to get some!
+			</h3>
 		{/if}
 	</SidebarShell>
 </div>

@@ -107,9 +107,6 @@
 		& span {
 			transition: all 0.2s;
 		}
-		&:hover .username {
-			color: var(--grey-text);
-		}
 		&:hover .pfp {
 			background: var(--hover) !important;
 		}
@@ -121,9 +118,9 @@
 	}
 	.status {
 		border-radius: 50%;
-		bottom: 4%;
+		bottom: 5%;
 		right: 5%;
 		width: 20%;
-		height: 20%;
+		aspect-ratio: 1;
 	}
 </style>

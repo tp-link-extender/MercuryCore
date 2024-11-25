@@ -25,7 +25,7 @@
 			class="w-85%" />
 	</div>
 	<p>{asset.name}</p>
-	<p class="text-emerald-6">{symbol}{asset.price}</p>
+	<p class="text-emerald-600">{symbol}{asset.price}</p>
 </a>
 
 <style>

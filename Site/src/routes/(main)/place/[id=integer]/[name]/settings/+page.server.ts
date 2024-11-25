@@ -2,7 +2,7 @@ import fs from "node:fs"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
-import { Record, equery, surql } from "$lib/server/surreal"
+import { Record, db } from "$lib/server/surreal"
 import { encode } from "$lib/urlName"
 import { error } from "@sveltejs/kit"
 import sharp from "sharp"
@@ -11,6 +11,8 @@ import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import type { RequestEvent } from "./$types.d.ts"
 import settingsQuery from "./settings.surql"
+import privateTicketQuery from "./settings/privateTicket.surql"
+import serverTicketQuery from "./settings/serverTicket.surql"
 import updateSettingsQuery from "./updateSettings.surql"
 
 const viewSchema = z.object({
@@ -54,7 +56,7 @@ type Place = {
 }
 
 async function placeQuery(id: number) {
-	const [[place]] = await equery<Place[][]>(settingsQuery, {
+	const [[place]] = await db.query<Place[][]>(settingsQuery, {
 		place: Record("place", id), // MAKE SURE ID IS A NUMBER
 	})
 	return place
@@ -79,9 +81,9 @@ export async function load({ locals, params }) {
 	}
 }
 
-async function getData(e: RequestEvent) {
-	const { user } = await authorise(e.locals)
-	const id = +e.params.id
+async function getData({ locals, params }: RequestEvent) {
+	const { user } = await authorise(locals)
+	const id = +params.id
 	const getPlace = await placeQuery(id)
 	if (user.username !== getPlace.owner.username && user.permissionLevel < 4)
 		error(403, "You do not have permission to update this page.")
@@ -116,7 +118,7 @@ actions.view = async e => {
 
 	const { title, description } = form.data
 
-	await equery(updateSettingsQuery, {
+	await db.query(updateSettingsQuery, {
 		place: Record("place", id),
 		title: filter(title),
 		description: filter(description || ""),
@@ -126,8 +128,7 @@ actions.view = async e => {
 actions.ticket = async e => {
 	const id = await getData(e)
 
-	await equery(surql`
-		UPDATE ${Record("place", id)} SET serverTicket = rand::guid()`)
+	await db.query(serverTicketQuery, { place: Record("place", id) })
 	return message(
 		await superValidate(e.request, zod(ticketSchema)),
 		"Regenerated!"
@@ -138,7 +139,7 @@ actions.network = async e => {
 	const form = await superValidate(e.request, zod(networkSchema))
 	if (!form.valid) return formError(form)
 
-	await equery(surql`UPDATE ${Record("place", id)} MERGE ${form.data}`)
+	await db.merge(Record("place", id), form.data)
 	return message(form, "Network settings updated successfully!")
 }
 actions.privacy = async e => {
@@ -148,15 +149,13 @@ actions.privacy = async e => {
 
 	const { privateServer } = form.data
 
-	await equery(surql`
-		UPDATE ${Record("place", id)} SET privateServer = ${privateServer}`)
+	await db.merge(Record("place", id), { privateServer })
 	return message(form, "Privacy settings updated successfully!")
 }
 actions.privatelink = async e => {
 	const id = await getData(e)
 
-	await equery(surql`
-		UPDATE ${Record("place", id)} SET privateTicket = rand::guid()`)
+	await db.query(privateTicketQuery, { place: Record("place", id) })
 	return message(
 		await superValidate(e.request, zod(privatelinkSchema)),
 		"Regenerated!"

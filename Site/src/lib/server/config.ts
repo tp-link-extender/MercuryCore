@@ -2,6 +2,14 @@ import { brickColours } from "$lib/brickColours"
 import { z } from "zod"
 import rawconfig from "../../../../mercury.core.ts"
 
+if (!process.versions.bun && !Bun) {
+	const runtime = process.versions.node ? "Node" : "an incorrect runtime"
+	console.error(
+		`Bun not detected. Did you accidentally start Mercury Core with ${runtime}?`
+	)
+	process.exit(1)
+}
+
 const brickColourEnum = z.union([
 	z.literal(1), // br
 	z.literal(1), // uh

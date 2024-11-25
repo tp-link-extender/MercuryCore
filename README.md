@@ -1,11 +1,8 @@
-# ⚠️ Warning: Top Sneaky repository ⚠️
-
-The repository you are looking at is public, but the project has not yet been publicly announced. If you're in the Mercury Core community, you didn't see anything. 🤫
-
 # ![Mercury Core logo banner](./Assets/banner.png)
 
 Mercury Core is the ultimate community-driven secure, flexible, and stable foundation for the future of your revival web platform, allowing for easy customisation or complete overhaul and possible integration with multiple clients and external services.
 
+> [!NOTE]  
 > If you don’t know what any of those things are, Mercury Core is a build-your-own-Roblox.
 
 ## Contents
@@ -29,7 +26,7 @@ The [Mercury Core development](https://marketplace.visualstudio.com/items?itemNa
 You will need:
 
 -   Latest version of Bun installed (expected as `bun`)
--   Latest version of Docker installed (expected as `docker`)
+-   Latest version of Docker installed (expected as `docker`, optional)
 -   A terminal
 -   A modern web browser (Early 2024 onwards for most major browsers)
 -   A computer, as it would be painful to live without one, wouldn't it?
@@ -42,7 +39,10 @@ Instructions:
 -   Copy the `.env.example` file to `.env` to set up the environment variables
 -   Run `docker compose up -d` to start the database and micro services
 
-To start a local dev server, go to the **Site** directory, run `bun -b dev`, and navigate to the link shown in the terminal (remember not to use HTTPS!). Upon saving a file, your changes will be shown in the web browser.
+> [!TIP]  
+> If you don't have or can't install Docker, you can start the database manually by [installing SurrealDB](https://surrealdb.com/install) and running `surreal start -l trace -u root -p root --allow-scripting file:./data/database` in the repository's root directory, and the economy service manually by [installing Go](https://go.dev/dl/) and running `go run .` in the **Economy** directory. You'll need to run these in separate terminals or in the background.
+
+To start a local dev server, go to the **Site** directory, run `bun dev`, and navigate to the link shown in the terminal (remember not to use HTTPS!). Upon saving a file, your changes will be shown in the web browser.
 
 -   If you are using WSL2, the server may not correctly reflect the changes you make if the repository is stored on the Windows drive. To fix this, move the repository into a folder managed by WSL, or alternatively add the following to the default export of vite.config.ts:
 
@@ -64,7 +64,8 @@ The data directory, which is hidden from source control and should be kept priva
 -   **data/surreal** &ndash; database files
 -   **data/thumbnails** &ndash; asset thumbnails
 
-It may be helpful to mount to an external volume or directory to keep this data safe, allow for easier backups, and to provide it with more space.
+> [!TIP]  
+> It may be helpful to mount to an external volume or directory to keep this data safe, allow for easier backups, and to provide it with more space.
 
 # Hosting
 
@@ -84,9 +85,11 @@ Instructions:
     -   If you're using Caddy with multiple configuration files, import the Caddyfile in the repository's root directory into a Caddyfile somewhere else, and run `caddy start` and `caddy reload` from there.
 -   Run `docker compose up -d` to start the database and micro services
 -   Copy the `.env.example` file to `.env` to set up the environment variables
--   Run `bun -b prod` to install dependencies and begin building
+-   Run `bun prod` to install dependencies and begin building
 -   Run `bun ./build` (not to be confused with `bun build`) to start Mercury Core.
-    -   Several methods can be used to run it as a background process as well.
+
+> [!TIP]  
+> Several methods can be used to run Mercury Core as a background process as well. Daemons, GNU Screen, Docker, and PM2 all work for this purpose.
 
 # Customisation
 
@@ -101,8 +104,9 @@ Client integration remains, by its nature, a difficult part of building any revi
 Corescripts for clients that support it should be placed in a newly created **Corescripts** directory. This includes host, join, studio, visit, and render scripts, as well as any external libraries you wish to use. Beyond this, corescripts are not in the scope of Mercury Core.  
 They should be written in or compiled to Lua, and should aim to be as lightweight and efficient as possible. Minification and removal of extraneous code is recommended to decrease load on both the server and clients, as well as the use of a module system to keep code organised and reduce duplication.
 
-If you're using original corescripts provided with the client instead of custom ones, it's common to encounter issues which may need heavy modification to fix or rewrite into your own custom corescripts. This requires a significant amount of internal client knowledge and maintenance effort, with very sparse documentation available for beginners.  
-If choosing to go down the route of using original corescripts, especially for older clients, we recommend taking a look at the scripts used for original Mercury 2 at [tp-link-extender/2013](https://github.com/tp-link-extender/2013) and wish you the best of luck.
+> [!CAUTION]  
+> If you're using original corescripts provided with the client instead of custom ones, it's common to encounter issues which may need heavy modification to fix or rewrite into your own custom corescripts. This requires a significant amount of internal client knowledge and maintenance effort, with very sparse documentation available for beginners.  
+> If choosing to go down the route of using original corescripts, especially for older clients, we recommend taking a look at the scripts used for original Mercury 2 at [tp-link-extender/2013](https://github.com/tp-link-extender/2013) and wish you the best of luck.
 
 The private key for corescript signing should be placed in **Assets/PrivateKey.pem**, with the corresponding public key patched into the client.
 
@@ -110,7 +114,7 @@ Different client versions may try to access different endpoints on Mercury Core,
 
 # Mercury Core's stack
 
-Mercury's frontent is built with [Svelte](https://svelte.dev), a UI framework that compiles to vanilla JS, and [SvelteKit](https://kit.svelte.dev), a powerful full-stack framework for building transitional apps.
+Mercury's frontend is built with [Svelte](https://svelte.dev), a UI framework that compiles to vanilla JS, and [SvelteKit](https://kit.svelte.dev), a powerful full-stack framework for building transitional apps.
 
 The site uses [Typescript](https://typescripts.org) throughout, a language that adds type extensions ontop of Javascript. Intellisense and type checking are used as well, as they help to prevent bugs and improve understanding of the codebase.
 

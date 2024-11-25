@@ -11,7 +11,7 @@ import {
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
-import { Record, equery, surql } from "$lib/server/surreal"
+import { Record, db } from "$lib/server/surreal"
 import { graphicAsset } from "$lib/server/xmlAsset"
 import { encode } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
@@ -117,18 +117,19 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 		return formError(form, ["asset"], ["Asset failed to upload"])
 	}
 
-	const [id] = await equery<number[]>(surql`
-		(UPDATE ONLY stuff:increment SET asset += 2).asset`)
+	const [id] = await db.query<number[]>(
+		"(UPDATE ONLY stuff:increment SET asset += 2).asset"
+	)
 	const imageAssetId = id - 1 // LOL, concurrency problems Solved!
 
 	const slug = encode(name)
 	const created = await createAsset(user.id, id, name, slug)
 	if (!created.ok) {
-		await equery(surql`UPDATE ONLY stuff:increment SET asset -= 2`)
+		await db.query("UPDATE ONLY stuff:increment SET asset -= 2")
 		return formError(form, ["other"], [created.msg])
 	}
 
-	await equery(createAssetQuery, {
+	await db.query(createAssetQuery, {
 		name,
 		assetType,
 		price,

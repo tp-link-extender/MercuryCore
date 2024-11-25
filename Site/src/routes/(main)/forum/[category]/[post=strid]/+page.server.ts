@@ -4,9 +4,9 @@ import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import { like } from "$lib/server/like"
 import { authorise } from "$lib/server/lucia"
-import { type Replies, recurse } from "$lib/server/nestedReplies"
+import type { Replies } from "$lib/server/nestedReplies"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, type RecordId, equery, surql } from "$lib/server/surreal"
+import { Record, type RecordId, db, incrementId } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
@@ -14,21 +14,13 @@ import { z } from "zod"
 import { actions as categoryActions } from "../+page.server"
 import type { RequestEvent } from "./$types.d.ts"
 import createReplyQuery from "./createReply.surql"
-import forumPostQuery from "./post.surql"
+import postQuery from "./post.surql"
 import updateVisibilityQuery from "./updateVisibility.surql"
 
 const schema = z.object({
 	content: z.string().min(1).max(1000),
 	replyId: z.string().optional(),
 })
-
-const SELECTREPLIES = recurse(
-	// Make sure it's not a reply to another reply
-	`<-replyToPost<-forumReply
-		WHERE !->replyToReply
-		ORDER BY pinned DESC, score DESC`,
-	"<-replyToReply<-forumReply"
-)
 
 type ForumPost = {
 	author: BasicUser
@@ -52,16 +44,17 @@ export async function load({ locals, params }) {
 	exclude("Forum")
 	const { user } = await authorise(locals)
 
-	const postQuery = forumPostQuery.replace("_SELECTREPLIES", SELECTREPLIES)
-	const [[forumPost]] = await equery<ForumPost[][]>(postQuery, {
+	const [[post]] = await db.query<ForumPost[][]>(postQuery, {
 		forumPost: Record("forumPost", params.post),
 		user: Record("user", user.id),
 	})
-	if (!forumPost) error(404, "Not found")
+	if (!post) error(404, "Not found")
+
+	console.log(post.replies[0].replies)
 
 	return {
 		form: await superValidate(zod(schema)),
-		post: forumPost,
+		post,
 	}
 }
 
@@ -77,7 +70,7 @@ async function findReply<T>(
 	if (!id) error(400, "Missing reply id")
 	// Incorrect ids filtering is done with route matchers now
 
-	const [[reply]] = await equery<T[][]>(input, {
+	const [[reply]] = await db.query<T[][]>(input, {
 		forumReply: Record("forumReply", id),
 	})
 	if (!reply) error(404, "Reply not found")
@@ -86,14 +79,14 @@ async function findReply<T>(
 }
 
 const updateVisibility = (visibility: string, text: string, id: string) =>
-	equery(updateVisibilityQuery, {
+	db.query(updateVisibilityQuery, {
 		forumReply: Record("forumReply", id),
 		text,
 		visibility,
 	})
 
 const pinThing = (pinned: boolean, thing: RecordId<string>) =>
-	equery(surql`UPDATE $thing SET pinned = $pinned`, { thing, pinned })
+	db.query("UPDATE $thing SET pinned = $pinned", { thing, pinned })
 
 // wrapping this stuff in arrow functions just to prevent it from maybe returning god knows what to the client from an action
 const pinReply = (pinned: boolean) => async (e: RequestEvent) => {
@@ -133,16 +126,17 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	const replypostId = replyId
 		? Record("forumReply", replyId)
 		: Record("forumPost", params.post)
-	const [[replypost]] = await equery<{ authorId: string }[][]>(
-		surql`
+	const [[replypost]] = await db.query<{ authorId: string }[][]>(
+		`
 			SELECT meta::id(<-created[0]<-user[0].id) AS authorId
-			FROM ${replypostId}  WHERE visibility = "Visible"`
+			FROM $replypostId  WHERE visibility = "Visible"`,
+		{ replypostId }
 	)
 	if (!replypost) error(404, `${replyId ? "Reply" : "Post"} not found`)
 
-	const [newReplyId] = await equery<string[]>(surql`fn::id()`)
+	const newReplyId = await incrementId()
 
-	await equery(createReplyQuery, {
+	await db.query(createReplyQuery, {
 		content: filter(unfiltered),
 		user: Record("user", user.id),
 		forumReply: Record("forumReply", newReplyId),
@@ -151,21 +145,16 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	})
 
 	if (user.id !== replypost.authorId)
-		await equery(
-			surql`
-				RELATE $sender->notification->$receiver CONTENT {
-					type: ${replyId ? "ForumReplyReply" : "ForumPostReply"},
-					time: time::now(),
-					note: $note,
-					relativeId: ${newReplyId},
-					read: false,
-				}`,
+		await db.query(
+			"fn::notify($sender, $receiver, $type, $note, $relativeId)",
 			{
 				sender: Record("user", user.id),
 				receiver: Record("user", replypost.authorId),
+				type: replyId ? "ForumReplyReply" : "ForumPostReply",
 				note: `${user.username} replied to your ${
 					replyId ? "reply" : "post"
 				}: ${unfiltered}`,
+				relativeId: newReplyId,
 			}
 		)
 

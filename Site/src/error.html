@@ -1,62 +1,65 @@
 <!DOCTYPE html>
 <!-- fcuk -->
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<title>%sveltekit.error.message%</title>
 
-		<style>
-			body {
-				font-family: sans-serif;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: center;
-				background: #100f0e;
-				color: #f6f4f3;
-				overflow: hidden;
-				height: 100vh;
+<head>
+	<meta charset="utf-8" />
+	<title>%sveltekit.error.message%</title>
+
+	<style>
+		body {
+			font-family: sans-serif;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			background: #100f0e;
+			color: #f6f4f3;
+			overflow: hidden;
+			height: 100vh;
+		}
+
+		#error {
+			display: flex;
+			align-items: center;
+			max-width: 32rem;
+			margin: 0 1rem;
+		}
+
+		#status {
+			font-weight: 200;
+			font-size: 3rem;
+			line-height: 1;
+			position: relative;
+			top: -0.05rem;
+		}
+
+		#message {
+			border-left: 1px solid #ccc;
+			padding-left: 1rem;
+			margin-left: 1rem;
+			min-height: 2.5rem;
+			display: flex;
+			align-items: center;
+
+			& h1 {
+				font-weight: 400;
+				font-size: 1em;
+				margin: 0;
 			}
+		}
+	</style>
+</head>
 
-			#error {
-				display: flex;
-				align-items: center;
-				max-width: 32rem;
-				margin: 0 1rem;
-			}
-
-			#status {
-				font-weight: 200;
-				font-size: 3rem;
-				line-height: 1;
-				position: relative;
-				top: -0.05rem;
-			}
-
-			#message {
-				border-left: 1px solid #ccc;
-				padding-left: 1rem;
-				margin-left: 1rem;
-				min-height: 2.5rem;
-				display: flex;
-				align-items: center;
-
-				& h1 {
-					font-weight: 400;
-					font-size: 1em;
-					margin: 0;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<div id="error">
-			<span id="status">%sveltekit.status%</span>
-			<div id="message">
-				<h1>%sveltekit.error.message% :(</h1>
-			</div>
+<body>
+	<div id="error">
+		<span id="status">%sveltekit.status%</span>
+		<div id="message">
+			<h1>%sveltekit.error.message% :(</h1>
 		</div>
-		<br />
-		<a href="/">go home?</a>
-	</body>
+	</div>
+	<br>
+	<a href="/">go home?</a>
+</body>
+
 </html>

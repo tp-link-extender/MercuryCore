@@ -21,7 +21,7 @@
 <div class="ctnr max-w-280 pb-6">
 	<h1>Render queue &ndash; Admin</h1>
 	<a href="/admin" class="no-underline">
-		<fa fa-caret-left />
+		<fa fa-caret-left></fa>
 		Back to panel
 	</a>
 </div>
@@ -32,21 +32,21 @@
 			<div class="card light-text p-4">
 				<h2 class="text-xl mb-0">Render Server</h2>
 				<small class="pb-3">
-					is <b class="text-emerald-6">active</b>
+					is <b class="text-emerald-600">active</b>
 				</small>
 
 				<div>
-					<fa fa-image class="text-emerald-6 pr-1" />
+					<fa fa-image class="text-emerald-600 pr-1"></fa>
 					<b>0 renders</b>
 					Completed
 				</div>
 				<div>
-					<fa fa-bars-progress class="text-yellow-5 pr-1" />
+					<fa fa-bars-progress class="text-yellow-500 pr-1"></fa>
 					<b>0 renders</b>
 					Pending
 				</div>
 				<div>
-					<fa fa-image-slash class="text-red-5 pr-1" />
+					<fa fa-image-slash class="text-red-500 pr-1"></fa>
 					<b>0 renders</b>
 					Failed
 				</div>

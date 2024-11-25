@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { browser } from "$app/environment"
 	import { applyAction } from "$app/forms"
 	import { enhance } from "$app/forms"
 	import { invalidateAll } from "$app/navigation"
@@ -13,8 +12,6 @@
 
 	const { user } = data
 
-	let query = data.query
-	let searchedData: typeof data.assets = []
 	let regenerating = false
 
 	const enhanceRegen: import("./$types").SubmitFunction = () => {
@@ -23,25 +20,6 @@
 			if (result.type === "success") await invalidateAll()
 			await applyAction(result)
 			regenerating = false
-		}
-	}
-
-	// Run function whenever query changes
-	async function search() {
-		if (query.trim().length === 0) {
-			searchedData = data.assets
-			return
-		}
-
-		const response = await fetch(`/character/search?q=${query}`)
-		searchedData = (await response.json()).data.assets as typeof data.assets
-	}
-	$: query && browser && search()
-
-	export const snapshot = {
-		capture: () => query,
-		restore: v => {
-			query = v
 		}
 	}
 
@@ -75,11 +53,10 @@
 		RightLeg: "left-24 top-38 h-22 w-10"
 	})
 
-	$: assets = (query && browser ? searchedData : data.assets || []).filter(
-		a =>
-			tabData.currentTab === "Recent"
-				? true
-				: a.type === tabTypes[tabData.currentTab]
+	$: assets = data.assets.filter(a =>
+		tabData.currentTab === "Recent"
+			? true
+			: a.type === tabTypes[tabData.currentTab]
 	)
 </script>
 
@@ -90,11 +67,11 @@
 			<div class="card w-full p-4">
 				<form use:enhance={enhanceRegen} method="POST" action="?/regen">
 					<button class="btn btn-secondary w-full">
-						<fa fa-rotate />
+						<fa fa-rotate></fa>
 						Regenerate
 					</button>
 				</form>
-				<p class="text-red-5">
+				<p class="text-red-500">
 					{form?.msg || ""}
 				</p>
 				<img
@@ -105,8 +82,8 @@
 			</div>
 			<div class="card w-full p-4">
 				Body Colours
-				<div class="mx-auto h-240px w-194px text-center">
-					<div class="parts relative">
+				<div class="flex justify-center pt-4">
+					<div class="parts relative h-60 w-46">
 						{#each Object.keys(bodyParts) as bodyPart}
 							<button
 								popovertarget={bodyPart}
@@ -115,7 +92,9 @@
 								]}"
 								class="btn bodyPart absolute p-0 {styles[
 									bodyPart
-								]}" />
+								]}"
+								aria-label={bodyPart}>
+							</button>
 						{/each}
 					</div>
 				</div>
@@ -123,34 +102,7 @@
 		</div>
 		<div class="col-span-3">
 			<TabNav bind:tabData justify />
-			<form
-				on:submit|preventDefault
-				action="/character?tab={tabData.currentTab}"
-				class="input-group pb-4">
-				<input
-					bind:value={query}
-					type="text"
-					name="q"
-					placeholder="Search for an item"
-					aria-label="Search for an item"
-					aria-describedby="button-addon2" />
-				<input type="hidden" name="tab" value={tabData.currentTab} />
-				<button
-					class="btn btn-secondary"
-					aria-label="Search"
-					id="button-addon2">
-					<fa fa-search />
-				</button>
-			</form>
-			{#if query && assets.length === 0}
-				<h2 class="text-xs pt-12">
-					{#if tabData.currentTab === "Recent"}
-						No recently worn items found with search term {query}
-					{:else}
-						No {tabData.currentTab} found with search term {query}
-					{/if}
-				</h2>
-			{:else}
+			{#if assets.length > 0}
 				<div
 					class="grid xl:grid-cols-6 sm:grid-cols-4 grid-cols-3 gap-4">
 					{#each assets || [] as asset, num}
@@ -162,6 +114,12 @@
 							{enhanceRegen} />
 					{/each}
 				</div>
+			{:else}
+				<h2 class="text-center">
+					No {tabData.currentTab === "Recent"
+						? "recently worn items"
+						: tabData.currentTab} found.
+				</h2>
 			{/if}
 		</div>
 	</div>
@@ -187,7 +145,9 @@
 					class="inline">
 					<button
 						class="btn colour size-10"
-						style="background-color: #{brickToHex[colour]}" />
+						style="background-color: #{brickToHex[colour]}"
+						aria-label={colour.toString()}>
+					</button>
 				</form>
 			{/each}
 		</div>
@@ -211,25 +171,6 @@
 		transition: filter 0.2s ease-out;
 		&:hover {
 			filter: brightness(70%);
-		}
-	}
-
-	.parts {
-		margin: 11px 0px 0px 36px;
-		@media (max-width: 639.9px) {
-			margin: 11px 4px 0px 7px;
-		}
-		@media (min-width: 640px) {
-			margin: 11px 4px 0px 7px;
-		}
-		@media (min-width: 768px) {
-			margin: 11px 4px 0px 9px;
-		}
-		@media (min-width: 1024px) {
-			margin: 11px 4px 0px -8px;
-		}
-		@media (min-width: 1280px) {
-			margin: 11px 0px 0px 7px;
 		}
 	}
 </style>

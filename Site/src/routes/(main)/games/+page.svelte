@@ -14,7 +14,7 @@
 		<div class="flex w-full sm:w-1/2">
 			<h1 class="pr-6">Games</h1>
 			<a href="/games/create" class="btn btn-primary">
-				<fa fa-plus class="pr-2" />
+				<fa fa-plus class="pr-2"></fa>
 				Create
 			</a>
 		</div>
@@ -29,6 +29,7 @@
 			<Pagination totalPages={data.pages} />
 		{/key}
 	{:else}
-		<h2 class="text-center">No games yet. Be the first to create one!</h2>
+		<h2 class="text-center">No games yet.</h2>
+		<h3 class="pt-4 text-center">Be the first to create one!</h3>
 	{/if}
 </div>

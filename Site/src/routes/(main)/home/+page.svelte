@@ -32,7 +32,7 @@
 			</a>
 		</h1>
 		<div
-			class="card rounded-2 p-4 bg-darker overflow-x-hidden <lg:max-h-50vh">
+			class="card bg-darker rounded-2 p-4 <lg:max-h-50vh overflow-x-hidden lg:overflow-y-hidden">
 			<p>
 				Post your status &ndash; your friends and followers can view how
 				you're doing!
@@ -42,7 +42,7 @@
 				{formData}
 				inline
 				nopad
-				submit="<fa fa-paper-plane-top />"
+				submit="<fa fa-paper-plane-top></fa>"
 				working="...">
 				<Input
 					{formData}

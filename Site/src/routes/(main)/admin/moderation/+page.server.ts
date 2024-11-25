@@ -1,11 +1,14 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, equery, findWhere, surql } from "$lib/server/surreal"
+import { Record, db, find, findWhere } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
+import moderateQuery from "./moderate.surql"
+import moderateeQuery from "./moderatee.surql"
+import unbanQuery from "./unban.surql"
 
 const schema = z.object({
 	username: z.string().min(3).max(21),
@@ -20,13 +23,8 @@ export async function load({ locals, url }) {
 	const form = await superValidate(zod(schema))
 
 	const associatedReport = url.searchParams.get("report")
-	if (associatedReport) {
-		const [[report]] = await equery<{ username: string }[][]>(
-			surql`SELECT * FROM ${Record("report", associatedReport)}`
-		)
-		if (!report) error(400, "Invalid report id")
-		return { form }
-	}
+	if (associatedReport && !find("report", associatedReport))
+		error(400, "Invalid report id")
 
 	return { form }
 }
@@ -47,11 +45,9 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 		id: string
 		permissionLevel: number
 	}
-	const [[getModeratee]] = await equery<Moderatee[][]>(
-		surql`
-			SELECT meta::id(id) AS id, permissionLevel
-			FROM user WHERE username = ${username}`
-	)
+	const [[getModeratee]] = await db.query<Moderatee[][]>(moderateeQuery, {
+		username,
+	})
 	if (!getModeratee)
 		return formError(form, ["username"], ["User does not exist"])
 	if (getModeratee.permissionLevel > 2)
@@ -80,7 +76,6 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 				AND active = true`,
 			qParams
 		)
-
 		if (!foundUnban)
 			return formError(
 				form,
@@ -96,7 +91,6 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 				AND type = "AccountDeleted"`,
 			qParams
 		)
-
 		if (foundDeleted)
 			return formError(
 				form,
@@ -104,12 +98,10 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 				["You cannot unban a deleted user"]
 			)
 
-		await equery(
-			surql`
-				UPDATE moderation SET active = false WHERE out = $moderatee;
-				fn::auditLog("Moderation", ${`Unban ${username}`}, $user)`,
-			qParams
-		)
+		await db.query(unbanQuery, {
+			...qParams,
+			note: `Unban ${username}`,
+		})
 
 		return message(form, `${username} has been unbanned`)
 	}
@@ -137,23 +129,13 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 		() => ["AccountDeletion", `Delete ${username}'s account`, "deleted"],
 	][intAction - 1]()
 
-	await equery(
-		surql`
-			RELATE $moderator->moderation->$moderatee CONTENT {
-				note: $reason,
-				type: $moderationAction,
-				time: time::now(),
-				timeEnds: $timeEnds,
-				active: true,
-			};
-			fn::auditLog("Moderation", ${`${note}: ${reason}`}, $user)`,
-		{
-			reason,
-			moderationAction,
-			timeEnds: date || new Date(),
-			...qParams,
-		}
-	)
+	await db.query(moderateQuery, {
+		...qParams,
+		reason,
+		moderationAction,
+		timeEnds: date || new Date(),
+		note: `${note}: ${reason}`,
+	})
 
 	return message(form, `${username} has been ${actioned}`)
 }

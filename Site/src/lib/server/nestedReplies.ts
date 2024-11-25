@@ -1,4 +1,4 @@
-// Functions for selecting nested forum replies or asset comments
+// (previously) Functions for selecting nested forum replies or asset comments
 
 export type Replies = {
 	author: BasicUser
@@ -17,38 +17,3 @@ export type Replies = {
 	score: number
 	visibility: string
 }[]
-
-const SELECTFROM = `
-	SELECT
-		*,
-		(SELECT text, updated FROM $parent.content
-		ORDER BY updated DESC) AS content,
-		meta::id(id) AS id,
-		NONE AS parentReplyId,
-		(SELECT status, username FROM <-created<-user)[0] AS author,
-
-		count(<-likes) - count(<-dislikes) AS score,
-		$user IN <-likes<-user.id AS likes,
-		$user IN <-dislikes<-user.id AS dislikes,
-
-		# again #
-	FROM`
-
-const asReplies = (from: string) => `(${from}) AS replies`
-
-/**
- * Recursively select nested replies or comments in a database query.
- * @param query
- * @param relationName
- * @param commentName
- * @param times
- * @returns
- */
-export function recurse(query: string, query2 = query) {
-	let rep = asReplies(`${SELECTFROM} ${query}`)
-	const q = asReplies(`${SELECTFROM} ${query2}`)
-	// On a comment page, the top comment is already selected
-	for (let i = 0; i < 9; i++) rep = rep.replace("# again #", q)
-
-	return rep.replace("# again #", "[] AS replies")
-}

@@ -1,0 +1,48 @@
+name: Bug report
+description: Report a bug in Mercury Core
+labels:
+    - bug
+
+body:
+    - type: textarea
+      id: bug-description
+      attributes:
+          label: Describe the bug
+          description: A clear and concise description of what the bug is.
+          placeholder: Red, has seven spots, eats aphids
+      validations:
+          required: true
+
+    - type: textarea
+      id: reproduction
+      attributes:
+          label: Reproduction
+          description: Please provide a list of steps to reproduce this bug.
+          placeholder: "1. Step 1"
+      validations:
+          required: true
+
+    - type: textarea
+      id: expected-behaviour
+      attributes:
+          label: Expected behaviour
+          description: A clear and concise description of what you expected to happen.
+          placeholder: Show an appropriate success message and add content to the database
+      validations:
+          required: true
+
+    - type: textarea
+      id: logs
+      attributes:
+          label: Logs
+          description: Please include applicable browser console or server logs around the time this bug occurred.
+          placeholder: "Segmentation fault (core dumped)"
+
+    - type: textarea
+      id: system-info
+      attributes:
+          label: System info
+          description: Please provide any relevant system information that may help us diagnose the issue.
+          placeholder: Bun version, Docker container versions, browser vendor and version, etc
+      validations:
+          required: true

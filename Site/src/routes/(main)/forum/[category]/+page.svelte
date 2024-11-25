@@ -23,7 +23,7 @@
 			<a
 				href="/forum/create?category={data.name}"
 				class="btn btn-primary">
-				<fa fa-file class="pr-2" />
+				<fa fa-file class="pr-2"></fa>
 				Create post
 			</a>
 		</span>
@@ -42,8 +42,7 @@
 			<Pagination totalPages={data.pages} />
 		{/key}
 	{:else}
-		<h2 class="text-center">
-			No posts in this category yet. Be the first to create one!
-		</h2>
+		<h2 class="text-center">No posts in this category yet.</h2>
+		<h3 class="pt-4 text-center">Be the first to write one!</h3>
 	{/if}
 </div>

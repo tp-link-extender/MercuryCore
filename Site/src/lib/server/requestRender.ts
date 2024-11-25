@@ -1,6 +1,8 @@
 import fs from "node:fs"
 import config from "$lib/server/config"
-import { equery, surql } from "$lib/server/surreal"
+import { db } from "$lib/server/surreal"
+import createRenderQuery from "./createRender.surql"
+import renderQuery from "./render.surql"
 
 export type Status = "Pending" | "Rendering" | "Completed" | "Error"
 export type RenderType = "Clothing" | "Avatar" | "Model" | "Mesh"
@@ -20,33 +22,12 @@ export default async function (
 	relativeId: string | number,
 	wait = false
 ) {
-	const [, , render] = await equery<Render[]>(
-		surql`
-			LET $render = (SELECT status, created, id FROM render
-				WHERE status IN ["Pending", "Rendering"]
-					AND type = ${renderType}
-					AND relativeId = ${relativeId})[0];
-			IF $render AND $render.created + 1s < time::now() {
-				UPDATE $render.id SET status = "Error"
-			};
-			# need the updated one
-			SELECT status, created, id FROM $render.id`
-	)
+	const params = { renderType, relativeId }
+	const [, , render] = await db.query<Render[]>(renderQuery, params)
 	if (render && render.status !== "Error") return
 
 	// If the render doesn't exist or if the last one errored, create a new render
-
-	const [, renderId] = await equery<string[]>(
-		surql`
-			LET $render = CREATE render CONTENT {
-				type: ${renderType},
-				status: "Pending",
-				created: time::now(),
-				completed: NONE, # hmm..
-				relativeId: ${relativeId}
-			};
-			meta::id($render[0].id)`
-	)
+	const [, renderId] = await db.query<string[]>(createRenderQuery, params)
 
 	// Tap in rcc
 	const scriptFile = Bun.file(`../Corescripts/render${renderType}.lua`)

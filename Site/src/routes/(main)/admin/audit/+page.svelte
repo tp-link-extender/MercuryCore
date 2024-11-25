@@ -9,10 +9,10 @@
 	let tabData = TabData(data.url, ["Audit logs"], ["fa-list"])
 
 	const colours = Object.freeze({
-		Account: "text-sky-5",
-		Administration: "text-red-5",
-		Moderation: "text-emerald-5",
-		Economy: "text-yellow-5"
+		Account: "text-sky-500",
+		Administration: "text-red-500",
+		Moderation: "text-emerald-500",
+		Economy: "text-yellow-500"
 	})
 </script>
 
@@ -21,7 +21,7 @@
 <div class="ctnr max-w-280 pb-6">
 	<h1>Audit logs &ndash; Admin</h1>
 	<a href="/admin" class="no-underline">
-		<fa fa-caret-left />
+		<fa fa-caret-left></fa>
 		Back to panel
 	</a>
 </div>
