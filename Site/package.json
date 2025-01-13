@@ -31,7 +31,7 @@
 		"@sveltejs/kit": "^2.8.2",
 		"@sveltejs/vite-plugin-svelte": "^4.0.1",
 		"@unocss/core": "0.61.0",
-		"@unocss/extractor-svelte": "0.61.0",
+		"@unocss/extractor-svelte": "65.4.0",
 		"@unocss/preset-tagify": "0.61.0",
 		"@unocss/transformer-directives": "0.61.0",
 		"@unocss/transformer-variant-group": "0.61.0",
