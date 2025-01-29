@@ -10,9 +10,9 @@ import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import type { RequestEvent } from "./$types.d.ts"
+import privateTicketQuery from "./privateTicket.surql"
+import serverTicketQuery from "./serverTicket.surql"
 import settingsQuery from "./settings.surql"
-import privateTicketQuery from "./settings/privateTicket.surql"
-import serverTicketQuery from "./settings/serverTicket.surql"
 import updateSettingsQuery from "./updateSettings.surql"
 
 const viewSchema = z.object({
