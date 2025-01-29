@@ -61,8 +61,8 @@ DEFINE TABLE OVERWRITE user SCHEMAFULL;
 	DEFINE FIELD OVERWRITE status ON user TYPE any; # future ig
 	DEFINE FIELD OVERWRITE theme ON user TYPE number;
 	DEFINE FIELD OVERWRITE username ON user TYPE string;
-DEFINE INDEX OVERWRITE usernameI ON user COLUMNS username UNIQUE;
-DEFINE INDEX OVERWRITE emailI ON user COLUMNS email UNIQUE;
+DEFINE INDEX IF NOT EXISTS usernameI ON user COLUMNS username UNIQUE;
+DEFINE INDEX IF NOT EXISTS emailI ON user COLUMNS email UNIQUE;
 
 DEFINE FUNCTION OVERWRITE fn::auditLog($action: string, $note: string, $user: record) {
 	CREATE auditLog CONTENT {
