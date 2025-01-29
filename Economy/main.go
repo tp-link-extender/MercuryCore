@@ -17,8 +17,10 @@ import (
 	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
+const idchars = "0123456789abcdefghijklmnopqrstuvwxyz"
+
 func randId() (id string) {
-	id, _ = gonanoid.Generate("0123456789abcdefghijklmnopqrstuvwxyz", 15)
+	id, _ = gonanoid.Generate(idchars, 15) // doesn't error at runtime, really
 	return
 }
 
@@ -73,8 +75,7 @@ func toReadable(c currency) string {
 // Since fees are stored as a separate value and are burned, I can't see a reason for them to exist for now
 // UTXOs lmao
 type SentTx struct {
-	To         user
-	From       user
+	To, From   user
 	Amount     currency
 	Link, Note string // Transaction links might be a bit of an ass backwards concept for now but ion care
 	Returns    []asset
@@ -117,17 +118,17 @@ var (
 
 func validateTx(sent SentTx, fee currency) (e error) {
 	if sent.Amount == 0 {
-		e = fmt.Errorf("transaction must have an amount")
+		e = errors.New("transaction must have an amount")
 	} else if sent.From == "" {
-		e = fmt.Errorf("transaction must have a sender")
+		e = errors.New("transaction must have a sender")
 	} else if sent.To == "" {
-		e = fmt.Errorf("transaction must have a recipient")
+		e = errors.New("transaction must have a recipient")
 	} else if sent.From == sent.To {
 		e = fmt.Errorf("circular transaction: %s -> %s", sent.From, sent.To)
 	} else if sent.Note == "" {
-		e = fmt.Errorf("transaction must have a note")
+		e = errors.New("transaction must have a note")
 	} else if sent.Link == "" {
-		e = fmt.Errorf("transaction must have a link")
+		e = errors.New("transaction must have a link")
 	} else if total := sent.Amount + fee; total > balances[sent.From] {
 		e = fmt.Errorf("insufficient balance: balance was %s, at least %s is required", toReadable(balances[sent.From]), toReadable(total))
 	}
@@ -136,26 +137,26 @@ func validateTx(sent SentTx, fee currency) (e error) {
 
 func validateMint(sent SentMint) (e error) {
 	if sent.Amount == 0 {
-		e = fmt.Errorf("mint must have an amount")
+		e = errors.New("mint must have an amount")
 	} else if sent.To == "" {
-		e = fmt.Errorf("mint must have a recipient")
+		e = errors.New("mint must have a recipient")
 	} else if sent.Note == "" {
-		e = fmt.Errorf("mint must have a note")
+		e = errors.New("mint must have a note")
 	}
 	return
 }
 
 func validateBurn(sent SentBurn) (e error) {
 	if sent.Amount == 0 {
-		e = fmt.Errorf("burn must have an amount")
+		e = errors.New("burn must have an amount")
 	} else if sent.From == "" {
-		e = fmt.Errorf("burn must have a sender")
+		e = errors.New("burn must have a sender")
 	} else if sent.Amount > balances[sent.From] {
 		e = fmt.Errorf("insufficient balance: balance was %s, at least %s is required", toReadable(balances[sent.From]), toReadable(sent.Amount))
 	} else if sent.Note == "" {
-		e = fmt.Errorf("burn must have a note")
+		e = errors.New("burn must have a note")
 	} else if sent.Link == "" {
-		e = fmt.Errorf("burn must have a link")
+		e = errors.New("burn must have a link")
 	}
 	return
 }
@@ -190,9 +191,8 @@ func currentFee() float64 {
 
 func handleTxTypes(lines []string, handleTx func(tx Tx), handleMint func(mint Mint), handleBurn func(burn Burn)) {
 	for _, line := range lines {
-		parts := strings.SplitN(line, " ", 2) // split line at first space, with the transaction type being the first part
-
-		switch parts[0] {
+		// split line at first space, with the transaction type being the first part
+		switch parts := strings.SplitN(line, " ", 2); parts[0] {
 		case "Transaction":
 			var tx Tx
 			Assert(json.Unmarshal([]byte(parts[1]), &tx), "Failed to decode transaction from ledger")
@@ -249,52 +249,51 @@ func updateBalances() {
 }
 
 func appendEvent(e any, eType string) error {
-	_, err := file.WriteString(eType + " ") // Lol good luck error handling this
-	if err != nil {
-		println(err.Error())
+	if _, err := file.WriteString(eType + " "); err != nil { // Lol good luck error handling this
+		fmt.Println(err.Error())
 	}
 	return json.NewEncoder(file).Encode(e)
 }
 
-func transact(sent SentTx) error {
+func transact(sent SentTx) (err error) {
 	fee := currency(float64(sent.Amount) * currentFee())
-	if err := validateTx(sent, fee); err != nil {
-		return err
-	} else if err := appendEvent(
+	if err = validateTx(sent, fee); err != nil {
+		return
+	} else if err = appendEvent(
 		Tx{sent, fee, uint64(time.Now().UnixMilli()), randId()},
 		"Transaction",
 	); err != nil {
-		return err
+		return
 	}
 
 	// successfully written
 	balances[sent.From] -= sent.Amount + fee
 	balances[sent.To] += sent.Amount
-	return nil
+	return
 }
 
-func mint(sent SentMint, time uint64) error {
-	if err := validateMint(sent); err != nil {
-		return err
-	} else if err := appendEvent(Mint{sent, time, randId()}, "Mint"); err != nil {
-		return err
+func mint(sent SentMint, time uint64) (err error) {
+	if err = validateMint(sent); err != nil {
+		return
+	} else if err = appendEvent(Mint{sent, time, randId()}, "Mint"); err != nil {
+		return
 	}
 
 	// successfully written
 	balances[sent.To] += sent.Amount
-	return nil
+	return
 }
 
-func burn(sent SentBurn) error {
-	if err := validateBurn(sent); err != nil {
-		return err
-	} else if err := appendEvent(Burn{sent, uint64(time.Now().UnixMilli()), randId()}, "Burn"); err != nil {
-		return err
+func burn(sent SentBurn) (err error) {
+	if err = validateBurn(sent); err != nil {
+		return
+	} else if err = appendEvent(Burn{sent, uint64(time.Now().UnixMilli()), randId()}, "Burn"); err != nil {
+		return
 	}
 
 	// successfully written
 	balances[sent.From] -= sent.Amount
-	return nil
+	return
 }
 
 func stipend(to user) error {
@@ -307,18 +306,18 @@ func stipend(to user) error {
 	return nil
 }
 
-func readTransactions() ([]string, error) {
+func readTransactions() (txs []string, err error) {
 	file, err := os.OpenFile(currentFilepath, os.O_RDONLY, 0o644)
 	if err != nil {
 		fmt.Println(c.InRed("Failed to open ledger:"), err)
-		return []string{}, err
+		return
 	}
 	defer file.Close()
 
 	bytes, err := io.ReadAll(file)
 	if err != nil {
 		fmt.Println(c.InRed("Failed to read transactions from ledger:"), err)
-		return []string{}, err
+		return
 	}
 	return strings.Split(string(bytes), "\n"), nil
 }
@@ -342,24 +341,24 @@ func balanceRoute(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, balances[user])
 }
 
-func readReversed() ([]string, int, error) {
-	lines, err := readTransactions()
-	if err != nil {
-		return lines, 0, err
+func readReversed() (lines []string, ll int, err error) {
+	if lines, err = readTransactions(); err != nil {
+		return
 	}
 
-	for i := range len(lines) / 2 {
-		j := len(lines) - i - 1
+	l := len(lines)
+	for i := range l / 2 {
+		j := l - i - 1
 		lines[i], lines[j] = lines[j], lines[i]
 	}
 
-	return lines[1:], len(lines) - 1, nil
+	return lines[1:], l - 1, nil
 }
 
 func enumerateTransactions(validate func(tx map[string]any) bool) (transactions []map[string]any, err error) {
 	lines, linesLen, err := readReversed()
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	for _, line := range lines[:min(100, linesLen)] { // Get the last 100 transactions
@@ -367,7 +366,7 @@ func enumerateTransactions(validate func(tx map[string]any) bool) (transactions 
 
 		var tx any
 		if err = json.Unmarshal([]byte(parts[1]), &tx); err != nil {
-			return nil, err
+			return
 		}
 
 		casted := tx.(map[string]any)
@@ -468,27 +467,27 @@ func main() {
 		fmt.Println(c.InPurple("Running in Docker!"))
 		currentFilepath = filepathDockerised
 	}
-	file, err = os.OpenFile(currentFilepath, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0o644)
-	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			fmt.Println(c.InPurple("Economy data folder not found, creating..."))
-			err = os.MkdirAll(folderpath, 0o644)
-			Assert(err, "Failed to create economy data folder")
-			file, err = os.Create(currentFilepath)
-			Assert(err, "Failed to create ledger")
-		} else {
+
+	if file, err = os.OpenFile(currentFilepath, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0o644); err != nil {
+		if !errors.Is(err, os.ErrNotExist) {
 			Assert(err, "Failed to open ledger")
 		}
+
+		fmt.Println(c.InPurple("Economy data folder not found, creating..."))
+		err = os.MkdirAll(folderpath, 0o644)
+		Assert(err, "Failed to create economy data folder")
+		file, err = os.Create(currentFilepath)
+		Assert(err, "Failed to create ledger")
 	}
 	defer file.Close()
 	updateBalances()
 
-	println("User count    ", len(balances))
-	println("Economy size  ", toReadable(economySize()))
-	println("CCU           ", toReadable(currency(CCU())))
-	println("TCU           ", toReadable(currency(TCU)))
-	println("Fee percentage", int(currentFee()*100))
-	println("Stipend size  ", toReadable(currentStipend()))
+	fmt.Println("User count    ", len(balances))
+	fmt.Println("Economy size  ", toReadable(economySize()))
+	fmt.Println("CCU           ", toReadable(currency(CCU())))
+	fmt.Println("TCU           ", toReadable(currency(TCU)))
+	fmt.Println("Fee percentage", int(currentFee()*100))
+	fmt.Println("Stipend size  ", toReadable(currentStipend()))
 
 	http.HandleFunc("GET /currentFee", currentFeeRoute)
 	http.HandleFunc("GET /currentStipend", currentStipendRoute)
@@ -500,7 +499,6 @@ func main() {
 	http.HandleFunc("POST /burn", burnRoute)
 	http.HandleFunc("POST /stipend/{id}", stipendRoute)
 
-	fmt.Println(c.InGreen("~ Economy service is up on port 2009 ~"))
-	err = http.ListenAndServe(":2009", nil) // 03/Jan/2009 Chancellor on brink of second bailout for banks
-	Assert(err, "Failed to start server")
+	fmt.Println(c.InGreen("~ Economy service is up on port 2009 ~")) // 03/Jan/2009 Chancellor on brink of second bailout for banks
+	Assert(http.ListenAndServe(":2009", nil), "Failed to start server")
 }
