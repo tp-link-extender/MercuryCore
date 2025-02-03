@@ -4,8 +4,8 @@ import { db } from "$lib/server/surreal"
 import createRenderQuery from "./createRender.surql"
 import renderQuery from "./render.surql"
 
-export type Status = "Pending" | "Rendering" | "Completed" | "Error"
 export type RenderType = "Clothing" | "Avatar" | "Model" | "Mesh"
+export type Status = "Pending" | "Rendering" | "Completed" | "Error"
 
 type Render = {
 	status: Status
@@ -30,13 +30,6 @@ export default async function (
 	const [, renderId] = await db.query<string[]>(createRenderQuery, params)
 
 	// Tap in rcc
-	const scriptFile = Bun.file(`../Corescripts/render${renderType}.lua`)
-	const script = (await scriptFile.text())
-		.replaceAll("_BASE_URL", config.Domain)
-		.replaceAll("_THUMBNAIL_KEY", process.env.RCC_KEY)
-		.replaceAll("_RENDER_TYPE", renderType)
-		.replaceAll("_ASSET_ID", relativeId.toString())
-
 	const path =
 		renderType === "Avatar"
 			? `../data/avatars/${relativeId}.png`
@@ -58,6 +51,13 @@ export default async function (
 		})
 
 	// Send the script to the RCCService proxy
+	const scriptFile = Bun.file(`../Corescripts/render${renderType}.lua`)
+	const script = (await scriptFile.text())
+		.replaceAll("_BASE_URL", config.Domain)
+		.replaceAll("_THUMBNAIL_KEY", process.env.RCC_KEY)
+		.replaceAll("_RENDER_TYPE", renderType)
+		.replaceAll("_ASSET_ID", relativeId.toString())
+
 	await Promise.all([
 		waiter,
 		// Uhh carrot just got the

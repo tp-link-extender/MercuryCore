@@ -25,10 +25,10 @@ type Asset = {
 
 export async function load({ locals }) {
 	const { user } = await authorise(locals, 3)
+
 	const [assets] = await db.query<Asset[][]>(assetsQuery, {
 		user: Record("user", user.id),
 	})
-
 	return { assets }
 }
 

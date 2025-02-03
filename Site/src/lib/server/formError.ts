@@ -12,7 +12,7 @@ import type { SuperValidated } from "sveltekit-superforms"
  * @example
  * return formError(form, ["password"], ["Username or password is incorrect"])
  */
-export default function (
+export default (
 	form: SuperValidated<
 		{ [k: string]: unknown },
 		unknown,
@@ -20,7 +20,7 @@ export default function (
 	>,
 	fields?: string[],
 	messages?: string[]
-) {
+) => {
 	form.valid = false
 	if (fields && messages && fields.length > 0 && messages.length > 0)
 		// add field and message to the errors object

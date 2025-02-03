@@ -8,6 +8,17 @@ const ratelimitTimewindow = new Map<string, number>()
 const ratelimitRequests = new Map<string, number>()
 const existingTimeouts = new Map<string, Timer>()
 
+type Form = SuperValidated<
+	{ [k: string]: unknown },
+	unknown,
+	{ [k: string]: unknown }
+> | null
+
+const limit = (form: Form) =>
+	form
+		? message(form, "Too many requests", { status: 429 })
+		: fail(429, { msg: "Too many requests" })
+
 /** Allows for a function to be ratelimited by a category, and returns a 429 failure if too many requests are sent.
  * @param form The superForm object sent by the client. Can be null, in which case a fail object is returned.
  * @param category The category to ratelimit by.
@@ -19,17 +30,13 @@ const existingTimeouts = new Map<string, Timer>()
  *	const limit = ratelimit(form, "statusPost", getClientAddress, 30)
  *	if (limit) return limit
  */
-export default function (
-	form: SuperValidated<
-		{ [k: string]: unknown },
-		unknown,
-		{ [k: string]: unknown }
-	> | null,
+export default (
+	form: Form,
 	category: string,
 	getClientAddress: () => string,
 	timeWindow: number,
 	maxRequests = 1
-) {
+) => {
 	let id: string
 	try {
 		id = getClientAddress() + category
@@ -41,22 +48,16 @@ export default function (
 	}
 	const currentTimewindow = ratelimitTimewindow.get(id) || Date.now()
 
-	const limit = () =>
-		form
-			? message(form, "Too many requests", { status: 429 })
-			: fail(429, { msg: "Too many requests" })
-
 	if (currentTimewindow > Date.now() + timeWindow * 1000) {
 		console.log("Ratelimited based on time window!")
-		return limit()
+		return limit(form)
 	}
 
 	const currentRequests = (ratelimitRequests.get(id) || 0) + 1
-
 	if (currentRequests > maxRequests) {
 		ratelimitTimewindow.set(id, currentTimewindow)
 		console.log("Ratelimited based on requests!")
-		return limit()
+		return limit(form)
 	}
 
 	clearTimeout(existingTimeouts.get(id))

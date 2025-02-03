@@ -38,7 +38,7 @@ type AssetData = {
 	visibility: string
 }
 
-export const load = async ({ locals }) => {
+export async function load({ locals }) {
 	const { user } = await authorise(locals)
 
 	const [assets] = await db.query<Asset[][]>(assetsQuery, {

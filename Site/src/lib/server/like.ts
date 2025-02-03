@@ -71,32 +71,32 @@ const queryNone: QueryFunction<void> = async (userId, thing, queryString) => {
 // likeLikes returns the like and dislike count
 // likeScore returns the score (likes - dislikes)
 // likeNone returns nothing
-export const likeLikes = async (userId: string, thing: RecordId<string>) =>
+const likeLikes = async (userId: string, thing: RecordId<string>) =>
 	queryLikes(userId, thing, likeQuery)
-export const likeScore = async (userId: string, thing: RecordId<string>) =>
+const likeScore = async (userId: string, thing: RecordId<string>) =>
 	queryScore(userId, thing, likeQuery)
-export const likeNone = async (userId: string, thing: RecordId<string>) =>
+const likeNone = async (userId: string, thing: RecordId<string>) =>
 	queryNone(userId, thing, likeQuery)
 
-export const unlikeLikes = async (userId: string, thing: RecordId<string>) =>
+const unlikeLikes = async (userId: string, thing: RecordId<string>) =>
 	queryLikes(userId, thing, unlikeQuery)
-export const unlikeScore = async (userId: string, thing: RecordId<string>) =>
+const unlikeScore = async (userId: string, thing: RecordId<string>) =>
 	queryScore(userId, thing, unlikeQuery)
-export const unlikeNone = async (userId: string, thing: RecordId<string>) =>
+const unlikeNone = async (userId: string, thing: RecordId<string>) =>
 	queryNone(userId, thing, unlikeQuery)
 
-export const dislikeLikes = async (userId: string, thing: RecordId<string>) =>
+const dislikeLikes = async (userId: string, thing: RecordId<string>) =>
 	queryLikes(userId, thing, dislikeQuery)
-export const dislikeScore = async (userId: string, thing: RecordId<string>) =>
+const dislikeScore = async (userId: string, thing: RecordId<string>) =>
 	queryScore(userId, thing, dislikeQuery)
-export const dislikeNone = async (userId: string, thing: RecordId<string>) =>
+const dislikeNone = async (userId: string, thing: RecordId<string>) =>
 	queryNone(userId, thing, dislikeQuery)
 
-export const undislikeLikes = async (userId: string, thing: RecordId<string>) =>
+const undislikeLikes = async (userId: string, thing: RecordId<string>) =>
 	queryLikes(userId, thing, undislikeQuery)
-export const undislikeScore = async (userId: string, thing: RecordId<string>) =>
+const undislikeScore = async (userId: string, thing: RecordId<string>) =>
 	queryScore(userId, thing, undislikeQuery)
-export const undislikeNone = async (userId: string, thing: RecordId<string>) =>
+const undislikeNone = async (userId: string, thing: RecordId<string>) =>
 	queryNone(userId, thing, undislikeQuery)
 
 // smells like legacy
@@ -110,12 +110,6 @@ export {
 export type LikeActions = "like" | "unlike" | "dislike" | "undislike"
 
 // better than like switch
-export const likeActions = Object.freeze({
-	like: likeNone,
-	unlike: unlikeNone,
-	dislike: dislikeNone,
-	undislike: undislikeNone,
-})
 export const likeScoreActions = Object.freeze({
 	like: likeScore,
 	unlike: unlikeScore,

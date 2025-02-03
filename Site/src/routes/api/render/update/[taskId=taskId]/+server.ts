@@ -1,7 +1,7 @@
 import { Record, db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
-import completeQuery from "./completeQuery.surql"
-import renderQuery from "./renderQuery.surql"
+import completeQuery from "./complete.surql"
+import renderQuery from "./render.surql"
 
 type Render = {
 	type: "Clothing" | "Avatar"

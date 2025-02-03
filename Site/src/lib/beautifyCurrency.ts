@@ -1,6 +1,6 @@
 const zeros = /0+$/
 
-export default function (balance: number) {
+export default (balance: number) => {
 	const beforePoint = Math.floor(balance / 1e6).toString()
 	const afterPoint = (balance % 1e6)
 		.toFixed(0)
@@ -8,5 +8,6 @@ export default function (balance: number) {
 		.replace(zeros, "")
 	const zerosBefore = "0".repeat(Math.max(6 - beforePoint.length, 0))
 	const zerosAfter = "0".repeat(Math.max(6 - afterPoint.length, 0))
+
 	return [zerosBefore, beforePoint, afterPoint, zerosAfter]
 }

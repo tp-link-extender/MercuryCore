@@ -48,7 +48,8 @@ export async function GET({ url }) {
 			? "Enum.MembershipType.BuildersClub"
 			: "Enum.MembershipType.None"
 
-	const file = (await Bun.file("../Corescripts/join.lua").text())
+	const scriptFile = Bun.file("../Corescripts/join.lua")
+	const script = (await scriptFile.text())
 		.replaceAll("_PLACE_ID", placeId.toString())
 		.replaceAll("_SERVER_ADDRESS", gameSession.place.serverIP)
 		.replaceAll("_SERVER_PORT", gameSession.place.serverPort.toString())
@@ -59,5 +60,5 @@ export async function GET({ url }) {
 		.replaceAll("_CHAR_APPEARANCE", charApp)
 		.replaceAll("_PING_URL", pingUrl)
 
-	return new Response(await SignData(file))
+	return new Response(await SignData(script))
 }
