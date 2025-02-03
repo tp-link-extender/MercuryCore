@@ -2,10 +2,10 @@
 
 import { type RecordId, db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
-import followersQuery from "./followersQuery.surql"
-import followingQuery from "./followingQuery.surql"
-import friendsQuery from "./friendsQuery.surql"
-import userQuery from "./userQuery.surql"
+import followersQuery from "./followers.surql"
+import followingQuery from "./following.surql"
+import friendsQuery from "./friends.surql"
+import userQuery from "./user.surql"
 
 // "$id->friends->user OR $id<-friends<-user" doesn't work
 // "$id<->friends<->user" shows yourself in the list (twice)
