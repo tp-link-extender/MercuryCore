@@ -63,10 +63,9 @@ async function findReply<T>(
 	permissionLevel?: number,
 	input = "SELECT 1 FROM $forumReply"
 ) {
-	const { locals, url } = e
-	const { user } = await authorise(locals, permissionLevel)
+	const { user } = await authorise(e.locals, permissionLevel)
 
-	const id = url.searchParams.get("id")
+	const id = e.url.searchParams.get("id")
 	if (!id) error(400, "Missing reply id")
 	// Incorrect ids filtering is done with route matchers now
 
@@ -95,10 +94,9 @@ const pinReply = (pinned: boolean) => async (e: RequestEvent) => {
 }
 
 const pinPost = (pinned: boolean) => async (e: RequestEvent) => {
-	const { locals, url } = e
-	await authorise(locals, 4)
+	await authorise(e.locals, 4)
 
-	const id = url.searchParams.get("id")
+	const id = e.url.searchParams.get("id")
 	if (!id) error(400, "Missing post id")
 	if (!idRegex.test(id)) error(400, "Invalid post id")
 

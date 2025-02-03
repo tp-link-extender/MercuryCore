@@ -30,6 +30,7 @@ const pathnameColours = Object.freeze({
 function pathnameColour(pathname: string) {
 	for (const [prefix, colour] of Object.entries(pathnameColours))
 		if (pathname.startsWith(`/${prefix}`)) return colour(pathname)
+
 	return pathname
 }
 
@@ -88,6 +89,7 @@ export async function handle(e) {
 	if (!sessionId) {
 		event.locals.session = null
 		event.locals.user = null
+
 		return await finish(e)
 	}
 
@@ -119,6 +121,7 @@ export async function handle(e) {
 		redirect(302, "/moderation")
 
 	await stipend(user.id)
+
 	return await finish(e)
 }
 

@@ -30,13 +30,13 @@ const limit = (form: Form) =>
  *	const limit = ratelimit(form, "statusPost", getClientAddress, 30)
  *	if (limit) return limit
  */
-export default function (
+export default (
 	form: Form,
 	category: string,
 	getClientAddress: () => string,
 	timeWindow: number,
 	maxRequests = 1
-) {
+) => {
 	let id: string
 	try {
 		id = getClientAddress() + category

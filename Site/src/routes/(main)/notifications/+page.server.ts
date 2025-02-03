@@ -4,8 +4,9 @@ import { error } from "@sveltejs/kit"
 import readQuery from "./read.surql"
 import readAllQuery from "./readAll.surql"
 
-export const load = async ({ locals }) => {
+export async function load({ locals }) {
 	const { user } = await authorise(locals)
+
 	await db.query(readAllQuery, {
 		user: Record("user", user.id),
 	})

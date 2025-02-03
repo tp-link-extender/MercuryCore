@@ -65,12 +65,14 @@ export async function load({ locals, params }) {
 		user: Record("user", user.id),
 	})
 	if (!userExists) error(404, "Not found")
+
 	return userExists
 }
 
 async function getData({ params }: RequestEvent) {
 	const [[user2]] = await db.query<{ id: string }[][]>(findUserQuery, params)
 	if (!user2) error(404, "User not found")
+
 	return { user2 }
 }
 
@@ -94,8 +96,7 @@ const acceptExisting: ActionFunction = (params, user) =>
 	)
 
 async function getInteractData(e: RequestEvent) {
-	const { request, locals } = e
-	const { user } = await authorise(locals)
+	const { user } = await authorise(e.locals)
 	const { user2 } = await getData(e)
 
 	if (user.id === user2.id) error(400, "You can't friend/follow yourself")
@@ -106,21 +107,20 @@ async function getInteractData(e: RequestEvent) {
 			user: Record("user", user.id),
 			user2: Record("user", user2.id),
 		},
-		data: await formData(request),
+		data: await formData(e.request),
 	}
 }
 
 async function rerender(e: RequestEvent) {
-	const { locals, params } = e
-	await authorise(locals, 5)
+	await authorise(e.locals, 5)
 
 	const { user2 } = await getData(e)
 
 	try {
 		await requestRender("Avatar", user2.id, true)
 		return {
-			avatarBody: `/api/avatar/${params.username}-body?r=${Math.random()}`,
-			avatar: `/api/avatar/${params.username}?r=${Math.random()}`,
+			avatarBody: `/api/avatar/${e.params.username}-body?r=${Math.random()}`,
+			avatar: `/api/avatar/${e.params.username}?r=${Math.random()}`,
 		}
 	} catch (e) {
 		console.error(e)

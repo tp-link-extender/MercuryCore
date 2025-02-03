@@ -9,7 +9,7 @@ export type Asset = {
 	type: number
 }
 
-export const load = async ({ url }) => {
+export async function load({ url }) {
 	const { page, checkPages } = pageQuery(url)
 
 	const [assets, pages] = await db.query<[Asset[], number]>(catalogQuery, {
