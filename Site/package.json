@@ -31,7 +31,7 @@
 		"@sveltejs/adapter-node": "^5.2.12",
 		"@sveltejs/kit": "^2.16.1",
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",
-		"@unocss/core": "^65.4.3",
+		"@unocss/core": "^66.0.0",
 		"@unocss/extractor-svelte": "^65.4.3",
 		"@unocss/preset-tagify": "^65.4.3",
 		"@unocss/transformer-directives": "^65.4.3",
