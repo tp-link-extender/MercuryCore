@@ -34,7 +34,7 @@
 		"@unocss/core": "^66.0.0",
 		"@unocss/extractor-svelte": "^66.0.0",
 		"@unocss/preset-tagify": "^66.0.0",
-		"@unocss/transformer-directives": "^65.4.3",
+		"@unocss/transformer-directives": "^66.0.0",
 		"@unocss/transformer-variant-group": "^66.0.0",
 		"codemirror": "^6.0.1",
 		"d3-interpolate": "^3.0.1",
