@@ -41,7 +41,7 @@
 		"lucia": "^3.2.2",
 		"nprogress": "^0.2.0",
 		"picocolors": "^1.1.1",
-		"sharp": "^0.33.5",
+		"sharp": "^0.34.0",
 		"surrealdb": "^1.1.0",
 		"svelte": "^5.19.5",
 		"sveltekit-superforms": "^2.23.1",
