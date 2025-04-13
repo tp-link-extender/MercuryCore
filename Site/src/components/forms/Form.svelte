@@ -1,26 +1,38 @@
 <script lang="ts">
-	import { page } from "$app/stores"
+	import { page } from "$app/state"
+	import type { Snippet } from "svelte"
+	import type { HTMLFormAttributes } from "svelte/elements"
 
-	export let working = "Working..."
-	export let submit = "Submit"
+	const {
+		working = "Working...",
+		submit = "Submit",
+		inline = false,
+		nopad = false, // Don't pad the icon on the submit button
+		method = "POST",
+		formData,
+		children,
+		...rest
+	}: {
+		working?: string
+		submit?: string
+		inline?: boolean
+		nopad?: boolean // Don't pad the icon on the submit button
+		method?: HTMLFormAttributes["method"]
+		formData: import("sveltekit-superforms").SuperForm<any>
+		children: Snippet
+	} = $props()
 
-	export let inline = false
-	export let nopad = false // Don't pad the icon on the submit button
-
-	export let method = "POST"
-
-	export let formData: import("sveltekit-superforms").SuperForm<any> // boooo but nothing else works
 	const { errors, message, enhance: enh, delayed } = formData
 
 	// use:enh may not be used on forms that aren't method === "POST"
 	const use = method === "POST" ? enh : () => {}
 
-	$: other = $errors.other || ""
+	let other = $derived($errors.other || "")
 </script>
 
-<form use:use {method} {...$$restProps}>
+<form use:use {method} {...rest}>
 	<fieldset class={inline ? "input-group" : "pb-2"}>
-		<slot />
+		{@render children()}
 		{#if submit}
 			<button class="btn btn-primary h-full" class:nopad>
 				{@html /* ecks ess ess moment */ $delayed ? working : submit}
@@ -36,9 +48,11 @@
 
 {#if $message}
 	<p
-		class={inline ? "mb-0" : ""}
-		class:text-emerald-600={$page.status === 200}
-		class:text-red-500={$page.status >= 400}>
+		class={{
+			"mb-0": inline,
+			"text-emerald-600": page.status === 200,
+			"text-red-500": page.status >= 400
+		}}>
 		{$message}
 	</p>
 {/if}

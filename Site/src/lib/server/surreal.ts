@@ -9,7 +9,7 @@ export const db = new Surreal()
 
 export const version = db.version.bind(db)
 
-const realUrl = new URL("ws://localhost:8000")
+const realUrl = new URL("ws://localhost:8000") // must be ws:// to prevent token expiration, http:// will expire after 1 hour by default
 
 async function reconnect() {
 	try {

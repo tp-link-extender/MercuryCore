@@ -60,9 +60,7 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 		error(400, "Invalid category")
 
 	const unfiltered = form.data.content?.trim()
-	console.log(unfiltered)
 	const newPostId = await incrementId()
-	console.log(newPostId)
 
 	await db.query(createQuery, {
 		user: Record("user", user.id),
