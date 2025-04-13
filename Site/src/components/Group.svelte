@@ -3,12 +3,18 @@
 
 	import fade from "$lib/fade"
 
-	export let group: {
-		name: string
-		memberCount: number
-	}
-	export let num: number
-	export let total: number
+	const {
+		group,
+		num,
+		total
+	}: {
+		group: {
+			name: string
+			memberCount: number
+		}
+		num: number
+		total: number
+	} = $props()
 </script>
 
 <a
