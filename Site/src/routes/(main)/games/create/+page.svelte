@@ -6,7 +6,7 @@
 	import beautifyCurrency from "$lib/beautifyCurrency"
 	import { superForm } from "sveltekit-superforms/client"
 
-	export let data
+	let { data } = $props();
 
 	const formData = superForm(data.form)
 	export const snapshot = formData

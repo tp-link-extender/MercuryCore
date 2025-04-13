@@ -7,12 +7,11 @@
 	import { brickColours, brickToHex } from "$lib/brickColours"
 	import AvatarItem from "./AvatarItem.svelte"
 
-	export let data
-	export let form
+	let { data, form } = $props();
 
 	const { user } = data
 
-	let regenerating = false
+	let regenerating = $state(false)
 
 	const enhanceRegen: import("./$types").SubmitFunction = () => {
 		regenerating = true
@@ -33,17 +32,17 @@
 		Pants: 12,
 		Gear: 19
 	})
-	let tabData = TabData(data.url, Object.keys(tabTypes))
+	let tabData = $state(TabData(data.url, Object.keys(tabTypes)))
 
-	const bodyParts: { [k: string]: number } = {
+	const bodyParts: { [k: string]: number } = $state({
 		Head: user.bodyColours.Head,
 		Torso: user.bodyColours.Torso,
 		LeftArm: user.bodyColours.LeftArm,
 		RightArm: user.bodyColours.RightArm,
 		LeftLeg: user.bodyColours.LeftLeg,
 		RightLeg: user.bodyColours.RightLeg
-	}
-	const bodyPartPopovers: { [k: string]: HTMLDivElement } = {}
+	})
+	const bodyPartPopovers: { [k: string]: HTMLDivElement } = $state({})
 	const styles: { [k: string]: string } = Object.freeze({
 		Head: "left-17 size-12",
 		Torso: "left-12 top-14 size-22",
@@ -53,11 +52,11 @@
 		RightLeg: "left-24 top-38 h-22 w-10"
 	})
 
-	$: assets = data.assets.filter(a =>
+	let assets = $derived(data.assets.filter(a =>
 		tabData.currentTab === "Recent"
 			? true
 			: a.type === tabTypes[tabData.currentTab]
-	)
+	))
 </script>
 
 <div class="ctnr light-text">
@@ -138,7 +137,7 @@
 					use:enhance={enhanceRegen}
 					method="POST"
 					action="?/paint&p={bodyPart}&c={colour}"
-					on:submit={() => {
+					onsubmit={() => {
 						bodyParts[bodyPart] = colour
 						bodyPartPopovers[bodyPart].hidePopover()
 					}}

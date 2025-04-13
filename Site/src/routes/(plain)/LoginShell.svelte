@@ -1,8 +1,19 @@
 <script lang="ts">
-	export let name: string
-	export let tagline: string
-	export let descriptions: { [k: string]: string }
-	export let pad = false
+	interface Props {
+		name: string;
+		tagline: string;
+		descriptions: { [k: string]: string };
+		pad?: boolean;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		name,
+		tagline,
+		descriptions,
+		pad = false,
+		children
+	}: Props = $props();
 </script>
 
 <div class="light-text flex <lg:flex-col min-h-screen h-full overflow-auto">
@@ -35,7 +46,7 @@
 			? 'lg:pt-20vh'
 			: 'lg:pt-12vh'} z-1">
 		<div class="max-w-120 mx-auto">
-			<slot />
+			{@render children?.()}
 		</div>
 	</div>
 </div>

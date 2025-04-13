@@ -8,7 +8,7 @@
 	import { superForm } from "sveltekit-superforms/client"
 	import Status from "./Status.svelte"
 
-	export let data
+	let { data } = $props();
 
 	const { user } = data
 	const formData = superForm(data.form)

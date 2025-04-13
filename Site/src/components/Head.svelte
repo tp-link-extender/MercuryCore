@@ -1,8 +1,17 @@
 <script lang="ts">
-	export let name: string
-	export let title = name
-	export let description = ""
-	export let ogImage = ""
+	interface Props {
+		name: string;
+		title?: any;
+		description?: string;
+		ogImage?: string;
+	}
+
+	let {
+		name,
+		title = name,
+		description = "",
+		ogImage = ""
+	}: Props = $props();
 </script>
 
 <svelte:head>

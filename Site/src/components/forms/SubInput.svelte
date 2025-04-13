@@ -1,24 +1,30 @@
 <script lang="ts">
 	import type { HTMLInputTypeAttribute } from "svelte/elements"
 
-	// Imported into Input.svelte to prevent code duplication
-	export let name: string
-	export let type: HTMLInputTypeAttribute
+	
 
-	export let formData: import("sveltekit-superforms").SuperForm<any>
+	interface Props {
+		// Imported into Input.svelte to prevent code duplication
+		name: string;
+		type: HTMLInputTypeAttribute;
+		formData: import("sveltekit-superforms").SuperForm<any>;
+		[key: string]: any
+	}
+
+	let { name, type, formData, ...rest }: Props = $props();
 	const { form, errors, constraints } = formData
 </script>
 
 {#if type === "checkbox"}
 	<input
-		{...$$restProps}
+		{...rest}
 		bind:checked={$form[name]}
 		{name}
 		id={name}
 		type="checkbox" />
 {:else}
 	<input
-		{...$$restProps}
+		{...rest}
 		bind:value={$form[name]}
 		{...$constraints[name]}
 		{name}

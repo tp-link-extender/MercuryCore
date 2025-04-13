@@ -6,7 +6,11 @@
 	import Head from "$components/Head.svelte"
 	import Navbar from "$components/Navbar.svelte"
 
-	export let data: import("./$types").LayoutData
+	interface Props {
+		data: import("./$types").LayoutData;
+	}
+
+	let { data }: Props = $props();
 
 	const status = $page.status
 	function errors() {

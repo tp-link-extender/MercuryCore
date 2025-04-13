@@ -5,7 +5,7 @@
 	import { VERSION } from "@sveltejs/kit"
 	import Waves from "./Waves.svelte"
 
-	export let data
+	let { data } = $props();
 
 	const [, c1, c2] = data.stipend.ok
 		? beautifyCurrency(data.stipend.value)

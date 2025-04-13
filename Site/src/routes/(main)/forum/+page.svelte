@@ -3,7 +3,7 @@
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
 
-	export let data
+	let { data } = $props();
 
 	const { user } = data
 </script>

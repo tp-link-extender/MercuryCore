@@ -1,7 +1,11 @@
 <script lang="ts">
 	import { page } from "$app/stores"
 
-	export let totalPages: number
+	interface Props {
+		totalPages: number;
+	}
+
+	let { totalPages }: Props = $props();
 
 	function getNewUrl(p: number) {
 		const url = new URL($page.url) // clone?

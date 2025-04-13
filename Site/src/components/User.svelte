@@ -16,26 +16,41 @@
 		accent3: "accent2"
 	})
 
-	export let user: BasicUser
-	export let full = false
-	export let thin = false
-	export let image = false
-	export let bottom = false
-	export let rerender: {
+	interface Props {
+		user: BasicUser;
+		full?: boolean;
+		thin?: boolean;
+		image?: boolean;
+		bottom?: boolean;
+		rerender?: {
 		form?: {
 			avatar?: string
 		} | null
 		regenerating?: boolean
-	} | null = null // Used on profile page for rerender button
-	export let size = "2rem"
-	export let bg: keyof typeof transitionBackgrounds = "accent2"
+	} | null; // Used on profile page for rerender button
+		size?: string;
+		bg?: keyof typeof transitionBackgrounds;
+		[key: string]: any
+	}
+
+	let {
+		user,
+		full = false,
+		thin = false,
+		image = false,
+		bottom = false,
+		rerender = null,
+		size = "2rem",
+		bg = "accent2",
+		...rest
+	}: Props = $props();
 
 	const style = `width: ${size}; max-width: ${size}; height: ${size}; min-height: ${size}`
 	const style2 = `${style}; background: var(--${bg})`
 </script>
 
 {#if image}
-	<div class="flex {$$restProps.class}" class:items-center={full}>
+	<div class="flex {rest.class}" class:items-center={full}>
 		<div class="relative">
 			<!-- css hell -->
 			<div
@@ -69,7 +84,7 @@
 {:else}
 	<a
 		href="/user/{user.username}"
-		class="flex no-underline {$$restProps.class}"
+		class="flex no-underline {rest.class}"
 		class:flex-col={bottom}
 		class:items-center={full}>
 		<div class="relative">

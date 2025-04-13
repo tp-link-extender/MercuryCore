@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 	import { invalidate } from "$app/navigation"
-	import { page } from "$app/stores"
+	import { page } from "$app/state"
 	import Head from "$components/Head.svelte"
 	import SidebarShell from "$components/SidebarShell.svelte"
 	import Tab from "$components/Tab.svelte"
@@ -12,14 +12,14 @@
 	import Textarea from "$components/forms/Textarea.svelte"
 	import { superForm } from "sveltekit-superforms/client"
 
-	export let data
+	let { data } = $props();
 
-	let tabData = TabData(
+	let tabData = $state(TabData(
 		data.url,
 		["Create Banner", "Banner List"],
 		["fa-plus", "fa-list"]
-	)
-	let textLightForms: { [k: string]: HTMLFormElement } = {}
+	))
+	let textLightForms: { [k: string]: HTMLFormElement } = $state({})
 
 	const formData = superForm(data.form)
 	export const snapshot = formData
@@ -125,7 +125,7 @@
 								action="?/updateTextLight&id={banner.id}"
 								class="px-2">
 								<input
-									on:change={async () => {
+									onchange={async () => {
 										textLightForms[
 											banner.id
 										].requestSubmit()
@@ -148,8 +148,8 @@
 			</tbody>
 		</table>
 		<p
-			class:text-emerald-600={$page.status === 200}
-			class:text-red-500={$page.status >= 400}>
+			class:text-emerald-600={page.status === 200}
+			class:text-red-500={page.status >= 400}>
 			{$message || ""}
 		</p>
 	</Tab>

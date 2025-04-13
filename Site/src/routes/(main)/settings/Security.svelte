@@ -3,7 +3,11 @@
 	import Input from "$components/forms/Input.svelte"
 	import { superForm } from "sveltekit-superforms/client"
 
-	export let data: import("./$types").PageData
+	interface Props {
+		data: import("./$types").PageData;
+	}
+
+	let { data }: Props = $props();
 
 	const formData = superForm(data.passwordForm)
 </script>

@@ -1,5 +1,9 @@
 <script lang="ts">
-	export let reverse = false
+	interface Props {
+		reverse?: boolean;
+	}
+
+	let { reverse = false }: Props = $props();
 </script>
 
 <span

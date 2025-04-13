@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
-	import { page } from "$app/stores"
+	import { page } from "$app/state"
 	import Head from "$components/Head.svelte"
 	import Pagination from "$components/Pagination.svelte"
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
 
-	export let data
+	let { data } = $props();
 </script>
 
 <Head name={data.siteName} title="Friend requests" />
@@ -51,7 +51,7 @@
 				</div>
 			{/each}
 		</div>
-		{#key $page.url}
+		{#key page.url}
 			<Pagination totalPages={data.pages} />
 		{/key}
 	{:else}

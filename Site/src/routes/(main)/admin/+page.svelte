@@ -6,7 +6,7 @@
 	import TabData from "$components/TabData"
 	import permissionLevels from "$lib/permissionLevels"
 
-	export let data
+	let { data } = $props();
 
 	const { user, totalmem, freemem } = data
 
@@ -19,7 +19,7 @@
 		"fa-scale-balanced"
 	]
 
-	const panel: { [k: string]: [string, string, string][] } = {
+	const panel: { [k: string]: [string, string, string][] } = $state({
 		Moderation: [
 			["User moderation", "moderation", "fa-user-slash"],
 			["Abuse reports", "reports", "fa-flag"],
@@ -28,7 +28,7 @@
 		],
 		Catalog: [["Asset creation", "create", "fa-file-circle-plus"]],
 		Economy: [["Transactions", "transactions", "fa-money-bill-transfer"]]
-	}
+	})
 	const tabNames = ["Moderation", "Catalog", "Economy", "Statistics"]
 
 	if (user.permissionLevel === 5) {
@@ -41,13 +41,13 @@
 		tabNames.unshift("Administration")
 	}
 
-	let tabData = TabData(data.url, tabNames, [
+	let tabData = $state(TabData(data.url, tabNames, [
 		"fa-diamond-half-stroke",
 		"fa-stamp",
 		"fa-basket-shopping",
 		"fa-coins",
 		"fa-chart-mixed"
-	])
+	]))
 
 	const mbUsed = (totalmem - freemem) / 1e3 ** 2
 	// they done let gbs in the door

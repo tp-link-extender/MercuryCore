@@ -2,9 +2,9 @@
 	import { enhance } from "$app/forms"
 	import Head from "$components/Head.svelte"
 
-	export let data
+	let { data } = $props();
 
-	let checked = false
+	let checked = $state(false)
 
 	const moderationAction: { [k: string]: string } = {
 		Warning: "Warning",

@@ -2,9 +2,13 @@
 	import User from "$components/User.svelte"
 	import beautifyCurrency from "$lib/beautifyCurrency"
 
-	export let transaction: import("../routes/(main)/admin/transactions/$types").PageData["transactions"][0]
-	export let users: import("../routes/(main)/admin/transactions/$types").PageData["users"]
-	export let currencySymbol: string
+	interface Props {
+		transaction: import("../routes/(main)/admin/transactions/$types").PageData["transactions"][0];
+		users: import("../routes/(main)/admin/transactions/$types").PageData["users"];
+		currencySymbol: string;
+	}
+
+	let { transaction, users, currencySymbol }: Props = $props();
 
 	const [, c1, c2] = beautifyCurrency(transaction.Amount)
 </script>

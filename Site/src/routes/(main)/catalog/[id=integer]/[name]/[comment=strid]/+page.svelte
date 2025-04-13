@@ -5,16 +5,16 @@
 	import Head from "$components/Head.svelte"
 	import { writable } from "svelte/store"
 
-	export let data
+	let { data } = $props();
 
 	const { user } = data
 
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({})
 
-	$: topReply = data.replies[0]
+	let topReply = $derived(data.replies[0])
 
-	let refresh = 0
+	let refresh = $state(0)
 </script>
 
 <Head name={data.siteName} title="Comments on asset" />

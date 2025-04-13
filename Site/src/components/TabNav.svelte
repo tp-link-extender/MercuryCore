@@ -1,28 +1,35 @@
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
+
 	import { interpolateLab } from "d3-interpolate"
 	import { tweened } from "svelte/motion"
 
-	export let tabData: {
+	interface Props {
+		tabData: {
 		name: string
 		tabs: string[]
 		currentTab: string
 		url: string
 		icons?: string[]
 		num: number
+	};
+		justify?: boolean;
+		vertical?: boolean;
+		[key: string]: any
 	}
-	export let justify = false
-	export let vertical = false
 
-	let colour = tweened("white", {
+	let { tabData = $bindable(), justify = false, vertical = false, ...rest }: Props = $props();
+
+	let colour = $state(tweened("white", {
 		duration: 200,
 		interpolate: interpolateLab
-	})
+	}))
 </script>
 
 <ul
 	class="flex flex-wrap list-none min-w-28 pl-0 {vertical
 		? 'vertical flex-col gap-2'
-		: 'pb-6'} {$$restProps.class || ''}"
+		: 'pb-6'} {rest.class || ''}"
 	class:justified={justify}
 	role="tablist">
 	{#each tabData.tabs as tab, pos}
@@ -44,7 +51,7 @@
 					currentSearch.set(tabData.name, tab)
 					return currentSearch.toString()
 				})()}"
-				on:click|preventDefault={() => {
+				onclick={preventDefault(() => {
 					// get css variable --hue
 					const hue = getComputedStyle(
 						document.body
@@ -55,7 +62,7 @@
 					})
 					tabData.currentTab = tab
 					$colour = "white"
-				}}>
+				})}>
 				{#if tabData.icons}
 					<fa class="{tabData.icons[pos]} pr-2"></fa>
 				{/if}

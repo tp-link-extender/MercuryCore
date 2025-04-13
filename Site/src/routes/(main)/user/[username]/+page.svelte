@@ -11,14 +11,13 @@
 	import Interactions from "./Interactions.svelte"
 	import ProfilePlace from "./ProfilePlace.svelte"
 
-	export let data
-	export let form // ghoofy ahh types
+	let { data, form } = $props();
 
 	const { user } = data
 
 	const perms = permissionLevels(user.permissionLevel)
 
-	let regenerating = false
+	let regenerating = $state(false)
 
 	const enhanceRegen: import("./$types").SubmitFunction = () => {
 		regenerating = true
@@ -29,7 +28,7 @@
 		}
 	}
 
-	let accordion: import("@melt-ui/svelte").Accordion // Sometimes undefined for some probably crazy reason
+	let accordion: import("@melt-ui/svelte").Accordion = $state() // Sometimes undefined for some probably crazy reason
 </script>
 
 <Head name={data.siteName} title={data.username} />

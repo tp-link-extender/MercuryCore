@@ -1,8 +1,12 @@
 <script lang="ts">
-	import { page } from "$app/stores"
+	import { page } from "$app/state"
 	import { superForm } from "sveltekit-superforms/client"
 
-	export let data: import("./$types").PageData
+	interface Props {
+		data: import("./$types").PageData;
+	}
+
+	let { data }: Props = $props();
 
 	const {
 		message,
@@ -24,7 +28,7 @@
 					value={data.serverTicket}
 					disabled />
 				<button
-					class="btn btn-{$message && $page.status === 200
+					class="btn btn-{$message && page.status === 200
 						? 'success'
 						: 'secondary'}">
 					<fa fa-rotate></fa>

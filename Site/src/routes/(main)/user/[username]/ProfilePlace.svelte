@@ -1,7 +1,11 @@
 <script lang="ts">
 	import { encode } from "$lib/urlName"
 
-	export let place: import("./$types").PageData["places"][0]
+	interface Props {
+		place: import("./$types").PageData["places"][0];
+	}
+
+	let { place }: Props = $props();
 
 	const slug = encode(place.name)
 	const ratio = Math.floor(

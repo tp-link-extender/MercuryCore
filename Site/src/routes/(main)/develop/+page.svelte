@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { createBubbler, preventDefault } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import AdminLink from "$components/AdminLink.svelte"
 	import Head from "$components/Head.svelte"
 	import SidebarShell from "$components/SidebarShell.svelte"
@@ -6,7 +9,7 @@
 	import TabData from "$components/TabData"
 	import TabNav from "$components/TabNav.svelte"
 
-	export let data
+	let { data } = $props();
 
 	const assetTypes = [
 		["Shirts", "🧥", "11"],
@@ -15,8 +18,8 @@
 		["Decals", "🖼️", "13"]
 	]
 
-	let tabData = TabData(data.url, ["Create", "Creations"])
-	let tabData2 = TabData(data.url, ["Shirts", "T-Shirts", "Pants", "Decals"])
+	let tabData = $state(TabData(data.url, ["Create", "Creations"]))
+	let tabData2 = $state(TabData(data.url, ["Shirts", "T-Shirts", "Pants", "Decals"]))
 </script>
 
 <Head name={data.siteName} title="Create" />
@@ -40,7 +43,7 @@
 			<Tab {tabData}>
 				<TabNav bind:tabData={tabData2} justify />
 				<form
-					on:submit|preventDefault
+					onsubmit={preventDefault(bubble('submit'))}
 					action="/character?tab={tabData.currentTab}"
 					class="pb-4">
 					<input

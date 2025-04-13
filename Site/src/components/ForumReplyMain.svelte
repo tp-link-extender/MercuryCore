@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
+
 	import { enhance } from "$app/forms"
 	import DeleteButton from "$components/DeleteButton.svelte"
 	import ForumReply from "$components/ForumReply.svelte"
@@ -12,29 +14,47 @@
 	import User from "$components/User.svelte"
 	import type { Writable } from "svelte/store"
 
-	export let user: UserType
-	export let reply: Reply
 
-	export let num: number
-	export let depth = 0
-	export let replyingTo: Writable<string>
-	export let postAuthorName: string
-	export let categoryName = ""
-	export let postId: string
-	export let assetSlug = ""
 
 	const baseUrl = categoryName
 		? `forum/${categoryName.toLowerCase()}/${postId}`
 		: `catalog/${postId}/${assetSlug}`
 
-	export let repliesCollapsed: RepliesCollapsed
-	export let topLevel = true
-	export let pinnable = false
-	export let refreshReplies: import("@sveltejs/kit").SubmitFunction
+	interface Props {
+		user: UserType;
+		reply: Reply;
+		num: number;
+		depth?: number;
+		replyingTo: Writable<string>;
+		postAuthorName: string;
+		categoryName?: string;
+		postId: string;
+		assetSlug?: string;
+		repliesCollapsed: RepliesCollapsed;
+		topLevel?: boolean;
+		pinnable?: boolean;
+		refreshReplies: import("@sveltejs/kit").SubmitFunction;
+	}
 
-	let content = "" // Allows current reply to not be lost on clicking to another reply
+	let {
+		user,
+		reply = $bindable(),
+		num,
+		depth = 0,
+		replyingTo,
+		postAuthorName,
+		categoryName = "",
+		postId,
+		assetSlug = "",
+		repliesCollapsed,
+		topLevel = true,
+		pinnable = false,
+		refreshReplies
+	}: Props = $props();
 
-	$: hidden = reply.visibility !== "Visible"
+	let content = $state("") // Allows current reply to not be lost on clicking to another reply
+
+	let hidden = $derived(reply.visibility !== "Visible")
 
 	const likeEnhance: import("@sveltejs/kit").SubmitFunction = ({
 		formData
@@ -144,7 +164,7 @@
 			</form>
 			<a
 				href="/forum/{categoryName}/{postId}/{reply.id}"
-				on:click|preventDefault={() => replyingTo.set(reply.id)}
+				onclick={preventDefault(() => replyingTo.set(reply.id))}
 				class="btn btn-sm p-0 px-1 text-neutral-5
 				hover:text-neutral-300 {hidden ? 'opacity-33' : ''}">
 				<fa fa-message class="pr-2"></fa>
@@ -206,7 +226,7 @@
 								Reply
 							</button>
 							<button
-								on:click={() => replyingTo.set("")}
+								onclick={() => replyingTo.set("")}
 								class="btn btn-tertiary grey-text">
 								<fa fa-cancel class="pr-2"></fa>
 								Cancel
@@ -222,7 +242,7 @@
 				<div class="card reply bg-darker p-4 pt-2 max-w-3/4">
 					<form
 						use:enhance
-						on:submit={() => replyingTo.set("")}
+						onsubmit={() => replyingTo.set("")}
 						method="POST"
 						action="?/reply&rid={reply.id}">
 						<label for="content" class="light-text pb-2">
@@ -244,7 +264,7 @@
 									Reply
 								</button>
 								<button
-									on:click={() => replyingTo.set("")}
+									onclick={() => replyingTo.set("")}
 									class="btn btn-tertiary grey-text">
 									<fa fa-cancel class="pr-2"></fa>
 									Cancel

@@ -11,14 +11,14 @@
 	import { writable } from "svelte/store"
 	import { superForm } from "sveltekit-superforms/client"
 
-	export let data
+	let { data } = $props();
 
 	const { user } = data
 
 	let post = writable(data.post) // this is the svelte 4 thing ever
 	let replyingTo = writable("")
 
-	let refresh = 0
+	let refresh = $state(0)
 
 	const repliesCollapsed = writable({})
 

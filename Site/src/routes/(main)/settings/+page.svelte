@@ -8,15 +8,15 @@
 	import Security from "./Security.svelte"
 	import Styling from "./Styling.svelte"
 
-	export let data
+	let { data } = $props();
 
 	const { user } = data
 
-	let tabData = TabData(
+	let tabData = $state(TabData(
 		data.url,
 		["Profile", "Account", "Security", "Styling"],
 		["fa-id-card", "fa-user", "fa-lock", "fa-paint-brush"]
-	)
+	))
 </script>
 
 <Head name={data.siteName} title="Settings" />

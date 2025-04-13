@@ -1,9 +1,13 @@
 <script lang="ts">
-	import { page } from "$app/stores"
+	import { page } from "$app/state"
 	import fade from "$lib/fade"
 	import { superForm } from "sveltekit-superforms/client"
 
-	export let data: import("./$types").PageData
+	interface Props {
+		data: import("./$types").PageData;
+	}
+
+	let { data }: Props = $props();
 
 	const {
 		message,
@@ -11,11 +15,11 @@
 		delayed
 	} = superForm(data.privatelinkForm, { id: "privatelink" })
 
-	$: value = encodeURI(
+	let value = $derived(encodeURI(
 		`https://${data.domain}/place/${data.id}/${data.slug}?privateServer=${data.privateTicket}`
-	)
+	))
 
-	let copiedSuccess = false
+	let copiedSuccess = $state(false)
 </script>
 
 <form use:enh method="POST" action="?/privatelink&tab=Privacy">
@@ -27,7 +31,7 @@
 			<div class="input-group">
 				<input id="privateLink" {value} disabled />
 				<button
-					on:click={() => {
+					onclick={() => {
 						navigator.clipboard.writeText(value)
 						copiedSuccess = true
 						setTimeout(() => (copiedSuccess = false), 4000)
@@ -37,7 +41,7 @@
 					<fa fa-copy></fa>
 				</button>
 				<button
-					class="btn btn-{$message && $page.status === 200
+					class="btn btn-{$message && page.status === 200
 						? 'success'
 						: 'secondary'}">
 					<fa fa-rotate></fa>

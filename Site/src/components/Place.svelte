@@ -4,15 +4,19 @@
 	import fade from "$lib/fade"
 	import { encode } from "$lib/urlName"
 
-	export let place: {
+	interface Props {
+		place: {
 		id: number
 		name: string
 		likeCount: number
 		dislikeCount: number
 		playerCount: number
+	};
+		num: number;
+		total: number;
 	}
-	export let num: number
-	export let total: number
+
+	let { place, num, total }: Props = $props();
 
 	const slug = encode(place.name)
 	const ratio = Math.floor(

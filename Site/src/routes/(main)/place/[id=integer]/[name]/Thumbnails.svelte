@@ -1,9 +1,15 @@
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
+
 	import fade from "$lib/fade"
 
-	export let thumbnails: number[]
-	export let id: string
-	export let slug: string
+	interface Props {
+		thumbnails: number[];
+		id: string;
+		slug: string;
+	}
+
+	let { thumbnails, id, slug }: Props = $props();
 
 	function scroll(e: MouseEvent) {
 		const url = new URL((e.target as HTMLAnchorElement)?.href).hash.slice(1)
@@ -30,13 +36,13 @@
 					<a
 						href="#slide{i < 1 ? thumbs : i}"
 						class="carousel-button"
-						on:click|preventDefault={scroll}>
+						onclick={preventDefault(scroll)}>
 						❮
 					</a>
 					<a
 						href="#slide{i === thumbs - 1 ? 1 : i + 2}"
 						class="carousel-button"
-						on:click|preventDefault={scroll}>
+						onclick={preventDefault(scroll)}>
 						❯
 					</a>
 				</div>

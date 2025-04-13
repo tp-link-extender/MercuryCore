@@ -2,9 +2,13 @@
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
 
-	export let user: BasicUser
-	export let num: number
-	export let total: number
+	interface Props {
+		user: BasicUser;
+		num: number;
+		total: number;
+	}
+
+	let { user, num, total }: Props = $props();
 </script>
 
 <a

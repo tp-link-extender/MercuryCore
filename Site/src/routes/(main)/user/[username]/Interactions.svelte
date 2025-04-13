@@ -2,7 +2,11 @@
 	import { enhance } from "$app/forms"
 	import fade from "$lib/fade"
 
-	export let data: import("./$types").PageData
+	interface Props {
+		data: import("./$types").PageData;
+	}
+
+	let { data }: Props = $props();
 </script>
 
 <div class="flex gap-2">

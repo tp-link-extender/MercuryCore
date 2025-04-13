@@ -5,13 +5,13 @@
 	import TabData from "$components/TabData"
 	import User from "$components/User.svelte"
 
-	export let data
+	let { data } = $props();
 
-	let tabData = TabData(
+	let tabData = $state(TabData(
 		data.url,
 		["Status", "Render Queue"],
 		["fa-check-circle", "fa-bars-progress"]
-	)
+	))
 
 	const current = data.queue[0]
 </script>

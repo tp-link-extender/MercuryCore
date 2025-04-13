@@ -1,6 +1,10 @@
 <script lang="ts">
-	export let user: string
-	export let url: string
+	interface Props {
+		user: string;
+		url: string;
+	}
+
+	let { user, url }: Props = $props();
 </script>
 
 <li class="rounded-2">

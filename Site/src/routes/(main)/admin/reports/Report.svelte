@@ -1,7 +1,11 @@
 <script lang="ts">
 	import User from "$components/User.svelte"
 
-	export let report: import("./$types").PageData["reports"][0]
+	interface Props {
+		report: import("./$types").PageData["reports"][0];
+	}
+
+	let { report }: Props = $props();
 </script>
 
 <div id={report.id} class="light-text p-4 max-w-180" popover="auto">

@@ -1,26 +1,34 @@
 <script lang="ts">
+	import { run, preventDefault } from 'svelte/legacy';
+
 	import { browser } from "$app/environment"
 	import { goto } from "$app/navigation"
 
-	export let pages: string[]
-
-	let search = ""
-	let searchCompleted = true
-	let searchFocus = -1
-	$: if (search === "") {
-		searchCompleted = true
-		searchFocus = -1
+	interface Props {
+		pages: string[];
 	}
 
-	let searchText = "Search"
+	let { pages }: Props = $props();
+
+	let search = $state("")
+	let searchCompleted = $state(true)
+	let searchFocus = $state(-1)
+	run(() => {
+		if (search === "") {
+			searchCompleted = true
+			searchFocus = -1
+		}
+	});
+
+	let searchText = $state("Search")
 
 	// only show after JS loads to allow for ctrl+k to be detected
 	new Promise(r => r(0)).then(() => {
 		if (browser) searchText += " (ctrl+k)"
 	})
 
-	let searchInput: HTMLInputElement
-	const searchResults: HTMLElement[] = []
+	let searchInput: HTMLInputElement = $state()
+	const searchResults: HTMLElement[] = $state([])
 
 	const searchCategories = [
 		["Users", "users"],
@@ -68,7 +76,7 @@
 </script>
 
 <svelte:window
-	on:keydown={e => {
+	onkeydown={e => {
 		// the right way (actually works on different keyboard layouts, lookin at you {insert several docs sites})
 		if (!e.ctrlKey || e.key !== "k") return
 		e.preventDefault()
@@ -81,7 +89,7 @@
 		<input
 			bind:this={searchInput}
 			bind:value={search}
-			on:keydown={keydown}
+			onkeydown={keydown}
 			class="bg-background h-10 pl-4 w-full"
 			name="q"
 			type="search"
@@ -94,8 +102,8 @@
 			{#each searchCategories as [name, value], num}
 				<button
 					bind:this={searchResults[num]}
-					on:click|preventDefault={() =>
-						goto(`/search?q=${search}&c=${value}`)}
+					onclick={preventDefault(() =>
+						goto(`/search?q=${search}&c=${value}`))}
 					class="btn light-text block w-full py-2 text-start"
 					name="c"
 					{value}

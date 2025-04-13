@@ -12,13 +12,13 @@
 	import fade from "$lib/fade"
 	import { superForm } from "sveltekit-superforms/client"
 
-	export let data
+	let { data } = $props();
 
 	const formDataManual = superForm(data.formManual)
 	const formDataAutopilot = superForm(data.formAuto)
 
-	let tabData = TabData(data.url, ["Asset creation"], ["fa-file-circle-plus"])
-	let tabData2 = TabData(data.url, ["Manual", "Autopilot"], [], "tab2")
+	let tabData = $state(TabData(data.url, ["Asset creation"], ["fa-file-circle-plus"]))
+	let tabData2 = $state(TabData(data.url, ["Manual", "Autopilot"], [], "tab2"))
 
 	const aan = (word: string) =>
 		"aeiou".includes(word[0].toLowerCase()) ? "an" : "a"

@@ -1,7 +1,11 @@
 <script lang="ts">
-	export let data: import("../routes/$types").LayoutData
+	interface Props {
+		data: import("../routes/$types").LayoutData;
+	}
 
-	let clicked = false
+	let { data }: Props = $props();
+
+	let clicked = $state(false)
 </script>
 
 <footer class="bg-darker relative flex justify-center <lg:pb-20!">
@@ -31,7 +35,7 @@
 					<span>&ndash;</span>
 				{/if}
 				<button
-					on:mousedown={() => {
+					onmousedown={() => {
 						clicked = !clicked
 					}}
 					id="heart"

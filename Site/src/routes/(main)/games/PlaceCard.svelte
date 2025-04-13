@@ -4,22 +4,26 @@
 	import fade from "$lib/fade"
 	import { encode } from "$lib/urlName"
 
-	export let place: {
+	interface Props {
+		place: {
 		id: number
 		name: string
 		likeCount: number
 		dislikeCount: number
 		serverPing: number
 		playerCount: number
+	};
+		num: number;
+		total: number;
 	}
-	export let num: number
-	export let total: number
+
+	let { place, num, total }: Props = $props();
 
 	const slug = encode(place.name)
 	const ratio = place.likeCount / (place.likeCount + place.dislikeCount)
 	const percentage = Math.floor(ratio * 100)
 
-	$: online = place.serverPing > Date.now() / 1000 - 35
+	let online = $derived(place.serverPing > Date.now() / 1000 - 35)
 </script>
 
 <a

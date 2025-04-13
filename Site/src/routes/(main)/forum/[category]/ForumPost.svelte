@@ -3,10 +3,19 @@
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
 
-	export let post: import("./$types").PageData["posts"][number]
-	export let num: number
-	export let total: number
-	export let categoryName: string
+	interface Props {
+		post: import("./$types").PageData["posts"][number];
+		num: number;
+		total: number;
+		categoryName: string;
+	}
+
+	let {
+		post = $bindable(),
+		num,
+		total,
+		categoryName
+	}: Props = $props();
 
 	let likesDisabled = false
 	let dislikesDisabled = false

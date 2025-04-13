@@ -10,7 +10,7 @@
 	import fade from "$lib/fade"
 	import { superForm } from "sveltekit-superforms/client"
 
-	export let data
+	let { data } = $props();
 
 	const formData = superForm(data.form)
 	export const snapshot = formData
@@ -25,7 +25,7 @@
 		["5", "Unban"]
 	]
 
-	let tabData = TabData(data.url, ["User moderation"], ["fa-gavel"])
+	let tabData = $state(TabData(data.url, ["User moderation"], ["fa-gavel"]))
 </script>
 
 <Head name={data.siteName} title="User moderation - Admin" />
