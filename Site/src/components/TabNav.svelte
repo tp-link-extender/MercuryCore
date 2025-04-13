@@ -1,35 +1,40 @@
 <script lang="ts">
-	import { preventDefault } from 'svelte/legacy';
-
 	import { interpolateLab } from "d3-interpolate"
 	import { tweened } from "svelte/motion"
 
-	interface Props {
+	let {
+		tabData = $bindable(),
+		justify = false,
+		vertical = false,
+		class: class_
+	}: {
 		tabData: {
-		name: string
-		tabs: string[]
-		currentTab: string
-		url: string
-		icons?: string[]
-		num: number
-	};
-		justify?: boolean;
-		vertical?: boolean;
-		[key: string]: any
-	}
+			name: string
+			tabs: string[]
+			currentTab: string
+			url: string
+			icons?: string[]
+			num: number
+		}
+		justify?: boolean
+		vertical?: boolean
+		class: string
+	} = $props()
 
-	let { tabData = $bindable(), justify = false, vertical = false, ...rest }: Props = $props();
-
-	let colour = $state(tweened("white", {
-		duration: 200,
-		interpolate: interpolateLab
-	}))
+	let colour = $state(
+		tweened("white", {
+			duration: 200,
+			interpolate: interpolateLab
+		})
+	)
 </script>
 
 <ul
-	class="flex flex-wrap list-none min-w-28 pl-0 {vertical
-		? 'vertical flex-col gap-2'
-		: 'pb-6'} {rest.class || ''}"
+	class={[
+		"flex flex-wrap list-none min-w-28 pl-0",
+		vertical ? "vertical flex-col gap-2" : "pb-6",
+		class_
+	]}
 	class:justified={justify}
 	role="tablist">
 	{#each tabData.tabs as tab, pos}
@@ -51,7 +56,8 @@
 					currentSearch.set(tabData.name, tab)
 					return currentSearch.toString()
 				})()}"
-				onclick={preventDefault(() => {
+				onclick={e => {
+					e.preventDefault()
 					// get css variable --hue
 					const hue = getComputedStyle(
 						document.body
@@ -62,7 +68,7 @@
 					})
 					tabData.currentTab = tab
 					$colour = "white"
-				})}>
+				}}>
 				{#if tabData.icons}
 					<fa class="{tabData.icons[pos]} pr-2"></fa>
 				{/if}

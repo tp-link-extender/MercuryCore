@@ -2,13 +2,15 @@
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
 
-	interface Props {
-		user: BasicUser;
-		num: number;
-		total: number;
-	}
-
-	let { user, num, total }: Props = $props();
+	const {
+		user,
+		num,
+		total
+	}: {
+		user: BasicUser
+		num: number
+		total: number
+	} = $props()
 </script>
 
 <a

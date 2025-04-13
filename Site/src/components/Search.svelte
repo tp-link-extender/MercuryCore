@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { run, preventDefault } from 'svelte/legacy';
+	import { preventDefault, run } from "svelte/legacy"
 
 	import { browser } from "$app/environment"
 	import { goto } from "$app/navigation"
 
-	interface Props {
-		pages: string[];
-	}
-
-	let { pages }: Props = $props();
+	let {
+		pages
+	}: {
+		pages: string[]
+	} = $props()
 
 	let search = $state("")
 	let searchCompleted = $state(true)
@@ -18,7 +18,7 @@
 			searchCompleted = true
 			searchFocus = -1
 		}
-	});
+	})
 
 	let searchText = $state("Search")
 
@@ -27,7 +27,7 @@
 		if (browser) searchText += " (ctrl+k)"
 	})
 
-	let searchInput: HTMLInputElement = $state()
+	let searchInput: HTMLInputElement | undefined = $state()
 	const searchResults: HTMLElement[] = $state([])
 
 	const searchCategories = [
@@ -80,7 +80,7 @@
 		// the right way (actually works on different keyboard layouts, lookin at you {insert several docs sites})
 		if (!e.ctrlKey || e.key !== "k") return
 		e.preventDefault()
-		searchInput.focus()
+		searchInput?.focus()
 	}} />
 
 <form action="/search" role="search" class="mx-auto px-2 pb-1">
@@ -103,7 +103,8 @@
 				<button
 					bind:this={searchResults[num]}
 					onclick={preventDefault(() =>
-						goto(`/search?q=${search}&c=${value}`))}
+						goto(`/search?q=${search}&c=${value}`)
+					)}
 					class="btn light-text block w-full py-2 text-start"
 					name="c"
 					{value}

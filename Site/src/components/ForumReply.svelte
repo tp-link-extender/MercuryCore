@@ -20,31 +20,7 @@
 	import fade from "$lib/fade"
 	import type { Writable } from "svelte/store"
 
-	
-
-
-	const baseUrl = categoryName
-		? `/forum/${categoryName.toLowerCase()}/${postId}`
-		: `/catalog/${postId}/${assetSlug}`
-
-	interface Props {
-		// too many exports help
-		user: UserType;
-		reply: Reply;
-		num: number;
-		depth?: number;
-		replyingTo: Writable<string>;
-		postAuthorName: string;
-		categoryName?: string;
-		postId: string;
-		assetSlug?: string;
-		pinnable?: boolean;
-		refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any>;
-		repliesCollapsed: RepliesCollapsed;
-		topLevel?: boolean;
-	}
-
-	let {
+	const {
 		user,
 		reply,
 		num,
@@ -58,7 +34,27 @@
 		refreshReplies,
 		repliesCollapsed,
 		topLevel = true
-	}: Props = $props();
+	}: {
+		// too many exports help
+		user: UserType
+		reply: Reply
+		num: number
+		depth?: number
+		replyingTo: Writable<string>
+		postAuthorName: string
+		categoryName?: string
+		postId: string
+		assetSlug?: string
+		pinnable?: boolean
+		refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any>
+		repliesCollapsed: RepliesCollapsed
+		topLevel?: boolean
+	} = $props()
+
+	const baseUrl = categoryName
+		? `/forum/${categoryName.toLowerCase()}/${postId}`
+		: `/catalog/${postId}/${assetSlug}`
+
 	// Some have to be writables to allow them to keep state, either on element destroy or on page change
 
 	const collapse = (id: string) => () =>

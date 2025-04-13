@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { preventDefault } from 'svelte/legacy';
+	import { preventDefault } from "svelte/legacy"
 
 	import { enhance } from "$app/forms"
 	import DeleteButton from "$components/DeleteButton.svelte"
@@ -13,28 +13,6 @@
 	import ReportButton from "$components/ReportButton.svelte"
 	import User from "$components/User.svelte"
 	import type { Writable } from "svelte/store"
-
-
-
-	const baseUrl = categoryName
-		? `forum/${categoryName.toLowerCase()}/${postId}`
-		: `catalog/${postId}/${assetSlug}`
-
-	interface Props {
-		user: UserType;
-		reply: Reply;
-		num: number;
-		depth?: number;
-		replyingTo: Writable<string>;
-		postAuthorName: string;
-		categoryName?: string;
-		postId: string;
-		assetSlug?: string;
-		repliesCollapsed: RepliesCollapsed;
-		topLevel?: boolean;
-		pinnable?: boolean;
-		refreshReplies: import("@sveltejs/kit").SubmitFunction;
-	}
 
 	let {
 		user,
@@ -50,7 +28,25 @@
 		topLevel = true,
 		pinnable = false,
 		refreshReplies
-	}: Props = $props();
+	}: {
+		user: UserType
+		reply: Reply
+		num: number
+		depth?: number
+		replyingTo: Writable<string>
+		postAuthorName: string
+		categoryName?: string
+		postId: string
+		assetSlug?: string
+		repliesCollapsed: RepliesCollapsed
+		topLevel?: boolean
+		pinnable?: boolean
+		refreshReplies: import("@sveltejs/kit").SubmitFunction
+	} = $props()
+
+	const baseUrl = categoryName
+		? `forum/${categoryName.toLowerCase()}/${postId}`
+		: `catalog/${postId}/${assetSlug}`
 
 	let content = $state("") // Allows current reply to not be lost on clicking to another reply
 

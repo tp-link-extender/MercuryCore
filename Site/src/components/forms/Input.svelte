@@ -1,6 +1,9 @@
 <script lang="ts">
 	import SubInput from "$components/forms/SubInput.svelte"
-	import type { HTMLInputTypeAttribute } from "svelte/elements"
+	import type {
+		HTMLInputAttributes,
+		HTMLInputTypeAttribute
+	} from "svelte/elements"
 
 	const {
 		name,
@@ -21,7 +24,7 @@
 		inline?: boolean
 		column?: boolean
 		formData: import("sveltekit-superforms").SuperForm<any>
-	} = $props()
+	} & HTMLInputAttributes = $props()
 
 	const { errors } = formData
 </script>

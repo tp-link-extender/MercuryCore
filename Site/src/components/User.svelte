@@ -16,24 +16,7 @@
 		accent3: "accent2"
 	})
 
-	interface Props {
-		user: BasicUser;
-		full?: boolean;
-		thin?: boolean;
-		image?: boolean;
-		bottom?: boolean;
-		rerender?: {
-		form?: {
-			avatar?: string
-		} | null
-		regenerating?: boolean
-	} | null; // Used on profile page for rerender button
-		size?: string;
-		bg?: keyof typeof transitionBackgrounds;
-		[key: string]: any
-	}
-
-	let {
+	const {
 		user,
 		full = false,
 		thin = false,
@@ -42,15 +25,30 @@
 		rerender = null,
 		size = "2rem",
 		bg = "accent2",
-		...rest
-	}: Props = $props();
+		class: class_
+	}: {
+		user: BasicUser
+		full?: boolean
+		thin?: boolean
+		image?: boolean
+		bottom?: boolean
+		rerender?: {
+			form?: {
+				avatar?: string
+			} | null
+			regenerating?: boolean
+		} | null // Used on profile page for rerender button
+		size?: string
+		bg?: keyof typeof transitionBackgrounds
+		class?: string
+	} = $props()
 
 	const style = `width: ${size}; max-width: ${size}; height: ${size}; min-height: ${size}`
 	const style2 = `${style}; background: var(--${bg})`
 </script>
 
 {#if image}
-	<div class="flex {rest.class}" class:items-center={full}>
+	<div class={["flex", class_]} class:items-center={full}>
 		<div class="relative">
 			<!-- css hell -->
 			<div
@@ -84,9 +82,14 @@
 {:else}
 	<a
 		href="/user/{user.username}"
-		class="flex no-underline {rest.class}"
-		class:flex-col={bottom}
-		class:items-center={full}>
+		class={[
+			"flex no-underline",
+			class_,
+			{
+				"flex-col": bottom,
+				"items-center": full
+			}
+		]}>
 		<div class="relative">
 			<div
 				class="status"
@@ -108,8 +111,10 @@
 			</span>
 		{:else if bottom}
 			<span
-				class="overflow-hidden max-h-12 pt-2 text-center"
-				class:small={user.username?.length || 0 > 15}
+				class={[
+					"overflow-hidden max-h-12 pt-2 text-center",
+					{ small: user.username?.length > 15 }
+				]}
 				style="max-width: {size}">
 				{user.username}
 			</span>

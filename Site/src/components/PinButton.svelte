@@ -1,21 +1,18 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 
-	
-	interface Props {
-		id: string;
-		pinned?: boolean;
-		post?: boolean;
-		// Replies need to be re-ordered after a reply is pinned or unpinned
-		refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any>;
-	}
-
 	let {
 		id,
 		pinned = $bindable(false),
 		post = false,
 		refreshReplies
-	}: Props = $props();
+	}: {
+		id: string
+		pinned?: boolean
+		post?: boolean
+		// Replies need to be re-ordered after a reply is pinned or unpinned
+		refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any>
+	} = $props()
 
 	let text = $derived(pinned ? "unpin" : "pin")
 	let colour = $derived(pinned ? "text-red-500" : "text-green-500")

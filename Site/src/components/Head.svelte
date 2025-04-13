@@ -1,17 +1,15 @@
 <script lang="ts">
-	interface Props {
-		name: string;
-		title?: any;
-		description?: string;
-		ogImage?: string;
-	}
-
-	let {
+	const {
 		name,
 		title = name,
 		description = "",
 		ogImage = ""
-	}: Props = $props();
+	}: {
+		name: string
+		title?: string
+		description?: string
+		ogImage?: string
+	} = $props()
 </script>
 
 <svelte:head>

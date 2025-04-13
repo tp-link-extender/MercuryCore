@@ -3,13 +3,15 @@
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
 
-	interface Props {
-		asset: import("./$types").PageData["assets"][0];
-		num: number;
-		total: number;
-	}
-
-	let { asset, num, total }: Props = $props();
+	let {
+		asset,
+		num,
+		total
+	}: {
+		asset: import("./$types").PageData["assets"][0]
+		num: number
+		total: number
+	} = $props()
 </script>
 
 <div in:fade|global={{ num, total }} class="card duration-300">

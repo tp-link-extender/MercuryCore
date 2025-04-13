@@ -1,10 +1,11 @@
 <script lang="ts">
-	interface Props {
-		user: string;
-		url: string;
-	}
-
-	let { user, url }: Props = $props();
+	let {
+		user,
+		url
+	}: {
+		user: string
+		url: string
+	} = $props()
 </script>
 
 <li class="rounded-2">

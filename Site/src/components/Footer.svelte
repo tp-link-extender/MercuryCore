@@ -1,9 +1,9 @@
 <script lang="ts">
-	interface Props {
-		data: import("../routes/$types").LayoutData;
-	}
-
-	let { data }: Props = $props();
+	const {
+		data
+	}: {
+		data: import("../routes/$types").LayoutData
+	} = $props()
 
 	let clicked = $state(false)
 </script>

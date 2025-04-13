@@ -3,7 +3,12 @@
 
 	import fade from "$lib/fade"
 
-	interface Props {
+	const {
+		asset,
+		num,
+		total,
+		symbol
+	}: {
 		asset: {
 			id: number
 			name: string
@@ -14,9 +19,7 @@
 		num: number
 		total: number
 		symbol: string
-	}
-
-	let { asset, num, total, symbol }: Props = $props()
+	} = $props()
 </script>
 
 <a

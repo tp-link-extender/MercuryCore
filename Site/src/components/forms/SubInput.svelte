@@ -1,17 +1,20 @@
 <script lang="ts">
-	import type { HTMLInputTypeAttribute } from "svelte/elements"
+	import type {
+		HTMLInputAttributes,
+		HTMLInputTypeAttribute
+	} from "svelte/elements"
 
-	
-
-	interface Props {
+	const {
+		name,
+		type,
+		formData,
+		...rest
+	}: {
 		// Imported into Input.svelte to prevent code duplication
-		name: string;
-		type: HTMLInputTypeAttribute;
-		formData: import("sveltekit-superforms").SuperForm<any>;
-		[key: string]: any
-	}
-
-	let { name, type, formData, ...rest }: Props = $props();
+		name: string
+		type: HTMLInputTypeAttribute
+		formData: import("sveltekit-superforms").SuperForm<any>
+	} & HTMLInputAttributes = $props()
 	const { form, errors, constraints } = formData
 </script>
 
