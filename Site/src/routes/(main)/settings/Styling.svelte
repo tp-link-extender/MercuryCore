@@ -30,12 +30,13 @@
 			class="btn btn-secondary"
 			on:click|preventDefault={() => {
 				if (!$form.css) return
-				const style = document.getElementById("custom-css")
-				console.log(style)
-				if (!style) return
+				let style = document.getElementById("custom-css")
+				// remove old style
+				if (!style) style = document.createElement("style")
+
 				style.id = "custom-css"
-				style.innerHTML = $form.css.replaceAll(";", " !important;")
-				document.head.appendChild(style)
+				style.innerHTML = $form.css
+				document.body.appendChild(style)
 			}}>
 			Preview
 		</button>

@@ -5,7 +5,7 @@
 	export let data
 </script>
 
-<div id="bg" class="fixed w-full h-full pointer-events-none" />
+<div id="bg" class="fixed w-full h-full pointer-events-none"></div>
 
 <!--
 	Data from the root layout must be passed into components, as it cannot be accessed directly.
