@@ -2,10 +2,18 @@
 	import NoScript from "$components/NoScript.svelte"
 	import YesScript from "$components/YesScript.svelte"
 	import { type createAccordion, melt } from "@melt-ui/svelte"
+	import type { Snippet } from "svelte"
 	import { slide } from "svelte/transition"
 
-	export let accordion: ReturnType<typeof createAccordion> // odd type imports but ok
-	export let title: string
+	const {
+		accordion,
+		title,
+		children
+	}: {
+		accordion: ReturnType<typeof createAccordion>
+		title: string
+		children: Snippet
+	} = $props()
 
 	const {
 		elements: { content, item, trigger },
@@ -14,12 +22,11 @@
 </script>
 
 <NoScript>
-	<!-- somebody fix typescript, whys it even linting my html, stick to ya day job nerd -->
 	<details name="details">
 		<summary class="bg-darker p-2 px-4 rounded-2 block">
 			{title}
 		</summary>
-		<slot />
+		{@render children()}
 	</details>
 </NoScript>
 <YesScript>
@@ -31,7 +38,7 @@
 		</button>
 		{#if $isSelected(title)}
 			<div use:melt={$content(title)} transition:slide>
-				<slot />
+				{@render children()}
 			</div>
 		{/if}
 	</div>

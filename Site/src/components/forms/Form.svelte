@@ -20,7 +20,7 @@
 		method?: HTMLFormAttributes["method"]
 		formData: import("sveltekit-superforms").SuperForm<any>
 		children: Snippet
-	} = $props()
+	} & HTMLFormAttributes = $props()
 
 	const { errors, message, enhance: enh, delayed } = formData
 

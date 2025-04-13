@@ -6,20 +6,14 @@
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
 
-	export let data
+	const { data } = $props()
 </script>
 
 <Head name={data.siteName} title="Search for {data.query}" />
 
-{#if data.category}
-	<h1 class="text-center">
-		Search for "{data.query}" in {data.category}
-	</h1>
-{:else}
-	<h1 class="text-center text-2xl">
-		Choose a category to search for "{data.query}"
-	</h1>
-{/if}
+<h1 class="text-center">
+	Search for "{data.query}" in {data.category}
+</h1>
 
 <div class="pt-12 px-4">
 	{#if data.category === "users" && data.users}
@@ -58,18 +52,6 @@
 				</div>
 			{/each}
 		</div>
-	{:else}
-		<div id="buttons" class="flex justify-center gap-4">
-			<a class="btn btn-primary" href="/search?q={data.query}&c=users">
-				Users
-			</a>
-			<a class="btn btn-primary" href="/search?q={data.query}&c=places">
-				Places
-			</a>
-			<a class="btn btn-primary" href="/search?q={data.query}&c=assets">
-				Catalog
-			</a>
-		</div>
 	{/if}
 </div>
 
@@ -77,10 +59,5 @@
 	.grid {
 		grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
 		grid-gap: 0 1rem;
-
-		& div a {
-			width: 8rem;
-			margin: auto;
-		}
 	}
 </style>

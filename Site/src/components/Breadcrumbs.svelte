@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let path: [string, string][]
+	const { path }: { path: [string, string][] } = $props()
 </script>
 
 <nav aria-label="breadcrumb">
