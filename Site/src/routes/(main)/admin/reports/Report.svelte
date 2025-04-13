@@ -1,11 +1,11 @@
 <script lang="ts">
 	import User from "$components/User.svelte"
 
-	interface Props {
-		report: import("./$types").PageData["reports"][0];
-	}
-
-	let { report }: Props = $props();
+	const {
+		report
+	}: {
+		report: import("./$types").PageData["reports"][0]
+	} = $props()
 </script>
 
 <div id={report.id} class="light-text p-4 max-w-180" popover="auto">

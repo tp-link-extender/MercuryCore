@@ -4,20 +4,22 @@
 	import fade from "$lib/fade"
 	import { encode } from "$lib/urlName"
 
-	interface Props {
+	const {
+		place,
+		num,
+		total
+	}: {
 		place: {
-		id: number
-		name: string
-		likeCount: number
-		dislikeCount: number
-		serverPing: number
-		playerCount: number
-	};
-		num: number;
-		total: number;
-	}
-
-	let { place, num, total }: Props = $props();
+			id: number
+			name: string
+			likeCount: number
+			dislikeCount: number
+			serverPing: number
+			playerCount: number
+		}
+		num: number
+		total: number
+	} = $props()
 
 	const slug = encode(place.name)
 	const ratio = place.likeCount / (place.likeCount + place.dislikeCount)

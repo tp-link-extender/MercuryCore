@@ -1,19 +1,19 @@
 <script lang="ts">
-	interface Props {
-		name: string;
-		tagline: string;
-		descriptions: { [k: string]: string };
-		pad?: boolean;
-		children?: import('svelte').Snippet;
-	}
+	import type { Snippet } from "svelte"
 
-	let {
+	const {
 		name,
 		tagline,
 		descriptions,
 		pad = false,
 		children
-	}: Props = $props();
+	}: {
+		name: string
+		tagline: string
+		descriptions: { [k: string]: string }
+		pad?: boolean
+		children?: Snippet
+	} = $props()
 </script>
 
 <div class="light-text flex <lg:flex-col min-h-screen h-full overflow-auto">

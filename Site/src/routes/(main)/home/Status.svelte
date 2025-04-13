@@ -2,11 +2,11 @@
 	import ReportButton from "$components/ReportButton.svelte"
 	import User from "$components/User.svelte"
 
-	interface Props {
-		status: import("./$types").PageData["feed"][0];
-	}
-
-	let { status }: Props = $props();
+	const {
+		status
+	}: {
+		status: import("./$types").PageData["feed"][0]
+	} = $props()
 </script>
 
 <div class="card p-3">

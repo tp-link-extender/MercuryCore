@@ -1,24 +1,23 @@
 <script lang="ts">
-	interface Props {
-		launch: (joinscripturl: string) => () => void;
-		serverTicket: string;
-		domain: string;
-		siteName: string;
-	}
-
-	let {
+	const {
 		launch,
 		serverTicket,
 		domain,
 		siteName
-	}: Props = $props();
+	}: {
+		launch: (joinscripturl: () => string) => () => void
+		serverTicket: string
+		domain: string
+		siteName: string
+	} = $props()
 
 	let filepath = $state("")
 
 	const host = launch(
-		`mercury-player:1+launchmode:ide+script:http://${domain}/game/host?ticket=${serverTicket}&autopilot=${btoa(
-			filepath
-		)}`
+		() =>
+			`mercury-player:1+launchmode:ide+script:http://${domain}/game/host?ticket=${serverTicket}&autopilot=${btoa(
+				filepath
+			)}`
 	)
 </script>
 
@@ -41,7 +40,7 @@
 		aria-label="Map location" />
 	<button
 		class="btn btn-secondary"
-		onclick={launch("mercury-player:1+launchmode:maps")}
+		onclick={launch(() => "mercury-player:1+launchmode:maps")}
 		type="button">
 		<fa fa-arrow-up-right-from-square></fa>
 		Map Folder

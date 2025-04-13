@@ -5,11 +5,7 @@
 	import { get } from "svelte/store"
 	import { superForm } from "sveltekit-superforms/client"
 
-	interface Props {
-		data: import("./$types").PageData;
-	}
-
-	let { data }: Props = $props();
+	const { data }: { data: import("./$types").PageData } = $props()
 
 	const formData = superForm(data.viewForm)
 	const { form } = formData

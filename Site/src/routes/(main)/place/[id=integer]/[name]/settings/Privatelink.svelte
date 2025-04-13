@@ -3,11 +3,7 @@
 	import fade from "$lib/fade"
 	import { superForm } from "sveltekit-superforms/client"
 
-	interface Props {
-		data: import("./$types").PageData;
-	}
-
-	let { data }: Props = $props();
+	const { data }: { data: import("./$types").PageData } = $props()
 
 	const {
 		message,
@@ -15,9 +11,9 @@
 		delayed
 	} = superForm(data.privatelinkForm, { id: "privatelink" })
 
-	let value = $derived(encodeURI(
+	let value = encodeURI(
 		`https://${data.domain}/place/${data.id}/${data.slug}?privateServer=${data.privateTicket}`
-	))
+	)
 
 	let copiedSuccess = $state(false)
 </script>

@@ -12,7 +12,7 @@
 	import Thumbnails from "./Thumbnails.svelte"
 	import customProtocol from "./customprotocol.ts"
 
-	let { data } = $props();
+	let { data } = $props()
 
 	const { user } = data
 
@@ -30,17 +30,17 @@
 
 	// Place Launcher
 
-	let popover: HTMLDivElement = $state()
+	let popover: HTMLDivElement | undefined = $state()
 	let installed = $state(true)
 	let success = $state(false)
 
-	const launch = (joinscripturl: string) => () => {
+	const launch = (joinscripturl: () => string) => () => {
 		success = false
 		customProtocol(
-			joinscripturl,
+			joinscripturl(),
 			() => {
 				success = true
-				setTimeout(() => popover.hidePopover(), 16000)
+				setTimeout(() => popover?.hidePopover(), 16000)
 			},
 			() => {
 				installed = false
@@ -71,11 +71,13 @@
 		// JoinScript is my favourite programming language (-i mean scripting language)
 		const joinScript = encodeURIComponent(joinScriptData.data.joinScriptUrl)
 		const joinUri = `mercury-player:1+launchmode:play+joinscripturl:${joinScript}+gameinfo:test`
-		launch(joinUri)()
+		launch(() => joinUri)()
 	}
 
 	let tabData = $state(TabData(data.url, ["Description", "Game"]))
-	let tabData2 = $state(TabData(data.url, ["Manual", "Autopilot"], undefined, "tab2"))
+	let tabData2 = $state(
+		TabData(data.url, ["Manual", "Autopilot"], undefined, "tab2")
+	)
 	let copiedSuccess = $state(false)
 
 	const likeEnhance: import("./$types").SubmitFunction = ({ formData }) => {
@@ -284,7 +286,7 @@
 							<button
 								class="btn btn-sm btn-tertiary"
 								onclick={launch(
-									"mercury-player:1+launchmode:ide"
+									() => "mercury-player:1+launchmode:ide"
 								)}>
 								<fa fa-arrow-up-right-from-square></fa>
 								Studio

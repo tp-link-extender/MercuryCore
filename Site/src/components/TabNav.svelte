@@ -18,7 +18,7 @@
 		}
 		justify?: boolean
 		vertical?: boolean
-		class: string
+		class?: string
 	} = $props()
 
 	let colour = $state(

@@ -13,8 +13,9 @@
 			num: number
 		}
 		children?: Snippet
-		class: string
+		class?: string
 	} = $props()
+
 	const num = ++tabData.num
 </script>
 

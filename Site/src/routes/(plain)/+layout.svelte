@@ -1,9 +1,7 @@
 <script lang="ts">
-	interface Props {
-		children?: import('svelte').Snippet;
-	}
+	import type { Snippet } from "svelte"
 
-	let { children }: Props = $props();
+	const { children }: { children: Snippet } = $props()
 </script>
 
 <!--
@@ -11,5 +9,5 @@
 -->
 
 <main>
-	{@render children?.()}
+	{@render children()}
 </main>
