@@ -32,11 +32,6 @@ func Assert(err error, txt string) {
 	}
 }
 
-func isDockerised() bool {
-	_, err := os.Stat("/.dockerenv")
-	return err == nil
-}
-
 type (
 	user     string
 	currency uint64
@@ -44,9 +39,8 @@ type (
 )
 
 const (
-	filepathDockerised = "./data/ledger" // jsonl file
-	folderpath         = "../data/economy"
-	filepath           = folderpath + "/ledger"
+	folderpath = "../data/economy" // jsonl file
+	filepath   = folderpath + "/ledger"
 
 	Micro currency = 1
 	Milli          = 1e3 * Micro
@@ -461,14 +455,9 @@ func stipendRoute(w http.ResponseWriter, r *http.Request) {
 func main() {
 	fmt.Println(c.InYellow("Loading ledger..."))
 	// create the file if it dont exist
-	var err error
-
-	if isDockerised() {
-		fmt.Println(c.InPurple("Running in Docker!"))
-		currentFilepath = filepathDockerised
-	}
-
-	if file, err = os.OpenFile(currentFilepath, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0o644); err != nil {
+	
+	file, err := os.OpenFile(currentFilepath, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0o644)
+	if err != nil {
 		if !errors.Is(err, os.ErrNotExist) {
 			Assert(err, "Failed to open ledger")
 		}
