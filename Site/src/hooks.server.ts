@@ -61,17 +61,18 @@ async function finish({ event, resolve }: Parameters<Handle>[0]) {
 	const res = await resolve(event)
 	if (!res.headers.get("content-type")?.includes("text/html")) return res
 
-	// if it's html, add the user's theme before the </body> tag
+	// if it's html, add the user's theme and custom CSS before the </body> tag
 	const file = Bun.file(`../Assets/${config.Themes[user?.theme || 0].Path}`)
-
-	// ...and the custom CSS
-	const css = user?.css ? `<style id="custom-css">${user.css}</style>` : ""
+	const themecss = await file.text()
+	const customcss = user?.css ? `<style id="custom-css">${user.css}</style>` : ""
 
 	// duplicate the response to avoid modifying the original
 	const text = (await res.clone().text()).replace(
 		"</body>",
-		`<style>${await file.text()}</style>${css}</body>`
+		`<style>${themecss}</style>${customcss}</body>`
 	)
+
+	res.headers.delete("content-length") // prevent cutoff, since the body was modified
 
 	return new Response(text, {
 		status: res.status,

@@ -21,10 +21,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@codemirror/commands": "^6.8.1",
-		"@codemirror/lang-css": "^6.3.1",
-		"@codemirror/state": "^6.5.2",
-		"@codemirror/view": "^6.36.5",
 		"@melt-ui/pp": "^0.3.2",
 		"@melt-ui/svelte": "^0.86.6",
 		"@sveltejs/adapter-node": "^5.2.12",
@@ -35,7 +31,6 @@
 		"@unocss/preset-tagify": "^66.0.0",
 		"@unocss/transformer-directives": "^66.0.0",
 		"@unocss/transformer-variant-group": "^66.0.0",
-		"codemirror": "^6.0.1",
 		"d3-interpolate": "^3.0.1",
 		"lucia": "^3.2.2",
 		"nprogress": "^0.2.0",

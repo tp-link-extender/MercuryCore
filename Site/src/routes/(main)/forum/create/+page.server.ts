@@ -45,8 +45,8 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 	const title = form.data.title.trim()
 	if (!title) return formError(form, ["title"], ["Post must have a title"])
 
-	// const limit = ratelimit(form, "forumPost", getClientAddress, 30)
-	// if (limit) return limit
+	const limit = ratelimit(form, "forumPost", getClientAddress, 30)
+	if (limit) return limit
 
 	const category = url.searchParams.get("category")
 	if (

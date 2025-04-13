@@ -19,6 +19,9 @@ const limit = (form: Form) =>
 		? message(form, "Too many requests", { status: 429 })
 		: fail(429, { msg: "Too many requests" })
 
+const winlel =
+	"Failed to ratelimit! Are you running Windows? Whoops, that sounds like a you problem!"
+
 /** Allows for a function to be ratelimited by a category, and returns a 429 failure if too many requests are sent.
  * @param form The superForm object sent by the client. Can be null, in which case a fail object is returned.
  * @param category The category to ratelimit by.
@@ -41,9 +44,7 @@ export default (
 	try {
 		id = getClientAddress() + category
 	} catch {
-		console.log(
-			"Failed to ratelimit! Are you running Windows? Whoops, that sounds like a you problem!"
-		)
+		console.log(winlel)
 		return
 	}
 	const currentTimewindow = ratelimitTimewindow.get(id) || Date.now()
