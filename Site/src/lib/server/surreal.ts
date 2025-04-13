@@ -9,7 +9,7 @@ export const db = new Surreal()
 
 export const version = db.version.bind(db)
 
-const realUrl = new URL("http://localhost:8000")
+const realUrl = new URL("ws://localhost:8000")
 
 async function reconnect() {
 	try {

@@ -50,8 +50,6 @@ export async function load({ locals, params }) {
 	})
 	if (!post) error(404, "Not found")
 
-	console.log(post.replies[0].replies)
-
 	return {
 		form: await superValidate(zod(schema)),
 		post,
