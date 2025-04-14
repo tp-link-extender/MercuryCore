@@ -10,7 +10,7 @@
 	import fade from "$lib/fade"
 	import { superForm } from "sveltekit-superforms/client"
 
-	let { data } = $props();
+	let { data } = $props()
 
 	const formData = superForm(data.form)
 	export const snapshot = formData
@@ -39,7 +39,7 @@
 </div>
 
 <SidebarShell bind:tabData class="max-w-280">
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		<Form
 			{formData}
 			submit={$form.action === "3" || $form.action === "4" // 5:53 am and im bored as shit

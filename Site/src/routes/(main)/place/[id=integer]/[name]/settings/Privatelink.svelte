@@ -11,8 +11,10 @@
 		delayed
 	} = superForm(data.privatelinkForm, { id: "privatelink" })
 
-	let value = encodeURI(
-		`https://${data.domain}/place/${data.id}/${data.slug}?privateServer=${data.privateTicket}`
+	let value = $derived(
+		encodeURI(
+			`https://${data.domain}/place/${data.id}/${data.slug}?privateServer=${data.privateTicket}`
+		)
 	)
 
 	let copiedSuccess = $state(false)

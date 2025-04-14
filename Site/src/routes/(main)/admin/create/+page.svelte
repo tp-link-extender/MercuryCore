@@ -12,13 +12,17 @@
 	import fade from "$lib/fade"
 	import { superForm } from "sveltekit-superforms/client"
 
-	let { data } = $props();
+	let { data } = $props()
 
 	const formDataManual = superForm(data.formManual)
 	const formDataAutopilot = superForm(data.formAuto)
 
-	let tabData = $state(TabData(data.url, ["Asset creation"], ["fa-file-circle-plus"]))
-	let tabData2 = $state(TabData(data.url, ["Manual", "Autopilot"], [], "tab2"))
+	let tabData = $state(
+		TabData(data.url, ["Asset creation"], ["fa-file-circle-plus"])
+	)
+	let tabData2 = $state(
+		TabData(data.url, ["Manual", "Autopilot"], [], "tab2")
+	)
 
 	const aan = (word: string) =>
 		"aeiou".includes(word[0].toLowerCase()) ? "an" : "a"
@@ -35,7 +39,7 @@
 </div>
 
 <SidebarShell bind:tabData class="max-w-280">
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		<TabNav bind:tabData={tabData2} justify />
 		{((tabData2.num = 0), "")}
 		<Tab tabData={tabData2}>

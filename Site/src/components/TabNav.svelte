@@ -21,6 +21,11 @@
 		class?: string
 	} = $props()
 
+	// prevents nested tabs from breaking
+	$effect(() => {
+		tabData.num = 0
+	})
+
 	let colour = $state(
 		tweened("white", {
 			duration: 200,
@@ -33,16 +38,20 @@
 	class={[
 		"flex flex-wrap list-none min-w-28 pl-0",
 		vertical ? "vertical flex-col gap-2" : "pb-6",
-		class_
+		class_,
+		{ justified: justify }
 	]}
-	class:justified={justify}
 	role="tablist">
 	{#each tabData.tabs as tab, pos}
 		<li
-			class="item {vertical && tabData.currentTab === tab
-				? 'activetab'
-				: ''} {vertical ? 'rounded-2' : 'p-1'}"
-			class:active={!vertical && tabData.currentTab === tab}
+			class={[
+				"item",
+				vertical ? "rounded-2" : "p-1",
+				{
+					activetab: vertical && tabData.currentTab === tab,
+					active: !vertical && tabData.currentTab === tab
+				}
+			]}
 			style="border-bottom-color: {$colour}"
 			data-sveltekit-preload-data="off">
 			<a

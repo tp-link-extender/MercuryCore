@@ -5,13 +5,15 @@
 	import TabData from "$components/TabData"
 	import User from "$components/User.svelte"
 
-	let { data } = $props();
+	let { data } = $props()
 
-	let tabData = $state(TabData(
-		data.url,
-		["Status", "Render Queue"],
-		["fa-check-circle", "fa-bars-progress"]
-	))
+	let tabData = $state(
+		TabData(
+			data.url,
+			["Status", "Render Queue"],
+			["fa-check-circle", "fa-bars-progress"]
+		)
+	)
 
 	const current = data.queue[0]
 </script>
@@ -27,7 +29,7 @@
 </div>
 
 <SidebarShell bind:tabData class="max-w-280">
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		<div class="<lg:flex flex-col lg:grid grid-cols-2 gap-4">
 			<div class="card light-text p-4">
 				<h2 class="text-xl mb-0">Render Server</h2>
@@ -80,7 +82,7 @@
 			</div>
 		</div>
 	</Tab>
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		<table id="rendertable" class="w-full light-text">
 			<thead>
 				<tr>

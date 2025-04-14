@@ -22,7 +22,7 @@
 <Head name={data.siteName} title="{data.name} Settings" />
 
 <!--
-	Pretty chuffed with this way of organising forms, makes it way easier to have multiple forms on a page without them messing eachother up.
+	Pretty chuffed with this way of organising forms, makes it way easier to have multiple forms on a page without them messing each other up.
  -->
 <div class="ctnr max-w-220 light-text">
 	<div class="pb-4">
@@ -33,7 +33,7 @@
 		</a>
 	</div>
 	<TabNav bind:tabData />
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		<h2 class="text-xl">Game View</h2>
 		<p class="grey-text">
 			Change the title and description of your server.
@@ -41,7 +41,7 @@
 		<ViewForm {data} />
 	</Tab>
 
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		<h2 class="text-xl">Network</h2>
 		<p class="grey-text">
 			Change the network configurations of your server.
@@ -52,7 +52,7 @@
 		{/key}
 	</Tab>
 
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		<h2 class="text-xl">Privacy</h2>
 		<p class="grey-text">
 			Enable private server to make your game only accessible to those

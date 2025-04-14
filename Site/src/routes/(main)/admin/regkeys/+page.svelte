@@ -10,7 +10,7 @@
 	import fade from "$lib/fade"
 	import { superForm } from "sveltekit-superforms/client"
 
-	let { data } = $props();
+	let { data } = $props()
 
 	const formData = superForm(data.form)
 	export const snapshot = formData
@@ -18,11 +18,13 @@
 
 	const tomorrow = new Date(Date.now() + 86400e3).toISOString().slice(0, 10)
 
-	let tabData = $state(TabData(
-		data.url,
-		["Create Key", "Keys"],
-		["fa-key", "fa-envelopes-bulk"]
-	))
+	let tabData = $state(
+		TabData(
+			data.url,
+			["Create Key", "Keys"],
+			["fa-key", "fa-envelopes-bulk"]
+		)
+	)
 </script>
 
 <Head name={data.siteName} title="Registration Keys - Admin" />
@@ -36,7 +38,7 @@
 </div>
 
 <SidebarShell bind:tabData class="max-w-280">
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		<Form {formData} action="?/create" submit="Create">
 			<Input
 				{formData}
@@ -72,7 +74,7 @@
 		</Form>
 	</Tab>
 
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		<table class="w-full">
 			<thead>
 				<tr>

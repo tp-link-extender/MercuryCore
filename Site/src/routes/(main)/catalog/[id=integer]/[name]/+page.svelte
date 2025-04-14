@@ -13,7 +13,7 @@
 	import { writable } from "svelte/store"
 	import { superForm } from "sveltekit-superforms/client"
 
-	let { data, form } = $props();
+	let { data, form } = $props()
 
 	const { user } = data
 	const fee = (data.currentFee * data.asset.price).toFixed(2)
@@ -161,9 +161,9 @@
 
 	<TabNav bind:tabData justify />
 
-	<Tab {tabData} />
+	<Tab bind:tabData />
 
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		<PostReply {formData} comment />
 		{#key refresh}
 			{#if data.asset.replies.length > 0}

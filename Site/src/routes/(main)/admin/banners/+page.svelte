@@ -12,13 +12,15 @@
 	import Textarea from "$components/forms/Textarea.svelte"
 	import { superForm } from "sveltekit-superforms/client"
 
-	let { data } = $props();
+	let { data } = $props()
 
-	let tabData = $state(TabData(
-		data.url,
-		["Create Banner", "Banner List"],
-		["fa-plus", "fa-list"]
-	))
+	let tabData = $state(
+		TabData(
+			data.url,
+			["Create Banner", "Banner List"],
+			["fa-plus", "fa-list"]
+		)
+	)
 	let textLightForms: { [k: string]: HTMLFormElement } = $state({})
 
 	const formData = superForm(data.form)
@@ -37,7 +39,7 @@
 </div>
 
 <SidebarShell bind:tabData class="max-w-280">
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		<Form {formData} submit="<fa fa-plus></fa> Create" action="?/create">
 			<Textarea
 				{formData}
@@ -57,7 +59,7 @@
 		</Form>
 	</Tab>
 
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		<table class="w-full light-text">
 			<thead>
 				<tr>
@@ -96,7 +98,8 @@
 									<fa
 										class={banner.active
 											? "fa-eye-slash"
-											: "fa-eye"}></fa>
+											: "fa-eye"}>
+									</fa>
 									{banner.active ? "Deactivate" : "Activate"}
 								</button>
 							</form>

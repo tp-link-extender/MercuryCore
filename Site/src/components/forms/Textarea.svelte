@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type { HTMLTextareaAttributes } from "svelte/elements"
+
 	const {
 		name,
 		label = "",
@@ -16,7 +18,7 @@
 		rows?: number
 		lowpad?: boolean
 		formData: import("sveltekit-superforms").SuperForm<any>
-	} = $props()
+	} & HTMLTextareaAttributes = $props()
 
 	// TODO: prevent tabs in textarea caused by... the formatter....
 	$effect(() => {

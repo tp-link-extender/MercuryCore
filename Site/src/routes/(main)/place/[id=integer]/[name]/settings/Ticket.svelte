@@ -13,9 +13,7 @@
 
 <form use:enh method="POST" action="?/ticket&tab=Network">
 	<fieldset class="flex flex-wrap pb-4">
-		<label for="ticket" class="w-full md:w-1/4 text-md-right">
-			Server ticket
-		</label>
+		<label for="ticket" class="w-full md:w-1/4">Server ticket</label>
 		<div class="w-full md:w-3/4">
 			<div class="input-group">
 				<input

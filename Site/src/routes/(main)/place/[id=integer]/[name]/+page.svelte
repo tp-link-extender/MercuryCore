@@ -256,11 +256,11 @@
 
 	<TabNav bind:tabData justify />
 
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		{$place.description.text || ""}
 	</Tab>
 
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		{#if user?.permissionLevel === 5 || $place.ownerUser?.username === user?.username}
 			<h3 class="pb-2">Hosting on {data.siteName}</h3>
 			<p>
@@ -277,9 +277,7 @@
 			</p>
 			<div class="flex items-start mb-4">
 				<TabNav bind:tabData={tabData2} vertical class="pr-4" />
-				<!-- Prevents nested tabs from breaking -->
-				{((tabData2.num = 0), "")}
-				<Tab tabData={tabData2}>
+				<Tab bind:tabData={tabData2}>
 					<p>
 						You can host your server by opening your map in
 						<span class="px-1">
@@ -314,7 +312,7 @@
 						</small>
 					{/if}
 				</Tab>
-				<Tab tabData={tabData2}>
+				<Tab bind:tabData={tabData2}>
 					<Autopilot
 						{launch}
 						serverTicket={$place.serverTicket}

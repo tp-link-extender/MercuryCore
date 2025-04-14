@@ -8,15 +8,17 @@
 	import Security from "./Security.svelte"
 	import Styling from "./Styling.svelte"
 
-	let { data } = $props();
+	let { data } = $props()
 
 	const { user } = data
 
-	let tabData = $state(TabData(
-		data.url,
-		["Profile", "Account", "Security", "Styling"],
-		["fa-id-card", "fa-user", "fa-lock", "fa-paint-brush"]
-	))
+	let tabData = $state(
+		TabData(
+			data.url,
+			["Profile", "Account", "Security", "Styling"],
+			["fa-id-card", "fa-user", "fa-lock", "fa-paint-brush"]
+		)
+	)
 </script>
 
 <Head name={data.siteName} title="Settings" />
@@ -31,22 +33,19 @@
 	</div>
 
 	<TabNav bind:tabData />
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		<h2 class="text-xl">User Profile</h2>
 		<p class="grey-text pb-6">Change your bio, site theme and more.</p>
 		<Profile {data} />
 	</Tab>
 
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		<h2 class="text-xl">User Information</h2>
-		<p class="grey-text pb-6">
-			Information about your account, you can change certain aspects of it
-			here.
-		</p>
+		<p class="grey-text pb-6">Information about your account.</p>
 		<Account {data} />
 	</Tab>
 
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		<h2 class="text-xl">Account Security</h2>
 		<p class="grey-text pb-6">
 			Ensure your account is secure by changing your password and other
@@ -55,7 +54,7 @@
 		<Security {data} />
 	</Tab>
 
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		<h2 class="text-xl pb-4">Styling</h2>
 		<Styling {data} />
 	</Tab>
