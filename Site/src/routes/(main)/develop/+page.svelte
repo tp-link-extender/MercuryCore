@@ -6,7 +6,7 @@
 	import TabData from "$components/TabData"
 	import TabNav from "$components/TabNav.svelte"
 
-	let { data } = $props()
+	const { data } = $props()
 
 	const assetTypes = [
 		["Shirts", "🧥", "11"],

@@ -6,7 +6,7 @@
 	import TabData from "$components/TabData"
 	import permissionLevels from "$lib/permissionLevels"
 
-	let { data } = $props()
+	const { data } = $props()
 
 	const { user, totalmem, freemem } = data
 

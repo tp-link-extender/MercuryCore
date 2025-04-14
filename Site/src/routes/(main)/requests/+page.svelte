@@ -6,7 +6,7 @@
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
 
-	let { data } = $props();
+	const { data } = $props()
 </script>
 
 <Head name={data.siteName} title="Friend requests" />

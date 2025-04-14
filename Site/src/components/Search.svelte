@@ -1,23 +1,14 @@
 <script lang="ts">
-	import { preventDefault, run } from "svelte/legacy"
-
 	import { browser } from "$app/environment"
 	import { goto } from "$app/navigation"
 
-	let {
-		pages
-	}: {
-		pages: string[]
-	} = $props()
+	const { pages }: { pages: string[] } = $props()
 
 	let search = $state("")
-	let searchCompleted = $state(true)
 	let searchFocus = $state(-1)
-	run(() => {
-		if (search === "") {
-			searchCompleted = true
-			searchFocus = -1
-		}
+	$effect(() => {
+		if (search !== "") return
+		searchFocus = -1
 	})
 
 	let searchText = $state("Search")
@@ -27,7 +18,7 @@
 		if (browser) searchText += " (ctrl+k)"
 	})
 
-	let searchInput: HTMLInputElement | undefined = $state()
+	let searchInput = $state<HTMLInputElement>()
 	const searchResults: HTMLElement[] = $state([])
 
 	const searchCategories = [
@@ -45,10 +36,8 @@
 		switch (e.key) {
 			case "Enter":
 				e.preventDefault()
-				if (!searchCompleted && searchFocus >= 0)
-					searchResults[searchFocus].click()
+				searchResults[Math.max(0, searchFocus)].click() // better but not perfect
 
-				searchCompleted = true
 				searchFocus = -1
 				break
 			case "ArrowDown":
@@ -69,8 +58,6 @@
 			case "Escape":
 				search = ""
 				break
-			default:
-				searchCompleted = false
 		}
 	}
 </script>
@@ -102,9 +89,10 @@
 			{#each searchCategories as [name, value], num}
 				<button
 					bind:this={searchResults[num]}
-					onclick={preventDefault(() =>
+					onclick={e => {
+						e.preventDefault()
 						goto(`/search?q=${search}&c=${value}`)
-					)}
+					}}
 					class="btn light-text block w-full py-2 text-start"
 					name="c"
 					{value}

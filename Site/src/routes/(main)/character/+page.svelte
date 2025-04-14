@@ -7,7 +7,7 @@
 	import { brickColours, brickToHex } from "$lib/brickColours"
 	import AvatarItem from "./AvatarItem.svelte"
 
-	let { data, form } = $props();
+	const { data, form } = $props()
 
 	const { user } = data
 
@@ -52,11 +52,13 @@
 		RightLeg: "left-24 top-38 h-22 w-10"
 	})
 
-	let assets = $derived(data.assets.filter(a =>
-		tabData.currentTab === "Recent"
-			? true
-			: a.type === tabTypes[tabData.currentTab]
-	))
+	let assets = $derived(
+		data.assets.filter(a =>
+			tabData.currentTab === "Recent"
+				? true
+				: a.type === tabTypes[tabData.currentTab]
+		)
+	)
 </script>
 
 <div class="ctnr light-text">
@@ -75,8 +77,10 @@
 				</p>
 				<img
 					alt="Your character"
-					class:opacity-50={regenerating}
-					class="w-full transition-opacity duration-300"
+					class={[
+						"w-full transition-opacity duration-300",
+						{ "opacity-50": regenerating }
+					]}
 					src={form?.avatar || `/api/avatar/${user.username}-body`} />
 			</div>
 			<div class="card w-full p-4">

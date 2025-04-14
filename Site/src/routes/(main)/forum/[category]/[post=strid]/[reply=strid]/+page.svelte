@@ -8,7 +8,7 @@
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({})
 
-	let { data } = $props();
+	const { data } = $props()
 
 	let topReply = $derived(data.replies[0])
 	let parentPost = $derived(topReply.parentPost)

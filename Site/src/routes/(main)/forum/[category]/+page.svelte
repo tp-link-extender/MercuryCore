@@ -5,7 +5,7 @@
 	import Pagination from "$components/Pagination.svelte"
 	import ForumPost from "./ForumPost.svelte"
 
-	let { data } = $props();
+	const { data } = $props()
 </script>
 
 <Head name={data.siteName} title="{data.name} - Forum" />

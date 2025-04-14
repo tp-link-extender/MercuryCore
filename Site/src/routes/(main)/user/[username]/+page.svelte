@@ -11,7 +11,7 @@
 	import Interactions from "./Interactions.svelte"
 	import ProfilePlace from "./ProfilePlace.svelte"
 
-	let { data, form } = $props();
+	const { data, form } = $props()
 
 	const { user } = data
 
@@ -28,7 +28,7 @@
 		}
 	}
 
-	let accordion: import("@melt-ui/svelte").Accordion = $state() // Sometimes undefined for some probably crazy reason
+	let accordion = $state<import("@melt-ui/svelte").Accordion>() // Sometimes undefined for some probably crazy reason
 </script>
 
 <Head name={data.siteName} title={data.username} />

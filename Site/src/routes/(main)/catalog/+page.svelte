@@ -6,7 +6,7 @@
 	import TabData from "$components/TabData"
 	import TabNav from "$components/TabNav.svelte"
 
-	let { data } = $props();
+	const { data } = $props()
 
 	const tabTypes: { [k: string]: number } = {
 		Hats: 8,
@@ -19,7 +19,9 @@
 
 	let tabData = $state(TabData(data.url, Object.keys(tabTypes)))
 
-	let assets = $derived(data.assets.filter(a => a.type === tabTypes[tabData.currentTab]))
+	let assets = $derived(
+		data.assets.filter(a => a.type === tabTypes[tabData.currentTab])
+	)
 </script>
 
 <Head name={data.siteName} title="Catalog" />

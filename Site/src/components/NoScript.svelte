@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from "svelte"
 
-	let { children }: { children?: Snippet } = $props()
+	const { children }: { children?: Snippet } = $props()
 </script>
 
 <!-- basically just <noscript> except not when there's no script -->

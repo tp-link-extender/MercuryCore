@@ -2,7 +2,7 @@
 	import Head from "$components/Head.svelte"
 	import User from "$components/User.svelte"
 
-	let { data } = $props();
+	const { data } = $props()
 
 	const notificationNotes: { [k: string]: string } = {
 		AssetApproved: "Asset approval",

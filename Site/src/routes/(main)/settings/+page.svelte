@@ -8,7 +8,7 @@
 	import Security from "./Security.svelte"
 	import Styling from "./Styling.svelte"
 
-	let { data } = $props()
+	const { data } = $props()
 
 	const { user } = data
 

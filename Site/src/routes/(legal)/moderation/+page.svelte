@@ -2,7 +2,7 @@
 	import { enhance } from "$app/forms"
 	import Head from "$components/Head.svelte"
 
-	let { data } = $props();
+	const { data } = $props()
 
 	let checked = $state(false)
 

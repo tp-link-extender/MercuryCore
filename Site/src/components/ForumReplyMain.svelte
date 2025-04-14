@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { preventDefault } from "svelte/legacy"
-
 	import { enhance } from "$app/forms"
 	import DeleteButton from "$components/DeleteButton.svelte"
 	import ForumReply from "$components/ForumReply.svelte"
@@ -160,7 +158,10 @@
 			</form>
 			<a
 				href="/forum/{categoryName}/{postId}/{reply.id}"
-				onclick={preventDefault(() => replyingTo.set(reply.id))}
+				onclick={e => {
+					e.preventDefault()
+					replyingTo.set(reply.id)
+				}}
 				class="btn btn-sm p-0 px-1 text-neutral-5
 				hover:text-neutral-300 {hidden ? 'opacity-33' : ''}">
 				<fa fa-message class="pr-2"></fa>

@@ -5,7 +5,7 @@
 	import User from "$components/User.svelte"
 	import Report from "./Report.svelte"
 
-	let { data } = $props();
+	const { data } = $props()
 
 	let tabData = $state(TabData(data.url, ["Abuse reports"], ["fa-list"]))
 </script>

@@ -10,7 +10,7 @@
 	import fade from "$lib/fade"
 	import { superForm } from "sveltekit-superforms/client"
 
-	let { data } = $props()
+	const { data } = $props()
 
 	const formData = superForm(data.form)
 	export const snapshot = formData

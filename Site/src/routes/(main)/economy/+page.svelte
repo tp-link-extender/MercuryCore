@@ -4,7 +4,7 @@
 	import beautifyCurrency from "$lib/beautifyCurrency"
 	import fade from "$lib/fade"
 
-	let { data } = $props();
+	const { data } = $props()
 
 	const [c1, c2, c3, c4] = beautifyCurrency(data.balance)
 </script>

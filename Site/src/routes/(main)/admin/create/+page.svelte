@@ -12,7 +12,7 @@
 	import fade from "$lib/fade"
 	import { superForm } from "sveltekit-superforms/client"
 
-	let { data } = $props()
+	const { data } = $props()
 
 	const formDataManual = superForm(data.formManual)
 	const formDataAutopilot = superForm(data.formAuto)

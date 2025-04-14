@@ -13,7 +13,7 @@
 	import { writable } from "svelte/store"
 	import { superForm } from "sveltekit-superforms/client"
 
-	let { data, form } = $props()
+	const { data, form } = $props()
 
 	const { user } = data
 	const fee = (data.currentFee * data.asset.price).toFixed(2)

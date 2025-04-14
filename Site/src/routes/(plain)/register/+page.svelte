@@ -6,7 +6,7 @@
 	import LoginShell from "../LoginShell.svelte"
 	import Waves from "../Waves.svelte"
 
-	let { data } = $props();
+	const { data } = $props()
 
 	const formData = superForm(data.form)
 	export const snapshot = formData

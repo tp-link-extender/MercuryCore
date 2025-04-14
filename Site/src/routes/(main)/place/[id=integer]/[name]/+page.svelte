@@ -12,7 +12,7 @@
 	import Thumbnails from "./Thumbnails.svelte"
 	import customProtocol from "./customprotocol.ts"
 
-	let { data } = $props()
+	const { data } = $props()
 
 	const { user } = data
 
@@ -30,7 +30,7 @@
 
 	// Place Launcher
 
-	let popover: HTMLDivElement | undefined = $state()
+	let popover = $state<HTMLDivElement>()
 	let installed = $state(true)
 	let success = $state(false)
 

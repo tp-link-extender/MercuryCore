@@ -4,9 +4,11 @@
 	import TabData from "$components/TabData"
 	import AssetApprove from "./AssetApprove.svelte"
 
-	let { data } = $props();
+	const { data } = $props()
 
-	let tabData = $state(TabData(data.url, ["Asset queue"], ["fa-file-circle-xmark"]))
+	let tabData = $state(
+		TabData(data.url, ["Asset queue"], ["fa-file-circle-xmark"])
+	)
 </script>
 
 <Head name={data.siteName} title="Asset approval - Admin" />

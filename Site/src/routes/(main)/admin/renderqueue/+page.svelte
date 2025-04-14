@@ -5,7 +5,7 @@
 	import TabData from "$components/TabData"
 	import User from "$components/User.svelte"
 
-	let { data } = $props()
+	const { data } = $props()
 
 	let tabData = $state(
 		TabData(

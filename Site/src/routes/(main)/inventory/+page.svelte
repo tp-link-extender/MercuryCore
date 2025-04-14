@@ -6,7 +6,7 @@
 	import SidebarShell from "$components/SidebarShell.svelte"
 	import TabData from "$components/TabData"
 
-	let { data } = $props();
+	const { data } = $props()
 
 	const tabTypes: { [k: string]: number } = Object.freeze({
 		Hats: 8,
@@ -19,7 +19,9 @@
 
 	let tabData = $state(TabData(data.url, Object.keys(tabTypes)))
 
-	let assets = $derived(data.assets.filter(a => a.type === tabTypes[tabData.currentTab]))
+	let assets = $derived(
+		data.assets.filter(a => a.type === tabTypes[tabData.currentTab])
+	)
 </script>
 
 <Head name={data.siteName} title="Inventory" />
@@ -51,7 +53,7 @@
 				<!--
 					?tab= works questionably due to url/local state mismatch...
 					eh, I signed up for that	
-				--> 
+				-->
 				<a href="/catalog?tab={tabData.currentTab}">Catalog</a>
 				to get some!
 			</h3>

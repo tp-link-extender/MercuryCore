@@ -12,7 +12,7 @@
 	import Textarea from "$components/forms/Textarea.svelte"
 	import { superForm } from "sveltekit-superforms/client"
 
-	let { data } = $props()
+	const { data } = $props()
 
 	let tabData = $state(
 		TabData(

@@ -4,7 +4,7 @@
 	import Pagination from "$components/Pagination.svelte"
 	import PlaceCard from "./PlaceCard.svelte"
 
-	let { data } = $props();
+	const { data } = $props()
 </script>
 
 <Head name={data.siteName} title="Discover" />

@@ -10,13 +10,15 @@
 	import TicketForm from "./Ticket.svelte"
 	import ViewForm from "./View.svelte"
 
-	let { data } = $props();
+	const { data } = $props()
 
-	let tabData = $state(TabData(
-		data.url,
-		["View", "Network", "Privacy"],
-		["fa-eye", "fa-network-wired", "fa-eye-low-vision"]
-	))
+	let tabData = $state(
+		TabData(
+			data.url,
+			["View", "Network", "Privacy"],
+			["fa-eye", "fa-network-wired", "fa-eye-low-vision"]
+		)
+	)
 </script>
 
 <Head name={data.siteName} title="{data.name} Settings" />

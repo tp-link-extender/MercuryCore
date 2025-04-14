@@ -2,7 +2,7 @@
 	import Footer from "$components/Footer.svelte"
 	import Navbar from "$components/Navbar.svelte"
 
-	let { data, children } = $props();
+	const { data, children } = $props()
 </script>
 
 <div id="bg" class="fixed w-full h-full pointer-events-none"></div>
@@ -13,7 +13,7 @@
 <Navbar {data} />
 
 <main class="py-5vh <lg:pt-2.5vh bg-transparent flex-1 z-1">
-	{@render children?.()}
+	{@render children()}
 </main>
 
 <Footer {data} />

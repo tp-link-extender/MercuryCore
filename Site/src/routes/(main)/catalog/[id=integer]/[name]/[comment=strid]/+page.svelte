@@ -5,7 +5,7 @@
 	import Head from "$components/Head.svelte"
 	import { writable } from "svelte/store"
 
-	let { data } = $props();
+	const { data } = $props()
 
 	const { user } = data
 

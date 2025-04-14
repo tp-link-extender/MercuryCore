@@ -5,13 +5,11 @@
 	import Transaction from "$components/Transaction.svelte"
 	import fade from "$lib/fade"
 
-	let { data } = $props();
+	const { data } = $props()
 
-	let tabData = $state(TabData(
-		data.url,
-		["All transactions"],
-		["fa-money-bill-wave"]
-	))
+	let tabData = $state(
+		TabData(data.url, ["All transactions"], ["fa-money-bill-wave"])
+	)
 </script>
 
 <Head name={data.siteName} title="Transactions - Admin" />

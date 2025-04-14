@@ -11,7 +11,7 @@
 	import { writable } from "svelte/store"
 	import { superForm } from "sveltekit-superforms/client"
 
-	let { data } = $props();
+	const { data } = $props()
 
 	const { user } = data
 

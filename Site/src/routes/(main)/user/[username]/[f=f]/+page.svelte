@@ -4,7 +4,7 @@
 	import Head from "$components/Head.svelte"
 	import UserCard from "$components/UserCard.svelte"
 
-	let { data } = $props();
+	const { data } = $props()
 
 	const titles = {
 		friends: () => `${data.username}'s friends`,

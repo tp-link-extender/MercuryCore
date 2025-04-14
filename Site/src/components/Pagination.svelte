@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/state"
 
-	let { totalPages }: { totalPages: number } = $props()
+	const { totalPages }: { totalPages: number } = $props()
 
 	function getNewUrl(p: number) {
 		const url = new URL(page.url) // clone?

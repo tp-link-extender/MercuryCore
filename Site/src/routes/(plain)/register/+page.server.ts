@@ -8,7 +8,6 @@ import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import accountRegistered from "../accountRegistered"
-import accountRegisteredQuery from "../accountRegistered.surql"
 import createUserQuery from "./createUser.surql"
 import regkeyCheckQuery from "./regkeyCheck.surql"
 

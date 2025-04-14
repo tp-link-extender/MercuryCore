@@ -5,7 +5,7 @@
 	import { VERSION } from "@sveltejs/kit"
 	import Waves from "./Waves.svelte"
 
-	let { data } = $props();
+	const { data } = $props()
 
 	const [, c1, c2] = data.stipend.ok
 		? beautifyCurrency(data.stipend.value)
@@ -72,7 +72,8 @@
 							{#if ok}
 								{#each success as stat, i}
 									<small
-										class="text-3.5 font-500 pr-1 {i % 2 == 0
+										class="text-3.5 font-500 pr-1 {i % 2 ==
+										0
 											? 'opacity-60'
 											: 'text-emerald-200'}">
 										{stat}
