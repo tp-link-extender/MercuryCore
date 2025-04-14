@@ -27,6 +27,7 @@ You will need:
 
 -   Latest version of Bun installed (expected as `bun`)
 -   Latest version of Docker installed (expected as `docker`, optional)
+    -   Alternative container managers can be used, for example Podman
 -   A terminal
 -   A modern web browser (Early 2024 onwards for most major browsers)
 -   A computer, as it would be painful to live without one, wouldn't it?
@@ -36,11 +37,11 @@ Instructions:
 -   Clone the repository to your local machine
 -   Open a terminal and navigate to the directory of the repository
 -   Run `bun i` to install all dependencies
--   Copy the `.env.example` file to `.env` to set up the environment variables
+-   Copy the **Site/.env.example** file to **Site/.env** and modify it to set up the environment variables
 -   Run `docker compose up -d` to start the database and economy service
 
 > [!TIP]  
-> If you don't have or can't install Docker, you can start the database manually by [installing SurrealDB](https://surrealdb.com/install) and running `surreal start -l trace -u root -p root --allow-scripting file:./data/surreal` in the repository's root directory, and the economy service manually by [installing Go](https://go.dev/dl/) and running `go run .` in the **Economy** directory. You'll need to run these in separate terminals or in the background.
+> If you don't have or can't install a container manager, you can start the database manually by [installing SurrealDB](https://surrealdb.com/install) and running `surreal start -l trace -u root -p root --allow-scripting file:./data/surreal` in the repository's root directory, and the economy service manually by [installing Go](https://go.dev/dl/) and running `go run .` in the **Economy** directory. You'll need to run these in separate terminals or in the background.
 
 To start a local dev server, go to the **Site** directory, run `bun dev`, and navigate to the link shown in the terminal (remember not to use HTTPS!). Upon saving a file, your changes will be shown in the web browser.
 
@@ -72,7 +73,7 @@ The data directory, which is hidden from source control and should be kept priva
 You will need:
 
 -   Latest version of Bun installed (expected as `bun`)
--   Latest version of Docker installed (expected as `docker`)
+-   Latest version of Docker or another container manager installed (expected as `docker`)
 -   Latest version of Caddy server installed (expected as `caddy`)
 -   A terminal
 -   Some sort of server hardware
@@ -84,12 +85,12 @@ Instructions:
     -   You can also run `caddy reload` to reload the configuration file without restarting the server.
     -   If you're using Caddy with multiple configuration files, import the Caddyfile in the repository's root directory into a Caddyfile somewhere else, and run `caddy start` and `caddy reload` from there.
 -   Run `docker compose up -d` to start the database and economy service
--   Copy the `.env.example` file to `.env` to set up the environment variables
+-   Copy the **Site/.env.example** file to **Site/.env** and modify it to set up the environment variables
 -   Run `bun prod` to install dependencies and begin building
 -   Run `bun ./build` (not to be confused with `bun build`) to start Mercury Core.
 
 > [!TIP]  
-> Several methods can be used to run Mercury Core as a background process as well. Daemons, GNU Screen, Docker, and PM2 all work for this purpose.
+> Several methods can be used to run Mercury Core as a background process as well. Daemons, GNU Screen, containers, and PM2 all work for this purpose.
 
 # Customisation
 

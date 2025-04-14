@@ -43,6 +43,6 @@ body:
       attributes:
           label: System info
           description: Please provide any relevant system information that may help us diagnose the issue.
-          placeholder: Bun version, Docker container versions, browser vendor and version, etc
+          placeholder: Bun version, container versions, browser vendor and version, etc
       validations:
           required: true
