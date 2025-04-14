@@ -55,11 +55,11 @@
 			style="border-bottom-color: {$colour}"
 			data-sveltekit-preload-data="off">
 			<a
-				class="block tab no-underline {vertical
-					? 'p-4 py-2'
-					: 'p-3 py-1'} rounded-2 {tabData.currentTab === tab
-					? 'disabled active'
-					: ''}"
+				class={[
+					"block tab no-underline rounded-2",
+					vertical ? "p-4 py-2" : "p-3 py-1",
+					{ "disabled active": tabData.currentTab === tab }
+				]}
 				href="?{(() => {
 					const currentSearch = new URL(tabData.url).searchParams
 					currentSearch.set(tabData.name, tab)

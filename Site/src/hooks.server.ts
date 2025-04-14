@@ -64,7 +64,9 @@ async function finish({ event, resolve }: Parameters<Handle>[0]) {
 	// if it's html, add the user's theme and custom CSS before the </body> tag
 	const file = Bun.file(`../Assets/${config.Themes[user?.theme || 0].Path}`)
 	const themecss = await file.text()
-	const customcss = user?.css ? `<style id="custom-css">${user.css}</style>` : ""
+	const customcss = user?.css
+		? `<style id="custom-css">${user.css}</style>`
+		: ""
 
 	// duplicate the response to avoid modifying the original
 	const text = (await res.clone().text()).replace(

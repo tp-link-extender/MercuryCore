@@ -34,7 +34,7 @@
 			{label}
 		</label>
 	{/if}
-	<div class="w-full {label ? 'md:w-3/4' : ''}">
+	<div class={["w-full", { "md:w-3/4": label }]}>
 		<textarea
 			{...rest}
 			bind:value={$form[name]}

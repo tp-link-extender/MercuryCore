@@ -31,11 +31,11 @@
 
 <div class="flex flex-wrap {inline ? 'flex-1' : 'pb-8'}">
 	{#if label}
-		<label for={name} class="w-full {column ? '' : 'md:w-1/4'}">
+		<label for={name} class={["w-full", { "md:w-1/4": !column }]}>
 			{label}
 		</label>
 	{/if}
-	<div class="w-full {label && !column ? 'md:w-3/4' : ''}">
+	<div class={["w-full", { "md:w-3/4": label && !column }]}>
 		<!-- welp, boilerplate begets boilerplate -->
 		{#if after}
 			<div class="flex items-center">

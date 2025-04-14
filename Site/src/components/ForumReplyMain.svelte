@@ -115,7 +115,7 @@
 				{new Date(reply.posted).toLocaleString()}
 			</small>
 		</div>
-		<p class="py-2 m-0 break-all {hidden ? 'opacity-33' : ''}">
+		<p class={["py-2 m-0 break-all", { "opacity-33": hidden }]}>
 			{reply.content[0].text}
 		</p>
 		{#if $replyingTo !== reply.id}
@@ -123,7 +123,7 @@
 				use:enhance={likeEnhance}
 				method="POST"
 				action="?/like&rid={reply.id}"
-				class="inline pr-2 {hidden ? 'opacity-33' : ''}">
+				class={["inline pr-2", { "opacity-33": hidden }]}>
 				<button
 					name="action"
 					value={reply.likes ? "unlike" : "like"}
@@ -137,11 +137,13 @@
 					</fa>
 				</button>
 				<span
-					class="text-center {reply.likes
-						? 'text-emerald-600 font-bold'
-						: reply.dislikes
-							? 'text-red-500 font-bold'
-							: ''}">
+					class={[
+						"text-center",
+						{
+							"text-emerald-600 font-bold": reply.likes,
+							"text-red-500 font-bold": reply.dislikes
+						}
+					]}>
 					{reply.score}
 				</span>
 				<button
@@ -163,8 +165,10 @@
 					e.preventDefault()
 					replyingTo.set(reply.id)
 				}}
-				class="btn btn-sm p-0 px-1 text-neutral-5
-				hover:text-neutral-300 {hidden ? 'opacity-33' : ''}">
+				class={[
+					"btn btn-sm p-0 px-1 text-neutral-5 hover:text-neutral-300",
+					{ "opacity-33": hidden }
+				]}>
 				<fa fa-message class="pr-2"></fa>
 				Reply
 			</a>

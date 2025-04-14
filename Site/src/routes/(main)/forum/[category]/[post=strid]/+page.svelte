@@ -72,9 +72,10 @@
 		]} />
 
 	<div
-		class="post card bg-darker flex-row {$post.pinned
-			? 'border-(solid 1px green-5)!'
-			: ''}">
+		class={[
+			"post card bg-darker flex-row",
+			{ "border-(solid 1px green-5)!": $post.pinned }
+		]}>
 		<form
 			use:enhance={likeEnhance}
 			method="POST"
@@ -94,11 +95,13 @@
 					</fa>
 				</button>
 				<span
-					class="py-2 text-center {$post.likes
-						? 'text-emerald-600 font-bold'
-						: $post.dislikes
-							? 'text-red-500 font-bold'
-							: ''}">
+					class={[
+						"py-2 text-center",
+						{
+							"text-emerald-600 font-bold": $post.likes,
+							"text-red-500 font-bold": $post.dislikes
+						}
+					]}>
 					{$post.score}
 				</span>
 				<button
