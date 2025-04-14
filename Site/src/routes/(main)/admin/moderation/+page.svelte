@@ -17,7 +17,7 @@
 	const { form } = formData
 	const tomorrow = new Date(Date.now() + 86400e3).toISOString().slice(0, 10)
 
-	const moderationOptions = [
+	const moderationOptions: [string, string][] = [
 		["1", "Warning"],
 		["2", "Ban"],
 		["3", "Termination"],

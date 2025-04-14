@@ -22,9 +22,9 @@
 
 <Head name={data.siteName} title="Notifications" />
 
-<h1 class="text-center">Notifications</h1>
+<h1 class="text-center">Notifications ({data.notifications.length})</h1>
 
-<div class="ctnr pt-12 max-w-200">
+<div class="ctnr pt-8 max-w-200">
 	{#each data.notifications as notification}
 		<div class="pb-4">
 			<div class={["card p-4", { "bg-darker": notification.read }]}>
@@ -46,6 +46,6 @@
 		</div>
 	{/each}
 	{#if data.notifications.length === 0}
-		<h2 class="text-center">No notifications yet.</h2>
+		<h2 class="pt-12 text-center">No notifications yet.</h2>
 	{/if}
 </div>

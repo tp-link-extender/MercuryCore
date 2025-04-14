@@ -172,8 +172,8 @@
 					{refreshReplies} />
 			{/each}
 		{:else}
-			<h3 class="text-center pt-6">No replies yet.</h3>
-			<h4 class="text-center pt-4">Be the first to post one!</h4>
+			<h3 class="pt-6 text-center">No replies yet.</h3>
+			<h4 class="pt-4 text-center">Be the first to post one!</h4>
 		{/if}
 	{/key}
 </div>

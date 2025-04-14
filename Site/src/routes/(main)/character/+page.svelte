@@ -117,12 +117,17 @@
 							{enhanceRegen} />
 					{/each}
 				</div>
+			{:else if tabData.currentTab === "Recent"}
+				<h2 class="text-center">No recently worn items.</h2>
 			{:else}
 				<h2 class="text-center">
-					No {tabData.currentTab === "Recent"
-						? "recently worn items"
-						: tabData.currentTab} found.
+					You don't have any {tabData.currentTab} yet.
 				</h2>
+				<h3 class="pt-4 text-center">
+					Head to the
+					<a href="/catalog?tab={tabData.currentTab}">Catalog</a>
+					to get some!
+				</h3>
 			{/if}
 		</div>
 	</div>

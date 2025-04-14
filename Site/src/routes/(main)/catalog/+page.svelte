@@ -117,7 +117,7 @@
 				{/key}
 			{:else}
 				<h2 class="pt-12 text-center">
-					No assets exist in this category yet.
+					No {tabData.currentTab} available.
 				</h2>
 			{/if}
 		</div>
