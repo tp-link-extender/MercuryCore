@@ -32,7 +32,7 @@
 	in:fade|global={{ num, total }}
 	class="card text-center no-underline rounded-4 w-90 md:w-82 lg:w-78 light-text bg-darker"
 	href="/place/{place.id}/{slug}">
-	<div class="flex" class:opacity-50={!online}>
+	<div class={["flex", { "opacity-50": !online }]}>
 		<div class="w-1/2">
 			<div class="shadow overflow-hidden bg-black relative rounded-l-4">
 				<img

@@ -73,7 +73,7 @@
 				{name}
 				id={name}
 				{placeholder}
-				class:is-invalid={$errors[name]}>
+				class={{ "is-invalid": $errors[name] }}>
 				{#each mOptions as { value, label }}
 					<option {value} selected={$isSelected(value)}>
 						{label}
@@ -120,8 +120,10 @@
 							use:melt={$option({ value, label })}>
 							<fa
 								fa-check
-								class:hidden={!$isSelected(value)}
-								class="pr-2">
+								class={[
+									"pr-2",
+									{ hidden: !$isSelected(value) }
+								]}>
 							</fa>
 							{label}
 						</button>

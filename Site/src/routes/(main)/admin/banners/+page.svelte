@@ -151,8 +151,10 @@
 			</tbody>
 		</table>
 		<p
-			class:text-emerald-600={page.status === 200}
-			class:text-red-500={page.status >= 400}>
+			class={{
+				"text-emerald-600": page.status === 200,
+				"text-red-500": page.status >= 400
+			}}>
 			{$message || ""}
 		</p>
 	</Tab>

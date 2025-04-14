@@ -76,7 +76,7 @@
 							I understand
 						</label>
 					</div>
-					<button class="btn btn-primary" class:disabled={!checked}>
+					<button class={["btn btn-primary", { disabled: !checked }]}>
 						Reactivate
 					</button>
 				</form>

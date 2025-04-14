@@ -8,6 +8,7 @@
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
 	import permissionLevels from "$lib/permissionLevels"
+	import { createAccordion } from "@melt-ui/svelte"
 	import Interactions from "./Interactions.svelte"
 	import ProfilePlace from "./ProfilePlace.svelte"
 
@@ -28,7 +29,7 @@
 		}
 	}
 
-	let accordion = $state<import("@melt-ui/svelte").Accordion>() // Sometimes undefined for some probably crazy reason
+	let accordion = $state(createAccordion()) // Sometimes undefined for some probably crazy reason
 </script>
 
 <Head name={data.siteName} title={data.username} />
@@ -163,8 +164,10 @@
 				<h2>Avatar</h2>
 				<div class="card bg-darker p-4">
 					<img
-						class="transition-opacity duration-300"
-						class:opacity-50={regenerating}
+						class={[
+							"transition-opacity duration-300",
+							{ "opacity-50": regenerating }
+						]}
 						src={form?.avatarBody ||
 							`/api/avatar/${data.username}-body`}
 						alt={data.username} />
@@ -191,14 +194,12 @@
 			{#if data.places.length > 0}
 				<div class="pt-6">
 					<h2>Creations</h2>
-					<Accordion bind:accordion>
-						<div class="flex flex-col gap-2">
-							{#each accordion ? data.places : [] as place}
-								<AccordionItem {accordion} title={place.name}>
-									<ProfilePlace {place} />
-								</AccordionItem>
-							{/each}
-						</div>
+					<Accordion {accordion} class="flex flex-col gap-2">
+						{#each accordion ? data.places : [] as place}
+							<AccordionItem {accordion} title={place.name}>
+								<ProfilePlace {place} />
+							</AccordionItem>
+						{/each}
 					</Accordion>
 				</div>
 			{/if}

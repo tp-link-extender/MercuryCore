@@ -27,7 +27,7 @@
 <div class="ctnr pt-12 max-w-200">
 	{#each data.notifications as notification}
 		<div class="pb-4">
-			<div class:bg-darker={notification.read} class="card p-4">
+			<div class={["card p-4", { "bg-darker": notification.read }]}>
 				<span class="flex gap-3 items-center pb-4">
 					<User
 						user={notification.sender}

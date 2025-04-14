@@ -80,7 +80,7 @@
 {/if}
 
 {#if reply && reply.author}
-	<div class="pt-2" class:flex={!topLevel}>
+	<div class={["pt-2", { flex: !topLevel }]}>
 		{#if !topLevel}
 			<span class="flex flex-col pt-2">
 				<User user={reply.author} thin size="1.5rem" />

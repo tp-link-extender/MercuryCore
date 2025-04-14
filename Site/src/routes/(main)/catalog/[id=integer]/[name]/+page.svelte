@@ -53,8 +53,10 @@
 	<div class="flex <sm:flex-col">
 		<div class="pr-4 pb-4">
 			<img
-				class:opacity-50={regenerating}
-				class="image transition-opacity duration-300 aspect-1 w-80vw max-w-100"
+				class={[
+					"image transition-opacity duration-300 aspect-1 w-80vw max-w-100",
+					{ "opacity-50": regenerating }
+				]}
 				src={form?.icon ||
 					`/catalog/${data.asset.id}/${data.slug}/icon`}
 				alt={data.asset.name} />

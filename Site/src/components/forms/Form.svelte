@@ -34,7 +34,7 @@
 	<fieldset class={inline ? "input-group" : "pb-2"}>
 		{@render children()}
 		{#if submit}
-			<button class="btn btn-primary h-full" class:nopad>
+			<button class={["btn btn-primary h-full", { nopad }]}>
 				{@html /* ecks ess ess moment */ $delayed ? working : submit}
 			</button>
 		{/if}

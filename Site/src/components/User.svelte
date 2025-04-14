@@ -48,7 +48,7 @@
 </script>
 
 {#if image}
-	<div class={["flex", class_]} class:items-center={full}>
+	<div class={["flex", class_, { "items-center": full }]}>
 		<div class="relative">
 			<!-- css hell -->
 			<div
@@ -58,8 +58,10 @@
 			<div class="rounded-full" style={style2}>
 				{#if rerender}
 					<img
-						class="transition-opacity duration-300 rounded-full rounded-t-0"
-						class:opacity-50={rerender.regenerating}
+						class={[
+							"transition-opacity duration-300 rounded-full rounded-t-0",
+							{ "opacity-50": rerender.regenerating }
+						]}
 						src={rerender.form?.avatar ||
 							`/api/avatar/${user.username}`}
 						alt={user.username}

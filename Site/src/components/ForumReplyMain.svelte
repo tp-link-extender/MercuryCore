@@ -84,15 +84,16 @@
 		<div class="flex items-center pt-2">
 			<a
 				href="/user/{reply.author.username}"
-				class="userlink items-center no-underline flex flex-row font-bold {reply
-					.author.username === postAuthorName
-					? assetSlug
-						? 'text-yellow-500'
-						: 'text-blue-600'
-					: ''}"
-				class:light-text={reply.author.username !== postAuthorName}
-				class:opacity-33={hidden}
-				class:pl-4={!topLevel}>
+				class={[
+					"userlink items-center no-underline flex flex-row font-bold",
+					{
+						[assetSlug ? "text-yellow-500" : "text-blue-600"]:
+							reply.author.username === postAuthorName,
+						"light-text": reply.author.username !== postAuthorName,
+						"opacity-33": hidden,
+						"pl-4": !topLevel
+					}
+				]}>
 				{#if topLevel}
 					<User
 						user={reply.author}

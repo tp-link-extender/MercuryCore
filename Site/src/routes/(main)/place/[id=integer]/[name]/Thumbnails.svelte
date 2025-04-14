@@ -24,8 +24,10 @@
 		{@const thumbs = thumbnails.length}
 		<div
 			id="slide{i + 1}"
-			class="carousel-item box-content flex-none relative w-full"
-			class:active={!i}>
+			class={[
+				"carousel-item box-content flex-none relative w-full",
+				{ active: !i }
+			]}>
 			<img
 				src="/place/{id}/{slug}/thumbnail/{i + 1}"
 				class="w-full"

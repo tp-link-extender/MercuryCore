@@ -27,6 +27,7 @@ export async function load({ params }) {
 
 	return {
 		...params,
+		f: params.f as keyof typeof queries,
 		users,
 		count,
 	}
