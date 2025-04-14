@@ -2,7 +2,7 @@
 	import Head from "$components/Head.svelte"
 	import UserCard from "$components/UserCard.svelte"
 
-	export let data
+	const { data } = $props()
 </script>
 
 <Head name={data.siteName} title="Members of {data.name}" />

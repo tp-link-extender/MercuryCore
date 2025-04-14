@@ -16,26 +16,39 @@
 		accent3: "accent2"
 	})
 
-	export let user: BasicUser
-	export let full = false
-	export let thin = false
-	export let image = false
-	export let bottom = false
-	export let rerender: {
-		form?: {
-			avatar?: string
-		} | null
-		regenerating?: boolean
-	} | null = null // Used on profile page for rerender button
-	export let size = "2rem"
-	export let bg: keyof typeof transitionBackgrounds = "accent2"
+	const {
+		user,
+		full = false,
+		thin = false,
+		image = false,
+		bottom = false,
+		rerender = null,
+		size = "2rem",
+		bg = "accent2",
+		class: class_
+	}: {
+		user: BasicUser
+		full?: boolean
+		thin?: boolean
+		image?: boolean
+		bottom?: boolean
+		rerender?: {
+			form?: {
+				avatar?: string
+			} | null
+			regenerating?: boolean
+		} | null // Used on profile page for rerender button
+		size?: string
+		bg?: keyof typeof transitionBackgrounds
+		class?: string
+	} = $props()
 
 	const style = `width: ${size}; max-width: ${size}; height: ${size}; min-height: ${size}`
 	const style2 = `${style}; background: var(--${bg})`
 </script>
 
 {#if image}
-	<div class="flex {$$restProps.class}" class:items-center={full}>
+	<div class={["flex", class_, { "items-center": full }]}>
 		<div class="relative">
 			<!-- css hell -->
 			<div
@@ -45,8 +58,10 @@
 			<div class="rounded-full" style={style2}>
 				{#if rerender}
 					<img
-						class="transition-opacity duration-300 rounded-full rounded-t-0"
-						class:opacity-50={rerender.regenerating}
+						class={[
+							"transition-opacity duration-300 rounded-full rounded-t-0",
+							{ "opacity-50": rerender.regenerating }
+						]}
 						src={rerender.form?.avatar ||
 							`/api/avatar/${user.username}`}
 						alt={user.username}
@@ -69,9 +84,14 @@
 {:else}
 	<a
 		href="/user/{user.username}"
-		class="flex no-underline {$$restProps.class}"
-		class:flex-col={bottom}
-		class:items-center={full}>
+		class={[
+			"flex no-underline",
+			class_,
+			{
+				"flex-col": bottom,
+				"items-center": full
+			}
+		]}>
 		<div class="relative">
 			<div
 				class="status"
@@ -93,8 +113,10 @@
 			</span>
 		{:else if bottom}
 			<span
-				class="overflow-hidden max-h-12 pt-2 text-center"
-				class:small={user.username?.length || 0 > 15}
+				class={[
+					"overflow-hidden max-h-12 pt-2 text-center",
+					{ small: user.username?.length > 15 }
+				]}
 				style="max-width: {size}">
 				{user.username}
 			</span>

@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { page } from "$app/stores"
+	import { page } from "$app/state"
 	import Group from "$components/Group.svelte"
 	import Head from "$components/Head.svelte"
 	import Pagination from "$components/Pagination.svelte"
 
-	export let data
+	const { data } = $props()
 </script>
 
 <Head name={data.siteName} title="Groups" />
@@ -23,7 +23,7 @@
 				<Group {group} {num} total={data.groups.length} />
 			{/each}
 		</div>
-		{#key $page.url}
+		{#key page.url}
 			<Pagination totalPages={data.pages} />
 		{/key}
 	{:else}

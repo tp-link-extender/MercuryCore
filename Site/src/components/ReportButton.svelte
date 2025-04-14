@@ -1,6 +1,11 @@
 <script lang="ts">
-	export let user: string
-	export let url: string
+	const {
+		user,
+		url
+	}: {
+		user: string
+		url: string
+	} = $props()
 </script>
 
 <li class="rounded-2">

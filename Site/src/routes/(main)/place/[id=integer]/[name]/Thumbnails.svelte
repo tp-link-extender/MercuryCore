@@ -1,9 +1,15 @@
 <script lang="ts">
 	import fade from "$lib/fade"
 
-	export let thumbnails: number[]
-	export let id: string
-	export let slug: string
+	const {
+		thumbnails,
+		id,
+		slug
+	}: {
+		thumbnails: number[]
+		id: string
+		slug: string
+	} = $props()
 
 	function scroll(e: MouseEvent) {
 		const url = new URL((e.target as HTMLAnchorElement)?.href).hash.slice(1)
@@ -18,8 +24,10 @@
 		{@const thumbs = thumbnails.length}
 		<div
 			id="slide{i + 1}"
-			class="carousel-item box-content flex-none relative w-full"
-			class:active={!i}>
+			class={[
+				"carousel-item box-content flex-none relative w-full",
+				{ active: !i }
+			]}>
 			<img
 				src="/place/{id}/{slug}/thumbnail/{i + 1}"
 				class="w-full"
@@ -30,13 +38,19 @@
 					<a
 						href="#slide{i < 1 ? thumbs : i}"
 						class="carousel-button"
-						on:click|preventDefault={scroll}>
+						onclick={e => {
+							e.preventDefault()
+							scroll(e)
+						}}>
 						❮
 					</a>
 					<a
 						href="#slide{i === thumbs - 1 ? 1 : i + 2}"
 						class="carousel-button"
-						on:click|preventDefault={scroll}>
+						onclick={e => {
+							e.preventDefault()
+							scroll(e)
+						}}>
 						❯
 					</a>
 				</div>

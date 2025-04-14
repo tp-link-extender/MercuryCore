@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { page } from "$app/stores"
+	import { page } from "$app/state"
 	import Asset from "$components/Asset.svelte"
 	import Head from "$components/Head.svelte"
 	import Pagination from "$components/Pagination.svelte"
 	import SidebarShell from "$components/SidebarShell.svelte"
 	import TabData from "$components/TabData"
 
-	export let data
+	const { data } = $props()
 
 	const tabTypes: { [k: string]: number } = Object.freeze({
 		Hats: 8,
@@ -17,9 +17,11 @@
 		Faces: 18
 	})
 
-	let tabData = TabData(data.url, Object.keys(tabTypes))
+	let tabData = $state(TabData(data.url, Object.keys(tabTypes)))
 
-	$: assets = data.assets.filter(a => a.type === tabTypes[tabData.currentTab])
+	let assets = $derived(
+		data.assets.filter(a => a.type === tabTypes[tabData.currentTab])
+	)
 </script>
 
 <Head name={data.siteName} title="Inventory" />
@@ -39,7 +41,7 @@
 						symbol={data.currencySymbol} />
 				{/each}
 			</div>
-			{#key $page.url}
+			{#key page.url}
 				<Pagination totalPages={data.pages} />
 			{/key}
 		{:else}
@@ -51,7 +53,7 @@
 				<!--
 					?tab= works questionably due to url/local state mismatch...
 					eh, I signed up for that	
-				--> 
+				-->
 				<a href="/catalog?tab={tabData.currentTab}">Catalog</a>
 				to get some!
 			</h3>

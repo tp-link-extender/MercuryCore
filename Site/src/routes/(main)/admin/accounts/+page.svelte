@@ -6,12 +6,14 @@
 	import Input from "$components/forms/Input.svelte"
 	import { superForm } from "sveltekit-superforms/client"
 
-	export let data
+	const { data } = $props()
 
 	const formData = superForm(data.form)
 	export const snapshot = formData
 
-	let tabData = TabData(data.url, ["Change User Password"], ["fa-key"])
+	let tabData = $state(
+		TabData(data.url, ["Change User Password"], ["fa-key"])
+	)
 </script>
 
 <Head name={data.siteName} title="Accounts - Admin" />

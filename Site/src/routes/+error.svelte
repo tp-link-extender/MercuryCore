@@ -1,14 +1,18 @@
 <script lang="ts">
 	// If an error happens in any +page or +layout file, this page will be rendered instead.
 
-	import { page } from "$app/stores"
+	import { page } from "$app/state"
 	import Footer from "$components/Footer.svelte"
 	import Head from "$components/Head.svelte"
 	import Navbar from "$components/Navbar.svelte"
 
-	export let data: import("./$types").LayoutData
+	const {
+		data
+	}: {
+		data: import("./$types").LayoutData
+	} = $props()
 
-	const status = $page.status
+	const status = page.status
 	function errors() {
 		if (status === 401 || status === 403) return "403"
 		if (status === 404) return "404"
@@ -37,7 +41,7 @@
 				Error {status}
 			</a>
 		</h1>
-		{$page.error?.message}
+		{page.error?.message}
 		<a href="/home" class="accent-text">Head home?</a>
 	</div>
 </main>

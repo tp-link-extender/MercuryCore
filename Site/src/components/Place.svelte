@@ -4,15 +4,21 @@
 	import fade from "$lib/fade"
 	import { encode } from "$lib/urlName"
 
-	export let place: {
-		id: number
-		name: string
-		likeCount: number
-		dislikeCount: number
-		playerCount: number
-	}
-	export let num: number
-	export let total: number
+	const {
+		place,
+		num,
+		total
+	}: {
+		place: {
+			id: number
+			name: string
+			likeCount: number
+			dislikeCount: number
+			playerCount: number
+		}
+		num: number
+		total: number
+	} = $props()
 
 	const slug = encode(place.name)
 	const ratio = Math.floor(

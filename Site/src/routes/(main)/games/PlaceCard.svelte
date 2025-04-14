@@ -4,29 +4,35 @@
 	import fade from "$lib/fade"
 	import { encode } from "$lib/urlName"
 
-	export let place: {
-		id: number
-		name: string
-		likeCount: number
-		dislikeCount: number
-		serverPing: number
-		playerCount: number
-	}
-	export let num: number
-	export let total: number
+	const {
+		place,
+		num,
+		total
+	}: {
+		place: {
+			id: number
+			name: string
+			likeCount: number
+			dislikeCount: number
+			serverPing: number
+			playerCount: number
+		}
+		num: number
+		total: number
+	} = $props()
 
 	const slug = encode(place.name)
 	const ratio = place.likeCount / (place.likeCount + place.dislikeCount)
 	const percentage = Math.floor(ratio * 100)
 
-	$: online = place.serverPing > Date.now() / 1000 - 35
+	let online = $derived(place.serverPing > Date.now() / 1000 - 35)
 </script>
 
 <a
 	in:fade|global={{ num, total }}
 	class="card text-center no-underline rounded-4 w-90 md:w-82 lg:w-78 light-text bg-darker"
 	href="/place/{place.id}/{slug}">
-	<div class="flex" class:opacity-50={!online}>
+	<div class={["flex", { "opacity-50": !online }]}>
 		<div class="w-1/2">
 			<div class="shadow overflow-hidden bg-black relative rounded-l-4">
 				<img

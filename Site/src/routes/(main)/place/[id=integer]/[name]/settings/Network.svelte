@@ -3,7 +3,11 @@
 	import Input from "$components/forms/Input.svelte"
 	import { superForm } from "sveltekit-superforms/client"
 
-	export let data: import("./$types").PageData
+	const {
+		data
+	}: {
+		data: import("./$types").PageData
+	} = $props()
 
 	const formData = superForm(data.networkForm)
 	const { form } = formData

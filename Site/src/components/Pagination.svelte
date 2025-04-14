@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { page } from "$app/stores"
+	import { page } from "$app/state"
 
-	export let totalPages: number
+	const { totalPages }: { totalPages: number } = $props()
 
 	function getNewUrl(p: number) {
-		const url = new URL($page.url) // clone?
+		const url = new URL(page.url) // clone?
 		url.searchParams.set("p", p.toString())
 		return url.pathname + url.search
 	}
-	const pageQ = $page.url.searchParams.get("p") || "1"
+	const pageQ = page.url.searchParams.get("p") || "1"
 	const currentPage = Number.isNaN(+pageQ) ? 1 : +pageQ
 	const prevPage = currentPage - 1
 	const nextPage = currentPage + 1

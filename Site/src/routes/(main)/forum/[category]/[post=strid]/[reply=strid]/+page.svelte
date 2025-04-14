@@ -8,12 +8,12 @@
 	let replyingTo = writable("")
 	const repliesCollapsed = writable({})
 
-	export let data
+	const { data } = $props()
 
-	$: topReply = data.replies[0]
-	$: parentPost = topReply.parentPost
+	let topReply = $derived(data.replies[0])
+	let parentPost = $derived(topReply.parentPost)
 
-	let refresh = 0
+	let refresh = $state(0)
 </script>
 
 <Head name={data.siteName} title="Replies to forum post" />

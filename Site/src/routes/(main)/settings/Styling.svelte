@@ -3,7 +3,7 @@
 	import Form from "$components/forms/Form.svelte"
 	import { superForm } from "sveltekit-superforms/client"
 
-	export let data: import("./$types").PageData
+	const { data }: { data: import("./$types").PageData } = $props()
 
 	const { user } = data
 	const formData = superForm(data.stylingForm)
@@ -28,10 +28,10 @@
 	<span class="pr-2">
 		<button
 			class="btn btn-secondary"
-			on:click|preventDefault={() => {
+			onclick={e => {
+				e.preventDefault()
 				if (!$form.css) return
 				let style = document.getElementById("custom-css")
-				// remove old style
 				if (!style) style = document.createElement("style")
 
 				style.id = "custom-css"

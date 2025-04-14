@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { page } from "$app/stores"
+	import { page } from "$app/state"
 	import Asset from "$components/Asset.svelte"
 	import Head from "$components/Head.svelte"
 	import Pagination from "$components/Pagination.svelte"
 	import TabData from "$components/TabData"
 	import TabNav from "$components/TabNav.svelte"
 
-	export let data
+	const { data } = $props()
 
 	const tabTypes: { [k: string]: number } = {
 		Hats: 8,
@@ -17,9 +17,11 @@
 		Faces: 18
 	}
 
-	let tabData = TabData(data.url, Object.keys(tabTypes))
+	let tabData = $state(TabData(data.url, Object.keys(tabTypes)))
 
-	$: assets = data.assets.filter(a => a.type === tabTypes[tabData.currentTab])
+	let assets = $derived(
+		data.assets.filter(a => a.type === tabTypes[tabData.currentTab])
+	)
 </script>
 
 <Head name={data.siteName} title="Catalog" />
@@ -110,12 +112,12 @@
 							symbol={data.currencySymbol} />
 					{/each}
 				</div>
-				{#key $page.url}
+				{#key page.url}
 					<Pagination totalPages={data.pages} />
 				{/key}
 			{:else}
 				<h2 class="pt-12 text-center">
-					No assets exist in this category yet.
+					No {tabData.currentTab} available.
 				</h2>
 			{/if}
 		</div>

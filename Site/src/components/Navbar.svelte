@@ -4,7 +4,7 @@
 	import User from "$components/User.svelte"
 	import { slide } from "svelte/transition"
 
-	export let data: import("../routes/$types").LayoutData
+	const { data }: { data: import("../routes/$types").LayoutData } = $props()
 
 	const { user } = data
 	const nav1 = [

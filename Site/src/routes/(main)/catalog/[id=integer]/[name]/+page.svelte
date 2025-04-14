@@ -13,15 +13,14 @@
 	import { writable } from "svelte/store"
 	import { superForm } from "sveltekit-superforms/client"
 
-	export let data
-	export let form // would be typed as null unless we do actions shenanigans
+	const { data, form } = $props()
 
 	const { user } = data
 	const fee = (data.currentFee * data.asset.price).toFixed(2)
 	const totalPrice = (1 + data.currentFee) * data.asset.price
 	const itsFree = data.asset.price === 0 // IT'S FREEEEEEEEEEEEEE
 
-	let regenerating = false
+	let regenerating = $state(false)
 
 	const enhanceRegen: import("./$types").SubmitFunction = () => {
 		regenerating = true
@@ -37,8 +36,8 @@
 	const formData = superForm(data.form)
 	export const snapshot = formData
 
-	let refresh = 0
-	let tabData = TabData(data.url, ["Recommended", "Comments"])
+	let refresh = $state(0)
+	let tabData = $state(TabData(data.url, ["Recommended", "Comments"]))
 
 	const refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any> =
 		() =>
@@ -54,8 +53,10 @@
 	<div class="flex <sm:flex-col">
 		<div class="pr-4 pb-4">
 			<img
-				class:opacity-50={regenerating}
-				class="image transition-opacity duration-300 aspect-1 w-80vw max-w-100"
+				class={[
+					"image transition-opacity duration-300 aspect-1 w-80vw max-w-100",
+					{ "opacity-50": regenerating }
+				]}
 				src={form?.icon ||
 					`/catalog/${data.asset.id}/${data.slug}/icon`}
 				alt={data.asset.name} />
@@ -162,9 +163,9 @@
 
 	<TabNav bind:tabData justify />
 
-	<Tab {tabData} />
+	<Tab bind:tabData />
 
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		<PostReply {formData} comment />
 		{#key refresh}
 			{#if data.asset.replies.length > 0}

@@ -4,7 +4,7 @@
 	import Textarea from "$components/forms/Textarea.svelte"
 	import { superForm } from "sveltekit-superforms/client"
 
-	export let data: import("./$types").PageData
+	const { data }: { data: import("./$types").PageData } = $props()
 
 	const { user } = data
 	const formData = superForm(data.profileForm)

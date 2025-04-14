@@ -3,9 +3,15 @@
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
 
-	export let asset: import("./$types").PageData["assets"][0]
-	export let num: number
-	export let total: number
+	const {
+		asset,
+		num,
+		total
+	}: {
+		asset: import("./$types").PageData["assets"][0]
+		num: number
+		total: number
+	} = $props()
 </script>
 
 <div in:fade|global={{ num, total }} class="card duration-300">
@@ -114,7 +120,7 @@
 	.card {
 		border: 1px solid var(--accent2);
 	}
-	.card:has(#open:hover) {
+	.card:has(:global(#open:hover)) {
 		background: var(--darker);
 	}
 

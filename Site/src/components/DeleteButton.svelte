@@ -1,10 +1,17 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 
-	export let id: string
-	export let moderate = false
-	export let post = false
-	export let refreshReplies: import("@sveltejs/kit").SubmitFunction
+	const {
+		id,
+		moderate = false,
+		post = false,
+		refreshReplies
+	}: {
+		id: string
+		moderate?: boolean
+		post?: boolean
+		refreshReplies: import("@sveltejs/kit").SubmitFunction
+	} = $props()
 
 	const text = moderate ? "moderate" : "delete"
 	const colour = moderate ? "text-cyan-500" : "text-yellow-500"

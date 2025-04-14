@@ -5,7 +5,7 @@
 	import Textarea from "$components/forms/Textarea.svelte"
 	import { superForm } from "sveltekit-superforms/client"
 
-	export let data
+	const { data } = $props()
 
 	const formData = superForm(data.form)
 	export const snapshot = formData

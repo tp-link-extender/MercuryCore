@@ -10,14 +10,14 @@
 	import fade from "$lib/fade"
 	import { superForm } from "sveltekit-superforms/client"
 
-	export let data
+	const { data } = $props()
 
 	const formData = superForm(data.form)
 	export const snapshot = formData
 	const { form } = formData
 	const tomorrow = new Date(Date.now() + 86400e3).toISOString().slice(0, 10)
 
-	const moderationOptions = [
+	const moderationOptions: [string, string][] = [
 		["1", "Warning"],
 		["2", "Ban"],
 		["3", "Termination"],
@@ -25,7 +25,7 @@
 		["5", "Unban"]
 	]
 
-	let tabData = TabData(data.url, ["User moderation"], ["fa-gavel"])
+	let tabData = $state(TabData(data.url, ["User moderation"], ["fa-gavel"]))
 </script>
 
 <Head name={data.siteName} title="User moderation - Admin" />
@@ -39,7 +39,7 @@
 </div>
 
 <SidebarShell bind:tabData class="max-w-280">
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		<Form
 			{formData}
 			submit={$form.action === "3" || $form.action === "4" // 5:53 am and im bored as shit

@@ -7,12 +7,11 @@
 	import { brickColours, brickToHex } from "$lib/brickColours"
 	import AvatarItem from "./AvatarItem.svelte"
 
-	export let data
-	export let form
+	const { data, form } = $props()
 
 	const { user } = data
 
-	let regenerating = false
+	let regenerating = $state(false)
 
 	const enhanceRegen: import("./$types").SubmitFunction = () => {
 		regenerating = true
@@ -33,17 +32,17 @@
 		Pants: 12,
 		Gear: 19
 	})
-	let tabData = TabData(data.url, Object.keys(tabTypes))
+	let tabData = $state(TabData(data.url, Object.keys(tabTypes)))
 
-	const bodyParts: { [k: string]: number } = {
+	const bodyParts: { [k: string]: number } = $state({
 		Head: user.bodyColours.Head,
 		Torso: user.bodyColours.Torso,
 		LeftArm: user.bodyColours.LeftArm,
 		RightArm: user.bodyColours.RightArm,
 		LeftLeg: user.bodyColours.LeftLeg,
 		RightLeg: user.bodyColours.RightLeg
-	}
-	const bodyPartPopovers: { [k: string]: HTMLDivElement } = {}
+	})
+	const bodyPartPopovers: { [k: string]: HTMLDivElement } = $state({})
 	const styles: { [k: string]: string } = Object.freeze({
 		Head: "left-17 size-12",
 		Torso: "left-12 top-14 size-22",
@@ -53,10 +52,12 @@
 		RightLeg: "left-24 top-38 h-22 w-10"
 	})
 
-	$: assets = data.assets.filter(a =>
-		tabData.currentTab === "Recent"
-			? true
-			: a.type === tabTypes[tabData.currentTab]
+	let assets = $derived(
+		data.assets.filter(a =>
+			tabData.currentTab === "Recent"
+				? true
+				: a.type === tabTypes[tabData.currentTab]
+		)
 	)
 </script>
 
@@ -76,8 +77,10 @@
 				</p>
 				<img
 					alt="Your character"
-					class:opacity-50={regenerating}
-					class="w-full transition-opacity duration-300"
+					class={[
+						"w-full transition-opacity duration-300",
+						{ "opacity-50": regenerating }
+					]}
 					src={form?.avatar || `/api/avatar/${user.username}-body`} />
 			</div>
 			<div class="card w-full p-4">
@@ -114,12 +117,17 @@
 							{enhanceRegen} />
 					{/each}
 				</div>
+			{:else if tabData.currentTab === "Recent"}
+				<h2 class="text-center">No recently worn items.</h2>
 			{:else}
 				<h2 class="text-center">
-					No {tabData.currentTab === "Recent"
-						? "recently worn items"
-						: tabData.currentTab} found.
+					You don't have any {tabData.currentTab} yet.
 				</h2>
+				<h3 class="pt-4 text-center">
+					Head to the
+					<a href="/catalog?tab={tabData.currentTab}">Catalog</a>
+					to get some!
+				</h3>
 			{/if}
 		</div>
 	</div>
@@ -138,7 +146,7 @@
 					use:enhance={enhanceRegen}
 					method="POST"
 					action="?/paint&p={bodyPart}&c={colour}"
-					on:submit={() => {
+					onsubmit={() => {
 						bodyParts[bodyPart] = colour
 						bodyPartPopovers[bodyPart].hidePopover()
 					}}

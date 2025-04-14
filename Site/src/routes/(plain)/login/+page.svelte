@@ -6,7 +6,7 @@
 	import LoginShell from "../LoginShell.svelte"
 	import Waves from "../Waves.svelte"
 
-	export let data
+	const { data } = $props()
 
 	const formData = superForm(data.form)
 	export const snapshot = formData
@@ -19,10 +19,10 @@
 
 <Waves reverse />
 
-<LoginShell 
+<LoginShell
 	name={data.siteName}
 	tagline={data.tagline}
-	descriptions={data.descriptions} 
+	descriptions={data.descriptions}
 	pad>
 	{#if data.users}
 		<h2>Log into your account</h2>

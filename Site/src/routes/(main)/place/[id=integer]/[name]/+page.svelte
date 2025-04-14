@@ -12,13 +12,13 @@
 	import Thumbnails from "./Thumbnails.svelte"
 	import customProtocol from "./customprotocol.ts"
 
-	export let data
+	const { data } = $props()
 
 	const { user } = data
 
 	let place = writable(data.place)
 
-	$: online = $place.serverPing > Date.now() / 1000 - 35
+	let online = $derived($place.serverPing > Date.now() / 1000 - 35)
 
 	const statistics = [
 		// ["Activity", "0 visits"],
@@ -30,17 +30,17 @@
 
 	// Place Launcher
 
-	let popover: HTMLDivElement
-	let installed = true
-	let success = false
+	let popover = $state<HTMLDivElement>()
+	let installed = $state(true)
+	let success = $state(false)
 
-	const launch = (joinscripturl: string) => () => {
+	const launch = (joinscripturl: () => string) => () => {
 		success = false
 		customProtocol(
-			joinscripturl,
+			joinscripturl(),
 			() => {
 				success = true
-				setTimeout(() => popover.hidePopover(), 16000)
+				setTimeout(() => popover?.hidePopover(), 16000)
 			},
 			() => {
 				installed = false
@@ -71,12 +71,14 @@
 		// JoinScript is my favourite programming language (-i mean scripting language)
 		const joinScript = encodeURIComponent(joinScriptData.data.joinScriptUrl)
 		const joinUri = `mercury-player:1+launchmode:play+joinscripturl:${joinScript}+gameinfo:test`
-		launch(joinUri)()
+		launch(() => joinUri)()
 	}
 
-	let tabData = TabData(data.url, ["Description", "Game"])
-	let tabData2 = TabData(data.url, ["Manual", "Autopilot"], undefined, "tab2")
-	let copiedSuccess = false
+	let tabData = $state(TabData(data.url, ["Description", "Game"]))
+	let tabData2 = $state(
+		TabData(data.url, ["Manual", "Autopilot"], undefined, "tab2")
+	)
+	let copiedSuccess = $state(false)
 
 	const likeEnhance: import("./$types").SubmitFunction = ({ formData }) => {
 		const action = formData.get("action")
@@ -166,7 +168,7 @@
 			</div>
 			<div id="buttons" class="flex flex-col">
 				<button
-					on:click={placeLauncher}
+					onclick={placeLauncher}
 					class="btn btn-primary"
 					popovertarget="ready">
 					<img
@@ -254,11 +256,11 @@
 
 	<TabNav bind:tabData justify />
 
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		{$place.description.text || ""}
 	</Tab>
 
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		{#if user?.permissionLevel === 5 || $place.ownerUser?.username === user?.username}
 			<h3 class="pb-2">Hosting on {data.siteName}</h3>
 			<p>
@@ -275,16 +277,14 @@
 			</p>
 			<div class="flex items-start mb-4">
 				<TabNav bind:tabData={tabData2} vertical class="pr-4" />
-				<!-- Prevents nested tabs from breaking -->
-				{((tabData2.num = 0), "")}
-				<Tab tabData={tabData2}>
+				<Tab bind:tabData={tabData2}>
 					<p>
 						You can host your server by opening your map in
 						<span class="px-1">
 							<button
 								class="btn btn-sm btn-tertiary"
-								on:click={launch(
-									"mercury-player:1+launchmode:ide"
+								onclick={launch(
+									() => "mercury-player:1+launchmode:ide"
 								)}>
 								<fa fa-arrow-up-right-from-square></fa>
 								Studio
@@ -294,7 +294,7 @@
 					</p>
 					<code class="pr-2">{loadCommand}</code>
 					<button
-						on:click={() => {
+						onclick={() => {
 							navigator.clipboard.writeText(loadCommand)
 							copiedSuccess = true
 							setTimeout(() => (copiedSuccess = false), 4000)
@@ -312,7 +312,7 @@
 						</small>
 					{/if}
 				</Tab>
-				<Tab tabData={tabData2}>
+				<Tab bind:tabData={tabData2}>
 					<Autopilot
 						{launch}
 						serverTicket={$place.serverTicket}
@@ -330,7 +330,7 @@
 							.length}/{$place.maxPlayers}
 					</div>
 					<button
-						on:click={placeLauncher}
+						onclick={placeLauncher}
 						id="join"
 						class="btn btn-sm btn-primary">
 						Join Server

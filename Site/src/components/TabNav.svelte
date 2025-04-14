@@ -2,49 +2,71 @@
 	import { interpolateLab } from "d3-interpolate"
 	import { tweened } from "svelte/motion"
 
-	export let tabData: {
-		name: string
-		tabs: string[]
-		currentTab: string
-		url: string
-		icons?: string[]
-		num: number
-	}
-	export let justify = false
-	export let vertical = false
+	let {
+		tabData = $bindable(),
+		justify = false,
+		vertical = false,
+		class: class_
+	}: {
+		tabData: {
+			name: string
+			tabs: string[]
+			currentTab: string
+			url: string
+			icons?: string[]
+			num: number
+		}
+		justify?: boolean
+		vertical?: boolean
+		class?: string
+	} = $props()
 
-	let colour = tweened("white", {
-		duration: 200,
-		interpolate: interpolateLab
+	// prevents nested tabs from breaking
+	$effect(() => {
+		tabData.num = 0
 	})
+
+	let colour = $state(
+		tweened("white", {
+			duration: 200,
+			interpolate: interpolateLab
+		})
+	)
 </script>
 
 <ul
-	class="flex flex-wrap list-none min-w-28 pl-0 {vertical
-		? 'vertical flex-col gap-2'
-		: 'pb-6'} {$$restProps.class || ''}"
-	class:justified={justify}
+	class={[
+		"flex flex-wrap list-none min-w-28 pl-0",
+		vertical ? "vertical flex-col gap-2" : "pb-6",
+		class_,
+		{ justified: justify }
+	]}
 	role="tablist">
 	{#each tabData.tabs as tab, pos}
 		<li
-			class="item {vertical && tabData.currentTab === tab
-				? 'activetab'
-				: ''} {vertical ? 'rounded-2' : 'p-1'}"
-			class:active={!vertical && tabData.currentTab === tab}
+			class={[
+				"item",
+				vertical ? "rounded-2" : "p-1",
+				{
+					activetab: vertical && tabData.currentTab === tab,
+					active: !vertical && tabData.currentTab === tab
+				}
+			]}
 			style="border-bottom-color: {$colour}"
 			data-sveltekit-preload-data="off">
 			<a
-				class="block tab no-underline {vertical
-					? 'p-4 py-2'
-					: 'p-3 py-1'} rounded-2 {tabData.currentTab === tab
-					? 'disabled active'
-					: ''}"
+				class={[
+					"block tab no-underline rounded-2",
+					vertical ? "p-4 py-2" : "p-3 py-1",
+					{ "disabled active": tabData.currentTab === tab }
+				]}
 				href="?{(() => {
 					const currentSearch = new URL(tabData.url).searchParams
 					currentSearch.set(tabData.name, tab)
 					return currentSearch.toString()
 				})()}"
-				on:click|preventDefault={() => {
+				onclick={e => {
+					e.preventDefault()
 					// get css variable --hue
 					const hue = getComputedStyle(
 						document.body

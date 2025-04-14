@@ -2,7 +2,7 @@
 	import Head from "$components/Head.svelte"
 	import User from "$components/User.svelte"
 
-	export let data
+	const { data } = $props()
 
 	const notificationNotes: { [k: string]: string } = {
 		AssetApproved: "Asset approval",
@@ -22,12 +22,12 @@
 
 <Head name={data.siteName} title="Notifications" />
 
-<h1 class="text-center">Notifications</h1>
+<h1 class="text-center">Notifications ({data.notifications.length})</h1>
 
-<div class="ctnr pt-12 max-w-200">
+<div class="ctnr pt-8 max-w-200">
 	{#each data.notifications as notification}
 		<div class="pb-4">
-			<div class:bg-darker={notification.read} class="card p-4">
+			<div class={["card p-4", { "bg-darker": notification.read }]}>
 				<span class="flex gap-3 items-center pb-4">
 					<User
 						user={notification.sender}
@@ -46,6 +46,6 @@
 		</div>
 	{/each}
 	{#if data.notifications.length === 0}
-		<h2 class="text-center">No notifications yet.</h2>
+		<h2 class="pt-12 text-center">No notifications yet.</h2>
 	{/if}
 </div>

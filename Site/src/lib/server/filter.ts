@@ -15,5 +15,7 @@ const replace = (word: string) =>
 export default (text: string) =>
 	// Replace all words in the text with #s proportional to the length of the word
 	text.replaceAll(/\b(\w+)\b/g, (_, word) =>
-		FilteredWords.indexOf(word.toLowerCase()) !== -1 ? replace(word) : word
+		(FilteredWords as string[]).indexOf(word.toLowerCase()) !== -1
+			? replace(word)
+			: word
 	)

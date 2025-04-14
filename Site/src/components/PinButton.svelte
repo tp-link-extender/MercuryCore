@@ -1,14 +1,21 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 
-	export let id: string
-	export let pinned = false
-	export let post = false
-	// Replies need to be re-ordered after a reply is pinned or unpinned
-	export let refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any>
+	let {
+		id,
+		pinned = $bindable(false),
+		post = false,
+		refreshReplies
+	}: {
+		id: string
+		pinned?: boolean
+		post?: boolean
+		// Replies need to be re-ordered after a reply is pinned or unpinned
+		refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any>
+	} = $props()
 
-	$: text = pinned ? "unpin" : "pin"
-	$: colour = pinned ? "text-red-500" : "text-green-500"
+	let text = $derived(pinned ? "unpin" : "pin")
+	let colour = $derived(pinned ? "text-red-500" : "text-green-500")
 </script>
 
 <li class="rounded-2">

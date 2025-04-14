@@ -1,7 +1,11 @@
 <script lang="ts">
-	export let data: import("../routes/$types").LayoutData
+	const {
+		data
+	}: {
+		data: import("../routes/$types").LayoutData
+	} = $props()
 
-	let clicked = false
+	let clicked = $state(false)
 </script>
 
 <footer class="bg-darker relative flex justify-center <lg:pb-20!">
@@ -31,12 +35,14 @@
 					<span>&ndash;</span>
 				{/if}
 				<button
-					on:mousedown={() => {
+					onmousedown={() => {
 						clicked = !clicked
 					}}
 					id="heart"
-					class="grey-text border-0 p-0 cursor-pointer text-base bg-transparent"
-					class:clicked>
+					class={[
+						"grey-text border-0 p-0 cursor-pointer text-base bg-transparent",
+						{ clicked }
+					]}>
 					<span class="grey-text">made with</span>
 					<fa fa-heart></fa>
 				</button>

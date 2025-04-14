@@ -1,15 +1,23 @@
 <script lang="ts">
-	export let launch: (joinscripturl: string) => () => void
-	export let serverTicket: string
-	export let domain: string
-	export let siteName: string
+	const {
+		launch,
+		serverTicket,
+		domain,
+		siteName
+	}: {
+		launch: (joinscripturl: () => string) => () => void
+		serverTicket: string
+		domain: string
+		siteName: string
+	} = $props()
 
-	let filepath = ""
+	let filepath = $state("")
 
 	const host = launch(
-		`mercury-player:1+launchmode:ide+script:http://${domain}/game/host?ticket=${serverTicket}&autopilot=${btoa(
-			filepath
-		)}`
+		() =>
+			`mercury-player:1+launchmode:ide+script:http://${domain}/game/host?ticket=${serverTicket}&autopilot=${btoa(
+				filepath
+			)}`
 	)
 </script>
 
@@ -32,12 +40,12 @@
 		aria-label="Map location" />
 	<button
 		class="btn btn-secondary"
-		on:click={launch("mercury-player:1+launchmode:maps")}
+		onclick={launch(() => "mercury-player:1+launchmode:maps")}
 		type="button">
 		<fa fa-arrow-up-right-from-square></fa>
 		Map Folder
 	</button>
-	<button class="btn btn-primary" on:click={host} type="button">
+	<button class="btn btn-primary" onclick={host} type="button">
 		<fa fa-wifi></fa>
 		Begin Hosting
 	</button>
@@ -51,7 +59,7 @@
 				<li class="rounded-2">
 					<button
 						class="btn light-text pl-4 pr-0 text-start"
-						on:click={host}
+						onclick={host}
 						type="button">
 						Begin Hosting (no Studio tools)
 					</button>

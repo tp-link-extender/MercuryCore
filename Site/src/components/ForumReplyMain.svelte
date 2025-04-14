@@ -12,29 +12,43 @@
 	import User from "$components/User.svelte"
 	import type { Writable } from "svelte/store"
 
-	export let user: UserType
-	export let reply: Reply
-
-	export let num: number
-	export let depth = 0
-	export let replyingTo: Writable<string>
-	export let postAuthorName: string
-	export let categoryName = ""
-	export let postId: string
-	export let assetSlug = ""
+	let {
+		user,
+		reply = $bindable(),
+		num,
+		depth = 0,
+		replyingTo,
+		postAuthorName,
+		categoryName = "",
+		postId,
+		assetSlug = "",
+		repliesCollapsed,
+		topLevel = true,
+		pinnable = false,
+		refreshReplies
+	}: {
+		user: UserType
+		reply: Reply
+		num: number
+		depth?: number
+		replyingTo: Writable<string>
+		postAuthorName: string
+		categoryName?: string
+		postId: string
+		assetSlug?: string
+		repliesCollapsed: RepliesCollapsed
+		topLevel?: boolean
+		pinnable?: boolean
+		refreshReplies: import("@sveltejs/kit").SubmitFunction
+	} = $props()
 
 	const baseUrl = categoryName
 		? `forum/${categoryName.toLowerCase()}/${postId}`
 		: `catalog/${postId}/${assetSlug}`
 
-	export let repliesCollapsed: RepliesCollapsed
-	export let topLevel = true
-	export let pinnable = false
-	export let refreshReplies: import("@sveltejs/kit").SubmitFunction
+	let content = $state("") // Allows current reply to not be lost on clicking to another reply
 
-	let content = "" // Allows current reply to not be lost on clicking to another reply
-
-	$: hidden = reply.visibility !== "Visible"
+	let hidden = $derived(reply.visibility !== "Visible")
 
 	const likeEnhance: import("@sveltejs/kit").SubmitFunction = ({
 		formData
@@ -70,15 +84,16 @@
 		<div class="flex items-center pt-2">
 			<a
 				href="/user/{reply.author.username}"
-				class="userlink items-center no-underline flex flex-row font-bold {reply
-					.author.username === postAuthorName
-					? assetSlug
-						? 'text-yellow-500'
-						: 'text-blue-600'
-					: ''}"
-				class:light-text={reply.author.username !== postAuthorName}
-				class:opacity-33={hidden}
-				class:pl-4={!topLevel}>
+				class={[
+					"userlink items-center no-underline flex flex-row font-bold",
+					{
+						[assetSlug ? "text-yellow-500" : "text-blue-600"]:
+							reply.author.username === postAuthorName,
+						"light-text": reply.author.username !== postAuthorName,
+						"opacity-33": hidden,
+						"pl-4": !topLevel
+					}
+				]}>
 				{#if topLevel}
 					<User
 						user={reply.author}
@@ -100,7 +115,7 @@
 				{new Date(reply.posted).toLocaleString()}
 			</small>
 		</div>
-		<p class="py-2 m-0 break-all {hidden ? 'opacity-33' : ''}">
+		<p class={["py-2 m-0 break-all", { "opacity-33": hidden }]}>
 			{reply.content[0].text}
 		</p>
 		{#if $replyingTo !== reply.id}
@@ -108,7 +123,7 @@
 				use:enhance={likeEnhance}
 				method="POST"
 				action="?/like&rid={reply.id}"
-				class="inline pr-2 {hidden ? 'opacity-33' : ''}">
+				class={["inline pr-2", { "opacity-33": hidden }]}>
 				<button
 					name="action"
 					value={reply.likes ? "unlike" : "like"}
@@ -122,11 +137,13 @@
 					</fa>
 				</button>
 				<span
-					class="text-center {reply.likes
-						? 'text-emerald-600 font-bold'
-						: reply.dislikes
-							? 'text-red-500 font-bold'
-							: ''}">
+					class={[
+						"text-center",
+						{
+							"text-emerald-600 font-bold": reply.likes,
+							"text-red-500 font-bold": reply.dislikes
+						}
+					]}>
 					{reply.score}
 				</span>
 				<button
@@ -144,9 +161,14 @@
 			</form>
 			<a
 				href="/forum/{categoryName}/{postId}/{reply.id}"
-				on:click|preventDefault={() => replyingTo.set(reply.id)}
-				class="btn btn-sm p-0 px-1 text-neutral-5
-				hover:text-neutral-300 {hidden ? 'opacity-33' : ''}">
+				onclick={e => {
+					e.preventDefault()
+					replyingTo.set(reply.id)
+				}}
+				class={[
+					"btn btn-sm p-0 px-1 text-neutral-5 hover:text-neutral-300",
+					{ "opacity-33": hidden }
+				]}>
 				<fa fa-message class="pr-2"></fa>
 				Reply
 			</a>
@@ -206,7 +228,7 @@
 								Reply
 							</button>
 							<button
-								on:click={() => replyingTo.set("")}
+								onclick={() => replyingTo.set("")}
 								class="btn btn-tertiary grey-text">
 								<fa fa-cancel class="pr-2"></fa>
 								Cancel
@@ -222,7 +244,7 @@
 				<div class="card reply bg-darker p-4 pt-2 max-w-3/4">
 					<form
 						use:enhance
-						on:submit={() => replyingTo.set("")}
+						onsubmit={() => replyingTo.set("")}
 						method="POST"
 						action="?/reply&rid={reply.id}">
 						<label for="content" class="light-text pb-2">
@@ -244,7 +266,7 @@
 									Reply
 								</button>
 								<button
-									on:click={() => replyingTo.set("")}
+									onclick={() => replyingTo.set("")}
 									class="btn btn-tertiary grey-text">
 									<fa fa-cancel class="pr-2"></fa>
 									Cancel

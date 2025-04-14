@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	export type UserType = {
 		username: string
 		permissionLevel: number
@@ -20,26 +20,41 @@
 	import fade from "$lib/fade"
 	import type { Writable } from "svelte/store"
 
-	// too many exports help
-	export let user: UserType
-	export let reply: Reply
-
-	export let num: number
-	export let depth = 0
-	export let replyingTo: Writable<string>
-	export let postAuthorName: string
-	export let categoryName = ""
-	export let postId: string
-	export let assetSlug = ""
-	export let pinnable = false
-	export let refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any>
+	const {
+		user,
+		reply,
+		num,
+		depth = 0,
+		replyingTo,
+		postAuthorName,
+		categoryName = "",
+		postId,
+		assetSlug = "",
+		pinnable = false,
+		refreshReplies,
+		repliesCollapsed,
+		topLevel = true
+	}: {
+		// too many exports help
+		user: UserType
+		reply: Reply
+		num: number
+		depth?: number
+		replyingTo: Writable<string>
+		postAuthorName: string
+		categoryName?: string
+		postId: string
+		assetSlug?: string
+		pinnable?: boolean
+		refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any>
+		repliesCollapsed: RepliesCollapsed
+		topLevel?: boolean
+	} = $props()
 
 	const baseUrl = categoryName
 		? `/forum/${categoryName.toLowerCase()}/${postId}`
 		: `/catalog/${postId}/${assetSlug}`
 
-	export let repliesCollapsed: RepliesCollapsed
-	export let topLevel = true
 	// Some have to be writables to allow them to keep state, either on element destroy or on page change
 
 	const collapse = (id: string) => () =>
@@ -65,12 +80,12 @@
 {/if}
 
 {#if reply && reply.author}
-	<div class="pt-2" class:flex={!topLevel}>
+	<div class={["pt-2", { flex: !topLevel }]}>
 		{#if !topLevel}
 			<span class="flex flex-col pt-2">
 				<User user={reply.author} thin size="1.5rem" />
 				<button
-					on:click={collapse(reply.id)}
+					onclick={collapse(reply.id)}
 					aria-label="Collapse reply"
 					class="collapseBar {reply.pinned
 						? 'bg-green-500'
@@ -81,7 +96,7 @@
 
 		{#if $repliesCollapsed?.[reply.id]}
 			<button
-				on:click={collapse(reply.id)}
+				onclick={collapse(reply.id)}
 				aria-label="Expand reply"
 				class="expandBar pb-2 pl-4 text-base cursor-pointer">
 				<small class="max-w-40 text-ellipsis">

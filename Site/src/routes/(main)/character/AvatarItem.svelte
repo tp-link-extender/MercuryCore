@@ -4,15 +4,23 @@
 	import { enhance } from "$app/forms"
 	import fade from "$lib/fade"
 
-	export let asset: {
-		name: string
-		id: number
-		wearing: boolean
-	}
-	export let num: number
-	export let total: number
-	export let currentTab: string
-	export let enhanceRegen: import("./$types").SubmitFunction
+	const {
+		asset,
+		num,
+		total,
+		currentTab,
+		enhanceRegen
+	}: {
+		asset: {
+			name: string
+			id: number
+			wearing: boolean
+		}
+		num: number
+		total: number
+		currentTab: string
+		enhanceRegen: import("./$types").SubmitFunction
+	} = $props()
 </script>
 
 <form

@@ -6,23 +6,36 @@
 	import fade from "$lib/fade"
 	import { createSelect, melt } from "@melt-ui/svelte"
 
-	export let name: string
-	export let label: string
-	export let help = ""
-	export let placeholder = ""
-	export let disabled = false
-	export let multiple = false // messes up hugely if this is true, custom behaviour incoming
-	// also messes up with superforms cuz it only submits the last selected value
+	const {
+		name,
+		label = "",
+		help = "",
+		placeholder = "",
+		disabled = false,
+		multiple = false, // messes up hugely if this is true, custom behaviour incoming
+		// also messes up with superforms cuz it only submits the last selected value
 
-	export let options: string[][] // actually [string, string][] but whatever
-	export let selected: string | null = null
+		options = [],
+		selected = null,
+		formData,
+		...rest
+	}: {
+		name: string
+		label?: string
+		help?: string
+		placeholder?: string
+		disabled?: boolean
+		multiple?: boolean
+		options: [string, string][]
+		selected?: string | null
+		formData: import("sveltekit-superforms").SuperForm<any>
+	} = $props()
 
 	const mOptions = options.map(([value, label]) => ({ value, label }))
 	const mSelected = selected
 		? mOptions.find(o => o.value === selected)
 		: { value: "", label: "" }
 
-	export let formData: import("sveltekit-superforms").SuperForm<any>
 	const { form, errors, constraints } = formData
 
 	const {
@@ -40,7 +53,9 @@
 		...(mSelected && { defaultSelected: mSelected })
 	})
 
-	$: $form[name] = $selectedValue?.value || mSelected?.value
+	$effect(() => {
+		$form[name] = $selectedValue?.value || mSelected?.value
+	})
 </script>
 
 <div class="flex flex-wrap pb-8">
@@ -52,13 +67,13 @@
 			<!-- fallback to standard select -->
 			<select
 				{disabled}
-				{...$$restProps}
+				{...rest}
 				bind:value={$form[name]}
 				{...$constraints[name]}
 				{name}
 				id={name}
 				{placeholder}
-				class:is-invalid={$errors[name]}>
+				class={{ "is-invalid": $errors[name] }}>
 				{#each mOptions as { value, label }}
 					<option {value} selected={$isSelected(value)}>
 						{label}
@@ -105,8 +120,11 @@
 							use:melt={$option({ value, label })}>
 							<fa
 								fa-check
-								class:hidden={!$isSelected(value)}
-								class="pr-2" ></fa>
+								class={[
+									"pr-2",
+									{ hidden: !$isSelected(value) }
+								]}>
+							</fa>
 							{label}
 						</button>
 					{/each}

@@ -11,14 +11,14 @@
 	import { writable } from "svelte/store"
 	import { superForm } from "sveltekit-superforms/client"
 
-	export let data
+	const { data } = $props()
 
 	const { user } = data
 
 	let post = writable(data.post) // this is the svelte 4 thing ever
 	let replyingTo = writable("")
 
-	let refresh = 0
+	let refresh = $state(0)
 
 	const repliesCollapsed = writable({})
 
@@ -72,9 +72,10 @@
 		]} />
 
 	<div
-		class="post card bg-darker flex-row {$post.pinned
-			? 'border-(solid 1px green-5)!'
-			: ''}">
+		class={[
+			"post card bg-darker flex-row",
+			{ "border-(solid 1px green-5)!": $post.pinned }
+		]}>
 		<form
 			use:enhance={likeEnhance}
 			method="POST"
@@ -94,11 +95,13 @@
 					</fa>
 				</button>
 				<span
-					class="py-2 text-center {$post.likes
-						? 'text-emerald-600 font-bold'
-						: $post.dislikes
-							? 'text-red-500 font-bold'
-							: ''}">
+					class={[
+						"py-2 text-center",
+						{
+							"text-emerald-600 font-bold": $post.likes,
+							"text-red-500 font-bold": $post.dislikes
+						}
+					]}>
 					{$post.score}
 				</span>
 				<button
@@ -169,8 +172,8 @@
 					{refreshReplies} />
 			{/each}
 		{:else}
-			<h3 class="text-center pt-6">No replies yet.</h3>
-			<h4 class="text-center pt-4">Be the first to post one!</h4>
+			<h3 class="pt-6 text-center">No replies yet.</h3>
+			<h4 class="pt-4 text-center">Be the first to post one!</h4>
 		{/if}
 	{/key}
 </div>

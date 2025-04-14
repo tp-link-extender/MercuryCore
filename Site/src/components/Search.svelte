@@ -2,25 +2,24 @@
 	import { browser } from "$app/environment"
 	import { goto } from "$app/navigation"
 
-	export let pages: string[]
+	const { pages }: { pages: string[] } = $props()
 
-	let search = ""
-	let searchCompleted = true
-	let searchFocus = -1
-	$: if (search === "") {
-		searchCompleted = true
+	let search = $state("")
+	let searchFocus = $state(-1)
+	$effect(() => {
+		if (search !== "") return
 		searchFocus = -1
-	}
+	})
 
-	let searchText = "Search"
+	let searchText = $state("Search")
 
 	// only show after JS loads to allow for ctrl+k to be detected
 	new Promise(r => r(0)).then(() => {
 		if (browser) searchText += " (ctrl+k)"
 	})
 
-	let searchInput: HTMLInputElement
-	const searchResults: HTMLElement[] = []
+	let searchInput = $state<HTMLInputElement>()
+	const searchResults: HTMLElement[] = $state([])
 
 	const searchCategories = [
 		["Users", "users"],
@@ -37,10 +36,8 @@
 		switch (e.key) {
 			case "Enter":
 				e.preventDefault()
-				if (!searchCompleted && searchFocus >= 0)
-					searchResults[searchFocus].click()
+				searchResults[Math.max(0, searchFocus)].click() // better but not perfect
 
-				searchCompleted = true
 				searchFocus = -1
 				break
 			case "ArrowDown":
@@ -61,18 +58,16 @@
 			case "Escape":
 				search = ""
 				break
-			default:
-				searchCompleted = false
 		}
 	}
 </script>
 
 <svelte:window
-	on:keydown={e => {
+	onkeydown={e => {
 		// the right way (actually works on different keyboard layouts, lookin at you {insert several docs sites})
 		if (!e.ctrlKey || e.key !== "k") return
 		e.preventDefault()
-		searchInput.focus()
+		searchInput?.focus()
 	}} />
 
 <form action="/search" role="search" class="mx-auto px-2 pb-1">
@@ -81,7 +76,7 @@
 		<input
 			bind:this={searchInput}
 			bind:value={search}
-			on:keydown={keydown}
+			onkeydown={keydown}
 			class="bg-background h-10 pl-4 w-full"
 			name="q"
 			type="search"
@@ -94,8 +89,10 @@
 			{#each searchCategories as [name, value], num}
 				<button
 					bind:this={searchResults[num]}
-					on:click|preventDefault={() =>
-						goto(`/search?q=${search}&c=${value}`)}
+					onclick={e => {
+						e.preventDefault()
+						goto(`/search?q=${search}&c=${value}`)
+					}}
 					class="btn light-text block w-full py-2 text-start"
 					name="c"
 					{value}

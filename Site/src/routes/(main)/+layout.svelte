@@ -2,7 +2,7 @@
 	import Footer from "$components/Footer.svelte"
 	import Navbar from "$components/Navbar.svelte"
 
-	export let data
+	const { data, children } = $props()
 </script>
 
 <!--
@@ -11,7 +11,7 @@
 <Navbar {data} />
 
 <main class="py-5vh <lg:pt-2.5vh flex-1">
-	<slot />
+	{@render children?.()}
 </main>
 
 <Footer {data} />

@@ -5,9 +5,9 @@
 	import User from "$components/User.svelte"
 	import Report from "./Report.svelte"
 
-	export let data
+	const { data } = $props()
 
-	let tabData = TabData(data.url, ["Abuse reports"], ["fa-list"])
+	let tabData = $state(TabData(data.url, ["Abuse reports"], ["fa-list"]))
 </script>
 
 <Head name={data.siteName} title="Abuse reports - Admin" />

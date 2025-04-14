@@ -3,15 +3,23 @@
 
 	import fade from "$lib/fade"
 
-	export let asset: {
-		id: number
-		name: string
-		price: number
+	const {
+		asset,
+		num,
+		total,
+		symbol
+	}: {
+		asset: {
+			id: number
+			name: string
+			price: number
+			// ratio?: string | number
+		}
 		// ratio?: string | number
-	}
-	export let num: number
-	export let total: number
-	export let symbol: string
+		num: number
+		total: number
+		symbol: string
+	} = $props()
 </script>
 
 <a

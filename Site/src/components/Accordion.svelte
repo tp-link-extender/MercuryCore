@@ -1,9 +1,18 @@
 <script lang="ts">
 	import NoScript from "$components/NoScript.svelte"
 	import YesScript from "$components/YesScript.svelte"
-	import { createAccordion, melt } from "@melt-ui/svelte"
+	import { type createAccordion, melt } from "@melt-ui/svelte"
+	import type { Snippet } from "svelte"
+	import type { HTMLAttributes } from "svelte/elements"
 
-	export let accordion = createAccordion()
+	const {
+		accordion,
+		children,
+		...rest
+	}: {
+		accordion: ReturnType<typeof createAccordion>
+		children: Snippet
+	} & HTMLAttributes<HTMLDivElement> = $props()
 
 	const {
 		elements: { root }
@@ -11,10 +20,12 @@
 </script>
 
 <NoScript>
-	<slot />
+	<div {...rest}>
+		{@render children()}
+	</div>
 </NoScript>
 <YesScript>
-	<div use:melt={$root}>
-		<slot />
+	<div use:melt={$root} {...rest}>
+		{@render children()}
 	</div>
 </YesScript>

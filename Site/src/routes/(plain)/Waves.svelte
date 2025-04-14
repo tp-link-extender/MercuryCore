@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let reverse = false
+	const { reverse = false }: { reverse?: boolean } = $props()
 </script>
 
 <span

@@ -1,12 +1,24 @@
 <script lang="ts">
 	import fade from "$lib/fade"
+	import type { Snippet } from "svelte"
 
-	export let num: number
-	export let total: number
-	export let href: string
-	export let iconClass = ""
-	export let emoji = ""
-	export let name: string
+	const {
+		num,
+		total,
+		href,
+		iconClass = "",
+		emoji = "",
+		name,
+		children
+	}: {
+		num: number
+		total: number
+		href: string
+		iconClass?: string
+		emoji?: string
+		name: string
+		children?: Snippet
+	} = $props()
 </script>
 
 <a
@@ -22,7 +34,7 @@
 		<div class="text-xl pt-4">
 			{name}
 		</div>
-		<slot />
+		{@render children?.()}
 	</div>
 </a>
 

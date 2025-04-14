@@ -1,8 +1,13 @@
 <script lang="ts">
-	import { page } from "$app/stores"
+	import { page } from "$app/state"
 
-	export let comment = false
-	export let formData: import("sveltekit-superforms").SuperForm<any>
+	const {
+		comment = false,
+		formData
+	}: {
+		comment?: boolean
+		formData: import("sveltekit-superforms").SuperForm<any>
+	} = $props()
 
 	const {
 		form,
@@ -22,7 +27,7 @@
 		<textarea
 			bind:value={$form.content}
 			{...$constraints.content}
-			class:is-invalid={$errors.content}
+			class={{ "is-invalid": $errors.content }}
 			name="content"
 			placeholder="What are your thoughts?"
 			rows="4">
@@ -36,9 +41,13 @@
 		</button>
 	</fieldset>
 	<p
-		class="pb-4"
-		class:text-emerald-600={$page.status === 200}
-		class:text-red-500={$page.status >= 400}>
+		class={[
+			"pb-4",
+			{
+				"text-emerald-600": page.status === 200,
+				"text-red-500": page.status >= 400
+			}
+		]}>
 		{$message || $errors.content || ""}
 	</p>
 </form>

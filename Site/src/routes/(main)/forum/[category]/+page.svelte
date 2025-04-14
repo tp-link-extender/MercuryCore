@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { page } from "$app/stores"
+	import { page } from "$app/state"
 	import Breadcrumbs from "$components/Breadcrumbs.svelte"
 	import Head from "$components/Head.svelte"
 	import Pagination from "$components/Pagination.svelte"
 	import ForumPost from "./ForumPost.svelte"
 
-	export let data
+	const { data } = $props()
 </script>
 
 <Head name={data.siteName} title="{data.name} - Forum" />
@@ -38,7 +38,7 @@
 					categoryName={data.name} />
 			{/each}
 		</div>
-		{#key $page.url}
+		{#key page.url}
 			<Pagination totalPages={data.pages} />
 		{/key}
 	{:else}

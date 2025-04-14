@@ -4,9 +4,9 @@
 	import TabData from "$components/TabData"
 	import User from "$components/User.svelte"
 
-	export let data
+	const { data } = $props()
 
-	let tabData = TabData(data.url, ["Audit logs"], ["fa-list"])
+	let tabData = $state(TabData(data.url, ["Audit logs"], ["fa-list"]))
 
 	const colours = Object.freeze({
 		Account: "text-sky-500",

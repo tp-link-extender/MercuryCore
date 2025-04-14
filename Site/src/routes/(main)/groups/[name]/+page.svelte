@@ -3,7 +3,7 @@
 	import Head from "$components/Head.svelte"
 	import User from "$components/User.svelte"
 
-	export let data
+	const { data } = $props()
 </script>
 
 <Head name={data.siteName} title={data.name} />

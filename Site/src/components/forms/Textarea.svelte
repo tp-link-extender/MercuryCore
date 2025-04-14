@@ -1,12 +1,30 @@
 <script lang="ts">
-	export let name: string
-	export let label = ""
-	export let help = ""
-	export let placeholder = ""
-	export let rows = 3
-	export let lowpad = false
+	import type { HTMLTextareaAttributes } from "svelte/elements"
 
-	export let formData: import("sveltekit-superforms").SuperForm<any>
+	const {
+		name,
+		label = "",
+		help = "",
+		placeholder = "",
+		rows = 3,
+		lowpad = false,
+		formData,
+		...rest
+	}: {
+		name: string
+		label?: string
+		help?: string
+		placeholder?: string
+		rows?: number
+		lowpad?: boolean
+		formData: import("sveltekit-superforms").SuperForm<any>
+	} & HTMLTextareaAttributes = $props()
+
+	// TODO: prevent tabs in textarea caused by... the formatter....
+	$effect(() => {
+		$form[name] = ""
+	})
+
 	const { form, errors, constraints } = formData
 </script>
 
@@ -16,16 +34,16 @@
 			{label}
 		</label>
 	{/if}
-	<div class="w-full {label ? 'md:w-3/4' : ''}">
+	<div class={["w-full", { "md:w-3/4": label }]}>
 		<textarea
-			{...$$restProps}
+			{...rest}
 			bind:value={$form[name]}
 			{...$constraints[name]}
 			{name}
 			id={name}
 			{rows}
 			placeholder={placeholder || null}
-			class:is-invalid={$errors[name]}>
+			class={{ "is-invalid": $errors[name] }}>
 		</textarea>
 
 		{#if help}

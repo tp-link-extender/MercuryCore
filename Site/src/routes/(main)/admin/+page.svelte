@@ -6,7 +6,7 @@
 	import TabData from "$components/TabData"
 	import permissionLevels from "$lib/permissionLevels"
 
-	export let data
+	const { data } = $props()
 
 	const { user, totalmem, freemem } = data
 
@@ -19,7 +19,7 @@
 		"fa-scale-balanced"
 	]
 
-	const panel: { [k: string]: [string, string, string][] } = {
+	const panel: { [k: string]: [string, string, string][] } = $state({
 		Moderation: [
 			["User moderation", "moderation", "fa-user-slash"],
 			["Abuse reports", "reports", "fa-flag"],
@@ -28,7 +28,7 @@
 		],
 		Catalog: [["Asset creation", "create", "fa-file-circle-plus"]],
 		Economy: [["Transactions", "transactions", "fa-money-bill-transfer"]]
-	}
+	})
 	const tabNames = ["Moderation", "Catalog", "Economy", "Statistics"]
 
 	if (user.permissionLevel === 5) {
@@ -41,13 +41,15 @@
 		tabNames.unshift("Administration")
 	}
 
-	let tabData = TabData(data.url, tabNames, [
-		"fa-diamond-half-stroke",
-		"fa-stamp",
-		"fa-basket-shopping",
-		"fa-coins",
-		"fa-chart-mixed"
-	])
+	let tabData = $state(
+		TabData(data.url, tabNames, [
+			"fa-diamond-half-stroke",
+			"fa-stamp",
+			"fa-basket-shopping",
+			"fa-coins",
+			"fa-chart-mixed"
+		])
+	)
 
 	const mbUsed = (totalmem - freemem) / 1e3 ** 2
 	// they done let gbs in the door
@@ -70,7 +72,7 @@
 
 <SidebarShell bind:tabData class="max-w-340">
 	{#each tabNames.slice(0, -1) as key}
-		<Tab {tabData} class="grid lg:grid-cols-4 gap-4">
+		<Tab bind:tabData class="grid lg:grid-cols-4 gap-4">
 			{#each panel[key] as i, num}
 				<AdminLink
 					href="/admin/{i[1]}"
@@ -82,7 +84,7 @@
 		</Tab>
 	{/each}
 
-	<Tab {tabData}>
+	<Tab bind:tabData>
 		<div class="grid lg:grid-cols-[7fr_5fr] gap-4">
 			<div class="flex flex-col gap-4">
 				<div class="card bg-a p-4">

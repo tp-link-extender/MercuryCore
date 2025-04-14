@@ -1,37 +1,49 @@
 <script lang="ts">
 	import SubInput from "$components/forms/SubInput.svelte"
-	import type { HTMLInputTypeAttribute } from "svelte/elements"
+	import type {
+		HTMLInputAttributes,
+		HTMLInputTypeAttribute
+	} from "svelte/elements"
 
-	export let name: string
-	export let label = ""
-	export let help = ""
-	export let after = ""
-	export let type: HTMLInputTypeAttribute = "text"
+	const {
+		name,
+		label = "",
+		help = "",
+		after = "",
+		type = "text",
+		inline = false,
+		column = false,
+		formData,
+		...rest
+	}: {
+		name: string
+		label?: string
+		help?: string
+		after?: string
+		type?: HTMLInputTypeAttribute
+		inline?: boolean
+		column?: boolean
+		formData: import("sveltekit-superforms").SuperForm<any>
+	} & HTMLInputAttributes = $props()
 
-	export let inline = false
-	export let column = false
-	export let formData: import("sveltekit-superforms").SuperForm<any>
 	const { errors } = formData
 </script>
 
 <div class="flex flex-wrap {inline ? 'flex-1' : 'pb-8'}">
 	{#if label}
-		<label for={name} class="w-full {column ? '' : 'md:w-1/4'}">
+		<label for={name} class={["w-full", { "md:w-1/4": !column }]}>
 			{label}
 		</label>
 	{/if}
-	<div
-		class="w-full {label && !column
-			? 'md:w-3/4'
-			: ''} {$$restProps.mainclass || ''}">
+	<div class={["w-full", { "md:w-3/4": label && !column }]}>
 		<!-- welp, boilerplate begets boilerplate -->
 		{#if after}
 			<div class="flex items-center">
-				<SubInput {...$$restProps} {name} {type} {formData} />
+				<SubInput {...rest} {name} {type} {formData} />
 				{@html after}
 			</div>
 		{:else}
-			<SubInput {...$$restProps} {name} {type} {formData} />
+			<SubInput {...rest} {name} {type} {formData} />
 		{/if}
 
 		{#if help}

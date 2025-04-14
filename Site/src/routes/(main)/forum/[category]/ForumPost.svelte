@@ -3,10 +3,17 @@
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
 
-	export let post: import("./$types").PageData["posts"][number]
-	export let num: number
-	export let total: number
-	export let categoryName: string
+	const {
+		post = $bindable(),
+		num,
+		total,
+		categoryName
+	}: {
+		post: import("./$types").PageData["posts"][number]
+		num: number
+		total: number
+		categoryName: string
+	} = $props()
 
 	let likesDisabled = false
 	let dislikesDisabled = false
@@ -40,9 +47,10 @@
 
 <div
 	in:fade|global={{ num, total }}
-	class="card bg-darker flex-row overflow-hidden h-40 {post.pinned
-		? 'border-(solid 1px green-5)!'
-		: ''}">
+	class={[
+		"card bg-darker flex-row overflow-hidden h-40",
+		{ "border-(solid 1px green-5)!": post.pinned }
+	]}>
 	<form
 		use:enhance={likeEnhance}
 		method="POST"
@@ -63,11 +71,13 @@
 				</fa>
 			</button>
 			<span
-				class="py-2 text-center {post.likes
-					? 'text-emerald-600 font-bold'
-					: post.dislikes
-						? 'text-red-500 font-bold'
-						: ''}">
+				class={[
+					"py-2 text-center",
+					{
+						"text-emerald-600 font-bold": post.likes,
+						"text-red-500 font-bold": post.dislikes
+					}
+				]}>
 				{post.score}
 			</span>
 			<button

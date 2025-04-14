@@ -1,8 +1,15 @@
 <script lang="ts">
-	export let name: string
-	export let title = name
-	export let description = ""
-	export let ogImage = ""
+	const {
+		name,
+		title = name,
+		description = "",
+		ogImage = ""
+	}: {
+		name: string
+		title?: string
+		description?: string
+		ogImage?: string
+	} = $props()
 </script>
 
 <svelte:head>

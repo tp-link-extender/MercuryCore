@@ -2,7 +2,7 @@
 	import { enhance } from "$app/forms"
 	import fade from "$lib/fade"
 
-	export let data: import("./$types").PageData
+	const { data }: { data: import("./$types").PageData } = $props()
 </script>
 
 <div class="flex gap-2">
