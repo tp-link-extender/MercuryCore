@@ -18,7 +18,7 @@
 
 <Head name={data.siteName} title="Accounts - Admin" />
 
-<div class="ctnr max-w-240">
+<div class="ctnr max-w-240 pb-6">
 	<h1>Accounts &ndash; Admin</h1>
 	<a href="/admin" class="no-underline">
 		<fa fa-caret-left></fa>
@@ -26,19 +26,17 @@
 	</a>
 </div>
 
-<div class="px-4 pt-6">
-	<SidebarShell bind:tabData>
-		<Form
+<SidebarShell bind:tabData>
+	<Form
+		{formData}
+		submit="<fa fa-key></fa> Change password"
+		action="?/changePassword">
+		<Input {formData} name="username" label="Username" />
+		<Input
 			{formData}
-			submit="<fa fa-key></fa> Change password"
-			action="?/changePassword">
-			<Input {formData} name="username" label="Username" />
-			<Input
-				{formData}
-				name="password"
-				label="New password"
-				type="password"
-				placeholder={"•".repeat(20)} />
-		</Form>
-	</SidebarShell>
-</div>
+			name="password"
+			label="New password"
+			type="password"
+			placeholder={"•".repeat(20)} />
+	</Form>
+</SidebarShell>

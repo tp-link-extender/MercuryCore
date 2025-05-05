@@ -10,7 +10,7 @@ import { z } from "zod"
 import type { RequestEvent } from "./$types.ts"
 import createQuery from "./create.surql"
 import disabledQuery from "./disabled.surql"
-import regKeysQuery from "./regKeys.surql"
+import regkeysQuery from "./regkeys.surql"
 
 const schema = z.object({
 	enableRegKeyCustom: z.boolean().optional(),
@@ -32,7 +32,7 @@ export async function load({ locals }) {
 	if (!config.RegistrationKeys.Enabled) error(404, "Not Found")
 	await authorise(locals, 5)
 
-	const [regKeys] = await db.query<RegKey[][]>(regKeysQuery)
+	const [regKeys] = await db.query<RegKey[][]>(regkeysQuery)
 	return {
 		form: await superValidate(zod(schema)),
 		regKeys,

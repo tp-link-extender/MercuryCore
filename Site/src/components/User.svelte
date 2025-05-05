@@ -1,6 +1,8 @@
 <script lang="ts">
 	// User profile link component
 
+	import type { ClassValue } from "svelte/elements"
+
 	const statusColours = Object.freeze({
 		// 8 months late lmao
 		Playing: "#238560",
@@ -40,7 +42,7 @@
 		} | null // Used on profile page for rerender button
 		size?: string
 		bg?: keyof typeof transitionBackgrounds
-		class?: string
+		class?: ClassValue
 	} = $props()
 
 	const style = `width: ${size}; max-width: ${size}; height: ${size}; min-height: ${size}`

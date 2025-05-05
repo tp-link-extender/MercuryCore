@@ -13,7 +13,7 @@
 
 <Head name={data.siteName} title="Asset approval - Admin" />
 
-<div class="flex px-4">
+<div class="flex px-4 pb-6">
 	<div class="<lg:hidden w-75"></div>
 	<div class="flex w-full justify-center">
 		<div class="w-full max-w-240 <md:px-4">
@@ -27,7 +27,6 @@
 	</div>
 </div>
 
-<div class="px-4 pt-6">
 	<SidebarShell
 		bind:tabData
 		space
@@ -36,4 +35,3 @@
 			<AssetApprove {asset} {num} total={(data.assets || []).length} />
 		{/each}
 	</SidebarShell>
-</div>

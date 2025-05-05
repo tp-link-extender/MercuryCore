@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from "svelte"
+	import type { ClassValue } from "svelte/elements"
 	import { fade } from "svelte/transition"
 
 	let {
@@ -13,7 +14,7 @@
 			num: number
 		}
 		children?: Snippet
-		class?: string
+		class?: ClassValue
 	} = $props()
 
 	const num = ++tabData.num

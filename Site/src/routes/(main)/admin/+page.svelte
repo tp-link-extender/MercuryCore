@@ -59,7 +59,7 @@
 
 <Head name={data.siteName} title="Admin" />
 
-<div class="ctnr max-w-340">
+<div class="ctnr 2xl:p-0 max-w-340">
 	<h1>Admin Panel</h1>
 	<h2 class="text-xl pb-4">
 		Your permission level is <span style="color: {perms[0]}">
@@ -70,7 +70,7 @@
 	<hr />
 </div>
 
-<SidebarShell bind:tabData class="max-w-340">
+<SidebarShell bind:tabData space class="max-w-340">
 	{#each tabNames.slice(0, -1) as key}
 		<Tab bind:tabData class="grid lg:grid-cols-4 gap-4">
 			{#each panel[key] as i, num}

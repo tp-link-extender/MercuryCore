@@ -1,6 +1,7 @@
 <script lang="ts">
 	import fade from "$lib/fade"
 	import type { Snippet } from "svelte"
+	import type { ClassValue } from "svelte/elements"
 
 	const {
 		num,
@@ -14,7 +15,7 @@
 		num: number
 		total: number
 		href: string
-		iconClass?: string
+		iconClass?: ClassValue
 		emoji?: string
 		name: string
 		children?: Snippet
@@ -29,7 +30,7 @@
 		{#if emoji}
 			<span class="text-10">{emoji}</span>
 		{:else}
-			<fa class="text-10 {iconClass}"></fa>
+			<fa class={["text-10", iconClass]}></fa>
 		{/if}
 		<div class="text-xl pt-4">
 			{name}

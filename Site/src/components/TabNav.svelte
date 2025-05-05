@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { interpolateLab } from "d3-interpolate"
+	import type { ClassValue } from "svelte/elements"
 	import { tweened } from "svelte/motion"
 
 	let {
@@ -18,7 +19,7 @@
 		}
 		justify?: boolean
 		vertical?: boolean
-		class?: string
+		class?: ClassValue
 	} = $props()
 
 	// prevents nested tabs from breaking
@@ -36,8 +37,8 @@
 
 <ul
 	class={[
-		"flex flex-wrap list-none min-w-28 pl-0",
-		vertical ? "vertical flex-col gap-2" : "pb-6",
+		"flex flex-wrap list-none min-w-28",
+		vertical ? "vertical flex-col gap-2 <md:pl-4" : "pb-6",
 		class_,
 		{ justified: justify }
 	]}

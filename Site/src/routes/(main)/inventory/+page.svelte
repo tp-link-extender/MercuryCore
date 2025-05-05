@@ -28,35 +28,33 @@
 
 <h1 class="text-center pb-4">Inventory</h1>
 
-<div class="px-4 pt-6">
-	<SidebarShell bind:tabData space>
-		{#if assets.length > 0}
-			<div
-				class="grid gap-4 grid-cols-2 xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3">
-				{#each assets as asset, num (asset.id)}
-					<Asset
-						{asset}
-						{num}
-						total={assets.length}
-						symbol={data.currencySymbol} />
-				{/each}
-			</div>
-			{#key page.url}
-				<Pagination totalPages={data.pages} />
-			{/key}
-		{:else}
-			<h2 class="pt-12 text-center">
-				You don't have any {tabData.currentTab} yet.
-			</h2>
-			<h3 class="pt-4 text-center">
-				Head to the
-				<!--
-					?tab= works questionably due to url/local state mismatch...
-					eh, I signed up for that	
-				-->
-				<a href="/catalog?tab={tabData.currentTab}">Catalog</a>
-				to get some!
-			</h3>
-		{/if}
-	</SidebarShell>
-</div>
+<SidebarShell bind:tabData space>
+	{#if assets.length > 0}
+		<div
+			class="grid gap-4 grid-cols-2 xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3">
+			{#each assets as asset, num (asset.id)}
+				<Asset
+					{asset}
+					{num}
+					total={assets.length}
+					symbol={data.currencySymbol} />
+			{/each}
+		</div>
+		{#key page.url}
+			<Pagination totalPages={data.pages} />
+		{/key}
+	{:else}
+		<h2 class="pt-12 text-center">
+			You don't have any {tabData.currentTab} yet.
+		</h2>
+		<h3 class="pt-4 text-center">
+			Head to the
+			<!--
+				?tab= works questionably due to url/local state mismatch...
+				eh, I signed up for that	
+			-->
+			<a href="/catalog?tab={tabData.currentTab}">Catalog</a>
+			to get some!
+		</h3>
+	{/if}
+</SidebarShell>

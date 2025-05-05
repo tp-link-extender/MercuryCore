@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { browser, dev } from "$app/environment"
+	import { browser } from "$app/environment"
 	import { enhance } from "$app/forms"
 	import { navigating } from "$app/stores"
 	import User from "$components/User.svelte"
