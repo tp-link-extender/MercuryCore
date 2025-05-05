@@ -36,7 +36,7 @@
 	</div>
 	<TabNav bind:tabData />
 	<Tab bind:tabData>
-		<h2 class="text-xl">Game View</h2>
+		<h2 class="text-xl">Server view</h2>
 		<p class="grey-text">
 			Change the title and description of your server.
 		</p>

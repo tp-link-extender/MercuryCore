@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { interpolateLab } from "d3-interpolate"
 	import type { ClassValue } from "svelte/elements"
-	import { tweened } from "svelte/motion"
+	import { Tween } from "svelte/motion"
 
 	let {
 		tabData = $bindable(),
@@ -27,18 +27,16 @@
 		tabData.num = 0
 	})
 
-	let colour = $state(
-		tweened("white", {
-			duration: 200,
-			interpolate: interpolateLab
-		})
-	)
+	let colour = new Tween("white", {
+		duration: 200,
+		interpolate: interpolateLab
+	})
 </script>
 
 <ul
 	class={[
 		"flex flex-wrap list-none min-w-28",
-		vertical ? "vertical flex-col gap-2 <md:pl-4" : "pb-6",
+		vertical ? "vertical flex-col gap-2 <md:pl-4" : "pl-0 pb-6",
 		class_,
 		{ justified: justify }
 	]}
@@ -53,7 +51,7 @@
 					active: !vertical && tabData.currentTab === tab
 				}
 			]}
-			style="border-bottom-color: {$colour}"
+			style="border-bottom-color: {colour.current}"
 			data-sveltekit-preload-data="off">
 			<a
 				class={[
@@ -72,12 +70,9 @@
 					const hue = getComputedStyle(
 						document.body
 					).getPropertyValue("--hue")
-					colour = tweened(`hsl(${hue}, 100%, 60%)`, {
-						duration: 500,
-						interpolate: interpolateLab
-					})
+					colour.set(`hsl(${hue}, 100%, 60%)`, { duration: 0 })
 					tabData.currentTab = tab
-					$colour = "white"
+					colour.set("white")
 				}}>
 				{#if tabData.icons}
 					<fa class="{tabData.icons[pos]} pr-2"></fa>

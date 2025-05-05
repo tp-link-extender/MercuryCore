@@ -4,14 +4,12 @@
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	const {
-		message,
-		enhance: enh,
-		delayed
-	} = superForm(data.ticketForm, { id: "ticket" })
+	const { message, enhance, delayed } = superForm(data.ticketForm, {
+		id: "ticket"
+	})
 </script>
 
-<form use:enh method="POST" action="?/ticket&tab=Network">
+<form use:enhance method="POST" action="?/ticket&tab=Network">
 	<fieldset class="flex flex-wrap pb-4">
 		<label for="ticket" class="w-full md:w-1/4">Server ticket</label>
 		<div class="w-full md:w-3/4">

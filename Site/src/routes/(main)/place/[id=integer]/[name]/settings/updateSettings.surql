@@ -1,5 +1,4 @@
 LET $og = SELECT
-	title,
 	(SELECT text, updated FROM $parent.description
 	ORDER BY updated)[$] AS description
 FROM $place;

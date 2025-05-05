@@ -5,11 +5,9 @@
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	const {
-		message,
-		enhance: enh,
-		delayed
-	} = superForm(data.privatelinkForm, { id: "privatelink" })
+	const { message, enhance, delayed } = superForm(data.privatelinkForm, {
+		id: "privatelink"
+	})
 
 	let value = $derived(
 		encodeURI(
@@ -20,7 +18,7 @@
 	let copiedSuccess = $state(false)
 </script>
 
-<form use:enh method="POST" action="?/privatelink&tab=Privacy">
+<form use:enhance method="POST" action="?/privatelink&tab=Privacy">
 	<fieldset class="flex flex-wrap pb-2">
 		<label for="privateLink" class="w-full md:w-1/4">
 			Private server link

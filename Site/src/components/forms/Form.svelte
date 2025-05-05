@@ -22,10 +22,10 @@
 		children: Snippet
 	} & HTMLFormAttributes = $props()
 
-	const { errors, message, enhance: enh, delayed } = formData
+	const { errors, message, enhance, delayed } = formData
 
 	// use:enh may not be used on forms that aren't method === "POST"
-	const use = method === "POST" ? enh : () => {}
+	const use = method === "POST" ? enhance : () => {}
 
 	let other = $derived($errors.other || "")
 </script>

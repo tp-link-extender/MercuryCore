@@ -17,6 +17,8 @@
 	const { user } = data
 
 	const perms = permissionLevels(user.permissionLevel)
+	// (for unocss)
+	// fa-user fa-check fa-hammer fa-shield-alt fa-scale-balanced
 
 	let regenerating = $state(false)
 

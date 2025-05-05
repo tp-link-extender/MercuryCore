@@ -9,17 +9,10 @@
 		formData: import("sveltekit-superforms").SuperForm<any>
 	} = $props()
 
-	const {
-		form,
-		errors,
-		message,
-		constraints,
-		enhance: enh,
-		delayed
-	} = formData
+	const { form, errors, message, constraints, enhance, delayed } = formData
 </script>
 
-<form use:enh method="POST" action="?/reply" class="py-2">
+<form use:enhance method="POST" action="?/reply" class="py-2">
 	<label for="content" class="light-text py-2">
 		Post a {comment ? "comment" : "reply"}
 	</label>
