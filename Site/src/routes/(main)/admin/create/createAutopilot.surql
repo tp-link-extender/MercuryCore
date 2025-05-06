@@ -15,7 +15,7 @@ FOR $assetId IN $assets {
 		}],
 		visibility: "Visible",
 	};
-	RELATE $user->owns->$asset;
+	RELATE $user->ownsAsset->$asset;
 	RELATE $user->created->$asset;
 	RELATE $cached->createdAsset->$asset;
 };
@@ -34,7 +34,7 @@ LET $asset = CREATE asset CONTENT {
 	}],
 	visibility: "Visible",
 };
-RELATE $user->owns->$asset;
+RELATE $user->ownsAsset->$asset;
 RELATE $user->created->$asset;
 {
 	id: $id,

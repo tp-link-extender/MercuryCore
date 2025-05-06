@@ -20,5 +20,5 @@ SELECT
 	ORDER BY updated DESC) AS content,
 	(SELECT status, username FROM <-created<-user)[0] as authorUser
 FROM statusPost 
-ORDER BY posted DESC
+ORDER BY created DESC
 LIMIT 40;

@@ -11,7 +11,7 @@ SELECT
 	updated,
 	maxPlayers,
 	(SELECT username, status
-	FROM <-owns<-user)[0] AS ownerUser,
+	FROM <-ownsPlace<-user)[0] AS ownerUser,
 	(SELECT
 		in.username AS username,
 		"Playing" AS status # duh

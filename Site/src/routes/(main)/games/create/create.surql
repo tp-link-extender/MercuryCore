@@ -11,4 +11,4 @@ LET $place = CREATE place CONTENT {
 	serverPort: $serverPort,
 	serverPing: 0,
 };
-RELATE $user->owns->$place;
+RELATE $user->ownsPlace->$place;

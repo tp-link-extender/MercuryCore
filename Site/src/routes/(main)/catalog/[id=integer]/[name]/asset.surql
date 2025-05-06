@@ -2,8 +2,8 @@ SELECT
 	*,
 	record::id(id) AS id,
 	(SELECT status, username FROM <-created<-user)[0] AS creator,
-	count(<-owns<-user) AS sold,
-	$user IN <-owns<-user.id AS owned,
+	count(<-ownsAsset<-user) AS sold,
+	$user IN <-ownsAsset<-user.id AS owned,
 
 	(SELECT text, updated FROM $parent.description
 	ORDER BY updated)[$] AS description,

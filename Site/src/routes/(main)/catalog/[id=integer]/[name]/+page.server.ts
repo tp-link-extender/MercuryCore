@@ -263,7 +263,7 @@ actions.buy = async e => {
 	}
 
 	await Promise.all([
-		db.query("RELATE $user->owns->$asset SET time = time::now()", {
+		db.query("RELATE $user->ownsAsset->$asset SET time = time::now()", {
 			asset: Record("asset", id),
 			user: Record("user", user.id),
 		}),

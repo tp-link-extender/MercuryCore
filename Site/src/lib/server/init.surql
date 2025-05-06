@@ -18,8 +18,8 @@ DEFINE TABLE OVERWRITE assetCache SCHEMAFULL;
 
 DEFINE TABLE OVERWRITE assetComment SCHEMAFULL;
 	DEFINE FIELD OVERWRITE content ON assetComment FLEXIBLE TYPE array;
+	DEFINE FIELD OVERWRITE created ON assetComment TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE pinned ON assetComment TYPE bool;
-	DEFINE FIELD OVERWRITE posted ON assetComment TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE visibility ON assetComment TYPE string;
 
 DEFINE TABLE OVERWRITE auditLog SCHEMAFULL;
@@ -43,37 +43,45 @@ DEFINE TABLE OVERWRITE forumCategory SCHEMAFULL;
 
 DEFINE TABLE OVERWRITE forumPost SCHEMAFULL;
 	DEFINE FIELD OVERWRITE content ON forumPost FLEXIBLE TYPE array;
+	DEFINE FIELD OVERWRITE created ON forumPost TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE pinned ON forumPost TYPE bool;
-	DEFINE FIELD OVERWRITE posted ON forumPost TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE title ON forumPost TYPE string;
 	DEFINE FIELD OVERWRITE visibility ON forumPost TYPE string;
 
 DEFINE TABLE OVERWRITE forumReply SCHEMAFULL;
 	DEFINE FIELD OVERWRITE content ON forumReply FLEXIBLE TYPE array;
+	DEFINE FIELD OVERWRITE created ON forumReply TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE pinned ON forumReply TYPE bool;
-	DEFINE FIELD OVERWRITE posted ON forumReply TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE visibility ON forumReply TYPE string;
 
 DEFINE TABLE OVERWRITE group SCHEMAFULL;
 	DEFINE FIELD OVERWRITE created ON group TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE name ON group TYPE string;
 
-DEFINE TABLE OVERWRITE moderation SCHEMAFULL;
+DEFINE TABLE OVERWRITE hasSession SCHEMAFULL TYPE RELATION FROM user TO session;
+
+DEFINE TABLE OVERWRITE moderation SCHEMAFULL TYPE RELATION FROM user TO user;
 	DEFINE FIELD OVERWRITE active ON moderation TYPE bool;
 	DEFINE FIELD OVERWRITE note ON moderation TYPE string;
 	DEFINE FIELD OVERWRITE time ON moderation TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE timeEnds ON moderation TYPE datetime;
 	DEFINE FIELD OVERWRITE type ON moderation TYPE string;
 
-DEFINE TABLE OVERWRITE notification SCHEMAFULL;
+DEFINE TABLE OVERWRITE notification SCHEMAFULL TYPE RELATION FROM user TO user;
 	DEFINE FIELD OVERWRITE note ON notification TYPE string;
 	DEFINE FIELD OVERWRITE read ON notification TYPE bool;
 	DEFINE FIELD OVERWRITE relativeId ON notification TYPE any;
 	DEFINE FIELD OVERWRITE time ON notification TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE type ON notification TYPE string;
 
-DEFINE TABLE OVERWRITE owns SCHEMAFULL;
-	DEFINE FIELD OVERWRITE time ON owns TYPE datetime DEFAULT time::now();
+DEFINE TABLE OVERWRITE ownsAsset SCHEMAFULL TYPE RELATION FROM user TO asset;
+	DEFINE FIELD OVERWRITE time ON ownsAsset TYPE datetime DEFAULT time::now();
+
+DEFINE TABLE OVERWRITE ownsGroup SCHEMAFULL TYPE RELATION FROM user TO group;
+	DEFINE FIELD OVERWRITE time ON ownsGroup TYPE datetime DEFAULT time::now();
+
+DEFINE TABLE OVERWRITE ownsPlace SCHEMAFULL TYPE RELATION FROM user TO place;
+	DEFINE FIELD OVERWRITE time ON ownsPlace TYPE datetime DEFAULT time::now();
 
 DEFINE TABLE OVERWRITE place SCHEMAFULL;
 	DEFINE FIELD OVERWRITE created ON place TYPE datetime DEFAULT time::now();
@@ -102,13 +110,14 @@ DEFINE TABLE OVERWRITE render SCHEMAFULL;
 	DEFINE FIELD OVERWRITE status ON render TYPE string DEFAULT "Pending";
 	DEFINE FIELD OVERWRITE type ON render TYPE string;
 
-DEFINE TABLE OVERWRITE report SCHEMAFULL;
+DEFINE TABLE OVERWRITE report SCHEMAFULL TYPE RELATION FROM user TO user;
 	DEFINE FIELD OVERWRITE category ON report TYPE string;
 	DEFINE FIELD OVERWRITE note ON report TYPE string;
 	DEFINE FIELD OVERWRITE time ON report TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE url ON report TYPE string;
 
 DEFINE TABLE OVERWRITE session SCHEMAFULL;
+	DEFINE FIELD OVERWRITE created ON session TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE expiresAt ON session TYPE datetime;
 
 DEFINE TABLE OVERWRITE statusPost SCHEMAFULL;
@@ -231,7 +240,7 @@ WHEN $event = "UPDATE" AND $after.usesLeft = 0 THEN
 # separation of concerns, maaaan
 
 DEFINE FUNCTION OVERWRITE fn::filterInventory($thing: object) {
-	RETURN $user IN $thing<-owns<-user
+	RETURN $user IN $thing<-ownsAsset<-user
 		AND $thing.type IN [2, 8, 11, 12, 17, 18, 19]
 };
 

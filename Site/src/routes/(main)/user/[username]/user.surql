@@ -22,7 +22,7 @@ SELECT
 
 		count(<-likes) AS likeCount,
 		count(<-dislikes) AS dislikeCount
-	FROM ->owns->place) AS places,
+	FROM ->ownsPlace->place) AS places,
 
 	count(<->friends) AS friendCount,
 	count(<-follows) AS followerCount,
@@ -37,5 +37,5 @@ SELECT
 	(SELECT name, count(<-member) AS memberCount
 	FROM ->member->group) AS groups,
 	(SELECT name, count(<-member) AS memberCount
-	FROM ->owns->group) AS groupsOwned
+	FROM ->ownsGroup->group) AS groupsOwned
 FROM user WHERE username = $username;

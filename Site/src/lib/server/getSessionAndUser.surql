@@ -1,4 +1,4 @@
-LET $s = SELECT * FROM ONLY $sess;
+LET $s = SELECT record::id(id) AS id, expiresAt FROM ONLY $sess;
 LET $u = (SELECT
     record::id(id) AS id,
 	(SELECT text, updated FROM $parent.bio ORDER BY updated)[$] AS bio,
@@ -20,20 +20,14 @@ FROM $sess<-hasSession<-user)[0];
 IF $s {
 	IF $s.expiresAt < time::now() {
 		DELETE $s;
-		$s = NULL;
+		$s = NONE;
 	} ELSE IF $s.expiresAt + 15d < time::now() {
 		$s.expiresAt = time::now() + 30d;
 	};
 };
 
 {
-	session: IF $s {
-		{
-			id: record::id($s.id),
-			user: $u.id,
-			expiresAt: $s.expiresAt,
-		}
-	},
+	session: $s,
 	user: $u,
 };
 

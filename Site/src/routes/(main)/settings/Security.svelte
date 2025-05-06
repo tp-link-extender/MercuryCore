@@ -28,7 +28,7 @@
 		name="cpassword"
 		label="Current password"
 		type="password"
-		placeholder={"•".repeat(14)}
+		placeholder={"•".repeat(18)}
 		autocomplete="current-password" />
 	<Input
 		{formData}
@@ -36,13 +36,13 @@
 		label="New password"
 		type="password"
 		autocomplete="new-password"
-		placeholder={"•".repeat(20)}
+		placeholder={"•".repeat(23)}
 		help="Make sure your password is unique." />
 	<Input
 		{formData}
 		name="cnpassword"
 		label="Confirm new password"
 		type="password"
-		placeholder={"•".repeat(20)}
+		placeholder={"•".repeat(23)}
 		autocomplete="new-password" />
 </Form>

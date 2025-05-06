@@ -46,7 +46,7 @@
 				name="password"
 				label="Password"
 				type="password"
-				placeholder="Password" />
+				placeholder={"•".repeat(18)} />
 		</Form>
 	{:else}
 		<h2>There are no users registered in the database yet!</h2>

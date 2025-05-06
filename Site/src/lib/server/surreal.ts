@@ -54,7 +54,8 @@ type RecordIdTypes = {
 	likes: string
 	moderation: string
 	notification: string
-	owns: string
+	ownsAsset: string
+	ownsPlace: string
 	place: number
 	playing: string
 	posted: string

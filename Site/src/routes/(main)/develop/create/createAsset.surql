@@ -3,7 +3,7 @@ LET $imageAsset = CREATE asset CONTENT {
 	name: $name,
 	type: 1,
 };
-RELATE $user->owns->$imageAsset;
+RELATE $user->ownsAsset->$imageAsset;
 RELATE $user->created->$imageAsset;
 
 LET $asset = CREATE asset CONTENT {
@@ -16,6 +16,6 @@ LET $asset = CREATE asset CONTENT {
 	price: $price,
 	type: $assetType,
 };
-RELATE $user->owns->$asset;
+RELATE $user->ownsAsset->$asset;
 RELATE $user->created->$asset;
 RELATE $asset->imageAsset->$imageAsset;

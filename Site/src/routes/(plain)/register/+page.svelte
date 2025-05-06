@@ -59,7 +59,7 @@
 				name="password"
 				label="Password"
 				type="password"
-				placeholder={"•".repeat(14)} />
+				placeholder={"•".repeat(18)} />
 			<Input
 				{formData}
 				column
@@ -67,7 +67,7 @@
 				name="cpassword"
 				label="Confirm Password"
 				type="password"
-				placeholder={"•".repeat(14)} />
+				placeholder={"•".repeat(18)} />
 			{#if data.regKeysEnabled}
 				<Input
 					{formData}
@@ -110,14 +110,14 @@
 				name="password"
 				label="Password"
 				type="password"
-				placeholder={"•".repeat(14)} />
+				placeholder={"•".repeat(18)} />
 			<Input
 				{formData}
 				column
 				name="cpassword"
 				label="Confirm Password"
 				type="password"
-				placeholder={"•".repeat(14)} />
+				placeholder={"•".repeat(18)} />
 		</Form>
 		<p>
 			If you want to create more users, head to the Admin panel after
