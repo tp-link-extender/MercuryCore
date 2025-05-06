@@ -22,7 +22,9 @@ import createAssetQuery from "./createAsset.surql"
 
 const schema = z.object({
 	// Object.keys(assets) doesn't work
-	type: z.enum(["2", "8", "11", "12", "13", "18"]),
+	type: z.enum(["2", "8", "11", "12", "13", "18"], {
+		message: "Select an asset type",
+	}),
 	name: z.string().min(3).max(50),
 	description: z.string().max(1000).optional(),
 	price: z.number().int().min(0).max(999),

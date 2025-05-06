@@ -10,7 +10,6 @@
 		name,
 		label = "",
 		help = "",
-		placeholder = "",
 		disabled = false,
 		multiple = false, // messes up hugely if this is true, custom behaviour incoming
 		// also messes up with superforms cuz it only submits the last selected value
@@ -23,7 +22,6 @@
 		name: string
 		label?: string
 		help?: string
-		placeholder?: string
 		disabled?: boolean
 		multiple?: boolean
 		options: [string, string][]
@@ -31,7 +29,10 @@
 		formData: import("sveltekit-superforms").SuperForm<any>
 	} = $props()
 
-	const mOptions = options.map(([value, label]) => ({ value, label }))
+	const mOptions = [
+		{ value: "", label: "Select an option" },
+		...options.map(([value, label]) => ({ value, label }))
+	]
 	const mSelected = selected
 		? mOptions.find(o => o.value === selected)
 		: { value: "", label: "" }
@@ -72,7 +73,6 @@
 				{...$constraints[name]}
 				{name}
 				id={name}
-				{placeholder}
 				class={{ "is-invalid": $errors[name] }}>
 				{#each mOptions as { value, label }}
 					<option {value} selected={$isSelected(value)}>
@@ -107,7 +107,7 @@
 			{/if}
 
 			<button use:melt={$trigger} {disabled} class="fakeselect">
-				{$selectedLabel || placeholder || "Select an option"}
+				{$selectedLabel || "Select an option"}
 			</button>
 			{#if $open}
 				<div

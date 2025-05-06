@@ -576,7 +576,7 @@ details[open] summary {
 }
 
 [popover]:not(#results) {
-	@apply border-none p-0 transition-all duration-300 ease-in-out overflow-y-auto rounded-2 py-6;
+	@apply border-none transition-all duration-300 ease-in-out overflow-y-auto rounded-2 py-6;
 	background: var(--darker);
 	outline: transparent;
 	filter: drop-shadow(0 20px 13px rgba(255, 255, 255, 0.02))

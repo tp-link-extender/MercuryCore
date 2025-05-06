@@ -13,7 +13,9 @@ import unbanQuery from "./unban.surql"
 const schema = z.object({
 	username: z.string().min(3).max(21),
 	// enum to allow 1 to be selected initially
-	action: z.enum(["1", "2", "3", "4", "5"]),
+	action: z.enum(["1", "2", "3", "4", "5"], {
+		message: "Select a moderation action",
+	}),
 	banDate: z.string().optional(),
 	reason: z.string().min(15).max(150),
 })

@@ -10,7 +10,7 @@
 	const formData = superForm(data.form)
 	export const snapshot = formData
 
-	const reports = [
+	const reports: [string, string][] = [
 		["AccountTheft", "Account theft"],
 		["Dating", "Dating"],
 		["Exploiting", "Exploiting"],

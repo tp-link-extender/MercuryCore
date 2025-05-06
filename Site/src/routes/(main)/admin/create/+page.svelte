@@ -41,7 +41,6 @@
 <SidebarShell bind:tabData class="max-w-280">
 	<Tab bind:tabData>
 		<TabNav bind:tabData={tabData2} justify />
-		{((tabData2.num = 0), "")}
 		<Tab tabData={tabData2}>
 			<div class="alert alert-primary" role="alert">
 				<fa class="pr-2" fa-circle-info></fa>
@@ -50,6 +49,7 @@
 			<Form
 				formData={formDataManual}
 				nopad
+				action="?/manual"
 				enctype="multipart/form-data"
 				submit="Create"
 				class="pt-8 light-text">

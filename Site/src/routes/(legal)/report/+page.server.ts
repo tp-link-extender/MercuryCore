@@ -22,7 +22,9 @@ const schema = z.object({
 		"Swearing",
 		"Threats",
 		"Under13",
-	]),
+	], {
+		message: "Select a report category",
+	}),
 	note: z.string().optional(),
 })
 
