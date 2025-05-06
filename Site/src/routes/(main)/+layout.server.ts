@@ -1,4 +1,4 @@
-import { authorise } from "$lib/server/lucia"
+import { authorise } from "$lib/server/auth"
 
 // Most pages on the site require a user to be logged in.
 // No risk of data leakage to unauthenticated users here as a redirect is performed.

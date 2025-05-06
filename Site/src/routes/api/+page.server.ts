@@ -1,7 +1,7 @@
 // Contains various api methods that cannot be accessed in a page context,
 // usually because they are requested from a component.
 
-import { auth, authorise } from "$lib/server/lucia"
+import { authorise, cookieName, invalidateSession } from "$lib/server/auth"
 import { error, redirect } from "@sveltejs/kit"
 
 const msg = Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString()
@@ -14,8 +14,9 @@ export const actions: import("./$types").Actions = {}
 actions.logout = async ({ locals, cookies }) => {
 	const { session } = await authorise(locals)
 
-	await auth.invalidateSession(session.id)
-	cookies.delete("auth_session", { path: "." })
+	await invalidateSession(session.id)
+	cookies.delete(cookieName, { path: "/" })
+
 	redirect(302, "/login")
 }
 actions.statusping = () => {

@@ -1,6 +1,6 @@
 import { brickColours } from "$lib/brickColours.ts"
 import { intRegex } from "$lib/paramTests"
-import { authorise } from "$lib/server/lucia"
+import { authorise } from "$lib/server/auth"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { Record, db } from "$lib/server/surreal"
@@ -71,7 +71,7 @@ async function getEquipData(e: RequestEvent) {
 	return { user, id, asset }
 }
 
-async function rerender(user: import("lucia").User) {
+async function rerender(user: User) {
 	try {
 		await requestRender("Avatar", user.id, true)
 		return {

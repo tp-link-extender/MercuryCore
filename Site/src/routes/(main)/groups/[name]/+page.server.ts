@@ -1,5 +1,5 @@
+import { authorise } from "$lib/server/auth"
 import exclude from "$lib/server/exclude"
-import { authorise } from "$lib/server/lucia"
 import { Record, type RecordId, db } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
 import type { RequestEvent } from "./$types.d.ts"

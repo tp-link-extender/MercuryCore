@@ -1,6 +1,6 @@
+import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
-import { authorise } from "$lib/server/lucia"
 import { Record, db } from "$lib/server/surreal"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"

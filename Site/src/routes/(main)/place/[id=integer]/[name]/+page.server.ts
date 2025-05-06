@@ -1,7 +1,7 @@
+import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formData from "$lib/server/formData"
 import { type LikeActions, likeLikesActions } from "$lib/server/like"
-import { authorise } from "$lib/server/lucia"
 import { Record, db, find, findWhere } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"

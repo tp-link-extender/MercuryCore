@@ -1,39 +1,11 @@
 //  Prevents TypeScript from complaining about missing types.
 
-/// <reference types="lucia" />
 /// <reference types="@types/bun" />
 
 declare namespace svelteHTML {
 	import type { AttributifyAttributes } from "@unocss/preset-attributify"
 
 	type HTMLAttributes = AttributifyAttributes
-}
-
-declare module "lucia" {
-	interface Register {
-		Lucia: typeof import("$lib/server/lucia").auth
-		DatabaseUserAttributes: {
-			id: string
-			bio: {
-				text: string
-				updated: string
-			}[]
-			bodyColours: {
-				Head: number
-				LeftArm: number
-				LeftLeg: number
-				RightArm: number
-				RightLeg: number
-				Torso: number
-			}
-			created: string
-			email: string
-			lastOnline: string
-			permissionLevel: number
-			css: string
-			theme: number
-		} & BasicUser
-	}
 }
 
 declare global {
@@ -45,6 +17,34 @@ declare global {
 		username: string
 	}
 
+	declare type Session = {
+		id: string
+		user: string
+		expiresAt: Date
+	}
+
+	declare interface User extends BasicUser {
+		id: string
+		bio: {
+			text: string
+			updated: string
+		}[]
+		bodyColours: {
+			Head: number
+			LeftArm: number
+			LeftLeg: number
+			RightArm: number
+			RightLeg: number
+			Torso: number
+		}
+		created: string
+		email: string
+		lastOnline: string
+		permissionLevel: number
+		css: string
+		theme: number
+	}
+
 	declare module "*.surql" {
 		const value: string
 		export default value
@@ -52,8 +52,8 @@ declare global {
 
 	namespace App {
 		interface Locals {
-			user: import("lucia").User | null
-			session: import("lucia").Session | null
+			session: Session | null
+			user: User | null
 		}
 	}
 }

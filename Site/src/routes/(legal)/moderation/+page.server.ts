@@ -1,4 +1,4 @@
-import { authorise } from "$lib/server/lucia"
+import { authorise } from "$lib/server/auth"
 import { Record, db } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import getModerationQuery from "./getModeration.surql"

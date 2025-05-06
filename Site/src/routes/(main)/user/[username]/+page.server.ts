@@ -1,5 +1,5 @@
+import { authorise } from "$lib/server/auth"
 import formData from "$lib/server/formData"
-import { authorise } from "$lib/server/lucia"
 import requestRender from "$lib/server/requestRender"
 import { Record, type RecordId, db } from "$lib/server/surreal"
 import { error, fail } from "@sveltejs/kit"
@@ -16,7 +16,7 @@ import unfollowQuery from "./unfollow.surql"
 import unfriendQuery from "./unfriend.surql"
 import userQuery from "./user.surql"
 
-type User = {
+interface User extends BasicUser {
 	bio: {
 		id: string
 		text: string
@@ -56,7 +56,7 @@ type User = {
 		posted: string
 		visibility: string
 	}[]
-} & BasicUser
+}
 
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
@@ -81,7 +81,7 @@ type ActionFunction = (
 		user: RecordId<"user">
 		user2: RecordId<"user">
 	},
-	user: import("lucia").User
+	user: { id: string; username: string }
 ) => Promise<unknown>
 
 const acceptExisting: ActionFunction = (params, user) =>

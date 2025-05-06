@@ -1,5 +1,5 @@
+import { authorise } from "$lib/server/auth"
 import exclude from "$lib/server/exclude"
-import { authorise } from "$lib/server/lucia"
 import type { Replies } from "$lib/server/nestedReplies"
 import { Record, db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"

@@ -1,6 +1,6 @@
+import { cookieName, cookieOptions, createSession } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
-import { auth } from "$lib/server/lucia"
 import { db } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
@@ -59,13 +59,8 @@ actions.default = async ({ request, cookies }) => {
 			[" ", "Incorrect username or password"] // Don't give any extra information which may be useful to attackers
 		)
 
-	const session = await auth.createSession(user.id, {})
-	const sessionCookie = auth.createSessionCookie(session.id)
-
-	cookies.set(sessionCookie.name, sessionCookie.value, {
-		path: ".",
-		...sessionCookie.attributes,
-	})
+	const session = await createSession(user.id)
+	cookies.set(cookieName, session.id, cookieOptions)
 
 	redirect(302, "/home")
 }

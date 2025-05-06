@@ -1,12 +1,15 @@
 // "'Hooks' are app-wide functions you declare that SvelteKit will call in response to specific events, giving you fine-grained control over the framework's behaviour."
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
+import {
+	cookieName,
+	cookieOptions,
+	validateSessionToken,
+} from "$lib/server/auth"
 import config from "$lib/server/config"
 import { stipend } from "$lib/server/economy"
-import { auth } from "$lib/server/lucia"
 import { Record, db } from "$lib/server/surreal"
 import { type Handle, redirect } from "@sveltejs/kit"
-import type { Cookie, User } from "lucia"
 import pc from "picocolors"
 import moderatedQuery from "./moderated.surql"
 
@@ -88,28 +91,21 @@ async function finish({ event, resolve }: Parameters<Handle>[0]) {
 export async function handle(e) {
 	const { event } = e
 
-	const sessionId = event.cookies.get(auth.sessionCookieName)
-	if (!sessionId) {
+	const token = event.cookies.get(cookieName)
+	if (!token) {
 		event.locals.session = null
 		event.locals.user = null
+		event.cookies.delete(cookieName, { path: "/" })
 
 		return await finish(e)
 	}
 
-	const { session, user } = await auth.validateSession(sessionId)
+	const { session, user } = await validateSessionToken(token)
 	if (!session || !user) return await finish(e)
 
 	event.locals.session = session
 	event.locals.user = user
-
-	const setSession = (sessionCookie: Cookie) =>
-		// sveltekit types deviate from the de facto standard here
-		event.cookies.set(sessionCookie.name, sessionCookie.value, {
-			path: ".",
-			...sessionCookie.attributes,
-		})
-	if (!session) setSession(auth.createBlankSessionCookie())
-	else if (session.fresh) setSession(auth.createSessionCookie(session.id))
+	event.cookies.set(cookieName, session.id, cookieOptions)
 
 	const [, moderated] = await db.query<boolean[][]>(moderatedQuery, {
 		user: Record("user", user.id),

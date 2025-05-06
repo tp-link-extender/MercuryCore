@@ -1,4 +1,4 @@
-import { authorise } from "$lib/server/lucia"
+import { authorise } from "$lib/server/auth"
 import { Record, db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import readQuery from "./read.surql"

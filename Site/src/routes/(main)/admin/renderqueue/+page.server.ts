@@ -1,4 +1,4 @@
-import { authorise } from "$lib/server/lucia"
+import { authorise } from "$lib/server/auth"
 import type { RenderType, Status } from "$lib/server/requestRender"
 import { db } from "$lib/server/surreal"
 import renderQueueQuery from "./renderqueue.surql"

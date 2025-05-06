@@ -1,6 +1,6 @@
+import { cookieName, cookieOptions, createSession } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
-import { auth } from "$lib/server/lucia"
 import requestRender from "$lib/server/requestRender"
 import { Record, type RecordId, db, findWhere } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
@@ -106,13 +106,8 @@ actions.register = async ({ request, cookies }) => {
 		await requestRender("Avatar", userId)
 	} catch {}
 
-	const session = await auth.createSession(userId, {})
-	const sessionCookie = auth.createSessionCookie(session.id)
-
-	cookies.set(sessionCookie.name, sessionCookie.value, {
-		path: ".",
-		...sessionCookie.attributes,
-	})
+	const session = await createSession(userId)
+	cookies.set(cookieName, session.id, cookieOptions)
 
 	redirect(302, "/home")
 }
@@ -150,13 +145,8 @@ actions.initialAccount = async ({ request, cookies }) => {
 		await requestRender("Avatar", userId)
 	} catch {}
 
-	const { id } = await auth.createSession(userId, {})
-	const cookie = auth.createSessionCookie(id)
-
-	cookies.set(cookie.name, cookie.value, {
-		path: ".",
-		...cookie.attributes,
-	})
+	const session = await createSession(userId)
+	cookies.set(cookieName, session.id, cookieOptions)
 
 	redirect(302, "/home")
 }

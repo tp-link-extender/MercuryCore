@@ -1,6 +1,6 @@
+import { authorise } from "$lib/server/auth"
 import { economyConnFailed, getBalance } from "$lib/server/economy"
 import { getTransactions, transformTransactions } from "$lib/server/economy"
-import { authorise } from "$lib/server/lucia"
 import { error } from "@sveltejs/kit"
 
 export async function load({ locals }) {

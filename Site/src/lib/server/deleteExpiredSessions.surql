@@ -1,1 +1,1 @@
-DELETE session WHERE expiresAt < time::millis();
+DELETE session WHERE expiresAt < time::now();

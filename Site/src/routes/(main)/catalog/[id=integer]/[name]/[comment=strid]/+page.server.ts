@@ -1,4 +1,4 @@
-import { authorise } from "$lib/server/lucia"
+import { authorise } from "$lib/server/auth"
 import type { Replies } from "$lib/server/nestedReplies"
 import { Record, db } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"

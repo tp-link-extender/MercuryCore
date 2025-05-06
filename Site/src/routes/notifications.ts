@@ -1,5 +1,4 @@
 import { Record, db } from "$lib/server/surreal"
-import type { User } from "lucia"
 import getAssetCommentQuery from "./getAssetComment.surql"
 import getForumPostQuery from "./getForumPost.surql"
 import getForumReplyQuery from "./getForumReply.surql"

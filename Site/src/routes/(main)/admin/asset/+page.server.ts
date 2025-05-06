@@ -1,6 +1,6 @@
 import fs from "node:fs/promises"
 import { intRegex } from "$lib/paramTests"
-import { authorise } from "$lib/server/lucia"
+import { authorise } from "$lib/server/auth"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { Record, db } from "$lib/server/surreal"

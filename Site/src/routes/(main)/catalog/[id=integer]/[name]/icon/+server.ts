@@ -1,5 +1,5 @@
+import { authorise } from "$lib/server/auth"
 import { tShirtThumbnail } from "$lib/server/imageAsset"
-import { authorise } from "$lib/server/lucia"
 import { Record, db } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import assetQuery from "./asset.surql"

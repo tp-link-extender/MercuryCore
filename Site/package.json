@@ -32,7 +32,6 @@
 		"@unocss/transformer-directives": "^66.1.0",
 		"@unocss/transformer-variant-group": "^66.1.0",
 		"d3-interpolate": "^3.0.1",
-		"lucia": "^3.2.2",
 		"nprogress": "^0.2.0",
 		"picocolors": "^1.1.1",
 		"sharp": "^0.34.1",

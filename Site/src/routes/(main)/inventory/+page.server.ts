@@ -1,6 +1,6 @@
-import { authorise } from "$lib/server/lucia"
+import { authorise } from "$lib/server/auth"
 import pageQuery from "$lib/server/pageQuery"
-import { db, Record } from "$lib/server/surreal.ts"
+import { Record, db } from "$lib/server/surreal.ts"
 import inventoryQuery from "./inventory.surql"
 
 type Asset = {

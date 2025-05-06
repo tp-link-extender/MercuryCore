@@ -1,4 +1,5 @@
 import fs from "node:fs"
+import { authorise } from "$lib/server/auth"
 import { createAsset, getAssetPrice } from "$lib/server/economy"
 import formError from "$lib/server/formError"
 import {
@@ -8,7 +9,6 @@ import {
 	tShirtThumbnail,
 	thumbnail,
 } from "$lib/server/imageAsset"
-import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { Record, db } from "$lib/server/surreal"

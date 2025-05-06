@@ -1,5 +1,5 @@
+import { authorise } from "$lib/server/auth"
 import exclude from "$lib/server/exclude"
-import { authorise } from "$lib/server/lucia"
 import { db } from "$lib/server/surreal"
 import statisticsQuery from "./statistics.surql"
 

@@ -1,8 +1,8 @@
+import { authorise } from "$lib/server/auth"
 import {
 	getAdminTransactions,
 	transformTransactions,
 } from "$lib/server/economy"
-import { authorise } from "$lib/server/lucia"
 import { error } from "@sveltejs/kit"
 
 export async function load({ locals }) {

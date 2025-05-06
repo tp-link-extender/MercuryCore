@@ -1,4 +1,4 @@
-import { authorise } from "$lib/server/lucia"
+import { authorise } from "$lib/server/auth"
 import pageQuery from "$lib/server/pageQuery"
 import { Record, db } from "$lib/server/surreal"
 import requestsQuery from "./requests.surql"

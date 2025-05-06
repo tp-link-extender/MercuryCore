@@ -1,4 +1,5 @@
 import { idRegex } from "$lib/paramTests"
+import { authorise } from "$lib/server/auth"
 import {
 	economyConnFailed,
 	getBalance,
@@ -9,7 +10,6 @@ import filter from "$lib/server/filter"
 import formData from "$lib/server/formData"
 import formError from "$lib/server/formError"
 import { type LikeActions, like, likeScoreActions } from "$lib/server/like"
-import { authorise } from "$lib/server/lucia"
 import type { Replies } from "$lib/server/nestedReplies"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
