@@ -47,7 +47,7 @@
 	}
 	onMount(() => setInterval(ping, 30e3))
 
-	const notificationNotes: { [k: string]: string } = Object.freeze({
+	const notificationNotes: { [_: string]: string } = Object.freeze({
 		AssetApproved: "Asset approval",
 		FriendRequest: "Friend request",
 		Follower: "New follower",

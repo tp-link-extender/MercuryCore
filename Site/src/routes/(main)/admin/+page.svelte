@@ -19,7 +19,7 @@
 		"fa-scale-balanced"
 	]
 
-	const panel: { [k: string]: [string, string, string][] } = $state({
+	const panel: { [_: string]: [string, string, string][] } = $state({
 		Moderation: [
 			["User moderation", "moderation", "fa-user-slash"],
 			["Abuse reports", "reports", "fa-flag"],

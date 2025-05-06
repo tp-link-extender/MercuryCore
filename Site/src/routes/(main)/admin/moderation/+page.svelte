@@ -8,6 +8,7 @@
 	import Select from "$components/forms/Select.svelte"
 	import Textarea from "$components/forms/Textarea.svelte"
 	import fade from "$lib/fade"
+	import SuperDebug from "sveltekit-superforms"
 	import { superForm } from "sveltekit-superforms/client"
 
 	const { data } = $props()
@@ -15,14 +16,18 @@
 	const formData = superForm(data.form)
 	export const snapshot = formData
 	const { form } = formData
+
+	$effect(() => {
+		if (data.report) $form.reason = data.report.note
+	})
+
 	const tomorrow = new Date(Date.now() + 86400e3).toISOString().slice(0, 10)
 
 	const moderationOptions: [string, string][] = [
 		["1", "Warning"],
 		["2", "Ban"],
 		["3", "Termination"],
-		["4", "Account Deletion"],
-		["5", "Unban"]
+		["4", "Account Deletion"]
 	]
 
 	let tabData = $state(TabData(data.url, ["User moderation"], ["fa-gavel"]))
@@ -42,9 +47,9 @@
 	<Tab bind:tabData>
 		<Form
 			{formData}
-			submit={$form.action === "3" || $form.action === "4" // 5:53 am and im bored as shit
-				? "<fa fa-explosion></fa> TERMINATE THAT MOTHAFUCKA!!!!"
-				: $form.action === "5"
+			submit={$form.action === "3" // 5:53 am and im bored as shit
+				? "<fa fa-explosion></fa> Nuke from orbit"
+				: $form.action === "4"
 					? "<fa fa-unlock></fa> Unban"
 					: "<fa fa-hammer-crash></fa> Moderate"}>
 			<Input {formData} name="username" label="Username" />

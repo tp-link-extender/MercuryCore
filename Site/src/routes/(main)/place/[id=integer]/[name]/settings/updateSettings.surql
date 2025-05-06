@@ -3,7 +3,7 @@ LET $og = SELECT
 	ORDER BY updated)[$] AS description
 FROM $place;
 
-UPDATE $place SET name = $title;
+UPDATE $place SET name = $name;
 
 IF $og.description.text != $description {
 	UPDATE $place SET description += {

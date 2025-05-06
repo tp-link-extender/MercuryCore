@@ -9,9 +9,9 @@ const ratelimitRequests = new Map<string, number>()
 const existingTimeouts = new Map<string, Timer>()
 
 type Form = SuperValidated<
-	{ [k: string]: unknown },
+	{ [_: string]: unknown },
 	unknown,
-	{ [k: string]: unknown }
+	{ [_: string]: unknown }
 > | null
 
 const limit = (form: Form) =>

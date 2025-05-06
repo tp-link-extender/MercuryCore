@@ -4,7 +4,7 @@
 
 	const { data } = $props()
 
-	const notificationNotes: { [k: string]: string } = {
+	const notificationNotes: { [_: string]: string } = {
 		AssetApproved: "Asset approval",
 		FriendRequest: "Friend request",
 		Follower: "New follower",

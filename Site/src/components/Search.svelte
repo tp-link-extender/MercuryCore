@@ -7,8 +7,7 @@
 	let search = $state("")
 	let searchFocus = $state(-1)
 	$effect(() => {
-		if (search !== "") return
-		searchFocus = -1
+		if (search === "") searchFocus = -1
 	})
 
 	let searchText = $state("Search")

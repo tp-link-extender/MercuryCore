@@ -2,5 +2,5 @@ CREATE $regKey CONTENT {
 	usesLeft: $regKeyUses,
 	expiry: $expiry,
 	created: time::now(),
-	creator: $user,
+	creator: $creator,
 }

@@ -26,4 +26,4 @@ export default Object.freeze({
 	37: "Code",
 	38: "Plugin",
 	42: "Face Accessory",
-} as { [k: string]: string })
+} as { [_: string]: string })

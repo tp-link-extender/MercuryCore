@@ -8,7 +8,7 @@
 
 	const { data } = $props()
 
-	const tabTypes: { [k: string]: number } = Object.freeze({
+	const tabTypes: { [_: string]: number } = Object.freeze({
 		Hats: 8,
 		"T-Shirts": 2,
 		Shirts: 11,

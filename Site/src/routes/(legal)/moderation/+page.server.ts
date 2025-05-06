@@ -32,7 +32,7 @@ actions.default = async ({ locals }) => {
 	const userModeration = await getModeration(user.id)
 	if (new Date(userModeration.timeEnds).getTime() > Date.now())
 		error(400, "Your moderation action has not yet ended")
-	if (["AccountDeleted", "Termination"].includes(userModeration.type))
+	if (userModeration.type === "Termination")
 		error(400, "You cannot reactivate your account")
 
 	await db.query(unmoderateQuery, { user: Record("user", user.id) })

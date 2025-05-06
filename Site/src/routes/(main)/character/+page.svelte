@@ -22,7 +22,7 @@
 		}
 	}
 
-	const tabTypes: { [k: string]: number } = Object.freeze({
+	const tabTypes: { [_: string]: number } = Object.freeze({
 		Recent: 0,
 		Hats: 8,
 		Heads: 17,
@@ -34,7 +34,7 @@
 	})
 	let tabData = $state(TabData(data.url, Object.keys(tabTypes)))
 
-	const bodyParts: { [k: string]: number } = $state({
+	const bodyParts: { [_: string]: number } = $state({
 		Head: user.bodyColours.Head,
 		Torso: user.bodyColours.Torso,
 		LeftArm: user.bodyColours.LeftArm,
@@ -42,8 +42,8 @@
 		LeftLeg: user.bodyColours.LeftLeg,
 		RightLeg: user.bodyColours.RightLeg
 	})
-	const bodyPartPopovers: { [k: string]: HTMLDivElement } = $state({})
-	const styles: { [k: string]: string } = Object.freeze({
+	const bodyPartPopovers: { [_: string]: HTMLDivElement } = $state({})
+	const styles: { [_: string]: string } = Object.freeze({
 		Head: "left-17 size-12",
 		Torso: "left-12 top-14 size-22",
 		LeftArm: "left-0 top-14 h-22 w-10",

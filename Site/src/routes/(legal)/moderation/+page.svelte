@@ -4,13 +4,10 @@
 
 	const { data } = $props()
 
-	let checked = $state(false)
-
-	const moderationAction: { [k: string]: string } = {
+	const moderationAction: { [_: string]: string } = {
 		Warning: "Warning",
 		Ban: "Ban",
-		Termination: "Termination",
-		AccountDeleted: "Account Deleted"
+		Termination: "Termination"
 	}
 	const actionType = moderationAction[data.type]
 
@@ -35,7 +32,7 @@
 <div class="ctnr pt-8 max-w-200">
 	<div class="card">
 		<div class="light-text p-4">
-			<h1>
+			<h1 class="pb-6">
 				{actionType == "Ban"
 					? `${actionType}ned for ${formatDateDiff(
 							new Date(data.timeEnds).getTime()
@@ -49,64 +46,48 @@
 			</p>
 
 			<p>
-				Reviewed: <code>{new Date(data.time)}</code>
+				Reviewed <b>{new Date(data.time)}</b>
 			</p>
 
 			<p>
-				Moderator note: <code>{data.note}</code>
+				Moderator note: <b>{data.note}</b>
 			</p>
 
 			{#if actionType === "Warning"}
+				<p class="pb-10">
+					Please make sure to follow the {data.siteName} Terms of Service
+					to prevent further action being taken on your account.
+				</p>
+				<p>
+					You may reactivate your account if you agree to follow our
+					Terms of Service.
+				</p>
 				<form use:enhance method="POST">
-					<p class="mb-12">
-						Please make sure to follow the {data.siteName} Terms of Service
-						to prevent further action to be taken on your account.
-					</p>
-					<p>
-						You may reactivate your account by agreeing to our Terms
-						of Service.
-					</p>
-					<div class="form-check mb-2">
-						<input
-							class="form-check-input"
-							type="checkbox"
-							bind:checked
-							id="agree" />
-						<label class="form-check-label" for="agree">
-							I understand
-						</label>
-					</div>
-					<button class={["btn btn-primary", { disabled: !checked }]}>
-						Reactivate
-					</button>
+					<button class={["btn btn-primary"]}>Reactivate</button>
 				</form>
 			{:else if actionType === "Ban"}
+				{@const ended = new Date(data.timeEnds).getTime() < Date.now()}
+				<p class="pb-10">
+					Please make sure to follow the {data.siteName} Terms of Service
+					to prevent further action being taken on your account.
+				</p>
+				<p>
+					You may reactivate your account after your ban ends in {formatDateDiff(
+						new Date(data.timeEnds).getTime()
+					)} if you agree to follow our Terms of Service.
+				</p>
 				<form use:enhance method="POST">
-					<p class="mb-12">
-						Please make sure to follow the {data.siteName} Terms of Service
-						to prevent further action to be taken on your account.
-					</p>
-					<p>
-						You may reactivate your account after your ban ends in {formatDateDiff(
-							new Date(data.timeEnds).getTime()
-						)}.
-					</p>
 					<button
-						class="btn btn-primary {new Date(
-							data.timeEnds
-						).getTime() < Date.now()
-							? ''
-							: 'disabled'}">
+						class={[
+							"btn btn-primary",
+							{ "pointer-events-none": !ended }
+						]}
+						disabled={!ended}>
 						Reactivate
 					</button>
 				</form>
-			{:else if actionType === "Termination"}
-				<p>You may not reactivate your account.</p>
 			{:else}
-				<p>
-					Your account has been deleted, but you may create another in
-					the future.
-				</p>
+				<p>You may not reactivate your account.</p>
 			{/if}
 		</div>
 	</div>

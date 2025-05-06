@@ -1,11 +1,12 @@
 import formError from "$lib/server/formError"
 import { authorise } from "$lib/server/lucia"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, db, find, findWhere } from "$lib/server/surreal"
+import { Record, db, findWhere } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
+import assocreportQuery from "./assocreport.surql"
 import moderateQuery from "./moderate.surql"
 import moderateeQuery from "./moderatee.surql"
 import unbanQuery from "./unban.surql"
@@ -13,7 +14,7 @@ import unbanQuery from "./unban.surql"
 const schema = z.object({
 	username: z.string().min(3).max(21),
 	// enum to allow 1 to be selected initially
-	action: z.enum(["1", "2", "3", "4", "5"], {
+	action: z.enum(["1", "2", "3", "4"], {
 		message: "Select a moderation action",
 	}),
 	banDate: z.string().optional(),
@@ -22,13 +23,21 @@ const schema = z.object({
 
 export async function load({ locals, url }) {
 	await authorise(locals, 4)
-	const form = await superValidate(zod(schema))
 
 	const associatedReport = url.searchParams.get("report")
-	if (associatedReport && !find("report", associatedReport))
-		error(400, "Invalid report id")
+	if (!associatedReport) return { form: await superValidate(zod(schema)) }
 
-	return { form }
+	const [report] = await db.query<
+		({ note: string, reportee: string } | undefined)[]
+	>(assocreportQuery, {
+		report: Record("report", associatedReport),
+	})
+	if (!report) error(400, "Invalid report id")
+
+	return { form: await superValidate({
+		username: report.reportee,
+		reason: report.note,
+	}, zod(schema)), report }
 }
 
 export const actions: import("./$types").Actions = {}
@@ -69,7 +78,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 		moderatee: Record("user", getModeratee.id),
 	}
 
-	if (intAction === 5) {
+	if (intAction === 4) {
 		// Unban
 		const foundUnban = await findWhere(
 			"moderation",
@@ -83,21 +92,6 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 				form,
 				["action"],
 				["You cannot unban a user that has not been moderated yet"]
-			)
-
-		const foundDeleted = await findWhere(
-			"moderation",
-			`in = $user
-				AND out = $moderatee
-				AND active = true
-				AND type = "AccountDeleted"`,
-			qParams
-		)
-		if (foundDeleted)
-			return formError(
-				form,
-				["action"],
-				["You cannot unban a deleted user"]
 			)
 
 		await db.query(unbanQuery, {
@@ -128,7 +122,6 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 			`banned until ${date?.toLocaleDateString()}`,
 		],
 		() => ["Termination", `Terminate ${username}`, "terminated"],
-		() => ["AccountDeletion", `Delete ${username}'s account`, "deleted"],
 	][intAction - 1]()
 
 	await db.query(moderateQuery, {

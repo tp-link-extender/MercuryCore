@@ -14,7 +14,7 @@
 
 	const [, c1, c2] = beautifyCurrency(data.price)
 
-	const assets: { [k: string]: string } = Object.freeze({
+	const assets: { [_: string]: string } = Object.freeze({
 		"2": "T-Shirt",
 		"11": "Shirt",
 		"12": "Pants",

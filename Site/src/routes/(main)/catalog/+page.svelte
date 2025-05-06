@@ -8,7 +8,7 @@
 
 	const { data } = $props()
 
-	const tabTypes: { [k: string]: number } = {
+	const tabTypes: { [_: string]: number } = {
 		Hats: 8,
 		"T-Shirts": 2,
 		Shirts: 11,
@@ -38,31 +38,26 @@
 			<div class="text-neutral-400 pt-4 pb-2">Sort by</div>
 			<div class="grid grid-cols-[1fr_9fr] items-center gap-1">
 				<input
-					class="form-check-input"
 					type="radio"
 					name="sort"
 					id="bestselling" />
 				<label for="bestselling">Best selling</label>
 				<input
-					class="form-check-input"
 					type="radio"
 					name="sort"
 					id="recent" />
 				<label for="recent">Recently created</label>
 				<input
-					class="form-check-input"
 					type="radio"
 					name="sort"
 					id="official" />
 				<label for="official">By {data.siteName}</label>
 				<input
-					class="form-check-input"
 					type="radio"
 					name="sort"
 					id="highToLow" />
 				<label for="highToLow">Price (high to low)</label>
 				<input
-					class="form-check-input"
 					type="radio"
 					name="sort"
 					id="lowToHigh" />
@@ -71,14 +66,13 @@
 			<div class="text-neutral-400 pt-4 pb-2">Price</div>
 			<div class="grid grid-cols-[1fr_9fr] items-center gap-1">
 				<input
-					class="form-check-input"
 					type="radio"
 					name="price"
 					id="any"
 					checked />
 				<label for="any">Any price</label>
 				<input
-					class="form-check-input self-start"
+					class="self-start"
 					type="radio"
 					name="price" />
 				<div>

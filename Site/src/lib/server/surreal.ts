@@ -121,7 +121,7 @@ export async function find<T extends keyof RecordIdTypes>(
 export async function findWhere(
 	table: keyof RecordIdTypes,
 	where: string,
-	params?: { [k: string]: unknown }
+	params?: { [_: string]: unknown }
 ) {
 	const [res] = await db.query<boolean[]>(
 		`!!SELECT 1 FROM type::table($table) WHERE ${where}`,

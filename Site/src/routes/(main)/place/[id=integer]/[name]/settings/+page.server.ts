@@ -16,7 +16,7 @@ import settingsQuery from "./settings.surql"
 import updateSettingsQuery from "./updateSettings.surql"
 
 const viewSchema = z.object({
-	title: z.string().max(100),
+	name: z.string().max(100),
 	icon: z.any().optional(),
 	description: z.string().max(1000).optional(),
 })
@@ -73,7 +73,9 @@ export async function load({ locals, params }) {
 	return {
 		...getPlace,
 		slug: encode(getPlace.name),
-		viewForm: await superValidate(zod(viewSchema)),
+		viewForm: await superValidate({
+			name: getPlace.name, 
+		}, zod(viewSchema)),
 		networkForm: await superValidate(zod(networkSchema)),
 		ticketForm: await superValidate(zod(ticketSchema)),
 		privacyForm: await superValidate(zod(privacySchema)),
@@ -116,11 +118,11 @@ actions.view = async e => {
 			.toFile(`../data/icons/${id}.avif`) // also errors aren't caught but whatever
 	}
 
-	const { title, description } = form.data
+	const { name, description } = form.data
 
 	await db.query(updateSettingsQuery, {
 		place: Record("place", id),
-		title: filter(title),
+		name: filter(name),
 		description: filter(description || ""),
 	})
 	return message(form, "View settings updated successfully!")

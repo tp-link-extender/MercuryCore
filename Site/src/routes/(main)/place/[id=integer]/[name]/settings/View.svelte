@@ -10,14 +10,10 @@
 	const formData = superForm(data.viewForm)
 	const { form } = formData
 
-	if (data.name && !get(formData.form).title) $form.title = data.name
-
-	const setText = () => {
+	$effect(() => {
 		if (data.description && !get(formData.form).description)
 			$form.description = data.description.text
-	}
-	setText()
-	$effect(setText)
+	})
 </script>
 
 <Form
@@ -25,7 +21,7 @@
 	enctype="multipart/form-data"
 	submit=" <fa fa-save class='pr-2'></fa> Save changes"
 	action="?/view&tab=View">
-	<Input {formData} name="title" label="Title" />
+	<Input {formData} name="name" label="Name" />
 	<Input
 		{formData}
 		name="icon"

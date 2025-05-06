@@ -21,7 +21,7 @@
 			["fa-plus", "fa-list"]
 		)
 	)
-	let textLightForms: { [k: string]: HTMLFormElement } = $state({})
+	let textLightForms: { [_: string]: HTMLFormElement } = $state({})
 
 	const formData = superForm(data.form)
 	export const snapshot = formData
@@ -139,7 +139,7 @@
 									name="bannerTextLight"
 									value="true"
 									id="bannerTextLight"
-									class="form-check-input valid" />
+									class="valid" />
 							</form>
 							{banner.textLight ? "Light" : "Dark"}
 						</td>

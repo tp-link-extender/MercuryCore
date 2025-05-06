@@ -14,9 +14,9 @@ import type { SuperValidated } from "sveltekit-superforms"
  */
 export default (
 	form: SuperValidated<
-		{ [k: string]: unknown },
+		{ [_: string]: unknown },
 		unknown,
-		{ [k: string]: unknown }
+		{ [_: string]: unknown }
 	>,
 	fields?: string[],
 	messages?: string[]

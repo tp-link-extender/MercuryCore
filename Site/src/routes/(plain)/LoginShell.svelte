@@ -10,7 +10,7 @@
 	}: {
 		name: string
 		tagline: string
-		descriptions: { [k: string]: string }
+		descriptions: { [_: string]: string }
 		pad?: boolean
 		children?: Snippet
 	} = $props()

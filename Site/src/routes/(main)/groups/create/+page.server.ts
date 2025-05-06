@@ -23,7 +23,7 @@ export async function load() {
 	}
 }
 
-const errors: { [k: string]: string } = Object.freeze({
+const errors: { [_: string]: string } = Object.freeze({
 	create: Buffer.from(
 		"RXJyb3IgMTY6IGR1bWIgbmlnZ2EgZGV0ZWN0ZWQ",
 		"base64"

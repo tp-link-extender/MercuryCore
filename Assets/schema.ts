@@ -105,7 +105,7 @@ export type Config = {
 		 *
 		 * Each description is a key-value pair, where the key is a feature's title and the value is its description.
 		 */
-		Descriptions: { [k: string]: string }
+		Descriptions: { [feature: string]: string }
 	}
 
 	/**
