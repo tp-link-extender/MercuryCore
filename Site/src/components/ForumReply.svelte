@@ -100,9 +100,10 @@
 						{reply.author.username}
 						{#if reply.author.username === postAuthorName}
 							<fa
-								class="{assetSlug
-									? 'fa-hammer'
-									: 'fa-microphone'} pl-1">
+								class={[
+									assetSlug ? "fa-hammer" : "fa-microphone",
+									"pl-1"
+								]}>
 							</fa>
 						{/if}
 					</span>

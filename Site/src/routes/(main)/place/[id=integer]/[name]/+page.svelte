@@ -275,7 +275,7 @@
 				using Autopilot to get started easily.
 			</p>
 			<div class="flex items-start mb-4">
-				<TabNav bind:tabData={tabData2} vertical class="pr-4" />
+				<TabNav bind:tabData={tabData2} vertical class="pr-4 pl-0" />
 				<Tab bind:tabData={tabData2}>
 					<p>
 						You can host your server by opening your map in

@@ -39,7 +39,7 @@ type (
 )
 
 const (
-	folderpath = "../data/economy" // jsonl file
+	folderpath = "../data/economy" // kinda jsonl file
 	filepath   = folderpath + "/ledger"
 
 	Micro currency = 1
@@ -50,9 +50,9 @@ const (
 	Giga           = 1e9 * Unit
 	Tera           = 1e12 * Unit // uint64 means ~18 tera is the economy limit (we could use math/big but that would unleash horror)
 
-	// Target Currency per User, the economy size will try to be this * user count (len(balances))
+	// Target Currency per User, the economy size will try to be this * user count (len(e.balances))
 	// By "user", I mean every user who has ever transacted with the economy
-	// If I'm correct, the stipend and fee should change if the CCU is more than 10% off from this
+	// The stipend and fee should change if the CCU is more than 10% off from this
 	TCU         = float64(100 * Unit)
 	baseStipend = float64(10 * Unit)
 	baseFee     = 0.1
@@ -198,10 +198,11 @@ func (e Economy) currentFee() float64 {
 func (e *Economy) handleTxTypes(lines []string) {
 	for _, line := range lines {
 		// split line at first space, with the transaction type being the first part
-		switch parts := strings.SplitN(line, " ", 2); parts[0] {
+		parts := strings.SplitN(line, " ", 2)
+		switch data := []byte(parts[1]); parts[0] {
 		case "Transaction":
 			var tx Tx
-			Assert(json.Unmarshal([]byte(parts[1]), &tx), "Failed to decode transaction from ledger")
+			Assert(json.Unmarshal(data, &tx), "Failed to decode transaction from ledger")
 
 			if tx.Amount+tx.Fee > e.balances[tx.From] {
 				fmt.Println("Invalid transaction in ledger")
@@ -211,12 +212,12 @@ func (e *Economy) handleTxTypes(lines []string) {
 			e.loadTx(tx)
 		case "Mint":
 			var mint Mint
-			Assert(json.Unmarshal([]byte(parts[1]), &mint), "Failed to decode mint from ledger")
+			Assert(json.Unmarshal(data, &mint), "Failed to decode mint from ledger")
 
 			e.loadMint(mint)
 		case "Burn":
 			var burn Burn
-			Assert(json.Unmarshal([]byte(parts[1]), &burn), "Failed to decode burn from ledger")
+			Assert(json.Unmarshal(data, &burn), "Failed to decode burn from ledger")
 
 			if burn.Amount > e.balances[burn.From] {
 				fmt.Println("Invalid burn in ledger")

@@ -78,7 +78,7 @@
 			use:enhance={likeEnhance}
 			method="POST"
 			action="?/like&id={post.id}"
-			class="bg-a p-1">
+			class="bg-a p-1 rounded-l-1">
 			<div class="flex flex-col">
 				<button
 					name="action"

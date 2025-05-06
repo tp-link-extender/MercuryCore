@@ -15,7 +15,9 @@
 		theme
 	])
 
-	if (user.bio) $form.bio = user.bio.text || ""
+	$effect(() => {
+		if (user.bio) $form.bio = user.bio.text || ""
+	})
 </script>
 
 <Form
@@ -36,6 +38,6 @@
 		name="bio"
 		label="Bio"
 		placeholder="Maximum 1000 characters"
-		help="Your bio will appear on your profile and allow other users to know who you are."
+		help="Your bio will appear on your profile and allow other users to know who you are.<br />Don't put any personally identifiable information here. It's the internet, and the ORC no less. You know the deal."
 		rows={3} />
 </Form>

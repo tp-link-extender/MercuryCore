@@ -125,7 +125,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 	const [[replypost]] = await db.query<{ authorId: string }[][]>(
 		`
 			SELECT record::id(<-created[0]<-user[0].id) AS authorId
-			FROM $replypostId  WHERE visibility = "Visible"`,
+			FROM $replypostId WHERE visibility = "Visible"`,
 		{ replypostId }
 	)
 	if (!replypost) error(404, `${replyId ? "Reply" : "Post"} not found`)

@@ -16,7 +16,11 @@
 
 	const { user } = data
 
-	const perms = permissionLevels(user.permissionLevel)
+	let perms = $state(permissionLevels(data.permissionLevel))
+	$effect(() => {
+		perms = permissionLevels(data.permissionLevel)
+	})
+
 	// (for unocss)
 	// fa-user fa-check fa-hammer fa-shield-alt fa-scale-balanced
 

@@ -35,7 +35,7 @@
 
 <ul
 	class={[
-		"flex flex-wrap list-none min-w-28",
+		"flex flex-wrap list-none min-w-28 shrink-0",
 		vertical ? "vertical flex-col gap-2 <md:pl-4" : "pl-0 pb-6",
 		class_,
 		{ justified: justify }
@@ -56,7 +56,7 @@
 			<a
 				class={[
 					"block tab no-underline rounded-2",
-					vertical ? "p-4 py-2" : "p-3 py-1",
+					vertical ? "pl-4 py-2" : "px-3 py-1",
 					{ "disabled active": tabData.currentTab === tab }
 				]}
 				href="?{(() => {

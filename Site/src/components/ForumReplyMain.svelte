@@ -152,20 +152,20 @@
 					</fa>
 				</button>
 			</form>
-			<a
-				href="/forum/{categoryName}/{postId}/{reply.id}"
-				onclick={e => {
-					e.preventDefault()
-					replyingTo = reply.id
-				}}
-				class={[
-					"btn btn-sm p-0 px-1 text-neutral-5 hover:text-neutral-300",
-					{ "opacity-33": hidden }
-				]}>
-				<fa fa-message class="pr-2"></fa>
-				Reply
-			</a>
 			{#if !hidden}
+				<a
+					href="/forum/{categoryName}/{postId}/{reply.id}"
+					onclick={e => {
+						e.preventDefault()
+						replyingTo = reply.id
+					}}
+					class={[
+						"btn btn-sm p-0 px-1 text-neutral-5 hover:text-neutral-300",
+						{ "opacity-33": hidden }
+					]}>
+					<fa fa-message class="pr-2"></fa>
+					Reply
+				</a>
 				<span class="dropdown">
 					<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
 					<div class="dropdown-content pt-2">

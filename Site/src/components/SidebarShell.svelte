@@ -20,7 +20,7 @@
 	<TabNav
 		bind:tabData
 		vertical
-		class={["w-full md:w-75 pr-4 pb-6 shrink-0", { "pl-0": !space }]} />
+		class={["w-full md:w-75 pr-4 pb-6", { "pl-0": !space }]} />
 	<div class="flex w-full justify-center">
 		<div class={["w-full", { ["max-w-240 " + class_]: space }]}>
 			{@render children?.()}

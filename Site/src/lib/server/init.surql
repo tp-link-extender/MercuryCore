@@ -139,13 +139,17 @@ DEFINE FUNCTION OVERWRITE fn::getComments($comment: record, $depth: number, $use
 	ORDER BY score DESC; 
 };
 
-DEFINE EVENT OVERWRITE bannerCreateLog ON TABLE banner WHEN $event = "CREATE" THEN
+DEFINE EVENT OVERWRITE bannerCreateLog ON TABLE banner
+WHEN $event = "CREATE" THEN
 	fn::auditLog("Administration", string::concat('Create banner "', $after.body, '"'), $after.creator);
-DEFINE EVENT OVERWRITE bannerDeleteLog ON TABLE banner WHEN $event = "UPDATE" AND !$before.deleted AND $after.deleted THEN
+DEFINE EVENT OVERWRITE bannerDeleteLog ON TABLE banner
+WHEN $event = "UPDATE" AND !$before.deleted AND $after.deleted THEN
 	fn::auditLog("Administration", string::concat('Delete banner "', $after.body, '"'), $after.creator);
-DEFINE EVENT OVERWRITE regKeyCreateLog ON TABLE regKey WHEN $event = "CREATE" THEN
+DEFINE EVENT OVERWRITE regKeyCreateLog ON TABLE regKey
+WHEN $event = "CREATE" THEN
 	fn::auditLog("Administration", string::concat("Create registration key ", record::id($after.id)), $after.creator);
-DEFINE EVENT OVERWRITE regKeyDisableLog ON TABLE regKey WHEN $event = "UPDATE" AND $after.usesLeft = 0 THEN
+DEFINE EVENT OVERWRITE regKeyDisableLog ON TABLE regKey
+WHEN $event = "UPDATE" AND $after.usesLeft = 0 THEN
 	fn::auditLog("Administration", string::concat("Disable registration key ", record::id($after.id)), $after.disabledBy);
 
 # separation of concerns, maaaan

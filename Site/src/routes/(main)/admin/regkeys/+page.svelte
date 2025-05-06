@@ -27,10 +27,10 @@
 	)
 </script>
 
-<Head name={data.siteName} title="Registration Keys - Admin" />
+<Head name={data.siteName} title="Registration keys - Admin" />
 
 <div class="ctnr max-w-280 pb-6">
-	<h1>Registration Keys &ndash; Admin</h1>
+	<h1>Registration keys &ndash; Admin</h1>
 	<a href="/admin" class="no-underline">
 		<fa fa-caret-left></fa>
 		Back to panel

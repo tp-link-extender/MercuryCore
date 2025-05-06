@@ -84,9 +84,9 @@
 					src={form?.avatar || `/api/avatar/${user.username}-body`} />
 			</div>
 			<div class="card w-full p-4">
-				Body Colours
+				Body colours
 				<div class="flex justify-center pt-4">
-					<div class="parts relative h-60 w-46">
+					<div class="relative h-60 w-46">
 						{#each Object.keys(bodyParts) as bodyPart}
 							<button
 								popovertarget={bodyPart}
@@ -176,7 +176,7 @@
 
 	.bodyPart,
 	.colour {
-		transition: filter 0.2s ease-out;
+		transition: all 0.2s ease-out;
 		&:hover {
 			filter: brightness(70%);
 		}

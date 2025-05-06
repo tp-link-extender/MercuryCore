@@ -8,9 +8,13 @@
 	let repliesCollapsed = $state({})
 	let refresh = $state(0)
 
-	const { data } = $props()
+	let { data } = $props()
+	let replies = $state(data.replies)
+	$effect(() => {
+		replies = data.replies
+	})
 
-	let topReply = $derived(data.replies[0])
+	let topReply = $derived(replies[0])
 	let parentPost = $derived(topReply.parentPost)
 </script>
 
@@ -32,10 +36,10 @@
 		]} />
 
 	{#key refresh}
-		{#each data.replies as reply, num}
+		{#each replies as reply, num}
 			<ForumReply
 				user={data.user}
-				bind:reply={data.replies[num]}
+				bind:reply={replies[num]}
 				{num}
 				bind:replyingTo
 				categoryName={data.forumCategory}

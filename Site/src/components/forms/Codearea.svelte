@@ -39,7 +39,7 @@
 
 		{#if help}
 			<small class="formhelp">
-				{help}
+				{@html help}
 			</small>
 		{/if}
 
