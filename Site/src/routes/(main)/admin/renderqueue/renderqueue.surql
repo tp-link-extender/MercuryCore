@@ -5,13 +5,13 @@ SELECT
 	created,
 	completed,
 	relativeId,
-	IF $parent.type = "Avatar" THEN
+	IF $parent.type = "Avatar" {
 		SELECT status, username FROM user WHERE number = $parent.relativeId
-	END[0] AS user,
-	IF $parent.type = "Clothing" THEN
+	}[0] AS user,
+	IF $parent.type = "Clothing" {
 		SELECT
 			record::id(id) AS id,
 			name
 		FROM asset WHERE id = $parent.relativeId
-	END[0] AS asset
+	}[0] AS asset
 FROM render ORDER BY created DESC;

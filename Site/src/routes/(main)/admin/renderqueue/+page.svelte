@@ -55,30 +55,34 @@
 			</div>
 			<div class="card light-text p-4">
 				<h2 class="text-xl">Currently Rendering</h2>
-				<table class="p-5 w-full bg-background rounded-2">
-					<thead>
-						<tr>
-							<th scope="col">Task ID</th>
-							<th scope="col">Render Type</th>
-							<th scope="col">User/Asset Requested</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<th scope="row">{current.id}</th>
-							<td>{current.type}</td>
-							<td>
-								{#if current.user}
-									<User user={current.user} full thin />
-								{:else if current.asset}
-									{current.asset.name}
-								{:else}
-									Unknown
-								{/if}
-							</td>
-						</tr>
-					</tbody>
-				</table>
+				{#if current}
+					<table class="p-5 w-full bg-background rounded-2">
+						<thead>
+							<tr>
+								<th scope="col">Task ID</th>
+								<th scope="col">Render Type</th>
+								<th scope="col">User/Asset Requested</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<th scope="row">{current.id}</th>
+								<td>{current.type}</td>
+								<td>
+									{#if current.user}
+										<User user={current.user} full thin />
+									{:else if current.asset}
+										{current.asset.name}
+									{:else}
+										Unknown
+									{/if}
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				{:else}
+					<p>No renders currently in progress.</p>
+				{/if}
 			</div>
 		</div>
 	</Tab>

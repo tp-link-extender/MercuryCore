@@ -4,9 +4,9 @@ SELECT
 	ORDER BY updated DESC) AS content,
 	record::id(id) AS id,
 	$forumPost AS parentPost,
-	(IF ->replyToReply->forumReply.id THEN
+	IF ->replyToReply->forumReply.id {
 		record::id(->replyToReply[0]->forumReply[0].id)
-	END) AS parentReplyId,
+	} AS parentReplyId,
 	(SELECT status, username FROM <-created<-user)[0] AS author,
 
 	count(<-likes) - count(<-dislikes) AS score,

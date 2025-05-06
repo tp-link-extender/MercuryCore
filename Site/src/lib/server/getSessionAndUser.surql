@@ -4,11 +4,11 @@ LET $u = (SELECT
 	(SELECT text, updated FROM $parent.bio ORDER BY updated)[$] AS bio,
     bodyColours,
     # created,
-    IF email THEN
+    IF email {
 		string::concat("*******@", string::split(email, "@")[$]) 
-	ELSE
+	} ELSE {
 		""
-	END AS email,
+	} AS email,
     lastOnline,
     permissionLevel,
     css,
@@ -17,7 +17,7 @@ LET $u = (SELECT
 	username
 FROM $sess<-hasSession<-user)[0];
 
-IF $s != NONE {
+IF $s {
 	IF $s.expiresAt < time::now() {
 		DELETE $s;
 		$s = NULL;
@@ -27,15 +27,13 @@ IF $s != NONE {
 };
 
 {
-	session: IF $s == NONE THEN
-		NONE
-	ELSE 
+	session: IF $s {
 		{
 			id: record::id($s.id),
 			user: $u.id,
 			expiresAt: $s.expiresAt,
 		}
-	END,
+	},
 	user: $u,
 };
 

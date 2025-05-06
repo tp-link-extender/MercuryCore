@@ -1,4 +1,4 @@
-# formatting seems.. fine? for now
+# Overwrites are needed to ensure that the schema is correct when changing in dev mode/on deployment
 
 DEFINE TABLE OVERWRITE auditLog SCHEMAFULL;
 	DEFINE FIELD OVERWRITE action ON auditLog TYPE string;
@@ -66,7 +66,15 @@ DEFINE TABLE OVERWRITE user SCHEMAFULL;
 	DEFINE FIELD OVERWRITE hashedPassword ON user TYPE string;
 	DEFINE FIELD OVERWRITE lastOnline ON user TYPE datetime;
 	DEFINE FIELD OVERWRITE permissionLevel ON user TYPE number;
-	DEFINE FIELD OVERWRITE status ON user TYPE any; # future ig
+	DEFINE FIELD OVERWRITE status ON user VALUE <future> {
+		(IF ->playing[WHERE valid AND ping > time::now() - 35s] {
+			"Playing"
+		} ELSE IF lastOnline > time::now() - 35s {
+			"Online"
+		} ELSE {
+			"Offline"
+		}) # dk y parens r needed
+	};
 	DEFINE FIELD OVERWRITE theme ON user TYPE number;
 	DEFINE FIELD OVERWRITE username ON user TYPE string;
 DEFINE INDEX IF NOT EXISTS usernameI ON user COLUMNS username UNIQUE;

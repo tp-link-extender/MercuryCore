@@ -6,16 +6,7 @@ CREATE user CONTENT {
 	email: IF $admin THEN "" ELSE $email END,
 	hashedPassword: $hashedPassword,
 	lastOnline: time::now(),
-	permissionLevel: IF $admin THEN 5 ELSE 1 END,
-	status: <future> {
-		IF ->playing[WHERE valid AND ping > time::now() - 35s] THEN
-			"Playing"
-		ELSE IF lastOnline > time::now() - 35s THEN
-			"Online"
-		ELSE
-			"Offline"
-		END
-	},
+	permissionLevel: IF $admin { 5 } ELSE { 1 },
 	theme: 0,
 	username: $username,
 };
