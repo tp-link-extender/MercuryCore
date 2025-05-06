@@ -73,9 +73,7 @@ export async function load({ locals, params }) {
 	return {
 		...getPlace,
 		slug: encode(getPlace.name),
-		viewForm: await superValidate({
-			name: getPlace.name, 
-		}, zod(viewSchema)),
+		viewForm: await superValidate({ name: getPlace.name }, zod(viewSchema)),
 		networkForm: await superValidate(zod(networkSchema)),
 		ticketForm: await superValidate(zod(ticketSchema)),
 		privacyForm: await superValidate(zod(privacySchema)),

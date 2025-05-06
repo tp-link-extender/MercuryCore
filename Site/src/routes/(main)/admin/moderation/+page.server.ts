@@ -28,16 +28,22 @@ export async function load({ locals, url }) {
 	if (!associatedReport) return { form: await superValidate(zod(schema)) }
 
 	const [report] = await db.query<
-		({ note: string, reportee: string } | undefined)[]
+		({ note: string; reportee: string } | undefined)[]
 	>(assocreportQuery, {
 		report: Record("report", associatedReport),
 	})
 	if (!report) error(400, "Invalid report id")
 
-	return { form: await superValidate({
-		username: report.reportee,
-		reason: report.note,
-	}, zod(schema)), report }
+	return {
+		form: await superValidate(
+			{
+				username: report.reportee,
+				reason: report.note,
+			},
+			zod(schema)
+		),
+		report,
+	}
 }
 
 export const actions: import("./$types").Actions = {}

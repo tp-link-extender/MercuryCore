@@ -348,7 +348,9 @@ span {
 .btn-light,
 .btn-dark {
 	@apply border-1 ring-offset-neutral-900;
-	transition: all 0.3s, box-shadow 0.15s;
+	transition:
+		all 0.3s,
+		box-shadow 0.15s;
 	&:active:not(:disabled) {
 		@apply ring-2;
 	}

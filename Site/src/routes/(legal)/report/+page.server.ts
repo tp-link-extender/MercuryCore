@@ -10,21 +10,24 @@ import getReporteeQuery from "./getReportee.surql"
 import reportQuery from "./report.surql"
 
 const schema = z.object({
-	category: z.enum([
-		"AccountTheft",
-		"Dating",
-		"Exploiting",
-		"Harassment",
-		"InappropriateContent",
-		"PersonalInformation",
-		"Scamming",
-		"Spam",
-		"Swearing",
-		"Threats",
-		"Under13",
-	], {
-		message: "Select a report category",
-	}),
+	category: z.enum(
+		[
+			"AccountTheft",
+			"Dating",
+			"Exploiting",
+			"Harassment",
+			"InappropriateContent",
+			"PersonalInformation",
+			"Scamming",
+			"Spam",
+			"Swearing",
+			"Threats",
+			"Under13",
+		],
+		{
+			message: "Select a report category",
+		}
+	),
 	note: z.string().optional(),
 })
 
