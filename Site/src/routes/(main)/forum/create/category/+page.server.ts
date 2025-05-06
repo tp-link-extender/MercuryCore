@@ -27,7 +27,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
 
-	const { name, description } = form.data
+	const { description, name } = form.data
 	// Conflicts with /forum/create
 	if (name.toLowerCase() === "create")
 		return formError(form, ["name"], ["Can't park there mate"])
@@ -35,7 +35,7 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	const limit = ratelimit(form, "forumCategory", getClientAddress, 30)
 	if (limit) return limit
 
-	await db.query(createQuery, { name, description })
+	await db.query(createQuery, { description, name })
 
 	redirect(302, `/forum/${name}`)
 }

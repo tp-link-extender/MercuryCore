@@ -85,9 +85,9 @@ actions.create = async e => {
 
 	const [result] = await db.queryRaw<unknown[]>(createQuery, {
 		regKey: Record("regKey", regKeyCustom || randomRegKey()),
-		regKeyUses,
-		expiry,
 		creator: Record("user", user.id),
+		expiry,
+		regKeyUses,
 	})
 
 	return result.status === "ERR"

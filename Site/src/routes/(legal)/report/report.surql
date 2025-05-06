@@ -1,6 +1,5 @@
 RELATE $user->report->$reportee CONTENT {
-	time: time::now(),
+	category: $category,
 	note: $note, 
 	url: $reportUrl,
-	category: $category,
 }

@@ -13,11 +13,9 @@ FOR $assetId IN $assets {
 			text: $cached.description,
 			updated: time::now(),
 		}],
-		created: time::now(),
-		updated: time::now(),
 		visibility: "Visible",
 	};
-	RELATE $user->owns->$asset SET time = time::now();
+	RELATE $user->owns->$asset;
 	RELATE $user->created->$asset;
 	RELATE $cached->createdAsset->$asset;
 };
@@ -34,11 +32,9 @@ LET $asset = CREATE asset CONTENT {
 		text: $description,
 		updated: time::now(),
 	}],
-	created: time::now(),
-	updated: time::now(),
 	visibility: "Visible",
 };
-RELATE $user->owns->$asset SET time = time::now();
+RELATE $user->owns->$asset;
 RELATE $user->created->$asset;
 {
 	id: $id,

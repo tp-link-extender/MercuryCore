@@ -1,9 +1,6 @@
-LET $status = CREATE statusPost CONTENT {
-	posted: time::now(),
-	visibility: "Visible",
-	content: [{
-		text: $content,
-		updated: time::now(),
-	}],
-};
+LET $status = CREATE statusPost SET content = [{
+	text: $content,
+	updated: time::now(),
+}];
+
 RELATE $user->created->$status;

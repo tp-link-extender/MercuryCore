@@ -1,6 +1,5 @@
 LET $post = CREATE ONLY forumPost CONTENT {
 	title: $title,
-	posted: time::now(),
 	visibility: "Visible",
 	pinned: false, # otherwise the post sorting would sort by [true, false, null] and you'll get random ordering on posts that have been unpinned
 	content: [{

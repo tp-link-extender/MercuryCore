@@ -1,5 +1,4 @@
 LET $reply = CREATE ONLY forumReply CONTENT {
-	posted: time::now(),
 	visibility: "Visible",
 	pinned: false,
 	content: [{

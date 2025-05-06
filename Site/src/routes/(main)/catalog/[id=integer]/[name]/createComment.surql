@@ -1,5 +1,4 @@
 LET $comment = CREATE ONLY assetComment CONTENT {
-	posted: time::now(),
 	visibility: "Visible",
 	pinned: false,
 	content: [{
