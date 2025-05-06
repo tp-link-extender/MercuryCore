@@ -10,8 +10,11 @@
 	import TabNav from "$components/TabNav.svelte"
 	import User from "$components/User.svelte"
 	import types from "$lib/assetTypes"
-	import { writable } from "svelte/store"
 	import { superForm } from "sveltekit-superforms/client"
+
+	let replyingTo = $state("")
+	let repliesCollapsed = $state({})
+	let refresh = $state(0)
 
 	const { data, form } = $props()
 
@@ -31,12 +34,9 @@
 		}
 	}
 
-	let replyingTo = writable("")
-	const repliesCollapsed = writable({})
 	const formData = superForm(data.form)
 	export const snapshot = formData
 
-	let refresh = $state(0)
 	let tabData = $state(TabData(data.url, ["Recommended", "Comments"]))
 
 	const refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any> =
@@ -174,11 +174,11 @@
 						{user}
 						bind:reply={data.asset.replies[num]}
 						{num}
-						{replyingTo}
+						bind:replyingTo
 						postId={data.asset.id.toString()}
 						assetSlug={data.slug}
 						postAuthorName={data.asset.creator.username || ""}
-						{repliesCollapsed}
+						bind:repliesCollapsed
 						topLevel={false}
 						pinnable
 						{refreshReplies} />

@@ -8,31 +8,26 @@
 	export type Reply =
 		| import("../routes/(main)/forum/[category]/[post=strid]/$types").PageData["post"]["replies"][number]
 		| import("../routes/(main)/catalog/[id=integer]/[name]/$types").PageData["asset"]["replies"][number]
-
-	export type RepliesCollapsed = Writable<{
-		[id: string]: boolean
-	}>
 </script>
 
 <script lang="ts">
 	import ForumReplyMain from "$components/ForumReplyMain.svelte"
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
-	import type { Writable } from "svelte/store"
 
 	let {
 		user,
 		reply = $bindable(),
 		num,
 		depth = 0,
-		replyingTo,
+		replyingTo = $bindable(),
 		postAuthorName,
 		categoryName = "",
 		postId,
 		assetSlug = "",
 		pinnable = false,
 		refreshReplies,
-		repliesCollapsed,
+		repliesCollapsed = $bindable(),
 		topLevel = true
 	}: {
 		// too many exports help
@@ -40,14 +35,14 @@
 		reply: Reply
 		num: number
 		depth?: number
-		replyingTo: Writable<string>
+		replyingTo: string
 		postAuthorName: string
 		categoryName?: string
 		postId: string
 		assetSlug?: string
 		pinnable?: boolean
 		refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any>
-		repliesCollapsed: RepliesCollapsed
+		repliesCollapsed: { [id: string]: boolean }
 		topLevel?: boolean
 	} = $props()
 
@@ -55,10 +50,11 @@
 		? `/forum/${categoryName.toLowerCase()}/${postId}`
 		: `/catalog/${postId}/${assetSlug}`
 
-	// Some have to be writables to allow them to keep state, either on element destroy or on page change
+	// Some have to be bindable to allow them to keep state, either on element/component destroy or on page change
 
-	const collapse = (id: string) => () =>
-		($repliesCollapsed[id] = !$repliesCollapsed[id])
+	const collapse = (id: string) => () => {
+		repliesCollapsed[id] = !repliesCollapsed[id]
+	}
 </script>
 
 {#if topLevel}
@@ -94,7 +90,7 @@
 			</span>
 		{/if}
 
-		{#if $repliesCollapsed?.[reply.id]}
+		{#if repliesCollapsed?.[reply.id]}
 			<button
 				onclick={collapse(reply.id)}
 				aria-label="Expand reply"
@@ -118,14 +114,13 @@
 				<ForumReplyMain
 					{user}
 					bind:reply
-					{num}
 					{depth}
-					{replyingTo}
+					bind:replyingTo
 					{postAuthorName}
 					{categoryName}
 					{postId}
 					{assetSlug}
-					{repliesCollapsed}
+					bind:repliesCollapsed
 					{topLevel}
 					{pinnable}
 					{refreshReplies} />

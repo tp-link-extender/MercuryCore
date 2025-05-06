@@ -7,7 +7,6 @@
 	import TabNav from "$components/TabNav.svelte"
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
-	import { writable } from "svelte/store"
 	import Autopilot from "./Autopilot.svelte"
 	import Thumbnails from "./Thumbnails.svelte"
 	import customProtocol from "./customprotocol.ts"
@@ -16,16 +15,16 @@
 
 	const { user } = data
 
-	let place = writable(data.place)
+	let place = $state(data.place)
 
-	let online = $derived($place.serverPing > Date.now() / 1000 - 35)
+	let online = $derived(place.serverPing > Date.now() / 1000 - 35)
 
 	const statistics = [
 		// ["Activity", "0 visits"],
-		["Created", new Date($place.created).toLocaleDateString()],
-		["Updated", new Date($place.updated).toLocaleDateString()],
-		["Server limit", $place.maxPlayers],
-		["Now playing", $place.players.length]
+		["Created", new Date(place.created).toLocaleDateString()],
+		["Updated", new Date(place.updated).toLocaleDateString()],
+		["Server limit", place.maxPlayers],
+		["Now playing", place.players.length]
 	]
 
 	// Place Launcher
@@ -48,17 +47,17 @@
 		)
 	}
 
-	const loadCommand = `dofile "http://${data.domain}/game/host?ticket=${$place.serverTicket}"`
+	const loadCommand = `dofile "http://${data.domain}/game/host?ticket=${place.serverTicket}"`
 
 	async function placeLauncher() {
 		installed = true
 
 		const formdata = new FormData()
-		formdata.append("serverId", $place.id.toString())
-		formdata.append("privateTicket", $place.privateTicket)
+		formdata.append("serverId", place.id.toString())
+		formdata.append("privateTicket", place.privateTicket)
 
 		// Get the joinscript URL
-		const response = await fetch(`/place/${$place.id}/${data.slug}?/join`, {
+		const response = await fetch(`/place/${place.id}/${data.slug}?/join`, {
 			method: "POST",
 			body: formdata
 		})
@@ -84,49 +83,49 @@
 		const action = formData.get("action")
 
 		if (action === "like") {
-			$place.likes = true
+			place.likes = true
 
-			if ($place.dislikes) $place.dislikeCount--
-			$place.dislikes = false
-			$place.likeCount++
+			if (place.dislikes) place.dislikeCount--
+			place.dislikes = false
+			place.likeCount++
 		} else if (action === "dislike") {
-			$place.dislikes = true
+			place.dislikes = true
 
-			if ($place.likes) $place.likeCount--
-			$place.likes = false
-			$place.dislikeCount++
+			if (place.likes) place.likeCount--
+			place.likes = false
+			place.dislikeCount++
 		} else if (action === "unlike") {
-			$place.likes = false
-			$place.likeCount--
+			place.likes = false
+			place.likeCount--
 		} else if (action === "undislike") {
-			$place.dislikes = false
-			$place.dislikeCount--
+			place.dislikes = false
+			place.dislikeCount--
 		}
 
 		return () => {}
 	}
 </script>
 
-<Head name={data.siteName} title={$place.name} />
+<Head name={data.siteName} title={place.name} />
 
 <div class="ctnr max-w-240 light-text">
 	<div class="grid grid-cols-1 md:(grid-cols-3 gap-4)">
 		<div class="col-span-2 pb-4">
 			<Thumbnails
 				thumbnails={data.thumbnails}
-				id={$place.id}
+				id={place.id}
 				slug={data.slug} />
 		</div>
 
 		<div class="flex flex-col justify-between gap-3">
 			<div class="card bg-darker p-4 pb-6 block">
 				<div class="flex justify-between">
-					<h1 class="text-2xl">{$place.name}</h1>
-					{#if $place.ownerUser?.username === user?.username || user?.permissionLevel >= 4}
+					<h1 class="text-2xl">{place.name}</h1>
+					{#if place.ownerUser?.username === user?.username || user?.permissionLevel >= 4}
 						<div>
 							<a
 								aria-label="Place settings"
-								href="/place/{$place.id}/{data.slug}/settings"
+								href="/place/{place.id}/{data.slug}/settings"
 								class="btn btn-sm btn-secondary">
 								<fa fa-sliders></fa>
 							</a>
@@ -135,9 +134,9 @@
 				</div>
 				<span class="flex py-2">
 					<b class="pr-2">by</b>
-					{#if $place.ownerUser}
+					{#if place.ownerUser}
 						<User
-							user={$place.ownerUser}
+							user={place.ownerUser}
 							size="1.5rem"
 							bg="darker"
 							full
@@ -159,8 +158,8 @@
 						<div class="dropdown-content pt-2">
 							<ul class="p-2 rounded-3">
 								<ReportButton
-									user={$place.ownerUser?.username || ""}
-									url="/place/{$place.id}/{data.slug}" />
+									user={place.ownerUser?.username || ""}
+									url="/place/{place.id}/{data.slug}" />
 							</ul>
 						</div>
 					</span>
@@ -180,31 +179,31 @@
 				<form
 					use:enhance={likeEnhance}
 					method="POST"
-					action="?/like&privateTicket={$place.privateTicket}"
+					action="?/like&privateTicket={place.privateTicket}"
 					class="w-full pt-4 px-0 pb-2">
 					<div class="flex justify-between pb-2">
 						<button
 							name="action"
-							value={$place.likes ? "unlike" : "like"}
-							aria-label={$place.likes ? "Unlike" : "Like"}
+							value={place.likes ? "unlike" : "like"}
+							aria-label={place.likes ? "Unlike" : "Like"}
 							class="btn p-0 px-1 text-emerald-500">
 							<fa
 								fa-thumbs-up
-								class="transition text-lg {$place.likes
+								class="transition text-lg {place.likes
 									? 'text-emerald-600 hover:text-emerald-300'
 									: 'text-neutral-600 hover:text-neutral-400'}">
 							</fa>
 						</button>
 						<button
 							name="action"
-							value={$place.dislikes ? "undislike" : "dislike"}
-							aria-label={$place.dislikes
+							value={place.dislikes ? "undislike" : "dislike"}
+							aria-label={place.dislikes
 								? "Undislike"
 								: "Dislike"}
 							class="btn p-0 px-1 text-red-500">
 							<fa
 								fa-thumbs-down
-								class="transition text-lg {$place.dislikes
+								class="transition text-lg {place.dislikes
 									? 'text-red-500 hover:text-red-300'
 									: 'text-neutral-600 hover:text-neutral-400'}">
 							</fa>
@@ -215,35 +214,35 @@
 							class="bg-emerald-500 transition-width-300"
 							role="progressbar"
 							aria-label="Likes"
-							style="width: {($place.likeCount /
-								($place.dislikeCount + $place.likeCount || 1)) *
+							style="width: {(place.likeCount /
+								(place.dislikeCount + place.likeCount || 1)) *
 								100}%"
-							aria-valuenow={$place.likeCount}
+							aria-valuenow={place.likeCount}
 							aria-valuemin={0}
-							aria-valuemax={$place.dislikeCount +
-								$place.likeCount}>
+							aria-valuemax={place.dislikeCount +
+								place.likeCount}>
 						</div>
 						<div
 							class="bg-red-500 transition-width-300"
 							role="progressbar"
 							aria-label="Dislikes"
-							style="width: {($place.dislikeCount /
-								($place.dislikeCount + $place.likeCount || 1)) *
+							style="width: {(place.dislikeCount /
+								(place.dislikeCount + place.likeCount || 1)) *
 								100}%"
-							aria-valuenow={$place.dislikeCount}
+							aria-valuenow={place.dislikeCount}
 							aria-valuemin={0}
-							aria-valuemax={$place.dislikeCount +
-								$place.likeCount}>
+							aria-valuemax={place.dislikeCount +
+								place.likeCount}>
 						</div>
 					</div>
 					<div class="flex justify-between">
 						<span class="px-2">
-							{$place.likeCount} like{$place.likeCount === 1
+							{place.likeCount} like{place.likeCount === 1
 								? ""
 								: "s"}
 						</span>
 						<span class="px-2">
-							{$place.dislikeCount} dislike{$place.dislikeCount ==
+							{place.dislikeCount} dislike{place.dislikeCount ==
 							1
 								? ""
 								: "s"}
@@ -257,11 +256,11 @@
 	<TabNav bind:tabData justify />
 
 	<Tab bind:tabData>
-		{$place.description.text || ""}
+		{place.description.text || ""}
 	</Tab>
 
 	<Tab bind:tabData>
-		{#if user?.permissionLevel === 5 || $place.ownerUser?.username === user?.username}
+		{#if user?.permissionLevel === 5 || place.ownerUser?.username === user?.username}
 			<h3 class="pb-2">Hosting on {data.siteName}</h3>
 			<p>
 				To begin hosting your map for everybody to play, you need to
@@ -315,7 +314,7 @@
 				<Tab bind:tabData={tabData2}>
 					<Autopilot
 						{launch}
-						serverTicket={$place.serverTicket}
+						serverTicket={place.serverTicket}
 						domain={data.domain}
 						siteName={data.siteName} />
 				</Tab>
@@ -326,8 +325,8 @@
 			<div class="card p-4 flex flex-row">
 				<div class="w-1/6">
 					<div class="pb-2">
-						Currently Playing: {$place.players
-							.length}/{$place.maxPlayers}
+						Currently Playing: {place.players
+							.length}/{place.maxPlayers}
 					</div>
 					<button
 						onclick={placeLauncher}
@@ -337,7 +336,7 @@
 					</button>
 				</div>
 				<div class="w-5/6 flex gap-3">
-					{#each $place.players as user}
+					{#each place.players as user}
 						<User {user} size="4.5rem" bg="darker" />
 					{/each}
 				</div>
@@ -373,11 +372,11 @@
 		{/key}
 		{#if success}
 			<span class="text-xl pt-6">
-				"{$place.name}" is ready to play! Have fun!
+				"{place.name}" is ready to play! Have fun!
 			</span>
 		{:else if installed}
 			<span class="text-xl pt-6">
-				Get ready to join "{$place.name}" by {$place.ownerUser
+				Get ready to join "{place.name}" by {place.ownerUser
 					?.username}!
 			</span>
 		{:else}

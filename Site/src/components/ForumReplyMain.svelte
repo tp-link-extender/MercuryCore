@@ -2,41 +2,34 @@
 	import { enhance } from "$app/forms"
 	import DeleteButton from "$components/DeleteButton.svelte"
 	import ForumReply from "$components/ForumReply.svelte"
-	import type {
-		RepliesCollapsed,
-		Reply,
-		UserType
-	} from "$components/ForumReply.svelte"
+	import type { Reply, UserType } from "$components/ForumReply.svelte"
 	import PinButton from "$components/PinButton.svelte"
 	import ReportButton from "$components/ReportButton.svelte"
 	import User from "$components/User.svelte"
-	import type { Writable } from "svelte/store"
 
 	let {
 		user,
 		reply = $bindable(),
-		num,
 		depth = 0,
-		replyingTo,
+		replyingTo = $bindable(),
 		postAuthorName,
 		categoryName = "",
 		postId,
 		assetSlug = "",
-		repliesCollapsed,
+		repliesCollapsed = $bindable(),
 		topLevel = true,
 		pinnable = false,
 		refreshReplies
 	}: {
 		user: UserType
 		reply: Reply
-		num: number
 		depth?: number
-		replyingTo: Writable<string>
+		replyingTo: string
 		postAuthorName: string
 		categoryName?: string
 		postId: string
 		assetSlug?: string
-		repliesCollapsed: RepliesCollapsed
+		repliesCollapsed: { [id: string]: boolean }
 		topLevel?: boolean
 		pinnable?: boolean
 		refreshReplies: import("@sveltejs/kit").SubmitFunction
@@ -118,7 +111,7 @@
 		<p class={["py-2 m-0 break-all", { "opacity-33": hidden }]}>
 			{reply.content[0].text}
 		</p>
-		{#if $replyingTo !== reply.id}
+		{#if replyingTo !== reply.id}
 			<form
 				use:enhance={likeEnhance}
 				method="POST"
@@ -163,7 +156,7 @@
 				href="/forum/{categoryName}/{postId}/{reply.id}"
 				onclick={e => {
 					e.preventDefault()
-					replyingTo.set(reply.id)
+					replyingTo = reply.id
 				}}
 				class={[
 					"btn btn-sm p-0 px-1 text-neutral-5 hover:text-neutral-300",
@@ -204,7 +197,7 @@
 			<div class="card reply bg-darker p-4 pt-2 max-w-3/4">
 				<form
 					use:enhance={e => {
-						replyingTo.set("")
+						replyingTo = ""
 						return refreshReplies(e)
 					}}
 					method="POST"
@@ -228,7 +221,9 @@
 								Reply
 							</button>
 							<button
-								onclick={() => replyingTo.set("")}
+								onclick={() => {
+									replyingTo = ""
+								}}
 								class="btn btn-tertiary grey-text">
 								<fa fa-cancel class="pr-2"></fa>
 								Cancel
@@ -244,7 +239,9 @@
 				<div class="card reply bg-darker p-4 pt-2 max-w-3/4">
 					<form
 						use:enhance
-						onsubmit={() => replyingTo.set("")}
+						onsubmit={() => {
+							replyingTo = ""
+						}}
 						method="POST"
 						action="?/reply&rid={reply.id}">
 						<label for="content" class="light-text pb-2">
@@ -266,7 +263,9 @@
 									Reply
 								</button>
 								<button
-									onclick={() => replyingTo.set("")}
+									onclick={() => {
+										replyingTo = ""
+									}}
 									class="btn btn-tertiary grey-text">
 									<fa fa-cancel class="pr-2"></fa>
 									Cancel
@@ -293,12 +292,12 @@
 		{user}
 		bind:reply={reply.replies[num]}
 		{num}
-		{replyingTo}
+		bind:replyingTo
 		{categoryName}
 		{postId}
 		{assetSlug}
 		{postAuthorName}
-		{repliesCollapsed}
+		bind:repliesCollapsed
 		depth={depth + 1}
 		topLevel={false}
 		{refreshReplies} />

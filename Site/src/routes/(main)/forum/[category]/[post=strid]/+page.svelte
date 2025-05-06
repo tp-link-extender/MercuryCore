@@ -8,19 +8,17 @@
 	import PostReply from "$components/PostReply.svelte"
 	import ReportButton from "$components/ReportButton.svelte"
 	import User from "$components/User.svelte"
-	import { writable } from "svelte/store"
 	import { superForm } from "sveltekit-superforms/client"
+
+	let replyingTo = $state("")
+	let repliesCollapsed = $state({})
+	let refresh = $state(0)
 
 	const { data } = $props()
 
 	const { user } = data
 
 	let post = $state(data.post) // this is the svelte 4 thing ever
-	let replyingTo = writable("")
-
-	let refresh = $state(0)
-
-	const repliesCollapsed = writable({})
 
 	type ActionResult = import("@sveltejs/kit").ActionResult // I promise there's a reason
 	async function onResult({ result }: { result: ActionResult }) {
@@ -162,11 +160,11 @@
 					{user}
 					bind:reply={post.replies[num]}
 					{num}
-					{replyingTo}
+					bind:replyingTo
 					categoryName={post.categoryName}
 					postId={post.id}
 					postAuthorName={post.author.username}
-					{repliesCollapsed}
+					bind:repliesCollapsed
 					topLevel={false}
 					pinnable
 					{refreshReplies} />

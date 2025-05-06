@@ -3,17 +3,15 @@
 	import Breadcrumbs from "$components/Breadcrumbs.svelte"
 	import ForumReply from "$components/ForumReply.svelte"
 	import Head from "$components/Head.svelte"
-	import { writable } from "svelte/store"
 
-	let replyingTo = writable("")
-	const repliesCollapsed = writable({})
+	let replyingTo = $state("")
+	let repliesCollapsed = $state({})
+	let refresh = $state(0)
 
 	const { data } = $props()
 
 	let topReply = $derived(data.replies[0])
 	let parentPost = $derived(topReply.parentPost)
-
-	let refresh = $state(0)
 </script>
 
 <Head name={data.siteName} title="Replies to forum post" />
@@ -39,11 +37,11 @@
 				user={data.user}
 				bind:reply={data.replies[num]}
 				{num}
-				{replyingTo}
+				bind:replyingTo
 				categoryName={data.forumCategory}
 				postId={data.postId}
 				postAuthorName={data.author}
-				{repliesCollapsed}
+				bind:repliesCollapsed
 				pinnable={!reply.parentReplyId}
 				refreshReplies={() =>
 					async ({ result }) => {
