@@ -5,4 +5,4 @@ LET $render = CREATE render CONTENT {
 	completed: NONE, # hmm..
 	relativeId: $relativeId,
 };
-meta::id($render[0].id);
+record::id($render[0].id);

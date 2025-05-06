@@ -20,9 +20,9 @@
 	import fade from "$lib/fade"
 	import type { Writable } from "svelte/store"
 
-	const {
+	let {
 		user,
-		reply,
+		reply = $bindable(),
 		num,
 		depth = 0,
 		replyingTo,
@@ -117,7 +117,7 @@
 			<div in:fade|global={{ num }} class="w-full">
 				<ForumReplyMain
 					{user}
-					{reply}
+					bind:reply
 					{num}
 					{depth}
 					{replyingTo}

@@ -169,10 +169,10 @@
 		<PostReply {formData} comment />
 		{#key refresh}
 			{#if data.asset.replies.length > 0}
-				{#each data.asset.replies as reply, num}
+				{#each data.asset.replies as _, num}
 					<ForumReply
 						{user}
-						{reply}
+						bind:reply={data.asset.replies[num]}
 						{num}
 						{replyingTo}
 						postId={data.asset.id.toString()}

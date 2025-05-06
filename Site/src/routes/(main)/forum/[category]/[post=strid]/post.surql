@@ -1,6 +1,6 @@
 SELECT
 	*,
-	meta::id(id) AS id,
+	record::id(id) AS id,
 	(SELECT status, username FROM <-created<-user)[0] AS author,
 	count(<-likes) - count(<-dislikes) AS score,
 	$user IN <-likes<-user.id AS likes,
@@ -11,7 +11,7 @@ SELECT
     	*,
 		(SELECT text, updated FROM $parent.content
 		ORDER BY updated DESC) AS content,
-		meta::id(id) AS id,
+		record::id(id) AS id,
 		NONE AS parentReplyId,
 		(SELECT status, username FROM <-created<-user)[0] AS author,
 

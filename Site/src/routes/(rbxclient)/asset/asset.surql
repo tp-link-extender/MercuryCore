@@ -1,1 +1,1 @@
-SELECT meta::id(id) AS id, name, visibility FROM $asset
+SELECT record::id(id) AS id, name, visibility FROM $asset

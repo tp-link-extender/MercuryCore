@@ -1,5 +1,5 @@
 SELECT
-	meta::id(id) AS id,
+	record::id(id) AS id,
 	name,
 	serverPing,
 	count(
@@ -15,7 +15,7 @@ SELECT status, username FROM $user->friends->user OR $user<-friends<-user;
 # Feed
 SELECT
 	*,
-	meta::id(id) AS id,
+	record::id(id) AS id,
 	(SELECT text, updated FROM $parent.content
 	ORDER BY updated DESC) AS content,
 	(SELECT status, username FROM <-created<-user)[0] as authorUser

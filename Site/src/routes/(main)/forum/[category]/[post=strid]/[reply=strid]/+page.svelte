@@ -37,7 +37,7 @@
 		{#each data.replies as reply, num}
 			<ForumReply
 				user={data.user}
-				{reply}
+				bind:reply={data.replies[num]}
 				{num}
 				{replyingTo}
 				categoryName={data.forumCategory}

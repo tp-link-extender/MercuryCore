@@ -1,1 +1,1 @@
-SELECT meta::id(id) AS id, assetModified FROM assetCache:[$id, $version];
+SELECT record::id(id) AS id, assetModified FROM assetCache:[$id, $version];

@@ -2,7 +2,7 @@
 	*,
 	(SELECT
 		*,
-		meta::id(id) AS id,
+		record::id(id) AS id,
 		(SELECT text, updated FROM $parent.content
 		ORDER BY updated DESC) AS content,
 		(SELECT status, username FROM <-created<-user)[0] AS author,

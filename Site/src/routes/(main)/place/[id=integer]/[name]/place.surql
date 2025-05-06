@@ -1,5 +1,5 @@
 SELECT
-	meta::id(id) AS id,
+	record::id(id) AS id,
 	name,
 	(SELECT text, updated FROM $parent.description
 	ORDER BY updated)[$] AS description,

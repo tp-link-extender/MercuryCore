@@ -60,15 +60,14 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 		error(400, "Invalid category")
 
 	const unfiltered = form.data.content?.trim()
-	const newPostId = await incrementId()
 
-	await db.query(createQuery, {
+	const newPost = await db.query<string[]>(createQuery, {
 		user: Record("user", user.id),
-		postId: Record("forumPost", newPostId),
 		category: Record("forumCategory", category),
 		title,
 		content: unfiltered ? filter(unfiltered) : undefined,
 	})
+	const newPostId = newPost[3] // let's hear it for newPost
 
 	await like(user.id, Record("forumPost", newPostId))
 

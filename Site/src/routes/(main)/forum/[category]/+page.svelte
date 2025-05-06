@@ -6,6 +6,8 @@
 	import ForumPost from "./ForumPost.svelte"
 
 	const { data } = $props()
+
+	let posts = $state(data.posts)
 </script>
 
 <Head name={data.siteName} title="{data.name} - Forum" />
@@ -28,13 +30,13 @@
 			</a>
 		</span>
 	</h1>
-	{#if data.posts.length > 0}
+	{#if posts.length > 0}
 		<div class="flex flex-col gap-4">
-			{#each data.posts as post, num (post.id)}
+			{#each posts as post, num (post.id)}
 				<ForumPost
-					{post}
+					bind:post={posts[num]}
 					{num}
-					total={data.posts.length}
+					total={posts.length}
 					categoryName={data.name} />
 			{/each}
 		</div>

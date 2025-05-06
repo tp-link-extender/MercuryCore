@@ -1,4 +1,4 @@
-LET $reply = CREATE $forumReply CONTENT {
+LET $reply = CREATE ONLY forumReply CONTENT {
 	posted: time::now(),
 	visibility: "Visible",
 	pinned: false,
@@ -12,3 +12,5 @@ IF $replyId {
 	RELATE $reply->replyToReply->$replyId;
 };
 RELATE $user->created->$reply;
+
+record::id($reply.id);

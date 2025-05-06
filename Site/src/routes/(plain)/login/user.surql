@@ -1,2 +1,2 @@
-SELECT meta::id(id) AS id, hashedPassword FROM user
+SELECT record::id(id) AS id, hashedPassword FROM user
 WHERE string::lowercase(username) = string::lowercase($username);

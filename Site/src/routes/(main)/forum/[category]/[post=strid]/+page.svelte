@@ -15,7 +15,7 @@
 
 	const { user } = data
 
-	let post = writable(data.post) // this is the svelte 4 thing ever
+	let post = $state(data.post) // this is the svelte 4 thing ever
 	let replyingTo = writable("")
 
 	let refresh = $state(0)
@@ -26,7 +26,7 @@
 	async function onResult({ result }: { result: ActionResult }) {
 		if (result.type === "success") await invalidateAll()
 		// Reload the post with the data including the new reply, as the form that posted the reply didn't do that
-		$post = data.post
+		post = data.post
 		refresh++
 	}
 	const formData = superForm(data.form, { onResult })
@@ -36,23 +36,23 @@
 		const action = formData.get("action")
 
 		if (action === "like") {
-			$post.likes = true
+			post.likes = true
 
-			if ($post.dislikes) $post.score++
-			$post.dislikes = false
-			$post.score++
+			if (post.dislikes) post.score++
+			post.dislikes = false
+			post.score++
 		} else if (action === "dislike") {
-			$post.dislikes = true
+			post.dislikes = true
 
-			if ($post.likes) $post.score--
-			$post.likes = false
-			$post.score--
+			if (post.likes) post.score--
+			post.likes = false
+			post.score--
 		} else if (action === "unlike") {
-			$post.likes = false
-			$post.score--
+			post.likes = false
+			post.score--
 		} else if (action === "undislike") {
-			$post.dislikes = false
-			$post.score++
+			post.dislikes = false
+			post.score++
 		}
 
 		return () => {}
@@ -61,35 +61,35 @@
 	const refreshReplies: import("./$types").SubmitFunction = () => onResult
 </script>
 
-<Head name={data.siteName} title={$post.title} />
+<Head name={data.siteName} title={post.title} />
 
 <div class="ctnr max-w-280 light-text">
 	<Breadcrumbs
 		path={[
 			["Forum", "/forum"],
-			[$post.categoryName, `/forum/${$post.categoryName}`],
-			[$post.title, ""]
+			[post.categoryName, `/forum/${post.categoryName}`],
+			[post.title, ""]
 		]} />
 
 	<div
 		class={[
 			"post card bg-darker flex-row",
-			{ "border-(solid 1px green-5)!": $post.pinned }
+			{ "border-(solid 1px green-5)!": post.pinned }
 		]}>
 		<form
 			use:enhance={likeEnhance}
 			method="POST"
-			action="?/like&id={$post.id}"
+			action="?/like&id={post.id}"
 			class="bg-a p-1">
 			<div class="flex flex-col">
 				<button
 					name="action"
-					value={$post.likes ? "unlike" : "like"}
-					aria-label={$post.likes ? "Unlike" : "Like"}
+					value={post.likes ? "unlike" : "like"}
+					aria-label={post.likes ? "Unlike" : "Like"}
 					class="btn p-1">
 					<fa
 						fa-thumbs-up
-						class="transition text-lg {$post.likes
+						class="transition text-lg {post.likes
 							? 'text-emerald-600 hover:text-emerald-300'
 							: 'text-neutral-600 hover:text-neutral-400'}">
 					</fa>
@@ -98,20 +98,20 @@
 					class={[
 						"py-2 text-center",
 						{
-							"text-emerald-600 font-bold": $post.likes,
-							"text-red-500 font-bold": $post.dislikes
+							"text-emerald-600 font-bold": post.likes,
+							"text-red-500 font-bold": post.dislikes
 						}
 					]}>
-					{$post.score}
+					{post.score}
 				</span>
 				<button
 					name="action"
-					value={$post.dislikes ? "undislike" : "dislike"}
-					aria-label={$post.dislikes ? "Undislike" : "Dislike"}
+					value={post.dislikes ? "undislike" : "dislike"}
+					aria-label={post.dislikes ? "Undislike" : "Dislike"}
 					class="btn p-1">
 					<fa
 						fa-thumbs-down
-						class="transition text-lg {$post.dislikes
+						class="transition text-lg {post.dislikes
 							? 'text-red-500 hover:text-red-300'
 							: 'text-neutral-600 hover:text-neutral-400'}">
 					</fa>
@@ -121,9 +121,9 @@
 		<div class="p-4 pl-6 no-underline w-full">
 			<span class="flex justify-between">
 				<div class="flex">
-					<User user={$post.author} full />
+					<User user={post.author} full />
 					<i class="pl-4 self-center">
-						{new Date($post.posted).toLocaleString()}
+						{new Date(post.posted).toLocaleString()}
 					</i>
 				</div>
 				<span class="dropdown">
@@ -133,22 +133,22 @@
 							{#if user.permissionLevel >= 4}
 								<PinButton
 									{refreshReplies}
-									id={$post.id}
-									pinned={$post.pinned}
+									id={post.id}
+									pinned={post.pinned}
 									post />
 							{/if}
 							<ReportButton
-								user={$post.author.username}
-								url="/forum/{$post.categoryName}/{$post.id}" />
+								user={post.author.username}
+								url="/forum/{post.categoryName}/{post.id}" />
 						</ul>
 					</div>
 				</span>
 			</span>
 			<h2 class="text-xl pt-2">
-				{$post.title}
+				{post.title}
 			</h2>
 			<p class="break-all">
-				{$post.content[0].text || ""}
+				{post.content[0].text || ""}
 			</p>
 		</div>
 	</div>
@@ -156,16 +156,16 @@
 	<PostReply {formData} />
 
 	{#key refresh}
-		{#if $post.replies.length > 0}
-			{#each $post.replies as reply, num}
+		{#if post.replies.length > 0}
+			{#each post.replies as _, num}
 				<ForumReply
 					{user}
-					{reply}
+					bind:reply={post.replies[num]}
 					{num}
 					{replyingTo}
-					categoryName={$post.categoryName}
-					postId={$post.id}
-					postAuthorName={$post.author.username}
+					categoryName={post.categoryName}
+					postId={post.id}
+					postAuthorName={post.author.username}
 					{repliesCollapsed}
 					topLevel={false}
 					pinnable

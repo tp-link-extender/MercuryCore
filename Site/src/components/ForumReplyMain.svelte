@@ -287,11 +287,11 @@
 	</a>
 {/if}
 
-{#each reply.replies as reply2}
+{#each reply.replies as _, num}
 	<!-- Get READY for some RECURSION!!! -->
 	<ForumReply
 		{user}
-		reply={reply2}
+		bind:reply={reply.replies[num]}
 		{num}
 		{replyingTo}
 		{categoryName}

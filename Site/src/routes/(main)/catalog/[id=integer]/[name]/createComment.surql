@@ -1,4 +1,4 @@
-LET $comment = CREATE $assetComment CONTENT {
+LET $comment = CREATE ONLY assetComment CONTENT {
 	posted: time::now(),
 	visibility: "Visible",
 	pinned: false,
@@ -12,3 +12,5 @@ IF $commentId {
 	RELATE $comment->replyToComment->$commentId;
 };
 RELATE $user->created->$comment;
+
+record::id($comment.id);

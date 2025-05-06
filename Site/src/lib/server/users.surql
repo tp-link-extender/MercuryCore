@@ -1,1 +1,1 @@
-SELECT meta::id(id) AS id, status, username FROM $usersList;
+SELECT record::id(id) AS id, status, username FROM $usersList;

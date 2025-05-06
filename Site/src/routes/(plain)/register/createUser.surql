@@ -21,7 +21,7 @@ CREATE user CONTENT {
 };
 # Return some user data
 LET $u = (SELECT id FROM user WHERE username = $username)[0].id;
-meta::id($u);
+record::id($u);
 
 IF $key {
 	UPDATE $key SET usesLeft -= 1;

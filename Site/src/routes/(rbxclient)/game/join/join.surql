@@ -1,6 +1,6 @@
 SELECT
 	(SELECT
-		meta::id(id) AS id,
+		record::id(id) AS id,
 		serverIP,
 		serverPort,
 		(SELECT username FROM <-owns<-user)[0] AS ownerUser

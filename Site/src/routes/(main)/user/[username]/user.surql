@@ -8,13 +8,13 @@ SELECT
 	(SELECT text, updated FROM $parent.bio ORDER BY updated)[$] AS bio,
 	(SELECT
 		*,
-		meta::id(id) AS id,
+		record::id(id) AS id,
 		(SELECT text, updated FROM $parent.content
 		ORDER BY updated DESC) AS content
 	FROM ->created->statusPost LIMIT 40) AS posts,
 
 	(SELECT
-		meta::id(id) AS id,
+		record::id(id) AS id,
 		name,
 		count(
 			SELECT 1 FROM <-playing WHERE valid AND ping > time::now() - 35s

@@ -31,7 +31,7 @@
 		{#each data.replies as reply, num}
 			<ForumReply
 				{user}
-				{reply}
+				bind:reply={data.replies[num]}
 				{num}
 				{replyingTo}
 				postId={data.assetId.toString()}

@@ -2,7 +2,7 @@ SELECT
 	name,
 	description,
 	(SELECT
-		meta::id(id) AS id,
+		record::id(id) AS id,
 		title,
 		posted,
 		(SELECT status, username FROM <-created<-user)[0] AS author

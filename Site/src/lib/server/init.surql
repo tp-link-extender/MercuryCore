@@ -47,6 +47,14 @@ DEFINE TABLE OVERWRITE statusPost SCHEMAFULL;
 	DEFINE FIELD OVERWRITE visibility ON statusPost TYPE string;
 
 DEFINE TABLE OVERWRITE stuff SCHEMALESS;
+IF stuff:increment == NULL {
+	CREATE stuff:increment CONTENT {
+		asset: 0,
+		ping: {
+			render: 0,
+		}
+	}
+};
 
 DEFINE TABLE OVERWRITE user SCHEMAFULL;
 	DEFINE FIELD OVERWRITE bio ON user FLEXIBLE TYPE array;
@@ -97,7 +105,7 @@ DEFINE FUNCTION OVERWRITE fn::getReplies($reply: record, $depth: number, $user: 
 		*,
 		(SELECT text, updated FROM $parent.content
 		ORDER BY updated DESC) AS content,
-		meta::id(id) AS id,
+		record::id(id) AS id,
 		NONE AS parentReplyId,
 		(SELECT status, username FROM <-created<-user)[0] AS author,
 
@@ -118,7 +126,7 @@ DEFINE FUNCTION OVERWRITE fn::getComments($comment: record, $depth: number, $use
 		*,
 		(SELECT text, updated FROM $parent.content
 		ORDER BY updated DESC) AS content,
-		meta::id(id) AS id,
+		record::id(id) AS id,
 		NONE AS parentReplyId,
 		(SELECT status, username FROM <-created<-user)[0] AS author,
 
@@ -136,9 +144,9 @@ DEFINE EVENT OVERWRITE bannerCreateLog ON TABLE banner WHEN $event = "CREATE" TH
 DEFINE EVENT OVERWRITE bannerDeleteLog ON TABLE banner WHEN $event = "UPDATE" AND !$before.deleted AND $after.deleted THEN
 	fn::auditLog("Administration", string::concat('Delete banner "', $after.body, '"'), $after.creator);
 DEFINE EVENT OVERWRITE regKeyCreateLog ON TABLE regKey WHEN $event = "CREATE" THEN
-	fn::auditLog("Administration", string::concat("Create registration key ", meta::id($after.id)), $after.creator);
+	fn::auditLog("Administration", string::concat("Create registration key ", record::id($after.id)), $after.creator);
 DEFINE EVENT OVERWRITE regKeyDisableLog ON TABLE regKey WHEN $event = "UPDATE" AND $after.usesLeft = 0 THEN
-	fn::auditLog("Administration", string::concat("Disable registration key ", meta::id($after.id)), $after.disabledBy);
+	fn::auditLog("Administration", string::concat("Disable registration key ", record::id($after.id)), $after.disabledBy);
 
 # separation of concerns, maaaan
 

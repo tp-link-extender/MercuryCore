@@ -1,5 +1,5 @@
 SELECT
-	meta::id(id) AS id,
+	record::id(id) AS id,
 	type,
 	status,
 	created,
@@ -10,7 +10,7 @@ SELECT
 	END[0] AS user,
 	IF $parent.type = "Clothing" THEN
 		SELECT
-			meta::id(id) AS id,
+			record::id(id) AS id,
 			name
 		FROM asset WHERE id = $parent.relativeId
 	END[0] AS asset

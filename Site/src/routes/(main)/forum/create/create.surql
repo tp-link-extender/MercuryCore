@@ -1,4 +1,4 @@
-LET $post = CREATE $postId CONTENT {
+LET $post = CREATE ONLY forumPost CONTENT {
 	title: $title,
 	posted: time::now(),
 	visibility: "Visible",
@@ -10,3 +10,5 @@ LET $post = CREATE $postId CONTENT {
 };
 RELATE $post->in->$category;
 RELATE $user->created->$post;
+
+record::id($post.id);

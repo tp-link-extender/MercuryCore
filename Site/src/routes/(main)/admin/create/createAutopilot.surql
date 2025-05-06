@@ -45,9 +45,9 @@ RELATE $user->created->$asset;
 	type: $cached.type,
 };
 (SELECT
-	(SELECT meta::id(id) AS id
+	(SELECT record::id(id) AS id
 	FROM ->createdAsset->asset)[0].id AS id,
 	type,
-	meta::id(id)[0] AS sharedId
+	record::id(id)[0] AS sharedId
 FROM assetCache WHERE ->createdAsset->asset);
 COMMIT TRANSACTION;
