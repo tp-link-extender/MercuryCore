@@ -13,34 +13,12 @@
 				"noConsole": "off"
 			},
 			"nursery": {
+				"all": true,
 				"useExplicitType": "off",
 				"useConsistentMemberAccessibility": "off",
 				"noSecrets": "off",
 				"noProcessEnv": "off",
 				"noUnknownTypeSelector": "off"
-			},
-			"style": {
-				"useLiteralEnumMembers": "error",
-				"noCommaOperator": "error",
-				"useNodejsImportProtocol": "error",
-				"useAsConstAssertion": "error",
-				"useNumericLiterals": "error",
-				"useEnumInitializers": "error",
-				"useSelfClosingElements": "error",
-				"useSingleVarDeclarator": "error",
-				"noUnusedTemplateLiteral": "error",
-				"useNumberNamespace": "error",
-				"noInferrableTypes": "error",
-				"useExponentiationOperator": "error",
-				"useTemplate": "error",
-				"noParameterAssign": "error",
-				"noNonNullAssertion": "error",
-				"useDefaultParameterLast": "error",
-				"noArguments": "error",
-				"useImportType": "error",
-				"useExportType": "error",
-				"noUselessElse": "error",
-				"useShorthandFunctionType": "error"
 			}
 		}
 	},
@@ -53,7 +31,7 @@
 	},
 	"overrides": [
 		{
-			"includes": ["**/*.svelte", "!**/node_modules/**"],
+			"include": ["*.svelte"],
 			"linter": {
 				"rules": {
 					"style": {
@@ -66,6 +44,16 @@
 						"noConfusingLabels": "off",
 						"noEvolvingTypes": "off",
 						"noImplicitAnyLet": "off"
+					}
+				}
+			}
+		},
+		{
+			"include": ["mercury.core.ts"],
+			"linter": {
+				"rules": {
+					"nursery": {
+						"useImportRestrictions": "off"
 					}
 				}
 			}
