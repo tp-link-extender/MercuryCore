@@ -1,11 +1,11 @@
 LET $s = SELECT record::id(id) AS id, expiresAt FROM ONLY $sess;
 LET $u = (SELECT
     record::id(id) AS id,
-	(SELECT text, updated FROM $parent.bio ORDER BY updated)[$] AS bio,
+	(SELECT text, updated FROM $parent.description ORDER BY updated)[$] AS description,
     bodyColours,
     # created,
     IF email {
-		string::concat("*******@", string::split(email, "@")[$]) 
+		string::concat("*******@", parse::email::host(email)) 
 	} ELSE {
 		""
 	} AS email,

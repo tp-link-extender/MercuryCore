@@ -144,24 +144,24 @@
 	</div>
 	<div class="sm:grid grid-cols-2 gap-4">
 		<div>
-			{#if data.bio && data.bio.text}
+			{#if data.description && data.description.text}
 				<div class="pt-6">
 					<div class="flex justify-between">
-						<h2>Bio</h2>
+						<h2>Description</h2>
 						{#if data.username === user.username}
 							<a
 								href="/settings"
 								class="btn light-text text-lg p-0 px-2"
-								aria-label="Edit bio">
+								aria-label="Edit description">
 								<fa fa-pencil></fa>
 							</a>
 						{/if}
 					</div>
-					<p class="pl-2">{data.bio.text}</p>
+					<p class="pl-2">{data.description.text}</p>
 				</div>
 			{:else if data.username === user.username}
 				<p class="pt-6 text-center">
-					Add a bio in
+					Add a description in
 					<a href="/settings">Settings</a>
 					to tell others about yourself! It will display here.
 				</p>

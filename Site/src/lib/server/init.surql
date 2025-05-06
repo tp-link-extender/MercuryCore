@@ -2,7 +2,7 @@
 
 DEFINE TABLE OVERWRITE asset SCHEMAFULL;
 	DEFINE FIELD OVERWRITE created ON asset TYPE datetime DEFAULT time::now();
-	DEFINE FIELD OVERWRITE description ON asset FLEXIBLE TYPE array DEFAULT [];
+	DEFINE FIELD OVERWRITE description ON asset FLEXIBLE TYPE array DEFAULT ALWAYS [];
 	DEFINE FIELD OVERWRITE name ON asset TYPE string;
 	DEFINE FIELD OVERWRITE price ON asset TYPE int DEFAULT 0;
 	DEFINE FIELD OVERWRITE type ON asset TYPE int;
@@ -136,10 +136,10 @@ IF stuff:increment == NULL {
 };
 
 DEFINE TABLE OVERWRITE user SCHEMAFULL;
-	DEFINE FIELD OVERWRITE bio ON user FLEXIBLE TYPE array DEFAULT [];
 	DEFINE FIELD OVERWRITE bodyColours ON user FLEXIBLE TYPE object;
 	DEFINE FIELD OVERWRITE created ON user TYPE datetime DEFAULT time::now();
-	DEFINE FIELD OVERWRITE css ON user TYPE string DEFAULT "";
+	DEFINE FIELD OVERWRITE css ON user TYPE string DEFAULT ALWAYS "";
+	DEFINE FIELD OVERWRITE description ON user FLEXIBLE TYPE array DEFAULT ALWAYS [];
 	DEFINE FIELD OVERWRITE email ON user TYPE string
 		ASSERT string::is::email($value) OR $value == ""; # admin account uh yeah
 	DEFINE FIELD OVERWRITE hashedPassword ON user TYPE string;

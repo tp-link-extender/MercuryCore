@@ -9,8 +9,8 @@ import passwordQuery from "./password.surql"
 import updateProfileQuery from "./updateProfile.surql"
 
 const profileSchema = z.object({
+	description: z.string().max(1000).optional(),
 	theme: z.enum(["0", ...config.Themes.map((_, i) => i.toString())]),
-	bio: z.string().max(1000).optional(),
 })
 const passwordSchema = z.object({
 	cpassword: z.string().min(1),
@@ -34,11 +34,11 @@ actions.profile = async ({ request, locals }) => {
 	const form = await superValidate(request, zod(profileSchema))
 	if (!form.valid) return formError(form)
 
-	const { bio, theme } = form.data
+	const { description, theme } = form.data
 
 	await db.query(updateProfileQuery, {
 		user: Record("user", user.id),
-		bio,
+		description,
 		theme: +(theme || 0),
 	})
 

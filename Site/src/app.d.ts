@@ -25,7 +25,7 @@ declare global {
 
 	declare interface User extends BasicUser {
 		id: string
-		bio: {
+		description: {
 			text: string
 			updated: string
 		}[]

@@ -23,30 +23,26 @@
 					{data.tagline}
 				</span>
 			{/if}
-			<span class="grey-text pl-1">|</span>
-			<span class="grey-text pl-1">
-				{new Date().getFullYear()}
-			</span>
 		</div>
 		<div class="sm:text-right <sm:pt-4">
-			<div class="flex <sm:flex-col sm:gap-3">
+			<div class="flex <sm:flex-col sm:gap-3 justify-end pb-2">
 				{#if data.pages.includes("Statistics")}
 					<a class="light-text" href="/statistics">Statistics</a>
-					<span>&ndash;</span>
 				{/if}
-				<button
-					onmousedown={() => {
-						clicked = !clicked
-					}}
-					id="heart"
-					class={[
-						"grey-text border-0 p-0 cursor-pointer text-base bg-transparent",
-						{ clicked }
-					]}>
-					<span class="grey-text">made with</span>
-					<fa fa-heart></fa>
-				</button>
 			</div>
+			<button
+				onmousedown={() => {
+					clicked = !clicked
+				}}
+				id="heart"
+				class={[
+					"grey-text border-0 p-0 cursor-pointer text-base bg-transparent",
+					{ clicked }
+				]}>
+				<span class="grey-text s1">made with</span>
+				<fa fa-heart></fa>
+				<span class="grey-text s2">in 🏴󠁧󠁢󠁳󠁣󠁴󠁿</span>
+			</button>
 		</div>
 	</div>
 </footer>
@@ -76,9 +72,13 @@
 			margin-top: -0.2rem;
 		}
 
-		&:hover span {
-			width: 5rem;
-			margin-left: 0.2rem;
+		&:hover .s1 {
+			width: 5.2rem;
+			padding: 0 0.2rem;
+		}
+		&:hover .s2 {
+			width: 2.5rem;
+			padding: 0 0.2rem;
 		}
 
 		&:not(.clicked) fa:hover {

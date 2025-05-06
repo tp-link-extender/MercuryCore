@@ -5,7 +5,7 @@ SELECT
 	number,
 	permissionLevel,
 	status,
-	(SELECT text, updated FROM $parent.bio ORDER BY updated)[$] AS bio,
+	(SELECT text, updated FROM $parent.description ORDER BY updated)[$] AS description,
 	(SELECT
 		*,
 		record::id(id) AS id,

@@ -17,7 +17,7 @@ import unfriendQuery from "./unfriend.surql"
 import userQuery from "./user.surql"
 
 interface User extends BasicUser {
-	bio: {
+	description: {
 		id: string
 		text: string
 		updated: string
