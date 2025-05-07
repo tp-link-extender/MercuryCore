@@ -1,19 +1,15 @@
 <script lang="ts">
-	const { path }: { path: [string, string][] } = $props()
+	const { path, final }: { path: [string, string][]; final: string } =
+		$props()
 </script>
 
 <nav aria-label="breadcrumb">
 	<ol
 		class="grey-text text-base px-0 flex flex-wrap list-none items-center justify-start">
-		{#each path as [name, href], num}
-			<li>
-				{#if num === path.length - 1}
-					{name}
-				{:else}
-					<a {href} class="accent-text">{name}</a>
-				{/if}
-			</li>
+		{#each path as [name, href]}
+			<li><a {href} class="accent-text">{name}</a></li>
 		{/each}
+		<li>{final}</li>
 	</ol>
 </nav>
 

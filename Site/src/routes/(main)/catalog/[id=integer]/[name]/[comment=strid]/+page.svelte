@@ -21,15 +21,15 @@
 	<Breadcrumbs
 		path={[
 			["Catalog", "/catalog"],
-			[data.assetName, `/catalog/${data.assetId}/${data.assetName}`],
-			[topReply.content[0].text, ""]
-		]} />
+			[data.assetName, `/catalog/${data.assetId}/${data.assetName}`]
+		]}
+		final={topReply.content[0].text} />
 
 	{#key refresh}
 		{#each data.replies as reply, num}
 			<Comment
 				{user}
-				bind:reply={data.replies[num]}
+				bind:comment={data.replies[num]}
 				{num}
 				bind:replyingTo
 				postId={data.assetId.toString()}

@@ -2,47 +2,20 @@
 	import { enhance } from "$app/forms"
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
+	import { likeEnhance } from "$lib/like"
 
 	const {
 		post = $bindable(),
 		num,
 		total,
-		categoryName
 	}: {
 		post: import("./$types").PageData["posts"][number]
 		num: number
 		total: number
-		categoryName: string
 	} = $props()
 
 	let likesDisabled = false
 	let dislikesDisabled = false
-
-	const likeEnhance: import("./$types").SubmitFunction = ({ formData }) => {
-		const action = formData.get("action")
-
-		if (action === "like") {
-			post.likes = true
-
-			if (post.dislikes) post.score++
-			post.dislikes = false
-			post.score++
-		} else if (action === "dislike") {
-			post.dislikes = true
-
-			if (post.likes) post.score--
-			post.likes = false
-			post.score--
-		} else if (action === "unlike") {
-			post.likes = false
-			post.score--
-		} else if (action === "undislike") {
-			post.dislikes = false
-			post.score++
-		}
-
-		return () => {}
-	}
 </script>
 
 <div
@@ -52,7 +25,7 @@
 		{ "border-(solid 1px green-5)!": post.pinned }
 	]}>
 	<form
-		use:enhance={likeEnhance}
+		use:enhance={likeEnhance(post)}
 		method="POST"
 		action="?/like&id={post.id}"
 		class="bg-a p-1 z-1">
@@ -96,7 +69,7 @@
 		</div>
 	</form>
 	<div class="pl-2 flex flex-col w-full">
-		<div class="flex pt-2 pl-4">
+		<div class="flex pt-4 pl-4">
 			<User user={post.author} full />
 			<em class="light-text pl-4 self-center">
 				{post.created.toLocaleString()}

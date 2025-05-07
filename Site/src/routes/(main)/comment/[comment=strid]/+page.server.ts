@@ -1,3 +1,4 @@
+import type { Scored } from "$lib/like"
 import { authorise } from "$lib/server/auth"
 import commentType from "$lib/server/comentType"
 import createCommentQuery from "$lib/server/createComment.surql"
@@ -15,7 +16,7 @@ const schema = z.object({
 	replyId: z.string().optional(),
 })
 
-type Comment = {
+interface Comment extends Scored {
 	id: string
 	author: BasicUser
 	content: {
@@ -24,10 +25,7 @@ type Comment = {
 	}[]
 	comments: []
 	created: Date
-	dislikes: boolean
-	likes: boolean
 	pinned: boolean
-	score: number
 	type: string[]
 	visibility: string
 }

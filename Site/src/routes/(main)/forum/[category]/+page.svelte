@@ -13,11 +13,7 @@
 <Head name={data.siteName} title="{data.name} - Forum" />
 
 <div class="ctnr max-w-200">
-	<Breadcrumbs
-		path={[
-			["Forum", "/forum"],
-			[data.name, ""]
-		]} />
+	<Breadcrumbs path={[["Forum", "/forum"]]} final={data.name} />
 
 	<h1 class="pb-8">
 		{data.name} &ndash; Forum
@@ -33,11 +29,7 @@
 	{#if posts.length > 0}
 		<div class="flex flex-col gap-4">
 			{#each posts as post, num (post.id)}
-				<ForumPost
-					bind:post={posts[num]}
-					{num}
-					total={posts.length}
-					categoryName={data.name} />
+				<ForumPost bind:post={posts[num]} {num} total={posts.length} />
 			{/each}
 		</div>
 		{#key page.url}

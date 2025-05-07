@@ -181,6 +181,12 @@
 									id={comment.id}
 									pinned={comment.pinned} />
 							{/if}
+							<li class="rounded-2">
+								<a class="btn pl-3 px-2 text-neutral-5" href="/comment/{comment.id}">
+									<fa fa-link class="pr-2"></fa>
+									Link
+								</a>
+							</li>
 						</ul>
 					</div>
 				</span>

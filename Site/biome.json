@@ -10,7 +10,8 @@
 			},
 			"suspicious": {
 				"noEvolvingTypes": "off",
-				"noConsole": "off"
+				"noConsole": "off",
+				"noFallthroughSwitchClause": "off"
 			},
 			"nursery": {
 				"all": true,

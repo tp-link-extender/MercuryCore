@@ -1,20 +1,20 @@
+import type { Scored } from "$lib/like"
 import { authorise } from "$lib/server/auth"
 import exclude from "$lib/server/exclude"
 import { Record, db } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
-import categoryQuery from "./category.surql"
 import type { PreviewPost } from "../+page.server"
+import categoryQuery from "./category.surql"
+
+interface Post extends PreviewPost, Scored {
+	pinned: boolean
+	visibility: string
+}
 
 type Category = {
 	description: string
 	name: string
-	posts: (PreviewPost & {
-		dislikes: boolean
-		likes: boolean
-		pinned: boolean
-		score: number
-		visibility: string
-	})[]
+	posts: Post[]
 }
 
 export async function load({ locals, params, url }) {
