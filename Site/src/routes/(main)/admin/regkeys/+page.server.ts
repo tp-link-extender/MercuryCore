@@ -60,9 +60,6 @@ actions.create = async e => {
 	const { user, form, error } = await getData(e)
 	if (error) return error
 
-	const limit = ratelimit(form, "createRegKey", e.getClientAddress, 30)
-	if (limit) return limit
-
 	const {
 		enableRegKeyCustom,
 		regKeyCustom,
@@ -78,10 +75,13 @@ actions.create = async e => {
 	)
 		return message(form, "Missing fields", { status: 400 })
 
-	const expiry = regKeyExpiry ? new Date(regKeyExpiry) : null
+	const expiry = regKeyExpiry ? new Date(regKeyExpiry) : undefined
 
 	if (!!enableRegKeyExpiry && (expiry?.getTime() || 0) < Date.now())
 		return formError(form, ["regKeyExpiry"], ["Invalid date"])
+
+	const limit = ratelimit(form, "createRegKey", e.getClientAddress, 30)
+	if (limit) return limit
 
 	const [result] = await db.queryRaw<unknown[]>(createQuery, {
 		regKey: Record("regKey", regKeyCustom || randomRegKey()),

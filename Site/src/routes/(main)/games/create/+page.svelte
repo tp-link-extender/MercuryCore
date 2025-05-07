@@ -35,7 +35,7 @@
 		placeholder="Up to 1000 characters" />
 	<Input
 		{formData}
-		name="serverIP"
+		name="serverAddress"
 		label="Server IP"
 		placeholder="You can use a URL instead of an IP if you wish" />
 	<Input

@@ -4,8 +4,8 @@ import logsQuery from "./logs.surql"
 
 type Log = {
 	action: "Account" | "Administration" | "Moderation" | "Economy"
+	created: Date
 	note: string
-	time: Date
 	user: BasicUser
 }
 

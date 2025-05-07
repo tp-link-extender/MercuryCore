@@ -12,7 +12,7 @@
 	const formData = superForm(data.networkForm)
 	const { form } = formData
 
-	if (data.serverIP) $form.serverIP = data.serverIP
+	if (data.serverAddress) $form.serverAddress = data.serverAddress
 	if (data.serverPort) $form.serverPort = data.serverPort
 	if (data.maxPlayers) $form.maxPlayers = data.maxPlayers
 </script>
@@ -21,7 +21,7 @@
 	{formData}
 	submit=" <fa fa-save class='pr-2'></fa> Save changes"
 	action="?/network&tab=Network">
-	<Input {formData} name="serverIP" label="Address" />
+	<Input {formData} name="serverAddress" label="Address" />
 	<Input
 		{formData}
 		name="serverPort"

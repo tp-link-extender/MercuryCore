@@ -1,3 +1,3 @@
 DELETE $user2->request WHERE out = $user;
-RELATE $user2->friends->$user SET time = time::now();
+RELATE $user2->friends->$user;
 fn::notify($user, $user2, "NewFriend", $note, $relativeId);

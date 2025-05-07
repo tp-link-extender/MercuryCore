@@ -24,8 +24,8 @@ DEFINE TABLE OVERWRITE assetComment SCHEMAFULL;
 
 DEFINE TABLE OVERWRITE auditLog SCHEMAFULL;
 	DEFINE FIELD OVERWRITE action ON auditLog TYPE string;
+	DEFINE FIELD OVERWRITE created ON auditLog TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE note ON auditLog TYPE string;
-	DEFINE FIELD OVERWRITE time ON auditLog TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE user ON auditLog TYPE record<user>;
 
 DEFINE TABLE OVERWRITE banner SCHEMAFULL;
@@ -35,6 +35,9 @@ DEFINE TABLE OVERWRITE banner SCHEMAFULL;
 	DEFINE FIELD OVERWRITE creator ON banner TYPE record<user>;
 	DEFINE FIELD OVERWRITE deleted ON banner TYPE bool;
 	DEFINE FIELD OVERWRITE textLight ON banner TYPE bool;
+
+DEFINE TABLE OVERWRITE follows SCHEMAFULL TYPE RELATION FROM user TO user;
+	DEFINE FIELD OVERWRITE created ON follows TYPE datetime DEFAULT time::now();
 
 DEFINE TABLE OVERWRITE forumCategory SCHEMAFULL;
 	DEFINE FIELD OVERWRITE created ON forumCategory TYPE datetime DEFAULT time::now();
@@ -54,6 +57,9 @@ DEFINE TABLE OVERWRITE forumReply SCHEMAFULL;
 	DEFINE FIELD OVERWRITE pinned ON forumReply TYPE bool;
 	DEFINE FIELD OVERWRITE visibility ON forumReply TYPE string;
 
+DEFINE TABLE OVERWRITE friends SCHEMAFULL TYPE RELATION FROM user TO user;
+	DEFINE FIELD OVERWRITE created ON friends TYPE datetime DEFAULT time::now();
+
 DEFINE TABLE OVERWRITE group SCHEMAFULL;
 	DEFINE FIELD OVERWRITE created ON group TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE name ON group TYPE string;
@@ -68,20 +74,18 @@ DEFINE TABLE OVERWRITE moderation SCHEMAFULL TYPE RELATION FROM user TO user;
 	DEFINE FIELD OVERWRITE type ON moderation TYPE string;
 
 DEFINE TABLE OVERWRITE notification SCHEMAFULL TYPE RELATION FROM user TO user;
+	DEFINE FIELD OVERWRITE created ON notification TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE note ON notification TYPE string;
 	DEFINE FIELD OVERWRITE read ON notification TYPE bool;
 	DEFINE FIELD OVERWRITE relativeId ON notification TYPE any;
-	DEFINE FIELD OVERWRITE time ON notification TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE type ON notification TYPE string;
 
 DEFINE TABLE OVERWRITE ownsAsset SCHEMAFULL TYPE RELATION FROM user TO asset;
-	DEFINE FIELD OVERWRITE time ON ownsAsset TYPE datetime DEFAULT time::now();
+	DEFINE FIELD OVERWRITE created ON ownsAsset TYPE datetime DEFAULT time::now();
 
 DEFINE TABLE OVERWRITE ownsGroup SCHEMAFULL TYPE RELATION FROM user TO group;
-	DEFINE FIELD OVERWRITE time ON ownsGroup TYPE datetime DEFAULT time::now();
 
 DEFINE TABLE OVERWRITE ownsPlace SCHEMAFULL TYPE RELATION FROM user TO place;
-	DEFINE FIELD OVERWRITE time ON ownsPlace TYPE datetime DEFAULT time::now();
 
 DEFINE TABLE OVERWRITE place SCHEMAFULL;
 	DEFINE FIELD OVERWRITE created ON place TYPE datetime DEFAULT time::now();
@@ -91,16 +95,16 @@ DEFINE TABLE OVERWRITE place SCHEMAFULL;
 	DEFINE FIELD OVERWRITE name ON place TYPE string DEFAULT "";
 	DEFINE FIELD OVERWRITE privateServer ON place TYPE bool DEFAULT false;
 	DEFINE FIELD OVERWRITE privateTicket ON place TYPE string DEFAULT rand::guid();
-	DEFINE FIELD OVERWRITE serverIP ON place TYPE string DEFAULT "";
+	DEFINE FIELD OVERWRITE serverAddress ON place TYPE string DEFAULT "";
 	DEFINE FIELD OVERWRITE serverPing ON place TYPE int DEFAULT 0;
-	DEFINE FIELD OVERWRITE serverPort ON place TYPE int DEFAULT 0;
+	DEFINE FIELD OVERWRITE serverPort ON place TYPE int;
 	DEFINE FIELD OVERWRITE serverTicket ON place TYPE string DEFAULT rand::guid();
 	DEFINE FIELD OVERWRITE updated ON place TYPE datetime DEFAULT time::now();
 
 DEFINE TABLE OVERWRITE regKey SCHEMAFULL;
 	DEFINE FIELD OVERWRITE created ON regKey TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE creator ON regKey TYPE record<user>;
-	DEFINE FIELD OVERWRITE expiry ON regKey TYPE datetime;
+	DEFINE FIELD OVERWRITE expiry ON regKey TYPE option<datetime>; # null -> NULL, undefined -> NONE
 	DEFINE FIELD OVERWRITE usesLeft ON regKey TYPE int;
 
 DEFINE TABLE OVERWRITE render SCHEMAFULL;
@@ -116,13 +120,16 @@ DEFINE TABLE OVERWRITE report SCHEMAFULL TYPE RELATION FROM user TO user;
 	DEFINE FIELD OVERWRITE time ON report TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE url ON report TYPE string;
 
+DEFINE TABLE OVERWRITE request SCHEMAFULL TYPE RELATION FROM user TO user;
+	DEFINE FIELD OVERWRITE created ON request TYPE datetime DEFAULT time::now();
+
 DEFINE TABLE OVERWRITE session SCHEMAFULL;
 	DEFINE FIELD OVERWRITE created ON session TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE expiresAt ON session TYPE datetime;
 
 DEFINE TABLE OVERWRITE statusPost SCHEMAFULL;
 	DEFINE FIELD OVERWRITE content ON statusPost FLEXIBLE TYPE array;
-	DEFINE FIELD OVERWRITE posted ON statusPost TYPE datetime DEFAULT time::now();
+	DEFINE FIELD OVERWRITE created ON statusPost TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE visibility ON statusPost TYPE string DEFAULT "Visible";
 
 DEFINE TABLE OVERWRITE stuff SCHEMALESS;
@@ -158,6 +165,8 @@ DEFINE TABLE OVERWRITE user SCHEMAFULL;
 	DEFINE FIELD OVERWRITE username ON user TYPE string;
 DEFINE INDEX IF NOT EXISTS usernameI ON user COLUMNS username UNIQUE;
 DEFINE INDEX IF NOT EXISTS emailI ON user COLUMNS email UNIQUE;
+
+DEFINE TABLE OVERWRITE used SCHEMAFULL TYPE RELATION FROM user TO regKey;
 
 DEFINE FUNCTION OVERWRITE fn::auditLog($action: string, $note: string, $user: record) {
 	CREATE auditLog CONTENT {

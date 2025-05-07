@@ -99,7 +99,7 @@
 		<div class="flex pt-2 pl-4">
 			<User user={post.author} full />
 			<em class="light-text pl-4 self-center">
-				{new Date(post.posted).toLocaleString()}
+				{post.created.toLocaleString()}
 			</em>
 		</div>
 		<a

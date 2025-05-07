@@ -16,7 +16,7 @@
 		</div>
 		<span class="self-center <md:(w-full pt-2 flex justify-between)">
 			<small class="pr-2">
-				<em>{new Date(status.posted).toLocaleString()}</em>
+				<em>{status.created.toLocaleString()}</em>
 			</small>
 			<span class="dropdown">
 				<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>

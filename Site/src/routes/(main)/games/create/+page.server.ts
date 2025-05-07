@@ -14,7 +14,7 @@ import createQuery from "./create.surql"
 const schema = z.object({
 	name: z.string().min(3).max(50),
 	description: z.string().max(1000),
-	serverIP: z
+	serverAddress: z
 		.string()
 		.regex(
 			/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
@@ -48,7 +48,7 @@ actions.default = async ({ request, locals }) => {
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
 
-	const { serverIP, serverPort, maxPlayers, privateServer } = form.data
+	const { serverAddress, serverPort, maxPlayers, privateServer } = form.data
 
 	const name = form.data.name.trim()
 	if (!name) return formError(form, ["name"], ["Place must have a name"])
@@ -82,7 +82,7 @@ actions.default = async ({ request, locals }) => {
 		id,
 		name: filter(name),
 		description: filter(description),
-		serverIP,
+		serverAddress,
 		serverPort,
 		privateServer,
 		maxPlayers,

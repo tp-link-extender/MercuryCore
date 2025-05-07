@@ -47,13 +47,13 @@ interface User extends BasicUser {
 		playerCount: number
 	}[]
 	posts: {
+		id: string
+		created: Date
 		content: {
 			id: string
 			text: string
-			updated: string
+			updated: Date
 		}[]
-		id: string
-		posted: string
 		visibility: string
 	}[]
 }

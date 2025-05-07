@@ -116,7 +116,7 @@
 		{:else if bottom}
 			<span
 				class={[
-					"overflow-hidden max-h-12 pt-2 text-center",
+					"max-h-12 pt-2 text-center",
 					{ small: user.username?.length > 15 }
 				]}
 				style="max-width: {size}">

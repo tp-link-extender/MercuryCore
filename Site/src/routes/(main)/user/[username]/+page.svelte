@@ -267,7 +267,7 @@
 			{#if data.posts.length > 0}
 				<h2 class="pt-6">Latest feed posts</h2>
 				<div class="grid md:grid-cols-2 gap-4">
-					{#each data.posts.sort((a, b) => new Date(b.posted).getTime() - new Date(a.posted).getTime()) as status, num}
+					{#each data.posts.sort((a, b) => b.created.getTime() - a.created.getTime()) as status, num}
 						<div
 							in:fade={{ num, total: data.posts.length, max: 9 }}
 							class="card bg-darker p-3 h-full">
@@ -279,7 +279,7 @@
 									image
 									bg="accent" />
 								<span class="italic flex-end">
-									{new Date(status.posted).toLocaleString()}
+									{status.created.toLocaleString()}
 								</span>
 							</div>
 							<p class="text-start mb-0">

@@ -21,7 +21,7 @@ const viewSchema = z.object({
 	description: z.string().max(1000).optional(),
 })
 const networkSchema = z.object({
-	serverIP: z
+	serverAddress: z
 		.string()
 		.max(100)
 		.regex(
@@ -48,7 +48,7 @@ type Place = {
 	owner: BasicUser
 	privateServer: boolean
 	privateTicket: string
-	serverIP: string
+	serverAddress: string
 	serverPing: number
 	serverPort: number
 	serverTicket: string

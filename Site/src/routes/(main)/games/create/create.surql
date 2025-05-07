@@ -7,8 +7,7 @@ LET $place = CREATE place CONTENT {
 	maxPlayers: $maxPlayers,
 	name: $name,
 	privateServer: $privateServer,
-	serverIP: $serverIP,
+	serverAddress: $serverAddress,
 	serverPort: $serverPort,
-	serverPing: 0,
 };
 RELATE $user->ownsPlace->$place;

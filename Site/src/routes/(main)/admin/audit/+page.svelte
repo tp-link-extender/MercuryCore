@@ -42,7 +42,7 @@
 					<td class={colours[log.action]}>{log.action}</td>
 					<td>{log.note}</td>
 					<td><User user={log.user} full thin /></td>
-					<td>{new Date(log.time).toLocaleString()}</td>
+					<td>{log.created.toLocaleString()}</td>
 				</tr>
 			{/each}
 		</tbody>

@@ -24,7 +24,7 @@
 
 	const { errors, message, enhance, delayed } = formData
 
-	// use:enh may not be used on forms that aren't method === "POST"
+	// use:enhance may not be used on forms that aren't method === "POST"
 	const use = method === "POST" ? enhance : () => {}
 
 	let other = $derived($errors.other || "")

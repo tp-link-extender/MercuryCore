@@ -16,11 +16,11 @@ type Category = {
 		content: {
 			text?: string
 		}[]
+		created: Date
 		dislikes: boolean
 		id: string
 		likes: boolean
 		pinned: boolean
-		posted: string
 		score: number
 		title: string
 		visibility: string

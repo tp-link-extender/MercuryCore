@@ -6,11 +6,11 @@ import notificationsQuery from "./notifications.surql"
 
 type Notification = {
 	id: string
+	created: Date
 	note: string
 	read: boolean
 	relativeId?: string
 	sender: BasicUser
-	time: string
 	type: string
 	link?: string
 }

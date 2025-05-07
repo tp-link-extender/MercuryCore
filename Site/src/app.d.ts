@@ -27,7 +27,7 @@ declare global {
 		id: string
 		description: {
 			text: string
-			updated: string
+			updated: Date
 		}[]
 		bodyColours: {
 			Head: number

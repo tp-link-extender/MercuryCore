@@ -29,11 +29,11 @@ type ForumPost = {
 		text: string
 		updated: string
 	}[]
+	created: Date
 	dislikes: boolean
 	id: string
 	likes: boolean
 	pinned: boolean
-	posted: string
 	replies: Replies
 	score: number
 	title: string

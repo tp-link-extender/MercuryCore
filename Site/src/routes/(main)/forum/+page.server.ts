@@ -4,14 +4,14 @@ import forumQuery from "./forum.surql"
 
 type Category = {
 	description: string
-	name: string
-	postCount: number
 	latestPost: {
-		author: BasicUser
 		id: string
-		posted: string
+		author: BasicUser
+		created: Date
 		title: string
 	}
+	name: string
+	postCount: number
 }
 
 export async function load() {

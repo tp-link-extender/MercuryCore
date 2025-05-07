@@ -121,7 +121,7 @@
 				<div class="flex">
 					<User user={post.author} full />
 					<i class="pl-4 self-center">
-						{new Date(post.posted).toLocaleString()}
+						{post.created.toLocaleString()}
 					</i>
 				</div>
 				<span class="dropdown">

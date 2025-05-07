@@ -105,7 +105,7 @@
 				{/if}
 			</a>
 			<small class="light-text pl-6">
-				{new Date(reply.posted).toLocaleString()}
+				{reply.created.toLocaleString()}
 			</small>
 		</div>
 		<p class={["py-2 m-0 break-all", { "opacity-33": hidden }]}>

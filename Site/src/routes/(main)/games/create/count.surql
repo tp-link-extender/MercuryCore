@@ -1,1 +1,1 @@
-SELECT count(->owns->place) FROM $user;
+SELECT count(->ownsPlace->place) FROM $user;

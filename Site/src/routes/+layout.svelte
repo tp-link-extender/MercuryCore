@@ -101,7 +101,7 @@
 						{notificationNotes[notification.type]}
 					</strong>
 					<small class="grey-text pr-4">
-						{new Date(notification.time).toLocaleString()}
+						{notification.created.toLocaleString()}
 					</small>
 				</a>
 				<form

@@ -23,14 +23,14 @@ type Place = {
 }
 
 type FeedPost = {
+	id: string
 	authorUser: BasicUser
 	content: {
 		id: string
 		text: string
 		updated: string
 	}[]
-	id: string
-	posted: string
+	created: Date
 	visibility: string
 }
 
@@ -63,12 +63,12 @@ actions.default = async ({ request, locals, getClientAddress }) => {
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
 
-	const limit = ratelimit(form, "statusPost", getClientAddress, 30)
-	if (limit) return limit
-
 	const unfiltered = form.data.status.trim()
 	if (!unfiltered)
 		return formError(form, ["status"], ["Status cannot be empty"])
+
+	const limit = ratelimit(form, "statusPost", getClientAddress, 30)
+	if (limit) return limit
 
 	await db.query(statusQuery, {
 		content: filter(unfiltered),

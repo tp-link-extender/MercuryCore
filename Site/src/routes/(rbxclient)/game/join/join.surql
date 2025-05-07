@@ -1,7 +1,7 @@
 SELECT
 	(SELECT
 		record::id(id) AS id,
-		serverIP,
+		serverAddress,
 		serverPort,
 		(SELECT username FROM <-ownsPlace<-user)[0] AS ownerUser
 	FROM ->place)[0] AS place,

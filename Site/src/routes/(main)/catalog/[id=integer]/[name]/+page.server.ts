@@ -32,15 +32,15 @@ const schema = z.object({
 })
 
 type Asset = {
+	created: Date
 	creator: BasicUser
 	description: {
 		text: string
-		updated: string
+		updated: Date
 	}
 	id: string
 	name: string
 	owned: boolean
-	posted: string
 	price: number
 	replies: Replies
 	sold: number
@@ -263,7 +263,7 @@ actions.buy = async e => {
 	}
 
 	await Promise.all([
-		db.query("RELATE $user->ownsAsset->$asset SET time = time::now()", {
+		db.query("RELATE $user->ownsAsset->$asset", {
 			asset: Record("asset", id),
 			user: Record("user", user.id),
 		}),
