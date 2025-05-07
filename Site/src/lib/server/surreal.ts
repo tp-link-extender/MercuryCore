@@ -35,16 +35,14 @@ export type { RecordId } from "surrealdb"
 type RecordIdTypes = {
 	asset: number
 	assetCache: [number, number]
-	assetComment: string
 	auditLog: string
 	banner: string
+	comment: string
 	created: string
 	createdAsset: string
 	dislikes: string
 	follows: string
 	forumCategory: string
-	forumPost: string
-	forumReply: string
 	friends: string
 	group: string
 	hasSession: string
@@ -69,7 +67,6 @@ type RecordIdTypes = {
 	report: string
 	request: string
 	session: string
-	statusPost: string
 	stuff: string
 	thumbnailCache: number
 	used: string

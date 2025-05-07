@@ -3,19 +3,20 @@ import { db } from "$lib/server/surreal"
 import forumQuery from "./forum.surql"
 
 type Category = {
-	id: string
 	description: string
 	latestPost: {
 		id: string
 		author: BasicUser
 		created: Date
-		title: string
+		currentContent: string
 	}
+	name: string
 	postCount: number
 }
 
 export async function load() {
 	exclude("Forum")
 	const [categories] = await db.query<Category[][]>(forumQuery)
+	console.log(categories[0])
 	return { categories }
 }

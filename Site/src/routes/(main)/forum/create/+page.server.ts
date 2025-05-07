@@ -2,7 +2,6 @@ import { authorise } from "$lib/server/auth"
 import exclude from "$lib/server/exclude"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
-import { like } from "$lib/server/like"
 import ratelimit from "$lib/server/ratelimit"
 import { Record, db, findWhere } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
@@ -12,7 +11,7 @@ import { z } from "zod"
 import createQuery from "./create.surql"
 
 const schema = z.object({
-	title: z.string().min(1).max(50),
+	// title: z.string().min(1).max(50),
 	content: z.string().max(3000).optional(),
 })
 
@@ -42,34 +41,34 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
 
-	const title = form.data.title.trim()
-	if (!title) return formError(form, ["title"], ["Post must have a title"])
+	// const title = form.data.title.trim()
+	// if (!title) return formError(form, ["title"], ["Post must have a title"])
 
 	const limit = ratelimit(form, "forumPost", getClientAddress, 30)
 	if (limit) return limit
 
-	const category = url.searchParams.get("category")
-	if (
-		!category ||
-		!(await findWhere(
-			"forumCategory",
-			"string::lowercase(name) = string::lowercase($category)",
-			{ category }
-		))
-	)
-		error(400, "Invalid category")
-
 	const unfiltered = form.data.content?.trim()
+	if (!unfiltered)
+		return formError(form, ["content"], ["Post must have content"])
+
+	const category = url.searchParams.get("category")
+	if (!category) error(400, "Missing category")
+
+	const [[getCategory]] = await db.query<{ id: string }[][]>(
+		`
+			SELECT record::id(id) AS id FROM forumCategory
+			WHERE string::lowercase(name) = string::lowercase($category)`,
+		{ category }
+	)
+	if (!getCategory) error(404, "Category not found")
 
 	const newPost = await db.query<string[]>(createQuery, {
 		user: Record("user", user.id),
-		category: Record("forumCategory", category),
-		title,
-		content: unfiltered ? filter(unfiltered) : undefined,
+		category: getCategory.id,
+		// title,
+		content: filter(unfiltered),
 	})
 	const newPostId = newPost[3] // let's hear it for newPost
-
-	await like(user.id, Record("forumPost", newPostId))
 
 	redirect(302, `/forum/${category}/${newPostId}`)
 }

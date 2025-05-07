@@ -16,12 +16,6 @@ DEFINE TABLE OVERWRITE assetCache SCHEMAFULL;
 	DEFINE FIELD OVERWRITE name ON assetCache TYPE string DEFAULT ALWAYS "Unnamed asset";
 	DEFINE FIELD OVERWRITE type ON assetCache TYPE int;
 
-DEFINE TABLE OVERWRITE assetComment SCHEMAFULL;
-	DEFINE FIELD OVERWRITE content ON assetComment FLEXIBLE TYPE array;
-	DEFINE FIELD OVERWRITE created ON assetComment TYPE datetime DEFAULT time::now();
-	DEFINE FIELD OVERWRITE pinned ON assetComment TYPE bool;
-	DEFINE FIELD OVERWRITE visibility ON assetComment TYPE string;
-
 DEFINE TABLE OVERWRITE auditLog SCHEMAFULL;
 	DEFINE FIELD OVERWRITE action ON auditLog TYPE string;
 	DEFINE FIELD OVERWRITE created ON auditLog TYPE datetime DEFAULT time::now();
@@ -36,25 +30,37 @@ DEFINE TABLE OVERWRITE banner SCHEMAFULL;
 	DEFINE FIELD OVERWRITE deleted ON banner TYPE bool;
 	DEFINE FIELD OVERWRITE textLight ON banner TYPE bool;
 
+DEFINE TABLE OVERWRITE comment SCHEMAFULL;
+	DEFINE FIELD OVERWRITE author ON comment VALUE <future> {
+		(SELECT status, username FROM <-createdComment<-user)[0]
+	};
+	DEFINE FIELD OVERWRITE content ON comment FLEXIBLE TYPE array;
+	DEFINE FIELD OVERWRITE created ON comment TYPE datetime DEFAULT time::now();
+	DEFINE FIELD OVERWRITE dislikes ON comment VALUE <future> {
+		($user IN <-dislikes<-user.id) 
+	};
+	DEFINE FIELD OVERWRITE likes ON comment VALUE <future> {
+		($user IN <-likes<-user.id) 
+	};
+	DEFINE FIELD OVERWRITE pinned ON comment TYPE bool DEFAULT false;
+	DEFINE FIELD OVERWRITE score ON comment VALUE <future> {
+		count(<-likes) - count(<-dislikes)
+	};
+	DEFINE FIELD OVERWRITE type ON comment FLEXIBLE TYPE array;
+		# ["status"] -> status
+		# ["forum", "{category id}"] -> forum
+		# ["asset", "{asset id}"] -> asset/catalog
+	DEFINE FIELD OVERWRITE visibility ON comment TYPE string DEFAULT "Visible";
+
+DEFINE TABLE OVERWRITE commentLink SCHEMAFULL TYPE RELATION FROM comment TO comment;
+
 DEFINE TABLE OVERWRITE follows SCHEMAFULL TYPE RELATION FROM user TO user;
 	DEFINE FIELD OVERWRITE created ON follows TYPE datetime DEFAULT time::now();
 
 DEFINE TABLE OVERWRITE forumCategory SCHEMAFULL;
 	DEFINE FIELD OVERWRITE created ON forumCategory TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE description ON forumCategory TYPE string;
-
-DEFINE TABLE OVERWRITE forumPost SCHEMAFULL;
-	DEFINE FIELD OVERWRITE content ON forumPost FLEXIBLE TYPE array;
-	DEFINE FIELD OVERWRITE created ON forumPost TYPE datetime DEFAULT time::now();
-	DEFINE FIELD OVERWRITE pinned ON forumPost TYPE bool;
-	DEFINE FIELD OVERWRITE title ON forumPost TYPE string;
-	DEFINE FIELD OVERWRITE visibility ON forumPost TYPE string;
-
-DEFINE TABLE OVERWRITE forumReply SCHEMAFULL;
-	DEFINE FIELD OVERWRITE content ON forumReply FLEXIBLE TYPE array;
-	DEFINE FIELD OVERWRITE created ON forumReply TYPE datetime DEFAULT time::now();
-	DEFINE FIELD OVERWRITE pinned ON forumReply TYPE bool;
-	DEFINE FIELD OVERWRITE visibility ON forumReply TYPE string;
+	DEFINE FIELD OVERWRITE name ON forumCategory TYPE string;
 
 DEFINE TABLE OVERWRITE friends SCHEMAFULL TYPE RELATION FROM user TO user;
 	DEFINE FIELD OVERWRITE created ON friends TYPE datetime DEFAULT time::now();
@@ -100,6 +106,8 @@ DEFINE TABLE OVERWRITE place SCHEMAFULL;
 	DEFINE FIELD OVERWRITE serverTicket ON place TYPE string DEFAULT rand::guid();
 	DEFINE FIELD OVERWRITE updated ON place TYPE datetime DEFAULT time::now();
 
+DEFINE TABLE OVERWRITE createdComment SCHEMAFULL TYPE RELATION FROM user TO comment;
+
 DEFINE TABLE OVERWRITE regKey SCHEMAFULL;
 	DEFINE FIELD OVERWRITE created ON regKey TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE creator ON regKey TYPE record<user>;
@@ -125,11 +133,6 @@ DEFINE TABLE OVERWRITE request SCHEMAFULL TYPE RELATION FROM user TO user;
 DEFINE TABLE OVERWRITE session SCHEMAFULL;
 	DEFINE FIELD OVERWRITE created ON session TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE expiresAt ON session TYPE datetime;
-
-DEFINE TABLE OVERWRITE statusPost SCHEMAFULL;
-	DEFINE FIELD OVERWRITE content ON statusPost FLEXIBLE TYPE array;
-	DEFINE FIELD OVERWRITE created ON statusPost TYPE datetime DEFAULT time::now();
-	DEFINE FIELD OVERWRITE visibility ON statusPost TYPE string DEFAULT "Visible";
 
 DEFINE TABLE OVERWRITE stuff SCHEMALESS;
 IF stuff:increment == NULL {
@@ -186,50 +189,6 @@ DEFINE FUNCTION OVERWRITE fn::notify($user: record, $user2: record, $type: strin
 		relativeId: $relativeId,
 		type: $type,
 	};
-};
-
-# not very dry
-DEFINE FUNCTION OVERWRITE fn::getReplies($reply: record, $depth: number, $user: record) {
-    IF $depth > 9 {
-        RETURN [];
-    };
-    
-    RETURN SELECT
-		*,
-		(SELECT text, updated FROM $parent.content
-		ORDER BY updated DESC) AS content,
-		record::id(id) AS id,
-		NONE AS parentReplyId,
-		(SELECT status, username FROM <-created<-user)[0] AS author,
-
-		count(<-likes) - count(<-dislikes) AS score,
-		$user IN <-likes<-user.id AS likes,
-		$user IN <-dislikes<-user.id AS dislikes,
-
-        fn::getReplies(id, $depth + 1, $user) AS replies
-    FROM $reply<-replyToReply<-forumReply;
-};
-
-DEFINE FUNCTION OVERWRITE fn::getComments($comment: record, $depth: number, $user: record) {
-    IF $depth > 9 {
-        RETURN [];
-    };
-    
-    RETURN SELECT
-		*,
-		(SELECT text, updated FROM $parent.content
-		ORDER BY updated DESC) AS content,
-		record::id(id) AS id,
-		NONE AS parentReplyId,
-		(SELECT status, username FROM <-created<-user)[0] AS author,
-
-		count(<-likes) - count(<-dislikes) AS score,
-		$user IN <-likes<-user.id AS likes,
-		$user IN <-dislikes<-user.id AS dislikes,
-
-        fn::getComments(id, $depth + 1, $user) AS replies
-    FROM $comment<-replyToComment<-assetComment
-	ORDER BY score DESC; 
 };
 
 DEFINE EVENT OVERWRITE bannerCreateLog ON TABLE banner

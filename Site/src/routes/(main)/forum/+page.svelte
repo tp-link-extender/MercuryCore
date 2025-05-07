@@ -20,10 +20,10 @@
 				<div class="flex flex-wrap">
 					<a
 						class="flex w-full lg:w-3/4 md:w-7/12 light-text no-underline"
-						href="/forum/{category.id.toLowerCase()}">
+						href="/forum/{category.name.toLowerCase()}">
 						<div class="w-3/4">
 							<h2>
-								{category.id}
+								{category.name}
 							</h2>
 							<p>
 								{category.description}
@@ -38,13 +38,17 @@
 					</a>
 					<div class="w-full lg:w-1/4 md:w-5/12">
 						{#if category.latestPost}
+							{@const content =
+								category.latestPost.currentContent}
 							<a
-								href="/forum/{category.id.toLowerCase()}/{category
+								href="/forum/{category.name.toLowerCase()}/{category
 									.latestPost.id}"
 								class="light-text no-underline">
 								Latest post:
 								<h3>
-									{category.latestPost.title}
+									{content.slice(0, 30)}{content.length > 30
+										? "..."
+										: ""}
 								</h3>
 							</a>
 							<span class="flex gap-2">

@@ -10,20 +10,20 @@
 	let posts = $state(data.posts)
 </script>
 
-<Head name={data.siteName} title="{data.id} - Forum" />
+<Head name={data.siteName} title="{data.name} - Forum" />
 
 <div class="ctnr max-w-200">
 	<Breadcrumbs
 		path={[
 			["Forum", "/forum"],
-			[data.id, ""]
+			[data.name, ""]
 		]} />
 
 	<h1 class="pb-8">
-		{data.id} &ndash; Forum
+		{data.name} &ndash; Forum
 		<span class="pl-6">
 			<a
-				href="/forum/create?category={data.id}"
+				href="/forum/create?category={data.name}"
 				class="btn btn-primary">
 				<fa fa-file class="pr-2"></fa>
 				Create post
@@ -37,7 +37,7 @@
 					bind:post={posts[num]}
 					{num}
 					total={posts.length}
-					categoryName={data.id} />
+					categoryName={data.name} />
 			{/each}
 		</div>
 		{#key page.url}

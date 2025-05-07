@@ -1,12 +1,17 @@
 SELECT
-	record::id(id) AS id,
 	description,
 	(SELECT
 		record::id(id) AS id,
-		title,
+		author,
 		created,
-		(SELECT status, username FROM <-created<-user)[0] AS author
-	FROM <-in<-forumPost
+		(SELECT text, updated FROM $parent.content
+		ORDER BY updated)[$].text AS currentContent
+	FROM comment
+	WHERE type = ["forum", record::id($parent.id)]
 	ORDER BY created)[$] AS latestPost,
-	count(<-in) AS postCount
+	name,
+	count(
+		SELECT 1 FROM comment
+		WHERE type = ["forum", record::id($parent.id)]
+	) AS postCount
 FROM forumCategory;

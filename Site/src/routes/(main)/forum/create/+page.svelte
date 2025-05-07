@@ -23,11 +23,11 @@
 
 <div class="ctnr pt-12 max-w-200 light-text">
 	<Form {formData} submit="Post">
-		<Input
+		<!-- <Input
 			{formData}
 			name="title"
 			label="Post title"
-			placeholder="Make sure to make it accurate" />
+			placeholder="Make sure to make it accurate" /> -->
 		<Textarea
 			{formData}
 			rows={3}
