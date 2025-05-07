@@ -6,12 +6,11 @@
 	}
 
 	export type Reply =
-		| import("../routes/(main)/forum/[category]/[post=strid]/$types").PageData["post"]["replies"][number]
-		| import("../routes/(main)/catalog/[id=integer]/[name]/$types").PageData["asset"]["replies"][number]
+		import("../routes/(main)/comment/[comment=strid]/$types").PageData["comment"]
 </script>
 
 <script lang="ts">
-	import ForumReplyMain from "$components/ForumReplyMain.svelte"
+	import CommentMain from "$components/CommentMain.svelte"
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
 
@@ -21,14 +20,14 @@
 		num,
 		depth = 0,
 		replyingTo = $bindable(),
-		postAuthorName,
-		categoryName = "",
-		postId,
+		// postAuthorName,
+		// categoryName = "",
+		// postId,
 		assetSlug = "",
-		pinnable = false,
+		// pinnable = false,
 		refreshReplies,
-		repliesCollapsed = $bindable(),
-		topLevel = true
+		repliesCollapsed = $bindable()
+		// topLevel = true
 	}: {
 		// too many exports help
 		user: UserType
@@ -36,19 +35,19 @@
 		num: number
 		depth?: number
 		replyingTo: string
-		postAuthorName: string
-		categoryName?: string
+		// postAuthorName: string
+		// categoryName?: string
 		postId: string
 		assetSlug?: string
-		pinnable?: boolean
+		// pinnable?: boolean
 		refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any>
 		repliesCollapsed: { [id: string]: boolean }
-		topLevel?: boolean
+		// topLevel?: boolean
 	} = $props()
 
-	const baseUrl = categoryName
-		? `/forum/${categoryName.toLowerCase()}/${postId}`
-		: `/catalog/${postId}/${assetSlug}`
+	// const baseUrl = categoryName
+	// 	? `/forum/${categoryName.toLowerCase()}/${postId}`
+	// 	: `/catalog/${postId}/${assetSlug}`
 
 	// Some have to be bindable to allow them to keep state, either on element/component destroy or on page change
 
@@ -57,38 +56,18 @@
 	}
 </script>
 
-{#if topLevel}
-	<a href="{baseUrl}{assetSlug ? '?tab=Comments' : ''}" class="no-underline">
-		<fa fa-arrow-left class="pr-2"></fa>
-		{#if assetSlug}
-			Back to asset
-		{:else}
-			Parent post
-		{/if}
-	</a>
-	{#if reply.parentReplyId}
-		<br />
-		<a href="{baseUrl}/{reply.parentReplyId}" class="no-underline">
-			<fa fa-arrow-up class="pr-2"></fa>
-			Parent reply
-		</a>
-	{/if}
-{/if}
-
 {#if reply && reply.author}
-	<div class={["pt-2", { flex: !topLevel }]}>
-		{#if !topLevel}
-			<span class="flex flex-col pt-2">
-				<User user={reply.author} thin size="1.5rem" />
-				<button
-					onclick={collapse(reply.id)}
-					aria-label="Collapse reply"
-					class="collapseBar {reply.pinned
-						? 'bg-green-500'
-						: 'bg-a2'} p-0 border-0 h-full mt-4 cursor-pointer">
-				</button>
-			</span>
-		{/if}
+	<div class="pt-2 flex">
+		<span class="flex flex-col pt-2">
+			<User user={reply.author} thin size="1.5rem" />
+			<button
+				onclick={collapse(reply.id)}
+				aria-label="Collapse reply"
+				class="collapseBar {reply.pinned
+					? 'bg-green-500'
+					: 'bg-a2'} p-0 border-0 h-full mt-4 cursor-pointer">
+			</button>
+		</span>
 
 		{#if repliesCollapsed?.[reply.id]}
 			<button
@@ -98,32 +77,27 @@
 				<small class="max-w-40 text-ellipsis">
 					<span class="grey-text">
 						{reply.author.username}
-						{#if reply.author.username === postAuthorName}
+						<!-- {#if reply.author.username === postAuthorName}
 							<fa
 								class={[
 									assetSlug ? "fa-hammer" : "fa-microphone",
 									"pl-1"
 								]}>
 							</fa>
-						{/if}
+						{/if} -->
 					</span>
 					- {reply.content[0].text}
 				</small>
 			</button>
 		{:else}
 			<div in:fade|global={{ num }} class="w-full">
-				<ForumReplyMain
+				<CommentMain
 					{user}
 					bind:reply
 					{depth}
 					bind:replyingTo
-					{postAuthorName}
-					{categoryName}
-					{postId}
 					{assetSlug}
 					bind:repliesCollapsed
-					{topLevel}
-					{pinnable}
 					{refreshReplies} />
 			</div>
 		{/if}

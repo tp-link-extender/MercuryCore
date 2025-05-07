@@ -5,7 +5,7 @@
 		*,
 		record::id(id) AS id,
 		(SELECT text, updated FROM $parent.content
-		ORDER BY updated DESC) AS currentContent
+		ORDER BY updated)[$].text AS currentContent
 	FROM comment
 	WHERE type = ["forum", record::id($parent.id)]
 	ORDER BY pinned DESC, score DESC

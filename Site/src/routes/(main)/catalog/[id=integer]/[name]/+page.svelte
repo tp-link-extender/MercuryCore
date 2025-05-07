@@ -2,7 +2,7 @@
 	import { applyAction } from "$app/forms"
 	import { enhance } from "$app/forms"
 	import { invalidateAll } from "$app/navigation"
-	import ForumReply from "$components/ForumReply.svelte"
+	import Comment from "$components/Comment.svelte"
 	import Head from "$components/Head.svelte"
 	import PostReply from "$components/PostReply.svelte"
 	import Tab from "$components/Tab.svelte"
@@ -170,7 +170,7 @@
 		{#key refresh}
 			{#if data.asset.replies.length > 0}
 				{#each data.asset.replies as _, num}
-					<ForumReply
+					<Comment
 						{user}
 						bind:reply={data.asset.replies[num]}
 						{num}

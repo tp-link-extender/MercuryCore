@@ -103,15 +103,11 @@
 			</em>
 		</div>
 		<a
-			href="/forum/{categoryName.toLowerCase()}/{post.id}"
+			href="/comment/{post.id}"
 			class="light-text px-4 pt-2 no-underline w-full">
-			<h2 class="pt-2">
-				{post.title}
-			</h2>
-
 			<div class="gradient w-full h-20 absolute bottom-0 left-0"></div>
-			<p class="break-all">
-				{post.content[0].text || ""}
+			<p class="break-all text-lg">
+				{post.currentContent}
 			</p>
 		</a>
 	</div>

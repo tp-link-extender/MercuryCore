@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { invalidateAll } from "$app/navigation"
 	import Breadcrumbs from "$components/Breadcrumbs.svelte"
-	import ForumReply from "$components/ForumReply.svelte"
+	import Comment from "$components/Comment.svelte"
 	import Head from "$components/Head.svelte"
 
 	let replyingTo = $state("")
@@ -27,7 +27,7 @@
 
 	{#key refresh}
 		{#each data.replies as reply, num}
-			<ForumReply
+			<Comment
 				{user}
 				bind:reply={data.replies[num]}
 				{num}

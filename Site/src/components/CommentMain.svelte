@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
+	import Comment from "$components/Comment.svelte"
+	import type { Reply, UserType } from "$components/Comment.svelte"
 	import DeleteButton from "$components/DeleteButton.svelte"
-	import ForumReply from "$components/ForumReply.svelte"
-	import type { Reply, UserType } from "$components/ForumReply.svelte"
 	import PinButton from "$components/PinButton.svelte"
 	import ReportButton from "$components/ReportButton.svelte"
 	import User from "$components/User.svelte"
@@ -12,32 +12,32 @@
 		reply = $bindable(),
 		depth = 0,
 		replyingTo = $bindable(),
-		postAuthorName,
-		categoryName = "",
-		postId,
+		// postAuthorName,
+		// categoryName = "",
+		// postId,
 		assetSlug = "",
 		repliesCollapsed = $bindable(),
-		topLevel = true,
-		pinnable = false,
+		// topLevel = true,
+		// pinnable = false,
 		refreshReplies
 	}: {
 		user: UserType
 		reply: Reply
 		depth?: number
 		replyingTo: string
-		postAuthorName: string
-		categoryName?: string
-		postId: string
+		// postAuthorName: string
+		// categoryName?: string
+		// postId: string
 		assetSlug?: string
 		repliesCollapsed: { [id: string]: boolean }
-		topLevel?: boolean
-		pinnable?: boolean
+		// topLevel?: boolean
+		// pinnable?: boolean
 		refreshReplies: import("@sveltejs/kit").SubmitFunction
 	} = $props()
 
-	const baseUrl = categoryName
-		? `forum/${categoryName.toLowerCase()}/${postId}`
-		: `catalog/${postId}/${assetSlug}`
+	// const baseUrl = categoryName
+	// 	? `forum/${categoryName.toLowerCase()}/${postId}`
+	// 	: `catalog/${postId}/${assetSlug}`
 
 	let content = $state("") // Allows current reply to not be lost on clicking to another reply
 
@@ -80,9 +80,9 @@
 				class={[
 					"userlink items-center no-underline flex flex-row font-bold",
 					{
-						[assetSlug ? "text-yellow-500" : "text-blue-600"]:
-							reply.author.username === postAuthorName,
-						"light-text": reply.author.username !== postAuthorName,
+						// [assetSlug ? "text-yellow-500" : "text-blue-600"]:
+						// 	reply.author.username === postAuthorName,
+						// "light-text": reply.author.username !== postAuthorName,
 						"opacity-33": hidden,
 						"pl-4": !topLevel
 					}
@@ -96,13 +96,13 @@
 						class="pr-4" />
 				{/if}
 				{reply.author.username}
-				{#if reply.author.username === postAuthorName}
+				<!-- {#if reply.author.username === postAuthorName}
 					<fa
 						class="{assetSlug
 							? 'fa-hammer'
 							: 'fa-microphone'} pl-2">
 					</fa>
-				{/if}
+				{/if} -->
 			</a>
 			<small class="light-text pl-6">
 				{reply.created.toLocaleString()}
@@ -154,7 +154,7 @@
 			</form>
 			{#if !hidden}
 				<a
-					href="/forum/{categoryName}/{postId}/{reply.id}"
+					href="/comment/{reply.id}"
 					onclick={e => {
 						e.preventDefault()
 						replyingTo = reply.id
@@ -175,7 +175,7 @@
 							{:else}
 								<ReportButton
 									user={reply.author.username}
-									url="/forum/{categoryName}/{postId}/{reply.id}" />
+									url="/comment/{reply.id}" />
 								{#if user.permissionLevel >= 4}
 									<DeleteButton
 										id={reply.id}
@@ -183,7 +183,7 @@
 										{refreshReplies} />
 								{/if}
 							{/if}
-							{#if pinnable && user.permissionLevel >= 4}
+							{#if user.permissionLevel >= 4}
 								<PinButton
 									{refreshReplies}
 									id={reply.id}
@@ -280,7 +280,7 @@
 </div>
 
 {#if depth > 8}
-	<a href="/{baseUrl}/{reply.id}" class="no-underline py-2">
+	<a href="/comment/{reply.id}" class="no-underline py-2">
 		<fa fa-arrow-down class="pr-2"></fa>
 		More replies
 	</a>
@@ -288,18 +288,14 @@
 
 {#each reply.replies as _, num}
 	<!-- Get READY for some RECURSION!!! -->
-	<ForumReply
+	<Comment
 		{user}
 		bind:reply={reply.replies[num]}
 		{num}
 		bind:replyingTo
-		{categoryName}
-		{postId}
 		{assetSlug}
-		{postAuthorName}
 		bind:repliesCollapsed
 		depth={depth + 1}
-		topLevel={false}
 		{refreshReplies} />
 {/each}
 

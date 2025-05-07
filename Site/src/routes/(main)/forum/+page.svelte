@@ -19,7 +19,7 @@
 				class="category card bg-darker p-4">
 				<div class="flex flex-wrap">
 					<a
-						class="flex w-full lg:w-3/4 md:w-7/12 light-text no-underline"
+						class="light-text flex w-full lg:w-3/4 md:w-7/12 no-underline"
 						href="/forum/{category.name.toLowerCase()}">
 						<div class="w-3/4">
 							<h2>
@@ -41,8 +41,7 @@
 							{@const content =
 								category.latestPost.currentContent}
 							<a
-								href="/forum/{category.name.toLowerCase()}/{category
-									.latestPost.id}"
+								href="/comment/{category.latestPost.id}"
 								class="light-text no-underline">
 								Latest post:
 								<h3>

@@ -3,23 +3,18 @@ import exclude from "$lib/server/exclude"
 import { Record, db } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import categoryQuery from "./category.surql"
+import type { PreviewPost } from "../+page.server"
 
 type Category = {
 	description: string
 	name: string
-	posts: {
-		id: string
-		author: BasicUser
-		content: {
-			text?: string
-		}[]
-		created: Date
+	posts: (PreviewPost & {
 		dislikes: boolean
 		likes: boolean
 		pinned: boolean
 		score: number
 		visibility: string
-	}[]
+	})[]
 }
 
 export async function load({ locals, params, url }) {

@@ -3,7 +3,7 @@ import exclude from "$lib/server/exclude"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, db, findWhere } from "$lib/server/surreal"
+import { Record, db } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
@@ -44,12 +44,12 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 	// const title = form.data.title.trim()
 	// if (!title) return formError(form, ["title"], ["Post must have a title"])
 
-	const limit = ratelimit(form, "forumPost", getClientAddress, 30)
-	if (limit) return limit
-
 	const unfiltered = form.data.content?.trim()
 	if (!unfiltered)
 		return formError(form, ["content"], ["Post must have content"])
+
+	const limit = ratelimit(form, "forumPost", getClientAddress, 30)
+	if (limit) return limit
 
 	const category = url.searchParams.get("category")
 	if (!category) error(400, "Missing category")
@@ -70,5 +70,5 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 	})
 	const newPostId = newPost[3] // let's hear it for newPost
 
-	redirect(302, `/forum/${category}/${newPostId}`)
+	redirect(302, `/comment/${newPostId}`)
 }
