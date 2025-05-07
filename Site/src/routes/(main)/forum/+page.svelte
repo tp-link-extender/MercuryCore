@@ -20,10 +20,10 @@
 				<div class="flex flex-wrap">
 					<a
 						class="flex w-full lg:w-3/4 md:w-7/12 light-text no-underline"
-						href="/forum/{category.name.toLowerCase()}">
+						href="/forum/{category.id.toLowerCase()}">
 						<div class="w-3/4">
 							<h2>
-								{category.name}
+								{category.id}
 							</h2>
 							<p>
 								{category.description}
@@ -39,7 +39,7 @@
 					<div class="w-full lg:w-1/4 md:w-5/12">
 						{#if category.latestPost}
 							<a
-								href="/forum/{category.name.toLowerCase()}/{category
+								href="/forum/{category.id.toLowerCase()}/{category
 									.latestPost.id}"
 								class="light-text no-underline">
 								Latest post:

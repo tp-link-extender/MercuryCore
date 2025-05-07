@@ -47,14 +47,6 @@ async function getData({ request, locals }: RequestEvent) {
 	return { user, form, error: !form.valid && formError(form) }
 }
 
-const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
-function randomRegKey() {
-	let key = ""
-	for (let i = 0; i < 20; i++)
-		key += chars[Math.floor(Math.random() * chars.length)]
-	return key
-}
-
 export const actions: import("./$types.ts").Actions = {}
 actions.create = async e => {
 	const { user, form, error } = await getData(e)
@@ -84,7 +76,7 @@ actions.create = async e => {
 	if (limit) return limit
 
 	const [result] = await db.queryRaw<unknown[]>(createQuery, {
-		regKey: Record("regKey", regKeyCustom || randomRegKey()),
+		regKeyCustom,
 		creator: Record("user", user.id),
 		expiry,
 		regKeyUses,

@@ -3,6 +3,7 @@ import { db } from "$lib/server/surreal"
 import forumQuery from "./forum.surql"
 
 type Category = {
+	id: string
 	description: string
 	latestPost: {
 		id: string
@@ -10,7 +11,6 @@ type Category = {
 		created: Date
 		title: string
 	}
-	name: string
 	postCount: number
 }
 

@@ -1,5 +1,6 @@
 (SELECT
 	*,
+	record::id(id) AS id,
 	(SELECT
 		*,
 		record::id(id) AS id,
@@ -12,14 +13,13 @@
 	FROM $parent<-in.in
 	ORDER BY pinned DESC, score DESC
 	LIMIT 15 START ($page - 1) * 15) AS posts
-OMIT id
 FROM forumCategory
-WHERE string::lowercase(name) = string::lowercase($category))[0];
+WHERE string::lowercase(record::id(id)) = string::lowercase($category))[0];
 
 math::max([
 	(SELECT
 		math::ceil(<float> count(SELECT 1 FROM $parent<-in.in) / 15) AS count
 	FROM forumCategory 
-	WHERE string::lowercase(name) = string::lowercase($category))[0].count,
+	WHERE string::lowercase(record::id(id)) = string::lowercase($category))[0].count,
 	1
 ]);

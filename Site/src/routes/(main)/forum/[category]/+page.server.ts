@@ -9,16 +9,16 @@ import categoryQuery from "./category.surql"
 import replypostQuery from "./replypost.surql"
 
 type Category = {
+	id: string
 	description: string
-	name: string
 	posts: {
+		id: string
 		author: BasicUser
 		content: {
 			text?: string
 		}[]
 		created: Date
 		dislikes: boolean
-		id: string
 		likes: boolean
 		pinned: boolean
 		score: number

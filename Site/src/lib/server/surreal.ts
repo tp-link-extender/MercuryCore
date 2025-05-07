@@ -3,7 +3,6 @@ import initQuery from "$lib/server/init.surql"
 import logo from "$lib/server/logo"
 import { error } from "@sveltejs/kit"
 import { RecordId, Surreal } from "surrealdb"
-import idQuery from "./id.surql"
 
 export const db = new Surreal()
 
@@ -130,9 +129,4 @@ export async function findWhere(
 		{ ...params, table }
 	)
 	return res
-}
-
-export async function incrementId() {
-	const [id] = await db.query<number[]>(idQuery)
-	return id.toString(36)
 }
