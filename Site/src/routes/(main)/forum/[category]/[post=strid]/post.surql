@@ -5,7 +5,7 @@ SELECT
 	count(<-likes) - count(<-dislikes) AS score,
 	$user IN <-likes<-user.id AS likes,
 	$user IN <-dislikes<-user.id AS dislikes,
-	(->in->forumCategory)[0].name AS categoryName,
+	record::id((->in->forumCategory)[0].id) AS categoryId,
 
     (SELECT
     	*,

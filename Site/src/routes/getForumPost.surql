@@ -1,3 +1,3 @@
 SELECT
-	(SELECT name FROM ->in->forumCategory) AS category
+	(SELECT record::id(id) AS id FROM ->in->forumCategory) AS category
 FROM $forumPost;

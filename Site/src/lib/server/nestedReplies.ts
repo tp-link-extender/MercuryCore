@@ -1,6 +1,6 @@
 // (previously) Functions for selecting nested forum replies or asset comments
 
-export type Replies = {
+export type Reply = {
 	id: string
 	author: BasicUser
 	content: {
@@ -16,4 +16,7 @@ export type Replies = {
 	replies: Replies
 	score: number
 	visibility: string
-}[]
+}
+
+export type Replies = Reply[]
+

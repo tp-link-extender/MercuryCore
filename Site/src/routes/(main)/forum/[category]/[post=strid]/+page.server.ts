@@ -24,7 +24,7 @@ const schema = z.object({
 
 type ForumPost = {
 	author: BasicUser
-	categoryName: string
+	categoryId: string
 	content: {
 		text: string
 		updated: string

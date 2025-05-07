@@ -25,12 +25,12 @@
 		path={[
 			["Forum", "/forum"],
 			[
-				parentPost.forumCategoryName,
-				`/forum/${parentPost.forumCategoryName}`
+				parentPost.forumCategoryId,
+				`/forum/${parentPost.forumCategoryId}`
 			],
 			[
 				parentPost.title,
-				`/forum/${parentPost.forumCategoryName}/${parentPost.id}`
+				`/forum/${parentPost.forumCategoryId}/${parentPost.id}`
 			],
 			[topReply.content[0].text, ""]
 		]} />

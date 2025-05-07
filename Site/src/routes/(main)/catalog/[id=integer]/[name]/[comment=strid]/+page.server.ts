@@ -1,5 +1,5 @@
 import { authorise } from "$lib/server/auth"
-import type { Replies } from "$lib/server/nestedReplies"
+import type { Reply } from "$lib/server/nestedReplies"
 import { Record, db } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
@@ -11,11 +11,11 @@ type Asset = {
 	creator: { username: string }
 }
 
-type AssetComment = Replies[number] & {
+interface AssetComment extends Reply {
 	parentPost: {
 		title: string
 		id: string
-		forumCategoryName: string
+		forumCategoryId: string
 	}
 }
 

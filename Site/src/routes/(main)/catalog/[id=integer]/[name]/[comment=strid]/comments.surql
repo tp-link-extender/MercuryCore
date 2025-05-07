@@ -15,8 +15,8 @@ SELECT
 	(SELECT
 		title,
 		record::id(id) AS id,
-		->in[0]->forumCategory[0].name as forumCategoryName
-	FROM $asset)[0] AS parentPost,
+		record::id(->in[0]->forumCategory[0].id) as forumCategoryId
+	FROM $asset)[0] AS parentPost, # TODO: rewrite
 
     (SELECT
     	*,

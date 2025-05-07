@@ -16,7 +16,7 @@ SELECT
 	(SELECT
 		title,
 		record::id(id) AS id,
-		->in[0]->forumCategory[0].name as forumCategoryName
+		record::id(->in[0]->forumCategory[0].id) as forumCategoryId
 	FROM $forumPost)[0] AS parentPost,
 
     fn::getReplies(id, 1, $user) AS replies

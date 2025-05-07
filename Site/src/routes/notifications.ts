@@ -33,7 +33,7 @@ async function getAssetComment(relativeId: string) {
 type ForumReply = {
 	id: string
 	parentPost: {
-		categoryName: string
+		categoryId: string
 		id: string
 	}
 }
@@ -47,7 +47,7 @@ async function getForumReply(relativeId: string) {
 
 type ForumPost = {
 	category: {
-		name: string
+		id: string
 	}
 }
 
@@ -89,7 +89,7 @@ export default async function (user: User | null) {
 				const reply = await getForumReply(i.relativeId)
 				if (!reply) break
 
-				i.link = `/forum/${reply.parentPost.categoryName.toLowerCase()}/${
+				i.link = `/forum/${reply.parentPost.categoryId.toLowerCase()}/${
 					reply.parentPost.id
 				}/${reply.id}`
 				break
@@ -100,7 +100,7 @@ export default async function (user: User | null) {
 				const post = await getForumPost(i.relativeId)
 				if (!post) break
 
-				i.link = `/forum/${post.category.name.toLowerCase()}/${
+				i.link = `/forum/${post.category.id.toLowerCase()}/${
 					i.relativeId
 				}`
 				break

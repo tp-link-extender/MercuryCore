@@ -1,16 +1,16 @@
 import { authorise } from "$lib/server/auth"
 import exclude from "$lib/server/exclude"
-import type { Replies } from "$lib/server/nestedReplies"
+import type { Reply } from "$lib/server/nestedReplies"
 import { Record, db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import postQuery from "./post.surql"
 import repliesQuery from "./replies.surql"
 
-type ForumReplies = Replies[number] & {
+interface ForumReply extends Reply {
 	parentPost: {
 		title: string
 		id: string
-		forumCategoryName: string
+		forumCategoryId: string
 	}
 }
 
@@ -24,7 +24,7 @@ export async function load({ locals, params }) {
 	)
 	if (!post) error(404, "Post not found")
 
-	const [forumReplies] = await db.query<ForumReplies[][]>(repliesQuery, {
+	const [forumReplies] = await db.query<ForumReply[][]>(repliesQuery, {
 		forumReply: Record("forumReply", params.reply),
 		forumPost: Record("forumPost", params.post),
 		user: Record("user", user.id),
