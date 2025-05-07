@@ -48,7 +48,9 @@ DEFINE TABLE OVERWRITE comment SCHEMAFULL;
 	};
 	DEFINE FIELD OVERWRITE type ON comment FLEXIBLE TYPE array;
 		# ["status"] -> status
-		# ["forum", "{category id}"] -> forum
+		# ["status", "{status id}"] -> status reply
+		# ["forum", "{category id}"] -> forum post
+		# ["forum", "{category id}", "{post id}"] -> forum post
 		# ["asset", "{asset id}"] -> asset/catalog
 	DEFINE FIELD OVERWRITE visibility ON comment TYPE string DEFAULT "Visible";
 
@@ -180,6 +182,30 @@ DEFINE FUNCTION OVERWRITE fn::auditLog($action: string, $note: string, $user: re
 
 DEFINE FUNCTION OVERWRITE fn::clampPages($count: number, $pages: number) {
 	RETURN math::max([math::ceil(<float> $count / 50), 1]);
+};
+
+DEFINE FUNCTION OVERWRITE fn::getComments($comment: record<comment>, $depth: number, $user: record<user>) {
+    IF $depth > 9 {
+        RETURN [];
+    };
+
+	RETURN SELECT
+		record::id(id) AS id,
+		author,
+		(SELECT text, updated FROM $parent.content
+		ORDER BY updated) AS content,
+		array::flatten(
+			SELECT VALUE fn::getComments($this.id, $depth + 1, $user)
+			FROM $comment<-commentLink<-comment
+		) AS comments,
+		created,
+		dislikes,
+		likes,
+		pinned,
+		score,
+		type,
+		visibility
+	FROM $comment;
 };
 
 DEFINE FUNCTION OVERWRITE fn::notify($user: record, $user2: record, $type: string, $note: string, $relativeId: any) {

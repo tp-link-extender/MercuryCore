@@ -1,7 +1,11 @@
 import { authorise } from "$lib/server/auth"
+import commentType from "$lib/server/comentType"
+import createCommentQuery from "$lib/server/createComment.surql"
+import filter from "$lib/server/filter"
+import formError from "$lib/server/formError"
+import ratelimit from "$lib/server/ratelimit"
 import { Record, db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
-import commentQuery from "./comment.surql"
 import { superValidate } from "sveltekit-superforms"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
@@ -18,28 +22,80 @@ type Comment = {
 		text: string
 		updated: Date
 	}[]
+	comments: []
 	created: Date
 	dislikes: boolean
 	likes: boolean
 	pinned: boolean
-	replies: []
 	score: number
 	type: string[]
 	visibility: string
 }
 
-
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
 
-	const [[comment]] = await db.query<Comment[][]>(commentQuery, {
-		comment: Record("comment", params.comment),
-		user: Record("user", user.id),
-	})
+	const [[comment]] = await db.query<Comment[][]>(
+		"fn::getComments($comment, 0, $user)",
+		{
+			comment: Record("comment", params.comment),
+			user: Record("user", user.id),
+		}
+	)
 	if (!comment) error(404, "Comment not found")
 
 	return {
 		comment,
-		form:  await superValidate(zod(schema))
+		form: await superValidate(zod(schema)),
 	}
+}
+
+export const actions: import("./$types").Actions = {}
+actions.comment = async ({ request, locals, params, getClientAddress }) => {
+	const { user } = await authorise(locals)
+	const form = await superValidate(request, zod(schema))
+	if (!form.valid) return formError(form)
+
+	const unfiltered = form.data.content.trim()
+	if (!unfiltered)
+		return formError(form, ["content"], ["Reply cannot be empty"])
+
+	const limit = ratelimit(form, "comment", getClientAddress, 5)
+	if (limit) return limit
+
+	const comment = Record("comment", params.comment)
+	const [getComment] = await db.query<{ authorId: string; type: string[] }[]>(
+		`
+			SELECT
+				record::id(<-createdComment[0]<-user[0].id) AS authorId,
+				type
+			FROM ONLY $comment WHERE visibility = "Visible"`,
+		{ comment }
+	)
+	if (!getComment) error(404, "Comment not found")
+
+	const { authorId, type } = getComment
+	const content = filter(unfiltered)
+
+	const [, , , , newCommentId] = await db.query<string[]>(
+		createCommentQuery,
+		{
+			comment,
+			content,
+			user: Record("user", user.id),
+			type: commentType(type, params.comment),
+		}
+	)
+
+	if (user.id !== authorId)
+		await db.query(
+			"fn::notify($sender, $receiver, $type, $note, $relativeId)",
+			{
+				sender: Record("user", user.id),
+				receiver: Record("user", authorId),
+				type: "CommentReply",
+				note: `${user.username} replied to your comment: ${content}`,
+				relativeId: newCommentId,
+			}
+		)
 }

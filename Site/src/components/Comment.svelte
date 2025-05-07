@@ -15,34 +15,34 @@
 	import fade from "$lib/fade"
 
 	let {
-		user,
-		reply = $bindable(),
-		num,
+		comment = $bindable(),
 		depth = 0,
-		replyingTo = $bindable(),
+		num,
 		// postAuthorName,
 		// categoryName = "",
 		// postId,
-		assetSlug = "",
+		// assetSlug = "",
 		// pinnable = false,
 		refreshReplies,
-		repliesCollapsed = $bindable()
+		repliesCollapsed = $bindable(),
+		replyingTo = $bindable(),
 		// topLevel = true
+		user
 	}: {
 		// too many exports help
-		user: UserType
-		reply: Reply
-		num: number
+		comment: Reply
 		depth?: number
-		replyingTo: string
+		num: number
 		// postAuthorName: string
 		// categoryName?: string
-		postId: string
-		assetSlug?: string
+		// postId: string
+		// assetSlug?: string
 		// pinnable?: boolean
 		refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any>
 		repliesCollapsed: { [id: string]: boolean }
+		replyingTo: string
 		// topLevel?: boolean
+		user: UserType
 	} = $props()
 
 	// const baseUrl = categoryName
@@ -56,27 +56,27 @@
 	}
 </script>
 
-{#if reply && reply.author}
+{#if comment && comment.author}
 	<div class="pt-2 flex">
 		<span class="flex flex-col pt-2">
-			<User user={reply.author} thin size="1.5rem" />
+			<User user={comment.author} thin size="1.5rem" />
 			<button
-				onclick={collapse(reply.id)}
+				onclick={collapse(comment.id)}
 				aria-label="Collapse reply"
-				class="collapseBar {reply.pinned
+				class="collapseBar {comment.pinned
 					? 'bg-green-500'
 					: 'bg-a2'} p-0 border-0 h-full mt-4 cursor-pointer">
 			</button>
 		</span>
 
-		{#if repliesCollapsed?.[reply.id]}
+		{#if repliesCollapsed?.[comment.id]}
 			<button
-				onclick={collapse(reply.id)}
+				onclick={collapse(comment.id)}
 				aria-label="Expand reply"
 				class="expandBar pb-2 pl-4 text-base cursor-pointer">
 				<small class="max-w-40 text-ellipsis">
 					<span class="grey-text">
-						{reply.author.username}
+						{comment.author.username}
 						<!-- {#if reply.author.username === postAuthorName}
 							<fa
 								class={[
@@ -86,18 +86,17 @@
 							</fa>
 						{/if} -->
 					</span>
-					- {reply.content[0].text}
+					- {comment.content[0].text}
 				</small>
 			</button>
 		{:else}
 			<div in:fade|global={{ num }} class="w-full">
 				<CommentMain
-					{user}
-					bind:reply
+					bind:comment
 					{depth}
-					bind:replyingTo
-					{assetSlug}
 					bind:repliesCollapsed
+					bind:replyingTo
+					{user}
 					{refreshReplies} />
 			</div>
 		{/if}

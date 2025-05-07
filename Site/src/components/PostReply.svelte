@@ -2,20 +2,14 @@
 	import { page } from "$app/state"
 
 	const {
-		comment = false,
 		formData
-	}: {
-		comment?: boolean
-		formData: import("sveltekit-superforms").SuperForm<any>
-	} = $props()
+	}: { formData: import("sveltekit-superforms").SuperForm<any> } = $props()
 
 	const { form, errors, message, constraints, enhance, delayed } = formData
 </script>
 
-<form use:enhance method="POST" action="?/reply" class="py-2">
-	<label for="content" class="light-text py-2">
-		Post a {comment ? "comment" : "reply"}
-	</label>
+<form use:enhance method="POST" action="?/comment" class="py-2">
+	<label for="content" class="light-text py-2">Post a comment</label>
 	<fieldset class="max-w-140 flex gap-4 items-end">
 		<textarea
 			bind:value={$form.content}
@@ -29,7 +23,7 @@
 			{#if $delayed}
 				Working...
 			{:else}
-				{comment ? "Comment" : "Reply"}
+				Comment
 			{/if}
 		</button>
 	</fieldset>

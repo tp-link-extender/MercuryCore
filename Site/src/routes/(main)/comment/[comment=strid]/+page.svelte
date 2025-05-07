@@ -20,19 +20,16 @@
 	const { user } = data
 
 	let comment = $state(data.comment)
-	let replies = $derived(comment.replies)
 	$effect(() => {
-		replies = comment.replies
+		comment = data.comment
 	})
 
 	async function onResult({ result }: { result: ActionResult }) {
 		if (result.type === "success") await invalidateAll()
 		// Reload the post with the data including the new reply, as the form that posted the reply didn't do that
 		comment = data.comment
-		refresh++
 	}
 	const formData = superForm(data.form, { onResult })
-	export const snapshot = formData
 
 	// let topReply = $derived(replies[0])
 	// let parentPost = $derived(topReply.parentPost)
@@ -153,28 +150,25 @@
 					</span>
 				</span>
 				<p class="break-all">
-					{comment.content[0].text || ""}
+					{comment.content[0].text}
 				</p>
 			</div>
 		</div>
-
-		<PostReply {formData} />
 	{/if}
 
-	{#key refresh}
-		{#each replies as _, num}
-			<Comment
-				user={data.user}
-				bind:reply={replies[num]}
-				{num}
-				bind:replyingTo
-				postId={data.comment.id}
-				bind:repliesCollapsed
-				refreshReplies={() =>
-					async ({ result }) => {
-						if (result.type === "success") await invalidateAll()
-						refresh++
-					}} />
-		{/each}
-	{/key}
+	<PostReply {formData} />
+
+	{#each comment.comments as _, num}
+		<Comment
+			bind:comment={comment.comments[num]}
+			{num}
+			refreshReplies={() =>
+				async ({ result }) => {
+					if (result.type === "success") await invalidateAll()
+					refresh++
+				}}
+			bind:repliesCollapsed
+			bind:replyingTo
+			user={data.user} />
+	{/each}
 </div>

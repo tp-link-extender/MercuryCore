@@ -1,4 +1,5 @@
 import { authorise } from "$lib/server/auth"
+import createCommentQuery from "$lib/server/createComment.surql"
 import exclude from "$lib/server/exclude"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
@@ -8,7 +9,6 @@ import { error, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
-import createQuery from "./create.surql"
 
 const schema = z.object({
 	// title: z.string().min(1).max(50),
@@ -48,7 +48,7 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 	if (!unfiltered)
 		return formError(form, ["content"], ["Post must have content"])
 
-	const limit = ratelimit(form, "forumPost", getClientAddress, 30)
+	const limit = ratelimit(form, "comment", getClientAddress, 30)
 	if (limit) return limit
 
 	const category = url.searchParams.get("category")
@@ -62,13 +62,15 @@ actions.default = async ({ request, locals, url, getClientAddress }) => {
 	)
 	if (!getCategory) error(404, "Category not found")
 
-	const newPost = await db.query<string[]>(createQuery, {
-		user: Record("user", user.id),
-		category: getCategory.id,
-		// title,
-		content: filter(unfiltered),
-	})
-	const newPostId = newPost[3] // let's hear it for newPost
+	const [, , , , newCommentId] = await db.query<string[]>(
+		createCommentQuery,
+		{
+			user: Record("user", user.id),
+			type: ["forum", getCategory.id],
+			// title,
+			content: filter(unfiltered),
+		}
+	)
 
-	redirect(302, `/comment/${newPostId}`)
+	redirect(302, `/comment/${newCommentId}`)
 }
