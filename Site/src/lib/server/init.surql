@@ -184,6 +184,11 @@ DEFINE FUNCTION OVERWRITE fn::clampPages($count: number, $pages: number) {
 	RETURN math::max([math::ceil(<float> $count / 50), 1]);
 };
 
+DEFINE FUNCTION OVERWRITE fn::currentContent($thing: record) {
+	RETURN (SELECT text, updated FROM $thing.content
+	ORDER BY updated)[$].text
+};
+
 DEFINE FUNCTION OVERWRITE fn::getComments($comment: record<comment>, $depth: number, $user: record<user>) {
     IF $depth > 9 {
         RETURN [];
@@ -192,8 +197,8 @@ DEFINE FUNCTION OVERWRITE fn::getComments($comment: record<comment>, $depth: num
 	RETURN SELECT
 		record::id(id) AS id,
 		author,
-		(SELECT text, updated FROM $parent.content
-		ORDER BY updated) AS content,
+		SELECT text, updated FROM $parent.content
+		ORDER BY updated DESC AS content,
 		array::flatten(
 			SELECT VALUE fn::getComments($this.id, $depth + 1, $user)
 			FROM $comment<-commentLink<-comment
@@ -201,10 +206,24 @@ DEFINE FUNCTION OVERWRITE fn::getComments($comment: record<comment>, $depth: num
 		created,
 		dislikes,
 		likes,
+		SELECT VALUE record::id(id)
+		FROM $comment->commentLink->comment AS parentId,
 		pinned,
 		score,
 		type,
-		visibility
+		visibility,
+		(IF type[0] == "forum" {
+			{
+				category: (SELECT VALUE name
+					FROM ONLY type::thing("forumCategory", type[1])),
+				post: IF type[2] {
+					(SELECT fn::currentContent(id) AS currentContent
+						FROM ONLY type::thing("comment", type[2])).currentContent
+				},
+			}
+		} ELSE IF type[0] == "asset" {
+
+		}) AS info
 	FROM $comment;
 };
 

@@ -18,7 +18,7 @@ async function reconnect() {
 			namespace: "main",
 			database: "main",
 			auth: {
-				username: "root",
+				username: "root", // security B)
 				password: "root",
 			},
 		})

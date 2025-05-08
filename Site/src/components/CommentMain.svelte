@@ -5,6 +5,8 @@
 	import DeleteButton from "$components/DeleteButton.svelte"
 	import PinButton from "$components/PinButton.svelte"
 	import ReportButton from "$components/ReportButton.svelte"
+	import { likeEnhance } from "$lib/like"
+	import CommentLike from "./CommentLike.svelte"
 
 	let {
 		comment = $bindable(),
@@ -41,34 +43,6 @@
 	let content = $state("") // Allows current reply to not be lost on clicking to another reply
 
 	let hidden = $derived(comment.visibility !== "Visible")
-
-	const likeEnhance: import("@sveltejs/kit").SubmitFunction = ({
-		formData
-	}) => {
-		const action = formData.get("action")
-
-		if (action === "like") {
-			comment.likes = true
-
-			if (comment.dislikes) comment.score++
-			comment.dislikes = false
-			comment.score++
-		} else if (action === "dislike") {
-			comment.dislikes = true
-
-			if (comment.likes) comment.score--
-			comment.likes = false
-			comment.score--
-		} else if (action === "unlike") {
-			comment.likes = false
-			comment.score--
-		} else if (action === "undislike") {
-			comment.dislikes = false
-			comment.score++
-		}
-
-		return () => {}
-	}
 </script>
 
 <div class="flex w-full">
@@ -77,7 +51,7 @@
 			<a
 				href="/user/{comment.author.username}"
 				class={[
-					"userlink items-center no-underline flex flex-row font-bold pl-4",
+					"userlink light-text items-center no-underline flex flex-row font-bold pl-4",
 					{
 						// [assetSlug ? "text-yellow-500" : "text-blue-600"]:
 						// 	reply.author.username === postAuthorName,
@@ -103,44 +77,13 @@
 		</p>
 		{#if replyingTo !== comment.id}
 			<form
-				use:enhance={likeEnhance}
+				use:enhance={likeEnhance(comment, c => {
+					comment = c
+				})}
 				method="POST"
 				action="?/like&rid={comment.id}"
 				class={["inline pr-2", { "opacity-33": hidden }]}>
-				<button
-					name="action"
-					value={comment.likes ? "unlike" : "like"}
-					aria-label={comment.likes ? "Unlike" : "Like"}
-					class="size-6 p-0 btn">
-					<fa
-						fa-thumbs-up
-						class="transition {comment.likes
-							? 'text-emerald-600 hover:text-emerald-300'
-							: 'text-neutral-600 hover:text-neutral-400'}">
-					</fa>
-				</button>
-				<span
-					class={[
-						"text-center",
-						{
-							"text-emerald-600 font-bold": comment.likes,
-							"text-red-500 font-bold": comment.dislikes
-						}
-					]}>
-					{comment.score}
-				</span>
-				<button
-					name="action"
-					value={comment.dislikes ? "undislike" : "dislike"}
-					aria-label={comment.dislikes ? "Undislike" : "Dislike"}
-					class="btn size-6 p-0">
-					<fa
-						fa-thumbs-down
-						class="transition {comment.dislikes
-							? 'text-red-500 hover:text-red-300'
-							: 'text-neutral-600 hover:text-neutral-400'}">
-					</fa>
-				</button>
+				<CommentLike {comment} small />
 			</form>
 			{#if !hidden}
 				<a
@@ -182,7 +125,9 @@
 									pinned={comment.pinned} />
 							{/if}
 							<li class="rounded-2">
-								<a class="btn pl-3 px-2 text-neutral-5" href="/comment/{comment.id}">
+								<a
+									class="btn pl-3 px-2 text-neutral-5"
+									href="/comment/{comment.id}">
 									<fa fa-link class="pr-2"></fa>
 									Link
 								</a>

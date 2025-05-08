@@ -25,9 +25,14 @@ interface Comment extends Scored {
 	}[]
 	comments: []
 	created: Date
+	parentId: string
 	pinned: boolean
 	type: string[]
 	visibility: string
+	info: {
+		category?: string
+		post?: string
+	}
 }
 
 export async function load({ locals, params }) {
@@ -41,6 +46,8 @@ export async function load({ locals, params }) {
 		}
 	)
 	if (!comment) error(404, "Comment not found")
+
+	console.log("info", comment.info)
 
 	return {
 		comment,

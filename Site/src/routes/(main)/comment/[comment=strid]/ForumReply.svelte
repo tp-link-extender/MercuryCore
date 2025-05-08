@@ -1,0 +1,75 @@
+<script lang="ts">
+	import { enhance } from "$app/forms"
+	import CommentLike from "$components/CommentLike.svelte"
+	import PinButton from "$components/PinButton.svelte"
+	import ReportButton from "$components/ReportButton.svelte"
+	import User from "$components/User.svelte"
+	import { likeEnhance } from "$lib/like"
+	import type { SubmitFunction } from "./$types"
+
+	let {
+		comment,
+		onResult,
+		user
+	}: {
+		comment: import("./$types").PageData["comment"]
+		onResult: (result: {
+			result: import("@sveltejs/kit").ActionResult
+		}) => Promise<void>
+		user: import("./$types").PageData["user"]
+	} = $props()
+
+	const refreshReplies: SubmitFunction = () => onResult
+</script>
+
+<a href="/comment/{comment.parentId}" class="no-underline">
+	<fa fa-arrow-up class="pr-2"></fa>
+	Parent comment
+</a>
+
+<div
+	class={[
+		"py-4 no-underline w-full",
+		{ "border-(solid 1px green-5)!": comment.pinned }
+	]}>
+	<div class="flex justify-between pb-4">
+		<div class="flex">
+			<User user={comment.author} full />
+			<i class="pl-4 self-center">
+				{comment.created.toLocaleString()}
+			</i>
+		</div>
+	</div>
+	<p class="break-all">
+		{comment.content[0].text}
+	</p>
+
+	<div class="flex gap-2">
+		<form
+			use:enhance={likeEnhance(comment, c => {
+				comment = c
+			})}
+			method="POST"
+			action="?/like&id={comment.id}">
+			<CommentLike {comment} small />
+		</form>
+
+		<span class="dropdown">
+			<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
+			<div class="dropdown-content pt-2">
+				<ul class="p-2 rounded-3">
+					{#if user.permissionLevel >= 4}
+						<PinButton
+							{refreshReplies}
+							id={comment.id}
+							pinned={comment.pinned}
+							post />
+					{/if}
+					<ReportButton
+						user={comment.author.username}
+						url="/comment/{comment.id}" />
+				</ul>
+			</div>
+		</span>
+	</div>
+</div>

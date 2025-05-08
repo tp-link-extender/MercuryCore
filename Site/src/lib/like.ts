@@ -6,8 +6,9 @@ export type Scored = {
 	score: number
 }
 
+// set allows for reactivity (no, renaming to like.svelte.ts doesn't work)
 export const likeEnhance =
-	(t: Scored): SubmitFunction =>
+	<T extends Scored>(t: T, set: (t: T) => void): SubmitFunction =>
 	({ formData }) => {
 		switch (formData.get("action")) {
 			case "like":
@@ -26,5 +27,6 @@ export const likeEnhance =
 				break
 		}
 
+		set(t)
 		return () => {}
 	}

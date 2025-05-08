@@ -56,7 +56,6 @@
 			}
 			case "Escape":
 				search = ""
-				break
 		}
 	}
 </script>

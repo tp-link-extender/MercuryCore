@@ -1,21 +1,19 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
+	import CommentLike from "$components/CommentLike.svelte"
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
 	import { likeEnhance } from "$lib/like"
 
-	const {
+	let {
 		post = $bindable(),
 		num,
-		total,
+		total
 	}: {
 		post: import("./$types").PageData["posts"][number]
 		num: number
 		total: number
 	} = $props()
-
-	let likesDisabled = false
-	let dislikesDisabled = false
 </script>
 
 <div
@@ -25,48 +23,13 @@
 		{ "border-(solid 1px green-5)!": post.pinned }
 	]}>
 	<form
-		use:enhance={likeEnhance(post)}
+		use:enhance={likeEnhance(post, p => {
+			post = p
+		})}
 		method="POST"
 		action="?/like&id={post.id}"
 		class="bg-a p-1 z-1">
-		<div class="flex flex-col">
-			<button
-				name="action"
-				value={post.likes ? "unlike" : "like"}
-				aria-label={post.likes ? "Unlike" : "Like"}
-				disabled={likesDisabled}
-				class="btn p-1">
-				<fa
-					fa-thumbs-up
-					class="transition text-lg {post.likes
-						? 'text-emerald-600 hover:text-emerald-300'
-						: 'text-neutral-600 hover:text-neutral-400'}">
-				</fa>
-			</button>
-			<span
-				class={[
-					"py-2 text-center",
-					{
-						"text-emerald-600 font-bold": post.likes,
-						"text-red-500 font-bold": post.dislikes
-					}
-				]}>
-				{post.score}
-			</span>
-			<button
-				name="action"
-				value={post.dislikes ? "undislike" : "dislike"}
-				aria-label={post.dislikes ? "Undislike" : "Dislike"}
-				disabled={dislikesDisabled}
-				class="btn p-1">
-				<fa
-					fa-thumbs-down
-					class="transition text-lg {post.dislikes
-						? 'text-red-500 hover:text-red-300'
-						: 'text-neutral-600 hover:text-neutral-400'}">
-				</fa>
-			</button>
-		</div>
+		<CommentLike comment={post} />
 	</form>
 	<div class="pl-2 flex flex-col w-full">
 		<div class="flex pt-4 pl-4">

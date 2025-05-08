@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
+	import CommentLike from "$components/CommentLike.svelte"
 	import PinButton from "$components/PinButton.svelte"
 	import ReportButton from "$components/ReportButton.svelte"
 	import User from "$components/User.svelte"
 	import { likeEnhance } from "$lib/like"
 	import type { SubmitFunction } from "./$types"
 
-	const {
+	let {
 		comment,
 		onResult,
 		user
@@ -27,46 +28,13 @@
 		{ "border-(solid 1px green-5)!": comment.pinned }
 	]}>
 	<form
-		use:enhance={likeEnhance(comment)}
+		use:enhance={likeEnhance(comment, c => {
+			comment = c
+		})}
 		method="POST"
 		action="?/like&id={comment.id}"
 		class="bg-a p-1 rounded-l-1">
-		<div class="flex flex-col">
-			<button
-				name="action"
-				value={comment.likes ? "unlike" : "like"}
-				aria-label={comment.likes ? "Unlike" : "Like"}
-				class="btn p-1">
-				<fa
-					fa-thumbs-up
-					class="transition text-lg {comment.likes
-						? 'text-emerald-600 hover:text-emerald-300'
-						: 'text-neutral-600 hover:text-neutral-400'}">
-				</fa>
-			</button>
-			<span
-				class={[
-					"py-2 text-center",
-					{
-						"text-emerald-600 font-bold": comment.likes,
-						"text-red-500 font-bold": comment.dislikes
-					}
-				]}>
-				{comment.score}
-			</span>
-			<button
-				name="action"
-				value={comment.dislikes ? "undislike" : "dislike"}
-				aria-label={comment.dislikes ? "Undislike" : "Dislike"}
-				class="btn p-1">
-				<fa
-					fa-thumbs-down
-					class="transition text-lg {comment.dislikes
-						? 'text-red-500 hover:text-red-300'
-						: 'text-neutral-600 hover:text-neutral-400'}">
-				</fa>
-			</button>
-		</div>
+		<CommentLike {comment} />
 	</form>
 	<div class="p-4 pl-6 no-underline w-full">
 		<div class="flex justify-between pb-4">

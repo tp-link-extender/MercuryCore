@@ -7,6 +7,7 @@
 	import type { ActionResult } from "@sveltejs/kit"
 	import { superForm } from "sveltekit-superforms"
 	import ForumPost from "./ForumPost.svelte"
+	import ForumReply from "./ForumReply.svelte"
 
 	let replyingTo = $state("")
 	let repliesCollapsed = $state({})
@@ -29,50 +30,52 @@
 
 	// let topReply = $derived(replies[0])
 	// let parentPost = $derived(topReply.parentPost)
+	let type = $derived(comment.type)
 
-	let mainType = $derived(comment.type[0])
-	let breadcrumb = $derived(
-		((): { path: [string, string][]; final: string } => {
-			if (mainType === "status")
-				return { path: [["Status", "/"]], final: "Post" }
+	const elide = (c: string) => (c.length > 50 ? `${c.slice(0, 50)}...` : c)
 
-			if (mainType === "asset")
-				return {
-					path: [
-						["Catalog", "/catalog"],
-						["Asset", "/catalog"]
-					],
-					final: "Comment"
-				}
+	function getBreadcrumb(): [string, string][] {
+		if (type[0] === "status") return [["Status", "/"]]
 
-			if (comment.type.length === 2)
-				return {
-					path: [
-						["Forum", "/forum"],
-						["Category", "/forum"]
-					],
-					final: "Post"
-				}
+		if (type[0] === "asset")
+			return [
+				["Catalog", "/catalog"],
+				["Asset", "/catalog"]
+			]
 
-			return {
-				path: [
-					["Forum", "/forum"],
-					["Category", "/forum"],
-					["Post", `/comment/${comment.id}`]
-				],
-				final: "Comment"
-			}
-		})()
-	)
+		if (comment.type.length === 2)
+			return [
+				["Forum", "/forum"],
+				[
+					comment.info.category || "Category",
+					`/forum/${comment.info.category?.toLowerCase()}`
+				]
+			]
+
+		return [
+			["Forum", "/forum"],
+			[
+				comment.info.category || "Category",
+				`/forum/${comment.info.category?.toLowerCase()}`
+			],
+			[elide(comment.info.post || "Post"), `/comment/${comment.type[2]}`]
+		]
+	}
 </script>
 
 <Head name={data.siteName} title="Comment" />
 
 <div class="ctnr max-w-280">
-	<Breadcrumbs {...breadcrumb} />
+	<Breadcrumbs
+		path={getBreadcrumb()}
+		final={elide(comment.content[0].text)} />
 
-	{#if mainType === "forum"}
-		<ForumPost {comment} {onResult} {user} />
+	{#if type[0] === "forum"}
+		{#if type.length === 2}
+			<ForumPost {comment} {onResult} {user} />
+		{:else}
+			<ForumReply {comment} {onResult} {user} />
+		{/if}
 	{/if}
 
 	<PostReply {formData} />
