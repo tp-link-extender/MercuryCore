@@ -1,19 +1,16 @@
 // we've come full circle, from lucia-sveltekit 0.3 to 0.1 to Lucia 0.3 to 1.0 to 2.0 to 3.2 to now.
 
 import { dev } from "$app/environment"
-import { Record, db } from "$lib/server/surreal"
+import { Record, type RecordId, db } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import deleteExpiredSessionsQuery from "./deleteExpiredSessions.surql"
 import deleteUserSessionsQuery from "./deleteUserSessions.surql"
 import getSessionAndUserQuery from "./getSessionAndUser.surql"
 import setSessionQuery from "./setSession.surql"
 
-export async function createSession(user: string): Promise<Session> {
-	const session = await db.query<Session[]>(setSessionQuery, {
-		user: Record("user", user),
-	})
-
-	return session[2]
+export async function createSession(user: RecordId<"user">): Promise<Session> {
+	const [, , session] = await db.query<Session[]>(setSessionQuery, { user })
+	return session
 }
 
 export async function validateSessionToken(

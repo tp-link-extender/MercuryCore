@@ -8,7 +8,7 @@ type Render = {
 	relativeId: number
 }
 
-export async function POST({ request, url, params }) {
+export async function POST({ params, request, url }) {
 	const apiKey = url.searchParams.get("apiKey")
 	if (!apiKey || apiKey !== process.env.RCC_KEY) error(403, "Stfu")
 

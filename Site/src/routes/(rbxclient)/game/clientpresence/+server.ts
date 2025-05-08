@@ -2,7 +2,7 @@ import { Record, db, find } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
 import pingQuery from "./ping.surql"
 
-export async function GET({ url, request }) {
+export async function GET({ request, url }) {
 	if (request.headers.get("user-agent") !== "Roblox/WinInet")
 		error(400, "Good one")
 

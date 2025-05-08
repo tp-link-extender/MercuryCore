@@ -158,7 +158,7 @@ async function rerender({ locals, params }: RequestEvent) {
 	error(400, "Can't rerender this type of asset")
 }
 export const actions: import("./$types").Actions = { rerender }
-actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
+actions.reply = async ({ locals, params, request, url, getClientAddress }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
@@ -211,7 +211,7 @@ actions.reply = async ({ url, request, locals, params, getClientAddress }) => {
 		like(user.id, Record("assetComment", newCommentId)),
 	])
 }
-actions.like = async ({ request, locals, params, url }) => {
+actions.like = async ({ locals, params, request, url }) => {
 	const { user } = await authorise(locals)
 	const data = await formData(request)
 	const action = data.action as LikeActions

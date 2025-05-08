@@ -10,6 +10,7 @@ import { error } from "@sveltejs/kit"
 import { superValidate } from "sveltekit-superforms"
 import { zod } from "sveltekit-superforms/adapters"
 import { z } from "zod"
+import removeCommentQuery from "./removeComment.surql"
 
 const schema = z.object({
 	content: z.string().min(1).max(1000),
@@ -47,8 +48,6 @@ export async function load({ locals, params }) {
 	)
 	if (!comment) error(404, "Comment not found")
 
-	console.log("info", comment.info)
-
 	return {
 		comment,
 		form: await superValidate(zod(schema)),
@@ -56,7 +55,7 @@ export async function load({ locals, params }) {
 }
 
 export const actions: import("./$types").Actions = {}
-actions.comment = async ({ request, locals, params, getClientAddress }) => {
+actions.comment = async ({ locals, params, request, getClientAddress }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
@@ -103,4 +102,37 @@ actions.comment = async ({ request, locals, params, getClientAddress }) => {
 				relativeId: newCommentId,
 			}
 		)
+}
+
+actions.pin = async ({ locals, params, url, getClientAddress }) => {
+	await authorise(locals, 4)
+
+	const limit = ratelimit(null, "pin", getClientAddress, 1)
+	if (limit) return limit
+
+	const [[ok]] = await db.query<1[][]>(
+		"UPDATE $comment SET pinned = $pinned RETURN VALUE 1",
+		{
+			comment: Record("comment", params.comment),
+			pinned: url.searchParams.get("set") === "true",
+		}
+	)
+	if (!ok) error(404, "Comment not found")
+}
+
+
+actions.delete = async ({ locals, params, url, getClientAddress }) => {
+	const moderate = url.searchParams.get("action") === "moderate"
+
+	const { user } = await authorise(locals, moderate ? 4 : 1)
+
+	const limit = ratelimit(null, "delete", getClientAddress, 5)
+	if (limit) return limit
+
+	const [, , [ok]] = await db.query<1[][]>(removeCommentQuery, {
+		comment: Record("comment", params.comment),
+		user: Record("user", user.id),
+		moderate,
+	})
+	if (!ok) error(404, "Comment not found")
 }

@@ -5,7 +5,6 @@
 	import ReportButton from "$components/ReportButton.svelte"
 	import User from "$components/User.svelte"
 	import { likeEnhance } from "$lib/like"
-	import type { SubmitFunction } from "./$types"
 
 	let {
 		comment,
@@ -19,7 +18,7 @@
 		user: import("./$types").PageData["user"]
 	} = $props()
 
-	const refreshReplies: SubmitFunction = () => onResult
+	const refreshReplies = () => onResult
 </script>
 
 <a href="/comment/{comment.parentId}" class="no-underline">
@@ -62,8 +61,7 @@
 						<PinButton
 							{refreshReplies}
 							id={comment.id}
-							pinned={comment.pinned}
-							post />
+							pinned={comment.pinned} />
 					{/if}
 					<ReportButton
 						user={comment.author.username}

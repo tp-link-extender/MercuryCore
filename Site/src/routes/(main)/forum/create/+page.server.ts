@@ -35,7 +35,7 @@ export async function load({ url }) {
 }
 
 export const actions: import("./$types").Actions = {}
-actions.default = async ({ request, locals, url, getClientAddress }) => {
+actions.default = async ({ locals, request, url, getClientAddress }) => {
 	exclude("Forum")
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(schema))

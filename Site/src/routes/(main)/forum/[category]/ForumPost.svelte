@@ -19,8 +19,8 @@
 <div
 	in:fade|global={{ num, total }}
 	class={[
-		"card bg-darker flex-row overflow-hidden h-40",
-		{ "border-(solid 1px green-5)!": post.pinned }
+		"card bg-darker flex-row overflow-hidden h-40 border-(1px solid)",
+		{ "border-green-5!": post.pinned }
 	]}>
 	<form
 		use:enhance={likeEnhance(post, p => {
@@ -51,7 +51,7 @@
 
 <style>
 	.card {
-		border: 1px solid var(--accent2);
+		border-color: var(--accent2);
 		transition: all 0.3s ease-out;
 		&:hover {
 			background: var(--background);

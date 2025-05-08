@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 	import CommentLike from "$components/CommentLike.svelte"
+	import DeleteButton from "$components/DeleteButton.svelte"
 	import PinButton from "$components/PinButton.svelte"
 	import ReportButton from "$components/ReportButton.svelte"
 	import User from "$components/User.svelte"
 	import { likeEnhance } from "$lib/like"
-	import type { SubmitFunction } from "./$types"
 
 	let {
 		comment,
@@ -19,13 +19,13 @@
 		user: import("./$types").PageData["user"]
 	} = $props()
 
-	const refreshReplies: SubmitFunction = () => onResult
+	const refreshReplies = () => onResult
 </script>
 
 <div
 	class={[
-		"post card bg-darker flex-row",
-		{ "border-(solid 1px green-5)!": comment.pinned }
+		"post card bg-darker flex-row border-(1px solid)",
+		{ "border-green-5!": comment.pinned }
 	]}>
 	<form
 		use:enhance={likeEnhance(comment, c => {
@@ -48,16 +48,25 @@
 				<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
 				<div class="dropdown-content pt-2">
 					<ul class="p-2 rounded-3">
+						{#if comment.author.username === user.username}
+							<DeleteButton id={comment.id} {refreshReplies} />
+						{:else}
+							<ReportButton
+								user={comment.author.username}
+								url="/comment/{comment.id}" />
+							{#if user.permissionLevel >= 4}
+								<DeleteButton
+									id={comment.id}
+									{refreshReplies}
+									moderate />
+							{/if}
+						{/if}
 						{#if user.permissionLevel >= 4}
 							<PinButton
-								{refreshReplies}
 								id={comment.id}
-								pinned={comment.pinned}
-								post />
+								{refreshReplies}
+								pinned={comment.pinned} />
 						{/if}
-						<ReportButton
-							user={comment.author.username}
-							url="/comment/{comment.id}" />
 					</ul>
 				</div>
 			</span>
@@ -67,3 +76,10 @@
 		</p>
 	</div>
 </div>
+
+<style>
+	.card {
+		border-color: var(--accent2);
+		transition: all 0.3s ease-out;
+	}
+</style>

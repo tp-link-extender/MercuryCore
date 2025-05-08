@@ -54,9 +54,9 @@ DEFINE TABLE OVERWRITE comment SCHEMAFULL;
 		# ["asset", "{asset id}"] -> asset/catalog
 	DEFINE FIELD OVERWRITE visibility ON comment TYPE string DEFAULT "Visible";
 
-DEFINE TABLE OVERWRITE commentLink SCHEMAFULL TYPE RELATION FROM comment TO comment;
+DEFINE TABLE OVERWRITE commentLink SCHEMAFULL TYPE RELATION FROM comment TO comment ENFORCED;
 
-DEFINE TABLE OVERWRITE follows SCHEMAFULL TYPE RELATION FROM user TO user;
+DEFINE TABLE OVERWRITE follows SCHEMAFULL TYPE RELATION FROM user TO user ENFORCED;
 	DEFINE FIELD OVERWRITE created ON follows TYPE datetime DEFAULT time::now();
 
 DEFINE TABLE OVERWRITE forumCategory SCHEMAFULL;
@@ -64,35 +64,35 @@ DEFINE TABLE OVERWRITE forumCategory SCHEMAFULL;
 	DEFINE FIELD OVERWRITE description ON forumCategory TYPE string;
 	DEFINE FIELD OVERWRITE name ON forumCategory TYPE string;
 
-DEFINE TABLE OVERWRITE friends SCHEMAFULL TYPE RELATION FROM user TO user;
+DEFINE TABLE OVERWRITE friends SCHEMAFULL TYPE RELATION FROM user TO user ENFORCED;
 	DEFINE FIELD OVERWRITE created ON friends TYPE datetime DEFAULT time::now();
 
 DEFINE TABLE OVERWRITE group SCHEMAFULL;
 	DEFINE FIELD OVERWRITE created ON group TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE name ON group TYPE string;
 
-DEFINE TABLE OVERWRITE hasSession SCHEMAFULL TYPE RELATION FROM user TO session;
+DEFINE TABLE OVERWRITE hasSession SCHEMAFULL TYPE RELATION FROM user TO session ENFORCED;
 
-DEFINE TABLE OVERWRITE moderation SCHEMAFULL TYPE RELATION FROM user TO user;
+DEFINE TABLE OVERWRITE moderation SCHEMAFULL TYPE RELATION FROM user TO user ENFORCED;
 	DEFINE FIELD OVERWRITE active ON moderation TYPE bool;
 	DEFINE FIELD OVERWRITE note ON moderation TYPE string;
 	DEFINE FIELD OVERWRITE time ON moderation TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE timeEnds ON moderation TYPE datetime;
 	DEFINE FIELD OVERWRITE type ON moderation TYPE string;
 
-DEFINE TABLE OVERWRITE notification SCHEMAFULL TYPE RELATION FROM user TO user;
+DEFINE TABLE OVERWRITE notification SCHEMAFULL TYPE RELATION FROM user TO user ENFORCED;
 	DEFINE FIELD OVERWRITE created ON notification TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE note ON notification TYPE string;
 	DEFINE FIELD OVERWRITE read ON notification TYPE bool;
 	DEFINE FIELD OVERWRITE relativeId ON notification TYPE any;
 	DEFINE FIELD OVERWRITE type ON notification TYPE string;
 
-DEFINE TABLE OVERWRITE ownsAsset SCHEMAFULL TYPE RELATION FROM user TO asset;
+DEFINE TABLE OVERWRITE ownsAsset SCHEMAFULL TYPE RELATION FROM user TO asset ENFORCED;
 	DEFINE FIELD OVERWRITE created ON ownsAsset TYPE datetime DEFAULT time::now();
 
 DEFINE TABLE OVERWRITE ownsGroup SCHEMAFULL TYPE RELATION FROM user TO group;
 
-DEFINE TABLE OVERWRITE ownsPlace SCHEMAFULL TYPE RELATION FROM user TO place;
+DEFINE TABLE OVERWRITE ownsPlace SCHEMAFULL TYPE RELATION FROM user TO place ENFORCED;
 
 DEFINE TABLE OVERWRITE place SCHEMAFULL;
 	DEFINE FIELD OVERWRITE created ON place TYPE datetime DEFAULT time::now();
@@ -123,13 +123,13 @@ DEFINE TABLE OVERWRITE render SCHEMAFULL;
 	DEFINE FIELD OVERWRITE status ON render TYPE string DEFAULT "Pending";
 	DEFINE FIELD OVERWRITE type ON render TYPE string;
 
-DEFINE TABLE OVERWRITE report SCHEMAFULL TYPE RELATION FROM user TO user;
+DEFINE TABLE OVERWRITE report SCHEMAFULL TYPE RELATION FROM user TO user ENFORCED;
 	DEFINE FIELD OVERWRITE category ON report TYPE string;
 	DEFINE FIELD OVERWRITE note ON report TYPE string;
 	DEFINE FIELD OVERWRITE time ON report TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE url ON report TYPE string;
 
-DEFINE TABLE OVERWRITE request SCHEMAFULL TYPE RELATION FROM user TO user;
+DEFINE TABLE OVERWRITE request SCHEMAFULL TYPE RELATION FROM user TO user ENFORCED;
 	DEFINE FIELD OVERWRITE created ON request TYPE datetime DEFAULT time::now();
 
 DEFINE TABLE OVERWRITE session SCHEMAFULL;
@@ -170,7 +170,7 @@ DEFINE TABLE OVERWRITE user SCHEMAFULL;
 DEFINE INDEX IF NOT EXISTS usernameI ON user COLUMNS username UNIQUE;
 DEFINE INDEX IF NOT EXISTS emailI ON user COLUMNS email UNIQUE;
 
-DEFINE TABLE OVERWRITE used SCHEMAFULL TYPE RELATION FROM user TO regKey;
+DEFINE TABLE OVERWRITE used SCHEMAFULL TYPE RELATION FROM user TO regKey ENFORCED;
 
 DEFINE FUNCTION OVERWRITE fn::auditLog($action: string, $note: string, $user: record) {
 	CREATE auditLog CONTENT {
@@ -236,6 +236,8 @@ DEFINE FUNCTION OVERWRITE fn::notify($user: record, $user2: record, $type: strin
 	};
 };
 
+# Events are mad awesome but they result in bugs that are FUCKING IMPOSSIBLE TO TRACK DOWN
+# IF SOMETHING INSANE IS HAPPENING TO THE DATABASE THE CAUSE IS PROBABLY HERE
 DEFINE EVENT OVERWRITE bannerCreateLog ON TABLE banner
 WHEN $event = "CREATE" THEN
 	fn::auditLog("Administration", string::concat('Create banner "', $after.body, '"'), $after.creator);
@@ -245,9 +247,6 @@ WHEN $event = "UPDATE" AND !$before.deleted AND $after.deleted THEN
 DEFINE EVENT OVERWRITE regKeyCreateLog ON TABLE regKey
 WHEN $event = "CREATE" THEN
 	fn::auditLog("Administration", string::concat("Create registration key ", record::id($after.id)), $after.creator);
-DEFINE EVENT OVERWRITE regKeyDisableLog ON TABLE regKey
-WHEN $event = "UPDATE" AND $after.usesLeft = 0 THEN
-	fn::auditLog("Administration", string::concat("Disable registration key ", record::id($after.id)), $after.disabledBy);
 
 # separation of concerns, maaaan
 

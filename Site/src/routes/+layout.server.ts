@@ -11,7 +11,7 @@ type Banner = {
 	textLight: boolean
 }
 
-export async function load({ request, locals }) {
+export async function load({ locals, request }) {
 	const { user } = locals
 	// No authorise() function call, as we don't want to redirect to login page if not logged in
 

@@ -33,7 +33,7 @@ const errors: { [_: string]: string } = Object.freeze({
 })
 
 export const actions: import("./$types").Actions = {}
-actions.default = async ({ request, locals }) => {
+actions.default = async ({ locals, request }) => {
 	exclude("Groups")
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(schema))

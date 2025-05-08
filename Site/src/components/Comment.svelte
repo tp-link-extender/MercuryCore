@@ -12,6 +12,7 @@
 <script lang="ts">
 	import CommentMain from "$components/CommentMain.svelte"
 	import User from "$components/User.svelte"
+	import { slide } from "svelte/transition"
 	import fade from "$lib/fade"
 
 	let {
@@ -57,7 +58,7 @@
 </script>
 
 {#if comment && comment.author}
-	<div class="pt-2 flex">
+	<div class="pt-4 flex" in:fade|global={{ num }}>
 		<span class="flex flex-col pt-2">
 			<User user={comment.author} thin size="1.5rem" />
 			<button
@@ -70,14 +71,15 @@
 		</span>
 
 		{#if repliesCollapsed?.[comment.id]}
+			<!-- delay transition in -->
 			<button
+				in:fade={{ delay: 350, duration: 150 }}
 				onclick={collapse(comment.id)}
 				aria-label="Expand reply"
-				class="expandBar pb-2 pl-4 text-base cursor-pointer">
-				<small class="max-w-40 text-ellipsis">
-					<span class="grey-text">
-						{comment.author.username}
-						<!-- {#if reply.author.username === postAuthorName}
+				class="expandBar justify-center pl-4 text-sm cursor-pointer text-left max-h-10 overflow-hidden">
+				<span class="grey-text">
+					{comment.author.username}
+					<!-- {#if reply.author.username === postAuthorName}
 							<fa
 								class={[
 									assetSlug ? "fa-hammer" : "fa-microphone",
@@ -85,12 +87,11 @@
 								]}>
 							</fa>
 						{/if} -->
-					</span>
-					- {comment.content[0].text}
-				</small>
+				</span>
+				- {comment.content[0].text}
 			</button>
 		{:else}
-			<div in:fade|global={{ num }} class="w-full">
+			<div transition:slide class="min-w-full pe-10">
 				<CommentMain
 					bind:comment
 					{depth}

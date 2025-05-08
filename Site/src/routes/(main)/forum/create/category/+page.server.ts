@@ -21,7 +21,7 @@ export async function load({ locals }) {
 }
 
 export const actions: import("./$types").Actions = {}
-actions.default = async ({ request, locals, getClientAddress }) => {
+actions.default = async ({ locals, request, getClientAddress }) => {
 	exclude("Forum")
 	await authorise(locals, 5)
 	const form = await superValidate(request, zod(schema))

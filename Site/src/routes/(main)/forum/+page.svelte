@@ -25,9 +25,7 @@
 							<h2>
 								{category.name}
 							</h2>
-							<p>
-								{category.description}
-							</p>
+							{category.description}
 						</div>
 						<h3 class="w-1/4">
 							{category.postCount || "No"} post{category.postCount ==

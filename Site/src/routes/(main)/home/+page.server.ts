@@ -58,7 +58,7 @@ export async function load({ locals }) {
 }
 
 export const actions: import("./$types").Actions = {}
-actions.default = async ({ request, locals, getClientAddress }) => {
+actions.default = async ({ locals, request, getClientAddress }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)

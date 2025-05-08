@@ -213,7 +213,7 @@ export async function load({ locals, url }) {
 
 export const actions: import("./$types").Actions = {}
 const intRegex2 = /\d+/
-actions.autopilot = async ({ request, locals }) => {
+actions.autopilot = async ({ locals, request }) => {
 	await authorise(locals, 3)
 	const form = await superValidate(request, zod(schemaAuto))
 	if (!form.valid) return formError(form)

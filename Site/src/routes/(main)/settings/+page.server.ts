@@ -29,7 +29,7 @@ export const load = async () => ({
 })
 
 export const actions: import("./$types").Actions = {}
-actions.profile = async ({ request, locals }) => {
+actions.profile = async ({ locals, request }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(profileSchema))
 	if (!form.valid) return formError(form)
@@ -44,7 +44,7 @@ actions.profile = async ({ request, locals }) => {
 
 	return message(form, "Profile updated successfully!")
 }
-actions.password = async ({ request, locals }) => {
+actions.password = async ({ locals, request }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(passwordSchema))
 	if (!form.valid) return formError(form)
@@ -73,7 +73,7 @@ actions.password = async ({ request, locals }) => {
 
 	return message(form, "Password updated successfully!")
 }
-actions.styling = async ({ request, locals }) => {
+actions.styling = async ({ locals, request }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(stylingSchema))
 	if (!form.valid) return formError(form)

@@ -38,7 +38,7 @@ async function bannerActiveCount() {
 	return banners
 }
 
-async function getData({ request, locals }: RequestEvent) {
+async function getData({ locals, request }: RequestEvent) {
 	const { user } = await authorise(locals, 5)
 	const form = await superValidate(request, zod(schema))
 

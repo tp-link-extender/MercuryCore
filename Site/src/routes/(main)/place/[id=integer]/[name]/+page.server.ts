@@ -47,7 +47,7 @@ type Playing = {
 
 const thumbnails = config.Images.DefaultPlaceThumbnails
 
-export async function load({ url, locals, params }) {
+export async function load({ locals, params, url }) {
 	const { user } = await authorise(locals)
 	const privateServerCode = url.searchParams.get("privateServer")
 	const id = +params.id
@@ -73,7 +73,7 @@ export async function load({ url, locals, params }) {
 }
 
 export const actions: import("./$types").Actions = {}
-actions.like = async ({ url, request, locals, params }) => {
+actions.like = async ({ locals, params, request, url }) => {
 	const { user } = await authorise(locals)
 	const data = await formData(request)
 	const action = data.action as LikeActions
@@ -91,7 +91,7 @@ actions.like = async ({ url, request, locals, params }) => {
 
 	await likeLikesActions[action](user.id, Record("place", id))
 }
-actions.join = async ({ request, locals }) => {
+actions.join = async ({ locals, request }) => {
 	const { user } = await authorise(locals)
 	const data = await formData(request)
 	const serverId = +data.serverId

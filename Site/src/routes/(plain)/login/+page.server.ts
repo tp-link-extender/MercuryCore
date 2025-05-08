@@ -1,7 +1,7 @@
 import { cookieName, cookieOptions, createSession } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
-import { db } from "$lib/server/surreal"
+import { db, type RecordId } from "$lib/server/surreal"
 import { redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
@@ -46,7 +46,7 @@ actions.default = async ({ request, cookies }) => {
 
 	const [[user]] = await db.query<
 		{
-			id: string
+			id: RecordId<"user">
 			hashedPassword: string
 		}[][]
 	>(userQuery, { username })
