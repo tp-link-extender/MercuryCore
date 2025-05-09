@@ -39,19 +39,16 @@
 			</i>
 		</div>
 	</div>
-	<p class="break-all">
+	<p class="break-all whitespace-pre-line">
 		{comment.content[0].text}
 	</p>
 
 	<div class="flex gap-2">
-		<form
-			use:enhance={likeEnhance(comment, c => {
+		<CommentLike
+			{comment}
+			likeEnhance={likeEnhance(comment, c => {
 				comment = c
-			})}
-			method="POST"
-			action="?/like&id={comment.id}">
-			<CommentLike {comment} small />
-		</form>
+			})} />
 
 		<span class="dropdown">
 			<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>

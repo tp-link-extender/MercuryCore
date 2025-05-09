@@ -103,7 +103,6 @@ actions.comment = async ({ locals, params, request, getClientAddress }) => {
 			}
 		)
 }
-
 actions.pin = async ({ locals, params, url, getClientAddress }) => {
 	await authorise(locals, 4)
 
@@ -119,8 +118,6 @@ actions.pin = async ({ locals, params, url, getClientAddress }) => {
 	)
 	if (!ok) error(404, "Comment not found")
 }
-
-
 actions.delete = async ({ locals, params, url, getClientAddress }) => {
 	const moderate = url.searchParams.get("action") === "moderate"
 

@@ -24,7 +24,6 @@ export const likeEnhance =
 			case "unlike":
 				if (t.likes) t.score--
 				t.likes = false
-				break
 		}
 
 		set(t)

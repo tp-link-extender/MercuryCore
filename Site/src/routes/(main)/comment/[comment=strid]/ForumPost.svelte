@@ -27,15 +27,12 @@
 		"post card bg-darker flex-row border-(1px solid)",
 		{ "border-green-5!": comment.pinned }
 	]}>
-	<form
-		use:enhance={likeEnhance(comment, c => {
+	<CommentLike
+		class="bg-a p-1 rounded-l-1"
+		{comment}
+		likeEnhance={likeEnhance(comment, c => {
 			comment = c
-		})}
-		method="POST"
-		action="?/like&id={comment.id}"
-		class="bg-a p-1 rounded-l-1">
-		<CommentLike {comment} />
-	</form>
+		})} />
 	<div class="p-4 pl-6 no-underline w-full">
 		<div class="flex justify-between pb-4">
 			<div class="flex">
@@ -71,7 +68,7 @@
 				</div>
 			</span>
 		</div>
-		<p class="break-all">
+		<p class="break-all whitespace-pre-line">
 			{comment.content[0].text}
 		</p>
 	</div>

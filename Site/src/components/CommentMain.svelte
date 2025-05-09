@@ -71,19 +71,17 @@
 			{comment.created.toLocaleString()}
 		</small>
 	</div>
-	<p class={["py-2 m-0 break-all", { "opacity-33": hidden }]}>
+	<p class={["py-2 m-0 break-all whitespace-pre-line", { "opacity-33": hidden }]}>
 		{comment.content[0].text}
 	</p>
 	{#if replyingTo !== comment.id}
-		<form
-			use:enhance={likeEnhance(comment, c => {
+		<CommentLike
+			class={["inline pr-2", { "opacity-33": hidden }]}
+			{comment}
+			likeEnhance={likeEnhance(comment, c => {
 				comment = c
 			})}
-			method="POST"
-			action="?/like&rid={comment.id}"
-			class={["inline pr-2", { "opacity-33": hidden }]}>
-			<CommentLike {comment} small />
-		</form>
+			small />
 		{#if !hidden}
 			<a
 				href="/comment/{comment.id}"

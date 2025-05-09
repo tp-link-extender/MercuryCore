@@ -22,15 +22,12 @@
 		"card bg-darker flex-row overflow-hidden h-40 border-(1px solid)",
 		{ "border-green-5!": post.pinned }
 	]}>
-	<form
-		use:enhance={likeEnhance(post, p => {
-			post = p
-		})}
-		method="POST"
-		action="?/like&id={post.id}"
-		class="bg-a p-1 z-1">
-		<CommentLike comment={post} />
-	</form>
+	<CommentLike
+		class="bg-a p-1 z-1"
+		comment={post}
+		likeEnhance={likeEnhance(post, c => {
+			post = c
+		})} />
 	<div class="pl-2 flex flex-col w-full">
 		<div class="flex pt-4 pl-4">
 			<User user={post.author} full />
@@ -42,7 +39,7 @@
 			href="/comment/{post.id}"
 			class="light-text px-4 pt-2 no-underline w-full">
 			<div class="gradient w-full h-20 absolute bottom-0 left-0"></div>
-			<p class="break-all text-lg">
+			<p class="break-all text-lg whitespace-pre-line">
 				{post.currentContent}
 			</p>
 		</a>
