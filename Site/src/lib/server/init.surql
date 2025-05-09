@@ -143,7 +143,7 @@ DEFINE TABLE OVERWRITE session SCHEMAFULL;
 	DEFINE FIELD OVERWRITE expiresAt ON session TYPE datetime;
 
 DEFINE TABLE OVERWRITE stuff SCHEMALESS;
-IF stuff:increment == NULL {
+IF !stuff:increment {
 	CREATE stuff:increment CONTENT {
 		asset: 0,
 		ping: {

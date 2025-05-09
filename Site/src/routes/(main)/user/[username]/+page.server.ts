@@ -64,7 +64,7 @@ export async function load({ locals, params }) {
 		...params,
 		user: Record("user", user.id),
 	})
-	if (!userExists) error(404, "Not found")
+	if (!userExists) error(404, "Not Found")
 
 	return userExists
 }

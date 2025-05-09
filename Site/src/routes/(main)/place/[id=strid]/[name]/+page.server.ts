@@ -50,7 +50,7 @@ const thumbnails = config.Images.DefaultPlaceThumbnails
 export async function load({ locals, params, url }) {
 	const { user } = await authorise(locals)
 	const privateServerCode = url.searchParams.get("privateServer")
-	const id = +params.id
+	const { id } = params
 	const [[place]] = await db.query<Place[][]>(placeQuery, {
 		user: Record("user", user.id),
 		place: Record("place", id),
@@ -69,32 +69,15 @@ export async function load({ locals, params, url }) {
 	if (!couldMatch(place.name, params.name))
 		redirect(302, `/place/${id}/${slug}`)
 
-	return { slug, place, thumbnails: [id % thumbnails.length] }
+	const idHash = Bun.hash.crc32(id)
+	return { slug, place, thumbnails: [idHash % thumbnails.length] }
 }
 
 export const actions: import("./$types").Actions = {}
-actions.like = async ({ locals, params, request, url }) => {
-	const { user } = await authorise(locals)
-	const data = await formData(request)
-	const action = data.action as LikeActions
-	const privateTicket = url.searchParams.get("privateTicket")
-
-	const id = +params.id
-	const [[place]] = await db.query<FoundPlace[][]>(findPlaceQuery, {
-		place: Record("place", id),
-	})
-	if (
-		!place ||
-		(place.privateServer && privateTicket !== place.privateTicket)
-	)
-		error(404, "Place not found")
-
-	await likeLikesActions[action](user.id, Record("place", id))
-}
 actions.join = async ({ locals, request }) => {
 	const { user } = await authorise(locals)
 	const data = await formData(request)
-	const serverId = +data.serverId
+	const serverId = data.serverId
 
 	if (!serverId) error(400, "Invalid Request")
 	if (!(await find("place", serverId))) error(404, "Place not found")

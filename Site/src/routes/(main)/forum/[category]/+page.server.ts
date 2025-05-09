@@ -32,7 +32,7 @@ export async function load({ locals, params, url }) {
 			user: Record("user", user.id),
 		}
 	)
-	if (!category) error(404, "Not found")
+	if (!category) error(404, "Not Found")
 	if (page > pages) redirect(303, `/forum/${params.category}?p=${pages}`)
 
 	return { ...category, pages }

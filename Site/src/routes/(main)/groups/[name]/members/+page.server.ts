@@ -14,6 +14,6 @@ type Group = {
 export async function load({ params }) {
 	exclude("Groups")
 	const [[group]] = await db.query<Group[][]>(membersQuery, params)
-	if (!group) error(404, "Not found")
+	if (!group) error(404, "Not Found")
 	return group
 }

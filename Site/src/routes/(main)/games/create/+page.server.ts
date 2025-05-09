@@ -26,7 +26,7 @@ const schema = z.object({
 })
 
 async function placeCount(id: string) {
-	const [[{ count }]] = await db.query<{ count: number }[][]>(countQuery, {
+	const [[count]] = await db.query<number[][]>(countQuery, {
 		user: Record("user", id),
 	})
 	return count
@@ -40,6 +40,15 @@ export async function load() {
 		// count: await placeCount((await authorise(locals)).user.id),
 		price: price.value,
 	}
+}
+
+// lel again
+function randomId(): string {
+	const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
+	let id = ""
+	for (let i = 0; i < 20; i++)
+		id += chars[Math.floor(Math.random() * chars.length)]
+	return id
 }
 
 export const actions: import("./$types").Actions = {}
@@ -66,20 +75,15 @@ actions.default = async ({ locals, request }) => {
 			["You can't have more than two places"]
 		)
 
-	const [id] = await db.query<number[]>(
-		"(UPDATE ONLY stuff:increment SET asset += 1).asset"
-	)
 	const slug = encode(name)
+	const id = randomId() // still, find a better way stat
 
 	const created = await createPlace(user.id, id, name, slug)
-	if (!created.ok) {
-		await db.query("UPDATE ONLY stuff:increment SET asset -= 1") // fuck, find a better way stat
-		return formError(form, ["other"], [created.msg])
-	}
+	if (!created.ok) return formError(form, ["other"], [created.msg])
 
 	await db.query(createQuery, {
-		user: Record("user", user.id),
 		id,
+		user: Record("user", user.id),
 		name: filter(name),
 		description: filter(description),
 		serverAddress,

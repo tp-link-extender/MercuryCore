@@ -1,4 +1,4 @@
-LET $place = CREATE place CONTENT {
+LET $place = CREATE ONLY place CONTENT {
 	id: $id,
 	description: [{
 		text: $description,

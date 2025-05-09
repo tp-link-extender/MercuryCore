@@ -64,7 +64,7 @@ export async function load({ locals, params }) {
 		asset: Record("asset", id),
 		user: Record("user", user.id),
 	})
-	if (!asset || !asset.creator) error(404, "Not found")
+	if (!asset || !asset.creator) error(404, "Not Found")
 
 	const slug = encode(asset.name)
 	if (!couldMatch(asset.name, params.name))
@@ -141,7 +141,7 @@ async function rerender({ locals, params }: RequestEvent) {
 	const [[asset]] = await db.query<FoundAsset[][]>(findAssetQuery, {
 		asset: Record("asset", id),
 	})
-	if (!asset) error(404, "Not found")
+	if (!asset) error(404, "Not Found")
 	if (asset.visibility === "Moderated")
 		error(400, "Can't rerender a moderated asset")
 
@@ -244,7 +244,7 @@ actions.buy = async e => {
 		user: Record("user", user.id),
 		asset: Record("asset", id),
 	})
-	if (!asset) error(404, "Not found")
+	if (!asset) error(404, "Not Found")
 	if (asset.owned) error(400, "You already own this item")
 	if (asset.visibility !== "Visible")
 		error(400, "This item hasn't been approved yet")

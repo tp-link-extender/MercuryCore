@@ -17,7 +17,7 @@ export async function GET({ locals, params }) {
 	const [[asset]] = await db.query<Asset[][]>(assetQuery, {
 		asset: Record("asset", id),
 	})
-	if (!asset) error(404, "Not found")
+	if (!asset) error(404, "Not Found")
 
 	if (asset.visibility === "Moderated") redirect(302, "/moderated.svg")
 	// If the asset is pending review

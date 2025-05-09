@@ -145,7 +145,7 @@ export async function createAsset(
 
 export async function createPlace(
 	To: string,
-	id: number,
+	id: string,
 	name: string,
 	slug: string
 ): Promise<ReturnErr> {
@@ -156,7 +156,7 @@ export async function createPlace(
 		price.value,
 		`Created place ${name}`,
 		`/place/${id}/${slug}`,
-		[id]
+		[]
 	)
 }
 

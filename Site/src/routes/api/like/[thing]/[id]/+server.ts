@@ -15,7 +15,7 @@ const queries = Object.freeze({
 } as const)
 const actions = Object.keys(queries) as (keyof typeof queries)[]
 
-export async function POST({ locals, params, request }) {
+export async function POST({ locals, params, request, url }) {
 	const { user } = await authorise(locals)
 
 	const data = await request.formData()
@@ -28,13 +28,24 @@ export async function POST({ locals, params, request }) {
 	const t = thing as (typeof things)[number]
 	if (!things.includes(t)) error(400, "Invalid thing")
 
-	const thingId = t === "place" ? +id : id
-	const qParams = {
-		user: Record("user", user.id),
-		thing: Record(t, thingId),
+	if (thing === "place") {
+		const [ok] = await db.query<boolean[]>(
+			`
+				SELECT VALUE !privateServer OR privateTicket == $ticket
+				FROM ONLY $place`,
+			{
+				place: Record("place", id),
+				ticket: url.searchParams.get("privateTicket"),
+			}
+		)
+
+		if (!ok) error(404, "Not Found")
 	}
 
-	await db.query(queries[action], qParams)
+	await db.query(queries[action], {
+		user: Record("user", user.id),
+		thing: Record(t, id),
+	})
 
 	return new Response()
 }

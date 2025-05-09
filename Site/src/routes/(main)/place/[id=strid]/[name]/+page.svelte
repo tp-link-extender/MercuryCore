@@ -7,6 +7,7 @@
 	import TabNav from "$components/TabNav.svelte"
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
+	import { likeEnhance } from "$lib/like"
 	import Autopilot from "./Autopilot.svelte"
 	import Thumbnails from "./Thumbnails.svelte"
 	import customProtocol from "./customprotocol.ts"
@@ -16,16 +17,15 @@
 	const { user } = data
 
 	let place = $state(data.place)
-
 	let online = $derived(place.serverPing > Date.now() / 1000 - 35)
 
-	const statistics = [
+	const statistics = $derived([
 		// ["Activity", "0 visits"],
 		["Created", new Date(place.created).toLocaleDateString()],
 		["Updated", new Date(place.updated).toLocaleDateString()],
 		["Server limit", place.maxPlayers],
 		["Now playing", place.players.length]
-	]
+	])
 
 	// Place Launcher
 
@@ -47,7 +47,9 @@
 		)
 	}
 
-	const loadCommand = `dofile "http://${data.domain}/game/host?ticket=${place.serverTicket}"`
+	let loadCommand = $derived(
+		`dofile "http://${data.domain}/game/host?ticket=${place.serverTicket}"`
+	)
 
 	async function placeLauncher() {
 		installed = true
@@ -78,32 +80,6 @@
 		TabData(data.url, ["Manual", "Autopilot"], undefined, "tab2")
 	)
 	let copiedSuccess = $state(false)
-
-	const likeEnhance: import("./$types").SubmitFunction = ({ formData }) => {
-		const action = formData.get("action")
-
-		if (action === "like") {
-			place.likes = true
-
-			if (place.dislikes) place.dislikeCount--
-			place.dislikes = false
-			place.likeCount++
-		} else if (action === "dislike") {
-			place.dislikes = true
-
-			if (place.likes) place.likeCount--
-			place.likes = false
-			place.dislikeCount++
-		} else if (action === "unlike") {
-			place.likes = false
-			place.likeCount--
-		} else if (action === "undislike") {
-			place.dislikes = false
-			place.dislikeCount--
-		}
-
-		return () => {}
-	}
 </script>
 
 <Head name={data.siteName} title={place.name} />
@@ -177,9 +153,11 @@
 				</button>
 
 				<form
-					use:enhance={likeEnhance}
+					use:enhance={likeEnhance(place, p => {
+						place = p
+					})}
 					method="POST"
-					action="?/like&privateTicket={place.privateTicket}"
+					action="/api/like/place/{place.id}?privateTicket={place.privateTicket}"
 					class="w-full pt-4 px-0 pb-2">
 					<div class="flex justify-between pb-2">
 						<button
@@ -242,8 +220,7 @@
 								: "s"}
 						</span>
 						<span class="px-2">
-							{place.dislikeCount} dislike{place.dislikeCount ==
-							1
+							{place.dislikeCount} dislike{place.dislikeCount == 1
 								? ""
 								: "s"}
 						</span>
@@ -376,8 +353,7 @@
 			</span>
 		{:else if installed}
 			<span class="text-xl pt-6">
-				Get ready to join "{place.name}" by {place.ownerUser
-					?.username}!
+				Get ready to join "{place.name}" by {place.ownerUser?.username}!
 			</span>
 		{:else}
 			<span class="text-xl pt-6">
