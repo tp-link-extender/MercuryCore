@@ -48,7 +48,8 @@
 			{comment}
 			likeEnhance={likeEnhance(comment, c => {
 				comment = c
-			})} />
+			})}
+			small />
 
 		<span class="dropdown">
 			<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>

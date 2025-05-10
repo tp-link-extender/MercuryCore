@@ -71,7 +71,11 @@
 			{comment.created.toLocaleString()}
 		</small>
 	</div>
-	<p class={["py-2 m-0 break-all whitespace-pre-line", { "opacity-33": hidden }]}>
+	<p
+		class={[
+			"py-2 m-0 break-all whitespace-pre-line",
+			{ "opacity-33": hidden }
+		]}>
 		{comment.content[0].text}
 	</p>
 	{#if replyingTo !== comment.id}
@@ -89,10 +93,7 @@
 					e.preventDefault()
 					replyingTo = comment.id
 				}}
-				class={[
-					"btn btn-sm p-0 px-1 text-neutral-5 hover:text-neutral-300",
-					{ "opacity-33": hidden }
-				]}>
+				class="btn btn-sm p-0 px-1 text-neutral-5 hover:text-neutral-300">
 				<fa fa-message class="pr-2"></fa>
 				Reply
 			</a>

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
 	import CommentLike from "$components/CommentLike.svelte"
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
@@ -14,6 +13,8 @@
 		num: number
 		total: number
 	} = $props()
+
+	let hidden = $derived(post.visibility !== "Visible")
 </script>
 
 <div
@@ -23,12 +24,12 @@
 		{ "border-green-5!": post.pinned }
 	]}>
 	<CommentLike
-		class="bg-a p-1 z-1"
+		class={["bg-a p-1 z-1", { "opacity-33": hidden }]}
 		comment={post}
 		likeEnhance={likeEnhance(post, c => {
 			post = c
 		})} />
-	<div class="pl-2 flex flex-col w-full">
+	<div class={["pl-2 flex flex-col w-full", { "opacity-33": hidden }]}>
 		<div class="flex pt-4 pl-4">
 			<User user={post.author} full />
 			<em class="light-text pl-4 self-center">
