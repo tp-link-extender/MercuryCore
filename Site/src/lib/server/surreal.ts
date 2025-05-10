@@ -2,7 +2,7 @@ import { building } from "$app/environment"
 import initQuery from "$lib/server/init.surql"
 import logo from "$lib/server/logo"
 import { error } from "@sveltejs/kit"
-import { RecordId, Surreal } from "surrealdb"
+import { type QueryParameters, RecordId, Surreal } from "surrealdb"
 
 export const db = new Surreal()
 
@@ -33,7 +33,7 @@ async function reconnect() {
 export type { RecordId } from "surrealdb"
 
 type RecordIdTypes = {
-	asset: number
+	asset: string
 	assetCache: [number, number]
 	auditLog: string
 	banner: string
@@ -126,4 +126,25 @@ export async function findWhere(
 		{ ...params, table }
 	)
 	return res
+}
+
+/**
+ * Runs a set of SurrealQL statements against the database.
+ * Identical to db.query(), but provides an improved set of error messages for large queries.
+ * @param query - Specifies the SurrealQL statements.
+ * @param bindings - Assigns variables which can be used in the query.
+ */
+export async function bigQuery<T extends unknown[]>(...args: QueryParameters) {
+	const raw = await db.queryRaw<T>(...args)
+	const errors = raw.filter(({ status }) => status === "ERR")
+	if (errors.length > 0) {
+		const errorMessages = errors
+			.map(({ result }, i) => `[${i}]: ${result}`)
+			.join("\n")
+		throw new Error(`SurrealDB query error:\n${errorMessages}`)
+	}
+
+	return raw.map(({ status, result }) => {
+		return result
+	}) as T
 }

@@ -19,7 +19,7 @@ import { error, fail, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
-import type { RequestEvent } from "./$types.d.ts"
+import type { RequestEvent } from "./$types.ts"
 import assetQuery from "./asset.surql"
 import buyQuery from "./buy.surql"
 import createCommentQuery from "./createComment.surql"
@@ -59,7 +59,7 @@ const failTexts = Object.freeze(["Bruh", "Okay", "Aight", "Rip", "Aw man..."])
 
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
-	const id = +params.id
+	const { id } = params
 	const [[asset]] = await db.query<Asset[][]>(assetQuery, {
 		asset: Record("asset", id),
 		user: Record("user", user.id),
@@ -88,7 +88,7 @@ export async function load({ locals, params }) {
 
 async function getBuyData(e: RequestEvent) {
 	const { user } = await authorise(e.locals)
-	const id = +e.params.id
+	const { id } = e.params
 	const assetExists = await find("asset", id)
 	if (!assetExists) error(404)
 
@@ -132,7 +132,7 @@ const pinComment = (pinned: boolean) => async (e: RequestEvent) => {
 async function rerender({ locals, params }: RequestEvent) {
 	await authorise(locals, 5)
 
-	const id = +params.id
+	const { id } = params
 	type FoundAsset = {
 		name: string
 		type: number
@@ -157,7 +157,7 @@ async function rerender({ locals, params }: RequestEvent) {
 
 	error(400, "Can't rerender this type of asset")
 }
-export const actions: import("./$types").Actions = { rerender }
+export const actions: import("./$types.ts").Actions = { rerender }
 actions.reply = async ({ locals, params, request, url, getClientAddress }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(schema))
@@ -174,7 +174,7 @@ actions.reply = async ({ locals, params, request, url, getClientAddress }) => {
 	const limit = ratelimit(form, "assetComment", getClientAddress, 5)
 	if (limit) return limit
 
-	const id = +params.id
+	const { id } = params.id
 	const assetOrComment = commentId
 		? Record("assetComment", commentId)
 		: Record("asset", id)
@@ -219,7 +219,7 @@ actions.like = async ({ locals, params, request, url }) => {
 	if (!commentId) error(400, "Missing comment id") // Asset likes not yet implemented
 	if (commentId && !idRegex.test(commentId)) error(400, "Invalid comment id")
 
-	const id = +params.id
+	const { id } = params
 	if (!(await find("asset", id))) error(404, "Asset not found")
 	if (!(await find("assetComment", commentId)))
 		error(404, "Asset coment not found")

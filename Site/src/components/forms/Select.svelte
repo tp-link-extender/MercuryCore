@@ -30,7 +30,9 @@
 	} = $props()
 
 	const mOptions = [
-		{ value: "", label: "Select an option" },
+		// Value does NOT work as an empty string
+		// (ask me how I know!)
+		{ value: null as unknown as string, label: "Select an option" },
 		...options.map(([value, label]) => ({ value, label }))
 	]
 	const mSelected = selected
@@ -98,10 +100,8 @@
 					id={name}
 					multiple
 					class="hidden">
-					{#each mOptions as { value, label }}
-						<option {value} selected>
-							{label}
-						</option>
+					{#each mOptions as { value }}
+						<option {value} selected={$isSelected(value)}></option>
 					{/each}
 				</select>
 			{/if}

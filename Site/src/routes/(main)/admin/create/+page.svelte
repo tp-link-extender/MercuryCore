@@ -10,6 +10,7 @@
 	import Textarea from "$components/forms/Textarea.svelte"
 	import types from "$lib/assetTypes"
 	import fade from "$lib/fade"
+	import SuperDebug from "sveltekit-superforms"
 	import { superForm } from "sveltekit-superforms/client"
 
 	const { data } = $props()
@@ -135,11 +136,12 @@
 							Found {sharedAssets.length} shared assets related to
 							{data.assetId}
 						{:else}
-							No versions found for asset {data.assetId}
+							No versions found for shared assets related to {data.assetId}
 						{/if}
 					{/await}
 				</p>
 			{/if}
+
 			<Form
 				formData={formDataAutopilot}
 				method={data.stage === 3 ? "POST" : "GET"}
@@ -188,11 +190,11 @@
 						{#if sharedAssets && sharedAssets.length > 0}
 							<div in:fade|global>
 								<Select
-									multiple
 									formData={formDataAutopilot}
 									options={sharedAssets.map(a => [a, a])}
 									name="shared"
-									label="Shared assets" />
+									label="Shared assets"
+									multiple />
 							</div>
 						{/if}
 					{/await}
