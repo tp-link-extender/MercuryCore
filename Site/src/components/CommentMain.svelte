@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
 	import Comment from "$components/Comment.svelte"
-	import type { Reply, UserType } from "$components/Comment.svelte"
+	import type { UserType } from "$components/Comment.svelte"
 	import DeleteButton from "$components/DeleteButton.svelte"
 	import PinButton from "$components/PinButton.svelte"
 	import ReportButton from "$components/ReportButton.svelte"
+	import type { Comment as CommentType } from "$lib/comment"
 	import { likeEnhance } from "$lib/like"
 	import { refreshComments } from "$lib/refreshComments"
 	import CommentLike from "./CommentLike.svelte"
@@ -13,31 +14,17 @@
 		comment = $bindable(),
 		depth = 0,
 		// postAuthorName,
-		// categoryName = "",
-		// postId,
-		// assetSlug = "",
-		repliesCollapsed = $bindable(),
+		commentsCollapsed = $bindable(),
 		replyingTo = $bindable(),
-		// topLevel = true,
-		// pinnable = false,
 		user
 	}: {
-		comment: Reply
+		comment: CommentType
 		depth?: number
 		// postAuthorName: string
-		// categoryName?: string
-		// postId: string
-		// assetSlug?: string
-		repliesCollapsed: { [id: string]: boolean }
+		commentsCollapsed: { [id: string]: boolean }
 		replyingTo: string
-		// topLevel?: boolean
-		// pinnable?: boolean
 		user: UserType
 	} = $props()
-
-	// const baseUrl = categoryName
-	// 	? `forum/${categoryName.toLowerCase()}/${postId}`
-	// 	: `catalog/${postId}/${assetSlug}`
 
 	let content = $state("") // Allows current reply to not be lost on clicking to another reply
 
@@ -173,7 +160,7 @@
 {#if depth > 8}
 	<a href="/comment/{comment.id}" class="no-underline py-2">
 		<fa fa-arrow-down class="pr-2"></fa>
-		More replies
+		More comments
 	</a>
 {/if}
 
@@ -183,7 +170,7 @@
 		bind:comment={comment.comments[num]}
 		depth={depth + 1}
 		{num}
-		bind:repliesCollapsed
+		bind:commentsCollapsed
 		bind:replyingTo
 		{user} />
 {/each}

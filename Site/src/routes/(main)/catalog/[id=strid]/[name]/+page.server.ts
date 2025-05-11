@@ -1,5 +1,5 @@
+import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
-import type { Comment } from "$lib/server/commentType.ts"
 import createCommentQuery from "$lib/server/createComment.surql"
 import {
 	economyConnFailed,
@@ -154,11 +154,10 @@ actions.comment = async ({ locals, params, request, getClientAddress }) => {
 
 	if (user.id !== creatorId)
 		await db.query(
-			"fn::notify($sender, $receiver, $type, $note, $relativeId)",
+			`fn::notify($sender, $receiver, "AssetComment", $note, $relativeId)`,
 			{
 				sender: Record("user", user.id),
 				receiver: Record("user", creatorId),
-				type: "AsssetComment",
 				note: `${user.username} commented on your asset: ${content}`,
 				relativeId: newCommentId,
 			}

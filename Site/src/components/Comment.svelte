@@ -4,9 +4,6 @@
 		permissionLevel: number
 		status: "Playing" | "Online" | "Offline"
 	}
-
-	export type Reply =
-		import("../routes/(main)/comment/[comment=strid]/$types").PageData["comment"]
 </script>
 
 <script lang="ts">
@@ -14,44 +11,29 @@
 	import User from "$components/User.svelte"
 	import { slide } from "svelte/transition"
 	import fade from "$lib/fade"
+	import type { Comment } from "$lib/comment"
 
+	// Some have to be bindable to allow them to keep state, either on element/component destroy or on page change
 	let {
 		comment = $bindable(),
 		depth = 0,
 		num,
 		// postAuthorName,
-		// categoryName = "",
-		// postId,
-		// assetSlug = "",
-		// pinnable = false,
-		repliesCollapsed = $bindable(),
+		commentsCollapsed = $bindable(),
 		replyingTo = $bindable(),
-		// topLevel = true
 		user
 	}: {
-		// too many exports help
-		comment: Reply
+		comment: Comment
 		depth?: number
 		num: number
 		// postAuthorName: string
-		// categoryName?: string
-		// postId: string
-		// assetSlug?: string
-		// pinnable?: boolean
-		repliesCollapsed: { [id: string]: boolean }
+		commentsCollapsed: { [id: string]: boolean }
 		replyingTo: string
-		// topLevel?: boolean
 		user: UserType
 	} = $props()
 
-	// const baseUrl = categoryName
-	// 	? `/forum/${categoryName.toLowerCase()}/${postId}`
-	// 	: `/catalog/${postId}/${assetSlug}`
-
-	// Some have to be bindable to allow them to keep state, either on element/component destroy or on page change
-
 	const collapse = (id: string) => () => {
-		repliesCollapsed[id] = !repliesCollapsed[id]
+		commentsCollapsed[id] = !commentsCollapsed[id]
 	}
 </script>
 
@@ -68,7 +50,7 @@
 			</button>
 		</span>
 
-		{#if repliesCollapsed?.[comment.id]}
+		{#if commentsCollapsed?.[comment.id]}
 			<!-- delay transition in -->
 			<button
 				in:fade={{ delay: 350, duration: 150 }}
@@ -93,7 +75,7 @@
 				<CommentMain
 					bind:comment
 					{depth}
-					bind:repliesCollapsed
+					bind:commentsCollapsed
 					bind:replyingTo
 					{user} />
 			</div>

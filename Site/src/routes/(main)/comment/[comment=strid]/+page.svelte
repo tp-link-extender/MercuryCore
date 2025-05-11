@@ -10,7 +10,7 @@
 	import ForumReply from "./ForumReply.svelte"
 
 	let replyingTo = $state("")
-	let repliesCollapsed = $state({})
+	let commentsCollapsed = $state({})
 
 	const { data } = $props()
 
@@ -86,7 +86,7 @@
 			<Comment
 				bind:comment={comments[num]}
 				{num}
-				bind:repliesCollapsed
+				bind:commentsCollapsed
 				bind:replyingTo
 				{user} />
 		{/each}

@@ -13,7 +13,7 @@
 	import { superForm } from "sveltekit-superforms/client"
 
 	let replyingTo = $state("")
-	let repliesCollapsed = $state({})
+	let commentsCollapsed = $state({})
 
 	const { data, form } = $props()
 
@@ -168,7 +168,7 @@
 				<Comment
 					bind:comment={comments[num]}
 					{num}
-					bind:repliesCollapsed
+					bind:commentsCollapsed
 					bind:replyingTo
 					{user} />
 			{/each}

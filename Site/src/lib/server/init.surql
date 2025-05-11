@@ -47,8 +47,8 @@ DEFINE TABLE OVERWRITE comment SCHEMAFULL;
 		count(<-likes) - count(<-dislikes)
 	};
 	DEFINE FIELD OVERWRITE type ON comment FLEXIBLE TYPE array;
-		# ["status"] -> status update
-		# ["status", "{status id}"] -> status update comment
+		# ["status"] -> status post
+		# ["status", "{status id}"] -> status post comment
 		# ["forum", "{category id}"] -> forum post
 		# ["forum", "{category id}", "{post id}"] -> forum post comment
 		# ["asset", "{asset id}"] -> asset comment
@@ -91,7 +91,7 @@ DEFINE TABLE OVERWRITE notification SCHEMAFULL TYPE RELATION FROM user TO user E
 	DEFINE FIELD OVERWRITE created ON notification TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE note ON notification TYPE string;
 	DEFINE FIELD OVERWRITE read ON notification TYPE bool;
-	DEFINE FIELD OVERWRITE relativeId ON notification TYPE any;
+	DEFINE FIELD OVERWRITE relativeId ON notification TYPE string;
 	DEFINE FIELD OVERWRITE type ON notification TYPE string;
 
 DEFINE TABLE OVERWRITE ownsAsset SCHEMAFULL TYPE RELATION FROM user TO asset ENFORCED;
@@ -233,8 +233,8 @@ DEFINE FUNCTION OVERWRITE fn::getComments($comment: record<comment>, $depth: num
 	FROM $comment;
 };
 
-DEFINE FUNCTION OVERWRITE fn::notify($user: record, $user2: record, $type: string, $note: string, $relativeId: any) {
-	RETURN RELATE $user->notification->$user2 CONTENT {
+DEFINE FUNCTION OVERWRITE fn::notify($sender: record, $receiver: record, $type: string, $note: string, $relativeId: string) {
+	RETURN RELATE $sender->notification->$receiver CONTENT {
 		note: $note,
 		read: false,
 		relativeId: $relativeId,

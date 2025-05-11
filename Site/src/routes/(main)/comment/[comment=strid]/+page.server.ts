@@ -1,5 +1,6 @@
+import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
-import { type Comment, commentType } from "$lib/server/commentType"
+import commentType from "$lib/server/commentType"
 import createCommentQuery from "$lib/server/createComment.surql"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
@@ -73,11 +74,10 @@ actions.comment = async ({ locals, params, request, getClientAddress }) => {
 
 	if (user.id !== creatorId)
 		await db.query(
-			"fn::notify($sender, $receiver, $type, $note, $relativeId)",
+			`fn::notify($sender, $receiver, "CommentReply", $note, $relativeId)`,
 			{
 				sender: Record("user", user.id),
 				receiver: Record("user", creatorId),
-				type: "CommentReply",
 				note: `${user.username} replied to your comment: ${content}`,
 				relativeId: newCommentId,
 			}
