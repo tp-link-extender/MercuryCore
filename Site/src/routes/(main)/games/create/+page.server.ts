@@ -10,6 +10,7 @@ import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import countQuery from "./count.surql"
 import createQuery from "./create.surql"
+import { randomId } from "$lib/server/id"
 
 const schema = z.object({
 	name: z.string().min(3).max(50),
@@ -40,15 +41,6 @@ export async function load() {
 		// count: await placeCount((await authorise(locals)).user.id),
 		price: price.value,
 	}
-}
-
-// lel again
-function randomId(): string {
-	const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
-	let id = ""
-	for (let i = 0; i < 20; i++)
-		id += chars[Math.floor(Math.random() * chars.length)]
-	return id
 }
 
 export const actions: import("./$types").Actions = {}

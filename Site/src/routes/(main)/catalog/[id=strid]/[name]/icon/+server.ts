@@ -13,7 +13,7 @@ type Asset = {
 
 export async function GET({ locals, params }) {
 	const { user } = await authorise(locals)
-	const id = +params.id
+	const { id } = params
 	const [[asset]] = await db.query<Asset[][]>(assetQuery, {
 		asset: Record("asset", id),
 	})

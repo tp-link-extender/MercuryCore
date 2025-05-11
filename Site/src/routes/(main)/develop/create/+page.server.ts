@@ -2,6 +2,7 @@ import fs from "node:fs"
 import { authorise } from "$lib/server/auth"
 import { createAsset, getAssetPrice } from "$lib/server/economy"
 import formError from "$lib/server/formError"
+import { randomId } from "$lib/server/id"
 import {
 	clothingAsset,
 	imageAsset,
@@ -74,7 +75,7 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 	if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
 	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
 
-	let saveImages: ((id: number) => Promise<number> | Promise<void>)[] = []
+	let saveImages: ((id: string) => Promise<number> | Promise<void>)[] = []
 
 	try {
 		switch (assetType) {
@@ -88,7 +89,7 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 			case 11: // Shirt
 			case 12: // Pants
 				saveImages[0] = await clothingAsset(asset)
-				saveImages[1] = (id: number) => requestRender("Clothing", id)
+				saveImages[1] = (id: string) => requestRender("Clothing", id)
 				break
 
 			case 13: // Decal
@@ -119,17 +120,12 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 		return formError(form, ["asset"], ["Asset failed to upload"])
 	}
 
-	const [id] = await db.query<number[]>(
-		"(UPDATE ONLY stuff:increment SET asset += 2).asset"
-	)
-	const imageAssetId = id - 1 // LOL, concurrency problems Solved!
-
 	const slug = encode(name)
+	const imageAssetId = randomId()
+	const id = randomId()
+
 	const created = await createAsset(user.id, id, name, slug)
-	if (!created.ok) {
-		await db.query("UPDATE ONLY stuff:increment SET asset -= 2")
-		return formError(form, ["other"], [created.msg])
-	}
+	if (!created.ok) return formError(form, ["other"], [created.msg])
 
 	await db.query(createAssetQuery, {
 		name,
