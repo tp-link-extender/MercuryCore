@@ -93,7 +93,7 @@ actions.register = async ({ request, cookies }) => {
 			)
 	}
 
-	const [, user, test] = await db.query<RecordId<"user">[]>(createUserQuery, {
+	const [, user] = await db.query<RecordId<"user">[]>(createUserQuery, {
 		username,
 		email,
 		// I still love scrypt, though argon2 is better supported

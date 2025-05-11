@@ -14,12 +14,12 @@ type Render = {
 /**
  * Requests a render from RCCService
  * @param renderType The type of render to request, "Clothing", "Avatar", "Model", or "Mesh".
- * @param relativeId If "Avatar", the number of the user to render their avatar, otherwise the id of the asset to render.
+ * @param relativeId If "Avatar", the id of the user to render their avatar, otherwise the id of the asset to render.
  * @param wait Whether to wait for the render to be completed before resolving.
  */
 export default async function (
 	renderType: RenderType,
-	relativeId: string | number,
+	relativeId: string,
 	wait = false
 ) {
 	const params = { renderType, relativeId }

@@ -60,10 +60,6 @@ type RecordIdTypes = {
 	recentlyWorn: string
 	regKey: string
 	render: string
-	replyToAsset: string
-	replyToComment: string
-	replyToPost: string
-	replyToReply: string
 	report: string
 	request: string
 	session: string

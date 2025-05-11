@@ -11,8 +11,8 @@
 	const colours = Object.freeze({
 		Account: "text-sky-500",
 		Administration: "text-red-500",
-		Moderation: "text-emerald-500",
-		Economy: "text-yellow-500"
+		Economy: "text-yellow-500",
+		Moderation: "text-emerald-500"
 	})
 </script>
 

@@ -3,7 +3,7 @@ import { db } from "$lib/server/surreal"
 import logsQuery from "./logs.surql"
 
 type Log = {
-	action: "Account" | "Administration" | "Moderation" | "Economy"
+	action: "Account" | "Administration" | "Economy" | "Moderation"
 	created: Date
 	note: string
 	user: BasicUser

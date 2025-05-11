@@ -126,7 +126,7 @@ DEFINE TABLE OVERWRITE regKey SCHEMAFULL;
 DEFINE TABLE OVERWRITE render SCHEMAFULL;
 	DEFINE FIELD OVERWRITE created ON render TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE completed ON render TYPE option<datetime>; # hmm...
-	DEFINE FIELD OVERWRITE relativeId ON render TYPE any; # todo: uh
+	DEFINE FIELD OVERWRITE relativeId ON render TYPE string;
 	DEFINE FIELD OVERWRITE status ON render TYPE string DEFAULT "Pending";
 	DEFINE FIELD OVERWRITE type ON render TYPE string;
 
