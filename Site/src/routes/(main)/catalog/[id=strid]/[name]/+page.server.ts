@@ -1,5 +1,6 @@
-import { idRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/auth"
+import type { Comment } from "$lib/server/commentType.ts"
+import createCommentQuery from "$lib/server/createComment.surql"
 import {
 	economyConnFailed,
 	getBalance,
@@ -7,10 +8,7 @@ import {
 	transact,
 } from "$lib/server/economy"
 import filter from "$lib/server/filter"
-import formData from "$lib/server/formData"
 import formError from "$lib/server/formError"
-import { type LikeActions, like, likeScoreActions } from "$lib/server/like"
-import type { Replies } from "$lib/server/nestedReplies"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { Record, db, find } from "$lib/server/surreal"
@@ -22,9 +20,7 @@ import { z } from "zod"
 import type { RequestEvent } from "./$types.ts"
 import assetQuery from "./asset.surql"
 import buyQuery from "./buy.surql"
-import createCommentQuery from "./createComment.surql"
 import findAssetQuery from "./findAsset.surql"
-import updateVisibilityQuery from "./updateVisibility.surql"
 
 const schema = z.object({
 	content: z.string().min(1).max(1000),
@@ -32,17 +28,17 @@ const schema = z.object({
 })
 
 type Asset = {
+	id: string
+	comments: Comment[]
 	created: Date
 	creator: BasicUser
 	description: {
 		text: string
 		updated: Date
 	}
-	id: string
 	name: string
 	owned: boolean
 	price: number
-	replies: Replies
 	sold: number
 	type: number
 	visibility: string
@@ -95,39 +91,6 @@ async function getBuyData(e: RequestEvent) {
 	return { user, id }
 }
 
-async function findComment<T>(
-	e: RequestEvent,
-	permissionLevel?: number,
-	input = "SELECT 1 FROM $assetComment"
-) {
-	const { locals, url } = e
-	const { user } = await authorise(locals, permissionLevel)
-
-	const id = url.searchParams.get("id")
-	if (!id) error(400, "Missing comment id")
-	// Prevents incorrect ids erroring the Surreal query as well
-	if (!idRegex.test(id)) error(400, "Invalid comment id")
-
-	const [[comment]] = await db.query<T[][]>(input, {
-		assetComment: Record("assetComment", id),
-	})
-	if (!comment) error(404, "Comment not found")
-
-	return { user, comment, id }
-}
-
-const updateVisibility = (visibility: string, text: string, id: string) =>
-	db.query(updateVisibilityQuery, {
-		assetComment: Record("assetComment", id),
-		text,
-		visibility,
-	})
-
-const pinComment = (pinned: boolean) => async (e: RequestEvent) => {
-	const { id } = await findComment(e, 4)
-	db.merge(Record("assetComment", id), { pinned })
-}
-
 // actions that return things are here because of sveltekit typescript limitations
 async function rerender({ locals, params }: RequestEvent) {
 	await authorise(locals, 5)
@@ -158,74 +121,48 @@ async function rerender({ locals, params }: RequestEvent) {
 	error(400, "Can't rerender this type of asset")
 }
 export const actions: import("./$types.ts").Actions = { rerender }
-actions.reply = async ({ locals, params, request, url, getClientAddress }) => {
+actions.comment = async ({ locals, params, request, getClientAddress }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
 
-	// If there is a commentId, it is a reply to another comment
-	const commentId = url.searchParams.get("rid")
-	if (commentId && !idRegex.test(commentId)) error(400, "Invalid comment id")
-
 	const unfiltered = form.data.content.trim()
 	if (!unfiltered)
-		return formError(form, ["content"], ["Comment cannot be empty"])
+		return formError(form, ["content"], ["Comment must have content"])
 
-	const limit = ratelimit(form, "assetComment", getClientAddress, 5)
+	const limit = ratelimit(form, "comment", getClientAddress, 5)
 	if (limit) return limit
 
-	const { id } = params.id
-	const assetOrComment = commentId
-		? Record("assetComment", commentId)
-		: Record("asset", id)
-	const [[commentAuthor]] = await db.query<{ id: string }[][]>(
-		"SELECT record::id(id) AS id FROM $assetOrComment<-created<-user",
-		{ assetOrComment }
-	)
-	if (commentId && !commentAuthor) error(404)
-
-	const receiverId = commentAuthor?.id || ""
-
-	const newComment = await db.query<string[]>(createCommentQuery, {
-		content: filter(unfiltered),
-		user: Record("user", user.id),
-		asset: Record("asset", id),
-		commentId: commentId ? Record("assetComment", commentId) : undefined,
-	})
-	const newCommentId = newComment[4]
-
-	await Promise.all([
-		user.id !== receiverId &&
-			db.query(
-				"fn::notify($sender, $receiver, $type, $note, $relativeId)",
-				{
-					sender: Record("user", user.id),
-					receiver: Record("user", receiverId),
-					type: commentId ? "AssetCommentReply" : "AssetComment",
-					note: commentId
-						? `${user.username} replied to your comment: ${unfiltered}`
-						: `${user.username} commented on your asset: ${unfiltered}`,
-					relativeId: newCommentId,
-				}
-			),
-		like(user.id, Record("assetComment", newCommentId)),
-	])
-}
-actions.like = async ({ locals, params, request, url }) => {
-	const { user } = await authorise(locals)
-	const data = await formData(request)
-	const action = data.action as LikeActions
-	const commentId = url.searchParams.get("rid")
-	if (!commentId) error(400, "Missing comment id") // Asset likes not yet implemented
-	if (commentId && !idRegex.test(commentId)) error(400, "Invalid comment id")
-
 	const { id } = params
-	if (!(await find("asset", id))) error(404, "Asset not found")
-	if (!(await find("assetComment", commentId)))
-		error(404, "Asset coment not found")
+	const [getAsset] = await db.query<{ creatorId: string }[]>(
+		`
+			SELECT
+				record::id(<-created[0]<-user[0].id) AS creatorId
+			FROM ONLY $asset WHERE visibility = "Visible"`,
+		{ asset: Record("asset", id) }
+	)
+	if (!getAsset) error(404)
 
-	// const type = commentId ? "assetComment" : "asset"
-	await likeScoreActions[action](user.id, Record("assetComment", commentId))
+	const { creatorId } = getAsset
+	const content = filter(unfiltered)
+
+	const [, newCommentId] = await db.query<string[]>(createCommentQuery, {
+		content,
+		type: ["asset", id],
+		user: Record("user", user.id),
+	})
+
+	if (user.id !== creatorId)
+		await db.query(
+			"fn::notify($sender, $receiver, $type, $note, $relativeId)",
+			{
+				sender: Record("user", user.id),
+				receiver: Record("user", creatorId),
+				type: "AsssetComment",
+				note: `${user.username} commented on your asset: ${content}`,
+				relativeId: newCommentId,
+			}
+		)
 }
 actions.buy = async e => {
 	const { user, id } = await getBuyData(e)
@@ -257,7 +194,7 @@ actions.buy = async e => {
 			asset.price,
 			`Purchased asset ${asset.name}`,
 			`/catalog/${id}/${asset.name}`,
-			[id]
+			[]
 		)
 		if (!tx.ok) error(400, tx.msg)
 	}
@@ -279,28 +216,3 @@ actions.buy = async e => {
 			),
 	])
 }
-actions.delete = async e => {
-	const { user, comment, id } = await findComment<{
-		authorId: string
-		visibility: string
-	}>(
-		e,
-		undefined,
-		`
-			SELECT
-				record::id((<-created<-user.id)[0]) AS authorId,
-				visibility
-			FROM $assetComment`
-	)
-	if (comment.authorId !== user.id)
-		error(403, "You cannot delete someone else's comment")
-	if (comment.visibility !== "Visible") error(400, "Comment already deleted")
-
-	await updateVisibility("Deleted", "[deleted]", id)
-}
-actions.moderate = async e => {
-	const { id } = await findComment(e, 4)
-	await updateVisibility("Moderated", "[removed]", id)
-}
-actions.pin = pinComment(true)
-actions.unpin = pinComment(false)

@@ -47,11 +47,12 @@ DEFINE TABLE OVERWRITE comment SCHEMAFULL;
 		count(<-likes) - count(<-dislikes)
 	};
 	DEFINE FIELD OVERWRITE type ON comment FLEXIBLE TYPE array;
-		# ["status"] -> status
-		# ["status", "{status id}"] -> status reply
+		# ["status"] -> status update
+		# ["status", "{status id}"] -> status update comment
 		# ["forum", "{category id}"] -> forum post
-		# ["forum", "{category id}", "{post id}"] -> forum post
-		# ["asset", "{asset id}"] -> asset/catalog
+		# ["forum", "{category id}", "{post id}"] -> forum post comment
+		# ["asset", "{asset id}"] -> asset comment
+		# ["asset", "{asset id}", "{comment id}"] -> asset comment comment
 	DEFINE FIELD OVERWRITE visibility ON comment TYPE string DEFAULT "Visible";
 
 DEFINE TABLE OVERWRITE commentLink SCHEMAFULL TYPE RELATION FROM comment TO comment ENFORCED;
@@ -198,8 +199,12 @@ DEFINE FUNCTION OVERWRITE fn::getComments($comment: record<comment>, $depth: num
 		SELECT text, updated FROM $parent.content
 		ORDER BY updated DESC AS content,
 		array::flatten(
-			SELECT VALUE fn::getComments($this.id, $depth + 1, $user)
+			(SELECT 
+				fn::getComments($this.id, $depth + 1, $user) AS comments,
+				pinned,
+				score
 			FROM $comment<-commentLink<-comment
+			ORDER BY pinned DESC, score DESC).comments
 		) AS comments,
 		created,
 		dislikes,
@@ -220,7 +225,10 @@ DEFINE FUNCTION OVERWRITE fn::getComments($comment: record<comment>, $depth: num
 				},
 			}
 		} ELSE IF type[0] == "asset" {
-
+			{
+				asset: (SELECT VALUE name
+					FROM ONLY type::thing("asset", type[1])),
+			}
 		}) AS info
 	FROM $comment;
 };

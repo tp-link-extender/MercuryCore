@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
 	import CommentLike from "$components/CommentLike.svelte"
 	import DeleteButton from "$components/DeleteButton.svelte"
 	import PinButton from "$components/PinButton.svelte"
@@ -19,7 +18,7 @@
 		user: import("./$types").PageData["user"]
 	} = $props()
 
-	const refreshReplies = () => onResult
+	const refreshComments = () => onResult
 </script>
 
 <div
@@ -46,22 +45,19 @@
 				<div class="dropdown-content pt-2">
 					<ul class="p-2 rounded-3">
 						{#if comment.author.username === user.username}
-							<DeleteButton id={comment.id} {refreshReplies} />
+							<DeleteButton id={comment.id} />
 						{:else}
 							<ReportButton
 								user={comment.author.username}
 								url="/comment/{comment.id}" />
 							{#if user.permissionLevel >= 4}
-								<DeleteButton
-									id={comment.id}
-									{refreshReplies}
-									moderate />
+								<DeleteButton id={comment.id} moderate />
 							{/if}
 						{/if}
 						{#if user.permissionLevel >= 4}
 							<PinButton
 								id={comment.id}
-								{refreshReplies}
+								{refreshComments}
 								pinned={comment.pinned} />
 						{/if}
 					</ul>

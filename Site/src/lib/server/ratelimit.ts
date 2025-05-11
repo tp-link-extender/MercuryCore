@@ -30,7 +30,7 @@ const winlel =
  * @param maxRequests The maximum number of requests allowed in the time window.
  * @returns The form object with a "Too many requests" error, if the ratelimit is exceeded.
  * @example
- *	const limit = ratelimit(form, "comment", getClientAddress, 30)
+ *	const limit = ratelimit(form, "comment", getClientAddress, 5)
  *	if (limit) return limit
  */
 export default (

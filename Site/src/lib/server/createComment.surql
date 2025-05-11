@@ -5,10 +5,10 @@ LET $c = CREATE ONLY comment CONTENT {
 	}],
 	type: $type,
 };
+record::id($c.id);
 RELATE $user->createdComment->$c;
 RELATE $user->likes->$c;
 IF $comment {
 	RELATE $c->commentLink->$comment;
 };
 
-record::id($c.id);

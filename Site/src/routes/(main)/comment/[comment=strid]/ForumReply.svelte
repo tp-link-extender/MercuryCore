@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
 	import CommentLike from "$components/CommentLike.svelte"
 	import PinButton from "$components/PinButton.svelte"
 	import ReportButton from "$components/ReportButton.svelte"
@@ -18,7 +17,7 @@
 		user: import("./$types").PageData["user"]
 	} = $props()
 
-	const refreshReplies = () => onResult
+	const refreshComments = () => onResult
 </script>
 
 <a href="/comment/{comment.parentId}" class="no-underline">
@@ -57,7 +56,7 @@
 				<ul class="p-2 rounded-3">
 					{#if user.permissionLevel >= 4}
 						<PinButton
-							{refreshReplies}
+							{refreshComments}
 							id={comment.id}
 							pinned={comment.pinned} />
 					{/if}

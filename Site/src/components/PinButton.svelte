@@ -4,12 +4,12 @@
 	let {
 		id,
 		pinned = $bindable(false),
-		refreshReplies
+		refreshComments
 	}: {
 		id: string
 		pinned?: boolean
 		// Replies need to be re-ordered after a reply is pinned or unpinned
-		refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any>
+		refreshComments: import("@sveltejs/kit").SubmitFunction<any, any>
 	} = $props()
 
 	let text = $derived(pinned ? "unpin" : "pin")
@@ -19,7 +19,7 @@
 	<form
 		use:enhance={e => {
 			pinned = !pinned
-			return refreshReplies(e)
+			return refreshComments(e)
 		}}
 		method="POST"
 		action="/comment/{id}?/pin&set={!pinned}"

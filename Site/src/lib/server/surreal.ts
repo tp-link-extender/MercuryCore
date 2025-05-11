@@ -95,7 +95,7 @@ if (!building) {
  * @param id The id of the record to find.
  * @returns Whether the record exists.
  * @example
- * await find("user:1")
+ * await find("user", id)
  */
 export async function find<T extends keyof RecordIdTypes>(
 	table: T,
@@ -144,7 +144,5 @@ export async function bigQuery<T extends unknown[]>(...args: QueryParameters) {
 		throw new Error(`SurrealDB query error:\n${errorMessages}`)
 	}
 
-	return raw.map(({ status, result }) => {
-		return result
-	}) as T
+	return raw.map(({ result }) => result) as T
 }

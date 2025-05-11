@@ -6,6 +6,7 @@
 	import PinButton from "$components/PinButton.svelte"
 	import ReportButton from "$components/ReportButton.svelte"
 	import { likeEnhance } from "$lib/like"
+	import { refreshComments } from "$lib/refreshComments"
 	import CommentLike from "./CommentLike.svelte"
 
 	let {
@@ -15,7 +16,6 @@
 		// categoryName = "",
 		// postId,
 		// assetSlug = "",
-		refreshReplies,
 		repliesCollapsed = $bindable(),
 		replyingTo = $bindable(),
 		// topLevel = true,
@@ -28,7 +28,6 @@
 		// categoryName?: string
 		// postId: string
 		// assetSlug?: string
-		refreshReplies: import("@sveltejs/kit").SubmitFunction
 		repliesCollapsed: { [id: string]: boolean }
 		replyingTo: string
 		// topLevel?: boolean
@@ -102,22 +101,19 @@
 				<div class="dropdown-content pt-2">
 					<ul class="p-2 rounded-3">
 						{#if comment.author.username === user.username}
-							<DeleteButton id={comment.id} {refreshReplies} />
+							<DeleteButton id={comment.id} />
 						{:else}
 							<ReportButton
 								user={comment.author.username}
 								url="/comment/{comment.id}" />
 							{#if user.permissionLevel >= 4}
-								<DeleteButton
-									id={comment.id}
-									{refreshReplies}
-									moderate />
+								<DeleteButton id={comment.id} moderate />
 							{/if}
 						{/if}
 						{#if user.permissionLevel >= 4}
 							<PinButton
 								id={comment.id}
-								{refreshReplies}
+								{refreshComments}
 								pinned={comment.pinned} />
 						{/if}
 						<li class="rounded-2">
@@ -137,7 +133,7 @@
 			<form
 				use:enhance={e => {
 					replyingTo = ""
-					return refreshReplies(e)
+					return refreshComments(e)
 				}}
 				method="POST"
 				action="/comment/{comment.id}?/comment">
@@ -187,7 +183,6 @@
 		bind:comment={comment.comments[num]}
 		depth={depth + 1}
 		{num}
-		{refreshReplies}
 		bind:repliesCollapsed
 		bind:replyingTo
 		{user} />

@@ -11,7 +11,6 @@
 
 	let replyingTo = $state("")
 	let repliesCollapsed = $state({})
-	let refresh = $state(0)
 
 	const { data } = $props()
 
@@ -26,10 +25,11 @@
 		if (result.type === "success") await invalidateAll()
 		comment = data.comment
 	}
-	const formData = superForm(data.form, { onResult })
+	const formData = superForm(data.form)
 
 	// let topReply = $derived(replies[0])
 	// let parentPost = $derived(topReply.parentPost)
+	let comments = $derived(comment.comments)
 	let type = $derived(comment.type)
 
 	const elide = (c: string) => (c.length > 50 ? `${c.slice(0, 50)}...` : c)
@@ -65,7 +65,8 @@
 
 <Head name={data.siteName} title="Comment" />
 
-<div class="ctnr max-w-280">
+<!-- huge padding cuz otherwise the dropdown on the bottom comments arent visible lmfao -->
+<div class={["ctnr max-w-280", { "pb-32": comments.length > 0 }]}>
 	<Breadcrumbs
 		path={getBreadcrumb()}
 		final={elide(comment.content[0].text)} />
@@ -80,17 +81,18 @@
 
 	<PostReply {formData} />
 
-	{#each comment.comments as _, num}
-		<Comment
-			bind:comment={comment.comments[num]}
-			{num}
-			refreshReplies={() =>
-				async ({ result }) => {
-					if (result.type === "success") await invalidateAll()
-					refresh++
-				}}
-			bind:repliesCollapsed
-			bind:replyingTo
-			user={data.user} />
-	{/each}
+	{#if comments.length > 0}
+		{#each comments as _, num}
+			<Comment
+				bind:comment={comments[num]}
+				{num}
+				bind:repliesCollapsed
+				bind:replyingTo
+				{user} />
+		{/each}
+	{:else}
+		<h3 class="text-center pt-6">
+			No comments yet. Be the first to post one!
+		</h3>
+	{/if}
 </div>

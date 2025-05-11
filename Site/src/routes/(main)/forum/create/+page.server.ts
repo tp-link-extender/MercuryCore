@@ -48,7 +48,7 @@ actions.default = async ({ locals, request, url, getClientAddress }) => {
 	if (!unfiltered)
 		return formError(form, ["content"], ["Post must have content"])
 
-	const limit = ratelimit(form, "comment", getClientAddress, 30)
+	const limit = ratelimit(form, "comment", getClientAddress, 5)
 	if (limit) return limit
 
 	const category = url.searchParams.get("category")
@@ -62,15 +62,11 @@ actions.default = async ({ locals, request, url, getClientAddress }) => {
 	)
 	if (!getCategory) error(404, "Category not found")
 
-	const [, , , , newCommentId] = await db.query<string[]>(
-		createCommentQuery,
-		{
-			user: Record("user", user.id),
-			type: ["forum", getCategory.id],
-			// title,
-			content: filter(unfiltered),
-		}
-	)
+	const [, newCommentId] = await db.query<string[]>(createCommentQuery, {
+		content: filter(unfiltered),
+		type: ["forum", getCategory.id],
+		user: Record("user", user.id),
+	})
 
 	redirect(302, `/comment/${newCommentId}`)
 }

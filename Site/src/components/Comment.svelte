@@ -24,7 +24,6 @@
 		// postId,
 		// assetSlug = "",
 		// pinnable = false,
-		refreshReplies,
 		repliesCollapsed = $bindable(),
 		replyingTo = $bindable(),
 		// topLevel = true
@@ -39,7 +38,6 @@
 		// postId: string
 		// assetSlug?: string
 		// pinnable?: boolean
-		refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any>
 		repliesCollapsed: { [id: string]: boolean }
 		replyingTo: string
 		// topLevel?: boolean
@@ -97,8 +95,7 @@
 					{depth}
 					bind:repliesCollapsed
 					bind:replyingTo
-					{user}
-					{refreshReplies} />
+					{user} />
 			</div>
 		{/if}
 	</div>

@@ -8,19 +8,8 @@ SELECT
 	(SELECT text, updated FROM $parent.description
 	ORDER BY updated)[$] AS description,
 
-    (SELECT
-    	*,
-		(SELECT text, updated FROM $parent.content
-		ORDER BY updated DESC) AS content,
-		record::id(id) AS id,
-		NONE AS parentReplyId,
-		(SELECT status, username FROM <-created<-user)[0] AS author,
-
-		count(<-likes) - count(<-dislikes) AS score,
-		$user IN <-likes<-user.id AS likes,
-		$user IN <-dislikes<-user.id AS dislikes,
-
-        fn::getReplies(id, 1, $user) AS replies
-    FROM <-replyToAsset<-assetComment WHERE !->replyToComment
-	ORDER BY pinned DESC, score DESC) AS replies
+	array::flatten(
+		SELECT VALUE fn::getComments($this.id, 1, $user)
+		FROM comment WHERE type = ["asset", record::id($parent.id)]
+	) AS comments
 FROM $asset;

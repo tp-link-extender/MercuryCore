@@ -1,14 +1,13 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
+	import { refreshComments } from "$lib/refreshComments"
 
 	const {
 		id,
 		moderate = false,
-		refreshReplies
 	}: {
 		id: string
 		moderate?: boolean
-		refreshReplies: import("@sveltejs/kit").SubmitFunction
 	} = $props()
 
 	const text = moderate ? "remove" : "delete"
@@ -16,7 +15,7 @@
 
 <li class="rounded-2">
 	<form
-		use:enhance={refreshReplies}
+		use:enhance={refreshComments}
 		method="POST"
 		action="/comment/{id}?/delete&action={text}"
 		class="inline">

@@ -14,7 +14,6 @@
 
 	let replyingTo = $state("")
 	let repliesCollapsed = $state({})
-	let refresh = $state(0)
 
 	const { data, form } = $props()
 
@@ -34,17 +33,14 @@
 		}
 	}
 
+	let comments = $state(data.asset.comments)
+	$effect(() => {
+		comments = data.asset.comments
+	})
+
 	const formData = superForm(data.form)
-	export const snapshot = formData
 
 	let tabData = $state(TabData(data.url, ["Recommended", "Comments"]))
-
-	const refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any> =
-		() =>
-		async ({ result }) => {
-			if (result.type === "success") await invalidateAll()
-			refresh++
-		}
 </script>
 
 <Head name={data.siteName} title={data.asset.name} />
@@ -165,30 +161,22 @@
 
 	<Tab bind:tabData />
 
-	<Tab bind:tabData>
-		<PostReply {formData} comment />
-		{#key refresh}
-			{#if data.asset.replies.length > 0}
-				{#each data.asset.replies as _, num}
-					<Comment
-						{user}
-						bind:reply={data.asset.replies[num]}
-						{num}
-						bind:replyingTo
-						postId={data.asset.id.toString()}
-						assetSlug={data.slug}
-						postAuthorName={data.asset.creator.username || ""}
-						bind:repliesCollapsed
-						topLevel={false}
-						pinnable
-						{refreshReplies} />
-				{/each}
-			{:else}
-				<h3 class="text-center pt-6">
-					No replies yet. Be the first to post one!
-				</h3>
-			{/if}
-		{/key}
+	<Tab bind:tabData class={{ "pb-32": comments.length > 0 }}>
+		<PostReply {formData} />
+		{#if comments.length > 0}
+			{#each comments as _, num}
+				<Comment
+					bind:comment={comments[num]}
+					{num}
+					bind:repliesCollapsed
+					bind:replyingTo
+					{user} />
+			{/each}
+		{:else}
+			<h3 class="text-center pt-6">
+				No comments yet. Be the first to post one!
+			</h3>
+		{/if}
 	</Tab>
 </div>
 

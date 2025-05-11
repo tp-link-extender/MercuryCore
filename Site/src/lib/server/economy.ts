@@ -139,7 +139,7 @@ export async function createAsset(
 		price.value,
 		`Created asset ${name}`,
 		`/catalog/${id}/${slug}`,
-		[id]
+		[]
 	)
 }
 
