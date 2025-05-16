@@ -17,8 +17,7 @@ SELECT
 	*,
 	record::id(id) AS id,
 	(SELECT text, updated FROM $parent.content
-	ORDER BY updated DESC) AS content,
-	(SELECT status, username FROM <-created<-user)[0] as authorUser
-FROM statusPost 
+	ORDER BY updated)[$].text AS currentContent
+FROM comment WHERE type = ["status"]
 ORDER BY created DESC
 LIMIT 40;

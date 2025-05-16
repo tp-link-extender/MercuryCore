@@ -1,18 +1,15 @@
 <script lang="ts">
 	import ReportButton from "$components/ReportButton.svelte"
 	import User from "$components/User.svelte"
+	import type { Comment } from "$lib/comment"
 
-	const {
-		status
-	}: {
-		status: import("./$types").PageData["feed"][0]
-	} = $props()
+	const { status }: { status: Comment } = $props()
 </script>
 
 <div class="card p-3">
 	<div class="flex <md:flex-col pb-2 justify-between">
 		<div class="flex items-center">
-			<User user={status.authorUser} size="2rem" full bg="darker" />
+			<User user={status.author} size="2rem" full bg="darker" />
 		</div>
 		<span class="self-center <md:(w-full pt-2 flex justify-between)">
 			<small class="pr-2">
@@ -23,7 +20,7 @@
 				<div class="dropdown-content pt-2">
 					<ul class="p-2 rounded-3">
 						<ReportButton
-							user={status.authorUser.username}
+							user={status.author.username}
 							url="status:{status.id}" />
 					</ul>
 				</div>

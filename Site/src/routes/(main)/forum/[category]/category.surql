@@ -13,12 +13,12 @@ FROM forumCategory
 WHERE string::lowercase(name) = string::lowercase($category))[0];
 
 math::max([
-	(SELECT
+	(SELECT VALUE
 		math::ceil(<float> count(
 			SELECT 1 FROM comment
 			WHERE type = ["forum", record::id($parent.id)]
-		) / 15) AS count
+		) / 15)
 	FROM forumCategory 
-	WHERE string::lowercase(name) = string::lowercase($category))[0].count OR 0,
+	WHERE string::lowercase(name) = string::lowercase($category))[0] OR 0,
 	1
 ]);

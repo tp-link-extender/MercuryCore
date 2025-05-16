@@ -1,5 +1,7 @@
+import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
-import filter from "$lib/server/filter.js"
+import createCommentQuery from "$lib/server/createComment.surql"
+import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { Record, db } from "$lib/server/surreal"
@@ -7,7 +9,6 @@ import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import homeQuery from "./home.surql"
-import statusQuery from "./status.surql"
 
 const schema = z.object({
 	status: z.string().min(1).max(1000),
@@ -22,18 +23,6 @@ type Place = {
 	dislikeCount: number
 }
 
-type FeedPost = {
-	id: string
-	authorUser: BasicUser
-	content: {
-		id: string
-		text: string
-		updated: string
-	}[]
-	created: Date
-	visibility: string
-}
-
 export async function load({ locals }) {
 	const { user } = await authorise(locals)
 	// (main)/+layout.server.ts will handle most redirects for logged-out users, but sometimes errors for this page.
@@ -45,7 +34,7 @@ export async function load({ locals }) {
 	]
 
 	const [places, friends, feed] = await db.query<
-		[Place[], BasicUser[], FeedPost[]]
+		[Place[], BasicUser[], Comment[]]
 	>(homeQuery, { user: Record("user", user.id) })
 
 	return {
@@ -65,13 +54,14 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 
 	const unfiltered = form.data.status.trim()
 	if (!unfiltered)
-		return formError(form, ["status"], ["Status cannot be empty"])
+		return formError(form, ["status"], ["Status must have content"])
 
-	const limit = ratelimit(form, "statusPost", getClientAddress, 30)
+	const limit = ratelimit(form, "comment", getClientAddress, 5)
 	if (limit) return limit
 
-	await db.query(statusQuery, {
+	await db.query(createCommentQuery, {
 		content: filter(unfiltered),
+		type: ["status"],
 		user: Record("user", user.id),
 	})
 }
