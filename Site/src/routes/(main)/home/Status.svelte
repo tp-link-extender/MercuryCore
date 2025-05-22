@@ -6,8 +6,8 @@
 	const { status }: { status: Comment } = $props()
 </script>
 
-<div class="card p-3">
-	<div class="flex <md:flex-col pb-2 justify-between">
+<div class="card">
+	<div class="flex <md:flex-col pb-2 justify-between p-3 pb-1.5">
 		<div class="flex items-center">
 			<User user={status.author} size="2rem" full bg="darker" />
 		</div>
@@ -27,9 +27,9 @@
 			</span>
 		</span>
 	</div>
-	<p class="text-start">
+	<a href="/comment/{status.id}" class="text-start no-underline p-3 pt-1.5 light-text">
 		{status.content[0].text}
-	</p>
+	</a>
 </div>
 
 <style>

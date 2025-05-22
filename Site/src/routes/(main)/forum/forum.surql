@@ -8,6 +8,7 @@ SELECT
 		ORDER BY updated)[$].text AS currentContent
 	FROM comment
 	WHERE type = ["forum", record::id($parent.id)]
+		AND visibility = "Visible"
 	ORDER BY created)[$] AS latestPost,
 	name,
 	count(

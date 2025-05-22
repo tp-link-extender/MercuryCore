@@ -30,9 +30,9 @@
 			post = c
 		})} />
 	<div class={["pl-2 flex flex-col w-full", { "opacity-33": hidden }]}>
-		<div class="flex pt-4 pl-4">
+		<div class="flex pt-4 px-4 justify-between items-center w-full">
 			<User user={post.author} full />
-			<em class="light-text pl-4 self-center">
+			<em class="light-text px-4">
 				{post.created.toLocaleString()}
 			</em>
 		</div>

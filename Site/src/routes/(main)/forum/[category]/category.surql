@@ -7,6 +7,7 @@
 		(SELECT text, updated FROM $parent.content
 		ORDER BY updated)[$].text AS currentContent
 	FROM comment WHERE type = ["forum", record::id($parent.id)]
+		AND visibility = "Visible"
 	ORDER BY pinned DESC, score DESC
 	LIMIT 15 START ($page - 1) * 15) AS posts
 FROM forumCategory

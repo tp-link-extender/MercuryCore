@@ -44,7 +44,7 @@
 		<TabNav bind:tabData={tabData2} justify />
 		<Tab tabData={tabData2}>
 			<div class="alert alert-primary" role="alert">
-				<fa class="pr-2" fa-circle-info></fa>
+				<fa class="pr-4" fa-circle-info></fa>
 				Manual uploading mode is for shared assets (ie. requires textures)
 			</div>
 			<Form
@@ -84,7 +84,7 @@
 		</Tab>
 		<Tab tabData={tabData2}>
 			<div class="alert alert-primary" role="alert">
-				<fa class="pr-2" fa-circle-info></fa>
+				<fa class="pr-4" fa-circle-info></fa>
 				Use manual uploading mode for shared assets (ie. mesh)
 			</div>
 			{#if data.stage >= 2}

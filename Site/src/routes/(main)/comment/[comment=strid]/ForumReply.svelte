@@ -30,13 +30,11 @@
 		"py-4 no-underline w-full",
 		{ "border-(solid 1px green-5)!": comment.pinned }
 	]}>
-	<div class="flex justify-between pb-4">
-		<div class="flex">
-			<User user={comment.author} full />
-			<i class="pl-4 self-center">
-				{comment.created.toLocaleString()}
-			</i>
-		</div>
+	<div class="flex pb-4">
+		<User user={comment.author} full />
+		<i class="pl-4 self-center">
+			{comment.created.toLocaleString()}
+		</i>
 	</div>
 	<p class="break-all whitespace-pre-line">
 		{comment.content[0].text}

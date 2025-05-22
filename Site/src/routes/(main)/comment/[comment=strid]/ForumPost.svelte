@@ -33,16 +33,16 @@
 			comment = c
 		})} />
 	<div class="p-4 pl-6 no-underline w-full">
-		<div class="flex justify-between pb-4">
-			<div class="flex">
+		<div class="flex pb-4">
+			<div class="flex justify-between items-center w-full">
 				<User user={comment.author} full />
-				<i class="pl-4 self-center">
+				<i class="px-4">
 					{comment.created.toLocaleString()}
 				</i>
 			</div>
 			<span class="dropdown">
-				<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
-				<div class="dropdown-content pt-2">
+				<fa fa-ellipsis-h class="dropdown-ellipsis py-2"></fa>
+				<div class="dropdown-content">
 					<ul class="p-2 rounded-3">
 						{#if comment.author.username === user.username}
 							<DeleteButton id={comment.id} />

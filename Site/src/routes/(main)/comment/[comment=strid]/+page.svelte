@@ -71,12 +71,32 @@
 		path={getBreadcrumb()}
 		final={elide(comment.content[0].text)} />
 
+	{#if comment.visibility === "Deleted" || comment.visibility === "Moderated"}
+		<div class="pt-2 pb-6">
+			<div class="alert alert-red" role="alert">
+				<fa class="pr-4" fa-eye-slash></fa>
+				<b>
+					This comment has been {comment.visibility === "Deleted"
+						? "deleted"
+						: "removed"}.
+				</b>
+				{#if type[0] === "forum" && type.length === 2}
+					It will no longer appear in forum category pages or in
+					recent post sections.
+				{/if}
+			</div>
+		</div>
+	{/if}
+
+	<!-- These are just different ways of displaying exactly the same information -->
 	{#if type[0] === "forum"}
 		{#if type.length === 2}
 			<ForumPost {comment} {onResult} {user} />
 		{:else}
 			<ForumReply {comment} {onResult} {user} />
 		{/if}
+	{:else if type[0] === "status"}
+		<ForumPost {comment} {onResult} {user} />
 	{/if}
 
 	<PostReply {formData} />

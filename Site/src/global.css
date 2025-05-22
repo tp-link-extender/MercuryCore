@@ -572,9 +572,14 @@ details[open] summary {
 
 .alert {
 	@apply p-4 px-6 rounded-2;
+	border-width: 1px;
+	border-style: solid;
 	&.alert-primary {
 		background: #2c145d;
-		border: 1px solid #73f;
+		border-color: #73f;
+	}
+	&.alert-red {
+		@apply bg-red-950 border-red-700;
 	}
 }
 
