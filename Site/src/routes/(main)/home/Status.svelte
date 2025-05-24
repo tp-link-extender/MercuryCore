@@ -1,5 +1,4 @@
 <script lang="ts">
-	import ReportButton from "$components/ReportButton.svelte"
 	import User from "$components/User.svelte"
 	import type { Comment } from "$lib/comment"
 
@@ -11,23 +10,13 @@
 		<div class="flex items-center">
 			<User user={status.author} size="2rem" full bg="darker" />
 		</div>
-		<span class="self-center <md:(w-full pt-2 flex justify-between)">
-			<small class="pr-2">
-				<em>{status.created.toLocaleString()}</em>
-			</small>
-			<span class="dropdown">
-				<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
-				<div class="dropdown-content pt-2">
-					<ul class="p-2 rounded-3">
-						<ReportButton
-							user={status.author.username}
-							url="status:{status.id}" />
-					</ul>
-				</div>
-			</span>
-		</span>
+		<small>
+			<i>{status.created.toLocaleString()}</i>
+		</small>
 	</div>
-	<a href="/comment/{status.id}" class="text-start no-underline p-3 pt-1.5 light-text">
+	<a
+		href="/comment/{status.id}"
+		class="text-start no-underline p-3 pt-1.5 light-text">
 		{status.content[0].text}
 	</a>
 </div>

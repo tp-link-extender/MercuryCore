@@ -54,7 +54,7 @@
 								<DeleteButton id={comment.id} moderate />
 							{/if}
 						{/if}
-						{#if user.permissionLevel >= 4}
+						{#if user.permissionLevel >= 4 && (comment.type.length !== 1 || comment.type[0] !== "status")}
 							<PinButton
 								id={comment.id}
 								{refreshComments}
