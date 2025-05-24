@@ -2,9 +2,32 @@ import { building } from "$app/environment"
 import initQuery from "$lib/server/init.surql"
 import logo from "$lib/server/logo"
 import { error } from "@sveltejs/kit"
-import { type QueryParameters, RecordId, Surreal } from "surrealdb"
+import {
+	type Prettify,
+	type QueryParameters,
+	RecordId,
+	Surreal,
+} from "surrealdb"
 
 export const db = new Surreal()
+
+// Retry queries
+const ogq = db.query.bind(db)
+const retriable = "This transaction can be retried"
+
+// oof
+db.query = async <T extends unknown[]>(
+	...args: QueryParameters
+): Promise<Prettify<T>> => {
+	try {
+		return (await ogq(...args)) as Prettify<T>
+	} catch (err) {
+		const e = err as Error
+		if (!e.message.endsWith(retriable)) throw e
+		console.log("Retrying query:", e.message)
+	}
+	return await db.query(...args)
+}
 
 export const version = db.version.bind(db)
 
@@ -130,15 +153,15 @@ export async function findWhere(
  * @param query - Specifies the SurrealQL statements.
  * @param bindings - Assigns variables which can be used in the query.
  */
-export async function bigQuery<T extends unknown[]>(...args: QueryParameters) {
-	const raw = await db.queryRaw<T>(...args)
-	const errors = raw.filter(({ status }) => status === "ERR")
-	if (errors.length > 0) {
-		const errorMessages = errors
-			.map(({ result }, i) => `[${i}]: ${result}`)
-			.join("\n")
-		throw new Error(`SurrealDB query error:\n${errorMessages}`)
-	}
+// export async function bigQuery<T extends unknown[]>(...args: QueryParameters) {
+// 	const raw = await db.queryRaw<T>(...args)
+// 	const errors = raw.filter(({ status }) => status === "ERR")
+// 	if (errors.length > 0) {
+// 		const errorMessages = errors
+// 			.map(({ result }, i) => `[${i}]: ${result}`)
+// 			.join("\n")
+// 		throw new Error(`SurrealDB query error:\n${errorMessages}`)
+// 	}
 
-	return raw.map(({ result }) => result) as T
-}
+// 	return raw.map(({ result }) => result) as T
+// }

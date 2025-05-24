@@ -4,7 +4,7 @@ import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import requestRender from "$lib/server/requestRender"
-import { bigQuery, db } from "$lib/server/surreal"
+import { db } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
@@ -261,12 +261,10 @@ actions.autopilot = async ({ locals, request }) => {
 	if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
 	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
 
-	const res = await bigQuery(createAutopilotQuery, {
+	const res = await db.query(createAutopilotQuery, {
 		assets: form.data.shared.split(",").map(s => +s),
 		...data,
 	})
-
-	console.log(res)
 
 	const { id, type } = res[6] as {
 		id: string

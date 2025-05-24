@@ -84,7 +84,7 @@ actions.sessions = async ({ cookies, locals, request }) => {
 	if (!form.valid) return formError(form)
 
 	const { password } = form.data
-	form.data.password = ""
+	form.data.password = "" // will only send back in the event of failure I think
 
 	const [[{ hashedPassword }]] = await db.query<
 		{ hashedPassword: string }[][]
