@@ -19,7 +19,7 @@
 <Form
 	{formData}
 	enctype="multipart/form-data"
-	submit=" <fa fa-save class='pr-2'></fa> Save changes"
+	submit=" <fa fa-save></fa> Save changes"
 	action="?/view&tab=View">
 	<Input {formData} name="name" label="Name" />
 	<Input

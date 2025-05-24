@@ -20,10 +20,7 @@
 	})
 </script>
 
-<Form
-	{formData}
-	action="?/profile"
-	submit="<fa fa-save class='pr-2'></fa> Save changes">
+<Form {formData} action="?/profile" submit="<fa fa-save></fa> Save changes">
 	<Select
 		{formData}
 		options={themes}

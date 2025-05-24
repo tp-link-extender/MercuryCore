@@ -8,7 +8,6 @@
 	import Select from "$components/forms/Select.svelte"
 	import Textarea from "$components/forms/Textarea.svelte"
 	import fade from "$lib/fade"
-	import SuperDebug from "sveltekit-superforms"
 	import { superForm } from "sveltekit-superforms/client"
 
 	const { data } = $props()

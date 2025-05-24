@@ -1,1 +1,1 @@
-SELECT hashedPassword FROM $user
+SELECT hashedPassword FROM $user;

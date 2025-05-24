@@ -11,7 +11,7 @@ export function load() {
 }
 
 export const actions: import("./$types").Actions = {}
-actions.logout = async ({ locals, cookies }) => {
+actions.logout = async ({ cookies, locals }) => {
 	const { session } = await authorise(locals)
 
 	await invalidateSession(session.id)

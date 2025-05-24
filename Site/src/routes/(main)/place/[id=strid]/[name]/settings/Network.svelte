@@ -19,7 +19,7 @@
 
 <Form
 	{formData}
-	submit=" <fa fa-save class='pr-2'></fa> Save changes"
+	submit=" <fa fa-save></fa> Save changes"
 	action="?/network&tab=Network">
 	<Input {formData} name="serverAddress" label="Address" />
 	<Input
