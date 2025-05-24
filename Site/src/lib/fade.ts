@@ -3,7 +3,7 @@
 // import { get } from "svelte/store"
 import { type FadeParams, fade } from "svelte/transition"
 
-type Params = FadeParams & {
+interface Params extends FadeParams {
 	num?: number
 	total?: number
 	max?: number

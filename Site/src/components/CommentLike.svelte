@@ -4,10 +4,10 @@
 	import type { ClassValue } from "svelte/elements"
 
 	const {
-		class: _class,
 		comment,
 		likeEnhance,
-		small = false
+		small = false,
+		class: class_ = ""
 	}: {
 		comment: Scored & { id: string }
 		likeEnhance: import("@sveltejs/kit").SubmitFunction
@@ -22,7 +22,7 @@
 	use:enhance={likeEnhance}
 	method="POST"
 	action="/api/like/comment/{comment.id}"
-	class={_class}>
+	class={class_}>
 	<span class={{ "flex flex-col": !small }}>
 		<button
 			name="action"

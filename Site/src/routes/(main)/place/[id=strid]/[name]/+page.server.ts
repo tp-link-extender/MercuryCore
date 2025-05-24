@@ -1,11 +1,9 @@
 import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formData from "$lib/server/formData"
-import { type LikeActions, likeLikesActions } from "$lib/server/like"
 import { Record, db, find, findWhere } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
-import findPlaceQuery from "./findPlace.surql"
 import invalidateSessionsQuery from "./invalidateSessions.surql"
 import placeQuery from "./place.surql"
 
@@ -16,7 +14,7 @@ type FoundPlace = {
 	privateTicket: string
 }
 
-type Place = FoundPlace & {
+interface Place extends FoundPlace {
 	created: string
 	description: {
 		text: string

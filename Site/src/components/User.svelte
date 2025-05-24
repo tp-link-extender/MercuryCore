@@ -27,7 +27,7 @@
 		rerender = null,
 		size = "2rem",
 		bg = "accent2",
-		class: class_
+		class: class_ = ""
 	}: {
 		user: BasicUser
 		full?: boolean
