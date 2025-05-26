@@ -15,11 +15,13 @@ type Render = {
  * Requests a render from RCCService
  * @param renderType The type of render to request, "Clothing", "Avatar", "Model", or "Mesh".
  * @param relativeId If "Avatar", the id of the user to render their avatar, otherwise the id of the asset to render.
+ * @param relativeName If "Avatar", the name of the user to render their avatar.
  * @param wait Whether to wait for the render to be completed before resolving.
  */
 export default async function (
 	renderType: RenderType,
 	relativeId: string,
+	relativeName = relativeId,
 	wait = false
 ) {
 	const params = { renderType, relativeId }
@@ -52,11 +54,17 @@ export default async function (
 
 	// Send the script to the RCCService proxy
 	const scriptFile = Bun.file(`../Corescripts/render${renderType}.lua`)
+	if (!(await scriptFile.exists()))
+		throw new Error(`Script file for ${renderType} does not exist`)
+
+	const pingUrl = `${config.RCCServiceProxyURL}/ping/${renderId}` // the proxy will handle sending to /api/render/update
+
 	const script = (await scriptFile.text())
-		.replaceAll("_BASE_URL", config.Domain)
-		.replaceAll("_THUMBNAIL_KEY", process.env.RCC_KEY)
-		.replaceAll("_RENDER_TYPE", renderType)
-		.replaceAll("_ASSET_ID", relativeId.toString())
+		.replaceAll("_BASE_URL", `"${config.Domain}"`)
+		.replaceAll("_THUMBNAIL_KEY", `"${process.env.RCC_KEY}"`)
+		.replaceAll("_RENDER_TYPE", `"${renderType}"`)
+		.replaceAll("_ASSET_ID", `"${relativeName}"`)
+		.replaceAll("_PING_URL", `"${pingUrl}"`)
 
 	await Promise.all([
 		waiter,

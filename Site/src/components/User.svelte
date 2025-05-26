@@ -139,6 +139,7 @@
 		position: absolute;
 	}
 	.status {
+		z-index: 1;
 		border-radius: 50%;
 		bottom: 5%;
 		right: 5%;

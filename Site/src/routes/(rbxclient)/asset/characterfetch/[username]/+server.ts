@@ -20,7 +20,7 @@ export async function GET({ params }) {
 	const [[user]] = await db.query<User[][]>(userQuery, { username })
 	if (!user) error(404, "User not found")
 
-	let charApp = `${config.Domain}/asset/bodycolours/${username}`
+	let charApp = `http://${config.Domain}/asset/bodycolours/${username}`
 	for (const asset of user.wearing)
 		charApp += `;${config.Domain}/asset?id=${asset}`
 

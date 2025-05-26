@@ -27,7 +27,7 @@ export async function GET({ url }) {
 
 	const scriptFile = Bun.file("../Corescripts/host.lua")
 	const script = (await scriptFile.text())
-		.replaceAll("_BASE_URL", config.Domain)
+		.replaceAll("_BASE_URL", `"${config.Domain}"`)
 		.replaceAll("_MAP_LOCATION_EXISTS", (!!mapLocation).toString())
 		.replaceAll("_MAP_LOCATION", mapLocation || "")
 		.replaceAll("_SERVER_PORT", port.toString())

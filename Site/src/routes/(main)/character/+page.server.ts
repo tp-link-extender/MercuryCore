@@ -72,7 +72,7 @@ async function getEquipData(e: RequestEvent) {
 
 async function rerender(user: User) {
 	try {
-		await requestRender("Avatar", user.id, true)
+		await requestRender("Avatar", user.id, user.username, true)
 		return {
 			avatar: `/api/avatar/${user.username}-body?r=${Math.random()}`,
 		}

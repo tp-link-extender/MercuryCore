@@ -262,7 +262,7 @@ actions.autopilot = async ({ locals, request }) => {
 	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
 
 	const res = await db.query(createAutopilotQuery, {
-		assets: form.data.shared.split(",").map(s => +s),
+		assets: data.shared.split(",").map(s => +s),
 		...data,
 	})
 
@@ -271,7 +271,7 @@ actions.autopilot = async ({ locals, request }) => {
 		type: number
 	}
 	const shared = res[7] as {
-		id: number
+		id: string // todo: check
 		type: number
 		sharedId: number
 	}[]
