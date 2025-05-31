@@ -5,7 +5,7 @@ import { error } from "@sveltejs/kit"
 import {
 	type Prettify,
 	type QueryParameters,
-	RecordId,
+	RecordId as SurrealRecordId,
 	Surreal,
 } from "surrealdb"
 
@@ -53,7 +53,10 @@ async function reconnect() {
 	}
 }
 
-export type { RecordId } from "surrealdb"
+if (!building) {
+	await reconnect()
+	await db.query(initQuery)
+}
 
 type RecordIdTypes = {
 	asset: string
@@ -93,6 +96,9 @@ type RecordIdTypes = {
 	wearing: string
 }
 
+// Ensure type safety when creating record ids
+export type RecordId<T extends keyof RecordIdTypes> = SurrealRecordId<T>
+
 /**
  * Returns a record id object for a given table and id.
  * @param table The table to get the record id for.
@@ -102,12 +108,7 @@ type RecordIdTypes = {
 export const Record = <T extends keyof RecordIdTypes>(
 	table: T,
 	id: RecordIdTypes[T]
-) => new RecordId(table, id)
-
-if (!building) {
-	await reconnect()
-	await db.query(initQuery)
-}
+) => new SurrealRecordId(table, id)
 
 /**
  * Finds whether a record exists in the database.

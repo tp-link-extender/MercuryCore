@@ -153,15 +153,13 @@ actions.comment = async ({ locals, params, request, getClientAddress }) => {
 	})
 
 	if (user.id !== creatorId)
-		await db.query(
-			`fn::notify($sender, $receiver, "AssetComment", $note, $relativeId)`,
-			{
-				sender: Record("user", user.id),
-				receiver: Record("user", creatorId),
-				note: `${user.username} commented on your asset: ${content}`,
-				relativeId: newCommentId,
-			}
-		)
+		await db.run("fn::notify", [
+			Record("user", user.id),
+			Record("user", creatorId),
+			"AssetComment",
+			`${user.username} commented on your asset: ${content}`,
+			newCommentId,
+		])
 }
 actions.buy = async e => {
 	const { user, id } = await getBuyData(e)

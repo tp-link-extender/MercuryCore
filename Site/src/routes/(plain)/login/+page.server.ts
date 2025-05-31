@@ -59,8 +59,7 @@ actions.default = async ({ request, cookies }) => {
 			[" ", "Incorrect username or password"] // Don't give any extra information which may be useful to attackers
 		)
 
-	const session = await createSession(user.id)
-	cookies.set(cookieName, session.id, cookieOptions)
+	cookies.set(cookieName, await createSession(user.id), cookieOptions)
 
 	redirect(302, "/home")
 }

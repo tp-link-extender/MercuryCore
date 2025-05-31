@@ -28,7 +28,7 @@ actions.changePassword = async ({ locals, request, getClientAddress }) => {
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
 
-	const limit = ratelimit(form, "resetPassword", getClientAddress, 30)
+	const limit = ratelimit(form, "changePassword", getClientAddress, 30)
 	if (limit) return limit
 
 	const { username, password } = form.data
@@ -45,10 +45,11 @@ actions.changePassword = async ({ locals, request, getClientAddress }) => {
 		})
 	}
 
-	await db.query('fn::auditLog("Account", $note, $user)', {
-		note: `Change account password for ${username}`,
-		user: Record("user", user.id),
-	})
+	await db.run("fn::auditLog", [
+		"Account",
+		`Change account password for ${username}`,
+		Record("user", user.id),
+	])
 
 	return message(form, "Password changed successfully!")
 }

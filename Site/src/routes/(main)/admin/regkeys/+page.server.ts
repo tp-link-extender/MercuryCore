@@ -106,8 +106,8 @@ actions.disable = async e => {
 
 	await db.query(
 		`
-				UPDATE $regKey SET usesLeft = 0;
-				fn::auditLog("Administration", $msg, $user)`,
+			UPDATE $regKey SET usesLeft = 0;
+			fn::auditLog("Administration", $msg, $user)`,
 		{
 			regKey: Record("regKey", id),
 			msg: `Disable registration key ${id}`,

@@ -4,7 +4,7 @@ import formData from "$lib/server/formData"
 import { Record, db, find, findWhere } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
-import invalidateSessionsQuery from "./invalidateSessions.surql"
+import invalidatePlayingQuery from "./invalidatePlaying.surql"
 import placeQuery from "./place.surql"
 
 type FoundPlace = {
@@ -33,14 +33,6 @@ interface Place extends FoundPlace {
 	serverPing: number
 	serverTicket: string
 	updated: string
-}
-
-type Playing = {
-	id: string
-	in: string
-	out: string
-	ping: string
-	valid: boolean
 }
 
 const thumbnails = config.Images.DefaultPlaceThumbnails
@@ -88,10 +80,13 @@ actions.join = async ({ locals, request }) => {
 	if (foundModerated) error(403, "You cannot currently play games")
 
 	// Invalidate all game sessions and create valid playing
-	const [, [playing]] = await db.query<Playing[][]>(invalidateSessionsQuery, {
-		user: Record("user", user.id),
-		place: Record("place", serverId),
-	})
+	const [, [playing]] = await db.query<{ id: string }[][]>(
+		invalidatePlayingQuery,
+		{
+			user: Record("user", user.id),
+			place: Record("place", serverId),
+		}
+	)
 
 	return {
 		joinScriptUrl: `${config.Domain}/game/join?ticket=${playing.id}`,

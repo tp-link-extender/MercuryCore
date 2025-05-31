@@ -114,7 +114,7 @@
 						<User
 							user={place.ownerUser}
 							size="1.5rem"
-							bg="darker"
+							bg="background"
 							full
 							thin />
 					{/if}

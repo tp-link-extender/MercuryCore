@@ -1,17 +1,21 @@
 // we've come full circle, from lucia-sveltekit 0.3 to 0.1 to Lucia 0.3 to 1.0 to 2.0 to 3.2 to now.
 
 import { dev } from "$app/environment"
+import deleteSessionsQuery from "$lib/server/deleteSessions.surql"
+import deleteUserSessionsQuery from "$lib/server/deleteUserSessions.surql"
+import getSessionAndUserQuery from "$lib/server/getSessionAndUser.surql"
+import setSessionQuery from "$lib/server/setSession.surql"
 import { Record, type RecordId, db } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
-import deleteExpiredSessionsQuery from "./deleteExpiredSessions.surql"
-import deleteUserSessionsQuery from "./deleteUserSessions.surql"
-import getSessionAndUserQuery from "./getSessionAndUser.surql"
-import setSessionQuery from "./setSession.surql"
 
-export async function createSession(user: RecordId<"user">): Promise<Session> {
-	const [, , session] = await db.query<Session[]>(setSessionQuery, { user })
+export async function createSession(user: RecordId<"user">): Promise<string> {
+	const [, session] = await db.query<string[]>(setSessionQuery, { user })
 	return session
 }
+
+type SessionValidationResult =
+	| { session: string; user: User }
+	| { session: null; user: null }
 
 export async function validateSessionToken(
 	token: string
@@ -25,7 +29,7 @@ export async function validateSessionToken(
 }
 
 export async function invalidateSession(sessionId: string): Promise<void> {
-	await db.query(deleteExpiredSessionsQuery, {
+	await db.query(deleteSessionsQuery, {
 		sess: Record("session", sessionId),
 	})
 }
@@ -35,10 +39,6 @@ export async function invalidateAllSessions(user: string): Promise<void> {
 		user: Record("user", user),
 	})
 }
-
-export type SessionValidationResult =
-	| { session: Session; user: User }
-	| { session: null; user: null }
 
 export const cookieName = "session"
 export const cookieOptions = Object.freeze({
@@ -58,7 +58,7 @@ export const cookieOptions = Object.freeze({
  * const { session, user } = await authorise(locals)
  */
 export async function authorise(
-	{ user, session }: { user: User | null; session: Session | null },
+	{ session, user }: { session: string | null; user: User | null },
 	level?: number
 ) {
 	if (!session || !user) redirect(302, "/login")

@@ -106,8 +106,7 @@ actions.register = async ({ request, cookies }) => {
 		await requestRender("Avatar", user.id.toString(), username)
 	} catch {}
 
-	const session = await createSession(user)
-	cookies.set(cookieName, session.id, cookieOptions)
+	cookies.set(cookieName, await createSession(user), cookieOptions)
 
 	redirect(302, "/home")
 }
@@ -144,8 +143,7 @@ actions.initialAccount = async ({ request, cookies }) => {
 		await requestRender("Avatar", user.id.toString(), username)
 	} catch {}
 
-	const session = await createSession(user)
-	cookies.set(cookieName, session.id, cookieOptions)
+	cookies.set(cookieName, await createSession(user), cookieOptions)
 
 	redirect(302, "/home")
 }
