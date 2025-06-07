@@ -21,7 +21,7 @@ export async function load({ params }) {
 		userQuery,
 		params
 	)
-	if (!user) error(404, "Not found")
+	if (!user) error(404, "Not Found")
 
 	const [users, count] = await db.query<BasicUser[][]>(queries[type], user)
 

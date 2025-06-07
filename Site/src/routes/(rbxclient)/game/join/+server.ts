@@ -50,15 +50,15 @@ export async function GET({ url }) {
 
 	const scriptFile = Bun.file("../Corescripts/join.lua")
 	const script = (await scriptFile.text())
-		.replaceAll("_PLACE_ID", placeId.toString())
+		.replaceAll("_PLACE_ID", `"${placeId.toString()}"`)
 		.replaceAll("_SERVER_ADDRESS", gameSession.place.serverAddress)
 		.replaceAll("_SERVER_PORT", gameSession.place.serverPort.toString())
 		.replaceAll("_CREATOR_ID", creatorUsername)
 		.replaceAll("_USER_ID", Math.floor(Math.random() * 1e9).toString()) // todo: tho not rly used 4 much atm
 		.replaceAll("_USER_NAME", gameSession.user.username)
 		.replaceAll("_MEMBERSHIP_TYPE", membershipType)
-		.replaceAll("_CHAR_APPEARANCE", charApp)
-		.replaceAll("_PING_URL", pingUrl)
+		.replaceAll("_CHAR_APPEARANCE", `"${charApp}"`)
+		.replaceAll("_PING_URL", `"${pingUrl}"`)
 
 	return new Response(await SignData(script))
 }

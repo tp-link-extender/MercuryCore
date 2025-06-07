@@ -1,8 +1,9 @@
 import fs from "node:fs"
-import { findWhere } from "$lib/server/surreal"
+import { db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
+import type { RecordId } from "surrealdb"
 
-export async function GET({ url, params }) {
+export async function GET({ params, url }) {
 	let { username } = params
 	if (!username) error(400, "Invalid Request")
 
@@ -14,12 +15,13 @@ export async function GET({ url, params }) {
 		shotType = "-body"
 	}
 
-	const foundUser = await findWhere("user", "username = $username", {
-		username,
-	})
-	if (!foundUser) error(404, "User not found")
+	const [[user]] = await db.query<{ id: RecordId<"user"> }[][]>(
+		"SELECT id FROM user WHERE username = $username",
+		{ username }
+	)
+	if (!user) error(404, "User not found")
 
-	const path = `../data/avatars/${username}${shotType}.png`
+	const path = `../data/avatars/${user.id.id}${shotType}.png`
 
 	try {
 		if (wait)

@@ -7,7 +7,7 @@
 		tabData = $bindable(),
 		justify = false,
 		vertical = false,
-		class: class_
+		class: class_ = ""
 	}: {
 		tabData: {
 			name: string

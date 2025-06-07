@@ -1,5 +1,5 @@
 import fs from "node:fs/promises"
-import { intRegex } from "$lib/paramTests"
+import { idRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/auth"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
@@ -37,11 +37,11 @@ async function getData({ locals, url }: RequestEvent) {
 	const id = url.searchParams.get("id")
 
 	if (!id) error(400, "Missing asset id")
-	if (!intRegex.test(id)) error(400, `Invalid asset id: ${id}`)
+	if (!idRegex.test(id)) error(400, `Invalid asset id: ${id}`)
 
 	const params = {
 		user: Record("user", user.id),
-		asset: Record("asset", +id),
+		asset: Record("asset", id),
 	}
 	const [[asset]] = await db.query<{ name: string }[][]>(
 		"SELECT name FROM $asset",
@@ -79,7 +79,7 @@ actions.rerender = async e => {
 	if (limit) return limit
 
 	try {
-		await requestRender("Clothing", +id)
+		await requestRender("Clothing", id)
 	} catch (e) {
 		console.error(e)
 		fail(500, { msg: "Failed to request render" })
@@ -88,8 +88,8 @@ actions.rerender = async e => {
 actions.purge = async e => {
 	// Nuclear option
 	const { id, params, assetName } = await getData(e)
-	const [[{ iaid }]] = await db.query<{ iaid: number }[][]>(iaidQuery, {
-		asset: Record("asset", +id),
+	const [[{ iaid }]] = await db.query<{ iaid: string }[][]>(iaidQuery, {
+		asset: Record("asset", id),
 	})
 
 	await Promise.all([

@@ -1,1 +1,4 @@
-CREATE type::thing("forumCategory", $name) SET description = $description;
+CREATE forumCategory CONTENT {
+	description: $description,
+	name: $name,
+};

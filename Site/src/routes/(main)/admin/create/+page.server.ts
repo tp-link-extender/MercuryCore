@@ -14,6 +14,8 @@ import getVersionsQuery from "./getVersions.surql"
 import sharedAssetsCacheQuery from "./sharedAssetsCache.surql"
 import typeQuery from "./type.surql"
 
+// TODO: port ALL of this to Open Cloud (https://create.roblox.com/docs/cloud/features/assets#/default/Assets_GetAsset)
+
 const schemaManual = z.object({
 	type: z.enum(["8", "18"]),
 	name: z.string().min(3).max(50),
@@ -45,11 +47,51 @@ const transformVersions = (vs: Asset[], cached = false) => ({
 	cached,
 	list: vs.map(v => [
 		v.id[1].toString(),
-		`${v.id[1]} - ${v.assetModified.substring(0, 10)}`, // docsocial type beat
+		`${v.id[1]} – ${v.assetModified.substring(0, 10)}`, // docsocial type beat
 	]),
 })
 
 const hatType = (type: number) => type > 41 && type < 47
+
+const metadataFields = (meta: any) => ({
+	name: meta.Name,
+	description: meta.Description,
+	type: meta.AssetTypeId,
+})
+
+async function getMetadata(id: number) {
+	const cachePath = `../data/assetCache/${id}_meta`
+	const cachedMeta = await Bun.file(cachePath)
+	if (await cachedMeta.exists()) {
+		console.log("Using cached metadata for", id)
+		return metadataFields(await cachedMeta.json())
+	}
+
+	const res = await fetch(
+		`https://economy.roblox.com/v2/assets/${id}/details`
+	)
+
+	if (res.status !== 200) {
+		console.log("Failed to fetch metadata for", id)
+
+		if (res.status === 429) {
+			console.log("Ratelimited, waiting...")
+			await new Promise(r => setTimeout(r, 30e3)) // usually takes 2 or 3 goes
+			return getMetadata(id)
+		}
+
+		return {
+			name: null,
+			description: null,
+			type: null,
+		}
+	}
+
+	// prevents fetching metadata multiple times, or saves in the event that the metadata fetching fails for some later version
+	await Bun.write(cachePath, await res.clone().arrayBuffer())
+
+	return metadataFields(await res.json())
+}
 
 async function fetchAssetVersion(id: number, version: number) {
 	console.log("Fetching asset version", version, "of", id)
@@ -74,17 +116,11 @@ async function fetchAssetVersion(id: number, version: number) {
 	const date = data.headers.get("last-modified")
 	if (!date) return "done"
 
-	console.log("api getting")
-
-	const meta: {
-		Name: string
-		Description: string
-		AssetTypeId: number
-	} = await (
-		await fetch(`https://economy.roblox.com/v2/assets/${id}/details`)
-	).json()
+	console.log("metadata getting")
 
 	if (!fs.existsSync("../data/assetCache")) fs.mkdirSync("../data/assetCache")
+
+	const { name, description, type } = await getMetadata(id)
 
 	// write the data to a file
 	// After all, they give the data in the response anyway. Why shouldn't I cache it?
@@ -93,14 +129,13 @@ async function fetchAssetVersion(id: number, version: number) {
 		Buffer.from(await data.arrayBuffer()).toString() // todo: needed?
 	)
 
-	const type = meta.AssetTypeId
 	return {
-		id: [id, version] as [number, number], // typescript moment
+		id: [id, version], // typescript moment
 		assetModified: new Date(date).toISOString(),
-		name: meta.Name,
-		description: meta.Description,
+		name,
+		description,
 		type: hatType(type) ? 8 : type,
-	}
+	} as Asset
 }
 
 async function getVersions(id: number, version?: number) {
@@ -139,6 +174,8 @@ async function getVersions(id: number, version?: number) {
 	return transformVersions(versions)
 }
 
+const assetIdRegex = /(\d+)$/
+
 async function getSharedAssets(id: number, version: number) {
 	const [[cache]] = await db.query<
 		{
@@ -155,14 +192,15 @@ async function getSharedAssets(id: number, version: number) {
 		cachedData = await Bun.file(
 			`../data/assetCache/${id}_${version}`
 		).text()
-		console.log("cached data", cachedData.startsWith("<roblox "))
 		if (!cachedData.startsWith("<roblox ")) return []
 	} catch {
 		return []
 	}
 
+	console.log("getting dependencies")
 	for (const [, url] of cachedData.matchAll(/<url>(.+)<\/url>/g)) {
-		const id = url.match(intRegex)?.[0]
+		const id = url.match(assetIdRegex)?.[0]
+		console.log("match id", id)
 		if (!id) continue // shouldn't happen, let's just ignore it
 		dependencies.push(id)
 
@@ -179,7 +217,7 @@ async function getSharedAssets(id: number, version: number) {
 }
 
 async function getType(id: number) {
-	const [[{ type }]] = await db.query<{ type: number }[][]>(typeQuery, { id })
+	const [[type]] = await db.query<{ type: number }[][]>(typeQuery, { id })
 	return type
 }
 
@@ -213,7 +251,7 @@ export async function load({ locals, url }) {
 
 export const actions: import("./$types").Actions = {}
 const intRegex2 = /\d+/
-actions.autopilot = async ({ request, locals }) => {
+actions.autopilot = async ({ locals, request }) => {
 	await authorise(locals, 3)
 	const form = await superValidate(request, zod(schemaAuto))
 	if (!form.valid) return formError(form)
@@ -223,17 +261,17 @@ actions.autopilot = async ({ request, locals }) => {
 	if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
 	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
 
-	const res = await db.query<unknown[]>(createAutopilotQuery, {
-		assets: form.data.shared.split(",").map(s => +s),
+	const res = await db.query(createAutopilotQuery, {
+		assets: data.shared.split(",").map(s => +s),
 		...data,
 	})
 
-	const { id, type } = res[7] as {
-		id: number
+	const { id, type } = res[6] as {
+		id: string
 		type: number
 	}
-	const shared = res[8] as {
-		id: number
+	const shared = res[7] as {
+		id: string // todo: check
 		type: number
 		sharedId: number
 	}[]

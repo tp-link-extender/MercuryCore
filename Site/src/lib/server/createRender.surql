@@ -1,5 +1,5 @@
-LET $render = CREATE render CONTENT {
+LET $render = CREATE ONLY render CONTENT {
 	relativeId: $relativeId,
 	type: $renderType,
 };
-record::id($render[0].id);
+record::id($render.id);

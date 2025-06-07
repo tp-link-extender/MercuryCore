@@ -22,7 +22,7 @@ export async function load({ locals, params }) {
 		user: Record("user", user.id),
 		...params,
 	})
-	if (!group) error(404, "Not found")
+	if (!group) error(404, "Not Found")
 
 	return group
 }

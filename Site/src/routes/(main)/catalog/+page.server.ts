@@ -5,7 +5,7 @@ import catalogQuery from "./catalog.surql"
 export type Asset = {
 	name: string
 	price: number
-	id: number
+	id: string
 	type: number
 }
 

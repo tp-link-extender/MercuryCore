@@ -1,7 +1,8 @@
-import { authorise } from "$lib/server/auth"
+import { authorise, cookieName, invalidateAllSessions } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import { Record, db } from "$lib/server/surreal"
+import { redirect } from "@sveltejs/kit"
 import { zod } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
@@ -17,6 +18,9 @@ const passwordSchema = z.object({
 	npassword: z.string().min(1),
 	cnpassword: z.string().min(1),
 })
+const sessionSchema = z.object({
+	password: z.string().min(1),
+})
 const stylingSchema = z.object({
 	css: z.string().max(10000).optional(),
 })
@@ -24,12 +28,13 @@ const stylingSchema = z.object({
 export const load = async () => ({
 	profileForm: await superValidate(zod(profileSchema)),
 	passwordForm: await superValidate(zod(passwordSchema)),
+	sessionForm: await superValidate(zod(sessionSchema)),
 	stylingForm: await superValidate(zod(stylingSchema)),
 	themes: config.Themes.map(t => t.Name),
 })
 
 export const actions: import("./$types").Actions = {}
-actions.profile = async ({ request, locals }) => {
+actions.profile = async ({ locals, request }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(profileSchema))
 	if (!form.valid) return formError(form)
@@ -44,7 +49,7 @@ actions.profile = async ({ request, locals }) => {
 
 	return message(form, "Profile updated successfully!")
 }
-actions.password = async ({ request, locals }) => {
+actions.password = async ({ locals, request }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(passwordSchema))
 	if (!form.valid) return formError(form)
@@ -73,7 +78,26 @@ actions.password = async ({ request, locals }) => {
 
 	return message(form, "Password updated successfully!")
 }
-actions.styling = async ({ request, locals }) => {
+actions.sessions = async ({ cookies, locals, request }) => {
+	const { user } = await authorise(locals)
+	const form = await superValidate(request, zod(sessionSchema))
+	if (!form.valid) return formError(form)
+
+	const { password } = form.data
+	form.data.password = "" // will only send back in the event of failure I think
+
+	const [[{ hashedPassword }]] = await db.query<
+		{ hashedPassword: string }[][]
+	>(passwordQuery, { user: Record("user", user.id) })
+	if (!Bun.password.verifySync(password, hashedPassword))
+		return formError(form, ["password"], ["Incorrect password"])
+
+	await invalidateAllSessions(user.id)
+	cookies.delete(cookieName, { path: "/" })
+
+	redirect(302, "/login")
+}
+actions.styling = async ({ locals, request }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(stylingSchema))
 	if (!form.valid) return formError(form)

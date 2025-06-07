@@ -10,6 +10,7 @@ import { superValidate } from "sveltekit-superforms/server"
 import { z } from "zod"
 import countQuery from "./count.surql"
 import createQuery from "./create.surql"
+import { randomId } from "$lib/server/id"
 
 const schema = z.object({
 	name: z.string().min(3).max(50),
@@ -26,7 +27,7 @@ const schema = z.object({
 })
 
 async function placeCount(id: string) {
-	const [[{ count }]] = await db.query<{ count: number }[][]>(countQuery, {
+	const [[count]] = await db.query<number[][]>(countQuery, {
 		user: Record("user", id),
 	})
 	return count
@@ -43,7 +44,7 @@ export async function load() {
 }
 
 export const actions: import("./$types").Actions = {}
-actions.default = async ({ request, locals }) => {
+actions.default = async ({ locals, request }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
@@ -66,20 +67,15 @@ actions.default = async ({ request, locals }) => {
 			["You can't have more than two places"]
 		)
 
-	const [id] = await db.query<number[]>(
-		"(UPDATE ONLY stuff:increment SET asset += 1).asset"
-	)
 	const slug = encode(name)
+	const id = randomId() // still, find a better way stat
 
 	const created = await createPlace(user.id, id, name, slug)
-	if (!created.ok) {
-		await db.query("UPDATE ONLY stuff:increment SET asset -= 1") // fuck, find a better way stat
-		return formError(form, ["other"], [created.msg])
-	}
+	if (!created.ok) return formError(form, ["other"], [created.msg])
 
 	await db.query(createQuery, {
-		user: Record("user", user.id),
 		id,
+		user: Record("user", user.id),
 		name: filter(name),
 		description: filter(description),
 		serverAddress,

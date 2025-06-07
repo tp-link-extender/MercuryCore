@@ -10,9 +10,7 @@
 		assets,
 		friendships,
 		followerships,
-		statusPosts,
-		forumPosts,
-		forumReplies
+		comments
 	] = data.stats
 </script>
 
@@ -49,16 +47,8 @@
 				<td>{followerships}</td>
 			</tr>
 			<tr>
-				<td>Status posts</td>
-				<td>{statusPosts}</td>
-			</tr>
-			<tr>
-				<td>Forum posts</td>
-				<td>{forumPosts}</td>
-			</tr>
-			<tr>
-				<td>Forum replies</td>
-				<td>{forumReplies}</td>
+				<td>Comments</td>
+				<td>{comments}</td>
 			</tr>
 		</tbody>
 	</table>

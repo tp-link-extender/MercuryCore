@@ -47,7 +47,7 @@ actions.register = async ({ request, cookies }) => {
 	const form = await superValidate(request, zod(schema))
 	if (!form.valid) return formError(form)
 
-	const { username, email, password, cpassword } = form.data
+	const { username, email, password, cpassword, regkey } = form.data
 	form.data.password = form.data.cpassword = ""
 
 	if (cpassword !== password)
@@ -73,7 +73,7 @@ actions.register = async ({ request, cookies }) => {
 
 	let key: RecordId<"regKey"> | undefined
 	if (config.RegistrationKeys.Enabled) {
-		const matched = form.data.regkey.match(prefixRegex)
+		const matched = regkey.match(prefixRegex)
 		if (!matched)
 			return formError(form, ["regkey"], ["Registration key is invalid"])
 
@@ -93,7 +93,7 @@ actions.register = async ({ request, cookies }) => {
 			)
 	}
 
-	const [, , userId] = await db.query<string[]>(createUserQuery, {
+	const [, user] = await db.query<RecordId<"user">[]>(createUserQuery, {
 		username,
 		email,
 		// I still love scrypt, though argon2 is better supported
@@ -103,11 +103,10 @@ actions.register = async ({ request, cookies }) => {
 	})
 
 	try {
-		await requestRender("Avatar", userId)
+		await requestRender("Avatar", user.id.toString(), username)
 	} catch {}
 
-	const session = await createSession(userId)
-	cookies.set(cookieName, session.id, cookieOptions)
+	cookies.set(cookieName, await createSession(user), cookieOptions)
 
 	redirect(302, "/home")
 }
@@ -134,19 +133,17 @@ actions.initialAccount = async ({ request, cookies }) => {
 
 	// This is the kind of stuff that always breaks due to never getting tested
 	// Remember: untested === unworking
-	const [, , userId] = await db.query<string[]>(createUserQuery, {
-		admin: true,
+	const [, user] = await db.query<RecordId<"user">[]>(createUserQuery, {
 		username,
 		hashedPassword: Bun.password.hashSync(password),
 		bodyColours: config.DefaultBodyColors,
 	})
 
 	try {
-		await requestRender("Avatar", userId)
+		await requestRender("Avatar", user.id.toString(), username)
 	} catch {}
 
-	const session = await createSession(userId)
-	cookies.set(cookieName, session.id, cookieOptions)
+	cookies.set(cookieName, await createSession(user), cookieOptions)
 
 	redirect(302, "/home")
 }

@@ -1,30 +1,20 @@
-import { idRegex } from "$lib/paramTests"
+import type { Scored } from "$lib/like"
 import { authorise } from "$lib/server/auth"
 import exclude from "$lib/server/exclude"
-import formData from "$lib/server/formData"
-import { likeScoreActions } from "$lib/server/like"
 import { Record, db } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
+import type { PreviewPost } from "../+page.server"
 import categoryQuery from "./category.surql"
-import replypostQuery from "./replypost.surql"
+
+interface Post extends PreviewPost, Scored {
+	pinned: boolean
+	visibility: string
+}
 
 type Category = {
-	id: string
 	description: string
-	posts: {
-		id: string
-		author: BasicUser
-		content: {
-			text?: string
-		}[]
-		created: Date
-		dislikes: boolean
-		likes: boolean
-		pinned: boolean
-		score: number
-		title: string
-		visibility: string
-	}[]
+	name: string
+	posts: Post[]
 }
 
 export async function load({ locals, params, url }) {
@@ -42,39 +32,8 @@ export async function load({ locals, params, url }) {
 			user: Record("user", user.id),
 		}
 	)
-	if (!category) error(404, "Not found")
+	if (!category) error(404, "Not Found")
 	if (page > pages) redirect(303, `/forum/${params.category}?p=${pages}`)
 
 	return { ...category, pages }
-}
-
-type Thing = {
-	id: string
-	score: number
-}
-
-async function select(replypost: "forumReply" | "forumPost", id: string) {
-	const [[thing]] = await db.query<Thing[][]>(replypostQuery, {
-		replypost: Record(replypost, id),
-	})
-	return thing
-}
-
-export const actions: import("./$types").Actions = {}
-actions.like = async ({ request, locals, url }) => {
-	exclude("Forum")
-	const { user } = await authorise(locals)
-	const data = await formData(request)
-	const action = data.action as keyof typeof likeScoreActions
-	const id = url.searchParams.get("id")
-	const replyId = url.searchParams.get("rid")
-	if (replyId && !idRegex.test(replyId)) error(400, "Invalid reply id")
-
-	const ids = id || replyId
-	if (!ids) error(400, "Missing id")
-
-	const type = id ? "Post" : "Reply"
-	if (!(await select(`forum${type}`, ids))) error(404, `${type} not found`)
-
-	await likeScoreActions[action](user.id, Record(`forum${type}`, ids))
 }

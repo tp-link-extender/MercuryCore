@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto"
-import { intRegex } from "$lib/paramTests"
+import { idRegex } from "$lib/paramTests"
 import config from "$lib/server/config"
 import { SignData } from "$lib/server/sign"
 import { Record, db } from "$lib/server/surreal"
@@ -24,7 +24,7 @@ type FoundAsset = {
 
 export async function GET({ url }) {
 	const id = url.searchParams.get("id")
-	if (!id || !intRegex.test(id)) error(400, "Invalid Request")
+	if (!id || !idRegex.test(id)) error(400, "Invalid Request")
 	console.log("Serving", id)
 
 	try {
@@ -32,7 +32,7 @@ export async function GET({ url }) {
 
 		if (await Bun.file(`../data/assets/${id}`).exists()) {
 			const [[asset]] = await db.query<FoundAsset[][]>(assetQuery, {
-				asset: Record("asset", +id),
+				asset: Record("asset", id),
 			})
 
 			if (!asset || asset.visibility === "Moderated")

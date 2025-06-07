@@ -61,7 +61,6 @@ export async function load({ url }) {
 			const [groups] = await db.query<Group[][]>(searchGroupsQuery, param)
 			return { query, category, groups }
 		}
-		default:
-			error(400, "Invalid category")
 	}
+	error(400, "Invalid category")
 }

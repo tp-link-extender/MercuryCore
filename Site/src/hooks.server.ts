@@ -105,7 +105,7 @@ export async function handle(e) {
 
 	event.locals.session = session
 	event.locals.user = user
-	event.cookies.set(cookieName, session.id, cookieOptions)
+	event.cookies.set(cookieName, session, cookieOptions)
 
 	const [, moderated] = await db.query<boolean[][]>(moderatedQuery, {
 		user: Record("user", user.id),

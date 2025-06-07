@@ -3,7 +3,7 @@
 
 export default {
 	Name: "Mercury",
-	Domain: "mercury2.com",
+	Domain: "localhost:5173",
 	DatabaseURL: "http://localhost:8000",
 	RCCServiceProxyURL: "http://localhost:64990",
 	LauncherURI: "mercury-player:",

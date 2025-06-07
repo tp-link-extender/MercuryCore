@@ -4,30 +4,31 @@
 	let {
 		id,
 		pinned = $bindable(false),
-		post = false,
-		refreshReplies
+		refreshComments
 	}: {
 		id: string
 		pinned?: boolean
-		post?: boolean
 		// Replies need to be re-ordered after a reply is pinned or unpinned
-		refreshReplies: import("@sveltejs/kit").SubmitFunction<any, any>
+		refreshComments: import("@sveltejs/kit").SubmitFunction<any, any>
 	} = $props()
 
 	let text = $derived(pinned ? "unpin" : "pin")
-	let colour = $derived(pinned ? "text-red-500" : "text-green-500")
 </script>
 
 <li class="rounded-2">
 	<form
 		use:enhance={e => {
 			pinned = !pinned
-			return refreshReplies(e)
+			return refreshComments(e)
 		}}
 		method="POST"
-		action="?/{text}{post ? 'post' : ''}&id={id}"
+		action="/comment/{id}?/pin&set={!pinned}"
 		class="inline">
-		<button class="btn pl-4 pr-2 {colour}">
+		<button
+			class={[
+				"btn pl-4 pr-2",
+				pinned ? "text-red-500" : "text-green-500"
+			]}>
 			<fa fa-thumbtack class="pr-2"></fa>
 			{text.charAt(0).toUpperCase() + text.slice(1)}
 		</button>

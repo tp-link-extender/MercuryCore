@@ -157,7 +157,7 @@
 							</a>
 						{/if}
 					</div>
-					<p class="pl-2">{data.description.text}</p>
+					<p class="pl-2 pt-4 whitespace-pre-line">{data.description.text}</p>
 				</div>
 			{:else if data.username === user.username}
 				<p class="pt-6 text-center">

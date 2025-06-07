@@ -128,7 +128,7 @@ export const getPlacePrice = () => getFeeBasedPrice(50)
 
 export async function createAsset(
 	To: string,
-	id: number,
+	id: string,
 	name: string,
 	slug: string
 ): Promise<ReturnErr> {
@@ -139,13 +139,13 @@ export async function createAsset(
 		price.value,
 		`Created asset ${name}`,
 		`/catalog/${id}/${slug}`,
-		[id]
+		[]
 	)
 }
 
 export async function createPlace(
 	To: string,
-	id: number,
+	id: string,
 	name: string,
 	slug: string
 ): Promise<ReturnErr> {
@@ -156,7 +156,7 @@ export async function createPlace(
 		price.value,
 		`Created place ${name}`,
 		`/place/${id}/${slug}`,
-		[id]
+		[]
 	)
 }
 

@@ -1,1 +1,1 @@
-UPDATE stuff:ping SET render = time::now()
+UPSERT stuff:ping SET render = time::now();

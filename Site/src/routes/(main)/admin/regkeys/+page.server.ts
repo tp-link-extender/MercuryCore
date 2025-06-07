@@ -40,7 +40,7 @@ export async function load({ locals }) {
 	}
 }
 
-async function getData({ request, locals }: RequestEvent) {
+async function getData({ locals, request }: RequestEvent) {
 	const { user } = await authorise(locals, 5)
 	const form = await superValidate(request, zod(schema))
 
@@ -104,8 +104,16 @@ actions.disable = async e => {
 			{ status: 400 }
 		)
 
-	// disabledBy for logging for now
-	await db.merge(Record("regKey", id), { usesLeft: 0, disabledBy: user.id })
+	await db.query(
+		`
+			UPDATE $regKey SET usesLeft = 0;
+			fn::auditLog("Administration", $msg, $user)`,
+		{
+			regKey: Record("regKey", id),
+			msg: `Disable registration key ${id}`,
+			user: Record("user", user.id),
+		}
+	)
 
 	return message(form, "Registration key disabled successfully")
 }

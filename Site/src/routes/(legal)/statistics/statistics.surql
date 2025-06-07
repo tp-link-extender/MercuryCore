@@ -4,6 +4,4 @@ count(SELECT 1 FROM group);
 count(SELECT 1 FROM asset);
 count(SELECT 1 FROM friends);
 count(SELECT 1 FROM follows);
-count(SELECT 1 FROM statusPost);
-count(SELECT 1 FROM forumPost);
-count(SELECT 1 FROM forumReply);
+count(SELECT 1 FROM comment);

@@ -1,5 +1,5 @@
 import { brickColours } from "$lib/brickColours.ts"
-import { intRegex } from "$lib/paramTests"
+import { idRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/auth"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
@@ -50,14 +50,13 @@ export async function load({ locals }) {
 
 async function getEquipData(e: RequestEvent) {
 	const { user } = await authorise(e.locals)
-	const strId = e.url.searchParams.get("id")
-	if (!strId) error(400, "Missing asset id")
-	if (!intRegex.test(strId)) error(400, `Invalid asset id: ${strId}`)
+	const id = e.url.searchParams.get("id")
+	if (!id) error(400, "Missing asset id")
+	if (!idRegex.test(id)) error(400, `Invalid asset id: ${id}`)
 
 	const limit = ratelimit(null, "equip", e.getClientAddress, 2)
 	if (limit) return { error: limit }
 
-	const id = +strId
 	const [[asset]] = await db.query<AssetData[][]>(equipDataQuery, {
 		asset: Record("asset", id),
 		user: Record("user", user.id),
@@ -73,7 +72,7 @@ async function getEquipData(e: RequestEvent) {
 
 async function rerender(user: User) {
 	try {
-		await requestRender("Avatar", user.id, true)
+		await requestRender("Avatar", user.id, user.username, true)
 		return {
 			avatar: `/api/avatar/${user.username}-body?r=${Math.random()}`,
 		}

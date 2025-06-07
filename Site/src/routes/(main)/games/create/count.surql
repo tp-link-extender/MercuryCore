@@ -1,1 +1,1 @@
-SELECT count(->ownsPlace->place) FROM $user;
+SELECT VALUE count(->ownsPlace->place) FROM $user;

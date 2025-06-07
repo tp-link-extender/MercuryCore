@@ -2,15 +2,17 @@ import exclude from "$lib/server/exclude"
 import { db } from "$lib/server/surreal"
 import forumQuery from "./forum.surql"
 
-type Category = {
+export type PreviewPost = {
 	id: string
+	author: BasicUser
+	created: Date
+	currentContent: string
+}
+
+type Category = {
 	description: string
-	latestPost: {
-		id: string
-		author: BasicUser
-		created: Date
-		title: string
-	}
+	latestPost: PreviewPost
+	name: string
 	postCount: number
 }
 

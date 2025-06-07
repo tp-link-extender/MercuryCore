@@ -1,4 +1,4 @@
-LET $imageAsset = CREATE asset CONTENT {
+LET $imageAsset = CREATE ONLY asset CONTENT {
 	id: $imageAssetId,
 	name: $name,
 	type: 1,
@@ -6,7 +6,7 @@ LET $imageAsset = CREATE asset CONTENT {
 RELATE $user->ownsAsset->$imageAsset;
 RELATE $user->created->$imageAsset;
 
-LET $asset = CREATE asset CONTENT {
+LET $asset = CREATE ONLY asset CONTENT {
 	id: $id,
 	description: [{
 		text: $description,

@@ -37,7 +37,6 @@
 				Post your status &ndash; your friends and followers can view how
 				you're doing!
 			</p>
-			<!-- fa-paper-plane-top (for unocss) -->
 			<Form
 				{formData}
 				inline

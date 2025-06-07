@@ -27,7 +27,7 @@
 		rerender = null,
 		size = "2rem",
 		bg = "accent2",
-		class: class_
+		class: class_ = ""
 	}: {
 		user: BasicUser
 		full?: boolean
@@ -47,6 +47,7 @@
 
 	const style = `width: ${size}; max-width: ${size}; height: ${size}; min-height: ${size}`
 	const style2 = `${style}; background: var(--${bg})`
+	const pfpstyle = `${style2}; --hover: var(--${transitionBackgrounds[bg]})`
 </script>
 
 {#if image}
@@ -57,16 +58,16 @@
 				class="status"
 				style="background: {statusColours[user.status]}">
 			</div>
-			<div class="rounded-full" style={style2}>
+			<div class="pfp" style={pfpstyle}>
 				{#if rerender}
 					<img
+						src={rerender.form?.avatar ||
+							`/api/avatar/${user.username}`}
+						alt={user.username}
 						class={[
 							"transition-opacity duration-300 rounded-full rounded-t-0",
 							{ "opacity-50": rerender.regenerating }
 						]}
-						src={rerender.form?.avatar ||
-							`/api/avatar/${user.username}`}
-						alt={user.username}
 						{style} />
 				{:else}
 					<img
@@ -99,13 +100,11 @@
 				class="status"
 				style="background: {statusColours[user.status]}">
 			</div>
-			<div
-				class="pfp rounded-full"
-				style="{style2}; --hover: var(--{transitionBackgrounds[bg]})">
+			<div class="pfp" style={pfpstyle}>
 				<img
 					src="/api/avatar/{user.username}"
 					alt={user.username}
-					class="rounded-full rounded-t-0 left-0"
+					class="rounded-full rounded-t-0"
 					{style} />
 			</div>
 		</div>
@@ -127,13 +126,12 @@
 {/if}
 
 <style>
-	a {
-		& span {
-			transition: all 0.2s;
-		}
-		&:hover .pfp {
-			background: var(--hover) !important;
-		}
+	.pfp {
+		@apply rounded-full transition-all duration-200;
+	}
+	/* sus */
+	:global(a):hover .pfp {
+		background: var(--hover) !important;
 	}
 
 	img,
@@ -141,6 +139,7 @@
 		position: absolute;
 	}
 	.status {
+		z-index: 1;
 		border-radius: 50%;
 		bottom: 5%;
 		right: 5%;

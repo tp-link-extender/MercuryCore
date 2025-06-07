@@ -6,7 +6,7 @@
 	let {
 		tabData = $bindable(),
 		children,
-		class: class_
+		class: class_ = ""
 	}: {
 		tabData: {
 			tabs: string[]

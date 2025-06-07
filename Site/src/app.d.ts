@@ -17,12 +17,6 @@ declare global {
 		username: string
 	}
 
-	declare type Session = {
-		id: string
-		user: string
-		expiresAt: Date
-	}
-
 	declare interface User extends BasicUser {
 		id: string
 		description: {
@@ -52,7 +46,7 @@ declare global {
 
 	namespace App {
 		interface Locals {
-			session: Session | null
+			session: string | null
 			user: User | null
 		}
 	}

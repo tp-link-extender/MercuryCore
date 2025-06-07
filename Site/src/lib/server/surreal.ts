@@ -2,9 +2,32 @@ import { building } from "$app/environment"
 import initQuery from "$lib/server/init.surql"
 import logo from "$lib/server/logo"
 import { error } from "@sveltejs/kit"
-import { RecordId, Surreal } from "surrealdb"
+import {
+	type Prettify,
+	type QueryParameters,
+	RecordId as SurrealRecordId,
+	Surreal,
+} from "surrealdb"
 
 export const db = new Surreal()
+
+// Retry queries
+const ogq = db.query.bind(db)
+const retriable = "This transaction can be retried"
+
+// oof
+db.query = async <T extends unknown[]>(
+	...args: QueryParameters
+): Promise<Prettify<T>> => {
+	try {
+		return (await ogq(...args)) as Prettify<T>
+	} catch (err) {
+		const e = err as Error
+		if (!e.message.endsWith(retriable)) throw e
+		console.log("Retrying query:", e.message)
+	}
+	return await db.query(...args)
+}
 
 export const version = db.version.bind(db)
 
@@ -18,7 +41,7 @@ async function reconnect() {
 			namespace: "main",
 			database: "main",
 			auth: {
-				username: "root",
+				username: "root", // security B)
 				password: "root",
 			},
 		})
@@ -30,21 +53,22 @@ async function reconnect() {
 	}
 }
 
-export type { RecordId } from "surrealdb"
+if (!building) {
+	await reconnect()
+	await db.query(initQuery)
+}
 
 type RecordIdTypes = {
-	asset: number
+	asset: string
 	assetCache: [number, number]
-	assetComment: string
 	auditLog: string
 	banner: string
+	comment: string
 	created: string
 	createdAsset: string
 	dislikes: string
 	follows: string
 	forumCategory: string
-	forumPost: string
-	forumReply: string
 	friends: string
 	group: string
 	hasSession: string
@@ -56,26 +80,24 @@ type RecordIdTypes = {
 	ownsAsset: string
 	ownsGroup: string
 	ownsPlace: string
-	place: number
+	place: string
 	playing: string
 	posted: string
 	recentlyWorn: string
 	regKey: string
 	render: string
-	replyToAsset: string
-	replyToComment: string
-	replyToPost: string
-	replyToReply: string
 	report: string
 	request: string
 	session: string
-	statusPost: string
 	stuff: string
 	thumbnailCache: number
 	used: string
 	user: string
 	wearing: string
 }
+
+// Ensure type safety when creating record ids
+export type RecordId<T extends keyof RecordIdTypes> = SurrealRecordId<T>
 
 /**
  * Returns a record id object for a given table and id.
@@ -86,19 +108,14 @@ type RecordIdTypes = {
 export const Record = <T extends keyof RecordIdTypes>(
 	table: T,
 	id: RecordIdTypes[T]
-) => new RecordId(table, id)
-
-if (!building) {
-	await reconnect()
-	await db.query(initQuery)
-}
+) => new SurrealRecordId(table, id)
 
 /**
  * Finds whether a record exists in the database.
  * @param id The id of the record to find.
  * @returns Whether the record exists.
  * @example
- * await find("user:1")
+ * await find("user", id)
  */
 export async function find<T extends keyof RecordIdTypes>(
 	table: T,
@@ -130,3 +147,22 @@ export async function findWhere(
 	)
 	return res
 }
+
+/**
+ * Runs a set of SurrealQL statements against the database.
+ * Identical to db.query(), but provides an improved set of error messages for large queries.
+ * @param query - Specifies the SurrealQL statements.
+ * @param bindings - Assigns variables which can be used in the query.
+ */
+// export async function bigQuery<T extends unknown[]>(...args: QueryParameters) {
+// 	const raw = await db.queryRaw<T>(...args)
+// 	const errors = raw.filter(({ status }) => status === "ERR")
+// 	if (errors.length > 0) {
+// 		const errorMessages = errors
+// 			.map(({ result }, i) => `[${i}]: ${result}`)
+// 			.join("\n")
+// 		throw new Error(`SurrealDB query error:\n${errorMessages}`)
+// 	}
+
+// 	return raw.map(({ result }) => result) as T
+// }
