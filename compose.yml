@@ -2,10 +2,10 @@
 # https://docs.docker.com/compose/
 
 services:
-    surreal:
+    database:
         # not :nightly because doing that once caused failures when graph linking
         # and also caused errors with query parameters (twice)
-        image: surrealdb/surrealdb:v2.3.3
+        build: ./Database
         ports:
             - 8000:8000
         restart: unless-stopped

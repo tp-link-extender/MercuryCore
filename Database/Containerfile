@@ -1,0 +1,1 @@
+FROM surrealdb/surrealdb:v2.3.3
