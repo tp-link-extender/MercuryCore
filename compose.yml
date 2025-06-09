@@ -13,7 +13,6 @@ services:
             - ./data/surreal:/database
         command:
             - start
-            - -l=trace
             - -u=root
             - -p=root
             - --allow-scripting
@@ -26,3 +25,12 @@ services:
         restart: unless-stopped
         volumes:
             - ./data/economy:/data/economy
+
+    site:
+        build: .
+        ports:
+            - 4443:4443
+        restart: unless-stopped
+        depends_on:
+            - database # will keep retrying until database is ready
+            - economy

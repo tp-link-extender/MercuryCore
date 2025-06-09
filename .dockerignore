@@ -1,0 +1,12 @@
+*
+!Site
+!Assets
+!mercury.core.ts
+
+Site/.gitignore
+Site/node_modules
+Site/Dockerfile
+Site/Caddyfile
+Site/.env.example
+Site/build
+Site/.svelte-kit

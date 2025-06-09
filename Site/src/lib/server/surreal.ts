@@ -34,27 +34,31 @@ export const version = db.version.bind(db)
 const realUrl = new URL("ws://localhost:8000") // must be ws:// to prevent token expiration, http:// will expire after 1 hour by default
 
 async function reconnect() {
-	try {
-		await db.close() // doesn't do anything if not connected
-		console.log("connecting")
-		await db.connect(realUrl, {
-			namespace: "main",
-			database: "main",
-			auth: {
-				username: "root", // security B)
-				password: "root",
-			},
-		})
-		console.log("reloaded", await version())
-		logo()
-	} catch (e) {
-		console.error(e)
-		error(500, "Failed to reconnect to database")
-	}
+	while (true)
+		try {
+			await db.close() // doesn't do anything if not connected
+			console.log("connecting")
+			await db.connect(realUrl, {
+				namespace: "main",
+				database: "main",
+				auth: {
+					username: "root", // security B)
+					password: "root",
+				},
+			})
+			console.log("reloaded", await version())
+			break
+		} catch (err) {
+			const e = err as Error
+			console.error(e.message)
+			console.log("Retrying connection in 1 second...")
+			await new Promise(resolve => setTimeout(resolve, 1000))
+		}
 }
 
 if (!building) {
 	await reconnect()
+	logo()
 	await db.query(initQuery)
 }
 
