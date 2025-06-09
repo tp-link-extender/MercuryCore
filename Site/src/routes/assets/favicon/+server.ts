@@ -1,4 +1,5 @@
-import { read } from "$app/server"
 import config from "$lib/server/config"
 
-export const GET = () => read(`/../Assets/${config.Branding.Favicon}`)
+// TODO: imports would be nice
+export const GET = () =>
+	new Response(Bun.file(`../Assets/${config.Branding.Favicon}`))

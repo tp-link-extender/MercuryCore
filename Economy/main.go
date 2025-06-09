@@ -485,7 +485,7 @@ func main() {
 	fmt.Println(c.InYellow("Loading ledger..."))
 	// create the file if it dont exist
 
-	file, err := os.Open(currentFilepath)
+	file, err := os.OpenFile(currentFilepath, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0o644)
 	if err != nil {
 		if !errors.Is(err, os.ErrNotExist) {
 			Assert(err, "Failed to open ledger")
