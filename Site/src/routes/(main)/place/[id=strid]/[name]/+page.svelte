@@ -65,13 +65,12 @@
 		})
 		const joinScriptData = deserialize(await response.text()) as {
 			status: number
-			data: { joinScriptUrl: string }
+			data: { ticket: string }
 		}
 		if (joinScriptData.status !== 200) return
 
 		// JoinScript is my favourite programming language (-i mean scripting language)
-		const joinScript = encodeURIComponent(joinScriptData.data.joinScriptUrl)
-		const joinUri = `mercury-player:1+launchmode:play+joinscripturl:${joinScript}+gameinfo:test`
+		const joinUri = data.scheme + joinScriptData.data.ticket
 		launch(() => joinUri)()
 	}
 
@@ -260,7 +259,7 @@
 							<button
 								class="btn btn-sm btn-tertiary"
 								onclick={launch(
-									() => "mercury-player:1+launchmode:ide"
+									() => `${data.scheme}1+launchmode:ide`
 								)}>
 								<fa fa-arrow-up-right-from-square></fa>
 								Studio

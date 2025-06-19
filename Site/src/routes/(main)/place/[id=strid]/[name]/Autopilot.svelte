@@ -1,11 +1,13 @@
 <script lang="ts">
 	const {
 		launch,
+		scheme,
 		serverTicket,
 		domain,
 		siteName
 	}: {
 		launch: (joinscripturl: () => string) => () => void
+		scheme: string
 		serverTicket: string
 		domain: string
 		siteName: string
@@ -15,7 +17,8 @@
 
 	const host = launch(
 		() =>
-			`mercury-player:1+launchmode:ide+script:http://${domain}/game/host?ticket=${serverTicket}&autopilot=${btoa(
+			// TODO: fix hosting and map opening with correct URI scheme
+			`${scheme}1+launchmode:ide+script:http://${domain}/game/host?ticket=${serverTicket}&autopilot=${btoa(
 				filepath
 			)}`
 	)
@@ -40,7 +43,7 @@
 		aria-label="Map location" />
 	<button
 		class="btn btn-secondary"
-		onclick={launch(() => "mercury-player:1+launchmode:maps")}
+		onclick={launch(() => `${scheme}1+launchmode:maps`)}
 		type="button">
 		<fa fa-arrow-up-right-from-square></fa>
 		Map Folder

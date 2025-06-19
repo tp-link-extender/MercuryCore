@@ -1,4 +1,4 @@
-mercury2.com {
+xtcy.dev {
 	rewrite /Asset /asset
 	rewrite /Asset/ /asset
 	rewrite /Asset/Default.ashx /asset

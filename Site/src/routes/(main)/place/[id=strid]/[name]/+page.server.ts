@@ -60,7 +60,12 @@ export async function load({ locals, params, url }) {
 		redirect(302, `/place/${id}/${slug}`)
 
 	const idHash = Bun.hash.crc32(id)
-	return { slug, place, thumbnails: [idHash % thumbnails.length] }
+	return {
+		scheme: config.LauncherURI,
+		slug,
+		place,
+		thumbnails: [idHash % thumbnails.length],
+	}
 }
 
 export const actions: import("./$types").Actions = {}
@@ -88,7 +93,5 @@ actions.join = async ({ locals, request }) => {
 		}
 	)
 
-	return {
-		joinScriptUrl: `${config.Domain}/game/join?ticket=${playing.id}`,
-	}
+	return { ticket: playing.id }
 }
