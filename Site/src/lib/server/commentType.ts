@@ -1,5 +1,4 @@
-
-export  default (type: string[], id: string) => {
+export default (type: string[], id: string) => {
 	const mtype = type[0]
 	if (
 		(mtype === "status" && type.length === 1) || // status post

@@ -47,7 +47,13 @@
 	},
 	"overrides": [
 		{
-			"includes": ["**/*.svelte", "!**/node_modules/**"],
+			"includes": [".svelte-kit/**", "build/**"],
+			"formatter": {
+				"enabled": false
+			}
+		},
+		{
+			"includes": ["**/*.svelte"],
 			"linter": {
 				"rules": {
 					"style": {
@@ -62,6 +68,9 @@
 						"noImplicitAnyLet": "off"
 					}
 				}
+			},
+			"formatter": {
+				"enabled": false
 			}
 		}
 	]

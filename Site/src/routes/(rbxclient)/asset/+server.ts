@@ -1,8 +1,8 @@
-import { createHash } from "node:crypto"
 import { idRegex, intRegex } from "$lib/paramTests"
 import config from "$lib/server/config"
 import { SignData } from "$lib/server/sign"
-import { Record, db } from "$lib/server/surreal"
+import { db, Record } from "$lib/server/surreal"
+import { createHash } from "node:crypto"
 import { error, redirect } from "@sveltejs/kit"
 import assetQuery from "./asset.surql"
 
@@ -52,7 +52,7 @@ export async function GET({ url }) {
 			throw new Error("Asset not found")
 
 		const [[asset]] = await db.query<FoundAsset[][]>(assetQuery, {
-			asset: Record("asset", id)
+			asset: Record("asset", id),
 		})
 
 		if (!asset || asset.visibility === "Moderated")
