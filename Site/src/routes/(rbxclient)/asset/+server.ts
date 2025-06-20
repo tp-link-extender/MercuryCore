@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto"
-import { idRegex } from "$lib/paramTests"
+import { idRegex, intRegex } from "$lib/paramTests"
 import config from "$lib/server/config"
 import { SignData } from "$lib/server/sign"
 import { Record, db } from "$lib/server/surreal"
@@ -24,35 +24,45 @@ type FoundAsset = {
 
 export async function GET({ url }) {
 	const id = url.searchParams.get("id")
-	if (!id || !idRegex.test(id)) error(400, "Invalid Request")
+
+	if (!id) error(400, "Invalid Request")
+	// all numbered ids are corescripts (for now)
+
+	if (intRegex.test(id)) {
+		console.log("Serving corescript", id)
+
+		const file = Bun.file(`../Corescripts/${id}.lua`)
+		if (!(await file.exists())) error(404, "Corescript not found")
+
+		const script = (await file.text()).replaceAll(
+			"roblox.com/asset",
+			`${config.Domain}/asset`
+		)
+
+		return response(await SignData(script))
+	}
+
+	if (!idRegex.test(id)) error(400, "Invalid Request")
 	console.log("Serving", id)
 
 	try {
 		// Try loading as an asset
 
-		if (await Bun.file(`../data/assets/${id}`).exists()) {
-			const [[asset]] = await db.query<FoundAsset[][]>(assetQuery, {
-				asset: Record("asset", id),
-			})
+		if (!(await Bun.file(`../data/assets/${id}`).exists()))
+			throw new Error("Asset not found")
 
-			if (!asset || asset.visibility === "Moderated")
-				throw new Error("Asset not found")
+		const [[asset]] = await db.query<FoundAsset[][]>(assetQuery, {
+			asset: Record("asset", id)
+		})
 
-			// The asset is visible or pending
-			// (allow pending assets to be shown through the api)
-			console.log(`serving asset #${id}`)
-			const file = await Bun.file(`../data/assets/${id}`).arrayBuffer()
-			return response(new Uint8Array(file))
-		}
+		if (!asset || asset.visibility === "Moderated")
+			throw new Error("Asset not found")
 
-		// Try loading as a corescript
-
-		const file = (
-			await Bun.file(`../Corescripts/${id}.lua`).text()
-		).replaceAll("roblox.com/asset", `${config.Domain}/asset`)
-
-		console.log("serving corescript", id)
-		return response(await SignData(file, +id))
+		// The asset is visible or pending
+		// (allow pending assets to be shown through the api)
+		console.log(`serving asset #${id}`)
+		const file = await Bun.file(`../data/assets/${id}`).arrayBuffer()
+		return response(new Uint8Array(file))
 	} catch {
 		redirect(302, `https://assetdelivery.roblox.com/v1/asset?id=${id}`)
 	}

@@ -1,6 +1,5 @@
 import type { Scored } from "$lib/like"
 
-
 export interface Comment extends Scored {
 	id: string
 	author: BasicUser
