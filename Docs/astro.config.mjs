@@ -7,12 +7,12 @@ import { defineConfig } from "astro/config"
 export default defineConfig({
 	integrations: [
 		starlight({
-			title: "My Docs",
+			title: "Mercury Core",
 			social: [
 				{
 					icon: "github",
 					label: "GitHub",
-					href: "https://github.com/withastro/starlight",
+					href: "https://github.com/tp-link-extender/MercuryCore",
 				},
 			],
 			sidebar: [
@@ -20,7 +20,7 @@ export default defineConfig({
 					label: "Guides",
 					items: [
 						// Each item here is one entry in the navigation menu.
-						{ label: "Example Guide", slug: "guides/example" },
+						{ label: "Example guide", slug: "guides/example" },
 					],
 				},
 				{
@@ -28,6 +28,9 @@ export default defineConfig({
 					autogenerate: { directory: "reference" },
 				},
 			],
+			components: {
+				Head: "./src/components/Head.astro",
+			},
 		}),
 	],
 })
