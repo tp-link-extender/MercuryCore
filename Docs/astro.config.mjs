@@ -31,6 +31,7 @@ export default defineConfig({
 			components: {
 				Head: "./src/components/Head.astro",
 			},
+			customCss: ["./src/global.css", "./src/fonts/font-face.css"],
 		}),
 	],
 })
