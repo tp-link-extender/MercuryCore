@@ -18,6 +18,10 @@ export default defineConfig({
 			],
 			sidebar: [
 				{
+					label: "Services",
+					slug: "services",
+				},
+				{
 					label: "Technology stack",
 					slug: "stack",
 				},

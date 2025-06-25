@@ -39,6 +39,15 @@
 	--sl-color-black: hsl(var(--hue) 5 96);
 }
 
+/* * {
+	font-feature-settings: "cv03", "cv04", "cv08", "cv09";
+} */
+
 main img {
 	border-radius: 0.5rem;
+}
+
+button,
+a {
+	cursor: pointer;
 }
