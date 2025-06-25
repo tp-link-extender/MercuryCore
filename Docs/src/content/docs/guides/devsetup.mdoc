@@ -1,9 +1,9 @@
 ---
 title: Development setup
-description: A guide in my new Starlight docs site.
+description: How to set up Mercury Core for local development.
 ---
 
-This guide details how to set up Mercury Core for local development.  
+This guide details how to set up Mercury Core for local development and modification.
 
 For a guide on server installation and hosting for production, see [TODO].
 
@@ -13,6 +13,7 @@ You should already have the necessary dependencies and command line tools instal
 
 You will need:
 
+-   Latest version of [Git](https://git-scm.com/) installed (expected as `git`)
 -   Latest version of [Bun](https://bun.sh/) installed (expected as `bun`)
 -   Latest version of [Docker](https://www.docker.com/) installed (expected as `docker`, optional)
     -   Alternative container managers can be used, for example [Podman](https://podman.io/).
@@ -24,28 +25,21 @@ You will need:
 
 {% steps %}
 
-1.  Clone the repository to a directory of your choice.
+1. Clone the repository to a directory of your choice on your local machine.
 
 	```bash
 	git clone https://github.com/tp-link-extender/MercuryCore
 	```
 
-2.  Navigate to the **Site** directory.
+2. Navigate to the directory of the repository.
 
-3.  Run `caddy start` to start the Caddy reverse proxy server.
-    -   You can also run `caddy reload` to reload the configuration file without restarting the server.
-    -   If you're using Caddy with multiple configuration files, import the Caddyfile in the repository's root directory into a Caddyfile somewhere else, and run `caddy start` and `caddy reload` from there.
+3. Run `bun i` to install all dependencies.
 
-4.  Run `docker compose up -d` to start the database and economy service.
+4. Copy the **Site/.env.example** file to **Site/.env** and modify it to set up the environment variables
 
-5.  Copy the **Site/.env.example** file to **Site/.env** and modify it to set up the environment variables.
-
-6.  Run `bun prod` to install dependencies and begin building.
-
-7.  Run `bun ./build` (not to be confused with `bun build`) to start Mercury Core.
+5. Run `docker compose up -d` to start the database and economy service.
+	{% aside type="tip" title="Running without containers" %}
+		If you don't have or can't install a container manager, you can start the database manually by [installing SurrealDB](https://surrealdb.com/install) and running `surreal start -l trace -u root -p root --allow-scripting file:./data/surreal` in the repository's root directory, and the economy service manually by [installing Go](https://go.dev/dl/) and running `go run .` in the **Economy** directory. You'll need to run these in separate terminals or in the background.
+	{% /aside %}
 
 {% /steps %}
-
-{% aside type="tip" title="Running in the background" %}
-	Several methods can be used to run Mercury Core as a background process as well. Daemons, GNU Screen, containers, and PM2 all work for this purpose.
-{% /aside %}

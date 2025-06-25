@@ -1,0 +1,48 @@
+---
+title: Production setup
+description: How to set up Mercury Core for production hosting.
+---
+
+This guide details how to set up a modified version of Mercury Core for production hosting.
+
+For a guide on setting up Mercury Core for local development, see [TODO].
+
+## Requirements
+
+You should already have the necessary dependencies and command line tools installed. If not, see [TODO] for an installation guid.
+
+You will need:
+
+-   A correctly configured or modified version of Mercury Core 
+-   Latest version of [Bun](https://bun.sh/) installed (expected as `bun`)
+-   Latest version of [Docker](https://www.docker.com/) installed (expected as `docker`, optional)
+    -   Alternative container managers can be used, for example [Podman](https://podman.io/).
+-   Latest version of [Caddy](https://caddyserver.com) installed (expected as `caddy`)
+-   A terminal
+-   A modern web browser (Early 2024 onwards for most major browsers)
+-   A computer, as it would be painful to live without one, wouldn't it?
+
+## Instructions
+
+{% steps %}
+
+1. Copy the modified version of Mercury Core to your server.
+
+2. Navigate to the **Site** directory.
+
+3. Run `caddy start` to start the Caddy reverse proxy server.
+    -   You can also run `caddy reload` to reload the configuration file without restarting the server.
+    -   If you're using Caddy with multiple configuration files, import the Caddyfile in the repository's root directory into a Caddyfile somewhere else, and run `caddy start` and `caddy reload` from there.
+
+4. Run `docker compose up -d` to start the database and economy service.
+
+5. Copy the **Site/.env.example** file to **Site/.env** and modify it to set up the environment variables.
+
+6. Run `bun prod` to install dependencies and begin building.
+
+7. Run `bun ./build` (not to be confused with `bun build`) to start Mercury Core.
+	{% aside type="tip" title="Running in the background" %}
+		Several methods can be used to run Mercury Core as a background process as well. Daemons, GNU Screen, containers, and PM2 all work for this purpose.
+	{% /aside %}
+
+{% /steps %}

@@ -18,6 +18,10 @@ export default defineConfig({
 			],
 			sidebar: [
 				{
+					label: "Technology stack",
+					slug: "stack",
+				},
+				{
 					label: "Guides",
 					autogenerate: { directory: "guides" },
 				},
