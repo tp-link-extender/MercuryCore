@@ -18,14 +18,7 @@ export default defineConfig({
 			sidebar: [
 				{
 					label: "Guides",
-					items: [
-						// Each item here is one entry in the navigation menu.
-						{ label: "Example guide", slug: "guides/example" },
-					],
-				},
-				{
-					label: "Reference",
-					autogenerate: { directory: "reference" },
+					items: [{ label: "Installation", slug: "guides/install" }],
 				},
 			],
 			components: {
