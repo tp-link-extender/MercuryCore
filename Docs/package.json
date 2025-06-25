@@ -13,7 +13,9 @@
 		"@biomejs/biome": "^2.0.5"
 	},
 	"dependencies": {
+		"@astrojs/markdoc": "^0.15.0",
 		"@astrojs/starlight": "^0.34.4",
+		"@astrojs/starlight-markdoc": "^0.4.0",
 		"astro": "^5.10.1",
 		"sharp": "^0.34.2"
 	}

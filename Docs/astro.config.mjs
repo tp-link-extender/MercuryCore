@@ -1,5 +1,6 @@
 // @ts-check
 
+import markdoc from "@astrojs/markdoc"
 import starlight from "@astrojs/starlight"
 import { defineConfig } from "astro/config"
 
@@ -18,7 +19,7 @@ export default defineConfig({
 			sidebar: [
 				{
 					label: "Guides",
-					items: [{ label: "Installation", slug: "guides/install" }],
+					autogenerate: { directory: "guides" },
 				},
 			],
 			components: {
@@ -26,5 +27,6 @@ export default defineConfig({
 			},
 			customCss: ["./src/global.css", "./src/fonts/font-face.css"],
 		}),
+		markdoc(),
 	],
 })

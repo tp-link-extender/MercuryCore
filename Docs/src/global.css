@@ -38,3 +38,7 @@
 	--sl-color-gray-7: hsl(var(--hue) 5 92);
 	--sl-color-black: hsl(var(--hue) 5 96);
 }
+
+main img {
+	border-radius: 0.5rem;
+}
