@@ -16,7 +16,7 @@
 		"@types/bun": "^1.2.16",
 		"@types/d3-interpolate": "^3.0.4",
 		"@types/nprogress": "^0.2.3",
-		"@types/serviceworker": "^0.0.139",
+		"@types/serviceworker": "^0.0.140",
 		"svelte-check": "^4.2.2"
 	},
 	"type": "module",
