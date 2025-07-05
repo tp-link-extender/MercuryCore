@@ -24,14 +24,6 @@ func randId() (id string) {
 	return
 }
 
-func Assert(err error, txt string) {
-	// so that I don't have to write this every time
-	if err != nil {
-		fmt.Println(c.InRed(txt+": ") + err.Error())
-		os.Exit(1)
-	}
-}
-
 type (
 	user     string
 	currency uint64
@@ -195,14 +187,16 @@ func (e *Economy) currentFee() float64 {
 	return max((1+(e.CCU()*0.9-TCU)/TCU*4)*baseFee, baseFee)
 }
 
-func (e *Economy) handleTxTypes(lines []string) {
+func (e *Economy) handleTxTypes(lines []string) (err error) {
 	for _, line := range lines {
 		// split line at first space, with the transaction type being the first part
 		parts := strings.SplitN(line, " ", 2)
 		switch data := []byte(parts[1]); parts[0] {
 		case "Transaction":
 			var tx Tx
-			Assert(json.Unmarshal(data, &tx), "Failed to decode transaction from ledger")
+			if err = json.Unmarshal(data, &tx); err != nil {
+				return fmt.Errorf("failed to decode transaction from ledger: %w", err)
+			}
 
 			if tx.Amount+tx.Fee > e.balances[tx.From] {
 				fmt.Println("Invalid transaction in ledger")
@@ -212,12 +206,16 @@ func (e *Economy) handleTxTypes(lines []string) {
 			e.loadTx(tx)
 		case "Mint":
 			var mint Mint
-			Assert(json.Unmarshal(data, &mint), "Failed to decode mint from ledger")
+			if err = json.Unmarshal(data, &mint); err != nil {
+				return fmt.Errorf("failed to decode mint from ledger: %w", err)
+			}
 
 			e.loadMint(mint)
 		case "Burn":
 			var burn Burn
-			Assert(json.Unmarshal(data, &burn), "Failed to decode burn from ledger")
+			if err = json.Unmarshal(data, &burn); err != nil {
+				return fmt.Errorf("failed to decode burn from ledger: %w", err)
+			}
 
 			if burn.Amount > e.balances[burn.From] {
 				fmt.Println("Invalid burn in ledger")
@@ -229,6 +227,7 @@ func (e *Economy) handleTxTypes(lines []string) {
 			fmt.Println(c.InRed("Unknown transaction type in ledger"))
 		}
 	}
+	return
 }
 
 func (e *Economy) loadTx(tx Tx) {
@@ -247,12 +246,28 @@ func (e *Economy) loadBurn(burn Burn) {
 	e.balances[burn.From] -= burn.Amount
 }
 
-func (e *Economy) updateBalances(file *os.File) {
-	bytes, err := io.ReadAll(file)
-	Assert(err, "Failed to read from ledger")
+func (e *Economy) loadData() (err error) {
+	bytes, err := io.ReadAll(e.data)
+	if err != nil {
+		return
+	}
 
 	lines := strings.Split(string(bytes), "\n")
-	e.handleTxTypes(lines[:len(lines)-1] /* remove last empty line */)
+	return e.handleTxTypes(lines[:len(lines)-1] /* remove last empty line */)
+}
+
+func NewEconomy(data io.ReadWriter) (e *Economy, err error) {
+	e = &Economy{
+		data:         data,
+		balances:     make(map[user]currency),
+		prevStipends: make(map[user]uint64),
+	}
+
+	if err = e.loadData(); err != nil {
+		return nil, fmt.Errorf("failed to load economy data: %w", err)
+	}
+
+	return e, nil
 }
 
 func (e *Economy) appendEvent(event any, eventType string) error {
@@ -324,25 +339,6 @@ func (e *Economy) readTransactions() (txs []string, err error) {
 	return strings.Split(string(bytes), "\n"), nil
 }
 
-func (e *Economy) currentFeeRoute(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, e.currentFee())
-}
-
-func (e *Economy) currentStipendRoute(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, e.currentStipend())
-}
-
-func (e *Economy) balanceRoute(w http.ResponseWriter, r *http.Request) {
-	var user user
-
-	if _, err := fmt.Sscanf(r.PathValue("id"), "%s", &user); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	fmt.Fprint(w, e.balances[user])
-}
-
 func (e *Economy) readReversed() (lines []string, ll int, err error) {
 	if lines, err = e.readTransactions(); err != nil {
 		return
@@ -382,7 +378,30 @@ func (e *Economy) enumerateTransactions(validate func(tx map[string]any) bool) (
 	return
 }
 
-func (e *Economy) adminTransactionsRoute(w http.ResponseWriter, r *http.Request) {
+type EconomyServer struct {
+	*Economy
+}
+
+func (e *EconomyServer) currentFeeRoute(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, e.currentFee())
+}
+
+func (e *EconomyServer) currentStipendRoute(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, e.currentStipend())
+}
+
+func (e *EconomyServer) balanceRoute(w http.ResponseWriter, r *http.Request) {
+	var u user
+
+	if _, err := fmt.Sscanf(r.PathValue("id"), "%s", &u); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	fmt.Fprint(w, e.balances[u])
+}
+
+func (e *EconomyServer) adminTransactionsRoute(w http.ResponseWriter, r *http.Request) {
 	transactions, err := e.enumerateTransactions(func(tx map[string]any) bool {
 		return true
 	})
@@ -395,7 +414,7 @@ func (e *Economy) adminTransactionsRoute(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-func (e *Economy) transactionsRoute(w http.ResponseWriter, r *http.Request) {
+func (e *EconomyServer) transactionsRoute(w http.ResponseWriter, r *http.Request) {
 	id := user(r.PathValue("id"))
 
 	transactions, err := e.enumerateTransactions(func(tx map[string]any) bool {
@@ -410,52 +429,52 @@ func (e *Economy) transactionsRoute(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (e *Economy) transactRoute(w http.ResponseWriter, r *http.Request) {
-	var sentTx SentTx
+func (e *EconomyServer) transactRoute(w http.ResponseWriter, r *http.Request) {
+	var stx SentTx
 
-	if err := json.NewDecoder(r.Body).Decode(&sentTx); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&stx); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	if err := e.transact(sentTx); err != nil {
+	if err := e.transact(stx); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	fmt.Println(c.InGreen(fmt.Sprintf("Transaction successful  %s -[%s]-> %s", sentTx.From, toReadable(sentTx.Amount), sentTx.To)))
+	fmt.Println(c.InGreen(fmt.Sprintf("Transaction successful  %s -[%s]-> %s", stx.From, toReadable(stx.Amount), stx.To)))
 }
 
-func (e *Economy) mintRoute(w http.ResponseWriter, r *http.Request) {
-	var sentMint SentMint
+func (e *EconomyServer) mintRoute(w http.ResponseWriter, r *http.Request) {
+	var sm SentMint
 
-	if err := json.NewDecoder(r.Body).Decode(&sentMint); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&sm); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	if err := e.mint(sentMint, uint64(time.Now().UnixMilli())); err != nil {
+	if err := e.mint(sm, uint64(time.Now().UnixMilli())); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	fmt.Println(c.InGreen(fmt.Sprintf("Mint successful         %s <-[%s]-", sentMint.To, toReadable(sentMint.Amount))))
+	fmt.Println(c.InGreen(fmt.Sprintf("Mint successful         %s <-[%s]-", sm.To, toReadable(sm.Amount))))
 }
 
-func (e *Economy) burnRoute(w http.ResponseWriter, r *http.Request) {
-	var sentBurn SentBurn
+func (e *EconomyServer) burnRoute(w http.ResponseWriter, r *http.Request) {
+	var sb SentBurn
 
-	if err := json.NewDecoder(r.Body).Decode(&sentBurn); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&sb); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	if err := e.burn(sentBurn); err != nil {
+	if err := e.burn(sb); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	fmt.Println(c.InGreen(fmt.Sprintf("Burn successful         %s -[%s]->", sentBurn.From, toReadable(sentBurn.Amount))))
+	fmt.Println(c.InGreen(fmt.Sprintf("Burn successful         %s -[%s]->", sb.From, toReadable(sb.Amount))))
 }
 
-func (e *Economy) stipendRoute(w http.ResponseWriter, r *http.Request) {
+func (e *EconomyServer) stipendRoute(w http.ResponseWriter, r *http.Request) {
 	var to user
 
 	if _, err := fmt.Sscanf(r.PathValue("id"), "%s", &to); err != nil {
@@ -496,16 +515,17 @@ func main() {
 	// create the file if it dont exist
 
 	file, err := createFilepath()
-	Assert(err, "Failed to create or open ledger")
+	if err != nil {
+		fmt.Println(c.InRed("Failed to create or open ledger: " + err.Error()))
+		os.Exit(1)
+	}
 	defer file.Close()
 
-	e := Economy{
-		data:         file,
-		balances:     make(map[user]currency),
-		prevStipends: make(map[user]uint64),
+	e, err := NewEconomy(file)
+	if err != nil {
+		fmt.Println(c.InRed("Failed to create economy: " + err.Error()))
+		os.Exit(1)
 	}
-
-	e.updateBalances(file)
 
 	fmt.Println("User count    ", len(e.balances))
 	fmt.Println("Economy size  ", toReadable(e.economySize()))
@@ -514,16 +534,21 @@ func main() {
 	fmt.Println("Fee percentage", int(e.currentFee()*100))
 	fmt.Println("Stipend size  ", toReadable(e.currentStipend()))
 
-	http.HandleFunc("GET /currentFee", e.currentFeeRoute)
-	http.HandleFunc("GET /currentStipend", e.currentStipendRoute)
-	http.HandleFunc("GET /balance/{id}", e.balanceRoute)
-	http.HandleFunc("GET /transactions", e.adminTransactionsRoute)
-	http.HandleFunc("GET /transactions/{id}", e.transactionsRoute)
-	http.HandleFunc("POST /transact", e.transactRoute)
-	http.HandleFunc("POST /mint", e.mintRoute)
-	http.HandleFunc("POST /burn", e.burnRoute)
-	http.HandleFunc("POST /stipend/{id}", e.stipendRoute)
+	es := EconomyServer{Economy: e}
+
+	http.HandleFunc("GET /currentFee", es.currentFeeRoute)
+	http.HandleFunc("GET /currentStipend", es.currentStipendRoute)
+	http.HandleFunc("GET /balance/{id}", es.balanceRoute)
+	http.HandleFunc("GET /transactions", es.adminTransactionsRoute)
+	http.HandleFunc("GET /transactions/{id}", es.transactionsRoute)
+	http.HandleFunc("POST /transact", es.transactRoute)
+	http.HandleFunc("POST /mint", es.mintRoute)
+	http.HandleFunc("POST /burn", es.burnRoute)
+	http.HandleFunc("POST /stipend/{id}", es.stipendRoute)
 
 	fmt.Println(c.InGreen("~ Economy service is up on port 2009 ~")) // 03/Jan/2009 Chancellor on brink of second bailout for banks
-	Assert(http.ListenAndServe(":2009", nil), "Failed to start server")
+	if err := http.ListenAndServe(":2009", nil); err != nil {
+		fmt.Println(c.InRed("Failed to start server: " + err.Error()))
+		os.Exit(1)
+	}
 }
