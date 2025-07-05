@@ -102,7 +102,7 @@ func (e *EconomyServer) mintRoute(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	if err := e.Mint(sm, uint64(time.Now().UnixMilli())); err != nil {
+	if _, err := e.Mint(sm); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}

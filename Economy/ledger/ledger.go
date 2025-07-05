@@ -15,7 +15,7 @@ import (
 
 const idchars = "0123456789abcdefghijklmnopqrstuvwxyz"
 
-func randId() (id string) {
+func RandId() (id string) {
 	id, _ = gonanoid.Generate(idchars, 15) // doesn't error at runtime, really
 	return
 }
@@ -283,10 +283,10 @@ func (e *Economy) Transact(sent SentTx) (err error) {
 	fee := Currency(float64(sent.Amount) * e.GetCurrentFee())
 	if err = e.validateTx(sent, fee); err != nil {
 		return
-	} else if err = e.appendEvent(
-		Tx{sent, fee, uint64(time.Now().UnixMilli()), randId()},
-		"Transaction",
-	); err != nil {
+	}
+
+	t := uint64(time.Now().UnixMilli())
+	if err = e.appendEvent(Tx{sent, fee, t, RandId()}, "Transaction"); err != nil {
 		return
 	}
 
@@ -296,11 +296,13 @@ func (e *Economy) Transact(sent SentTx) (err error) {
 	return
 }
 
-func (e *Economy) Mint(sent SentMint, time uint64) (err error) {
+func (e *Economy) Mint(sent SentMint) (t uint64, err error) {
 	if err = e.validateMint(sent); err != nil {
 		return
 	}
-	if err = e.appendEvent(Mint{sent, time, randId()}, "Mint"); err != nil {
+
+	t = uint64(time.Now().UnixMilli())
+	if err = e.appendEvent(Mint{sent, t, RandId()}, "Mint"); err != nil {
 		return
 	}
 
@@ -313,7 +315,9 @@ func (e *Economy) Burn(sent SentBurn) (err error) {
 	if err = e.validateBurn(sent); err != nil {
 		return
 	}
-	if err = e.appendEvent(Burn{sent, uint64(time.Now().UnixMilli()), randId()}, "Burn"); err != nil {
+
+	t := uint64(time.Now().UnixMilli())
+	if err = e.appendEvent(Burn{sent, t, RandId()}, "Burn"); err != nil {
 		return
 	}
 
@@ -323,8 +327,8 @@ func (e *Economy) Burn(sent SentBurn) (err error) {
 }
 
 func (e *Economy) Stipend(to User) (err error) {
-	time := uint64(time.Now().UnixMilli())
-	if err = e.Mint(SentMint{to, e.GetCurrentStipend(), "Stipend"}, time); err != nil {
+	time, err := e.Mint(SentMint{to, e.GetCurrentStipend(), "Stipend"})
+	if err != nil {
 		return
 	}
 
