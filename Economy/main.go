@@ -105,12 +105,12 @@ type Burn struct {
 }
 
 type Economy struct {
-	file         *os.File
+	data         io.ReadWriter
 	balances     map[user]currency
 	prevStipends map[user]uint64
 }
 
-func (e Economy) validateTx(sent SentTx, fee currency) error {
+func (e *Economy) validateTx(sent SentTx, fee currency) error {
 	if sent.Amount == 0 {
 		return errors.New("transaction must have an amount")
 	}
@@ -148,7 +148,7 @@ func (Economy) validateMint(sent SentMint) error {
 	return nil
 }
 
-func (e Economy) validateBurn(sent SentBurn) error {
+func (e *Economy) validateBurn(sent SentBurn) error {
 	if sent.Amount == 0 {
 		return errors.New("burn must have an amount")
 	}
@@ -167,7 +167,7 @@ func (e Economy) validateBurn(sent SentBurn) error {
 	return nil
 }
 
-func (e Economy) economySize() (size currency) {
+func (e *Economy) economySize() (size currency) {
 	for _, v := range e.balances {
 		size += v
 	}
@@ -175,7 +175,7 @@ func (e Economy) economySize() (size currency) {
 }
 
 // Current Currency per User
-func (e Economy) CCU() float64 {
+func (e *Economy) CCU() float64 {
 	users := len(e.balances)
 	if users == 0 {
 		return 0 // Division by zero causes overflowz
@@ -185,13 +185,13 @@ func (e Economy) CCU() float64 {
 
 // If the economy is too small, stipends will increase
 // If the economy is near or above desired size, stipends will be baseStipend
-func (e Economy) currentStipend() currency {
+func (e *Economy) currentStipend() currency {
 	return currency(max((TCU-e.CCU()+baseStipend)/2, baseStipend))
 }
 
 // If the economy is too large, fees will increase
 // If the economy is near or below desired size, fees will be baseFee
-func (e Economy) currentFee() float64 {
+func (e *Economy) currentFee() float64 {
 	return max((1+(e.CCU()*0.9-TCU)/TCU*4)*baseFee, baseFee)
 }
 
@@ -247,7 +247,7 @@ func (e *Economy) loadBurn(burn Burn) {
 	e.balances[burn.From] -= burn.Amount
 }
 
-func (e Economy) updateBalances(file *os.File) {
+func (e *Economy) updateBalances(file *os.File) {
 	bytes, err := io.ReadAll(file)
 	Assert(err, "Failed to read from ledger")
 
@@ -255,14 +255,14 @@ func (e Economy) updateBalances(file *os.File) {
 	e.handleTxTypes(lines[:len(lines)-1] /* remove last empty line */)
 }
 
-func (e Economy) appendEvent(event any, eventType string) error {
-	if _, err := e.file.WriteString(eventType + " "); err != nil { // Lol good luck error handling this
+func (e *Economy) appendEvent(event any, eventType string) error {
+	if _, err := e.data.Write([]byte(eventType + " ")); err != nil { // Lol good luck error handling this
 		fmt.Println(err.Error())
 	}
-	return json.NewEncoder(e.file).Encode(event)
+	return json.NewEncoder(e.data).Encode(event)
 }
 
-func (e Economy) transact(sent SentTx) (err error) {
+func (e *Economy) transact(sent SentTx) (err error) {
 	fee := currency(float64(sent.Amount) * e.currentFee())
 	if err = e.validateTx(sent, fee); err != nil {
 		return
@@ -315,15 +315,8 @@ func (e *Economy) stipend(to user) (err error) {
 	return
 }
 
-func readTransactions() (txs []string, err error) {
-	file, err := os.OpenFile(currentFilepath, os.O_RDONLY, 0o644)
-	if err != nil {
-		fmt.Println(c.InRed("Failed to open ledger:"), err)
-		return
-	}
-	defer file.Close()
-
-	bytes, err := io.ReadAll(file)
+func (e *Economy) readTransactions() (txs []string, err error) {
+	bytes, err := io.ReadAll(e.data)
 	if err != nil {
 		fmt.Println(c.InRed("Failed to read transactions from ledger:"), err)
 		return
@@ -331,15 +324,15 @@ func readTransactions() (txs []string, err error) {
 	return strings.Split(string(bytes), "\n"), nil
 }
 
-func (e Economy) currentFeeRoute(w http.ResponseWriter, r *http.Request) {
+func (e *Economy) currentFeeRoute(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, e.currentFee())
 }
 
-func (e Economy) currentStipendRoute(w http.ResponseWriter, r *http.Request) {
+func (e *Economy) currentStipendRoute(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, e.currentStipend())
 }
 
-func (e Economy) balanceRoute(w http.ResponseWriter, r *http.Request) {
+func (e *Economy) balanceRoute(w http.ResponseWriter, r *http.Request) {
 	var user user
 
 	if _, err := fmt.Sscanf(r.PathValue("id"), "%s", &user); err != nil {
@@ -350,8 +343,8 @@ func (e Economy) balanceRoute(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, e.balances[user])
 }
 
-func readReversed() (lines []string, ll int, err error) {
-	if lines, err = readTransactions(); err != nil {
+func (e *Economy) readReversed() (lines []string, ll int, err error) {
+	if lines, err = e.readTransactions(); err != nil {
 		return
 	}
 
@@ -364,8 +357,8 @@ func readReversed() (lines []string, ll int, err error) {
 	return lines[1:], l - 1, nil
 }
 
-func enumerateTransactions(validate func(tx map[string]any) bool) (transactions []map[string]any, err error) {
-	lines, linesLen, err := readReversed()
+func (e *Economy) enumerateTransactions(validate func(tx map[string]any) bool) (transactions []map[string]any, err error) {
+	lines, linesLen, err := e.readReversed()
 	if err != nil {
 		return
 	}
@@ -389,8 +382,8 @@ func enumerateTransactions(validate func(tx map[string]any) bool) (transactions 
 	return
 }
 
-func adminTransactionsRoute(w http.ResponseWriter, r *http.Request) {
-	transactions, err := enumerateTransactions(func(tx map[string]any) bool {
+func (e *Economy) adminTransactionsRoute(w http.ResponseWriter, r *http.Request) {
+	transactions, err := e.enumerateTransactions(func(tx map[string]any) bool {
 		return true
 	})
 	if err != nil {
@@ -402,10 +395,10 @@ func adminTransactionsRoute(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func transactionsRoute(w http.ResponseWriter, r *http.Request) {
+func (e *Economy) transactionsRoute(w http.ResponseWriter, r *http.Request) {
 	id := user(r.PathValue("id"))
 
-	transactions, err := enumerateTransactions(func(tx map[string]any) bool {
+	transactions, err := e.enumerateTransactions(func(tx map[string]any) bool {
 		return tx["From"] != nil && user(tx["From"].(string)) == id || tx["To"] != nil && user(tx["To"].(string)) == id
 	})
 	if err != nil {
@@ -417,7 +410,7 @@ func transactionsRoute(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (e Economy) transactRoute(w http.ResponseWriter, r *http.Request) {
+func (e *Economy) transactRoute(w http.ResponseWriter, r *http.Request) {
 	var sentTx SentTx
 
 	if err := json.NewDecoder(r.Body).Decode(&sentTx); err != nil {
@@ -432,7 +425,7 @@ func (e Economy) transactRoute(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(c.InGreen(fmt.Sprintf("Transaction successful  %s -[%s]-> %s", sentTx.From, toReadable(sentTx.Amount), sentTx.To)))
 }
 
-func (e Economy) mintRoute(w http.ResponseWriter, r *http.Request) {
+func (e *Economy) mintRoute(w http.ResponseWriter, r *http.Request) {
 	var sentMint SentMint
 
 	if err := json.NewDecoder(r.Body).Decode(&sentMint); err != nil {
@@ -447,7 +440,7 @@ func (e Economy) mintRoute(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(c.InGreen(fmt.Sprintf("Mint successful         %s <-[%s]-", sentMint.To, toReadable(sentMint.Amount))))
 }
 
-func (e Economy) burnRoute(w http.ResponseWriter, r *http.Request) {
+func (e *Economy) burnRoute(w http.ResponseWriter, r *http.Request) {
 	var sentBurn SentBurn
 
 	if err := json.NewDecoder(r.Body).Decode(&sentBurn); err != nil {
@@ -462,7 +455,7 @@ func (e Economy) burnRoute(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(c.InGreen(fmt.Sprintf("Burn successful         %s -[%s]->", sentBurn.From, toReadable(sentBurn.Amount))))
 }
 
-func (e Economy) stipendRoute(w http.ResponseWriter, r *http.Request) {
+func (e *Economy) stipendRoute(w http.ResponseWriter, r *http.Request) {
 	var to user
 
 	if _, err := fmt.Sscanf(r.PathValue("id"), "%s", &to); err != nil {
@@ -481,26 +474,33 @@ func (e Economy) stipendRoute(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(c.InGreen(fmt.Sprintf("Stipend successful      %s", to)))
 }
 
+func createFilepath() (file *os.File, err error) {
+	if file, err = os.OpenFile(currentFilepath, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0o644); err != nil {
+		if !errors.Is(err, os.ErrNotExist) {
+			return nil, fmt.Errorf("failed to open ledger: %w", err)
+		}
+
+		fmt.Println(c.InPurple("Economy data folder not found, creating..."))
+		if err = os.MkdirAll(folderpath, 0o644); err != nil {
+			return nil, fmt.Errorf("failed to create *Economy data folder: %w", err)
+		}
+		if file, err = os.Create(currentFilepath); err != nil {
+			return nil, fmt.Errorf("failed to create ledger: %w", err)
+		}
+	}
+	return
+}
+
 func main() {
 	fmt.Println(c.InYellow("Loading ledger..."))
 	// create the file if it dont exist
 
-	file, err := os.OpenFile(currentFilepath, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0o644)
-	if err != nil {
-		if !errors.Is(err, os.ErrNotExist) {
-			Assert(err, "Failed to open ledger")
-		}
-
-		fmt.Println(c.InPurple("Economy data folder not found, creating..."))
-		err = os.MkdirAll(folderpath, 0o644)
-		Assert(err, "Failed to create economy data folder")
-		file, err = os.Create(currentFilepath)
-		Assert(err, "Failed to create ledger")
-	}
+	file, err := createFilepath()
+	Assert(err, "Failed to create or open ledger")
 	defer file.Close()
 
 	e := Economy{
-		file:         file,
+		data:         file,
 		balances:     make(map[user]currency),
 		prevStipends: make(map[user]uint64),
 	}
@@ -517,8 +517,8 @@ func main() {
 	http.HandleFunc("GET /currentFee", e.currentFeeRoute)
 	http.HandleFunc("GET /currentStipend", e.currentStipendRoute)
 	http.HandleFunc("GET /balance/{id}", e.balanceRoute)
-	http.HandleFunc("GET /transactions", adminTransactionsRoute)
-	http.HandleFunc("GET /transactions/{id}", transactionsRoute)
+	http.HandleFunc("GET /transactions", e.adminTransactionsRoute)
+	http.HandleFunc("GET /transactions/{id}", e.transactionsRoute)
 	http.HandleFunc("POST /transact", e.transactRoute)
 	http.HandleFunc("POST /mint", e.mintRoute)
 	http.HandleFunc("POST /burn", e.burnRoute)
