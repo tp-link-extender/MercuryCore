@@ -33,12 +33,12 @@ type EconomyServer struct {
 	*Economy
 }
 
-func (e *EconomyServer) currentFeeRoute(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, e.GetCurrentFee())
-}
+// func (e *EconomyServer) currentFeeRoute(w http.ResponseWriter, r *http.Request) {
+// 	fmt.Fprint(w, e.GetCurrentFee())
+// }
 
 func (e *EconomyServer) currentStipendRoute(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, e.GetCurrentStipend())
+	fmt.Fprint(w, Stipend)
 }
 
 func (e *EconomyServer) balanceRoute(w http.ResponseWriter, r *http.Request) {
@@ -178,17 +178,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("User count    ", e.GetUserCount())
-	fmt.Println("Economy size  ", e.GetEconomySize())
-	fmt.Println("CCU           ", Currency(e.CCU()))
-	fmt.Println("TCU           ", Currency(TCU))
-	fmt.Println("Fee percentage", int(e.GetCurrentFee()*100))
-	fmt.Println("Stipend size  ", e.GetCurrentStipend())
+	e.Stats()
 
 	es := EconomyServer{Economy: e}
 
-	http.HandleFunc("GET /currentFee", es.currentFeeRoute)
-	http.HandleFunc("GET /currentStipend", es.currentStipendRoute)
+	// http.HandleFunc("GET /currentFee", es.currentFeeRoute)
+	// http.HandleFunc("GET /currentStipend", es.currentStipendRoute)
 	http.HandleFunc("GET /balance/{id}", es.balanceRoute)
 	http.HandleFunc("GET /transactions", es.adminTransactionsRoute)
 	http.HandleFunc("GET /transactions/{id}", es.transactionsRoute)

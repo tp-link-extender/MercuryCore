@@ -26,7 +26,7 @@ type (
 	Asset    uint64 // uint64 is overkill? idgaf
 )
 
-func (c Currency) String() string {
+func (c Currency) Readable() string {
 	return fmt.Sprintf("%d.%06d unit", c/Unit, c%Unit)
 }
 
@@ -42,9 +42,9 @@ const (
 	// Target Currency per User, the economy size will try to be this * user count (len(e.balances))
 	// By "user", I mean every user who has ever transacted with the economy
 	// The stipend and fee should change if the CCU is more than 10% off from this
-	TCU         = float64(100 * Unit)
-	baseStipend = float64(10 * Unit)
-	baseFee     = 0.1
+	// TCU         = float64(100 * Unit)
+	Stipend = 10 * Unit
+	// baseFee     = 0.1
 )
 
 // For now, transaction outputs are overkill
@@ -58,7 +58,7 @@ type SentTx struct {
 }
 type Tx struct {
 	SentTx
-	Fee  Currency // we ?could? store the fee as a portion of the amount instead, unclear atm if it's worth it
+	// Fee  Currency
 	Time uint64
 	Id   string
 }
@@ -112,15 +112,15 @@ func (e *Economy) GetEconomySize() (size Currency) {
 }
 
 // Current Currency per User
-func (e *Economy) CCU() float64 {
+func (e *Economy) CCU() Currency {
 	users := len(e.balances)
 	if users == 0 {
 		return 0 // Division by zero causes overflowz
 	}
-	return float64(e.GetEconomySize()) / float64(users)
+	return e.GetEconomySize() / Currency(users)
 }
 
-func (e *Economy) validateTx(sent SentTx, fee Currency) error {
+func (e *Economy) validateTx(sent SentTx) error {
 	if sent.Amount == 0 {
 		return errors.New("transaction must have an amount")
 	}
@@ -139,8 +139,8 @@ func (e *Economy) validateTx(sent SentTx, fee Currency) error {
 	if sent.Link == "" {
 		return errors.New("transaction must have a link")
 	}
-	if total := sent.Amount + fee; total > e.balances[sent.From] {
-		return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", e.balances[sent.From], total)
+	if total := sent.Amount; total > e.balances[sent.From] {
+		return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", e.balances[sent.From].Readable(), total.Readable())
 	}
 	return nil
 }
@@ -166,7 +166,7 @@ func (e *Economy) validateBurn(sent SentBurn) error {
 		return errors.New("burn must have a sender")
 	}
 	if sent.Amount > e.balances[sent.From] {
-		return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", e.balances[sent.From], sent.Amount)
+		return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", e.balances[sent.From].Readable(), sent.Amount.Readable())
 	}
 	if sent.Note == "" {
 		return errors.New("burn must have a note")
@@ -177,17 +177,11 @@ func (e *Economy) validateBurn(sent SentBurn) error {
 	return nil
 }
 
-// If the economy is too small, stipends will increase
-// If the economy is near or above desired size, stipends will be baseStipend
-func (e *Economy) GetCurrentStipend() Currency {
-	return Currency(max((TCU-e.CCU()+baseStipend)/2, baseStipend))
-}
-
-// If the economy is too large, fees will increase
-// If the economy is near or below desired size, fees will be baseFee
-func (e *Economy) GetCurrentFee() float64 {
-	return max((1+(e.CCU()*0.9-TCU)/TCU*4)*baseFee, baseFee)
-}
+// // If the economy is too small, stipends will increase
+// // If the economy is near or above desired size, stipends will be baseStipend
+// func (e *Economy) GetCurrentStipend() Currency {
+// 	return Currency(max((TCU-e.CCU()+baseStipend)/2, baseStipend))
+// }
 
 func (e *Economy) handleTxTypes(lines []string) (err error) {
 	for _, line := range lines {
@@ -200,7 +194,7 @@ func (e *Economy) handleTxTypes(lines []string) (err error) {
 				return fmt.Errorf("failed to decode transaction from ledger: %w", err)
 			}
 
-			if tx.Amount+tx.Fee > e.balances[tx.From] {
+			if tx.Amount > e.balances[tx.From] {
 				fmt.Println("Invalid transaction in ledger")
 				os.Exit(1)
 			}
@@ -233,7 +227,7 @@ func (e *Economy) handleTxTypes(lines []string) (err error) {
 }
 
 func (e *Economy) loadTx(tx Tx) {
-	e.balances[tx.From] -= tx.Amount + tx.Fee
+	e.balances[tx.From] -= tx.Amount
 	e.balances[tx.To] += tx.Amount
 }
 
@@ -280,18 +274,17 @@ func (e *Economy) appendEvent(event any, eventType string) error {
 }
 
 func (e *Economy) Transact(sent SentTx) (err error) {
-	fee := Currency(float64(sent.Amount) * e.GetCurrentFee())
-	if err = e.validateTx(sent, fee); err != nil {
+	if err = e.validateTx(sent); err != nil {
 		return
 	}
 
 	t := uint64(time.Now().UnixMilli())
-	if err = e.appendEvent(Tx{sent, fee, t, RandId()}, "Transaction"); err != nil {
+	if err = e.appendEvent(Tx{sent, t, RandId()}, "Transaction"); err != nil {
 		return
 	}
 
 	// successfully written
-	e.balances[sent.From] -= sent.Amount + fee
+	e.balances[sent.From] -= sent.Amount
 	e.balances[sent.To] += sent.Amount
 	return
 }
@@ -327,7 +320,7 @@ func (e *Economy) Burn(sent SentBurn) (err error) {
 }
 
 func (e *Economy) Stipend(to User) (err error) {
-	time, err := e.Mint(SentMint{to, e.GetCurrentStipend(), "Stipend"})
+	time, err := e.Mint(SentMint{to, Currency(Stipend), "Stipend"})
 	if err != nil {
 		return
 	}
@@ -386,4 +379,10 @@ func (e *Economy) LastNTransactions(validate func(tx map[string]any) bool, n int
 	}
 
 	return
+}
+
+func (e *Economy) Stats() {
+	fmt.Println("User count    ", e.GetUserCount())
+	fmt.Println("Economy size  ", e.GetEconomySize().Readable())
+	fmt.Println("CCU           ", e.CCU().Readable())
 }

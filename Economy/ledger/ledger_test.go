@@ -16,7 +16,7 @@ func TestEconomy(t *testing.T) {
 	}
 
 	if ccu := e.CCU(); ccu != 0 {
-		t.Fatalf("CCU is %f", ccu)
+		t.Fatalf("CCU is %v", ccu.Readable())
 	}
 
 	u1 := User(RandId())
@@ -32,4 +32,6 @@ func TestEconomy(t *testing.T) {
 	if balance := e.GetBalance(u1); balance != 50*Unit {
 		t.Fatalf("Balance is %d, expected %d", balance, 50*Unit)
 	}
+
+	e.Stats()
 }
