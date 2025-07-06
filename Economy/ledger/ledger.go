@@ -51,10 +51,10 @@ const (
 // Since fees are stored as a separate value and are burned, I can't see a reason for them to exist for now
 // UTXOs lmao
 type SentTx struct {
-	To, From   User
-	Amount     Currency
-	Link, Note string // Transaction links might be a bit of an ass backwards concept for now but ion care
-	Returns    []Asset
+	To, From User
+	Amount   Currency
+	Note     string
+	Returns  []Asset
 }
 type Tx struct {
 	SentTx
@@ -135,9 +135,6 @@ func (e *Economy) validateTx(sent SentTx) error {
 	}
 	if sent.Note == "" {
 		return errors.New("transaction must have a note")
-	}
-	if sent.Link == "" {
-		return errors.New("transaction must have a link")
 	}
 	if total := sent.Amount; total > e.balances[sent.From] {
 		return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", e.balances[sent.From].Readable(), total.Readable())
@@ -344,13 +341,6 @@ func (e *Economy) readReversed() (lines []string, err error) {
 		return
 	}
 
-	// l := len(lines)
-	// for i := range l / 2 {
-	// 	j := l - i - 1
-	// 	lines[i], lines[j] = lines[j], lines[i]
-	// }
-
-	// return lines[1:], l - 1, nil
 	slices.Reverse(lines)
 	return
 }
@@ -371,18 +361,30 @@ func (e *Economy) LastNTransactions(validate func(tx map[string]any) bool, n int
 		}
 
 		casted := tx.(map[string]any)
-		if !validate(casted) {
-			continue
-		}
 		casted["Type"] = parts[0]
-		transactions = append(transactions, casted)
+		if validate(casted) {
+			transactions = append(transactions, casted)
+		}
 	}
 
 	return
 }
 
+func (e *Economy) GetTransactionCount() (c int, err error) {
+	lines, err := e.readTransactions()
+	if err != nil {
+		return
+	}
+	return len(lines) - 1, nil // Exclude the last empty line
+}
+
 func (e *Economy) Stats() {
 	fmt.Println("User count    ", e.GetUserCount())
+	if txCount, err := e.GetTransactionCount(); err != nil {
+		fmt.Println("Error getting transaction count:", err)
+	} else {
+		fmt.Println("Transactions  ", txCount)
+	}
 	fmt.Println("Economy size  ", e.GetEconomySize().Readable())
 	fmt.Println("CCU           ", e.CCU().Readable())
 }

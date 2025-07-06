@@ -183,7 +183,7 @@ func main() {
 	es := EconomyServer{Economy: e}
 
 	// http.HandleFunc("GET /currentFee", es.currentFeeRoute)
-	// http.HandleFunc("GET /currentStipend", es.currentStipendRoute)
+	http.HandleFunc("GET /currentStipend", es.currentStipendRoute)
 	http.HandleFunc("GET /balance/{id}", es.balanceRoute)
 	http.HandleFunc("GET /transactions", es.adminTransactionsRoute)
 	http.HandleFunc("GET /transactions/{id}", es.transactionsRoute)
