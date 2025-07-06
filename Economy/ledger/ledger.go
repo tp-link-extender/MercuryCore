@@ -21,10 +21,33 @@ func RandId() (id string) {
 }
 
 type (
-	User     string
-	Currency uint64
-	Asset    uint64 // uint64 is overkill? idgaf
+	User      string
+	Currency  uint64
+	AssetType string
+	AssetId   string
+	Asset     string // {type}-{id}
 )
+
+const (
+	TypeAsset AssetType = "asset"
+	// TypeUser  AssetType = "user" // slavery lmao
+	TypeGroup AssetType = "group"
+	TypePlace AssetType = "place"
+)
+
+func NewAsset(at AssetType, id AssetId) Asset {
+	return Asset(fmt.Sprintf("%s-%s", at, id))
+}
+
+func (a Asset) Split() (at AssetType, id AssetId) {
+	parts := strings.SplitN(string(a), "-", 2)
+	if len(parts) != 2 {
+		return // invalid asset
+	}
+	return AssetType(parts[0]), AssetId(parts[1])
+}
+
+type Assets map[Asset]uint64 // quantity (could be Infinity)
 
 func (c Currency) Readable() string {
 	return fmt.Sprintf("%d.%06d unit", c/Unit, c%Unit)
@@ -45,6 +68,8 @@ const (
 	// TCU         = float64(100 * Unit)
 	Stipend = 10 * Unit
 	// baseFee     = 0.1
+	Infinity          = ^uint64(0)   // lol
+	BasicallyInfinity = Infinity / 2 // lmao, even
 )
 
 // For now, transaction outputs are overkill
@@ -54,7 +79,7 @@ type SentTx struct {
 	To, From User
 	Amount   Currency
 	Note     string
-	Returns  []Asset
+	Returns  Assets
 }
 type Tx struct {
 	SentTx
@@ -67,6 +92,7 @@ type SentMint struct {
 	To     User
 	Amount Currency
 	Note   string
+	// no returns for a mint
 }
 type Mint struct {
 	SentMint
@@ -78,7 +104,7 @@ type SentBurn struct {
 	From       User
 	Amount     Currency
 	Note, Link string
-	Returns    []Asset
+	Returns    Assets
 }
 type Burn struct {
 	SentBurn
@@ -87,13 +113,18 @@ type Burn struct {
 }
 
 type Economy struct {
-	data         io.ReadWriter
+	data         io.ReadWriteSeeker
 	balances     map[User]Currency
+	inventories  map[User]Assets
 	prevStipends map[User]uint64
 }
 
 func (e *Economy) GetBalance(u User) Currency {
 	return e.balances[u]
+}
+
+func (e *Economy) GetInventory(u User) Assets {
+	return e.inventories[u]
 }
 
 func (e *Economy) GetPrevStipend(u User) uint64 {
@@ -121,8 +152,8 @@ func (e *Economy) CCU() Currency {
 }
 
 func (e *Economy) validateTx(sent SentTx) error {
-	if sent.Amount == 0 {
-		return errors.New("transaction must have an amount")
+	if sent.Amount == 0 && sent.Returns == nil {
+		return errors.New("transaction must have an amount or returns")
 	}
 	if sent.From == "" {
 		return errors.New("transaction must have a sender")
@@ -138,6 +169,26 @@ func (e *Economy) validateTx(sent SentTx) error {
 	}
 	if total := sent.Amount; total > e.balances[sent.From] {
 		return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", e.balances[sent.From].Readable(), total.Readable())
+	}
+	if sent.Returns != nil {
+		if e.inventories[sent.To] == nil {
+			e.inventories[sent.To] = Assets{}
+		}
+		if e.inventories[sent.From] == nil {
+			e.inventories[sent.From] = Assets{}
+		}
+
+		for asset, quantity := range sent.Returns {
+			if quantity > e.inventories[sent.To][asset] {
+				return errors.New("insufficient asset quantity: other user does not have enough of the requested asset")
+			}
+			if e.inventories[sent.From][asset] >= BasicallyInfinity {
+				return errors.New("you already have infinity of the requested asset")
+			}
+
+			e.inventories[sent.To][asset] -= quantity
+			e.inventories[sent.From][asset] += quantity
+		}
 	}
 	return nil
 }
@@ -170,6 +221,19 @@ func (e *Economy) validateBurn(sent SentBurn) error {
 	}
 	if sent.Link == "" {
 		return errors.New("burn must have a link")
+	}
+	if sent.Returns != nil {
+		if e.inventories[sent.From] == nil {
+			e.inventories[sent.From] = Assets{}
+		}
+
+		for asset, quantity := range sent.Returns {
+			if e.inventories[sent.From][asset] > BasicallyInfinity {
+				return errors.New("you already have infinity of the requested asset")
+			}
+
+			e.inventories[sent.From][asset] += quantity
+		}
 	}
 	return nil
 }
@@ -242,17 +306,18 @@ func (e *Economy) loadBurn(burn Burn) {
 func (e *Economy) loadData() (err error) {
 	bytes, err := io.ReadAll(e.data)
 	if err != nil {
-		return
+		return fmt.Errorf("failed to load economy data: %w", err)
 	}
 
 	lines := strings.Split(string(bytes), "\n")
 	return e.handleTxTypes(lines[:len(lines)-1] /* remove last empty line */)
 }
 
-func NewEconomy(data io.ReadWriter) (e *Economy, err error) {
+func NewEconomy(data io.ReadWriteSeeker) (e *Economy, err error) {
 	e = &Economy{
 		data:         data,
 		balances:     make(map[User]Currency),
+		inventories:  make(map[User]Assets),
 		prevStipends: make(map[User]uint64),
 	}
 
@@ -260,7 +325,7 @@ func NewEconomy(data io.ReadWriter) (e *Economy, err error) {
 		return nil, fmt.Errorf("failed to load economy data: %w", err)
 	}
 
-	return e, nil
+	return
 }
 
 func (e *Economy) appendEvent(event any, eventType string) error {
@@ -272,12 +337,12 @@ func (e *Economy) appendEvent(event any, eventType string) error {
 
 func (e *Economy) Transact(sent SentTx) (err error) {
 	if err = e.validateTx(sent); err != nil {
-		return
+		return fmt.Errorf("invalid transaction: %w", err)
 	}
 
 	t := uint64(time.Now().UnixMilli())
 	if err = e.appendEvent(Tx{sent, t, RandId()}, "Transaction"); err != nil {
-		return
+		return fmt.Errorf("failed to append transaction event: %w", err)
 	}
 
 	// successfully written
@@ -288,12 +353,12 @@ func (e *Economy) Transact(sent SentTx) (err error) {
 
 func (e *Economy) Mint(sent SentMint) (t uint64, err error) {
 	if err = e.validateMint(sent); err != nil {
-		return
+		return 0, fmt.Errorf("invalid mint: %w", err)
 	}
 
 	t = uint64(time.Now().UnixMilli())
 	if err = e.appendEvent(Mint{sent, t, RandId()}, "Mint"); err != nil {
-		return
+		return 0, fmt.Errorf("failed to append mint event: %w", err)
 	}
 
 	// successfully written
@@ -303,12 +368,12 @@ func (e *Economy) Mint(sent SentMint) (t uint64, err error) {
 
 func (e *Economy) Burn(sent SentBurn) (err error) {
 	if err = e.validateBurn(sent); err != nil {
-		return
+		return fmt.Errorf("invalid burn: %w", err)
 	}
 
 	t := uint64(time.Now().UnixMilli())
 	if err = e.appendEvent(Burn{sent, t, RandId()}, "Burn"); err != nil {
-		return
+		return fmt.Errorf("failed to append burn event: %w", err)
 	}
 
 	// successfully written
@@ -326,10 +391,11 @@ func (e *Economy) Stipend(to User) (err error) {
 	return
 }
 
-func (e *Economy) readTransactions() ([]string, error) {
+func (e *Economy) readTransactions() (ls []string, err error) {
+	e.data.Seek(0, io.SeekStart) // Reset the reader to the start of the data (shouldn't leave it like this ever though)
 	bytes, err := io.ReadAll(e.data)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read transactions from ledger: %w", err)
+		return
 	}
 
 	lines := strings.Split(string(bytes), "\n")
