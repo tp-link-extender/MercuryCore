@@ -1,12 +1,11 @@
 import { building } from "$app/environment"
 import initQuery from "$lib/server/init.surql"
 import logo from "$lib/server/logo"
-import { error } from "@sveltejs/kit"
 import {
 	type Prettify,
 	type QueryParameters,
-	RecordId as SurrealRecordId,
 	Surreal,
+	RecordId as SurrealRecordId,
 } from "surrealdb"
 
 export const db = new Surreal()
@@ -31,13 +30,14 @@ db.query = async <T extends unknown[]>(
 
 export const version = db.version.bind(db)
 
-const realUrl = new URL("ws://localhost:8000") // must be ws:// to prevent token expiration, http:// will expire after 1 hour by default
+const url = "localhost:8000"
+const realUrl = new URL(`ws://${url}`) // must be ws:// to prevent token expiration, http:// will expire after 1 hour by default
 
 async function reconnect() {
-	while (true)
+	for (let attempt = 0; ; attempt++)
 		try {
 			await db.close() // doesn't do anything if not connected
-			console.log("connecting")
+			console.log("connecting to database")
 			await db.connect(realUrl, {
 				namespace: "main",
 				database: "main",
@@ -50,7 +50,11 @@ async function reconnect() {
 			break
 		} catch (err) {
 			const e = err as Error
-			console.error(e.message)
+			console.error("Failed to connect to database:", e.message)
+			if (attempt === 4)
+				console.log(
+					`Multiple connection attempts failed. Make sure the database is running, either locally or in a container, and is accessible at ${url}.`
+				)
 			console.log("Retrying connection in 1 second...")
 			await new Promise(resolve => setTimeout(resolve, 1000))
 		}

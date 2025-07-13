@@ -38,7 +38,7 @@ Instructions:
 -   Open a terminal and navigate to the directory of the repository
 -   Run `bun i` to install all dependencies
 -   Copy the **Site/.env.example** file to **Site/.env** and modify it to set up the environment variables
--   Run `docker compose up -d` to start the database and economy service
+-   Run `docker compose up -d database economy` to start the database and economy service
 
 > [!TIP]  
 > If you don't have or can't install a container manager, you can start the database manually by [installing SurrealDB](https://surrealdb.com/install) and running `surreal start -l trace -u root -p root --allow-scripting file:./data/surreal` in the repository's root directory, and the economy service manually by [installing Go](https://go.dev/dl/) and running `go run .` in the **Economy** directory. You'll need to run these in separate terminals or in the background.
@@ -84,7 +84,8 @@ Instructions:
 -   Run `caddy start` to start the Caddy reverse proxy server
     -   You can also run `caddy reload` to reload the configuration file without restarting the server.
     -   If you're using Caddy with multiple configuration files, import the Caddyfile in the repository's root directory into a Caddyfile somewhere else, and run `caddy start` and `caddy reload` from there.
--   Run `docker compose up -d` to start the database and economy service
+-   Run `docker compose up -d database economy` to start the database and economy service
+	-   If you want to run the site in your container manager as well, just run `docker compose up -d` instead to start all services
 -   Copy the **Site/.env.example** file to **Site/.env** and modify it to set up the environment variables
 -   Run `bun prod` to install dependencies and begin building
 -   Run `bun ./build` (not to be confused with `bun build`) to start Mercury Core.
