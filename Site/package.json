@@ -41,7 +41,7 @@
 		"typescript": "^5.8.3",
 		"unocss": "^66.2.3",
 		"vite": "^6.3.5",
-		"zod": "^3.25.67"
+		"zod": "^4.0.5"
 	},
 	"trustedDependencies": [
 		"@biomejs/biome",
