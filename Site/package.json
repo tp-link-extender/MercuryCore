@@ -40,7 +40,7 @@
 		"sveltekit-superforms": "^2.27.0",
 		"typescript": "^5.8.3",
 		"unocss": "^66.2.3",
-		"vite": "^6.3.5",
+		"vite": "^7.0.5",
 		"zod": "^4.0.5"
 	},
 	"trustedDependencies": [
