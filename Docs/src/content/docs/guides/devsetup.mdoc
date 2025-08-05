@@ -9,7 +9,7 @@ For a guide on server installation and hosting for production, see [Production s
 
 ## Requirements
 
-You should already have the necessary dependencies and command line tools installed. If not, see [TODO] for an installation guid.
+You should already have the necessary dependencies and command line tools installed. If not, see [TODO] for an installation guide.
 
 You will need:
 
@@ -40,6 +40,8 @@ You will need:
 5. Run `docker compose up -d` to start the database and economy service.
 	{% aside type="tip" title="Running without containers" %}
 		If you don't have or can't install a container manager, you can start the database manually by [installing SurrealDB](https://surrealdb.com/install) and running `surreal start -l trace -u root -p root --allow-scripting file:./data/surreal` in the repository's root directory, and the economy service manually by [installing Go](https://go.dev/dl/) and running `go run .` in the **Economy** directory. You'll need to run these in separate terminals or in the background.
+
+		In the near future, we're aiming to provide easier first-class support for native installation and setup.
 	{% /aside %}
 
 {% /steps %}

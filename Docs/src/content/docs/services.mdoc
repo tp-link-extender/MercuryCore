@@ -38,7 +38,7 @@ These are external services that are not part of the Mercury Core platform, but 
 
 ### Client
 
-The Client is a key part of any Revival platform. It handles the game logic, connection to place servers, world rendering, and gameplay.
+The Client is a key part of any revival platform. It handles the game logic, connection to place servers, world rendering, and gameplay.
 
 Clients need to be patched, proxied, hooked, or otherwise modified to work with an alternative API implementation such as Mercury Core. This process, as well as the API used by the client, will differ depending on the client version being used and any specific requirements of the revival platform.
 
@@ -67,3 +67,11 @@ The RCCService (Cloud Compute Service) is used for rendering images of avatars, 
 The Mercury Core site communicates with RCC instance via a [proxy](https://gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff) used to simplify requests and responses, and to handle authentication. Work sent to RCC needs to be queued as a task, which is then processed by the RCCService instance. The results are then returned to the site directly through an API endpoint.
 
 RCCService is easily customised through providing Lua scripts. These scripts also handle data serialisation and communication with the site.
+
+### Chat server integration
+
+It's common for revival platforms to have a significant portion of their community interaction take place in chat servers, usually [Discord](https://discord.com/) or [Guilded](https://www.guilded.gg/). As such, a mechanism for communication between the site and the chat server is often useful. A Mercury Discord bot is available at [tp-link-extender/Bot](https://github.com/tp-link-extender/Bot), handling reviewing and acceptance of applications and automatic distribution of invite keys.
+
+{% aside type="caution" title="Site integration" %}
+	The functionality for communication between the Site and the Discord bot is currently disabled in Mercury Core due to low usage. Please let us know if you would like it to be re-enabled by [filing an issue on the GitHub repository](https://github.com/tp-link-extender/MercuryCore/issues)!
+{% /aside %}
