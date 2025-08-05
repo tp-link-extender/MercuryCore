@@ -18,6 +18,10 @@ export default defineConfig({
 			],
 			sidebar: [
 				{
+					label: "Architecture",
+					slug: "architecture",
+				},
+				{
 					label: "Services",
 					slug: "services",
 				},
