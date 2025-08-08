@@ -18,6 +18,10 @@ export default defineConfig({
 			],
 			sidebar: [
 				{
+					label: "Install",
+					autogenerate: { directory: "install" },
+				},
+				{
 					label: "Architecture",
 					slug: "architecture",
 				},
