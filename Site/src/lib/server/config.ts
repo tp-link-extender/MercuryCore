@@ -1,11 +1,19 @@
+import { z } from "zod/v4"
 import { brickColours } from "$lib/brickColours"
-import { z } from "zod"
 import rawconfig from "../../../../mercury.core.ts"
 
-if (!process.versions.bun && !Bun) {
+if (!process.versions.bun || !Bun) {
 	const runtime = process.versions.node ? "Node" : "an incorrect runtime"
 	console.error(
 		`Bun not detected. Did you accidentally start Mercury Core with ${runtime}?`
+	)
+	process.exit(1)
+}
+
+const cwd = process.cwd()
+if (!cwd.endsWith("Site")) {
+	console.error(
+		`Current working directory should be the Site folder, but is ${cwd}`
 	)
 	process.exit(1)
 }
