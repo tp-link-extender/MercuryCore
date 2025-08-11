@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { browser } from "$app/environment"
-	import { enhance } from "$app/forms"
-	import { navigating } from "$app/stores"
-	import User from "$components/User.svelte"
 	import nprogress from "nprogress"
 	import { onMount } from "svelte"
+	import { browser } from "$app/environment"
+	import { enhance } from "$app/forms"
+	import { navigating } from "$app/state"
+	import User from "$components/User.svelte"
 
 	import "/src/nprogress.css"
 	import "/src/global.css"
@@ -24,7 +24,7 @@
 	// 100ms is the minimum time the loading bar will be shown
 	$effect(() => {
 		if (!browser) return
-		if ($navigating && !timeout) timeout = setTimeout(nprogress.start, 100)
+		if (navigating && !timeout) timeout = setTimeout(nprogress.start, 100)
 		else if (timeout) {
 			clearTimeout(timeout)
 			timeout = null

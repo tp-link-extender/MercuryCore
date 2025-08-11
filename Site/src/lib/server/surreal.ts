@@ -1,12 +1,12 @@
-import { building } from "$app/environment"
-import initQuery from "$lib/server/init.surql"
-import logo from "$lib/server/logo"
 import {
 	type Prettify,
 	type QueryParameters,
 	Surreal,
 	RecordId as SurrealRecordId,
 } from "surrealdb"
+import { building } from "$app/environment"
+import initQuery from "$lib/server/init.surql"
+import logo from "$lib/server/logo"
 
 export const db = new Surreal()
 

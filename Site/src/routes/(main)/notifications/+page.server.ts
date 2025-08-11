@@ -1,6 +1,6 @@
-import { authorise } from "$lib/server/auth"
-import { Record, db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
+import { authorise } from "$lib/server/auth"
+import { db, Record } from "$lib/server/surreal"
 import readQuery from "./read.surql"
 import readAllQuery from "./readAll.surql"
 
@@ -23,7 +23,7 @@ actions.default = async ({ locals, url }) => {
 			notification: Record("notification", id),
 			user: Record("user", user.id),
 		})
-	} catch (e) {
+	} catch {
 		error(400)
 	}
 }
