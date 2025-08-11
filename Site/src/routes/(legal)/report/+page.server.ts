@@ -1,11 +1,11 @@
+import { error } from "@sveltejs/kit"
+import { zod4 } from "sveltekit-superforms/adapters"
+import { message, superValidate } from "sveltekit-superforms/server"
+import { z } from "zod/v4"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, type RecordId, db } from "$lib/server/surreal"
-import { error } from "@sveltejs/kit"
-import { zod } from "sveltekit-superforms/adapters"
-import { message, superValidate } from "sveltekit-superforms/server"
-import { z } from "zod"
+import { db, Record, type RecordId } from "$lib/server/surreal"
 import getReporteeQuery from "./getReportee.surql"
 import reportQuery from "./report.surql"
 
@@ -52,14 +52,14 @@ export async function load({ locals, url }) {
 	return {
 		reportee,
 		url: reportedUrl,
-		form: await superValidate(zod(schema)),
+		form: await superValidate(zod4(schema)),
 	}
 }
 
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ locals, request, url, getClientAddress }) => {
 	const { user } = await authorise(locals)
-	const form = await superValidate(request, zod(schema))
+	const form = await superValidate(request, zod4(schema))
 	if (!form.valid) return formError(form)
 
 	const { category, note } = form.data

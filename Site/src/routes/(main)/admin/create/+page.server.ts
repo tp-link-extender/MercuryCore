@@ -1,14 +1,14 @@
 import fs from "node:fs"
+import { error, redirect } from "@sveltejs/kit"
+import { zod4 } from "sveltekit-superforms/adapters"
+import { superValidate } from "sveltekit-superforms/server"
+import { z } from "zod/v4"
 import { intRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import requestRender from "$lib/server/requestRender"
 import { db } from "$lib/server/surreal"
-import { error, redirect } from "@sveltejs/kit"
-import { zod } from "sveltekit-superforms/adapters"
-import { superValidate } from "sveltekit-superforms/server"
-import { z } from "zod"
 import createAutopilotQuery from "./createAutopilot.surql"
 import getVersionsQuery from "./getVersions.surql"
 import sharedAssetsCacheQuery from "./sharedAssetsCache.surql"
@@ -230,8 +230,8 @@ export async function load({ locals, url }) {
 
 	const stage = assetId ? (version ? 3 : 2) : 1
 	return {
-		formManual: await superValidate(zod(schemaManual)),
-		formAuto: await superValidate(zod(schemaAuto)),
+		formManual: await superValidate(zod4(schemaManual)),
+		formAuto: await superValidate(zod4(schemaAuto)),
 		stage,
 		...(stage === 2 &&
 			assetId && {
@@ -253,7 +253,7 @@ export const actions: import("./$types").Actions = {}
 const intRegex2 = /\d+/
 actions.autopilot = async ({ locals, request }) => {
 	await authorise(locals, 3)
-	const form = await superValidate(request, zod(schemaAuto))
+	const form = await superValidate(request, zod4(schemaAuto))
 	if (!form.valid) return formError(form)
 
 	const { data } = form

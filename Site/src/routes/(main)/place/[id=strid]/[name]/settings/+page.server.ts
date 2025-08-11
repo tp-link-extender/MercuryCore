@@ -1,14 +1,14 @@
 import fs from "node:fs"
+import { error } from "@sveltejs/kit"
+import sharp from "sharp"
+import { zod4 } from "sveltekit-superforms/adapters"
+import { message, superValidate } from "sveltekit-superforms/server"
+import { z } from "zod/v4"
 import { authorise } from "$lib/server/auth"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
-import { Record, db } from "$lib/server/surreal"
+import { db, Record } from "$lib/server/surreal"
 import { encode } from "$lib/urlName"
-import { error } from "@sveltejs/kit"
-import sharp from "sharp"
-import { zod } from "sveltekit-superforms/adapters"
-import { message, superValidate } from "sveltekit-superforms/server"
-import { z } from "zod"
 import type { RequestEvent } from "./$types.d.ts"
 import privateTicketQuery from "./privateTicket.surql"
 import serverTicketQuery from "./serverTicket.surql"
@@ -73,11 +73,14 @@ export async function load({ locals, params }) {
 	return {
 		...getPlace,
 		slug: encode(getPlace.name),
-		viewForm: await superValidate({ name: getPlace.name }, zod(viewSchema)),
-		networkForm: await superValidate(zod(networkSchema)),
-		ticketForm: await superValidate(zod(ticketSchema)),
-		privacyForm: await superValidate(zod(privacySchema)),
-		privatelinkForm: await superValidate(zod(privatelinkSchema)),
+		viewForm: await superValidate(
+			{ name: getPlace.name },
+			zod4(viewSchema)
+		),
+		networkForm: await superValidate(zod4(networkSchema)),
+		ticketForm: await superValidate(zod4(ticketSchema)),
+		privacyForm: await superValidate(zod4(privacySchema)),
+		privatelinkForm: await superValidate(zod4(privatelinkSchema)),
 	}
 }
 
@@ -96,7 +99,7 @@ actions.view = async e => {
 	const id = await getData(e)
 
 	const formData = await e.request.formData()
-	const form = await superValidate(formData, zod(viewSchema))
+	const form = await superValidate(formData, zod4(viewSchema))
 	if (!form.valid) return formError(form)
 
 	const icon = formData.get("icon") as File
@@ -130,13 +133,13 @@ actions.ticket = async e => {
 
 	await db.query(serverTicketQuery, { place: Record("place", id) })
 	return message(
-		await superValidate(e.request, zod(ticketSchema)),
+		await superValidate(e.request, zod4(ticketSchema)),
 		"Regenerated!"
 	)
 }
 actions.network = async e => {
 	const id = await getData(e)
-	const form = await superValidate(e.request, zod(networkSchema))
+	const form = await superValidate(e.request, zod4(networkSchema))
 	if (!form.valid) return formError(form)
 
 	await db.merge(Record("place", id), form.data)
@@ -144,7 +147,7 @@ actions.network = async e => {
 }
 actions.privacy = async e => {
 	const id = await getData(e)
-	const form = await superValidate(e.request, zod(privacySchema))
+	const form = await superValidate(e.request, zod4(privacySchema))
 	if (!form.valid) return formError(form)
 
 	const { privateServer } = form.data
@@ -157,7 +160,4 @@ actions.privatelink = async e => {
 
 	await db.query(privateTicketQuery, { place: Record("place", id) })
 	return message(
-		await superValidate(e.request, zod(privatelinkSchema)),
-		"Regenerated!"
-	)
-}
+		await superValidate(e.request, zod4(privatelinkSchema)),}

@@ -1,12 +1,12 @@
+import { redirect } from "@sveltejs/kit"
+import { zod4 } from "sveltekit-superforms/adapters"
+import { superValidate } from "sveltekit-superforms/server"
+import { z } from "zod/v4"
 import { cookieName, cookieOptions, createSession } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import requestRender from "$lib/server/requestRender"
-import { Record, type RecordId, db, findWhere } from "$lib/server/surreal"
-import { redirect } from "@sveltejs/kit"
-import { zod } from "sveltekit-superforms/adapters"
-import { superValidate } from "sveltekit-superforms/server"
-import { z } from "zod"
+import { db, findWhere, Record, type RecordId } from "$lib/server/surreal"
 import accountRegistered from "../accountRegistered"
 import createUserQuery from "./createUser.surql"
 import regkeyCheckQuery from "./regkeyCheck.surql"
@@ -36,7 +36,7 @@ const prefix = config.RegistrationKeys.Prefix
 const prefixRegex = new RegExp(`^${prefix}(.+)$`)
 
 export const load = async () => ({
-	form: await superValidate(zod(schema)),
+	form: await superValidate(zod4(schema)),
 	users: await accountRegistered(),
 	regKeysEnabled: config.RegistrationKeys.Enabled,
 	prefix,
@@ -44,7 +44,7 @@ export const load = async () => ({
 
 export const actions: import("./$types").Actions = {}
 actions.register = async ({ request, cookies }) => {
-	const form = await superValidate(request, zod(schema))
+	const form = await superValidate(request, zod4(schema))
 	if (!form.valid) return formError(form)
 
 	const { username, email, password, cpassword, regkey } = form.data
@@ -112,7 +112,7 @@ actions.register = async ({ request, cookies }) => {
 }
 // This is the initial account creation, which is only allowed if there are no existing users.
 actions.initialAccount = async ({ request, cookies }) => {
-	const form = await superValidate(request, zod(schemaInitial))
+	const form = await superValidate(request, zod4(schemaInitial))
 	if (!form.valid) return formError(form)
 
 	const { username, password, cpassword } = form.data

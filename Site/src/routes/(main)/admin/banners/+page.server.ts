@@ -1,10 +1,10 @@
+import { zod4 } from "sveltekit-superforms/adapters"
+import { message, superValidate } from "sveltekit-superforms/server"
+import { z } from "zod/v4"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, db } from "$lib/server/surreal"
-import { zod } from "sveltekit-superforms/adapters"
-import { message, superValidate } from "sveltekit-superforms/server"
-import { z } from "zod"
+import { db, Record } from "$lib/server/surreal"
 import type { RequestEvent } from "./$types.d.ts"
 import activeCountQuery from "./activeCount.surql"
 import bannersQuery from "./banners.surql"
@@ -30,7 +30,7 @@ export async function load({ locals }) {
 	await authorise(locals, 5)
 
 	const [banners] = await db.query<Banner[][]>(bannersQuery)
-	return { banners, form: await superValidate(zod(schema)) }
+	return { banners, form: await superValidate(zod4(schema)) }
 }
 
 async function bannerActiveCount() {
@@ -40,7 +40,7 @@ async function bannerActiveCount() {
 
 async function getData({ locals, request }: RequestEvent) {
 	const { user } = await authorise(locals, 5)
-	const form = await superValidate(request, zod(schema))
+	const form = await superValidate(request, zod4(schema))
 
 	return { user, form, error: !form.valid && formError(form) }
 }

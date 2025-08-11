@@ -1,3 +1,7 @@
+import { error, fail, redirect } from "@sveltejs/kit"
+import { zod4 } from "sveltekit-superforms/adapters"
+import { superValidate } from "sveltekit-superforms/server"
+import { z } from "zod/v4"
 import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
 import createCommentQuery from "$lib/server/createComment.surql"
@@ -11,12 +15,8 @@ import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
-import { Record, db, find } from "$lib/server/surreal"
+import { db, find, Record } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
-import { error, fail, redirect } from "@sveltejs/kit"
-import { zod } from "sveltekit-superforms/adapters"
-import { superValidate } from "sveltekit-superforms/server"
-import { z } from "zod"
 import type { RequestEvent } from "./$types.ts"
 import assetQuery from "./asset.surql"
 import buyQuery from "./buy.surql"
@@ -74,7 +74,7 @@ export async function load({ locals, params }) {
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
 		failText: failTexts[Math.floor(Math.random() * failTexts.length)],
-		form: await superValidate(zod(schema)),
+		form: await superValidate(zod4(schema)),
 		slug,
 		asset,
 		balance: balance.value,
@@ -123,7 +123,7 @@ async function rerender({ locals, params }: RequestEvent) {
 export const actions: import("./$types.ts").Actions = { rerender }
 actions.comment = async ({ locals, params, request, getClientAddress }) => {
 	const { user } = await authorise(locals)
-	const form = await superValidate(request, zod(schema))
+	const form = await superValidate(request, zod4(schema))
 	if (!form.valid) return formError(form)
 
 	const unfiltered = form.data.content.trim()

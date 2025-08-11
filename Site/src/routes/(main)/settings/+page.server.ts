@@ -1,11 +1,11 @@
+import { redirect } from "@sveltejs/kit"
+import { zod4 } from "sveltekit-superforms/adapters"
+import { message, superValidate } from "sveltekit-superforms/server"
+import { z } from "zod/v4"
 import { authorise, cookieName, invalidateAllSessions } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
-import { Record, db } from "$lib/server/surreal"
-import { redirect } from "@sveltejs/kit"
-import { zod } from "sveltekit-superforms/adapters"
-import { message, superValidate } from "sveltekit-superforms/server"
-import { z } from "zod"
+import { db, Record } from "$lib/server/surreal"
 import passwordQuery from "./password.surql"
 import updateProfileQuery from "./updateProfile.surql"
 
@@ -26,17 +26,17 @@ const stylingSchema = z.object({
 })
 
 export const load = async () => ({
-	profileForm: await superValidate(zod(profileSchema)),
-	passwordForm: await superValidate(zod(passwordSchema)),
-	sessionForm: await superValidate(zod(sessionSchema)),
-	stylingForm: await superValidate(zod(stylingSchema)),
+	profileForm: await superValidate(zod4(profileSchema)),
+	passwordForm: await superValidate(zod4(passwordSchema)),
+	sessionForm: await superValidate(zod4(sessionSchema)),
+	stylingForm: await superValidate(zod4(stylingSchema)),
 	themes: config.Themes.map(t => t.Name),
 })
 
 export const actions: import("./$types").Actions = {}
 actions.profile = async ({ locals, request }) => {
 	const { user } = await authorise(locals)
-	const form = await superValidate(request, zod(profileSchema))
+	const form = await superValidate(request, zod4(profileSchema))
 	if (!form.valid) return formError(form)
 
 	const { description, theme } = form.data
@@ -51,7 +51,7 @@ actions.profile = async ({ locals, request }) => {
 }
 actions.password = async ({ locals, request }) => {
 	const { user } = await authorise(locals)
-	const form = await superValidate(request, zod(passwordSchema))
+	const form = await superValidate(request, zod4(passwordSchema))
 	if (!form.valid) return formError(form)
 
 	const { cpassword, npassword, cnpassword } = form.data
@@ -80,7 +80,7 @@ actions.password = async ({ locals, request }) => {
 }
 actions.sessions = async ({ cookies, locals, request }) => {
 	const { user } = await authorise(locals)
-	const form = await superValidate(request, zod(sessionSchema))
+	const form = await superValidate(request, zod4(sessionSchema))
 	if (!form.valid) return formError(form)
 
 	const { password } = form.data
@@ -99,7 +99,7 @@ actions.sessions = async ({ cookies, locals, request }) => {
 }
 actions.styling = async ({ locals, request }) => {
 	const { user } = await authorise(locals)
-	const form = await superValidate(request, zod(stylingSchema))
+	const form = await superValidate(request, zod4(stylingSchema))
 	if (!form.valid) return formError(form)
 
 	const { css } = form.data

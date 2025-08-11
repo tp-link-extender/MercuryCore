@@ -1,12 +1,12 @@
+import { error, redirect } from "@sveltejs/kit"
+import { zod4 } from "sveltekit-superforms/adapters"
+import { superValidate } from "sveltekit-superforms/server"
+import { z } from "zod/v4"
 import { authorise } from "$lib/server/auth"
 import { createGroup, getGroupPrice } from "$lib/server/economy"
 import exclude from "$lib/server/exclude"
 import formError from "$lib/server/formError"
-import { Record, db, findWhere } from "$lib/server/surreal"
-import { error, redirect } from "@sveltejs/kit"
-import { zod } from "sveltekit-superforms/adapters"
-import { superValidate } from "sveltekit-superforms/server"
-import { z } from "zod"
+import { db, findWhere, Record } from "$lib/server/surreal"
 import createQuery from "./create.surql"
 
 const schema = z.object({
@@ -18,7 +18,7 @@ export async function load() {
 	const price = await getGroupPrice()
 	if (!price.ok) error(500, price.msg)
 	return {
-		form: await superValidate(zod(schema)),
+		form: await superValidate(zod4(schema)),
 		price: price.value,
 	}
 }
@@ -36,7 +36,7 @@ export const actions: import("./$types").Actions = {}
 actions.default = async ({ locals, request }) => {
 	exclude("Groups")
 	const { user } = await authorise(locals)
-	const form = await superValidate(request, zod(schema))
+	const form = await superValidate(request, zod4(schema))
 	if (!form.valid) return formError(form)
 
 	const { name } = form.data

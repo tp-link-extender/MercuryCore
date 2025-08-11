@@ -1,3 +1,7 @@
+import { error } from "@sveltejs/kit"
+import { superValidate } from "sveltekit-superforms"
+import { zod4 } from "sveltekit-superforms/adapters"
+import { z } from "zod/v4"
 import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
 import commentType from "$lib/server/commentType"
@@ -5,11 +9,7 @@ import createCommentQuery from "$lib/server/createComment.surql"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, db } from "$lib/server/surreal"
-import { error } from "@sveltejs/kit"
-import { superValidate } from "sveltekit-superforms"
-import { zod } from "sveltekit-superforms/adapters"
-import { z } from "zod"
+import { db, Record } from "$lib/server/surreal"
 import removeCommentQuery from "./removeComment.surql"
 
 const schema = z.object({
@@ -31,14 +31,14 @@ export async function load({ locals, params }) {
 
 	return {
 		comment,
-		form: await superValidate(zod(schema)),
+		form: await superValidate(zod4(schema)),
 	}
 }
 
 export const actions: import("./$types").Actions = {}
 actions.comment = async ({ locals, params, request, getClientAddress }) => {
 	const { user } = await authorise(locals)
-	const form = await superValidate(request, zod(schema))
+	const form = await superValidate(request, zod4(schema))
 	if (!form.valid) return formError(form)
 
 	const unfiltered = form.data.content.trim()

@@ -1,11 +1,11 @@
+import { redirect } from "@sveltejs/kit"
+import { zod4 } from "sveltekit-superforms/adapters"
+import { superValidate } from "sveltekit-superforms/server"
+import { z } from "zod/v4"
 import { cookieName, cookieOptions, createSession } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import { db, type RecordId } from "$lib/server/surreal"
-import { redirect } from "@sveltejs/kit"
-import { zod } from "sveltekit-superforms/adapters"
-import { superValidate } from "sveltekit-superforms/server"
-import { z } from "zod"
 import accountRegistered from "../accountRegistered"
 import userQuery from "./user.surql"
 
@@ -30,7 +30,7 @@ const schema = z.object({
 
 export async function load() {
 	return {
-		form: await superValidate(zod(schema)),
+		form: await superValidate(zod4(schema)),
 		users: await accountRegistered(),
 		descriptions: config.Branding.Descriptions,
 	}
@@ -38,7 +38,7 @@ export async function load() {
 
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ request, cookies }) => {
-	const form = await superValidate(request, zod(schema))
+	const form = await superValidate(request, zod4(schema))
 	if (!form.valid) return formError(form)
 
 	const { username, password } = form.data

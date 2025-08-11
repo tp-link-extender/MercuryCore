@@ -1,11 +1,11 @@
+import { error } from "@sveltejs/kit"
+import { zod4 } from "sveltekit-superforms/adapters"
+import { message, superValidate } from "sveltekit-superforms/server"
+import { z } from "zod/v4"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, db, findWhere } from "$lib/server/surreal"
-import { error } from "@sveltejs/kit"
-import { zod } from "sveltekit-superforms/adapters"
-import { message, superValidate } from "sveltekit-superforms/server"
-import { z } from "zod"
+import { db, findWhere, Record } from "$lib/server/surreal"
 import assocreportQuery from "./assocreport.surql"
 import moderateQuery from "./moderate.surql"
 import moderateeQuery from "./moderatee.surql"
@@ -25,7 +25,7 @@ export async function load({ locals, url }) {
 	await authorise(locals, 4)
 
 	const associatedReport = url.searchParams.get("report")
-	if (!associatedReport) return { form: await superValidate(zod(schema)) }
+	if (!associatedReport) return { form: await superValidate(zod4(schema)) }
 
 	const [report] = await db.query<
 		({ note: string; reportee: string } | undefined)[]
@@ -40,7 +40,7 @@ export async function load({ locals, url }) {
 				username: report.reportee,
 				reason: report.note,
 			},
-			zod(schema)
+			zod4(schema)
 		),
 		report,
 	}
@@ -49,7 +49,7 @@ export async function load({ locals, url }) {
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ locals, request, getClientAddress }) => {
 	const { user } = await authorise(locals, 4)
-	const form = await superValidate(request, zod(schema))
+	const form = await superValidate(request, zod4(schema))
 	if (!form.valid) return formError(form)
 
 	const { username, action, banDate, reason } = form.data

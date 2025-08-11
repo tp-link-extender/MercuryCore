@@ -1,16 +1,16 @@
+import { error, redirect } from "@sveltejs/kit"
+import { zod4 } from "sveltekit-superforms/adapters"
+import { superValidate } from "sveltekit-superforms/server"
+import { z } from "zod/v4"
 import { authorise } from "$lib/server/auth"
 import { createPlace, getPlacePrice } from "$lib/server/economy"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
-import { Record, db } from "$lib/server/surreal"
+import { randomId } from "$lib/server/id"
+import { db, Record } from "$lib/server/surreal"
 import { encode } from "$lib/urlName"
-import { error, redirect } from "@sveltejs/kit"
-import { zod } from "sveltekit-superforms/adapters"
-import { superValidate } from "sveltekit-superforms/server"
-import { z } from "zod"
 import countQuery from "./count.surql"
 import createQuery from "./create.surql"
-import { randomId } from "$lib/server/id"
 
 const schema = z.object({
 	name: z.string().min(3).max(50),
@@ -37,7 +37,7 @@ export async function load() {
 	const price = await getPlacePrice()
 	if (!price.ok) error(500, price.msg)
 	return {
-		form: await superValidate(zod(schema)),
+		form: await superValidate(zod4(schema)),
 		// count: await placeCount((await authorise(locals)).user.id),
 		price: price.value,
 	}
@@ -46,7 +46,7 @@ export async function load() {
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ locals, request }) => {
 	const { user } = await authorise(locals)
-	const form = await superValidate(request, zod(schema))
+	const form = await superValidate(request, zod4(schema))
 	if (!form.valid) return formError(form)
 
 	const { serverAddress, serverPort, maxPlayers, privateServer } = form.data

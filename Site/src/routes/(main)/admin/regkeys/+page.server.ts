@@ -1,12 +1,12 @@
+import { error } from "@sveltejs/kit"
+import { zod4 } from "sveltekit-superforms/adapters"
+import { message, superValidate } from "sveltekit-superforms/server"
+import { z } from "zod/v4"
 import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config.ts"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, db } from "$lib/server/surreal"
-import { error } from "@sveltejs/kit"
-import { zod } from "sveltekit-superforms/adapters"
-import { message, superValidate } from "sveltekit-superforms/server"
-import { z } from "zod"
+import { db, Record } from "$lib/server/surreal"
 import type { RequestEvent } from "./$types.ts"
 import createQuery from "./create.surql"
 import disabledQuery from "./disabled.surql"
@@ -34,7 +34,7 @@ export async function load({ locals }) {
 
 	const [regKeys] = await db.query<RegKey[][]>(regkeysQuery)
 	return {
-		form: await superValidate(zod(schema)),
+		form: await superValidate(zod4(schema)),
 		regKeys,
 		prefix: config.RegistrationKeys.Prefix,
 	}
@@ -42,7 +42,7 @@ export async function load({ locals }) {
 
 async function getData({ locals, request }: RequestEvent) {
 	const { user } = await authorise(locals, 5)
-	const form = await superValidate(request, zod(schema))
+	const form = await superValidate(request, zod4(schema))
 
 	return { user, form, error: !form.valid && formError(form) }
 }
