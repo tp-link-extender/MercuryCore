@@ -5,7 +5,7 @@ import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, Record } from "$lib/server/surreal"
-import type { RequestEvent } from "./$types.d.ts"
+import type { RequestEvent } from "./$types.d"
 import activeCountQuery from "./activeCount.surql"
 import bannersQuery from "./banners.surql"
 

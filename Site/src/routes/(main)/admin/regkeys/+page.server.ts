@@ -3,11 +3,11 @@ import { zod4 } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
 import { z } from "zod/v4"
 import { authorise } from "$lib/server/auth"
-import config from "$lib/server/config.ts"
+import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, Record } from "$lib/server/surreal"
-import type { RequestEvent } from "./$types.ts"
+import type { RequestEvent } from "./$types"
 import createQuery from "./create.surql"
 import disabledQuery from "./disabled.surql"
 import regkeysQuery from "./regkeys.surql"
@@ -47,7 +47,7 @@ async function getData({ locals, request }: RequestEvent) {
 	return { user, form, error: !form.valid && formError(form) }
 }
 
-export const actions: import("./$types.ts").Actions = {}
+export const actions: import("./$types").Actions = {}
 actions.create = async e => {
 	const { user, form, error } = await getData(e)
 	if (error) return error

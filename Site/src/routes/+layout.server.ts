@@ -1,7 +1,7 @@
-import config from "$lib/server/config.ts"
+import config from "$lib/server/config"
 import { db } from "$lib/server/surreal"
 import bannersQuery from "./banners.surql"
-import getNotifications from "./notifications.ts"
+import getNotifications from "./notifications"
 
 type Banner = {
 	// bruce, it's- I'm not doing this again

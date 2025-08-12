@@ -17,7 +17,7 @@ import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { db, find, Record } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
-import type { RequestEvent } from "./$types.ts"
+import type { RequestEvent } from "./$types"
 import assetQuery from "./asset.surql"
 import buyQuery from "./buy.surql"
 import findAssetQuery from "./findAsset.surql"
@@ -120,7 +120,7 @@ async function rerender({ locals, params }: RequestEvent) {
 
 	error(400, "Can't rerender this type of asset")
 }
-export const actions: import("./$types.ts").Actions = { rerender }
+export const actions: import("./$types").Actions = { rerender }
 actions.comment = async ({ locals, params, request, getClientAddress }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, zod4(schema))

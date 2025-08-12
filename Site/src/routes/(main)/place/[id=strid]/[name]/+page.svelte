@@ -9,8 +9,8 @@
 	import fade from "$lib/fade"
 	import { likeEnhance } from "$lib/like"
 	import Autopilot from "./Autopilot.svelte"
+	import customProtocol from "./customprotocol"
 	import Thumbnails from "./Thumbnails.svelte"
-	import customProtocol from "./customprotocol.ts"
 
 	const { data } = $props()
 

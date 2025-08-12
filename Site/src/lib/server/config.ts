@@ -1,6 +1,6 @@
 import { z } from "zod/v4"
 import { brickColours } from "$lib/brickColours"
-import rawconfig from "../../../../mercury.core.ts"
+import rawconfig from "../../../../mercury.core"
 
 if (!process.versions.bun || !Bun) {
 	const runtime = process.versions.node ? "Node" : "an incorrect runtime"
