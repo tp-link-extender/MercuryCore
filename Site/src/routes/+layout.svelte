@@ -1,7 +1,6 @@
 <script lang="ts">
 	import nprogress from "nprogress"
 	import { onMount } from "svelte"
-	import { browser } from "$app/environment"
 	import { enhance } from "$app/forms"
 	import { navigating } from "$app/state"
 	import User from "$components/User.svelte"
@@ -21,15 +20,25 @@
 	nprogress.configure({ showSpinner: false })
 
 	let timeout: Timer | null
+	const stopTimeout = () => {
+		if (!timeout) return
+		clearTimeout(timeout)
+		timeout = null
+	}
 	// 100ms is the minimum time the loading bar will be shown
-	$effect(() => {
-		if (!browser) return
-		if (navigating && !timeout) timeout = setTimeout(nprogress.start, 100)
-		else if (timeout) {
-			clearTimeout(timeout)
-			timeout = null
+	$effect(async () => {
+		if (!navigating || navigating.willUnload == null) return
+		stopTimeout()
+		if (navigating.type === "goto") {
+			// TODO: hack to prevent redirects from showing the bar
 			nprogress.done()
+			return
 		}
+
+		timeout = setTimeout(nprogress.start, 100)
+		await navigating.complete
+		stopTimeout()
+		nprogress.done()
 	})
 
 	async function ping() {

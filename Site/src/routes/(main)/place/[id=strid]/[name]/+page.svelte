@@ -219,7 +219,8 @@
 								: "s"}
 						</span>
 						<span class="px-2">
-							{place.dislikeCount} dislike{place.dislikeCount == 1
+							{place.dislikeCount} dislike{place.dislikeCount ===
+							1
 								? ""
 								: "s"}
 						</span>

@@ -33,7 +33,7 @@
 	<div class="card">
 		<div class="light-text p-4">
 			<h1 class="pb-6">
-				{actionType == "Ban"
+				{actionType === "Ban"
 					? `${actionType}ned for ${formatDateDiff(
 							new Date(data.timeEnds).getTime()
 						)}`
