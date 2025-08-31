@@ -1,7 +1,7 @@
 import { redirect } from "@sveltejs/kit"
-import { zod4 } from "sveltekit-superforms/adapters"
+import { type } from "arktype"
+import { arktype } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
-import { z } from "zod/v4"
 import { authorise, cookieName, invalidateAllSessions } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
@@ -9,34 +9,34 @@ import { db, Record } from "$lib/server/surreal"
 import passwordQuery from "./password.surql"
 import updateProfileQuery from "./updateProfile.surql"
 
-const profileSchema = z.object({
-	description: z.string().max(1000).optional(),
-	theme: z.enum(["0", ...config.Themes.map((_, i) => i.toString())]),
+const profileSchema = type({
+	description: "string? <= 1000",
+	theme: type.enumerated("0", ...config.Themes.map((_, i) => i.toString())),
 })
-const passwordSchema = z.object({
-	cpassword: z.string().min(1),
-	npassword: z.string().min(1),
-	cnpassword: z.string().min(1),
+const passwordSchema = type({
+	cpassword: "string >= 1",
+	npassword: "string >= 1",
+	cnpassword: "string >= 1",
 })
-const sessionSchema = z.object({
-	password: z.string().min(1),
+const sessionSchema = type({
+	password: "string >= 1",
 })
-const stylingSchema = z.object({
-	css: z.string().max(10000).optional(),
+const stylingSchema = type({
+	css: "string? <= 10000",
 })
 
 export const load = async () => ({
-	profileForm: await superValidate(zod4(profileSchema)),
-	passwordForm: await superValidate(zod4(passwordSchema)),
-	sessionForm: await superValidate(zod4(sessionSchema)),
-	stylingForm: await superValidate(zod4(stylingSchema)),
+	profileForm: await superValidate(arktype(profileSchema)),
+	passwordForm: await superValidate(arktype(passwordSchema)),
+	sessionForm: await superValidate(arktype(sessionSchema)),
+	stylingForm: await superValidate(arktype(stylingSchema)),
 	themes: config.Themes.map(t => t.Name),
 })
 
 export const actions: import("./$types").Actions = {}
 actions.profile = async ({ locals, request }) => {
 	const { user } = await authorise(locals)
-	const form = await superValidate(request, zod4(profileSchema))
+	const form = await superValidate(request, arktype(profileSchema))
 	if (!form.valid) return formError(form)
 
 	const { description, theme } = form.data
@@ -51,7 +51,7 @@ actions.profile = async ({ locals, request }) => {
 }
 actions.password = async ({ locals, request }) => {
 	const { user } = await authorise(locals)
-	const form = await superValidate(request, zod4(passwordSchema))
+	const form = await superValidate(request, arktype(passwordSchema))
 	if (!form.valid) return formError(form)
 
 	const { cpassword, npassword, cnpassword } = form.data
@@ -80,7 +80,7 @@ actions.password = async ({ locals, request }) => {
 }
 actions.sessions = async ({ cookies, locals, request }) => {
 	const { user } = await authorise(locals)
-	const form = await superValidate(request, zod4(sessionSchema))
+	const form = await superValidate(request, arktype(sessionSchema))
 	if (!form.valid) return formError(form)
 
 	const { password } = form.data
@@ -99,7 +99,7 @@ actions.sessions = async ({ cookies, locals, request }) => {
 }
 actions.styling = async ({ locals, request }) => {
 	const { user } = await authorise(locals)
-	const form = await superValidate(request, zod4(stylingSchema))
+	const form = await superValidate(request, arktype(stylingSchema))
 	if (!form.valid) return formError(form)
 
 	const { css } = form.data

@@ -1,6 +1,6 @@
-import { zod4 } from "sveltekit-superforms/adapters"
+import { type } from "arktype"
+import { arktype } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
-import { z } from "zod/v4"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
@@ -9,11 +9,11 @@ import type { RequestEvent } from "./$types.d"
 import activeCountQuery from "./activeCount.surql"
 import bannersQuery from "./banners.surql"
 
-const schema = z.object({
-	bannerText: z.string().max(100).optional(),
-	bannerColour: z.string().optional(),
-	bannerTextLight: z.boolean().optional(),
-	bannerBody: z.string().optional(),
+const schema = type({
+	bannerText: "string? <= 100",
+	bannerColour: "string?",
+	bannerTextLight: "boolean?",
+	bannerBody: "string?",
 })
 
 type Banner = {
@@ -30,7 +30,7 @@ export async function load({ locals }) {
 	await authorise(locals, 5)
 
 	const [banners] = await db.query<Banner[][]>(bannersQuery)
-	return { banners, form: await superValidate(zod4(schema)) }
+	return { banners, form: await superValidate(arktype(schema)) }
 }
 
 async function bannerActiveCount() {
@@ -40,7 +40,7 @@ async function bannerActiveCount() {
 
 async function getData({ locals, request }: RequestEvent) {
 	const { user } = await authorise(locals, 5)
-	const form = await superValidate(request, zod4(schema))
+	const form = await superValidate(request, arktype(schema))
 
 	return { user, form, error: !form.valid && formError(form) }
 }
