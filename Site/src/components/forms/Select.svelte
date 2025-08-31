@@ -1,10 +1,10 @@
 <script lang="ts">
 	// could make forms based on a js object or something instead of components but concerns with forms that require more interactivity/customisation
 
+	import { createSelect, melt } from "@melt-ui/svelte"
 	import NoScript from "$components/NoScript.svelte"
 	import YesScript from "$components/YesScript.svelte"
 	import fade from "$lib/fade"
-	import { createSelect, melt } from "@melt-ui/svelte"
 
 	const {
 		name,
@@ -29,16 +29,6 @@
 		formData: import("sveltekit-superforms").SuperForm<any>
 	} = $props()
 
-	const mOptions = [
-		// Value does NOT work as an empty string
-		// (ask me how I know!)
-		{ value: null as unknown as string, label: "Select an option" },
-		...options.map(([value, label]) => ({ value, label }))
-	]
-	const mSelected = selected
-		? mOptions.find(o => o.value === selected)
-		: { value: "", label: "" }
-
 	const { form, errors, constraints } = formData
 
 	const {
@@ -52,12 +42,7 @@
 			fitViewport: true,
 			sameWidth: true
 		},
-		multiple: multiple as false, // todo what the eff
-		...(mSelected && { defaultSelected: mSelected })
-	})
-
-	$effect(() => {
-		$form[name] = $selectedValue?.value || mSelected?.value
+		multiple: multiple as false // todo what the eff
 	})
 </script>
 
@@ -76,7 +61,7 @@
 				{name}
 				id={name}
 				class={{ "is-invalid": $errors[name] }}>
-				{#each mOptions as { value, label }}
+				{#each options as [value, label]}
 					<option {value} selected={$isSelected(value)}>
 						{label}
 					</option>
@@ -100,21 +85,21 @@
 					id={name}
 					multiple
 					class="hidden">
-					{#each mOptions as { value }}
+					{#each options as [value]}
 						<option {value} selected={$isSelected(value)}></option>
 					{/each}
 				</select>
 			{/if}
 
 			<button use:melt={$trigger} {disabled} class="fakeselect">
-				{$selectedLabel || "Select an option"}
+				{$selectedLabel || options[0]?.[1] || "Select an option"}
 			</button>
 			{#if $open}
 				<div
 					class="dropdown-content bg-darker flex flex-col rounded-lg p-2"
 					use:melt={$menu}
 					transition:fade={{ duration: 150 }}>
-					{#each mOptions as { value, label }}
+					{#each options as [value, label]}
 						<button
 							class="btn light-text"
 							use:melt={$option({ value, label })}>

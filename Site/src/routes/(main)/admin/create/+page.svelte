@@ -1,5 +1,4 @@
 <script lang="ts">
-	import SuperDebug from "sveltekit-superforms"
 	import { superForm } from "sveltekit-superforms/client"
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
