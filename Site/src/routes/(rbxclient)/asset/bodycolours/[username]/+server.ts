@@ -1,5 +1,5 @@
-import { db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
+import { db } from "$lib/server/surreal"
 import bodyColoursQuery from "./bodyColours.surql"
 
 type User = {

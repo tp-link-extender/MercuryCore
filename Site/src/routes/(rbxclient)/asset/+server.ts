@@ -1,9 +1,9 @@
+import { createHash } from "node:crypto"
+import { error, redirect } from "@sveltejs/kit"
 import { idRegex, intRegex } from "$lib/paramTests"
 import config from "$lib/server/config"
 import { SignData } from "$lib/server/sign"
 import { db, Record } from "$lib/server/surreal"
-import { createHash } from "node:crypto"
-import { error, redirect } from "@sveltejs/kit"
 import assetQuery from "./asset.surql"
 
 const headers = (file: string | Uint8Array) => ({

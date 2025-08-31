@@ -1,6 +1,6 @@
+import { error } from "@sveltejs/kit"
 import { idRegex } from "$lib/paramTests"
 import config from "$lib/server/config"
-import { error } from "@sveltejs/kit"
 
 export async function GET({ url }) {
 	const id = url.searchParams.get("id")

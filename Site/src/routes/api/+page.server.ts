@@ -1,8 +1,8 @@
 // Contains various api methods that cannot be accessed in a page context,
 // usually because they are requested from a component.
 
-import { authorise, cookieName, invalidateSession } from "$lib/server/auth"
 import { error, redirect } from "@sveltejs/kit"
+import { authorise, cookieName, invalidateSession } from "$lib/server/auth"
 
 const msg = Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString()
 

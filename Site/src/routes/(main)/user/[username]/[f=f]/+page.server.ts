@@ -1,7 +1,7 @@
 // The friends, followers, and following pages for a user.
 
-import { type RecordId, db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
+import { db, type RecordId } from "$lib/server/surreal"
 import followersQuery from "./followers.surql"
 import followingQuery from "./following.surql"
 import friendsQuery from "./friends.surql"

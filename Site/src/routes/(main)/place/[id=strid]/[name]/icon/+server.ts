@@ -1,6 +1,6 @@
+import { error } from "@sveltejs/kit"
 import config from "$lib/server/config"
 import { find } from "$lib/server/surreal"
-import { error } from "@sveltejs/kit"
 
 const icons = config.Images.DefaultPlaceIcons
 

@@ -1,5 +1,5 @@
-import { db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
+import { db } from "$lib/server/surreal"
 import pingQuery from "./ping.surql"
 
 export async function GET({ request, url }) {

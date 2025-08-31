@@ -1,7 +1,7 @@
-import { authorise } from "$lib/server/auth"
-import { Record, type RecordId, db } from "$lib/server/surreal"
-import { encode } from "$lib/urlName"
 import { error, redirect } from "@sveltejs/kit"
+import { authorise } from "$lib/server/auth"
+import { db, Record, type RecordId } from "$lib/server/surreal"
+import { encode } from "$lib/urlName"
 import placeIdQuery from "./placeId.surql"
 
 // these files r kinda like the no-man's land of the Mercury Core codebase
