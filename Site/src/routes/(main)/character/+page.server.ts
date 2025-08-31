@@ -90,7 +90,7 @@ async function paint({ locals, url }: RequestEvent) {
 	if (
 		!bodyPartQuery ||
 		!bodyColour ||
-		!brickColours.includes(+bodyColour) ||
+		!(brickColours as readonly number[]).includes(+bodyColour) ||
 		!bodyParts.includes(bodyPartQuery)
 	)
 		return fail(400)

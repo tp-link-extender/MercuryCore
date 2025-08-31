@@ -1,5 +1,5 @@
-import { z } from "zod/v4"
-import { brickColours } from "$lib/brickColours"
+import { type } from "arktype"
+import { brickColoursStrings } from "$lib/brickColours"
 import rawconfig from "../../../../mercury.core"
 
 if (!process.versions.bun || !Bun) {
@@ -18,25 +18,21 @@ if (!cwd.endsWith("Site")) {
 	process.exit(1)
 }
 
-const brickColourEnum = z.union([
-	z.literal(1), // br
-	z.literal(1), // uh
-	...brickColours.map(c => z.literal(c)),
-])
+const brickColourEnum = type.or(...brickColoursStrings)
 
 export const optionalPages = ["Statistics", "Groups", "Forum"] as const
 export type OptionalPage = (typeof optionalPages)[number]
 
-const schema = z.object({
-	Name: z.string().min(1),
-	Domain: z.string().min(1),
-	DatabaseURL: z.string().min(1),
-	RCCServiceProxyURL: z.string().min(1),
-	LauncherURI: z.string().min(1),
-	CurrencySymbol: z.string().min(1),
-	Pages: z.array(z.enum(optionalPages)),
+const schema = type({
+	Name: "string >= 1",
+	Domain: "string >= 1",
+	DatabaseURL: "string >= 1",
+	RCCServiceProxyURL: "string >= 1",
+	LauncherURI: "string >= 1",
+	CurrencySymbol: "string >= 1",
+	Pages: type.enumerated(...optionalPages).array(),
 
-	DefaultBodyColors: z.object({
+	DefaultBodyColors: type({
 		Head: brickColourEnum,
 		LeftArm: brickColourEnum,
 		LeftLeg: brickColourEnum,
@@ -45,47 +41,45 @@ const schema = z.object({
 		Torso: brickColourEnum,
 	}),
 
-	Logging: z.object({
-		Requests: z.boolean(),
-		FormattedErrors: z.boolean(),
-		Time: z.boolean(),
+	Logging: type({
+		Requests: "boolean",
+		FormattedErrors: "boolean",
+		Time: "boolean",
 	}),
 
-	Images: z.object({
-		DefaultPlaceIcons: z.array(z.string().min(1)),
-		DefaultPlaceThumbnails: z.array(z.string().min(1)),
+	Images: type({
+		DefaultPlaceIcons: "(string >= 1)[]",
+		DefaultPlaceThumbnails: "(string >= 1)[]",
 	}),
 
-	Branding: z.object({
-		Favicon: z.string().min(1),
-		Icon: z.string().min(1),
-		Tagline: z.string(),
+	Branding: type({
+		Favicon: "string >= 1",
+		Icon: "string >= 1",
+		Tagline: "string",
 	}),
 
-	Themes: z
-		.array(
-			z.object({
-				Name: z.string().min(1),
-				Path: z.string().min(1),
-			})
-		)
-		.min(1),
+	Themes: type({
+		Name: "string >= 1",
+		Path: "string >= 1",
+	})
+		.array()
+		.atLeastLength(1),
 
-	Filtering: z.object({
-		FilteredWords: z.array(z.string().min(1)),
-		ReplaceWith: z.string(),
-		ReplaceType: z.enum(["Character", "Word"]),
+	Filtering: type({
+		FilteredWords: "(string >= 1)[]",
+		ReplaceWith: "string",
+		ReplaceType: type.enumerated("Character", "Word"),
 	}),
 
-	RegistrationKeys: z.object({
-		Enabled: z.boolean(),
+	RegistrationKeys: type({
+		Enabled: "boolean",
 	}),
 })
 
-const parseResult = schema.safeParse(rawconfig)
-if (!parseResult.success) {
+const parseResult = schema(rawconfig)
+if (parseResult instanceof type.errors) {
 	console.error("Configuration error in mercury.core.ts:")
-	for (const error of parseResult.error.errors)
+	for (const error of parseResult)
 		console.error(`    ${error.path.join(".")}: ${error.message}`)
 	process.exit(1)
 }
