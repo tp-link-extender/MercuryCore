@@ -17,6 +17,11 @@ export default async () => {
 		{ cwd: "..", stdout: "pipe", stderr: "pipe" }
 	)
 
+	process.on("exit", () => {
+		console.log("Shutting down SurrealDB...")
+		proc.kill()
+	})
+
 	proc.exited.then(async () => {
 		console.error("SurrealDB process exited unexpectedly.")
 		const r = await proc.stderr.getReader().read()
