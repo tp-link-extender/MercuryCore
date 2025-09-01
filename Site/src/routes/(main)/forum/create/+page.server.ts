@@ -1,7 +1,7 @@
 import { error, redirect } from "@sveltejs/kit"
-import { zod4 } from "sveltekit-superforms/adapters"
+import { type } from "arktype"
+import { arktype } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
-import { z } from "zod/v4"
 import { authorise } from "$lib/server/auth"
 import createCommentQuery from "$lib/server/createComment.surql"
 import exclude from "$lib/server/exclude"
@@ -10,9 +10,9 @@ import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, Record } from "$lib/server/surreal"
 
-const schema = z.object({
-	// title: z.string().min(1).max(50),
-	content: z.string().max(3000).optional(),
+const schema = type({
+	// title: "1 <= string <= 50",
+	content: "(string <= 3000) | undefined",
 })
 
 export async function load({ url }) {
@@ -30,7 +30,7 @@ export async function load({ url }) {
 
 	return {
 		categoryName: category.name,
-		form: await superValidate(zod4(schema)),
+		form: await superValidate(arktype(schema)),
 	}
 }
 
@@ -38,7 +38,7 @@ export const actions: import("./$types").Actions = {}
 actions.default = async ({ locals, request, url, getClientAddress }) => {
 	exclude("Forum")
 	const { user } = await authorise(locals)
-	const form = await superValidate(request, zod4(schema))
+	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
 	// const title = form.data.title.trim()

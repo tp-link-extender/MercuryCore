@@ -25,7 +25,7 @@ const schema = type({
 			"Under13"
 		)
 		.describe("a valid report category"),
-	note: "string?",
+	note: "string | undefined",
 })
 
 async function getReportee(username: string) {

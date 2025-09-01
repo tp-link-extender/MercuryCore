@@ -19,7 +19,7 @@ import typeQuery from "./type.surql"
 const schemaManual = type({
 	type: "8 | 18",
 	name: "3 <= string <= 50",
-	description: "string? <= 1000",
+	description: "(string <= 1000) | undefined",
 	price: "string.numeric <= 999",
 	asset: "unknown",
 })
@@ -27,7 +27,7 @@ const schemaAuto = type({
 	assetId: "number.integer",
 	version: "number.integer",
 	name: "3 <= string <= 50",
-	description: "string? <= 1000",
+	description: "(string <= 1000) | undefined",
 	price: "number.integer <= 999",
 	shared: "string",
 })

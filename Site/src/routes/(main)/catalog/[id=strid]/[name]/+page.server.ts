@@ -1,7 +1,7 @@
 import { error, fail, redirect } from "@sveltejs/kit"
-import { zod4 } from "sveltekit-superforms/adapters"
+import { type } from "arktype"
+import { arktype } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
-import { z } from "zod/v4"
 import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
 import createCommentQuery from "$lib/server/createComment.surql"
@@ -22,9 +22,9 @@ import assetQuery from "./asset.surql"
 import buyQuery from "./buy.surql"
 import findAssetQuery from "./findAsset.surql"
 
-const schema = z.object({
-	content: z.string().min(1).max(1000),
-	replyId: z.string().optional(),
+const schema = type({
+	content: "1 <= string <= 1000",
+	replyId: "string | undefined",
 })
 
 type Asset = {
@@ -74,7 +74,7 @@ export async function load({ locals, params }) {
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
 		failText: failTexts[Math.floor(Math.random() * failTexts.length)],
-		form: await superValidate(zod4(schema)),
+		form: await superValidate(arktype(schema)),
 		slug,
 		asset,
 		balance: balance.value,
@@ -123,7 +123,7 @@ async function rerender({ locals, params }: RequestEvent) {
 export const actions: import("./$types").Actions = { rerender }
 actions.comment = async ({ locals, params, request, getClientAddress }) => {
 	const { user } = await authorise(locals)
-	const form = await superValidate(request, zod4(schema))
+	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
 	const unfiltered = form.data.content.trim()

@@ -10,10 +10,10 @@ import activeCountQuery from "./activeCount.surql"
 import bannersQuery from "./banners.surql"
 
 const schema = type({
-	bannerText: "string? <= 100",
-	bannerColour: "string?",
-	bannerTextLight: "boolean?",
-	bannerBody: "string?",
+	bannerText: "(string <= 100) | undefined",
+	bannerColour: "string | undefined",
+	bannerTextLight: "boolean | undefined",
+	bannerBody: "string | undefined",
 })
 
 type Banner = {

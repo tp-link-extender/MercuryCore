@@ -1,42 +1,37 @@
 import { redirect } from "@sveltejs/kit"
-import { zod4 } from "sveltekit-superforms/adapters"
+import { type } from "arktype"
+import { arktype } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
-import { z } from "zod/v4"
 import { cookieName, cookieOptions, createSession } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import requestRender from "$lib/server/requestRender"
 import { db, findWhere, Record, type RecordId } from "$lib/server/surreal"
+import { usernameTest } from "$lib/typeTests"
 import accountRegistered from "../accountRegistered"
 import createUserQuery from "./createUser.surql"
 import regkeyCheckQuery from "./regkeyCheck.surql"
 
-const schemaInitial = z.object({
-	username: z
-		.string()
-		.min(3)
-		.max(21)
-		.regex(/^[A-Za-z0-9_]+$/),
-	password: z.string().min(1).max(6969),
-	cpassword: z.string().min(1).max(6969),
+const schemaInitial = type({
+	username: usernameTest,
+	password: "1 <= string <= 6969",
+	cpassword: "1 <= string <= 6969",
 })
-const schema = z.object({
-	username: z
-		.string()
-		.min(3)
-		.max(21)
-		.regex(/^[A-Za-z0-9_]+$/),
-	email: z.string().regex(/^.+@.+$/), // https://youtu.be/mrGfahzt-4Q?t=1563
-	password: z.string().min(16).max(6969),
-	cpassword: z.string().min(16).max(6969),
-	regkey: z.string().min(1).max(6969),
+const schema = type({
+	username: usernameTest,
+	email: type(/^.+@.+$/).configure({
+		problem: "must be a valid RFC-5321 email address",
+	}), // https://youtu.be/mrGfahzt-4Q?t=1563
+	password: "16 <= string <= 6969",
+	cpassword: "16 <= string <= 6969",
+	regkey: "1 <= string <= 6969",
 })
 
 const prefix = config.RegistrationKeys.Prefix
 const prefixRegex = new RegExp(`^${prefix}(.+)$`)
 
 export const load = async () => ({
-	form: await superValidate(zod4(schema)),
+	form: await superValidate(arktype(schema)),
 	users: await accountRegistered(),
 	regKeysEnabled: config.RegistrationKeys.Enabled,
 	prefix,
@@ -44,7 +39,7 @@ export const load = async () => ({
 
 export const actions: import("./$types").Actions = {}
 actions.register = async ({ request, cookies }) => {
-	const form = await superValidate(request, zod4(schema))
+	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
 	const { username, email, password, cpassword, regkey } = form.data
@@ -112,7 +107,7 @@ actions.register = async ({ request, cookies }) => {
 }
 // This is the initial account creation, which is only allowed if there are no existing users.
 actions.initialAccount = async ({ request, cookies }) => {
-	const form = await superValidate(request, zod4(schemaInitial))
+	const form = await superValidate(request, arktype(schemaInitial))
 	if (!form.valid) return formError(form)
 
 	const { username, password, cpassword } = form.data

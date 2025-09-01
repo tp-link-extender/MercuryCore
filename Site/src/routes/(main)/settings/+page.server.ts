@@ -10,7 +10,7 @@ import passwordQuery from "./password.surql"
 import updateProfileQuery from "./updateProfile.surql"
 
 const profileSchema = type({
-	description: "string? <= 1000",
+	description: "(string <= 1000) | undefined",
 	theme: type.enumerated("0", ...config.Themes.map((_, i) => i.toString())),
 })
 const passwordSchema = type({
@@ -22,7 +22,7 @@ const sessionSchema = type({
 	password: "string >= 1",
 })
 const stylingSchema = type({
-	css: "string? <= 10000",
+	css: "(string <= 10000) | undefined",
 })
 
 export const load = async () => ({

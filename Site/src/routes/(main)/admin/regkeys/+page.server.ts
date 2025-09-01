@@ -1,7 +1,7 @@
 import { error } from "@sveltejs/kit"
-import { zod4 } from "sveltekit-superforms/adapters"
+import { type } from "arktype"
+import { arktype } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
-import { z } from "zod/v4"
 import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
@@ -12,12 +12,12 @@ import createQuery from "./create.surql"
 import disabledQuery from "./disabled.surql"
 import regkeysQuery from "./regkeys.surql"
 
-const schema = z.object({
-	enableRegKeyCustom: z.boolean().optional(),
-	regKeyCustom: z.string().min(3).max(50).optional(),
-	enableRegKeyExpiry: z.boolean().optional(),
-	regKeyExpiry: z.string().optional(),
-	regKeyUses: z.number().int().min(1).max(100).default(1),
+const schema = type({
+	enableRegKeyCustom: "boolean | undefined",
+	regKeyCustom: "(3 <= string <= 50) | undefined",
+	enableRegKeyExpiry: "boolean | undefined",
+	regKeyExpiry: "string | undefined",
+	regKeyUses: type("1 <= number <= 100").default(1),
 })
 
 type RegKey = {
@@ -34,7 +34,7 @@ export async function load({ locals }) {
 
 	const [regKeys] = await db.query<RegKey[][]>(regkeysQuery)
 	return {
-		form: await superValidate(zod4(schema)),
+		form: await superValidate(arktype(schema)),
 		regKeys,
 		prefix: config.RegistrationKeys.Prefix,
 	}
@@ -42,7 +42,7 @@ export async function load({ locals }) {
 
 async function getData({ locals, request }: RequestEvent) {
 	const { user } = await authorise(locals, 5)
-	const form = await superValidate(request, zod4(schema))
+	const form = await superValidate(request, arktype(schema))
 
 	return { user, form, error: !form.valid && formError(form) }
 }

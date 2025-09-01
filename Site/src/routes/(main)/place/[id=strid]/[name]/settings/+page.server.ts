@@ -1,13 +1,18 @@
 import fs from "node:fs"
 import { error } from "@sveltejs/kit"
+import { type } from "arktype"
 import sharp from "sharp"
-import { zod } from "sveltekit-superforms/adapters"
+import { arktype } from "sveltekit-superforms/adapters"
 import { message, superValidate } from "sveltekit-superforms/server"
-import { z } from "zod"
 import { authorise } from "$lib/server/auth"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import { db, Record } from "$lib/server/surreal"
+import {
+	maxPlayersTest,
+	serverAddressTest,
+	serverPortTest,
+} from "$lib/typeTests"
 import { encode } from "$lib/urlName"
 import type { RequestEvent } from "./$types.d"
 import privateTicketQuery from "./privateTicket.surql"
@@ -15,26 +20,21 @@ import serverTicketQuery from "./serverTicket.surql"
 import settingsQuery from "./settings.surql"
 import updateSettingsQuery from "./updateSettings.surql"
 
-const viewSchema = z.object({
-	name: z.string().max(100),
-	icon: z.any().optional(),
-	description: z.string().max(1000).optional(),
+const viewSchema = type({
+	name: "string <= 100",
+	icon: "(File | undefined)?",
+	description: "(string <= 1000) | undefined",
 })
-const networkSchema = z.object({
-	serverAddress: z
-		.string()
-		.max(100)
-		.regex(
-			/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
-		),
-	serverPort: z.number().int().min(1024).max(65535),
-	maxPlayers: z.number().int().min(1).max(100),
+const networkSchema = type({
+	serverAddress: serverAddressTest,
+	serverPort: serverPortTest,
+	maxPlayers: maxPlayersTest,
 })
-const ticketSchema = z.object({})
-const privacySchema = z.object({
-	privateServer: z.boolean(),
+const ticketSchema = type({} as never) // I'm a genius
+const privacySchema = type({
+	privateServer: "boolean",
 })
-const privatelinkSchema = z.object({})
+const privatelinkSchema = type({} as never)
 
 type Place = {
 	created: string
@@ -73,11 +73,14 @@ export async function load({ locals, params }) {
 	return {
 		...getPlace,
 		slug: encode(getPlace.name),
-		viewForm: await superValidate({ name: getPlace.name }, zod(viewSchema)),
-		networkForm: await superValidate(zod(networkSchema)),
-		ticketForm: await superValidate(zod(ticketSchema)),
-		privacyForm: await superValidate(zod(privacySchema)),
-		privatelinkForm: await superValidate(zod(privatelinkSchema)),
+		viewForm: await superValidate(
+			{ name: getPlace.name },
+			arktype(viewSchema)
+		),
+		networkForm: await superValidate(arktype(networkSchema)),
+		ticketForm: await superValidate(arktype(ticketSchema)), // lmaooo it works
+		privacyForm: await superValidate(arktype(privacySchema)),
+		privatelinkForm: await superValidate(arktype(privatelinkSchema)),
 	}
 }
 
@@ -96,10 +99,10 @@ actions.view = async e => {
 	const id = await getData(e)
 
 	const formData = await e.request.formData()
-	const form = await superValidate(formData, zod(viewSchema))
+	const form = await superValidate(formData, arktype(viewSchema))
 	if (!form.valid) return formError(form)
 
-	const icon = formData.get("icon") as File
+	const { name, icon, description } = form.data
 
 	if (icon && icon.size > 0) {
 		if (icon.size > 1e6)
@@ -116,8 +119,6 @@ actions.view = async e => {
 			.toFile(`../data/icons/${id}.avif`) // also errors aren't caught but whatever
 	}
 
-	const { name, description } = form.data
-
 	await db.query(updateSettingsQuery, {
 		place: Record("place", id),
 		name: filter(name),
@@ -130,13 +131,13 @@ actions.ticket = async e => {
 
 	await db.query(serverTicketQuery, { place: Record("place", id) })
 	return message(
-		await superValidate(e.request, zod(ticketSchema)),
+		await superValidate(e.request, arktype(ticketSchema)),
 		"Regenerated!"
 	)
 }
 actions.network = async e => {
 	const id = await getData(e)
-	const form = await superValidate(e.request, zod(networkSchema))
+	const form = await superValidate(e.request, arktype(networkSchema))
 	if (!form.valid) return formError(form)
 
 	await db.merge(Record("place", id), form.data)
@@ -144,7 +145,7 @@ actions.network = async e => {
 }
 actions.privacy = async e => {
 	const id = await getData(e)
-	const form = await superValidate(e.request, zod(privacySchema))
+	const form = await superValidate(e.request, arktype(privacySchema))
 	if (!form.valid) return formError(form)
 
 	const { privateServer } = form.data
@@ -157,7 +158,7 @@ actions.privatelink = async e => {
 
 	await db.query(privateTicketQuery, { place: Record("place", id) })
 	return message(
-		await superValidate(e.request, zod(privatelinkSchema)),
+		await superValidate(e.request, arktype(privatelinkSchema)),
 		"Regenerated!"
 	)
 }

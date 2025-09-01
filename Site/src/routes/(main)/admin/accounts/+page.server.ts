@@ -5,15 +5,11 @@ import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, Record } from "$lib/server/surreal"
+import { usernameTest } from "$lib/typeTests"
 import updatePasswordQuery from "./updatePassword.surql"
 
 const schema = type({
-	username: type("3 <= string <= 21").and(
-		type(/^[A-Za-z0-9_]+$/).configure({
-			problem:
-				"must contain only alphanumeric characters and underscores",
-		})
-	),
+	username: usernameTest,
 	password: "1 <= string <= 6969",
 })
 

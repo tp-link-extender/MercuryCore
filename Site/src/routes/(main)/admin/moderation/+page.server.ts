@@ -14,10 +14,10 @@ import unbanQuery from "./unban.surql"
 const schema = type({
 	username: "3 <= string <= 21",
 	// enum to allow 1 to be selected initially
-	action: type.enumerated(["1", "2", "3", "4"], {
+	action: type.enumerated("1", "2", "3", "4").configure({
 		problem: "must be a valid moderation action",
 	}),
-	banDate: "string?",
+	banDate: "string | undefined",
 	reason: "15 <= string <= 150",
 })
 

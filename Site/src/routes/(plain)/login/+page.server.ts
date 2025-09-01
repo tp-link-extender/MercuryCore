@@ -1,36 +1,23 @@
 import { redirect } from "@sveltejs/kit"
-import { zod4 } from "sveltekit-superforms/adapters"
+import { type } from "arktype"
+import { arktype } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
-import { z } from "zod/v4"
 import { cookieName, cookieOptions, createSession } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import { db, type RecordId } from "$lib/server/surreal"
+import { usernameTest } from "$lib/typeTests"
 import accountRegistered from "../accountRegistered"
 import userQuery from "./user.surql"
 
-const schema = z.object({
-	username: z
-		.string()
-		.min(3, { message: "Your username must be at least 3 characters long" })
-		.max(21, {
-			message: "Your username must be less than 21 characters long",
-		})
-		.regex(/^[A-Za-z0-9_]*$/, {
-			message:
-				"Your username can only contain the characters A-Z, a-z, 0-9, _",
-		}),
-	password: z
-		.string()
-		.min(1, { message: "Your password must be at least 1 character long" })
-		.max(6969, {
-			message: "Your password must be less than 6969 characters long",
-		}),
+const schema = type({
+	username: usernameTest,
+	password: "1 <= string <= 6969",
 })
 
 export async function load() {
 	return {
-		form: await superValidate(zod4(schema)),
+		form: await superValidate(arktype(schema)),
 		users: await accountRegistered(),
 		descriptions: config.Branding.Descriptions,
 	}
@@ -38,7 +25,7 @@ export async function load() {
 
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ request, cookies }) => {
-	const form = await superValidate(request, zod4(schema))
+	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
 	const { username, password } = form.data
