@@ -20,6 +20,11 @@ export default async () => {
 		stderr: "pipe",
 	})
 
+	process.on("exit", () => {
+		console.log("Shutting down Economy service...")
+		proc.kill()
+	})
+
 	proc.exited.then(async () => {
 		console.error("Economy service process exited unexpectedly.")
 		const r = await proc.stdout.getReader().read() // maybe stderr idk, I don't think the service uses it tho
