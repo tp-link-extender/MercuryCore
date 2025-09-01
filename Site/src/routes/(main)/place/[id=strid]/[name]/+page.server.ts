@@ -1,9 +1,9 @@
+import { error, redirect } from "@sveltejs/kit"
 import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formData from "$lib/server/formData"
-import { Record, db, find, findWhere } from "$lib/server/surreal"
+import { db, find, findWhere, Record } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
-import { error, redirect } from "@sveltejs/kit"
 import invalidatePlayingQuery from "./invalidatePlaying.surql"
 import placeQuery from "./place.surql"
 

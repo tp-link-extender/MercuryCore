@@ -1,7 +1,7 @@
+import { error } from "@sveltejs/kit"
 import config from "$lib/server/config"
 import { SignData } from "$lib/server/sign"
-import { Record, db, findWhere } from "$lib/server/surreal"
-import { error } from "@sveltejs/kit"
+import { db, findWhere, Record } from "$lib/server/surreal"
 import joinQuery from "./join.surql"
 
 type Session = {

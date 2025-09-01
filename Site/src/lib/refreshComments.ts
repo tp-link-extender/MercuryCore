@@ -1,5 +1,5 @@
-import { invalidateAll } from "$app/navigation"
 import type { SubmitFunction } from "@sveltejs/kit"
+import { invalidateAll } from "$app/navigation"
 
 export const refreshComments: SubmitFunction<any, any> =
 	() =>

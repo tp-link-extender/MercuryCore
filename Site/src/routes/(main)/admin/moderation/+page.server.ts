@@ -1,31 +1,31 @@
+import { error } from "@sveltejs/kit"
+import { type } from "arktype"
+import { arktype } from "sveltekit-superforms/adapters"
+import { message, superValidate } from "sveltekit-superforms/server"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, db, findWhere } from "$lib/server/surreal"
-import { error } from "@sveltejs/kit"
-import { zod } from "sveltekit-superforms/adapters"
-import { message, superValidate } from "sveltekit-superforms/server"
-import { z } from "zod"
+import { db, findWhere, Record } from "$lib/server/surreal"
 import assocreportQuery from "./assocreport.surql"
 import moderateQuery from "./moderate.surql"
 import moderateeQuery from "./moderatee.surql"
 import unbanQuery from "./unban.surql"
 
-const schema = z.object({
-	username: z.string().min(3).max(21),
+const schema = type({
+	username: "3 <= string <= 21",
 	// enum to allow 1 to be selected initially
-	action: z.enum(["1", "2", "3", "4"], {
-		message: "Select a moderation action",
+	action: type.enumerated("1", "2", "3", "4").configure({
+		problem: "must be a valid moderation action",
 	}),
-	banDate: z.string().optional(),
-	reason: z.string().min(15).max(150),
+	banDate: "string | undefined",
+	reason: "15 <= string <= 150",
 })
 
 export async function load({ locals, url }) {
 	await authorise(locals, 4)
 
 	const associatedReport = url.searchParams.get("report")
-	if (!associatedReport) return { form: await superValidate(zod(schema)) }
+	if (!associatedReport) return { form: await superValidate(arktype(schema)) }
 
 	const [report] = await db.query<
 		({ note: string; reportee: string } | undefined)[]
@@ -40,7 +40,7 @@ export async function load({ locals, url }) {
 				username: report.reportee,
 				reason: report.note,
 			},
-			zod(schema)
+			arktype(schema)
 		),
 		report,
 	}
@@ -49,7 +49,7 @@ export async function load({ locals, url }) {
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ locals, request, getClientAddress }) => {
 	const { user } = await authorise(locals, 4)
-	const form = await superValidate(request, zod(schema))
+	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
 	const { username, action, banDate, reason } = form.data

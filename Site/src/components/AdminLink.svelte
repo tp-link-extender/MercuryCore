@@ -1,7 +1,7 @@
 <script lang="ts">
-	import fade from "$lib/fade"
 	import type { Snippet } from "svelte"
 	import type { ClassValue } from "svelte/elements"
+	import fade from "$lib/fade"
 
 	const {
 		num,

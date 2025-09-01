@@ -1,9 +1,9 @@
 <script lang="ts">
-	import NoScript from "$components/NoScript.svelte"
-	import YesScript from "$components/YesScript.svelte"
 	import { type createAccordion, melt } from "@melt-ui/svelte"
 	import type { Snippet } from "svelte"
 	import type { HTMLAttributes } from "svelte/elements"
+	import NoScript from "$components/NoScript.svelte"
+	import YesScript from "$components/YesScript.svelte"
 
 	const {
 		accordion,

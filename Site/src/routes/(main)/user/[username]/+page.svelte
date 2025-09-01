@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { createAccordion } from "@melt-ui/svelte"
 	import { applyAction, enhance } from "$app/forms"
 	import { invalidateAll } from "$app/navigation"
 	import Accordion from "$components/Accordion.svelte"
@@ -8,7 +9,6 @@
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
 	import permissionLevels from "$lib/permissionLevels"
-	import { createAccordion } from "@melt-ui/svelte"
 	import Interactions from "./Interactions.svelte"
 	import ProfilePlace from "./ProfilePlace.svelte"
 
@@ -157,7 +157,9 @@
 							</a>
 						{/if}
 					</div>
-					<p class="pl-2 pt-4 whitespace-pre-line">{data.description.text}</p>
+					<p class="pl-2 pt-4 whitespace-pre-line">
+						{data.description.text}
+					</p>
 				</div>
 			{:else if data.username === user.username}
 				<p class="pt-6 text-center">

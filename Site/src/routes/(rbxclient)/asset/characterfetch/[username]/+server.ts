@@ -1,6 +1,6 @@
+import { error } from "@sveltejs/kit"
 import config from "$lib/server/config"
 import { db } from "$lib/server/surreal"
-import { error } from "@sveltejs/kit"
 import userQuery from "./user.surql"
 
 type User = {

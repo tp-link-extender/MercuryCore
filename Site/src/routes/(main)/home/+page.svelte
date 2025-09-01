@@ -1,11 +1,11 @@
 <script lang="ts">
+	import { superForm } from "sveltekit-superforms/client"
+	import Form from "$components/forms/Form.svelte"
+	import Input from "$components/forms/Input.svelte"
 	import Head from "$components/Head.svelte"
 	import Place from "$components/Place.svelte"
 	import User from "$components/User.svelte"
-	import Form from "$components/forms/Form.svelte"
-	import Input from "$components/forms/Input.svelte"
 	import fade from "$lib/fade"
-	import { superForm } from "sveltekit-superforms/client"
 	import Status from "./Status.svelte"
 
 	const { data } = $props()
