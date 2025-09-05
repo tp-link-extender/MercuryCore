@@ -10,23 +10,25 @@ import logo from "$lib/server/logo"
 import startEconomy from "$lib/server/process/economy"
 import startSurreal from "$lib/server/process/surreal"
 
-try {
-	startSurreal()
-} catch (e) {
-	console.log(e)
-	console.error(
-		"Failed to start SurrealDB. Make sure it is installed and accessible as `surreal`."
-	)
-	process.exit(1)
-}
-try {
-	startEconomy()
-} catch (e) {
-	console.log(e)
-	console.error(
-		"Failed to start the Economy service. Make sure it is built and accessible at Economy/Economy."
-	)
-	process.exit(1)
+if (!building) {
+	try {
+		startSurreal()
+	} catch (e) {
+		console.log(e)
+		console.error(
+			"Failed to start SurrealDB. Make sure it is installed and accessible as `surreal`."
+		)
+		process.exit(1)
+	}
+	try {
+		startEconomy()
+	} catch (e) {
+		console.log(e)
+		console.error(
+			"Failed to start the Economy service. Make sure it is built and accessible at Economy/Economy."
+		)
+		process.exit(1)
+	}
 }
 
 await new Promise(resolve => setTimeout(resolve, 500))
