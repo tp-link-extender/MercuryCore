@@ -14,7 +14,8 @@ export default async () => {
 		await Bun.spawn(["go", "build"], { cwd }).exited
 	}
 
-	const proc = Bun.spawn(["./Economy"], {
+	const name = process.platform === "win32" ? "Economy.exe" : "Economy"
+	const proc = Bun.spawn([name], {
 		cwd,
 		stdout: "pipe",
 		stderr: "pipe",
