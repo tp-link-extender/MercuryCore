@@ -1,16 +1,16 @@
+import { error, redirect } from "@sveltejs/kit"
+import { type } from "arktype"
+import { arktype } from "sveltekit-superforms/adapters"
+import { superValidate } from "sveltekit-superforms/server"
 import { authorise } from "$lib/server/auth"
 import { createGroup, getGroupPrice } from "$lib/server/economy"
 import exclude from "$lib/server/exclude"
 import formError from "$lib/server/formError"
-import { Record, db, findWhere } from "$lib/server/surreal"
-import { error, redirect } from "@sveltejs/kit"
-import { zod } from "sveltekit-superforms/adapters"
-import { superValidate } from "sveltekit-superforms/server"
-import { z } from "zod"
+import { db, findWhere, Record } from "$lib/server/surreal"
 import createQuery from "./create.surql"
 
-const schema = z.object({
-	name: z.string().min(3).max(40),
+const schema = type({
+	name: "3 <= string <= 40",
 })
 
 export async function load() {
@@ -18,7 +18,7 @@ export async function load() {
 	const price = await getGroupPrice()
 	if (!price.ok) error(500, price.msg)
 	return {
-		form: await superValidate(zod(schema)),
+		form: await superValidate(arktype(schema)),
 		price: price.value,
 	}
 }
@@ -36,7 +36,7 @@ export const actions: import("./$types").Actions = {}
 actions.default = async ({ locals, request }) => {
 	exclude("Groups")
 	const { user } = await authorise(locals)
-	const form = await superValidate(request, zod(schema))
+	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
 	const { name } = form.data

@@ -1,31 +1,28 @@
+import { type } from "arktype"
+import { arktype } from "sveltekit-superforms/adapters"
+import { message, superValidate } from "sveltekit-superforms/server"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, db } from "$lib/server/surreal"
-import { zod } from "sveltekit-superforms/adapters"
-import { message, superValidate } from "sveltekit-superforms/server"
-import { z } from "zod"
+import { db, Record } from "$lib/server/surreal"
+import { usernameTest } from "$lib/typeTests"
 import updatePasswordQuery from "./updatePassword.surql"
 
-const schema = z.object({
-	username: z
-		.string()
-		.min(3)
-		.max(21)
-		.regex(/^[A-Za-z0-9_]+$/),
-	password: z.string().min(1).max(6969),
+const schema = type({
+	username: usernameTest,
+	password: "1 <= string <= 6969",
 })
 
 export async function load({ locals }) {
 	await authorise(locals, 5)
 
-	return { form: await superValidate(zod(schema)) }
+	return { form: await superValidate(arktype(schema)) }
 }
 
 export const actions: import("./$types").Actions = {}
 actions.changePassword = async ({ locals, request, getClientAddress }) => {
 	const { user } = await authorise(locals, 5)
-	const form = await superValidate(request, zod(schema))
+	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
 	const limit = ratelimit(form, "changePassword", getClientAddress, 30)

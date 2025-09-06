@@ -1,11 +1,11 @@
-import { brickColours } from "$lib/brickColours.ts"
+import { error, fail } from "@sveltejs/kit"
+import { brickColours } from "$lib/brickColours"
 import { idRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/auth"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
-import { Record, db } from "$lib/server/surreal"
-import { error, fail } from "@sveltejs/kit"
-import type { RequestEvent } from "./$types.d.ts"
+import { db, Record } from "$lib/server/surreal"
+import type { RequestEvent } from "./$types.d"
 import assetsQuery from "./assets.surql"
 import equipQuery from "./equip.surql"
 import equipDataQuery from "./equipData.surql"
@@ -90,7 +90,7 @@ async function paint({ locals, url }: RequestEvent) {
 	if (
 		!bodyPartQuery ||
 		!bodyColour ||
-		!brickColours.includes(+bodyColour) ||
+		!(brickColours as readonly number[]).includes(+bodyColour) ||
 		!bodyParts.includes(bodyPartQuery)
 	)
 		return fail(400)

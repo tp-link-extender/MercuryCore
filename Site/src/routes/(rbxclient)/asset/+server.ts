@@ -1,9 +1,9 @@
+import { createHash } from "node:crypto"
+import { error, redirect } from "@sveltejs/kit"
 import { idRegex, intRegex } from "$lib/paramTests"
 import config from "$lib/server/config"
 import { SignData } from "$lib/server/sign"
 import { db, Record } from "$lib/server/surreal"
-import { createHash } from "node:crypto"
-import { error, redirect } from "@sveltejs/kit"
 import assetQuery from "./asset.surql"
 
 const headers = (file: string | Uint8Array) => ({
@@ -22,6 +22,9 @@ type FoundAsset = {
 	visibility: string
 }
 
+// you know how much I hate this thing, I don't even think I can rewrite it to make it better
+const healthModelId = "38037265"
+
 export async function GET({ url }) {
 	const id = url.searchParams.get("id")
 
@@ -31,7 +34,10 @@ export async function GET({ url }) {
 	if (intRegex.test(id)) {
 		console.log("Serving corescript", id)
 
-		const file = Bun.file(`../Corescripts/${id}.lua`)
+		const isHealthModel = id === healthModelId
+		const file = Bun.file(
+			`../Corescripts/${id}.${isHealthModel ? "xml" : "lua"}`
+		)
 		if (!(await file.exists())) error(404, "Corescript not found")
 
 		const script = (await file.text()).replaceAll(
@@ -39,6 +45,7 @@ export async function GET({ url }) {
 			`${config.Domain}/asset`
 		)
 
+		if (isHealthModel) return response(script)
 		return response(await SignData(script))
 	}
 

@@ -1,17 +1,16 @@
 <script lang="ts">
+	import { superForm } from "sveltekit-superforms/client"
+	import Form from "$components/forms/Form.svelte"
+	import Input from "$components/forms/Input.svelte"
+	import Select from "$components/forms/Select.svelte"
+	import Textarea from "$components/forms/Textarea.svelte"
 	import Head from "$components/Head.svelte"
 	import SidebarShell from "$components/SidebarShell.svelte"
 	import Tab from "$components/Tab.svelte"
 	import TabData from "$components/TabData"
 	import TabNav from "$components/TabNav.svelte"
-	import Form from "$components/forms/Form.svelte"
-	import Input from "$components/forms/Input.svelte"
-	import Select from "$components/forms/Select.svelte"
-	import Textarea from "$components/forms/Textarea.svelte"
 	import types from "$lib/assetTypes"
 	import fade from "$lib/fade"
-	import SuperDebug from "sveltekit-superforms"
-	import { superForm } from "sveltekit-superforms/client"
 
 	const { data } = $props()
 

@@ -1,6 +1,6 @@
-import { authorise } from "$lib/server/auth"
-import { Record, db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
+import { authorise } from "$lib/server/auth"
+import { db, Record } from "$lib/server/surreal"
 import dislikeQuery from "./dislike.surql"
 import likeQuery from "./like.surql"
 import undislikeQuery from "./undislike.surql"

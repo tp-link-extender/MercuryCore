@@ -1,4 +1,8 @@
 import fs from "node:fs"
+import { error, redirect } from "@sveltejs/kit"
+import { type } from "arktype"
+import { arktype } from "sveltekit-superforms/adapters"
+import { superValidate } from "sveltekit-superforms/server"
 import { authorise } from "$lib/server/auth"
 import { createAsset, getAssetPrice } from "$lib/server/economy"
 import formError from "$lib/server/formError"
@@ -6,37 +10,33 @@ import { randomId } from "$lib/server/id"
 import {
 	clothingAsset,
 	imageAsset,
+	thumbnail,
 	tShirt,
 	tShirtThumbnail,
-	thumbnail,
 } from "$lib/server/imageAsset"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
-import { Record, db } from "$lib/server/surreal"
+import { db, Record } from "$lib/server/surreal"
 import { graphicAsset } from "$lib/server/xmlAsset"
 import { encode } from "$lib/urlName"
-import { error, redirect } from "@sveltejs/kit"
-import { zod } from "sveltekit-superforms/adapters"
-import { superValidate } from "sveltekit-superforms/server"
-import { z } from "zod"
 import createAssetQuery from "./createAsset.surql"
 
-const schema = z.object({
+const schema = type({
 	// Object.keys(assets) doesn't work
-	type: z.enum(["2", "8", "11", "12", "13", "18"], {
-		message: "Select an asset type",
+	type: type.enumerated("2", "8", "11", "12", "13", "18").configure({
+		problem: "must be a valid asset type",
 	}),
-	name: z.string().min(3).max(50),
-	description: z.string().max(1000).optional(),
-	price: z.number().int().min(0).max(999),
-	asset: z.any(),
+	name: "3 <= string <= 50",
+	description: "(0 <= string <= 1000) | undefined",
+	price: "0 <= number.integer <= 999",
+	asset: "File",
 })
 
 export async function load({ url }) {
 	const price = await getAssetPrice()
 	if (!price.ok) error(500, price.msg)
 	return {
-		form: await superValidate(zod(schema)),
+		form: await superValidate(arktype(schema)),
 		assetType: url.searchParams.get("asset"),
 		price: price.value,
 	}
@@ -52,15 +52,13 @@ const assets: { [k: number]: string } = Object.freeze({
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ locals, request, getClientAddress }) => {
 	const { user } = await authorise(locals)
-	const form = await superValidate(request, zod(schema))
+	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
-	const { type, name, description, price } = form.data
+	const { type, name, description, price, asset } = form.data
 	const assetType = +type as keyof typeof assets
-	const asset = form.data.asset as File
-	form.data.asset = null
 
-	if (!asset || asset.size === 0)
+	if (asset.size === 0)
 		return formError(form, ["asset"], ["You must upload an asset"])
 	if (asset.size > 20e6)
 		return formError(

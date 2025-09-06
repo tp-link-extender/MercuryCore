@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { applyAction } from "$app/forms"
-	import { enhance } from "$app/forms"
+	import { applyAction, enhance } from "$app/forms"
 	import { invalidateAll } from "$app/navigation"
 	import TabData from "$components/TabData"
 	import TabNav from "$components/TabNav.svelte"

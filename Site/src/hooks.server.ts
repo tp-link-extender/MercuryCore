@@ -1,6 +1,8 @@
 // "'Hooks' are app-wide functions you declare that SvelteKit will call in response to specific events, giving you fine-grained control over the framework's behaviour."
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
+import { type Handle, redirect } from "@sveltejs/kit"
+import pc from "picocolors"
 import {
 	cookieName,
 	cookieOptions,
@@ -8,9 +10,7 @@ import {
 } from "$lib/server/auth"
 import config from "$lib/server/config"
 import { stipend } from "$lib/server/economy"
-import { Record, db } from "$lib/server/surreal"
-import { type Handle, redirect } from "@sveltejs/kit"
-import pc from "picocolors"
+import { db, Record } from "$lib/server/surreal"
 import moderatedQuery from "./moderated.surql"
 
 const { magenta, red, yellow, green, blue, gray } = pc

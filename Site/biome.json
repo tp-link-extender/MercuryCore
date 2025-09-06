@@ -60,7 +60,9 @@
 						"useConst": "off"
 					},
 					"correctness": {
-						"noUnusedLabels": "off"
+						"noUnusedLabels": "off",
+						"noUnusedImports": "off",
+						"noUnusedVariables": "off"
 					},
 					"suspicious": {
 						"noConfusingLabels": "off",

@@ -1,7 +1,7 @@
+import { error } from "@sveltejs/kit"
 import config from "$lib/server/config"
 import { SignData } from "$lib/server/sign"
 import { db } from "$lib/server/surreal"
-import { error } from "@sveltejs/kit"
 import placeQuery from "./place.surql"
 
 export async function GET({ url }) {

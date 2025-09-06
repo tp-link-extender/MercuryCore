@@ -1,14 +1,14 @@
 import fs from "node:fs"
+import { error, redirect } from "@sveltejs/kit"
+import { type } from "arktype"
+import { arktype } from "sveltekit-superforms/adapters"
+import { superValidate } from "sveltekit-superforms/server"
 import { intRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import requestRender from "$lib/server/requestRender"
 import { db } from "$lib/server/surreal"
-import { error, redirect } from "@sveltejs/kit"
-import { zod } from "sveltekit-superforms/adapters"
-import { superValidate } from "sveltekit-superforms/server"
-import { z } from "zod"
 import createAutopilotQuery from "./createAutopilot.surql"
 import getVersionsQuery from "./getVersions.surql"
 import sharedAssetsCacheQuery from "./sharedAssetsCache.surql"
@@ -16,20 +16,20 @@ import typeQuery from "./type.surql"
 
 // TODO: port ALL of this to Open Cloud (https://create.roblox.com/docs/cloud/features/assets#/default/Assets_GetAsset)
 
-const schemaManual = z.object({
-	type: z.enum(["8", "18"]),
-	name: z.string().min(3).max(50),
-	description: z.string().max(1000).optional(),
-	price: z.number().int().min(0).max(999),
-	asset: z.any(),
+const schemaManual = type({
+	type: "8 | 18",
+	name: "3 <= string <= 50",
+	description: "(string <= 1000) | undefined",
+	price: "string.numeric <= 999",
+	asset: "unknown",
 })
-const schemaAuto = z.object({
-	assetId: z.number().int(),
-	version: z.number().int(),
-	name: z.string().min(3).max(50),
-	description: z.string().max(1000).optional(),
-	price: z.number().int().min(0).max(999),
-	shared: z.string(),
+const schemaAuto = type({
+	assetId: "number.integer",
+	version: "number.integer",
+	name: "3 <= string <= 50",
+	description: "(string <= 1000) | undefined",
+	price: "number.integer <= 999",
+	shared: "string",
 })
 
 type Asset = {
@@ -230,8 +230,8 @@ export async function load({ locals, url }) {
 
 	const stage = assetId ? (version ? 3 : 2) : 1
 	return {
-		formManual: await superValidate(zod(schemaManual)),
-		formAuto: await superValidate(zod(schemaAuto)),
+		formManual: await superValidate(arktype(schemaManual)),
+		formAuto: await superValidate(arktype(schemaAuto)),
 		stage,
 		...(stage === 2 &&
 			assetId && {
@@ -253,7 +253,7 @@ export const actions: import("./$types").Actions = {}
 const intRegex2 = /\d+/
 actions.autopilot = async ({ locals, request }) => {
 	await authorise(locals, 3)
-	const form = await superValidate(request, zod(schemaAuto))
+	const form = await superValidate(request, arktype(schemaAuto))
 	if (!form.valid) return formError(form)
 
 	const { data } = form

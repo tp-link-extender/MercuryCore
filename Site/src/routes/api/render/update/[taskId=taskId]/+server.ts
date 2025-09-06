@@ -1,5 +1,5 @@
-import { Record, db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
+import { db, Record } from "$lib/server/surreal"
 import completeQuery from "./complete.surql"
 import renderQuery from "./render.surql"
 

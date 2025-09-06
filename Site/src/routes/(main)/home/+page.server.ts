@@ -1,17 +1,17 @@
+import { type } from "arktype"
+import { arktype } from "sveltekit-superforms/adapters"
+import { superValidate } from "sveltekit-superforms/server"
 import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
 import createCommentQuery from "$lib/server/createComment.surql"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
-import { Record, db } from "$lib/server/surreal"
-import { zod } from "sveltekit-superforms/adapters"
-import { superValidate } from "sveltekit-superforms/server"
-import { z } from "zod"
+import { db, Record } from "$lib/server/surreal"
 import homeQuery from "./home.surql"
 
-const schema = z.object({
-	status: z.string().min(1).max(1000),
+const schema = type({
+	status: "1 <= string <= 1000",
 })
 
 type Place = {
@@ -39,7 +39,7 @@ export async function load({ locals }) {
 
 	return {
 		greet: greets[Math.floor(Math.random() * greets.length)](),
-		form: await superValidate(zod(schema)),
+		form: await superValidate(arktype(schema)),
 		places,
 		friends,
 		feed,
@@ -49,7 +49,7 @@ export async function load({ locals }) {
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ locals, request, getClientAddress }) => {
 	const { user } = await authorise(locals)
-	const form = await superValidate(request, zod(schema))
+	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
 	const unfiltered = form.data.status.trim()
