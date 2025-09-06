@@ -22,6 +22,9 @@ type FoundAsset = {
 	visibility: string
 }
 
+// you know how much I hate this thing, I don't even think I can rewrite it to make it better
+const healthModelId = "38037265"
+
 export async function GET({ url }) {
 	const id = url.searchParams.get("id")
 
@@ -31,7 +34,9 @@ export async function GET({ url }) {
 	if (intRegex.test(id)) {
 		console.log("Serving corescript", id)
 
-		const file = Bun.file(`../Corescripts/${id}.lua`)
+		const file = Bun.file(
+			`../Corescripts/${id}.${id === healthModelId ? "xml" : "lua"}`
+		)
 		if (!(await file.exists())) error(404, "Corescript not found")
 
 		const script = (await file.text()).replaceAll(
