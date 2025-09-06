@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { page } from "$app/state"
 	import type { Snippet } from "svelte"
 	import type { HTMLFormAttributes } from "svelte/elements"
+	import { page } from "$app/state"
 
 	const {
 		working = "Working...",

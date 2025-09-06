@@ -9,13 +9,6 @@ DEFINE TABLE OVERWRITE asset SCHEMAFULL;
 	DEFINE FIELD OVERWRITE updated ON asset TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE visibility ON asset TYPE string DEFAULT "Pending";
 
-DEFINE TABLE OVERWRITE assetCache SCHEMAFULL;
-	DEFINE FIELD OVERWRITE assetModified ON assetCache TYPE string;
-	DEFINE FIELD OVERWRITE created ON assetCache TYPE datetime DEFAULT time::now();
-	DEFINE FIELD OVERWRITE description ON assetCache TYPE string DEFAULT ALWAYS "No description available.";
-	DEFINE FIELD OVERWRITE name ON assetCache TYPE string DEFAULT ALWAYS "Unnamed asset";
-	DEFINE FIELD OVERWRITE type ON assetCache TYPE int;
-
 DEFINE TABLE OVERWRITE auditLog SCHEMAFULL;
 	DEFINE FIELD OVERWRITE action ON auditLog TYPE string;
 	DEFINE FIELD OVERWRITE created ON auditLog TYPE datetime DEFAULT time::now();
