@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto"
-import { error, redirect } from "@sveltejs/kit"
-import { idRegex, intRegex } from "$lib/paramTests"
+import { error } from "@sveltejs/kit"
+import { intRegex } from "$lib/paramTests"
 import config from "$lib/server/config"
 import { SignData } from "$lib/server/sign"
 import { db, Record } from "$lib/server/surreal"
@@ -23,15 +23,17 @@ type FoundAsset = {
 }
 
 // you know how much I hate this thing, I don't even think I can rewrite it to make it better
-const healthModelId = "38037265"
+const healthModelId = 38037265
 
 export async function GET({ url }) {
-	const id = url.searchParams.get("id")
+	const assetId = url.searchParams.get("id")
+	if (!assetId || !intRegex.test(assetId)) error(400, "Invalid Request")
 
-	if (!id) error(400, "Invalid Request")
-	// all numbered ids are corescripts (for now)
+	// all asset ids are now numbered
+	const id = +assetId
 
-	if (intRegex.test(id)) {
+	// corescript ids are 8 digits
+	if (id < 100_000_000) {
 		console.log("Serving corescript", id)
 
 		const isHealthModel = id === healthModelId
@@ -49,28 +51,25 @@ export async function GET({ url }) {
 		return response(await SignData(script))
 	}
 
-	if (!idRegex.test(id)) error(400, "Invalid Request")
+	// other asset ids are 9 digits
+	if (id > 999_999_999) error(400, "Invalid Request")
+
 	console.log("Serving", id)
 
-	try {
-		// Try loading as an asset
+	// Try loading as an asset
+	if (!(await Bun.file(`../data/assets/${id}`).exists()))
+		error(404, "Asset not found")
 
-		if (!(await Bun.file(`../data/assets/${id}`).exists()))
-			throw new Error("Asset not found")
+	const [[asset]] = await db.query<FoundAsset[][]>(assetQuery, {
+		asset: Record("asset", id),
+	})
 
-		const [[asset]] = await db.query<FoundAsset[][]>(assetQuery, {
-			asset: Record("asset", id),
-		})
+	if (!asset || asset.visibility === "Moderated")
+		error(404, "Asset not found")
 
-		if (!asset || asset.visibility === "Moderated")
-			throw new Error("Asset not found")
-
-		// The asset is visible or pending
-		// (allow pending assets to be shown through the api)
-		console.log(`serving asset #${id}`)
-		const file = await Bun.file(`../data/assets/${id}`).arrayBuffer()
-		return response(new Uint8Array(file))
-	} catch {
-		redirect(302, `https://assetdelivery.roblox.com/v1/asset?id=${id}`)
-	}
+	// The asset is visible or pending
+	// (allow pending assets to be shown through the api)
+	console.log(`serving asset #${id}`)
+	const file = await Bun.file(`../data/assets/${id}`).arrayBuffer()
+	return response(new Uint8Array(file))
 }

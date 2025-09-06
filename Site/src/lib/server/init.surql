@@ -1,6 +1,8 @@
 # Overwrites are needed to ensure that the schema is correct when changing in dev mode/on deployment
 
 DEFINE TABLE OVERWRITE asset SCHEMAFULL;
+	# corescripts are 8 digits, user-uploaded assets are 9 (max is 2^31-1 = 2147483647, we need numeric ids for reasons... eugh)
+	DEFINE FIELD OVERWRITE id ON asset TYPE int DEFAULT rand::int(100_000_000, 999_999_999);
 	DEFINE FIELD OVERWRITE created ON asset TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE description ON asset FLEXIBLE TYPE array DEFAULT ALWAYS [];
 	DEFINE FIELD OVERWRITE name ON asset TYPE string;
