@@ -34,8 +34,9 @@ export async function GET({ url }) {
 	if (intRegex.test(id)) {
 		console.log("Serving corescript", id)
 
+		const isHealthModel = id === healthModelId
 		const file = Bun.file(
-			`../Corescripts/${id}.${id === healthModelId ? "xml" : "lua"}`
+			`../Corescripts/${id}.${isHealthModel ? "xml" : "lua"}`
 		)
 		if (!(await file.exists())) error(404, "Corescript not found")
 
@@ -44,6 +45,7 @@ export async function GET({ url }) {
 			`${config.Domain}/asset`
 		)
 
+		if (isHealthModel) return response(script)
 		return response(await SignData(script))
 	}
 
