@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { applyAction } from "$app/forms"
-	import { enhance } from "$app/forms"
+	import { superForm } from "sveltekit-superforms/client"
+	import { applyAction, enhance } from "$app/forms"
 	import { invalidateAll } from "$app/navigation"
 	import Comment from "$components/Comment.svelte"
 	import Head from "$components/Head.svelte"
@@ -10,7 +10,6 @@
 	import TabNav from "$components/TabNav.svelte"
 	import User from "$components/User.svelte"
 	import types from "$lib/assetTypes"
-	import { superForm } from "sveltekit-superforms/client"
 
 	let replyingTo = $state("")
 	let commentsCollapsed = $state({})
