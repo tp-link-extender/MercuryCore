@@ -24,7 +24,7 @@ export async function GET({ url }) {
 		else if (mapLocation) mapLocation = `rbxasset://maps/${mapLocation}`
 	}
 
-	const scriptFile = Bun.file("../Corescripts/host.lua")
+	const scriptFile = Bun.file("../data/server/loadscripts/host.lua")
 	const script = (await scriptFile.text())
 		.replaceAll("_BASE_URL", `"${config.Domain}"`)
 		.replaceAll("_MAP_LOCATION_EXISTS", (!!mapLocation).toString())

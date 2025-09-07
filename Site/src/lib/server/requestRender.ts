@@ -53,7 +53,7 @@ export default async function (
 		})
 
 	// Send the script to the RCCService proxy
-	const scriptFile = Bun.file(`../Corescripts/render${renderType}.lua`)
+	const scriptFile = Bun.file(`../data/server/render/render${renderType}.lua`)
 	if (!(await scriptFile.exists()))
 		throw new Error(`Script file for ${renderType} does not exist`)
 

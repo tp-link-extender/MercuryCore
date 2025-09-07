@@ -21,8 +21,18 @@ type FoundAsset = {
 	visibility: string
 }
 
-// you know how much I hate this thing, I don't even think I can rewrite it to make it better
-const healthModelId = 38037265
+async function loadPrivilegedAsset(id: number) {
+	const file = Bun.file(`../data/server/assets/${id}`)
+	if (!(await file.exists())) return
+	
+	console.log("Serving privileged", id)
+	const script = (await file.text()).replaceAll(
+		"roblox.com/asset",
+		`${config.Domain}/asset`
+	)
+
+	return response(script)
+	}
 
 export async function GET({ url }) {
 	const assetId = url.searchParams.get("id")
@@ -30,27 +40,11 @@ export async function GET({ url }) {
 
 	// all asset ids are now numbered
 	const id = +assetId
+	console.log("Requested asset", id)
 
-	// corescript ids are 8 digits
-	if (id < 100_000_000) {
-		console.log("Serving corescript", id)
-
-		const isHealthModel = id === healthModelId
-		const file = Bun.file(
-			`../Corescripts/${id}.${isHealthModel ? "xml" : "lua"}`
-		)
-		if (!(await file.exists())) error(404, "Corescript not found")
-
-		const script = (await file.text()).replaceAll(
-			"roblox.com/asset",
-			`${config.Domain}/asset`
-		)
-
-		return response(script)
-	}
-
-	// other asset ids are 9 digits
-	if (id > 999_999_999) error(400, "Invalid Request")
+	// just check it idc
+	const result = await loadPrivilegedAsset(id)
+	if (result) return result
 
 	console.log("Serving", id)
 
