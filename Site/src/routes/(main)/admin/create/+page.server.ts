@@ -9,9 +9,39 @@ import { db, Record } from "$lib/server/surreal"
 import createQuery from "./create.surql"
 
 const schema = type({
-	type: type.enumerated(1, 2, 3, 4, 5, 8, 10, 11, 12, 13, 16, 17, 18, 19, 24, 25, 26, 27, 28, 29, 30, 31, 32, 35, 37, 38, 42).configure({
-		problem: "must be a valid asset type",
-	}),
+	type: type
+		.enumerated(
+			1,
+			2,
+			3,
+			4,
+			5,
+			8,
+			10,
+			11,
+			12,
+			13,
+			16,
+			17,
+			18,
+			19,
+			24,
+			25,
+			26,
+			27,
+			28,
+			29,
+			30,
+			31,
+			32,
+			35,
+			37,
+			38,
+			42
+		)
+		.configure({
+			problem: "must be a valid asset type",
+		}),
 	name: "3 <= string <= 50",
 	description: "(string <= 1000) | undefined",
 	price: "0 <= number.integer <= 999",
@@ -28,7 +58,7 @@ export async function load({ locals }) {
 
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ locals, request }) => {
-	const {user} = await authorise(locals, 3)
+	const { user } = await authorise(locals, 3)
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
@@ -37,9 +67,9 @@ actions.default = async ({ locals, request }) => {
 	if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
 	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
 
-		console.log(data)
+	const { asset, description, name, price, type: assetType } = data
+	form.data.asset = null // make sure to return as a POJO
 
-	const { description, name, price, type: assetType } = data
 	const [, id] = await db.query<string[]>(createQuery, {
 		description,
 		name,
@@ -48,7 +78,7 @@ actions.default = async ({ locals, request }) => {
 		user: Record("user", user.id),
 	})
 
-	await Bun.write(`../data/assets/${id}`, await data.asset.arrayBuffer())
+	await Bun.write(`../data/assets/${id}`, await asset.arrayBuffer())
 
 	// we'll just assume it's a model 4 now
 	// await requestRender("Model", id)

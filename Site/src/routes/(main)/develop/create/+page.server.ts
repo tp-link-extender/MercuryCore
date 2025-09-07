@@ -49,9 +49,9 @@ const assets: { [k: number]: string } = Object.freeze({
 })
 
 function randAssetId() {
-	const min = 100_000_000;
-	const max = 1_000_000_000; // exclusive
-    return Math.random() * (max - min) + min;
+	const min = 100_000_000
+	const max = 1_000_000_000 // exclusive
+	return Math.random() * (max - min) + min
 }
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ locals, request, getClientAddress }) => {
@@ -61,6 +61,7 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 
 	const { type, name, description, price, asset } = form.data
 	const assetType = +type as keyof typeof assets
+	form.data.asset = null // make sure to return as a POJO
 
 	if (asset.size === 0)
 		return formError(form, ["asset"], ["You must upload an asset"])

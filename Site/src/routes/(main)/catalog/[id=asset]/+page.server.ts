@@ -5,7 +5,7 @@ import assetQuery from "./asset.surql"
 export async function load({ params }) {
 	const { id } = params
 	const [[asset]] = await db.query<{ name: string }[][]>(assetQuery, {
-		asset: Record("asset", id),
+		asset: Record("asset", +id),
 	})
 	if (!asset) error(404, "Not Found")
 
