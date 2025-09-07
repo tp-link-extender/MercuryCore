@@ -2,6 +2,4 @@
 .env
 /data
 /keys
-/Assets/PrivateKey.pem
-/Corescripts
 /Economy/Economy

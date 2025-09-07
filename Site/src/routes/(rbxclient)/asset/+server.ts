@@ -2,7 +2,6 @@ import { createHash } from "node:crypto"
 import { error } from "@sveltejs/kit"
 import { intRegex } from "$lib/paramTests"
 import config from "$lib/server/config"
-import { SignData } from "$lib/server/sign"
 import { db, Record } from "$lib/server/surreal"
 import assetQuery from "./asset.surql"
 
@@ -47,8 +46,7 @@ export async function GET({ url }) {
 			`${config.Domain}/asset`
 		)
 
-		if (isHealthModel) return response(script)
-		return response(await SignData(script))
+		return response(script)
 	}
 
 	// other asset ids are 9 digits
