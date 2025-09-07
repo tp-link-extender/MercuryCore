@@ -93,7 +93,6 @@ if (!building) {
 
 type RecordIdTypes = {
 	asset: number
-	assetCache: [number, number]
 	auditLog: string
 	banner: string
 	comment: string

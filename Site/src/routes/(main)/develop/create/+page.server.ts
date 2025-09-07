@@ -6,7 +6,6 @@ import { superValidate } from "sveltekit-superforms/server"
 import { authorise } from "$lib/server/auth"
 import { createAsset, getAssetPrice } from "$lib/server/economy"
 import formError from "$lib/server/formError"
-import { randomId } from "$lib/server/id"
 import {
 	clothingAsset,
 	imageAsset,
@@ -23,7 +22,7 @@ import createAssetQuery from "./createAsset.surql"
 
 const schema = type({
 	// Object.keys(assets) doesn't work
-	type: type.enumerated("2", "8", "11", "12", "13", "18").configure({
+	type: type.enumerated(2, 8, 11, 12, 13, 18).configure({
 		problem: "must be a valid asset type",
 	}),
 	name: "3 <= string <= 50",
@@ -49,6 +48,11 @@ const assets: { [k: number]: string } = Object.freeze({
 	13: "Decal",
 })
 
+function randAssetId() {
+	const min = 100_000_000;
+	const max = 1_000_000_000; // exclusive
+    return Math.random() * (max - min) + min;
+}
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ locals, request, getClientAddress }) => {
 	const { user } = await authorise(locals)
@@ -119,8 +123,8 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 	}
 
 	const slug = encode(name)
-	const imageAssetId = randomId()
-	const id = randomId()
+	const imageAssetId = randAssetId()
+	const id = randAssetId()
 
 	const created = await createAsset(user.id, id, name, slug)
 	if (!created.ok) return formError(form, ["other"], [created.msg])
