@@ -1,5 +1,5 @@
-import { Record, db } from "$lib/server/surreal"
 import { error, redirect } from "@sveltejs/kit"
+import { db, Record } from "$lib/server/surreal"
 import assetQuery from "./asset.surql"
 
 export async function load({ params }) {
