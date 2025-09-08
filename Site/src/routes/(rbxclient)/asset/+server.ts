@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto"
 import { error } from "@sveltejs/kit"
+import { OPEN_CLOUD_KEY } from "$env/static/private"
 import { intRegex } from "$lib/paramTests"
-import config from "$lib/server/config"
 import { db, Record } from "$lib/server/surreal"
 import assetQuery from "./asset.surql"
 
@@ -24,15 +24,63 @@ type FoundAsset = {
 async function loadPrivilegedAsset(id: number) {
 	const file = Bun.file(`../data/server/assets/${id}`)
 	if (!(await file.exists())) return
-	
-	console.log("Serving privileged", id)
-	const script = (await file.text()).replaceAll(
-		"roblox.com/asset",
-		`${config.Domain}/asset`
-	)
 
-	return response(script)
+	// this happens effectively never
+	// const script = (await file.text()).replaceAll(
+	// 	"roblox.com/asset",
+	// 	`${config.Domain}/asset`
+	// )
+
+	console.log("Serving privileged", id)
+	return response(new Uint8Array(await file.arrayBuffer()))
+}
+
+async function loadUserAsset(id: number) {
+	const file = Bun.file(`../data/assets/${id}`)
+	if (!(await file.exists())) return
+
+	const [[asset]] = await db.query<FoundAsset[][]>(assetQuery, {
+		asset: Record("asset", id),
+	})
+	if (!asset || asset.visibility === "Moderated") return
+
+	// The asset is visible or pending
+	// (allow pending assets to be shown through the api)
+	console.log("Serving user", id)
+	return response(new Uint8Array(await file.arrayBuffer()))
+}
+
+async function loadOpenCloudAsset(id: number) {
+	const cachepath = `../data/assetcache/${id}`
+	const file = Bun.file(cachepath)
+	if (await file.exists())
+		return response(new Uint8Array(await file.arrayBuffer()))
+
+	try {
+		const req = await fetch(
+			`https://apis.roblox.com/asset-delivery-api/v1/assetId/${id}`,
+			{ headers: { "X-API-Key": OPEN_CLOUD_KEY } }
+		)
+		if (!req.ok) return
+
+		const json = (await req.json()) as { location: string }
+		const location = json.location
+		if (!location) return
+
+		const res = await fetch(location)
+		if (!res.ok) return
+
+		// cache the asset
+		const buf = await res.arrayBuffer()
+		await Bun.write(cachepath, buf)
+
+		console.log("Serving Open Cloud", id)
+		return response(new Uint8Array(buf))
+	} catch (e) {
+		console.error(e)
+		error(500, "Failed to fetch Open Cloud asset")
 	}
+}
 
 export async function GET({ url }) {
 	const assetId = url.searchParams.get("id")
@@ -42,26 +90,15 @@ export async function GET({ url }) {
 	const id = +assetId
 	console.log("Requested asset", id)
 
-	// just check it idc
-	const result = await loadPrivilegedAsset(id)
-	if (result) return result
+	const result1 = await loadPrivilegedAsset(id)
+	if (result1) return result1
 
-	console.log("Serving", id)
+	// Try loading as a user asset
+	const result2 = await loadUserAsset(id)
+	if (result2) return result2
 
-	// Try loading as an asset
-	if (!(await Bun.file(`../data/assets/${id}`).exists()))
-		error(404, "Asset not found")
+	const result3 = await loadOpenCloudAsset(id)
+	if (result3) return result3
 
-	const [[asset]] = await db.query<FoundAsset[][]>(assetQuery, {
-		asset: Record("asset", id),
-	})
-
-	if (!asset || asset.visibility === "Moderated")
-		error(404, "Asset not found")
-
-	// The asset is visible or pending
-	// (allow pending assets to be shown through the api)
-	console.log(`serving asset #${id}`)
-	const file = await Bun.file(`../data/assets/${id}`).arrayBuffer()
-	return response(new Uint8Array(file))
+	error(404, "Not Found")
 }

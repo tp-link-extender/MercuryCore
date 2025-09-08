@@ -1,4 +1,5 @@
 import fs from "node:fs"
+import { RCC_KEY } from "$env/static/private"
 import config from "$lib/server/config"
 import { db } from "$lib/server/surreal"
 import createRenderQuery from "./createRender.surql"
@@ -61,7 +62,7 @@ export default async function (
 
 	const script = (await scriptFile.text())
 		.replaceAll("_BASE_URL", `"${config.Domain}"`)
-		.replaceAll("_THUMBNAIL_KEY", `"${process.env.RCC_KEY}"`)
+		.replaceAll("_THUMBNAIL_KEY", `"${RCC_KEY}"`)
 		.replaceAll("_RENDER_TYPE", `"${renderType}"`)
 		.replaceAll("_ASSET_ID", `"${relativeName}"`)
 		.replaceAll("_PING_URL", `"${pingUrl}"`)

@@ -1,4 +1,5 @@
 import { error } from "@sveltejs/kit"
+import { RCC_KEY } from "$env/static/private"
 import { db, Record } from "$lib/server/surreal"
 import completeQuery from "./complete.surql"
 import renderQuery from "./render.surql"
@@ -10,7 +11,7 @@ type Render = {
 
 export async function POST({ params, request, url }) {
 	const apiKey = url.searchParams.get("apiKey")
-	if (!apiKey || apiKey !== process.env.RCC_KEY) error(403, "Stfu")
+	if (!apiKey || apiKey !== RCC_KEY) error(403, "Stfu")
 
 	const render = Record("render", params.taskId)
 	const [[task]] = await db.query<Render[][]>(renderQuery, { render })
