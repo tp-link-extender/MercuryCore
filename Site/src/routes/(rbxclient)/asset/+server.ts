@@ -13,7 +13,7 @@ const headers = (file: string | Uint8Array) => ({
 		.digest("hex")}"`,
 })
 
-const response = (file: string | Uint8Array) =>
+const response = (file: string | Uint8Array<ArrayBuffer>) =>
 	new Response(file, { headers: headers(file) })
 
 type FoundAsset = {
@@ -22,8 +22,23 @@ type FoundAsset = {
 	visibility: string
 }
 
-const substituteURLs = (script: string) =>
-	script.replaceAll("roblox.com/asset", `${config.Domain}/asset`)
+const xmlStart = "<roblox"
+
+// Only substitute if it's an XML file (re-encoding image files tends to corrupt them)
+async function substituteURLs(file: Bun.BunFile | Response) {
+	const buf = await file.arrayBuffer()
+	if (
+		buf.byteLength >= 7 &&
+		new Uint8Array(buf.slice(0, 7)).every(
+			(b, i) => b === xmlStart.charCodeAt(i)
+		)
+	)
+		return new TextDecoder()
+			.decode(buf)
+			.replaceAll("roblox.com/asset", `${config.Domain}/asset`)
+
+	return new Uint8Array(buf)
+}
 
 async function loadPrivilegedAsset(id: number) {
 	const file = Bun.file(`../data/server/assets/${id}`)
@@ -46,7 +61,7 @@ async function loadUserAsset(id: number) {
 
 	// The asset is visible or pending
 	// (allow pending assets to be shown through the api)
-	const script = substituteURLs(await file.text())
+	const script = await substituteURLs(file)
 
 	console.log("Serving user", id)
 	return response(script)
@@ -55,8 +70,10 @@ async function loadUserAsset(id: number) {
 async function loadOpenCloudAsset(id: number) {
 	const cachepath = `../data/assetcache/${id}`
 	const file = Bun.file(cachepath)
-	if (await file.exists())
+	if (await file.exists()) {
+		console.log("Serving cached Open Cloud", id)
 		return response(new Uint8Array(await file.arrayBuffer()))
+	}
 
 	try {
 		const req = await fetch(
@@ -73,7 +90,7 @@ async function loadOpenCloudAsset(id: number) {
 		if (!res.ok) return
 
 		// cache the asset
-		const script = substituteURLs(await res.text())
+		const script = await substituteURLs(res)
 		await Bun.write(cachepath, script)
 
 		console.log("Serving Open Cloud", id)
