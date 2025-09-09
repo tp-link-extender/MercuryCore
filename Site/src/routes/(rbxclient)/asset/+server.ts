@@ -2,6 +2,7 @@ import { createHash } from "node:crypto"
 import { error } from "@sveltejs/kit"
 import { OPEN_CLOUD_KEY } from "$env/static/private"
 import { intRegex } from "$lib/paramTests"
+import config from "$lib/server/config"
 import { db, Record } from "$lib/server/surreal"
 import assetQuery from "./asset.surql"
 
@@ -21,15 +22,14 @@ type FoundAsset = {
 	visibility: string
 }
 
+const substituteURLs = (script: string) =>
+	script.replaceAll("roblox.com/asset", `${config.Domain}/asset`)
+
 async function loadPrivilegedAsset(id: number) {
 	const file = Bun.file(`../data/server/assets/${id}`)
 	if (!(await file.exists())) return
 
-	// this happens effectively never
-	// const script = (await file.text()).replaceAll(
-	// 	"roblox.com/asset",
-	// 	`${config.Domain}/asset`
-	// )
+	// Privileged assets don't need their URLs substituted
 
 	console.log("Serving privileged", id)
 	return response(new Uint8Array(await file.arrayBuffer()))
@@ -46,8 +46,10 @@ async function loadUserAsset(id: number) {
 
 	// The asset is visible or pending
 	// (allow pending assets to be shown through the api)
+	const script = substituteURLs(await file.text())
+
 	console.log("Serving user", id)
-	return response(new Uint8Array(await file.arrayBuffer()))
+	return response(script)
 }
 
 async function loadOpenCloudAsset(id: number) {
@@ -71,11 +73,11 @@ async function loadOpenCloudAsset(id: number) {
 		if (!res.ok) return
 
 		// cache the asset
-		const buf = await res.arrayBuffer()
-		await Bun.write(cachepath, buf)
+		const script = substituteURLs(await res.text())
+		await Bun.write(cachepath, script)
 
 		console.log("Serving Open Cloud", id)
-		return response(new Uint8Array(buf))
+		return response(script)
 	} catch (e) {
 		console.error(e)
 		error(500, "Failed to fetch Open Cloud asset")
