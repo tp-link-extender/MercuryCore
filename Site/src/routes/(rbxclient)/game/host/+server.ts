@@ -1,5 +1,6 @@
 import { error } from "@sveltejs/kit"
 import config from "$lib/server/config"
+import { SignData } from "$lib/server/sign"
 import { db } from "$lib/server/surreal"
 import placeQuery from "./place.surql"
 
@@ -31,5 +32,5 @@ export async function GET({ url }) {
 		.replaceAll("_SERVER_PORT", port.toString())
 		.replaceAll("_SERVER_PRESENCE_URL", `"${serverPresenceUrl}"`)
 
-	return new Response(script)
+	return new Response(await SignData(script))
 }

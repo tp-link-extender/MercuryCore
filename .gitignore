@@ -2,4 +2,5 @@
 .env
 /data
 /keys
+/Assets/PrivateKey.pem
 /Economy/Economy
