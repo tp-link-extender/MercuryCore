@@ -1,8 +1,8 @@
 <script lang="ts">
+	import { slide } from "svelte/transition"
 	import { enhance } from "$app/forms"
 	import Search from "$components/Search.svelte"
 	import User from "$components/User.svelte"
-	import { slide } from "svelte/transition"
 
 	const { data }: { data: import("../routes/$types").LayoutData } = $props()
 

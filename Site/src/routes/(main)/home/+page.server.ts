@@ -1,3 +1,4 @@
+import { error } from "@sveltejs/kit"
 import { type } from "arktype"
 import { arktype } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"

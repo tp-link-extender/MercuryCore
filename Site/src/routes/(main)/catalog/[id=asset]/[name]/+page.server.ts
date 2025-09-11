@@ -191,7 +191,7 @@ actions.buy = async e => {
 			asset.price,
 			`Purchased asset ${asset.name}`,
 			`/catalog/${id}/${asset.name}`,
-			[]
+			{}
 		)
 		if (!tx.ok) error(400, tx.msg)
 	}

@@ -13,6 +13,7 @@ const tryFetch =
 	async (url: string): Promise<ReturnValue<T>> => {
 		try {
 			const req = await fetch(url)
+			if (req.status >= 400) return { ok: false }
 			return { ok: true, value: await transform(req) }
 		} catch {
 			return { ok: false }
@@ -78,7 +79,7 @@ export async function transact(
 	Amount: number,
 	Note: string,
 	Link: string,
-	Returns: number[]
+	Returns: { [_: number]: number }
 ): Promise<ReturnErr> {
 	try {
 		const res = await fetch(`${economyUrl}/transact`, {
@@ -98,7 +99,7 @@ export async function burn(
 	Amount: number,
 	Note: string,
 	Link: string,
-	Returns: number[]
+	Returns: { [_: number]: number }
 ): Promise<ReturnErr> {
 	try {
 		const res = await fetch(`${economyUrl}/burn`, {
@@ -139,7 +140,7 @@ export async function createAsset(
 		price.value,
 		`Created asset ${name}`,
 		`/catalog/${id}/${slug}`,
-		[]
+		{}
 	)
 }
 
@@ -156,7 +157,7 @@ export async function createPlace(
 		price.value,
 		`Created place ${name}`,
 		`/place/${id}/${slug}`,
-		[]
+		{}
 	)
 }
 
@@ -171,7 +172,7 @@ export async function createGroup(
 		price.value,
 		`Created group ${name}`,
 		`/groups/${name}`,
-		[]
+		{}
 	)
 }
 
