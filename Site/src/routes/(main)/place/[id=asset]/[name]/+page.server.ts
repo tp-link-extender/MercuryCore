@@ -40,7 +40,7 @@ const thumbnails = config.Images.DefaultPlaceThumbnails
 export async function load({ locals, params, url }) {
 	const { user } = await authorise(locals)
 	const privateServerCode = url.searchParams.get("privateServer")
-	const { id } = params
+	const id = +params.id
 	const [[place]] = await db.query<Place[][]>(placeQuery, {
 		user: Record("user", user.id),
 		place: Record("place", id),
@@ -59,12 +59,11 @@ export async function load({ locals, params, url }) {
 	if (!couldMatch(place.name, params.name))
 		redirect(302, `/place/${id}/${slug}`)
 
-	const idHash = Bun.hash.crc32(id)
 	return {
 		scheme: config.LauncherURI,
 		slug,
 		place,
-		thumbnails: [idHash % thumbnails.length],
+		thumbnails: [id % thumbnails.length],
 	}
 }
 
@@ -72,7 +71,7 @@ export const actions: import("./$types").Actions = {}
 actions.join = async ({ locals, request }) => {
 	const { user } = await authorise(locals)
 	const data = await formData(request)
-	const serverId = data.serverId
+	const { serverId } = data
 
 	if (!serverId) error(400, "Invalid Request")
 	if (!(await find("place", serverId))) error(404, "Place not found")

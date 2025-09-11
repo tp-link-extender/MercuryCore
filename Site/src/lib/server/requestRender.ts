@@ -21,7 +21,7 @@ type Render = {
  */
 export default async function (
 	renderType: RenderType,
-	relativeId: string,
+	relativeId: string | number,
 	relativeName = relativeId,
 	wait = false
 ) {
@@ -64,7 +64,7 @@ export default async function (
 		.replaceAll("_BASE_URL", `"${config.Domain}"`)
 		.replaceAll("_THUMBNAIL_KEY", `"${RCC_KEY}"`)
 		.replaceAll("_RENDER_TYPE", `"${renderType}"`)
-		.replaceAll("_ASSET_ID", `"${relativeName}"`)
+		.replaceAll("_ASSET_ID", `"${relativeName}"`) // TODO: make not string
 		.replaceAll("_PING_URL", `"${pingUrl}"`)
 
 	await Promise.all([

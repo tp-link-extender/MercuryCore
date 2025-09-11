@@ -6,6 +6,7 @@ import { superValidate } from "sveltekit-superforms/server"
 import { authorise } from "$lib/server/auth"
 import { createAsset, getAssetPrice } from "$lib/server/economy"
 import formError from "$lib/server/formError"
+import { randomAssetId } from "$lib/server/id"
 import {
 	clothingAsset,
 	imageAsset,
@@ -47,12 +48,6 @@ const assets: { [k: number]: string } = Object.freeze({
 	12: "Pants",
 	13: "Decal",
 })
-
-function randAssetId() {
-	const min = 100_000_000
-	const max = 1_000_000_000 // exclusive
-	return Math.random() * (max - min) + min
-}
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ locals, request, getClientAddress }) => {
 	const { user } = await authorise(locals)
@@ -78,7 +73,7 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 	if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
 	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
 
-	let saveImages: ((id: string) => Promise<number> | Promise<void>)[] = []
+	let saveImages: ((id: number) => Promise<number> | Promise<void>)[] = []
 
 	try {
 		switch (assetType) {
@@ -92,7 +87,7 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 			case 11: // Shirt
 			case 12: // Pants
 				saveImages[0] = await clothingAsset(asset)
-				saveImages[1] = (id: string) => requestRender("Clothing", id)
+				saveImages[1] = (id: number) => requestRender("Clothing", id)
 				break
 
 			case 13: // Decal
@@ -124,8 +119,8 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 	}
 
 	const slug = encode(name)
-	const imageAssetId = randAssetId()
-	const id = randAssetId()
+	const imageAssetId = randomAssetId()
+	const id = randomAssetId()
 
 	const created = await createAsset(user.id, id, name, slug)
 	if (!created.ok) return formError(form, ["other"], [created.msg])

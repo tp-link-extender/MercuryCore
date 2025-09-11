@@ -128,7 +128,7 @@ export const getPlacePrice = () => getFeeBasedPrice(50)
 
 export async function createAsset(
 	To: string,
-	id: string,
+	id: number,
 	name: string,
 	slug: string
 ): Promise<ReturnErr> {
@@ -145,7 +145,7 @@ export async function createAsset(
 
 export async function createPlace(
 	To: string,
-	id: string,
+	id: number,
 	name: string,
 	slug: string
 ): Promise<ReturnErr> {

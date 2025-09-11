@@ -15,7 +15,7 @@ type Place = {
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
 	const [[place]] = await db.query<Place[][]>(placeIdQuery, {
-		place: Record("place", params.id),
+		place: Record("place", +params.id),
 	})
 
 	if (place && (!place.privateServer || user.id === place.ownerId.id))

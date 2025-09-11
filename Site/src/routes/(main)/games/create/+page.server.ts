@@ -6,7 +6,7 @@ import { authorise } from "$lib/server/auth"
 import { createPlace, getPlacePrice } from "$lib/server/economy"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
-import { randomId } from "$lib/server/id"
+import { randomAssetId } from "$lib/server/id"
 import { db, Record } from "$lib/server/surreal"
 import {
 	maxPlayersTest,
@@ -69,7 +69,7 @@ actions.default = async ({ locals, request }) => {
 		)
 
 	const slug = encode(name)
-	const id = randomId() // still, find a better way stat
+	const id = randomAssetId() // listen, this still isn't great, but whatever atp
 
 	const created = await createPlace(user.id, id, name, slug)
 	if (!created.ok) return formError(form, ["other"], [created.msg])

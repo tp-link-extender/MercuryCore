@@ -1,4 +1,5 @@
 import { error } from "@sveltejs/kit"
+import { assetRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/auth"
 import { db, Record } from "$lib/server/surreal"
 import dislikeQuery from "./dislike.surql"
@@ -28,13 +29,13 @@ export async function POST({ locals, params, request, url }) {
 	const t = thing as (typeof things)[number]
 	if (!things.includes(t)) error(400, "Invalid thing")
 
-	if (thing === "place") {
+	if (thing === "place" && assetRegex.test(id)) {
 		const [ok] = await db.query<boolean[]>(
 			`
 				SELECT VALUE !privateServer OR privateTicket == $ticket
 				FROM ONLY $place`,
 			{
-				place: Record("place", id),
+				place: Record("place", +id),
 				ticket: url.searchParams.get("privateTicket"),
 			}
 		)

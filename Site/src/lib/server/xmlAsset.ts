@@ -18,8 +18,8 @@ const strings = Object.freeze({
  */
 export async function graphicAsset(
 	type: string,
-	imageAssetId: string,
-	graphicAssetId: string
+	imageAssetId: number,
+	graphicAssetId: number
 ) {
 	const stringType = strings[type as keyof typeof strings]
 	const assetType = type === "Face" || type === "Decal" ? "Image" : "Other"

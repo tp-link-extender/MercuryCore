@@ -112,7 +112,7 @@ type RecordIdTypes = {
 	ownsAsset: string
 	ownsGroup: string
 	ownsPlace: string
-	place: string
+	place: number
 	playing: string
 	posted: string
 	recentlyWorn: string

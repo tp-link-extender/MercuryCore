@@ -55,7 +55,7 @@ type Place = {
 	updated: string
 }
 
-async function placeQuery(id: string) {
+async function placeQuery(id: number) {
 	const [[place]] = await db.query<Place[][]>(settingsQuery, {
 		place: Record("place", id),
 	})
@@ -63,7 +63,7 @@ async function placeQuery(id: string) {
 }
 
 export async function load({ locals, params }) {
-	const getPlace = await placeQuery(params.id)
+	const getPlace = await placeQuery(+params.id)
 	if (!getPlace) error(404, "Place not found")
 
 	const { user } = await authorise(locals)
@@ -86,7 +86,7 @@ export async function load({ locals, params }) {
 
 async function getData({ locals, params }: RequestEvent) {
 	const { user } = await authorise(locals)
-	const { id } = params
+	const id = +params.id
 	const getPlace = await placeQuery(id)
 	if (user.username !== getPlace.owner.username && user.permissionLevel < 4)
 		error(403, "You do not have permission to update this page.")
@@ -120,7 +120,7 @@ actions.view = async e => {
 	}
 
 	await db.query(updateSettingsQuery, {
-		place: Record("place", id),
+		place: Record("place", +id),
 		name: filter(name),
 		description: filter(description || ""),
 	})

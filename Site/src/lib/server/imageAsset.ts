@@ -22,7 +22,7 @@ export async function imageAsset(file: File, sharpOptions?: ResizeOptions) {
 			throw new Error("Image asset failed to upload")
 		})
 
-	return (id: string) => Bun.write(`../data/assets/${id}`, buffer)
+	return (id: number) => Bun.write(`../data/assets/${id}`, buffer)
 }
 
 /**
@@ -47,7 +47,7 @@ export async function clothingAsset(file: File, sharpOptions?: ResizeOptions) {
 			throw new Error("Image asset failed to upload")
 		})
 
-	return (id: string) => Bun.write(`../data/assets/${id}`, buffer)
+	return (id: number) => Bun.write(`../data/assets/${id}`, buffer)
 }
 
 /**
@@ -72,7 +72,7 @@ export async function thumbnail(file: File, sharpOptions?: ResizeOptions) {
 			throw new Error("Thumbnail failed to upload")
 		})
 
-	return (id: string) => Bun.write(`../data/thumbnails/${id}`, buffer)
+	return (id: number) => Bun.write(`../data/thumbnails/${id}`, buffer)
 }
 
 const tShirtOpts = Object.freeze({
@@ -99,7 +99,7 @@ export async function tShirt(file: File) {
 			throw new Error("Image asset failed to upload")
 		})
 
-	return (id: string) => Bun.write(`../data/assets/${id}`, buffer)
+	return (id: number) => Bun.write(`../data/assets/${id}`, buffer)
 }
 
 /**
@@ -121,5 +121,5 @@ export async function tShirtThumbnail(b: ArrayBuffer) {
 			throw new Error("Thumbnail failed to upload")
 		})
 
-	return (id: string) => Bun.write(`../data/thumbnails/${id}`, buffer)
+	return (id: number) => Bun.write(`../data/thumbnails/${id}`, buffer)
 }
