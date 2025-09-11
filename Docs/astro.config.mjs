@@ -27,7 +27,7 @@ export default defineConfig({
 				},
 				{
 					label: "Services",
-					slug: "services",
+					autogenerate: { directory: "services" },
 				},
 				{
 					label: "Technology stack",

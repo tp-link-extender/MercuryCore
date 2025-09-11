@@ -6,7 +6,7 @@ description: Tools needed to use and develop Mercury Core, and how to install th
 This page describes how to install and manage the tools for development and production environments for Mercury Core.
 
 
-In the near future, we may provide a tool for setting up and installing the necessary tools automatically. Please let us know if you would find that helpful.
+In the near future, we may provide a program for setting up and installing the necessary tools automatically. Please let us know if you would find that helpful.
 
 ## Baseline tools
 
