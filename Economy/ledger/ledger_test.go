@@ -152,7 +152,7 @@ func TestAssets(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	a := NewAsset(TypeAsset, AssetId(RandId()))
+	a := NewAsset(TypeAsset, AssetId(RandAssetId()))
 	if err = e.Burn(SentBurn{
 		From:   u1,
 		Amount: 1 * Milli,

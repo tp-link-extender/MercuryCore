@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math/rand"
 	"os"
 	"slices"
 	"strings"
@@ -20,11 +21,15 @@ func RandId() (id string) {
 	return
 }
 
+func RandAssetId() (id int) {
+	return rand.Intn(900_000_000) + 100_000_000 // 9 digit
+}
+
 type (
 	User      string
 	Currency  uint64
 	AssetType string
-	AssetId   string
+	AssetId   int
 	Asset     string // {type}-{id}
 )
 
@@ -36,16 +41,18 @@ const (
 )
 
 func NewAsset(at AssetType, id AssetId) Asset {
-	return Asset(fmt.Sprintf("%s-%s", at, id))
+	return Asset(fmt.Sprintf("%s-%d", at, id))
 }
 
-func (a Asset) Split() (at AssetType, id AssetId) {
-	parts := strings.SplitN(string(a), "-", 2)
-	if len(parts) != 2 {
-		return // invalid asset
-	}
-	return AssetType(parts[0]), AssetId(parts[1])
-}
+// func (a Asset) Split() (at AssetType, id AssetId) {
+// 	parts := strings.SplitN(string(a), "-", 2)
+// 	if len(parts) != 2 {
+// 		return // invalid asset
+// 	}
+
+// 	aid, _ := strconv.Atoi(parts[1])
+// 	return AssetType(parts[0]), AssetId(aid)
+// }
 
 type Assets map[Asset]uint64 // quantity (could be Infinity)
 
