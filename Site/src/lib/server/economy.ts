@@ -3,7 +3,7 @@ import usersQuery from "$lib/server/users.surql"
 
 const economyUrl = "localhost:2009"
 
-export const economyConnFailed = "Cannot connect to economy service"
+export const economyConnFailed = "Cannot connect to Economy service"
 
 type ReturnValue<T> = Promise<{ ok: true; value: T } | { ok: false }>
 type ReturnErr = { ok: true } | { ok: false; msg: string }
