@@ -1,19 +1,20 @@
-const cwd = " ../Economy"
-const name = `${cwd}/Economy${process.platform === "win32" ? ".exe" : ""}`
+const cwd = "../Economy"
+const name = `Economy${process.platform === "win32" ? ".exe" : ""}`
+const path = `${cwd}/${name}`
 
 let started = false
 
 export default async () => {
 	if (started) return
 	started = true
-	console.log(`Starting Economy service (${name})...`)
+	console.log(`Starting Economy service (${path})...`)
 
-	if (!(await Bun.file(name).exists())) {
+	if (!(await Bun.file(path).exists())) {
 		console.error("Attempting to build the Economy service...")
 		await Bun.spawn(["go", "build"], { cwd }).exited
 	}
 
-	const proc = Bun.spawn([name], {
+	const proc = Bun.spawn([`./${name}`], {
 		cwd,
 		stdout: "pipe",
 		stderr: "pipe",
