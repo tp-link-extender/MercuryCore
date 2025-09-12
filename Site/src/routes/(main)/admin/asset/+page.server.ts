@@ -36,8 +36,8 @@ async function getData({ locals, url }: RequestEvent) {
 	const { user } = await authorise(locals, 3)
 	const assetId = url.searchParams.get("id")
 
-	if (!assetId) error(400, "Missing asset id")
-	if (!assetRegex.test(assetId)) error(400, `Invalid asset id: ${assetId}`)
+	if (!assetId) error(400, "Missing asset ID")
+	if (!assetRegex.test(assetId)) error(400, `Invalid asset ID: ${assetId}`)
 	const id = +assetId
 
 	const params = {
