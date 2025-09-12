@@ -1,6 +1,5 @@
 SELECT
 	privateServer,
 	privateTicket,
-	count(SELECT 1 FROM $parent<-likes) AS likeCount,
-	count(SELECT 1 FROM $parent<-dislikes) AS dislikeCount
+	(SELECT username FROM <-ownsPlace<-user)[0].username AS ownerUsername
 FROM $place;

@@ -7,7 +7,7 @@
 		slug
 	}: {
 		thumbnails: number[]
-		id: string
+		id: number
 		slug: string
 	} = $props()
 

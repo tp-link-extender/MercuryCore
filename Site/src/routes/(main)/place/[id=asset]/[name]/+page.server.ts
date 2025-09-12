@@ -4,12 +4,12 @@ import config from "$lib/server/config"
 import formData from "$lib/server/formData"
 import { db, find, findWhere, Record } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
+import findPlaceQuery from "./findPlace.surql"
 import invalidatePlayingQuery from "./invalidatePlaying.surql"
 import placeQuery from "./place.surql"
 
 type FoundPlace = {
-	dislikeCount: number
-	likeCount: number
+	ownerUsername: string
 	privateServer: boolean
 	privateTicket: string
 }
@@ -20,8 +20,10 @@ interface Place extends FoundPlace {
 		text: string
 		updated: string
 	}
+	dislikeCount: number
 	dislikes: boolean
-	id: string
+	id: number
+	likeCount: number
 	likes: boolean
 	maxPlayers: number
 	name: string
@@ -39,7 +41,7 @@ const thumbnails = config.Images.DefaultPlaceThumbnails
 
 export async function load({ locals, params, url }) {
 	const { user } = await authorise(locals)
-	const privateServerCode = url.searchParams.get("privateServer")
+	const privateTicket = url.searchParams.get("privateServer")
 	const id = +params.id
 	const [[place]] = await db.query<Place[][]>(placeQuery, {
 		user: Record("user", user.id),
@@ -50,7 +52,7 @@ export async function load({ locals, params, url }) {
 		!place ||
 		(user.username !== place.ownerUser.username &&
 			place.privateServer &&
-			privateServerCode !== place.privateTicket)
+			privateTicket !== place.privateTicket)
 	)
 		error(404, "Place not found")
 
@@ -68,13 +70,24 @@ export async function load({ locals, params, url }) {
 }
 
 export const actions: import("./$types").Actions = {}
-actions.join = async ({ locals, request }) => {
+actions.join = async ({ locals, params, request }) => {
 	const { user } = await authorise(locals)
 	const data = await formData(request)
-	const { serverId } = data
+	const privateTicket = data?.privateTicket
 
-	if (!serverId) error(400, "Invalid Request")
-	if (!(await find("place", serverId))) error(404, "Place not found")
+	const id = +params.id
+	const placeR = Record("place", id)
+	const [[place]] = await db.query<FoundPlace[][]>(findPlaceQuery, {
+		place: placeR,
+	})
+
+	if (
+		!place ||
+		(user.username !== place.ownerUsername &&
+			place.privateServer &&
+			privateTicket !== place.privateTicket)
+	)
+		error(404, "Place not found")
 
 	const foundModerated = await findWhere(
 		"moderation",
@@ -88,7 +101,7 @@ actions.join = async ({ locals, request }) => {
 		invalidatePlayingQuery,
 		{
 			user: Record("user", user.id),
-			place: Record("place", serverId),
+			place: placeR,
 		}
 	)
 

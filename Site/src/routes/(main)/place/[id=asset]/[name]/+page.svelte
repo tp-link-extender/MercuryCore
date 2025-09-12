@@ -55,7 +55,6 @@
 		installed = true
 
 		const formdata = new FormData()
-		formdata.append("serverId", place.id.toString())
 		formdata.append("privateTicket", place.privateTicket)
 
 		// Get the joinscript URL
@@ -291,6 +290,7 @@
 				<Tab bind:tabData={tabData2}>
 					<Autopilot
 						{launch}
+						scheme={data.scheme}
 						serverTicket={place.serverTicket}
 						domain={data.domain}
 						siteName={data.siteName} />
