@@ -7,8 +7,8 @@ import { authorise } from "$lib/server/auth"
 import createCommentQuery from "$lib/server/createComment.surql"
 import {
 	economyConnFailed,
+	fee,
 	getBalance,
-	getCurrentFee,
 	transact,
 } from "$lib/server/economy"
 import filter from "$lib/server/filter"
@@ -55,7 +55,7 @@ const failTexts = Object.freeze(["Bruh", "Okay", "Aight", "Rip", "Aw man..."])
 
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
-	const { id } = params
+	const id = +params.id
 	const [[asset]] = await db.query<Asset[][]>(assetQuery, {
 		asset: Record("asset", id),
 		user: Record("user", user.id),
@@ -68,8 +68,6 @@ export async function load({ locals, params }) {
 
 	const balance = await getBalance(user.id)
 	if (!balance.ok) error(500, economyConnFailed)
-	const currentFee = await getCurrentFee()
-	if (!currentFee.ok) error(500, economyConnFailed)
 
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
@@ -78,13 +76,13 @@ export async function load({ locals, params }) {
 		slug,
 		asset,
 		balance: balance.value,
-		currentFee: currentFee.value,
+		currentFee: fee,
 	}
 }
 
 async function getBuyData(e: RequestEvent) {
 	const { user } = await authorise(e.locals)
-	const { id } = e.params
+	const id = +e.params.id
 	const assetExists = await find("asset", id)
 	if (!assetExists) error(404)
 
@@ -95,7 +93,7 @@ async function getBuyData(e: RequestEvent) {
 async function rerender({ locals, params }: RequestEvent) {
 	await authorise(locals, 5)
 
-	const { id } = params
+	const id = +params.id
 	type FoundAsset = {
 		name: string
 		type: number
@@ -133,7 +131,7 @@ actions.comment = async ({ locals, params, request, getClientAddress }) => {
 	const limit = ratelimit(form, "comment", getClientAddress, 5)
 	if (limit) return limit
 
-	const { id } = params
+	const id = +params.id
 	const [getAsset] = await db.query<{ creatorId: string }[]>(
 		`
 			SELECT

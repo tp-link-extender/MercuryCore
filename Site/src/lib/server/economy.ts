@@ -23,7 +23,6 @@ const tryFetch =
 const tryFetchValue = tryFetch(async req => +(await req.text()))
 const tryFetchJson = <T>() => tryFetch(async req => (await req.json()) as T) // type assertion much?¿
 
-export const getCurrentFee = () => tryFetchValue(`${economyUrl}/currentFee`)
 export const getStipend = () => tryFetchValue(`${economyUrl}/currentStipend`)
 export const getBalance = (user: string) =>
 	tryFetchValue(`${economyUrl}/balance/${user}`)
@@ -114,11 +113,9 @@ export async function burn(
 	}
 }
 
-const fee = 0.1
+export const fee = 0.1
 const getFeeBasedPrice = (multiplier: number): number =>
-	// const currentFee = await getCurrentFee()
-	// if (!currentFee.ok) return { ok: false, msg: economyConnFailed }
-	Math.round(fee * multiplier * 1e6) // increases when economy 2 large
+	Math.round(fee * multiplier * 1e6)
 
 export const getAssetPrice = () => getFeeBasedPrice(75)
 export const getGroupPrice = () => getFeeBasedPrice(50)
