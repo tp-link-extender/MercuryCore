@@ -7,13 +7,13 @@ let started = false
 export default async () => {
 	if (started) return
 	started = true
-	console.log(`Starting Economy service (${path})...`)
 
 	if (!(await Bun.file(path).exists())) {
 		console.error("Attempting to build the Economy service...")
 		await Bun.spawn(["go", "build"], { cwd }).exited
 	}
 
+	console.log(`Starting Economy service (${path})...`)
 	const proc = Bun.spawn([`./${name}`], {
 		cwd,
 		stdout: "pipe",

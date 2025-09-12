@@ -5,7 +5,7 @@ import { find } from "$lib/server/surreal"
 const thumbnails = config.Images.DefaultPlaceThumbnails
 
 export async function GET({ params }) {
-	const { id } = params
+	const id = +params.id
 	if (!(await find("place", id))) error(404, "Not Found")
 
 	const num = +params.num

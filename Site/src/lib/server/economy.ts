@@ -114,14 +114,11 @@ export async function burn(
 	}
 }
 
-async function getFeeBasedPrice(
-	multiplier: number
-): Promise<{ ok: true; value: number } | { ok: false; msg: string }> {
-	const currentFee = await getCurrentFee()
-	if (!currentFee.ok) return { ok: false, msg: economyConnFailed }
-	const value = Math.round(currentFee.value * multiplier * 1e6) // increases when economy 2 large
-	return { ok: true, value }
-}
+const fee = 0.1
+const getFeeBasedPrice = (multiplier: number): number =>
+	// const currentFee = await getCurrentFee()
+	// if (!currentFee.ok) return { ok: false, msg: economyConnFailed }
+	Math.round(fee * multiplier * 1e6) // increases when economy 2 large
 
 export const getAssetPrice = () => getFeeBasedPrice(75)
 export const getGroupPrice = () => getFeeBasedPrice(50)
@@ -133,11 +130,10 @@ export async function createAsset(
 	name: string,
 	slug: string
 ): Promise<ReturnErr> {
-	const price = await getAssetPrice()
-	if (!price.ok) return price
+	const price = getAssetPrice()
 	return await burn(
 		To,
-		price.value,
+		price,
 		`Created asset ${name}`,
 		`/catalog/${id}/${slug}`,
 		{}
@@ -150,11 +146,10 @@ export async function createPlace(
 	name: string,
 	slug: string
 ): Promise<ReturnErr> {
-	const price = await getPlacePrice()
-	if (!price.ok) return price
+	const price = getPlacePrice()
 	return await burn(
 		To,
-		price.value,
+		price,
 		`Created place ${name}`,
 		`/place/${id}/${slug}`,
 		{}
@@ -165,15 +160,8 @@ export async function createGroup(
 	To: string,
 	name: string
 ): Promise<ReturnErr> {
-	const price = await getGroupPrice()
-	if (!price.ok) return price
-	return await burn(
-		To,
-		price.value,
-		`Created group ${name}`,
-		`/groups/${name}`,
-		{}
-	)
+	const price = getGroupPrice()
+	return await burn(To, price, `Created group ${name}`, `/groups/${name}`, {})
 }
 
 export async function transformTransactions(list: ReceivedTx[]) {

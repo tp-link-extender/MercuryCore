@@ -33,12 +33,11 @@ const schema = type({
 })
 
 export async function load({ url }) {
-	const price = await getAssetPrice()
-	if (!price.ok) error(500, price.msg)
+	const price = getAssetPrice()
 	return {
 		form: await superValidate(arktype(schema)),
 		assetType: url.searchParams.get("asset"),
-		price: price.value,
+		price,
 	}
 }
 
