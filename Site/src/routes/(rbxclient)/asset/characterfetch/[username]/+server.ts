@@ -22,7 +22,7 @@ export async function GET({ params }) {
 
 	let charApp = `http://${config.Domain}/asset/bodycolours/${username}#`
 	for (const asset of user.wearing)
-		charApp += `;${config.Domain}/asset?id=${asset}`
+		charApp += `;http://${config.Domain}/asset?id=${asset}`
 
 	return new Response(charApp, {
 		headers: {
