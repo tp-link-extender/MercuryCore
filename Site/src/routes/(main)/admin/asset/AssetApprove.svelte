@@ -14,17 +14,16 @@
 	} = $props()
 </script>
 
-<div in:fade|global={{ num, total }} class="card duration-300">
-	<button
-		id="open"
-		class="bg-transparent p-0 border-0 cursor-pointer p-3"
-		popovertarget="modal{asset.id}">
-		<div class="text-center pb-2">
+<div in:fade|global={{ num, total }} class="card">
+	<div id="open" class="light-text p-3">
+		<button
+			class="text-center bg-transparent duration-300 border-0 cursor-pointer pb-2 rounded-1"
+			popovertarget="modal{asset.id}">
 			<img
 				src="/catalog/{asset.id}/{asset.name}/icon"
 				alt={asset.name}
 				class="w-85%" />
-		</div>
+		</button>
 		{asset.name}
 		<span class="flex">
 			<strong class="pr-2">by</strong>
@@ -35,7 +34,7 @@
 				full
 				bg="background" />
 		</span>
-	</button>
+	</div>
 	<div class="flex flex-col gap-1 p-3">
 		<form
 			use:enhance
@@ -119,9 +118,9 @@
 <style>
 	.card {
 		border: 1px solid var(--accent2);
-	}
-	.card:has(:global(#open:hover)) {
-		background: var(--darker);
+		button:hover {
+			background: var(--darker);
+		}
 	}
 
 	.image {
