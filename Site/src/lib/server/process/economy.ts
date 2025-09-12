@@ -6,7 +6,7 @@ let started = false
 export default async () => {
 	if (started) return
 	started = true
-	console.log("Starting Economy service...")
+	console.log(`Starting Economy service (${name})...`)
 
 	if (!(await Bun.file(name).exists())) {
 		console.error("Attempting to build the Economy service...")
