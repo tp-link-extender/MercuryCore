@@ -8,6 +8,7 @@
 		placeholder = "",
 		rows = 3,
 		lowpad = false,
+		defaultValue = "",
 		formData,
 		...rest
 	}: {
@@ -17,15 +18,16 @@
 		placeholder?: string
 		rows?: number
 		lowpad?: boolean
+		defaultValue?: string
 		formData: import("sveltekit-superforms").SuperForm<any>
 	} & HTMLTextareaAttributes = $props()
 
+	const { form, errors, constraints } = formData
+
 	// TODO: prevent tabs in textarea caused by... the formatter....
 	$effect(() => {
-		$form[name] = ""
+		$form[name] = defaultValue
 	})
-
-	const { form, errors, constraints } = formData
 </script>
 
 <div class="flex flex-wrap {lowpad ? 'pb-4' : 'pb-8'}">

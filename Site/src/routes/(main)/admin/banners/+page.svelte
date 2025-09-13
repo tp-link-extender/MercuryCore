@@ -168,12 +168,19 @@
 			{formData}
 			submit="<fa fa-save></fa> Save changes"
 			action="?/updateBody&id={banner.id}">
+			<!-- <div class="py-1 text-center" style="background: {banner.bgColour}">
+				<p class="p-0 {banner.textLight ? 'text-white' : 'text-black'}">
+					{banner.body}
+				</p>
+			</div> -->
+
 			<Textarea
 				{formData}
 				name="bannerBody"
 				rows={1}
 				placeholder="3-100 characters"
 				lowpad
+				defaultValue={banner.body}
 				class="text-{banner.textLight ? 'light' : 'dark'}"
 				style="background: {banner.bgColour} !important" />
 		</Form>

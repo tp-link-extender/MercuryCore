@@ -65,7 +65,7 @@ actions.create = async e => {
 		(!!enableRegKeyCustom && !regKeyCustom) ||
 		(!!enableRegKeyExpiry && !regKeyExpiry)
 	)
-		return message(form, "Missing fields", { status: 400 })
+		return message(form, "Missing fields")
 
 	const expiry = regKeyExpiry ? new Date(regKeyExpiry) : undefined
 
@@ -83,7 +83,7 @@ actions.create = async e => {
 	})
 
 	return result.status === "ERR"
-		? message(form, "This registration key already exists", { status: 400 })
+		? message(form, "This registration key already exists")
 		: message(
 				form,
 				"Key created successfully! Check the Keys tab for your new key."
@@ -93,7 +93,7 @@ actions.disable = async e => {
 	const { user, form, error } = await getData(e)
 	if (error) return error
 	const id = e.url.searchParams.get("id")
-	if (!id) return message(form, "Missing fields", { status: 400 })
+	if (!id) return message(form, "Missing fields")
 
 	const [[key]] =
 		await db.query<({ disabled: boolean } | null)[][]>(disabledQuery)
