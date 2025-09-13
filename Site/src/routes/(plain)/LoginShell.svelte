@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from "svelte"
+	import { dev } from "$app/environment"
 
 	const {
 		name,
@@ -20,10 +21,12 @@
 	<div
 		id="dark"
 		class="lg:w-1/2 p-8vw pt-5vh {pad ? 'lg:pt-20vh' : 'lg:pt-12vh'}">
-		<a href="/" class="btn btn-lg border-0 px-0 text-base">
-			<fa fa-arrow-left class="pr-2"></fa>
-			Home
-		</a>
+		{#if dev}
+			<a href="/" class="btn btn-lg border-0 px-0 text-base">
+				<fa fa-arrow-left class="pr-2"></fa>
+				Home
+			</a>
+		{/if}
 		<h1 class="font-bold text-14">{name}</h1>
 		{#if tagline}
 			<h2 class="font-semibold pb-3 text-12 opacity-50">

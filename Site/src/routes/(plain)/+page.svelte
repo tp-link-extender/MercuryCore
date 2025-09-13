@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { dev } from "$app/environment"
+	import { VERSION } from "@sveltejs/kit"
 	import Head from "$components/Head.svelte"
 	import beautifyCurrency from "$lib/beautifyCurrency"
-	import { VERSION } from "@sveltejs/kit"
 	import Waves from "./Waves.svelte"
 
 	const { data } = $props()
@@ -19,7 +18,8 @@
 				"Running",
 				`SvelteKit ${VERSION}`,
 				"in",
-				dev ? "DEVELOPMENT" : "PRODUCTION"
+				"development",
+				"mode"
 			],
 			err: ""
 		},

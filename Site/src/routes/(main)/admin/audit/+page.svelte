@@ -18,7 +18,7 @@
 
 <Head name={data.siteName} title="Audit logs - Admin" />
 
-<div class="ctnr max-w-280 pb-6">
+<div class="ctnr max-w-300 pb-6">
 	<h1>Audit logs &ndash; Admin</h1>
 	<a href="/admin" class="no-underline">
 		<fa fa-caret-left></fa>
@@ -26,7 +26,7 @@
 	</a>
 </div>
 
-<SidebarShell bind:tabData class="max-w-280">
+<SidebarShell bind:tabData class="max-w-300">
 	<table class="w-full">
 		<thead>
 			<tr>
