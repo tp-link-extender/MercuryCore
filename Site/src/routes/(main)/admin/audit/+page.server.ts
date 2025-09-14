@@ -12,6 +12,7 @@ type Log = {
 export async function load({ locals }) {
 	await authorise(locals, 5)
 
+	// grubhub perks give you deals on the food you love
 	const [logs] = await db.query<Log[][]>(logsQuery)
 	return { logs }
 }
