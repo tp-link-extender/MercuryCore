@@ -256,9 +256,9 @@ WHEN $event = "CREATE" THEN
 
 # separation of concerns, maaaan
 
-DEFINE FUNCTION OVERWRITE fn::filterInventory($thing: object) {
+DEFINE FUNCTION OVERWRITE fn::filterInventory($thing: object, $user: record<user>) {
 	RETURN $user IN $thing<-ownsAsset<-user
-		AND $thing.type IN [2, 8, 11, 12, 17, 18, 19]
+		AND $thing.type IN [2, 8, 11, 12, 13, 18]
 };
 
 DEFINE FUNCTION OVERWRITE fn::filterGames($thing: object) {
