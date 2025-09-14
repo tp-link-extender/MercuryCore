@@ -64,9 +64,9 @@ Due to the difficulty of providing web services across many of the ancient webvi
 
 ### RCCService
 
-The RCCService (Cloud Compute Service) is used for rendering images of avatars, places, and other user-uploaded assets.
+RCCService is used for rendering images of avatars, places, and other user-uploaded assets.
 
-The Mercury Core site communicates with RCC instance via a [proxy](https://gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff) used to simplify requests and responses, and to handle authentication. Work sent to RCC needs to be queued as a task, which is then processed by the RCCService instance. The results are then returned to the site directly through an API endpoint.
+The Mercury Core site communicates with a RCC instance via a [proxy](https://gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff) used to simplify requests and responses, and to handle authentication. Work sent to RCC needs to be queued as a task, which is then processed by the RCCService instance. The results are then returned to the site directly through a API endpoint.
 
 RCCService is easily customised through providing Lua scripts. These scripts also handle data serialisation and communication with the site.
 
