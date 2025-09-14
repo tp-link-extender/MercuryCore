@@ -1,9 +1,9 @@
-import { error, redirect } from "@sveltejs/kit"
+import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { arktype } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { authorise } from "$lib/server/auth"
-import { createPlace, getPlacePrice } from "$lib/server/economy"
+// import { createPlace, getPlacePrice } from "$lib/server/economy"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import { randomAssetId } from "$lib/server/id"
@@ -35,11 +35,11 @@ async function placeCount(id: string) {
 }
 
 export async function load() {
-	const price = getPlacePrice()
+	// const price = getPlacePrice()
 	return {
 		form: await superValidate(arktype(schema)),
 		// count: await placeCount((await authorise(locals)).user.id),
-		price,
+		// price,
 	}
 }
 
@@ -70,8 +70,8 @@ actions.default = async ({ locals, request }) => {
 	const slug = encode(name)
 	const id = randomAssetId() // listen, this still isn't great, but whatever atp
 
-	const created = await createPlace(user.id, id, name, slug)
-	if (!created.ok) return formError(form, ["other"], [created.msg])
+	// const created = await createPlace(user.id, id, name, slug)
+	// if (!created.ok) return formError(form, ["other"], [created.msg])
 
 	await db.query(createQuery, {
 		id,

@@ -48,11 +48,11 @@ actions.default = async ({ locals, request, url, getClientAddress }) => {
 	if (!unfiltered)
 		return formError(form, ["content"], ["Post must have content"])
 
-	const limit = ratelimit(form, "comment", getClientAddress, 5)
-	if (limit) return limit
-
 	const category = url.searchParams.get("category")
 	if (!category) error(400, "Missing category")
+
+	const limit = ratelimit(form, "comment", getClientAddress, 5)
+	if (limit) return limit
 
 	const [[getCategory]] = await db.query<{ id: string }[][]>(
 		`
