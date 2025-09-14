@@ -1,9 +1,9 @@
+import { error } from "@sveltejs/kit"
 import { authorise } from "$lib/server/auth"
 import {
 	getAdminTransactions,
 	transformTransactions,
 } from "$lib/server/economy"
-import { error } from "@sveltejs/kit"
 
 export async function load({ locals }) {
 	await authorise(locals, 5)

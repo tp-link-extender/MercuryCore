@@ -1,3 +1,3 @@
-FROM surrealdb/surrealdb:v2.3.3
+FROM surrealdb/surrealdb:v2.3.8
 
 EXPOSE 8000
