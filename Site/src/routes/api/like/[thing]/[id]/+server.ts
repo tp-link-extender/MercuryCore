@@ -18,24 +18,24 @@ const actions = Object.keys(queries) as (keyof typeof queries)[]
 
 export async function POST({ locals, params, request, url }) {
 	const { user } = await authorise(locals)
-
 	const data = await request.formData()
 
 	const action = data.get("action") as (typeof actions)[number]
 	if (!action) error(400, "Missing action")
 	if (!actions.includes(action)) error(400, "Invalid action")
 
-	const { thing, id } = params
-	const t = thing as (typeof things)[number]
+	let id: string | number = params.id
+	const t = params.thing as (typeof things)[number]
 	if (!things.includes(t)) error(400, "Invalid thing")
 
-	if (thing === "place" && assetRegex.test(id)) {
+	if (t === "place" && assetRegex.test(id)) {
+		id = +id
 		const [ok] = await db.query<boolean[]>(
 			`
 				SELECT VALUE !privateServer OR privateTicket == $ticket
 				FROM ONLY $place`,
 			{
-				place: Record("place", +id),
+				place: Record("place", id),
 				ticket: url.searchParams.get("privateTicket"),
 			}
 		)
