@@ -1,11 +1,12 @@
 <script lang="ts">
 	import User from "$components/User.svelte"
-	import type { Comment } from "$lib/comment"
 
-	const { status }: { status: Comment } = $props()
+	const { status }: { status: import("./$types").PageData["Status"] } = $props()
+
+	let hidden = $derived(status.visibility !== "Visible")
 </script>
 
-<div class="card">
+<div class={["card", { "opacity-33": hidden }]}>
 	<div class="flex <md:flex-col pb-2 justify-between p-3 pb-1.5">
 		<div class="flex items-center">
 			<User user={status.author} size="2rem" full bg="darker" />
@@ -17,7 +18,7 @@
 	<a
 		href="/comment/{status.id}"
 		class="text-start no-underline p-3 pt-1.5 light-text">
-		{status.content[0].text}
+		{status.currentContent}
 	</a>
 </div>
 

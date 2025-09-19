@@ -14,10 +14,13 @@ SELECT status, username FROM $user->friends->user OR $user<-friends<-user;
 
 # Feed
 SELECT
-	*,
 	record::id(id) AS id,
+	author,
+	created,
+	pinned,
+	visibility,
 	(SELECT text, updated FROM $parent.content
 	ORDER BY updated)[$].text AS currentContent
 FROM comment WHERE type = ["status"]
-ORDER BY created DESC
+ORDER BY pinned DESC, created DESC
 LIMIT 40;
