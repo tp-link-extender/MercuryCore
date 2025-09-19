@@ -11,13 +11,13 @@
 <div class="ctnr max-w-240">
 	<div class="px-6">
 		<h1>{data.name}</h1>
-		<p class="flex">
+		<div class="flex">
 			<b class="pr-2">by</b>
 			<User user={data.owner} full thin bg="accent" size="1.5rem" />
-		</p>
+		</div>
 		<div class="flex pt-6 justify-between">
 			<a
-				href="/groups/{data.name}/members"
+				href="/groups/{data.id}/members"
 				class="light-text text-center no-underline pl-6">
 				Members
 				<h3 class="light-text">

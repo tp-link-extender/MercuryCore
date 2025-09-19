@@ -8,7 +8,7 @@ export default {
 	RCCServiceProxyURL: "http://localhost:64990",
 	LauncherURI: "mercury-player:",
 	CurrencySymbol: "屌",
-	Pages: ["Statistics", "Forum"],
+	Pages: ["Statistics", "Forum", "Groups"],
 
 	// 'noob' colours
 	DefaultBodyColors: {
