@@ -48,3 +48,9 @@
 		</tbody>
 	</table>
 </SidebarShell>
+
+<style>
+	tbody tr:nth-child(2n-1) {
+		background: var(--darker);
+	}
+</style>
