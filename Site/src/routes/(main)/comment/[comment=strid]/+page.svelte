@@ -96,7 +96,11 @@
 			<ForumReply {comment} {onResult} {user} />
 		{/if}
 	{:else if type[0] === "status"}
-		<ForumPost {comment} {onResult} {user} />
+		{#if type.length === 1}
+			<ForumPost {comment} {onResult} {user} />
+		{:else}
+			<ForumReply {comment} {onResult} {user} />
+		{/if}
 	{/if}
 
 	<PostReply {formData} />

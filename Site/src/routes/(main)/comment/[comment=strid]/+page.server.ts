@@ -108,10 +108,10 @@ actions.delete = async ({ locals, params, url, getClientAddress }) => {
 	const limit = ratelimit(null, "delete", getClientAddress, 5)
 	if (limit) return limit
 
-	const [, , [ok]] = await db.query<1[][]>(removeCommentQuery, {
+	const [, , ok] = await db.query<1[][]>(removeCommentQuery, {
 		comment: Record("comment", params.comment),
 		user: Record("user", user.id),
 		moderate,
 	})
-	if (!ok) error(404, "Comment not found")
+	if (!ok?.[0]) error(404, "Comment not found or already deleted")
 }
