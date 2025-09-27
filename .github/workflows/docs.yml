@@ -25,8 +25,7 @@ concurrency:
     cancel-in-progress: false
 
 env:
-    BUILD_PATH: "." # default value when not using subfolders
-    # BUILD_PATH: subfolder
+    BUILD_PATH: "Docs"
 
 jobs:
     build:
