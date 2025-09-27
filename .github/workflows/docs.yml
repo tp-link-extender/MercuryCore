@@ -40,7 +40,7 @@ jobs:
               id: pages
               uses: actions/configure-pages@v5
             - name: Install dependencies
-              run: bun i
+              run: bun i -p
               working-directory: ${{ env.BUILD_PATH }}
             - name: Build with Astro
               run: |
