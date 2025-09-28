@@ -24,7 +24,9 @@ const schema = type({
 	}), // https://youtu.be/mrGfahzt-4Q?t=1563
 	password: "16 <= string <= 6969",
 	cpassword: "16 <= string <= 6969",
-	regkey: "1 <= string <= 6969",
+	...(config.RegistrationKeys.Enabled && {
+		regkey: "1 <= string <= 6969",
+	}),
 })
 
 const prefix = config.RegistrationKeys.Prefix
@@ -130,6 +132,7 @@ actions.initialAccount = async ({ request, cookies }) => {
 	// Remember: untested === unworking
 	const [, user] = await db.query<RecordId<"user">[]>(createUserQuery, {
 		username,
+		email: "",
 		hashedPassword: Bun.password.hashSync(password),
 		bodyColours: config.DefaultBodyColors,
 	})
