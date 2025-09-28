@@ -44,14 +44,16 @@
 				name="username"
 				label="Username"
 				placeholder="3-21 characters" />
-			<Input
-				{formData}
-				column
-				autocomplete="email"
-				name="email"
-				label="Email Address"
-				type="email"
-				placeholder="{data.siteName}@{data.domain}" />
+			{#if data.emailsEnabled}
+				<Input
+					{formData}
+					column
+					autocomplete="email"
+					name="email"
+					label="Email Address"
+					type="email"
+					placeholder="{data.siteName}@{data.domain}" />
+			{/if}
 			<Input
 				{formData}
 				column
