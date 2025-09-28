@@ -29,14 +29,14 @@ type RegKey = {
 }
 
 export async function load({ locals }) {
-	if (!config.RegistrationKeys.Enabled) error(404, "Not Found")
+	if (!config.Registration.Keys.Enabled) error(404, "Not Found")
 	await authorise(locals, 5)
 
 	const [regKeys] = await db.query<RegKey[][]>(regkeysQuery)
 	return {
 		form: await superValidate(arktype(schema)),
 		regKeys,
-		prefix: config.RegistrationKeys.Prefix,
+		prefix: config.Registration.Keys.Prefix,
 	}
 }
 

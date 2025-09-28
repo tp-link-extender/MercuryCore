@@ -62,8 +62,11 @@ export default {
 		ReplaceType: "Character",
 	},
 
-	RegistrationKeys: {
-		Enabled: true,
-		Prefix: "mercurkey-",
+	Registration: {
+		Keys: {
+			Enabled: true,
+			Prefix: "mercurkey-",
+		},
+		Emails: true,
 	},
 } satisfies import("./Assets/schema.ts").Config

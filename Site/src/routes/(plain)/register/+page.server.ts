@@ -24,18 +24,18 @@ const schema = type({
 	}), // https://youtu.be/mrGfahzt-4Q?t=1563
 	password: "16 <= string <= 6969",
 	cpassword: "16 <= string <= 6969",
-	...(config.RegistrationKeys.Enabled && {
+	...(config.Registration.Keys.Enabled && {
 		regkey: "1 <= string <= 6969",
 	}),
 })
 
-const prefix = config.RegistrationKeys.Prefix
+const prefix = config.Registration.Keys.Prefix
 const prefixRegex = new RegExp(`^${prefix}(.+)$`)
 
 export const load = async () => ({
 	form: await superValidate(arktype(schema)),
 	users: await accountRegistered(),
-	regKeysEnabled: config.RegistrationKeys.Enabled,
+	regKeysEnabled: config.Registration.Keys.Enabled,
 	prefix,
 })
 
@@ -69,7 +69,7 @@ actions.register = async ({ request, cookies }) => {
 		return formError(form, ["email"], ["This email is already in use"])
 
 	let key: RecordId<"regKey"> | undefined
-	if (config.RegistrationKeys.Enabled) {
+	if (config.Registration.Keys.Enabled) {
 		const matched = regkey.match(prefixRegex)
 		if (!matched)
 			return formError(form, ["regkey"], ["Registration key is invalid"])
@@ -91,6 +91,7 @@ actions.register = async ({ request, cookies }) => {
 	}
 
 	const [, user] = await db.query<RecordId<"user">[]>(createUserQuery, {
+		admin: false,
 		username,
 		email,
 		// I still love scrypt, though argon2 is better supported
@@ -131,6 +132,7 @@ actions.initialAccount = async ({ request, cookies }) => {
 	// This is the kind of stuff that always breaks due to never getting tested
 	// Remember: untested === unworking
 	const [, user] = await db.query<RecordId<"user">[]>(createUserQuery, {
+		admin: true,
 		username,
 		email: "",
 		hashedPassword: Bun.password.hashSync(password),

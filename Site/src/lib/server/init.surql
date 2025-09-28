@@ -142,12 +142,13 @@ DEFINE TABLE OVERWRITE session SCHEMAFULL;
 DEFINE TABLE OVERWRITE stuff SCHEMALESS;
 
 DEFINE TABLE OVERWRITE user SCHEMAFULL;
+	DEFINE FIELD OVERWRITE admin ON user TYPE bool DEFAULT false; # Only the first account should be admin
 	DEFINE FIELD OVERWRITE bodyColours ON user FLEXIBLE TYPE object;
 	DEFINE FIELD OVERWRITE created ON user TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE css ON user TYPE string DEFAULT ALWAYS "";
 	DEFINE FIELD OVERWRITE description ON user FLEXIBLE TYPE array DEFAULT ALWAYS [];
 	DEFINE FIELD OVERWRITE email ON user TYPE string
-		ASSERT string::is::email($value) OR $value == ""; # admin account uh yeah
+		ASSERT string::is::email($value) OR $value == "";
 	DEFINE FIELD OVERWRITE hashedPassword ON user TYPE string;
 	DEFINE FIELD OVERWRITE lastOnline ON user TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE permissionLevel ON user TYPE int;

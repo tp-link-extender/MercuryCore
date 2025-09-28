@@ -71,8 +71,12 @@ const schema = type({
 		ReplaceType: type.enumerated("Character", "Word"),
 	}),
 
-	RegistrationKeys: type({
-		Enabled: "boolean",
+	Registration: type({
+		Keys: type({
+			Enabled: "boolean",
+			Prefix: "string",
+		}),
+		Emails: "boolean",
 	}),
 })
 
