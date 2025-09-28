@@ -32,13 +32,12 @@ async function getData({ locals, params }: RequestEvent) {
 	exclude("Groups")
 	const { user } = await authorise(locals)
 
-	const { group } = params
-	const groupExists = await find("group", group)
+	const groupExists = await find("group", params.group)
 	if (!groupExists) fail(404, { msg: "Group not found" })
 
 	return {
 		user: Record("user", user.id),
-		group,
+		group: Record("group", params.group),
 	}
 }
 

@@ -29,7 +29,11 @@
 				method="POST"
 				action="?/{data.in ? 'leave' : 'join'}"
 				class="self-center">
-				<button class="btn {data.in ? 'btn-danger' : 'btn-success'}">
+				<button
+					class={[
+						"btn",
+						data.in ? "btn-red-secondary" : "btn-primary"
+					]}>
 					{#if data.in}
 						Leave
 					{:else}
