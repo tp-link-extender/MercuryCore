@@ -9,8 +9,18 @@ export default async () => {
 	started = true
 
 	if (!(await Bun.file(path).exists())) {
-		console.error("Attempting to build the Economy service...")
-		await Bun.spawn(["go", "build"], { cwd }).exited
+		console.log(
+			"Economy service does not exist. Attempting to build it with Go..."
+		)
+		try {
+			await Bun.spawn(["go", "build"], { cwd }).exited
+		} catch {
+			console.error(
+				"The attempt to  automatically build the Economy service failed. Please build the service automatically, by navigating to the Economy folder and running `go build`, or make sure Go is installed and accessible as `go`."
+			)
+			console.error("https://docs.xtcy.dev/install/go/")
+			process.exit(1)
+		}
 	}
 
 	console.log(`Starting Economy service (${path})...`)
