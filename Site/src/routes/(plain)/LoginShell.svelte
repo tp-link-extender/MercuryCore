@@ -11,7 +11,7 @@
 	}: {
 		name: string
 		tagline: string
-		descriptions: { [_: string]: string }
+		descriptions: [string, string][]
 		pad?: boolean
 		children?: Snippet
 	} = $props()
@@ -35,7 +35,7 @@
 		{/if}
 		<hr class="pt-6" />
 
-		{#each Object.entries(descriptions) as [title, description]}
+		{#each descriptions as [title, description]}
 			<div class="w-full">
 				<h2 class="font-semibold">{title}</h2>
 				<p class="pl-4 opacity-75">{description}</p>

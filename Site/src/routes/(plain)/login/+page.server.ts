@@ -19,7 +19,7 @@ export async function load() {
 	return {
 		form: await superValidate(arktype(schema)),
 		users: await accountRegistered(),
-		descriptions: config.Branding.Descriptions,
+		descriptions: Object.entries(config.Branding.Descriptions),
 	}
 }
 
