@@ -17,10 +17,22 @@ If you're only planning to use RCC for rendering images, the version doesn't mat
 
 ## Security
 
-RCCService usually runs TCP traffic on port 64989. It is strongly recommended not to expose RCC directly to the internet. Instead, the most common options are to use a secure VPN tunnel, like [OpenVPN](https://openvpn.net/get-started/), [WireGuard](https://www.wireguard.com), or [Tailscale](https://tailscale.com/kb/1017/install), or a proxy server.
+RCCService usually runs TCP traffic on port 64989. It is strongly recommended not to expose RCC directly to the internet, in order to prevent requests from malicious third parties. Instead, the most common options are to use a secure VPN tunnel, like [OpenVPN](https://openvpn.net/get-started/), [WireGuard](https://www.wireguard.com), or [Tailscale](https://tailscale.com/kb/1017/install), or a proxy server.
 
 ## Communication
 
 Up until 2021, RCC used a SOAP-based protocol, with XML payloads for communication. From 2021 onwards, RCC switched to a JSON-based protocol. Most of the time, it's simple to create a XML/JSON template and substitute values into it as needed to create requests.
 
 The main part of this template will usually be a Lua script instructing the service what to do, such as to create a game server in the same way that a host script does, or to render an image of a 3D model using the ThumbnailGenerator service. Once the operation is complete, the script will also handle notifying the requester of the results in an asynchronous manner.
+
+## Proxying
+
+Mercury Core communicates with RCC via a proxy server. This helps to ensure security, while also improving ease of communication with the service. In some cases, an RCC instance will produce invalid responses or gzip compress outputs based on their size, which a proxy server helps to prevent, as well as being able to downsize & de-alias images and compress responses into a more efficient binary format (as opposed to the standard Base64 encoding) to reduce network traffic and improve response speeds.
+
+{% aside type="warning" title="Available implementations" %}
+	An implementation of the proxy server is available at [gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff](https://gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff). However, this implementation is outdated and uses the old Base64 communication format. An updated version will be made available soon.
+{% /aside %}
+
+## Render scripts
+
+A set of render scripts are loaded by Mercury Core and sent to RCC, telling it exactly how to load and render assets, models, places, or user avatars. A set of example scripts for the 2015 RCCService are available at [tp-link-extender/2013](https://github.com/tp-link-extender/2013/tree/main/Render).
