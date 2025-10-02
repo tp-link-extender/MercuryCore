@@ -20,3 +20,15 @@ powershell -c "irm bun.sh/install.ps1 | iex"
 Alternatively, it may be possible to install Bun using a package manager of your choice.
 
 Bun should now be available as `bun`. If not, you may have to restart your shell or add it to your path.
+
+## Upgrading
+
+To upgrade Bun to the latest version without going through the reinstallation process, run the following command:
+
+```bash
+bun upgrade
+```
+
+You may need to run this command as an administrator or with `sudo` depending on your installation method. If you're using a package manager, refer to its documentation for upgrade instructions.
+
+After upgrading, restart any running instances of Bun to use the new version.
