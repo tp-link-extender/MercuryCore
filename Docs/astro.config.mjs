@@ -9,6 +9,7 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: "Mercury Core",
+			logo: { src: "./public/favicon.svg" },
 			social: [
 				{
 					icon: "github",
