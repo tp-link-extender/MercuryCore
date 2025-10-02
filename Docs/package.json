@@ -10,7 +10,7 @@
 		"astro": "astro"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.2.4"
+		"@biomejs/biome": "^2.2.5"
 	},
 	"dependencies": {
 		"@astrojs/markdoc": "^0.15.7",
