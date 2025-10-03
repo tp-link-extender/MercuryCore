@@ -37,11 +37,11 @@ You will need:
 
 4. Copy the **Site/.env.example** file to **Site/.env** and modify it to set up the environment variables
 
-5. Run `docker compose up -d` to start the database and economy service.
-	{% aside type="tip" title="Running without containers" %}
-		If you don't have or can't install a container manager, you can start the database manually by [installing SurrealDB](https://surrealdb.com/install) and running `surreal start -l trace -u root -p root --allow-scripting file:./data/surreal` in the repository's root directory, and the economy service manually by [installing Go](https://go.dev/dl/) and running `go run .` in the **Economy** directory. You'll need to run these in separate terminals or in the background.
+5. If you're using containers, run `docker compose up -d` to start the Database and Economy services.
 
-		In the near future, we're aiming to provide easier first-class support for native installation and setup.
+6. Run `bun dev` to start the development server and open the web interface in your default browser. This will start the Database and Economy services automatically if they are not already running.
+	{% aside type="tip" title="Hot reloading" %}
+		The development server supports hot reloading, so any changes you make to the code will be automatically reflected in the browser without needing to refresh the page.
 	{% /aside %}
 
 {% /steps %}

@@ -30,17 +30,17 @@ You will need:
 
 2. Navigate to the **Site** directory.
 
-3. Run `caddy start` to start the Caddy reverse proxy server.
+3. Copy the **Site/.env.example** file to **Site/.env** and modify it to set up the environment variables.
+
+4. If you're using containers, run `docker compose up -d` to start the Database and Economy services.
+
+5. Run `bun prod` to install dependencies and begin building.
+
+6. Run `caddy start` to start the Caddy reverse proxy server.
     -   You can also run `caddy reload` to reload the configuration file without restarting the server.
     -   If you're using Caddy with multiple configuration files, import the Caddyfile in the repository's root directory into a Caddyfile somewhere else, and run `caddy start` and `caddy reload` from there.
 
-4. Run `docker compose up -d` to start the database and economy service.
-
-5. Copy the **Site/.env.example** file to **Site/.env** and modify it to set up the environment variables.
-
-6. Run `bun prod` to install dependencies and begin building.
-
-7. Run `bun ./build` (not to be confused with `bun build`) to start Mercury Core.
+7. Run `bun ./build` (not to be confused with `bun build`) to start Mercury Core. This will start the Database and Economy services automatically if they are not already running.
 	{% aside type="tip" title="Running in the background" %}
 		Several methods can be used to run Mercury Core as a background process as well. Daemons, GNU Screen, containers, and PM2 all work for this purpose.
 	{% /aside %}
