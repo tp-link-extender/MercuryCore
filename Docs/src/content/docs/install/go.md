@@ -11,10 +11,10 @@ To install, download the latest [binary release](https://go.dev/dl/) and follow 
 
 To upgrade Go to the latest version without going through the reinstallation process, update the **go.mod** file in the project's directory and change the Go version:
 
-```go.mod
+```
 module whatever
 
-go 1.25
+go 1.25.1
 ```
 
 Upon the next build or run command, Go will automatically download and use the specified version. If you're using a package manager, refer to its documentation for upgrade instructions.
