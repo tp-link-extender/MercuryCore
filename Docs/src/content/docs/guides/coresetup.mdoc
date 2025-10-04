@@ -1,0 +1,63 @@
+---
+title: Corescripts setup
+description: How to set up corescripts, allowing them to be loaded and served by the Site.
+---
+
+This guide explains how scripts can be set up to be modified, and configured to be served by the Site. If a client is from 2011 or later, it will require corescripts to be set up in order to function correctly.
+
+## Terminology
+
+The term "corescripts" can sometimes be ambiguous or refer to multiple things. In Mercury Core, the following definitions apply.
+
+- **Builtins**: These are scripts, models, or other assets that are distributed with the client (therefore not loaded from the Site), and provide core functionality such as animations, character scripts (health regeneration, humanoid state), fonts, and some basic meshes.
+- **Hardcoded assets**: These are assets with IDs that are hardcoded into the client which cannot easily be changed, though they are still loaded from the Site. This includes things like the Health model (the bar at the bottom of the screen, showing health and managing the red damage flash effect in some clients).
+- **Loadscripts**: These are some of the first scripts that run when a place is loaded, for example the Host script, loaded by Studio when running the command to host a place, or the Join script, loaded by the Client when a user joins a place.
+- **Corescripts**: These are scripts that run on the Client. They provide functionality such as GUI elements, chat, and user interface. Corescripts are loaded from the Site, and each has a unique asset ID.  
+The Join script loads the Starter script (default ID 37801172), and the Starter script loads the rest of the corescripts. These scripts can be modified to change the IDs, so the IDs can be easily changed, as long as they are compatible with the client (this means they usually have to be numeric and below 2147483647).
+- **Dependencies**: These are assets (usually images) loaded by Corescripts, Builtins, or Hardcoded assets. They have their own unique IDs which, again, can be modified if needed, and are loaded from the Site.
+- **Libraries**: These are scripts that may include any functionality, commonly generic or reusable, loaded by Corescripts and any user-created scripts. Libraries are loaded by calling `LoadLibrary()` function with the Library's name (every library name begins with 'Rbx'), and each has an ID similarly to corescripts.  
+Libraries were removed from the Client in 2020 after years of deprecation. Depending on the Client version, they may be used heavily, rarely, or not at all.
+- **Plugins**: These are scripts distributed alongside Studio to provide extra functionality.
+- **Client scripts**: The combination of Builtin scripts, Loadscripts, Corescripts, and Libraries.
+- **Privileged assets**: The combination of all Builtins, Hardcoded assets, Corescripts, Libraries, and Dependencies.
+
+Under the usual vague definitions, "corescripts" could refer to *any* of the above.
+
+Loadscripts are loaded from the Site, each from their own specific URL paths.  
+Hardcoded assets, Corescripts, Libraries, and Dependencies are all loaded as if they were normal assets from the Site. However, they are instead loaded from a separate directory from the other assets to improve ease of setup, updating, and management. It would theoretically be possible to set up Mercury Core normally, and upload all these assets to the Site like normal assets, but this would be an inconvenient and tedious process, especially in development where Database resets may be common.
+
+## Example Corescripts
+
+An example repository, holding most Hardcoded assets, Loadscripts, Corescripts, Dependencies, Libraries, and Plugins for the 11 December 2013 client (release 132) used in Mercury 2 can be found at [tp-link-extender/2013](https://github.com/tp-link-extender/2013).
+
+{% aside type="caution" title="Omissions" %}
+	Some of the less useful or untestable Corescripts, such as those for handling badges and gamepass/product purchases, have been deliberately removed from the example repository. This is because the functionality for these features is not implemented in Mercury Core, mainly due to the trust required between the Site and gameservers to handle communications securely. As such, they can't be implemented in a revival platform that allows users to host their own gameservers.  
+	Once we are able to test with dedicated servers, we may re-add these scripts to the example repository.
+{% /aside %}
+
+## Modification
+
+The first thing to set straight is that **Client scripts don't *need* to be modified**. If a repository of scripts equal to that distributed at the time of the client being used is available, it can sometimes be used as-is if using URL-rewriting methods in, for example, a DLL or other dynamic library hook.
+
+Usually, minor modifications are required. This sometimes includes changing asset IDs to match those uploaded to the Site, or changing URLs in Loadscripts and Corescripts to match the Site's URL structure. Client script modification can result in incredible benefits, though most of these can be attained with little more than these minor changes.
+
+Sometimes, major corescript modification is required. This can be if a new feature needs to be added or an existing one needs to be changed/removed, if performance issues need to be fixed (these are very common in older clients), or if a feature needs to be rewritten to work with the new API implementation.
+
+### In-depth modification
+
+{% aside type="danger" title="Heavy Client script modification" %}
+	Heavy Client script modification is rarely undertaken by revival platform developers. As one may expect from the process of optimising and rewriting ancient code for decades-old deprecated systems, this is a daunting and very time-consuming task, requiring a deep understanding of the Client's internal workings, as well as the ability to reverse-engineer and debug complex issues with little feedback.
+
+	Documentation for newer Client scripts is generally a little easier to find, and documentation for older ones is extremely sparse. If you want to find the only available resources on modifying old Client scripts, uh... you're looking at it.
+
+	**We strongly suggest turning back now.**
+{% /aside %}
+
+To effectively modify Client scripts, you'll need at least passing familiarity with the, depending on your client, 30 000 to 300 000 lines of Lua code that make them up. A complete or clean rewrite of all Client scripts is an option, though would require an astounding level of work and understanding of the Client's internal workings. Starting from a copy of the original scripts is less than ideal but at least provides a working base to start from.
+
+Most of the time, the only debugging system available is the Client's log output files, unless you're lucky enough to have a client with a debug window corescript (2014 or later). As such, it's probably a good idea to build a logger script and debug console to forward log messages to an in-game GUI. The [Mercury debug console](https://github.com/tp-link-extender/2013/blob/main/Corescripts/20000001.luau) is available in the example repository, which also includes some extra utilities and other fun features.
+
+The best available crutches for understanding the API available in Client scripts is the [Community Roblox API reference](https://robloxapi.github.io/ref/). This also includes addition and removal dates for functions, as well as a timeline showing when features began to become usable, which can be useful when working with older clients.
+
+To improve the ability to modify the older Client scripts in the example repository, they were rewritten in a language that compiles to Lua. Options previously used included [MoonScript](https://moonscript.org) and [YueScript](https://yuescript.org). We ended up using [Luau](https://luau.org), as it's used for development of later official Client scripts, and the presence of type checking allows us to create a set of type definitions for the older Client's API. This also improves the experience for anyone developing games for the platform.  
+A custom script compiler is provided in the example repository, which can be used to compile and minify the Luau files into Lua, as well as correctly structuring and moving other Privileged assets into the correct directories to be served by the Site. The compiler also bundles scripts in a way that reusable parts can be extracted out into the Modules directory, improving maintainability and reducing duplication.
