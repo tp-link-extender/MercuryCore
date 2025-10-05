@@ -19,23 +19,64 @@ The Join script loads the Starter script (default ID 37801172), and the Starter 
 Libraries were removed from the Client in 2020 after years of deprecation. Depending on the Client version, they may be used heavily, rarely, or not at all.
 - **Plugins**: These are scripts distributed alongside Studio to provide extra functionality.
 - **Client scripts**: The combination of Builtin scripts, Loadscripts, Corescripts, and Libraries.
-- **Privileged assets**: The combination of all Builtins, Hardcoded assets, Corescripts, Libraries, and Dependencies.
+- **Privileged assets**: The combination of all Hardcoded assets, Corescripts, Libraries, and Dependencies.
 
 Under the usual vague definitions, "corescripts" could refer to *any* of the above.
 
 Loadscripts are loaded from the Site, each from their own specific URL paths.  
-Hardcoded assets, Corescripts, Libraries, and Dependencies are all loaded as if they were normal assets from the Site. However, they are instead loaded from a separate directory from the other assets to improve ease of setup, updating, and management. It would theoretically be possible to set up Mercury Core normally, and upload all these assets to the Site like normal assets, but this would be an inconvenient and tedious process, especially in development where Database resets may be common.
+Privileged assets are all loaded as if they were normal assets from the Site. However, they are instead loaded from a separate directory from the other assets to improve ease of setup, updating, and management. It would theoretically be possible to set up Mercury Core normally, and upload all these assets to the Site like normal assets, but this would be an inconvenient and tedious process, especially in development where Database resets may be common.
 
-## Example Corescripts
+## Example scripts
 
-An example repository, holding most Hardcoded assets, Loadscripts, Corescripts, Dependencies, Libraries, and Plugins for the 11 December 2013 client (release 132) used in Mercury 2 can be found at [tp-link-extender/2013](https://github.com/tp-link-extender/2013).
+An example repository, holding most Loadscripts, Plugins, and Privileged assets for the 11 December 2013 client (release 132) used in Mercury 2 can be found at [tp-link-extender/2013](https://github.com/tp-link-extender/2013).
 
 {% aside type="caution" title="Omissions" %}
 	Some of the less useful or untestable Corescripts, such as those for handling badges and gamepass/product purchases, have been deliberately removed from the example repository. This is because the functionality for these features is not implemented in Mercury Core, mainly due to the trust required between the Site and gameservers to handle communications securely. As such, they can't be implemented in a revival platform that allows users to host their own gameservers.  
 	Once we are able to test with dedicated servers, we may re-add these scripts to the example repository.
 {% /aside %}
 
+### Instructions
+
+The set of scripts includes a compiler to move and bundle scripts into the format and directory structure expected by Mercury Core. These instructions also include how to run the compiler and set up the output to be used by Mercury Core.
+
+{% steps %}
+
+1. Clone the [tp-link-extender/2013](https://github.com/tp-link-extender/2013) repository to a directory of your choice on your local machine.
+
+	```bash
+	git clone https://github.com/tp-link-extender/2013
+	```
+
+2. Navigate to the root directory of the cloned repository.
+
+3. Install the necessary tools. This can be done in a few ways:
+
+	- Install [Aftman](https://github.com/lpghatguy/aftman), and run `aftman install` to install the necessary tools.
+	- Install [Rokit](https://github.com/rojo-rbx/rokit), and run `rokit install` to install the necessary tools.
+	- Manually install [Darklua](https://darklua.com/docs/installation/) and add it to your PATH so it is accessible from the command line as `darklua`. This is the main dependency for the compiler, though we're planning to remove its requirement in the future.
+
+4. Copy your **PrivateKey.pem** file (the private key corresponding to the public key patched into the client) into the **compile** directory.
+
+5. Run `go run .` in the **compile** directory to compile all scripts.
+
+6. Navigate to the **out** directory in the root of the repository.
+
+7. There should be two directories: **server** and **plugins**. Move the entire **server** directory into the **data** directory of your Mercury Core repository.
+
+{% /steps %}
+
+The output structure of the compiler is as follows:
+
+- **out**
+  - **server**: Assets and scripts to be served from the Site. This entire directory must be moved into the **data** directory of the Mercury Core repository.
+	- **assets**: All Privileged assets. Each has an ID matching that expected by the Client, and are served normally as assets from the Site. When serving any asset, this directory is checked first. Privileged assets are pre-signed with the private key if required (if they are Corescripts or Libraries).
+	- **loadscripts**: Loadscripts. These are not pre-signed as they need to be modified by the Site before they are served.
+	- **render**: Render scripts, used to send to RCCService to render thumbnails and icons for assets.
+  - **plugins**: Studio plugins. These are bundled alongside the Client itself, so this directory is not needed by Mercury Core.
+
 ## Modification
+
+This section details how to modify Client scripts.
 
 The first thing to set straight is that **Client scripts don't *need* to be modified**. If a repository of scripts equal to that distributed at the time of the client being used is available, it can sometimes be used as-is if using URL-rewriting methods in, for example, a DLL or other dynamic library hook.
 
