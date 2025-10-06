@@ -4,7 +4,9 @@
 	import Input from "$components/forms/Input.svelte"
 	import Head from "$components/Head.svelte"
 	import SidebarShell from "$components/SidebarShell.svelte"
+	import Tab from "$components/Tab.svelte"
 	import TabData from "$components/TabData"
+	import User from "$components/User.svelte"
 
 	const { data } = $props()
 
@@ -12,7 +14,7 @@
 	export const snapshot = formData
 
 	let tabData = $state(
-		TabData(data.url, ["Change User Password"], ["fa-key"])
+		TabData(data.url, ["Change user password", "Users"], ["fa-key", "fa-user"])
 	)
 </script>
 
@@ -27,16 +29,36 @@
 </div>
 
 <SidebarShell bind:tabData>
-	<Form
-		{formData}
-		submit="<fa fa-key></fa> Change password"
-		action="?/changePassword">
-		<Input {formData} name="username" label="Username" />
-		<Input
+	<Tab bind:tabData>
+		<Form
 			{formData}
-			name="password"
-			label="New password"
-			type="password"
-			placeholder={"•".repeat(20)} />
-	</Form>
+			submit="<fa fa-key></fa> Change password"
+			action="?/changePassword">
+			<Input {formData} name="username" label="Username" />
+			<Input
+				{formData}
+				name="password"
+				label="New password"
+				type="password"
+				placeholder={"•".repeat(20)} />
+		</Form>
+	</Tab>
+	<Tab bind:tabData>
+		<table class="w-full">
+			<tbody>
+				{#each data.users as user}
+					<tr>
+						<td><User {user} full thin bg="accent"/></td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</Tab>
 </SidebarShell>
+
+<style>
+	tbody tr:nth-child(2n-1) {
+		background: var(--darker);
+	}
+</style>
+

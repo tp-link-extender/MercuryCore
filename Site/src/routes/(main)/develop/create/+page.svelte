@@ -14,11 +14,11 @@
 
 	const [, c1, c2] = beautifyCurrency(data.price)
 
-	const assets: { [_: string]: string } = Object.freeze({
-		"2": "T-Shirt",
-		"11": "Shirt",
-		"12": "Pants",
-		"13": "Decal"
+	const assets: { [_: number]: string } = Object.freeze({
+		2: "T-Shirt",
+		11: "Shirt",
+		12: "Pants",
+		13: "Decal"
 	})
 </script>
 

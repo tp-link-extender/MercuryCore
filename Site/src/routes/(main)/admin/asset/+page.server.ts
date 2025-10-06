@@ -1,6 +1,6 @@
 import fs from "node:fs/promises"
 import { error, fail } from "@sveltejs/kit"
-import { idRegex } from "$lib/paramTests"
+import { assetRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/auth"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
@@ -34,10 +34,11 @@ export async function load({ locals }) {
 
 async function getData({ locals, url }: RequestEvent) {
 	const { user } = await authorise(locals, 3)
-	const id = url.searchParams.get("id")
+	const assetId = url.searchParams.get("id")
 
-	if (!id) error(400, "Missing asset id")
-	if (!idRegex.test(id)) error(400, `Invalid asset id: ${id}`)
+	if (!assetId) error(400, "Missing asset ID")
+	if (!assetRegex.test(assetId)) error(400, `Invalid asset ID: ${assetId}`)
+	const id = +assetId
 
 	const params = {
 		user: Record("user", user.id),
@@ -88,7 +89,7 @@ actions.rerender = async e => {
 actions.purge = async e => {
 	// Nuclear option
 	const { id, params, assetName } = await getData(e)
-	const [[{ iaid }]] = await db.query<{ iaid: string }[][]>(iaidQuery, {
+	const [[{ iaid }]] = await db.query<{ iaid: number }[][]>(iaidQuery, {
 		asset: Record("asset", id),
 	})
 

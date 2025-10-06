@@ -50,11 +50,11 @@ const showHide = (action: string) => async (e: RequestEvent) => {
 	if (error) return error
 
 	const id = e.url.searchParams.get("id")
-	if (!id) return message(form, "Missing fields", { status: 400 })
+	if (!id) return message(form, "Missing fields")
 
 	const active = action === "show"
 	if (active && (await bannerActiveCount()) >= 3)
-		return message(form, "Too many active banners", { status: 400 })
+		return message(form, "Too many active banners")
 
 	await db.merge(Record("banner", id), { active })
 }
@@ -65,10 +65,9 @@ actions.create = async e => {
 	if (error) return error
 
 	const { bannerText, bannerColour, bannerTextLight } = form.data
-	if (!bannerText || !bannerColour)
-		return message(form, "Missing fields", { status: 400 })
+	if (!bannerText || !bannerColour) return message(form, "Missing fields")
 	if ((await bannerActiveCount()) >= 3)
-		return message(form, "Too many active banners", { status: 400 })
+		return message(form, "Too many active banners")
 
 	const limit = ratelimit(form, "createBanner", e.getClientAddress, 30)
 	if (limit) return limit
@@ -89,7 +88,7 @@ actions.delete = async e => {
 	if (error) return error
 
 	const id = e.url.searchParams.get("id")
-	if (!id) return message(form, "Missing fields", { status: 400 })
+	if (!id) return message(form, "Missing fields")
 
 	await db.merge(Record("banner", id), { deleted: true })
 }
@@ -99,8 +98,7 @@ actions.updateBody = async e => {
 
 	const id = e.url.searchParams.get("id")
 	const { bannerBody } = form.data
-	if (!bannerBody || !id)
-		return message(form, "Missing fields", { status: 400 })
+	if (!bannerBody || !id) return message(form, "Missing fields")
 
 	await db.merge(Record("banner", id), { body: bannerBody })
 }
@@ -110,7 +108,7 @@ actions.updateTextLight = async e => {
 
 	const id = e.url.searchParams.get("id")
 	const { bannerTextLight } = form.data
-	if (!id) return message(form, "Missing fields", { status: 400 })
+	if (!id) return message(form, "Missing fields")
 
 	await db.merge(Record("banner", id), { textLight: !!bannerTextLight })
 }

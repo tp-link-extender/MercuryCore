@@ -15,7 +15,8 @@
 	const enhanceRegen: import("./$types").SubmitFunction = () => {
 		regenerating = true
 		return async ({ result }) => {
-			if (result.type === "success") await invalidateAll()
+			// if (result.type === "success") // invalidateAll() anyway, even if the render fails
+			await invalidateAll()
 			await applyAction(result)
 			regenerating = false
 		}

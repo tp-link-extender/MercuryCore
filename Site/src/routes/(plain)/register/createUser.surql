@@ -1,6 +1,7 @@
 LET $u = CREATE ONLY user CONTENT {
+	admin: $admin,
 	bodyColours: $bodyColours,
-	email: IF $key { $email } ELSE { "" },
+	email: $email,
 	hashedPassword: $hashedPassword,
 	permissionLevel: IF $key { 1 } ELSE { 5 },
 	username: $username,

@@ -19,21 +19,26 @@ const schemaInitial = type({
 })
 const schema = type({
 	username: usernameTest,
-	email: type(/^.+@.+$/).configure({
-		problem: "must be a valid RFC-5321 email address",
+	...(config.Registration.Emails && {
+		email: type(/^.+@.+$/).configure({
+			problem: "must be a valid RFC-5321 email address",
+		}),
 	}), // https://youtu.be/mrGfahzt-4Q?t=1563
 	password: "16 <= string <= 6969",
 	cpassword: "16 <= string <= 6969",
-	regkey: "1 <= string <= 6969",
+	...(config.Registration.Keys.Enabled && {
+		regkey: "1 <= string <= 6969",
+	}),
 })
 
-const prefix = config.RegistrationKeys.Prefix
+const prefix = config.Registration.Keys.Prefix
 const prefixRegex = new RegExp(`^${prefix}(.+)$`)
 
 export const load = async () => ({
 	form: await superValidate(arktype(schema)),
 	users: await accountRegistered(),
-	regKeysEnabled: config.RegistrationKeys.Enabled,
+	regKeysEnabled: config.Registration.Keys.Enabled,
+	emailsEnabled: config.Registration.Emails,
 	prefix,
 })
 
@@ -42,7 +47,7 @@ actions.register = async ({ request, cookies }) => {
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
-	const { username, email, password, cpassword, regkey } = form.data
+	const { username, password, cpassword, email } = form.data
 	form.data.password = form.data.cpassword = ""
 
 	if (cpassword !== password)
@@ -62,12 +67,15 @@ actions.register = async ({ request, cookies }) => {
 			["This username is already in use"]
 		)
 
-	const emailCheck = await findWhere("user", "email = $email", { email })
-	if (emailCheck)
-		return formError(form, ["email"], ["This email is already in use"])
+	if (config.Registration.Emails) {
+		const emailCheck = await findWhere("user", "email = $email", { email })
+		if (emailCheck)
+			return formError(form, ["email"], ["This email is already in use"])
+	}
 
 	let key: RecordId<"regKey"> | undefined
-	if (config.RegistrationKeys.Enabled) {
+	if (config.Registration.Keys.Enabled) {
+		const { regkey } = form.data
 		const matched = regkey.match(prefixRegex)
 		if (!matched)
 			return formError(form, ["regkey"], ["Registration key is invalid"])
@@ -89,8 +97,9 @@ actions.register = async ({ request, cookies }) => {
 	}
 
 	const [, user] = await db.query<RecordId<"user">[]>(createUserQuery, {
+		admin: false,
 		username,
-		email,
+		email: email || "",
 		// I still love scrypt, though argon2 is better supported
 		hashedPassword: Bun.password.hashSync(password),
 		bodyColours: config.DefaultBodyColors,
@@ -129,7 +138,9 @@ actions.initialAccount = async ({ request, cookies }) => {
 	// This is the kind of stuff that always breaks due to never getting tested
 	// Remember: untested === unworking
 	const [, user] = await db.query<RecordId<"user">[]>(createUserQuery, {
+		admin: true,
 		username,
+		email: "",
 		hashedPassword: Bun.password.hashSync(password),
 		bodyColours: config.DefaultBodyColors,
 	})

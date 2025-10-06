@@ -1,6 +1,6 @@
 import { error, fail } from "@sveltejs/kit"
 import { brickColours } from "$lib/brickColours"
-import { idRegex } from "$lib/paramTests"
+import { assetRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/auth"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
@@ -50,9 +50,11 @@ export async function load({ locals }) {
 
 async function getEquipData(e: RequestEvent) {
 	const { user } = await authorise(e.locals)
-	const id = e.url.searchParams.get("id")
-	if (!id) error(400, "Missing asset id")
-	if (!idRegex.test(id)) error(400, `Invalid asset id: ${id}`)
+	const assetId = e.url.searchParams.get("id")
+
+	if (!assetId) error(400, "Missing asset ID")
+	if (!assetRegex.test(assetId)) error(400, `Invalid asset ID: ${assetId}`)
+	const id = +assetId
 
 	const limit = ratelimit(null, "equip", e.getClientAddress, 2)
 	if (limit) return { error: limit }

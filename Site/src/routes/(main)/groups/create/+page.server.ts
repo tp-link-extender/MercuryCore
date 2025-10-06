@@ -16,10 +16,9 @@ const schema = type({
 export async function load() {
 	exclude("Groups")
 	const price = await getGroupPrice()
-	if (!price.ok) error(500, price.msg)
 	return {
 		form: await superValidate(arktype(schema)),
-		price: price.value,
+		price,
 	}
 }
 

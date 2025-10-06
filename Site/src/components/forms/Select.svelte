@@ -44,6 +44,14 @@
 		},
 		multiple: multiple as false // todo what the eff
 	})
+
+	if (selected) {
+		$form[name] = selected
+		selectedValue.set({
+			value: selected,
+			label: Object.fromEntries(options)[selected] || selected
+		})
+	}
 </script>
 
 <div class="flex flex-wrap pb-8">
@@ -52,17 +60,20 @@
 	</label>
 	<div class="w-full md:w-3/4">
 		<NoScript>
-			<!-- fallback to standard select -->
+			<!-- fallback to standard select (i don't *think* we need to bind here, and sometimes bugs) -->
 			<select
 				{disabled}
 				{...rest}
-				bind:value={$form[name]}
 				{...$constraints[name]}
 				{name}
 				id={name}
 				class={{ "is-invalid": $errors[name] }}>
 				{#each options as [value, label]}
-					<option {value} selected={$isSelected(value)}>
+					<option
+						{value}
+						selected={selected
+							? value === selected
+							: $isSelected(value)}>
 						{label}
 					</option>
 				{/each}

@@ -1,12 +1,12 @@
-import { error, redirect } from "@sveltejs/kit"
+import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { arktype } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
 import { authorise } from "$lib/server/auth"
-import { createPlace, getPlacePrice } from "$lib/server/economy"
+// import { createPlace, getPlacePrice } from "$lib/server/economy"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
-import { randomId } from "$lib/server/id"
+import { randomAssetId } from "$lib/server/id"
 import { db, Record } from "$lib/server/surreal"
 import {
 	maxPlayersTest,
@@ -35,12 +35,11 @@ async function placeCount(id: string) {
 }
 
 export async function load() {
-	const price = await getPlacePrice()
-	if (!price.ok) error(500, price.msg)
+	// const price = getPlacePrice()
 	return {
 		form: await superValidate(arktype(schema)),
 		// count: await placeCount((await authorise(locals)).user.id),
-		price: price.value,
+		// price,
 	}
 }
 
@@ -69,10 +68,10 @@ actions.default = async ({ locals, request }) => {
 		)
 
 	const slug = encode(name)
-	const id = randomId() // still, find a better way stat
+	const id = randomAssetId() // listen, this still isn't great, but whatever atp
 
-	const created = await createPlace(user.id, id, name, slug)
-	if (!created.ok) return formError(form, ["other"], [created.msg])
+	// const created = await createPlace(user.id, id, name, slug)
+	// if (!created.ok) return formError(form, ["other"], [created.msg])
 
 	await db.query(createQuery, {
 		id,

@@ -8,7 +8,7 @@ export default {
 	RCCServiceProxyURL: "http://localhost:64990",
 	LauncherURI: "mercury-player:",
 	CurrencySymbol: "屌",
-	Pages: ["Statistics", "Forum"],
+	Pages: ["Statistics", "Forum", "Groups"],
 
 	// 'noob' colours
 	DefaultBodyColors: {
@@ -62,8 +62,11 @@ export default {
 		ReplaceType: "Character",
 	},
 
-	RegistrationKeys: {
-		Enabled: true,
-		Prefix: "mercurkey-",
+	Registration: {
+		Keys: {
+			Enabled: true,
+			Prefix: "mercurkey-",
+		},
+		Emails: true,
 	},
 } satisfies import("./Assets/schema.ts").Config

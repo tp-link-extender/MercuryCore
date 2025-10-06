@@ -10,7 +10,7 @@
 		symbol
 	}: {
 		asset: {
-			id: string
+			id: number
 			name: string
 			price: number
 			// ratio?: string | number

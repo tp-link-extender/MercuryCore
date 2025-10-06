@@ -1,7 +1,11 @@
-import { authorise } from "$lib/server/auth"
-import { economyConnFailed, getBalance } from "$lib/server/economy"
-import { getTransactions, transformTransactions } from "$lib/server/economy"
 import { error } from "@sveltejs/kit"
+import { authorise } from "$lib/server/auth"
+import {
+	economyConnFailed,
+	getBalance,
+	getTransactions,
+	transformTransactions,
+} from "$lib/server/economy"
 
 export async function load({ locals }) {
 	const { user } = await authorise(locals)

@@ -1,6 +1,8 @@
 # Overwrites are needed to ensure that the schema is correct when changing in dev mode/on deployment
 
 DEFINE TABLE OVERWRITE asset SCHEMAFULL;
+	# privileged assets are 8 digits, user-uploaded assets are 9 (max is 2^31-1 = 2147483647 (usually), we need numeric ids for reasons... eugh)
+	DEFINE FIELD OVERWRITE id ON asset TYPE int;
 	DEFINE FIELD OVERWRITE created ON asset TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE description ON asset FLEXIBLE TYPE array DEFAULT ALWAYS [];
 	DEFINE FIELD OVERWRITE name ON asset TYPE string;
@@ -8,13 +10,6 @@ DEFINE TABLE OVERWRITE asset SCHEMAFULL;
 	DEFINE FIELD OVERWRITE type ON asset TYPE int;
 	DEFINE FIELD OVERWRITE updated ON asset TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE visibility ON asset TYPE string DEFAULT "Pending";
-
-DEFINE TABLE OVERWRITE assetCache SCHEMAFULL;
-	DEFINE FIELD OVERWRITE assetModified ON assetCache TYPE string;
-	DEFINE FIELD OVERWRITE created ON assetCache TYPE datetime DEFAULT time::now();
-	DEFINE FIELD OVERWRITE description ON assetCache TYPE string DEFAULT ALWAYS "No description available.";
-	DEFINE FIELD OVERWRITE name ON assetCache TYPE string DEFAULT ALWAYS "Unnamed asset";
-	DEFINE FIELD OVERWRITE type ON assetCache TYPE int;
 
 DEFINE TABLE OVERWRITE auditLog SCHEMAFULL;
 	DEFINE FIELD OVERWRITE action ON auditLog TYPE string;
@@ -102,6 +97,7 @@ DEFINE TABLE OVERWRITE ownsGroup SCHEMAFULL TYPE RELATION FROM user TO group;
 DEFINE TABLE OVERWRITE ownsPlace SCHEMAFULL TYPE RELATION FROM user TO place ENFORCED;
 
 DEFINE TABLE OVERWRITE place SCHEMAFULL;
+	DEFINE FIELD OVERWRITE id ON place TYPE int;
 	DEFINE FIELD OVERWRITE created ON place TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE deleted ON place TYPE bool DEFAULT false;
 	DEFINE FIELD OVERWRITE description ON place FLEXIBLE TYPE array;
@@ -126,7 +122,7 @@ DEFINE TABLE OVERWRITE regKey SCHEMAFULL;
 DEFINE TABLE OVERWRITE render SCHEMAFULL;
 	DEFINE FIELD OVERWRITE created ON render TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE completed ON render TYPE option<datetime>; # hmm...
-	DEFINE FIELD OVERWRITE relativeId ON render TYPE string;
+	DEFINE FIELD OVERWRITE relativeId ON render TYPE string | int;
 	DEFINE FIELD OVERWRITE status ON render TYPE string DEFAULT "Pending";
 	DEFINE FIELD OVERWRITE type ON render TYPE string;
 
@@ -146,12 +142,13 @@ DEFINE TABLE OVERWRITE session SCHEMAFULL;
 DEFINE TABLE OVERWRITE stuff SCHEMALESS;
 
 DEFINE TABLE OVERWRITE user SCHEMAFULL;
+	DEFINE FIELD OVERWRITE admin ON user TYPE bool DEFAULT false; # Only the first account should be admin
 	DEFINE FIELD OVERWRITE bodyColours ON user FLEXIBLE TYPE object;
 	DEFINE FIELD OVERWRITE created ON user TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE css ON user TYPE string DEFAULT ALWAYS "";
 	DEFINE FIELD OVERWRITE description ON user FLEXIBLE TYPE array DEFAULT ALWAYS [];
 	DEFINE FIELD OVERWRITE email ON user TYPE string
-		ASSERT string::is::email($value) OR $value == ""; # admin account uh yeah
+		ASSERT string::is::email($value) OR $value == "";
 	DEFINE FIELD OVERWRITE hashedPassword ON user TYPE string;
 	DEFINE FIELD OVERWRITE lastOnline ON user TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE permissionLevel ON user TYPE int;
@@ -167,16 +164,20 @@ DEFINE TABLE OVERWRITE user SCHEMAFULL;
 	DEFINE FIELD OVERWRITE theme ON user TYPE int DEFAULT 0;
 	DEFINE FIELD OVERWRITE username ON user TYPE string;
 DEFINE INDEX IF NOT EXISTS usernameI ON user COLUMNS username UNIQUE;
-DEFINE INDEX IF NOT EXISTS emailI ON user COLUMNS email UNIQUE;
+# DEFINE INDEX IF NOT EXISTS emailI ON user COLUMNS email UNIQUE; # doesn't work with empty strings
 
 DEFINE TABLE OVERWRITE used SCHEMAFULL TYPE RELATION FROM user TO regKey ENFORCED;
+
+DEFINE FUNCTION OVERWRITE fn::assetId() {
+	RETURN rand::int(100_000_000, 999_999_999);
+};
 
 DEFINE FUNCTION OVERWRITE fn::auditLog($action: string, $note: string, $user: record) {
 	CREATE auditLog CONTENT {
 		action: $action,
 		note: $note,
 		user: $user,
-	}
+	};
 };
 
 DEFINE FUNCTION OVERWRITE fn::clampPages($count: number, $pages: number) {
@@ -256,9 +257,9 @@ WHEN $event = "CREATE" THEN
 
 # separation of concerns, maaaan
 
-DEFINE FUNCTION OVERWRITE fn::filterInventory($thing: object) {
+DEFINE FUNCTION OVERWRITE fn::filterInventory($thing: object, $user: record<user>) {
 	RETURN $user IN $thing<-ownsAsset<-user
-		AND $thing.type IN [2, 8, 11, 12, 17, 18, 19]
+		AND $thing.type IN [2, 8, 11, 12, 13, 18]
 };
 
 DEFINE FUNCTION OVERWRITE fn::filterGames($thing: object) {

@@ -9,6 +9,7 @@
 		total
 	}: {
 		group: {
+			id: string
 			name: string
 			memberCount: number
 		}
@@ -20,7 +21,7 @@
 <a
 	in:fade={{ num, total }}
 	class="card text-center light-text bg-darker no-underline rounded-4"
-	href="/groups/{group.name}">
+	href="/groups/{group.id}">
 	<div class="p-4 flex flex-col h-full">
 		{group.name}
 		<div class="mt-auto mb-1 float-end">

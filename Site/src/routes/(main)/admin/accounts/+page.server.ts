@@ -7,6 +7,7 @@ import ratelimit from "$lib/server/ratelimit"
 import { db, Record } from "$lib/server/surreal"
 import { usernameTest } from "$lib/typeTests"
 import updatePasswordQuery from "./updatePassword.surql"
+import usersQuery from "./users.surql"
 
 const schema = type({
 	username: usernameTest,
@@ -16,7 +17,12 @@ const schema = type({
 export async function load({ locals }) {
 	await authorise(locals, 5)
 
-	return { form: await superValidate(arktype(schema)) }
+	const [users] = await db.query<BasicUser[][]>(usersQuery)
+
+	return {
+		form: await superValidate(arktype(schema)),
+		users,
+	}
 }
 
 export const actions: import("./$types").Actions = {}

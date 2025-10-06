@@ -6,7 +6,7 @@ import { superValidate } from "sveltekit-superforms/server"
 import { authorise } from "$lib/server/auth"
 import { createAsset, getAssetPrice } from "$lib/server/economy"
 import formError from "$lib/server/formError"
-import { randomId } from "$lib/server/id"
+import { randomAssetId } from "$lib/server/id"
 import {
 	clothingAsset,
 	imageAsset,
@@ -23,7 +23,7 @@ import createAssetQuery from "./createAsset.surql"
 
 const schema = type({
 	// Object.keys(assets) doesn't work
-	type: type.enumerated("2", "8", "11", "12", "13", "18").configure({
+	type: type.enumerated(2, 8, 11, 12, 13, 18).configure({
 		problem: "must be a valid asset type",
 	}),
 	name: "3 <= string <= 50",
@@ -33,12 +33,11 @@ const schema = type({
 })
 
 export async function load({ url }) {
-	const price = await getAssetPrice()
-	if (!price.ok) error(500, price.msg)
+	const price = getAssetPrice()
 	return {
 		form: await superValidate(arktype(schema)),
 		assetType: url.searchParams.get("asset"),
-		price: price.value,
+		price,
 	}
 }
 
@@ -48,7 +47,6 @@ const assets: { [k: number]: string } = Object.freeze({
 	12: "Pants",
 	13: "Decal",
 })
-
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ locals, request, getClientAddress }) => {
 	const { user } = await authorise(locals)
@@ -57,6 +55,7 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 
 	const { type, name, description, price, asset } = form.data
 	const assetType = +type as keyof typeof assets
+	form.data.asset = null // make sure to return as a POJO
 
 	if (asset.size === 0)
 		return formError(form, ["asset"], ["You must upload an asset"])
@@ -73,7 +72,7 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 	if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
 	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
 
-	let saveImages: ((id: string) => Promise<number> | Promise<void>)[] = []
+	let saveImages: ((id: number) => Promise<number> | Promise<void>)[] = []
 
 	try {
 		switch (assetType) {
@@ -87,7 +86,7 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 			case 11: // Shirt
 			case 12: // Pants
 				saveImages[0] = await clothingAsset(asset)
-				saveImages[1] = (id: string) => requestRender("Clothing", id)
+				saveImages[1] = (id: number) => requestRender("Clothing", id)
 				break
 
 			case 13: // Decal
@@ -119,8 +118,8 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 	}
 
 	const slug = encode(name)
-	const imageAssetId = randomId()
-	const id = randomId()
+	const imageAssetId = randomAssetId()
+	const id = randomAssetId()
 
 	const created = await createAsset(user.id, id, name, slug)
 	if (!created.ok) return formError(form, ["other"], [created.msg])

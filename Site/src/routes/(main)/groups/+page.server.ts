@@ -4,6 +4,7 @@ import { db } from "$lib/server/surreal"
 import groupsQuery from "./groups.surql"
 
 export type Group = {
+	id: string
 	name: string
 	memberCount: number
 }

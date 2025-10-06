@@ -1,21 +1,30 @@
 const cwd = "../Economy"
+const name = `Economy${process.platform === "win32" ? ".exe" : ""}`
+const path = `${cwd}/${name}`
 
 let started = false
 
 export default async () => {
 	if (started) return
 	started = true
-	console.log("Starting Economy service...")
 
-	const exists = await Bun.file(`${cwd}/Economy`).exists()
-
-	if (!exists) {
-		console.error("Attempting to build the Economy service...")
-		await Bun.spawn(["go", "build"], { cwd }).exited
+	if (!(await Bun.file(path).exists())) {
+		console.log(
+			"Economy service does not exist. Attempting to build it with Go..."
+		)
+		try {
+			await Bun.spawn(["go", "build"], { cwd }).exited
+		} catch {
+			console.error(
+				"The attempt to  automatically build the Economy service failed. Please build the service automatically, by navigating to the Economy folder and running `go build`, or make sure Go is installed and accessible as `go`."
+			)
+			console.error("https://docs.xtcy.dev/install/go/")
+			process.exit(1)
+		}
 	}
 
-	const name = process.platform === "win32" ? "./Economy.exe" : "./Economy"
-	const proc = Bun.spawn([name], {
+	console.log(`Starting Economy service (${path})...`)
+	const proc = Bun.spawn([`./${name}`], {
 		cwd,
 		stdout: "pipe",
 		stderr: "pipe",

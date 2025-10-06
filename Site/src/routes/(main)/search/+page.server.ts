@@ -21,6 +21,7 @@ type Asset = {
 }
 
 type Group = {
+	id: string
 	name: string
 	memberCount: number
 }

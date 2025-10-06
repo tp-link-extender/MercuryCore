@@ -1,4 +1,4 @@
-import { Record, db } from "$lib/server/surreal"
+import { db, Record } from "$lib/server/surreal"
 import notificationsQuery from "./notifications.surql"
 
 type Notification = {

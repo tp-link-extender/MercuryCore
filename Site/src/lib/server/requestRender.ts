@@ -1,4 +1,5 @@
 import fs from "node:fs"
+import { RCC_KEY } from "$env/static/private"
 import config from "$lib/server/config"
 import { db } from "$lib/server/surreal"
 import createRenderQuery from "./createRender.surql"
@@ -20,10 +21,14 @@ type Render = {
  */
 export default async function (
 	renderType: RenderType,
-	relativeId: string,
+	relativeId: string | number,
 	relativeName = relativeId,
 	wait = false
 ) {
+	// console.log(
+	// 	`Requesting render of type ${renderType} for ${relativeId} (${relativeName})`
+	// )
+
 	const params = { renderType, relativeId }
 	const [, , render] = await db.query<Render[]>(renderQuery, params)
 	if (render && render.status !== "Error") return
@@ -31,29 +36,38 @@ export default async function (
 	// If the render doesn't exist or if the last one errored, create a new render
 	const [, renderId] = await db.query<string[]>(createRenderQuery, params)
 
+	// console.log(`Created new render with ID ${renderId}`)
+
 	// Tap in rcc
 	const path =
-		renderType === "Avatar"
-			? `../data/avatars/${relativeId}.png`
-			: `../data/thumbnails/${relativeId}`
+		renderType === "Avatar" ? "../data/avatars" : "../data/thumbnails"
+	if (!fs.existsSync(path)) fs.mkdirSync(path)
 
 	// If the file doesn't exist, wait for it to be created
 	// if it does exist, wait for it to be modified
 	const waiter =
 		wait &&
 		new Promise<void>(resolve => {
+			// console.log(`Waiting for render file at ${path}`)
 			try {
-				const watcher = fs.watch(path, () => {
+				const watcher = fs.watch(path, (_, filename) => {
+					if (!filename?.startsWith(relativeId.toString())) {
+						// console.log(`Ignoring change to ${filename}`)
+						return
+					}
 					watcher.close()
+					// console.log("Watcher detected change!")
 					resolve()
 				})
+				// console.log("Watcher started")
 			} catch {
+				// console.log("Watcher failed!", e)
 				resolve()
 			}
 		})
 
 	// Send the script to the RCCService proxy
-	const scriptFile = Bun.file(`../Corescripts/render${renderType}.lua`)
+	const scriptFile = Bun.file(`../data/server/render/render${renderType}.lua`)
 	if (!(await scriptFile.exists()))
 		throw new Error(`Script file for ${renderType} does not exist`)
 
@@ -61,11 +75,14 @@ export default async function (
 
 	const script = (await scriptFile.text())
 		.replaceAll("_BASE_URL", `"${config.Domain}"`)
-		.replaceAll("_THUMBNAIL_KEY", `"${process.env.RCC_KEY}"`)
+		.replaceAll("_THUMBNAIL_KEY", `"${RCC_KEY}"`)
 		.replaceAll("_RENDER_TYPE", `"${renderType}"`)
-		.replaceAll("_ASSET_ID", `"${relativeName}"`)
+		.replaceAll("_ASSET_ID", `"${relativeName}"`) // TODO: make not string
 		.replaceAll("_PING_URL", `"${pingUrl}"`)
 
+	// console.log(
+	// 	`Sending render request to RCCService for render ID ${renderId}`
+	// )
 	await Promise.all([
 		waiter,
 		// Uhh carrot just got the

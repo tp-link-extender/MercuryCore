@@ -14,7 +14,11 @@ type User = {
 }
 
 export async function GET({ params }) {
-	const [[user]] = await db.query<User[][]>(bodyColoursQuery, params)
+	const un = params.username
+	// trim # because sometimes there's a fragment
+	const username = un.endsWith("#") ? un.slice(0, -1) : un
+
+	const [[user]] = await db.query<User[][]>(bodyColoursQuery, { username })
 	if (!user) error(404, "User not found")
 
 	const colours = user.bodyColours

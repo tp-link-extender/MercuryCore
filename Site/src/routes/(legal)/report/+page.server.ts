@@ -65,7 +65,7 @@ actions.default = async ({ locals, request, url, getClientAddress }) => {
 	if (!username || !reportUrl) error(400, "Missing fields")
 
 	const reportee = await getReportee(username)
-	if (!reportee) return message(form, "Invalid user", { status: 400 })
+	if (!reportee) return message(form, "Invalid user")
 
 	const limit = ratelimit(form, "report", getClientAddress, 120)
 	if (limit) return limit

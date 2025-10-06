@@ -23,6 +23,13 @@ type Place = {
 	dislikeCount: number
 }
 
+type Status = {
+	id: string
+	author: BasicUser
+	created: Date
+	currentContent: string
+}
+
 export async function load({ locals }) {
 	const { user } = await authorise(locals)
 	// (main)/+layout.server.ts will handle most redirects for logged-out users, but sometimes errors for this page.
@@ -34,7 +41,7 @@ export async function load({ locals }) {
 	]
 
 	const [places, friends, feed] = await db.query<
-		[Place[], BasicUser[], Comment[]]
+		[Place[], BasicUser[], Status[]]
 	>(homeQuery, { user: Record("user", user.id) })
 
 	return {

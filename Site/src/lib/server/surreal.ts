@@ -92,8 +92,7 @@ if (!building) {
 }
 
 type RecordIdTypes = {
-	asset: string
-	assetCache: [number, number]
+	asset: number
 	auditLog: string
 	banner: string
 	comment: string
@@ -113,7 +112,7 @@ type RecordIdTypes = {
 	ownsAsset: string
 	ownsGroup: string
 	ownsPlace: string
-	place: string
+	place: number
 	playing: string
 	posted: string
 	recentlyWorn: string

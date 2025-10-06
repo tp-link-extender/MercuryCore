@@ -14,5 +14,6 @@ SELECT
 	count(
 		SELECT 1 FROM comment
 		WHERE type = ["forum", record::id($parent.id)]
+			AND visibility = "Visible"
 	) AS postCount
 FROM forumCategory;

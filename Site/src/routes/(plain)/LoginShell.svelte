@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from "svelte"
+	import { dev } from "$app/environment"
 
 	const {
 		name,
@@ -10,7 +11,7 @@
 	}: {
 		name: string
 		tagline: string
-		descriptions: { [_: string]: string }
+		descriptions: [string, string][]
 		pad?: boolean
 		children?: Snippet
 	} = $props()
@@ -20,10 +21,12 @@
 	<div
 		id="dark"
 		class="lg:w-1/2 p-8vw pt-5vh {pad ? 'lg:pt-20vh' : 'lg:pt-12vh'}">
-		<a href="/" class="btn btn-lg border-0 px-0 text-base">
-			<fa fa-arrow-left class="pr-2"></fa>
-			Home
-		</a>
+		{#if dev}
+			<a href="/" class="btn btn-lg border-0 px-0 text-base">
+				<fa fa-arrow-left class="pr-2"></fa>
+				Home
+			</a>
+		{/if}
 		<h1 class="font-bold text-14">{name}</h1>
 		{#if tagline}
 			<h2 class="font-semibold pb-3 text-12 opacity-50">
@@ -32,7 +35,7 @@
 		{/if}
 		<hr class="pt-6" />
 
-		{#each Object.entries(descriptions) as [title, description]}
+		{#each descriptions as [title, description]}
 			<div class="w-full">
 				<h2 class="font-semibold">{title}</h2>
 				<p class="pl-4 opacity-75">{description}</p>

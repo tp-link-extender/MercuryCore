@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Head from "$components/Head.svelte"
+	import { superForm } from "sveltekit-superforms/client"
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
-	import { superForm } from "sveltekit-superforms/client"
+	import Head from "$components/Head.svelte"
 	import LoginShell from "../LoginShell.svelte"
 	import Waves from "../Waves.svelte"
 

@@ -1,8 +1,8 @@
 import { createHash } from "node:crypto"
-import { error, redirect } from "@sveltejs/kit"
-import { idRegex, intRegex } from "$lib/paramTests"
+import { error } from "@sveltejs/kit"
+import { OPEN_CLOUD_KEY } from "$env/static/private"
+import { intRegex } from "$lib/paramTests"
 import config from "$lib/server/config"
-import { SignData } from "$lib/server/sign"
 import { db, Record } from "$lib/server/surreal"
 import assetQuery from "./asset.surql"
 
@@ -13,7 +13,7 @@ const headers = (file: string | Uint8Array) => ({
 		.digest("hex")}"`,
 })
 
-const response = (file: string | Uint8Array) =>
+const response = (file: string | Uint8Array<ArrayBuffer>) =>
 	new Response(file, { headers: headers(file) })
 
 type FoundAsset = {
@@ -22,55 +22,102 @@ type FoundAsset = {
 	visibility: string
 }
 
-// you know how much I hate this thing, I don't even think I can rewrite it to make it better
-const healthModelId = "38037265"
+const xmlStart = "<roblox"
 
-export async function GET({ url }) {
-	const id = url.searchParams.get("id")
-
-	if (!id) error(400, "Invalid Request")
-	// all numbered ids are corescripts (for now)
-
-	if (intRegex.test(id)) {
-		console.log("Serving corescript", id)
-
-		const isHealthModel = id === healthModelId
-		const file = Bun.file(
-			`../Corescripts/${id}.${isHealthModel ? "xml" : "lua"}`
+// Only substitute if it's an XML file (re-encoding image files tends to corrupt them)
+async function substituteURLs(file: Bun.BunFile | Response) {
+	const buf = await file.arrayBuffer()
+	if (
+		buf.byteLength >= 7 &&
+		new Uint8Array(buf.slice(0, 7)).every(
+			(b, i) => b === xmlStart.charCodeAt(i)
 		)
-		if (!(await file.exists())) error(404, "Corescript not found")
+	)
+		return new TextDecoder()
+			.decode(buf)
+			.replaceAll("roblox.com/asset", `${config.Domain}/asset`)
 
-		const script = (await file.text()).replaceAll(
-			"roblox.com/asset",
-			`${config.Domain}/asset`
-		)
+	return new Uint8Array(buf)
+}
 
-		if (isHealthModel) return response(script)
-		return response(await SignData(script))
+async function loadPrivilegedAsset(id: number) {
+	const file = Bun.file(`../data/server/assets/${id}`)
+	if (!(await file.exists())) return
+
+	// Privileged assets don't need their URLs substituted
+
+	console.log("Serving privileged", id)
+	return response(new Uint8Array(await file.arrayBuffer()))
+}
+
+async function loadUserAsset(id: number) {
+	const file = Bun.file(`../data/assets/${id}`)
+	if (!(await file.exists())) return
+
+	const [[asset]] = await db.query<FoundAsset[][]>(assetQuery, {
+		asset: Record("asset", id),
+	})
+	if (!asset || asset.visibility === "Moderated") return
+
+	// The asset is visible or pending
+	// (allow pending assets to be shown through the api)
+	const script = await substituteURLs(file)
+
+	console.log("Serving user", id)
+	return response(script)
+}
+
+async function loadOpenCloudAsset(id: number) {
+	const cachepath = `../data/assetcache/${id}`
+	const file = Bun.file(cachepath)
+	if (await file.exists()) {
+		console.log("Serving cached Open Cloud", id)
+		return response(new Uint8Array(await file.arrayBuffer()))
 	}
-
-	if (!idRegex.test(id)) error(400, "Invalid Request")
-	console.log("Serving", id)
 
 	try {
-		// Try loading as an asset
+		const req = await fetch(
+			`https://apis.roblox.com/asset-delivery-api/v1/assetId/${id}`,
+			{ headers: { "X-API-Key": OPEN_CLOUD_KEY } }
+		)
+		if (!req.ok) return
 
-		if (!(await Bun.file(`../data/assets/${id}`).exists()))
-			throw new Error("Asset not found")
+		const json = (await req.json()) as { location: string }
+		const location = json.location
+		if (!location) return
 
-		const [[asset]] = await db.query<FoundAsset[][]>(assetQuery, {
-			asset: Record("asset", id),
-		})
+		const res = await fetch(location)
+		if (!res.ok) return
 
-		if (!asset || asset.visibility === "Moderated")
-			throw new Error("Asset not found")
+		// cache the asset
+		const script = await substituteURLs(res)
+		await Bun.write(cachepath, script)
 
-		// The asset is visible or pending
-		// (allow pending assets to be shown through the api)
-		console.log(`serving asset #${id}`)
-		const file = await Bun.file(`../data/assets/${id}`).arrayBuffer()
-		return response(new Uint8Array(file))
-	} catch {
-		redirect(302, `https://assetdelivery.roblox.com/v1/asset?id=${id}`)
+		console.log("Serving Open Cloud", id)
+		return response(script)
+	} catch (e) {
+		console.error(e)
+		error(500, "Failed to fetch Open Cloud asset")
 	}
+}
+
+export async function GET({ url }) {
+	const assetId = url.searchParams.get("id")
+	if (!assetId || !intRegex.test(assetId)) error(400, "Invalid Request")
+
+	// all asset ids are now numbered
+	const id = +assetId
+	console.log("Requested asset", id)
+
+	const result1 = await loadPrivilegedAsset(id)
+	if (result1) return result1
+
+	// Try loading as a user asset
+	const result2 = await loadUserAsset(id)
+	if (result2) return result2
+
+	const result3 = await loadOpenCloudAsset(id)
+	if (result3) return result3
+
+	error(404, "Not Found")
 }

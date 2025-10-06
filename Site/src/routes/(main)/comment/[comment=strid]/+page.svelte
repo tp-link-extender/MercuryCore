@@ -1,11 +1,11 @@
 <script lang="ts">
+	import type { ActionResult } from "@sveltejs/kit"
+	import { superForm } from "sveltekit-superforms"
 	import { invalidateAll } from "$app/navigation"
 	import Breadcrumbs from "$components/Breadcrumbs.svelte"
 	import Comment from "$components/Comment.svelte"
 	import Head from "$components/Head.svelte"
 	import PostReply from "$components/PostReply.svelte"
-	import type { ActionResult } from "@sveltejs/kit"
-	import { superForm } from "sveltekit-superforms"
 	import ForumPost from "./ForumPost.svelte"
 	import ForumReply from "./ForumReply.svelte"
 
@@ -96,7 +96,11 @@
 			<ForumReply {comment} {onResult} {user} />
 		{/if}
 	{:else if type[0] === "status"}
-		<ForumPost {comment} {onResult} {user} />
+		{#if type.length === 1}
+			<ForumPost {comment} {onResult} {user} />
+		{:else}
+			<ForumReply {comment} {onResult} {user} />
+		{/if}
 	{/if}
 
 	<PostReply {formData} />

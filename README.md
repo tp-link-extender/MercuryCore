@@ -103,12 +103,12 @@ However, the most powerful way to customise Mercury Core will always be to edit 
 
 Client integration remains, by its nature, a difficult part of building any revival platform.
 
-Corescripts for clients that support it should be placed in a newly created **Corescripts** directory. This includes host, join, studio, visit, and render scripts, as well as any external libraries you wish to use. Beyond this, corescripts are not in the scope of Mercury Core.  
-They should be written in or compiled to Lua, and should aim to be as lightweight and efficient as possible. Minification and removal of extraneous code is recommended to decrease load on both the server and clients, as well as the use of a module system to keep code organised and reduce duplication.
+We'll use the term "Privileged asset" for any asset with an ID hardcoded into the client, or depended on by a script sent to the client. These should be generated in a specific folder structure (details at [tp-link-extender/2013](https://github.com/tp-link-extender/2013)) and placed in the **data/assets** directory. This includes corescripts, host, join, studio, visit, and render scripts (loadscripts), as well as any external libraries you wish to use. Beyond this, privileged assets are not in the scope of Mercury Core.  
+Any scripts used should be written in or compiled to Lua, and should aim to be as lightweight and efficient as possible. Minification and removal of extraneous code is recommended to decrease load on both the server and clients, as well as the use of a module system to keep code organised and reduce duplication.
 
 > [!CAUTION]  
 > If you're using original corescripts provided with the client instead of custom ones, it's common to encounter issues which may need heavy modification to fix or rewrite into your own custom corescripts. This requires a significant amount of internal client knowledge and maintenance effort, with very sparse documentation available for beginners.  
-> If choosing to go down the route of using original corescripts, especially for older clients, we recommend taking a look at the scripts used for original Mercury 2 at [tp-link-extender/2013](https://github.com/tp-link-extender/2013) and wish you the best of luck.
+> If choosing to go down the route of using original corescripts or loadscripts, especially for older clients, we recommend taking a look at the scripts used for original Mercury 2 at [tp-link-extender/2013](https://github.com/tp-link-extender/2013) and wish you the best of luck.
 
 The private key for corescript signing should be placed in **Assets/PrivateKey.pem**, with the corresponding public key patched into the client.
 
