@@ -1,0 +1,49 @@
+---
+title: RCCService
+description: Information about how RCCService works with Mercury Core and how it integrates with a revival platform.
+---
+
+This page provides information about the RCCService (Roblox Cloud Compute Service/Roblox Compute Cloud Service) and how to use it with Mercury Core.
+
+## Purpose
+
+RCC is an important piece of a revival platform, and has many useful capabilities. The primary use cases are hosting servers for multiplayer games, and rendering images of user-uploaded assets such as avatars, models, clothing, and places.
+
+## Versions
+
+Prior to 2008, RCC was known as RBXGS (Roblox Grid Services). These versions won't be covered at the moment as they're rarely used in the community.
+
+If you're only planning to use RCC for rendering images, the version doesn't matter too much unless you want historical accuracy. If you're planning to host multiplayer games, the version should match that of your Client and Studio as closely as possible. Mercury previously used a 2015 version of RCC alongside a 2013 Client and Studio, as RCC was not used for hosting games.
+
+## Security
+
+RCCService usually runs TCP traffic on port 64989. It is strongly recommended not to expose RCC directly to the internet, in order to prevent requests from malicious third parties. Instead, the most common options are to use a secure VPN tunnel, like [OpenVPN](https://openvpn.net/get-started/), [WireGuard](https://www.wireguard.com), or [Tailscale](https://tailscale.com/kb/1017/install), or a proxy server.
+
+## Communication
+
+Up until 2021, RCC used a SOAP-based protocol, with XML payloads for communication. From 2021 onwards, RCC switched to a JSON-based protocol. Most of the time, it's simple to create a XML/JSON template and substitute values into it as needed to create requests.
+
+The main part of this template will usually be a Lua script instructing the service what to do, such as to create a game server in the same way that a host script does, or to render an image of a 3D model using the ThumbnailGenerator service. Once the operation is complete, the script will also handle notifying the requester of the results in an asynchronous manner.
+
+## Proxying
+
+Mercury Core communicates with RCC via a proxy server. This helps to ensure security, while also improving ease of communication with the service. In some cases, an RCC instance will produce invalid responses or gzip compress outputs based on their size, which a proxy server helps to prevent, as well as being able to downsize & de-alias images and compress responses into a more efficient binary format (as opposed to the standard Base64 encoding) to reduce network traffic and improve response speeds.
+
+{% aside type="danger" title="Available implementations" %}
+	An implementation of the proxy server is available at [gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff](https://gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff). However, this implementation is outdated and uses the old Base64 communication format. An updated version will be made available soon.
+{% /aside %}
+
+The proxy server should run on port 64990. A **.env** file should be created in the same directory as the proxy server executable, with the following contents:
+
+```
+IP=::1
+ENDPOINT=http://xtcy.dev/api/render/update
+```
+
+`IP` should be set to the IP address of the RCC server, and `ENDPOINT` should be set to the URL of the render status update API path on your Mercury Core instance. By default, this is **/api/render/update**.
+
+Running the proxy server will start and manage the RCCService process automatically, provided that it is located as **RCCService/RCCService.exe** relative to the proxy server executable. If the host OS is Linux, it will use [Wine](https://www.winehq.org) to run the RCCService executable. As such, make sure it is installed, configured correctly to run 32-bit Windows applications, allows access to a virtual desktop if needed, and that it is accessible from the command line as `wine`.
+
+## Render scripts
+
+A set of render scripts are loaded by Mercury Core and sent to RCC, telling it exactly how to load and render assets, models, places, or user avatars. A set of example scripts for the 2015 RCCService are available at [tp-link-extender/2013](https://github.com/tp-link-extender/2013/tree/main/Render).

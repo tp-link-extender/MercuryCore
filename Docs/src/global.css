@@ -1,0 +1,53 @@
+:root {
+	--hue: 260;
+	--mainaccent: hsl(var(--hue) 100 60);
+
+	--darker: hsl(var(--hue) 10 4);
+	--background: hsl(var(--hue) 10 6);
+
+	--sl-font: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Dark mode colors. */
+:root {
+	--sl-color-accent-low: hsl(var(--hue) 100 30);
+	--sl-color-accent: var(--mainaccent);
+	--sl-color-accent-high: hsl(var(--hue) 100 75);
+	--sl-color-white: hsl(var(--hue) 5 96);
+	--sl-color-gray-1: hsl(var(--hue) 5 92);
+	--sl-color-gray-2: hsl(var(--hue) 10 77);
+	--sl-color-gray-3: hsl(var(--hue) 10 56);
+	--sl-color-gray-4: hsl(var(--hue) 10 35);
+	--sl-color-gray-5: hsl(var(--hue) 10 23);
+	--sl-color-gray-6: hsl(var(--hue) 10 12);
+	--sl-color-gray-7: var(--darker);
+	--sl-color-black: var(--background);
+}
+/* Light mode colors. */
+:root[data-theme="light"] {
+	--sl-color-accent-low: hsl(var(--hue) 100 75);
+	--sl-color-accent: var(--mainaccent);
+	--sl-color-accent-high: hsl(var(--hue) 100 30);
+	--sl-color-white: var(--darker);
+	--sl-color-gray-1: hsl(var(--hue) 10 12);
+	--sl-color-gray-2: hsl(var(--hue) 10 23);
+	--sl-color-gray-3: hsl(var(--hue) 10 35);
+	--sl-color-gray-4: hsl(var(--hue) 10 56);
+	--sl-color-gray-5: hsl(var(--hue) 10 77);
+	--sl-color-gray-6: hsl(var(--hue) 5 88);
+	--sl-color-gray-7: hsl(var(--hue) 5 92);
+	--sl-color-black: hsl(var(--hue) 5 96);
+}
+
+* {
+	font-feature-settings: "cv03", "cv04", "cv08", "cv09";
+}
+
+main img {
+	border-radius: 0.5rem;
+}
+
+button,
+a {
+	cursor: pointer;
+}

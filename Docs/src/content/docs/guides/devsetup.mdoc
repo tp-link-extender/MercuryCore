@@ -1,0 +1,47 @@
+---
+title: Development setup
+description: How to set up Mercury Core for local development.
+---
+
+This guide details how to set up Mercury Core for local development and modification.
+
+For a guide on server installation and hosting for production, see [Production setup](/guides/prodsetup).
+
+## Requirements
+
+You should already have the necessary dependencies and command line tools installed. If not, see [Installation](/install) for an installation guide.
+
+You will need:
+
+-   Latest version of [Git](https://git-scm.com/) installed (expected as `git`)
+-   Latest version of [Bun](https://bun.sh/) installed (expected as `bun`)
+-   Latest version of [Docker](https://www.docker.com/) installed (expected as `docker`, optional)
+    -   Alternative container managers can be used, for example [Podman](https://podman.io/).
+-   A terminal
+-   A modern web browser (Early 2024 onwards for most major browsers)
+-   A computer, as it would be painful to live without one, wouldn't it?
+
+## Instructions
+
+{% steps %}
+
+1. Clone the [tp-link-extender/MercuryCore](https://github.com/tp-link-extender/MercuryCore) repository to a directory of your choice on your local machine.
+
+	```bash
+	git clone https://github.com/tp-link-extender/MercuryCore
+	```
+
+2. Navigate to the directory of the repository.
+
+3. Run `bun i` to install all dependencies.
+
+4. Copy the **Site/.env.example** file to **Site/.env** and modify it to set up the environment variables
+
+5. If you're using containers, run `docker compose up -d` to start the Database and Economy services.
+
+6. Run `bun dev` to start the development server and open the web interface in your default browser. This will start the Database and Economy services automatically if they are not already running.
+	{% aside type="tip" title="Hot reloading" %}
+		The development server supports hot reloading, so any changes you make to the code will be automatically reflected in the browser without needing to refresh the page.
+	{% /aside %}
+
+{% /steps %}
