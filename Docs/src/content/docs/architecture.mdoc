@@ -17,4 +17,10 @@ Using a Virtual Private Server (VPS) is another common approach for hosting Merc
 
 Hosting external services that only run on Windows, such as RCCService, is often necessary. If running on dedicated hardware, this can be accomplished by installing a minimal Windows Server environment in a VM, allowing it to network with the Linux host. This can be done with tools such as [QEMU](https://www.qemu.org), [VirtualBox](https://www.virtualbox.org/), [VMware](https://www.vmware.com/), etc (Mercury previously used [Vagrant](https://developer.hashicorp.com/vagrant) with a VirtualBox backend for hosting RCC).
 
+{% aside type="tip" title="Windows applications on Linux" %}
+	Instead of using a VM or dual-server approach, it may be possible to run Windows applications on Linux using a compatibility layer such as [Wine](https://www.winehq.org). This generally works surprisingly well, though often needs configuration and testing to get working properly.
+
+	If doing this, make sure to set up your compatibility layer installation to run 32-bit applications. Also make sure to allow access to a virtual desktop or display server, as this is required for graphical purposes like rendering.
+{% /aside %}
+
 If networking issues arise during communication with the VM, or if running Mercury Core in a VPS, consider using a dual-server approach with a Linux host for running Mercury Core and a Windows host for running Windows-only services. As opening the Windows services to the public internet is likely required in this setup, using a VPN tunnel like [OpenVPN](https://openvpn.net) or [WireGuard](https://www.wireguard.com) can help secure the connection, although a basic [proxy](https://gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff) is usually sufficient and much easier to set up.

@@ -33,6 +33,17 @@ Mercury Core communicates with RCC via a proxy server. This helps to ensure secu
 	An implementation of the proxy server is available at [gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff](https://gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff). However, this implementation is outdated and uses the old Base64 communication format. An updated version will be made available soon.
 {% /aside %}
 
+The proxy server should run on port 64990. A **.env** file should be created in the same directory as the proxy server executable, with the following contents:
+
+```
+IP=::1
+ENDPOINT=http://xtcy.dev/api/render/update
+```
+
+`IP` should be set to the IP address of the RCC server, and `ENDPOINT` should be set to the URL of the render status update API path on your Mercury Core instance. By default, this is **/api/render/update**.
+
+Running the proxy server will start and manage the RCCService process automatically, provided that it is located as **RCCService/RCCService.exe** relative to the proxy server executable. If the host OS is Linux, it will use [Wine](https://www.winehq.org) to run the RCCService executable. As such, make sure it is installed, configured correctly to run 32-bit Windows applications, allows access to a virtual desktop if needed, and that it is accessible from the command line as `wine`.
+
 ## Render scripts
 
 A set of render scripts are loaded by Mercury Core and sent to RCC, telling it exactly how to load and render assets, models, places, or user avatars. A set of example scripts for the 2015 RCCService are available at [tp-link-extender/2013](https://github.com/tp-link-extender/2013/tree/main/Render).
