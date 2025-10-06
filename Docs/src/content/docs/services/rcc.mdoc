@@ -21,9 +21,9 @@ RCCService usually runs TCP traffic on port 64989. It is strongly recommended no
 
 ## Communication
 
-Up until 2021, RCC used a SOAP-based protocol, with XML payloads for communication. From 2021 onwards, RCC switched to a JSON-based protocol. Most of the time, it's simple to create a XML/JSON template and substitute values into it as needed to create requests.
+Up until 2017, RCC used a SOAP-based protocol, with Lua scripts inside XML payloads for communication. From 2017 until 2021, RCC used a system with JSON configuration inside XML SOAP payloads. From 2021 onwards, RCC uses an entirely JSON-based protocol. Most of the time, it's simple to create a XML/JSON template and substitute values into it as needed to create requests.
 
-The main part of this template will usually be a Lua script instructing the service what to do, such as to create a game server in the same way that a host script does, or to render an image of a 3D model using the ThumbnailGenerator service. Once the operation is complete, the script will also handle notifying the requester of the results in an asynchronous manner.
+If using a Lua script over SOAP, the script will instruct the service what to do, such as to create a game server in the same way that a host script does, or to render an image of a 3D model using the ThumbnailGenerator service. Once the operation is complete, the script will also handle notifying the requester of the results in an asynchronous manner.
 
 ## Proxying
 
