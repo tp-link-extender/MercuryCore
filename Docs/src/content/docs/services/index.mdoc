@@ -18,21 +18,21 @@ The Site service is the main component of Mercury Core, responsible for serving 
 	- User profiles
 	- Friends, following, and followers interactions between users
 	- Comments as text posts, used on the forum, in reply to assets, and status posts
-- API endpoints for accessing and interacting with clients
+- API endpoints for accessing and interacting with Clients
 
-The site will automatically start the Economy and Database services as needed if not using containers.
+The Site will automatically start the Economy and Database services as needed if not using containers.
 
 ### Economy
 
 The Economy service manages the in-game economy, including player transactions and currency systems. It ensures a balanced and fair economic environment for all players.
 
-The site can run without the Economy service, though some pages on the site will become inaccessible.
+The Site can run without the Economy service, though some pages on the Site will become inaccessible.
 
 ### Database
 
 The Database service is a [SurrealDB](https://surrealdb.com/) instance that stores all the data for the platform, including user accounts, uploaded places, game assets, and other related information. It provides a flexible and powerful data storage solution, chosen for its ability to handle complex relationships between different entities.
 
-The site will usually error if the Database service is not running, as it relies on the database for most of its functionality.
+The Site will usually error if the Database service is not running, as it relies on the database for most of its functionality.
 
 ## External services
 
@@ -42,37 +42,37 @@ These are external services that are not part of the Mercury Core platform, but 
 
 The Client is a key part of any revival platform. It handles the game logic, connection to place servers, world rendering, and gameplay.
 
-Clients need to be patched, proxied, hooked, or otherwise modified to work with an alternative API implementation such as Mercury Core. This process, as well as the API used by the client, will differ depending on the client version being used and any specific requirements of the revival platform.
+Clients need to be patched, proxied, hooked, or otherwise modified to work with an alternative API implementation such as Mercury Core. This process, as well as the API used by the Client, will differ depending on the Client version being used and any specific requirements of the revival platform.
 
-If the client is from 2011 or later, corescripts may be necessary to handle many features in the client. These will usually be written or found separately, and can be loaded as assets from the site.
+If the Client is from 2011 or later, Client scripts may be necessary to handle many features in the Client. These will usually be written or found separately, and can be loaded as assets from the Site. A [guide](/guides/coresetup) is available to help with setting up corescripts, based on the example 2013 Client scripts at [tp-link-extender/2013](https://github.com/tp-link-extender/2013)
 
 {% aside type="danger" title="Corescripts" %}
-	If you're using original corescripts provided with the client instead of custom ones, it's common to encounter issues which may need heavy modification to fix or rewrite into your own custom corescripts. This requires a significant amount of internal client knowledge and maintenance effort, with very sparse documentation available for beginners.
+	If you're using original corescripts provided with the Client instead of custom ones, it's common to encounter issues which may need heavy modification to fix or rewrite into your own custom corescripts. This requires a significant amount of internal Client knowledge and maintenance effort, with very sparse documentation available for beginners.
 
-	If choosing to go down the route of using original corescripts, especially for older clients, we recommend taking a look at the scripts used for 2013 clients at [tp-link-extender/2013](https://github.com/tp-link-extender/2013) and wish you the best of luck.
+	If choosing to go down the route of using original corescripts, especially for older Clients, we recommend taking a look at our example scripts for 2013 Clients and wish you the best of luck.
 {% /aside %}
 
 ### Studio
 
-The Studio provides an environment for users to create and edit places, assets, and other content for the platform. It interacts with the site using a similar set of API endpoints as the client, allowing users to upload and manage their creations. They can also be used to host a place server, allowing other users to connect to it and play together.
+The Studio provides an environment for users to create and edit places, assets, and other content for the platform. It interacts with the Site using a similar set of API endpoints as the Client, allowing users to upload and manage their creations. They can also be used to host a place server, allowing other users to connect to it and play together.
 
-Studios need to be modified in a similar way to clients to interact with an alternative API implementation.
+Studios need to be modified in a similar way to Clients to interact with an alternative API implementation.
 
-Depending on when the studio is from, some corescripts may be required, as well as implementations of plugins.
+Depending on when the Studio is from, some corescripts may be required, as well as implementations of plugins.
 
-Due to the difficulty of providing web services across many of the ancient webviews used in studios, support for interacting with the website from studio has been removed from Mercury Core. Users will need to use the site in a separate browser to open, upload, and manage their places and assets rather than doing so directly from the studio.
+Due to the difficulty of providing web services across many of the ancient webviews used in Studios, support for interacting with the Site from Studio has been removed from Mercury Core. Users will need to use the website in a separate browser to open, upload, and manage their places and assets rather than doing so directly from the Studio. This may change in future, especially if the ability to replace the Studio webview with a modern one, probably via a DLL hook, becomes available.
 
 ### RCCService
 
 RCCService is used for rendering images of avatars, places, and other user-uploaded assets.
 
-The Mercury Core site communicates with a RCC instance via a [proxy](https://gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff) used to simplify requests and responses, and to handle authentication. Work sent to RCC needs to be queued as a task, which is then processed by the RCCService instance. The results are then returned to the site directly through a API endpoint.
+The Mercury Core Site communicates with a RCC instance via a [proxy](https://gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff) used to simplify requests and responses, and to handle authentication. Work sent to RCC needs to be queued as a task, which is then processed by the RCCService instance. The results are then returned to the Site directly through a API endpoint.
 
-RCCService is easily customised through providing Lua scripts. These scripts also handle data serialisation and communication with the site.
+RCCService is easily customised through providing Lua scripts. These scripts also handle data serialisation and communication with the Site.
 
 ### Chat server integration
 
-It's common for revival platforms to have a significant portion of their community interaction take place in chat servers, usually [Discord](https://discord.com/) or [Guilded](https://www.guilded.gg/). As such, a mechanism for communication between the site and the chat server is often useful. A Mercury Discord bot is available at [tp-link-extender/Bot](https://github.com/tp-link-extender/Bot), handling reviewing and acceptance of applications and automatic distribution of invite keys.
+It's common for revival platforms to have a significant portion of their community interaction take place in chat servers, usually [Discord](https://discord.com/) or [Guilded](https://www.guilded.gg/). As such, a mechanism for communication between the Site and the chat server is often useful. A Mercury Discord bot is available at [tp-link-extender/Bot](https://github.com/tp-link-extender/Bot), handling reviewing and acceptance of applications and automatic distribution of invite keys.
 
 {% aside type="caution" title="Site integration" %}
 	The functionality for communication between the Site and the Discord bot is currently disabled in Mercury Core due to low usage. Please let us know if you would like it to be re-enabled by [filing an issue on the repository](https://github.com/tp-link-extender/MercuryCore/issues)!
