@@ -12,7 +12,6 @@ export default async () => {
 				"start",
 				"-u=root",
 				"-p=root",
-				"--allow-scripting",
 				"surrealkv://data/surreal",
 			],
 			{ cwd: "..", stdout: "pipe", stderr: "pipe" }

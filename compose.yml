@@ -15,7 +15,6 @@ services:
             - start
             - -u=root
             - -p=root
-            - --allow-scripting
             - surrealkv://database
 
     economy:
