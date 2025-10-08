@@ -1,6 +1,7 @@
 package ledger_test
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
@@ -52,7 +53,7 @@ func TestEconomy(t *testing.T) {
 
 	u1 := User(RandId())
 
-	if _, err = e.Mint(SentMint{
+	if err = e.Mint(SentMint{
 		To:     u1,
 		Amount: 50 * Unit,
 		Note:   "Here's 50 points for being a fly guy",
@@ -64,7 +65,7 @@ func TestEconomy(t *testing.T) {
 
 	u2 := User(RandId())
 
-	if _, err = e.Mint(SentMint{
+	if err = e.Mint(SentMint{
 		To:     u2,
 		Amount: 100 * Unit,
 		Note:   "Stipend",
@@ -117,6 +118,20 @@ func TestEconomy(t *testing.T) {
 	et.ExpectBalance(u2, 125*Unit)
 
 	e.Stats()
+
+	fmt.Println()
+	file.Seek(0, 0) // rewind for reading
+
+	e2, err := NewEconomy(file)
+	if err != nil {
+		t.Fatalf("Failed to reopen economy: %v", err)
+	}
+	e2.Stats()
+
+	et2 := &EconomyTest{e2, t}
+
+	et2.ExpectBalance(u1, 15*Unit)
+	et2.ExpectBalance(u2, 125*Unit)
 }
 
 func TestAssets(t *testing.T) {
@@ -136,7 +151,7 @@ func TestAssets(t *testing.T) {
 	u1 := User(RandId())
 	u2 := User(RandId())
 
-	if _, err = e.Mint(SentMint{
+	if err = e.Mint(SentMint{
 		To:     u1,
 		Amount: 1 * Unit,
 		Note:   "Minting for asset testing",
@@ -144,7 +159,7 @@ func TestAssets(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, err = e.Mint(SentMint{
+	if err = e.Mint(SentMint{
 		To:     u2,
 		Amount: 1 * Unit,
 		Note:   "Minting for asset testing",
@@ -183,4 +198,18 @@ func TestAssets(t *testing.T) {
 	et.ExpectInventoryQuantity(u2, a, 100)
 
 	e.Stats()
+
+	fmt.Println()
+	file.Seek(0, 0) // rewind for reading
+
+	e2, err := NewEconomy(file)
+	if err != nil {
+		t.Fatalf("Failed to reopen economy: %v", err)
+	}
+	e2.Stats()
+
+	et2 := &EconomyTest{e2, t}
+
+	et2.ExpectInventoryInfinite(u1, a)
+	et2.ExpectInventoryQuantity(u2, a, 100)
 }

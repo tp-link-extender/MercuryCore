@@ -1,6 +1,7 @@
 package ledger
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -177,24 +178,24 @@ func (e *Economy) validateTx(sent SentTx) error {
 	if total := sent.Amount; total > e.balances[sent.From] {
 		return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", e.balances[sent.From].Readable(), total.Readable())
 	}
-	if sent.Returns != nil {
-		if e.inventories[sent.To] == nil {
-			e.inventories[sent.To] = Assets{}
-		}
-		if e.inventories[sent.From] == nil {
-			e.inventories[sent.From] = Assets{}
-		}
 
-		for asset, quantity := range sent.Returns {
-			if quantity > e.inventories[sent.To][asset] {
-				return errors.New("insufficient asset quantity: other user does not have enough of the requested asset")
-			}
-			if e.inventories[sent.From][asset] >= BasicallyInfinity {
-				return errors.New("you already have infinity of the requested asset")
-			}
+	if sent.Returns == nil {
+		return nil
+	}
 
-			e.inventories[sent.To][asset] -= quantity
-			e.inventories[sent.From][asset] += quantity
+	if e.inventories[sent.To] == nil {
+		e.inventories[sent.To] = Assets{}
+	}
+	if e.inventories[sent.From] == nil {
+		e.inventories[sent.From] = Assets{}
+	}
+
+	for asset, qty := range sent.Returns {
+		if qty > e.inventories[sent.To][asset] {
+			return errors.New("insufficient asset quantity: other user does not have enough of the requested asset")
+		}
+		if e.inventories[sent.From][asset] >= BasicallyInfinity {
+			return errors.New("you already have infinity of the requested asset")
 		}
 	}
 	return nil
@@ -229,17 +230,18 @@ func (e *Economy) validateBurn(sent SentBurn) error {
 	if sent.Link == "" {
 		return errors.New("burn must have a link")
 	}
-	if sent.Returns != nil {
-		if e.inventories[sent.From] == nil {
-			e.inventories[sent.From] = Assets{}
-		}
 
-		for asset, quantity := range sent.Returns {
-			if e.inventories[sent.From][asset] > BasicallyInfinity {
-				return errors.New("you already have infinity of the requested asset")
-			}
+	if sent.Returns == nil {
+		return nil
+	}
 
-			e.inventories[sent.From][asset] += quantity
+	if e.inventories[sent.From] == nil {
+		e.inventories[sent.From] = Assets{}
+	}
+
+	for asset := range sent.Returns {
+		if e.inventories[sent.From][asset] > BasicallyInfinity {
+			return errors.New("you already have infinity of the requested asset")
 		}
 	}
 	return nil
@@ -297,6 +299,16 @@ func (e *Economy) handleTxTypes(lines []string) (err error) {
 func (e *Economy) loadTx(tx Tx) {
 	e.balances[tx.From] -= tx.Amount
 	e.balances[tx.To] += tx.Amount
+	for asset, qty := range tx.Returns {
+		if e.inventories[tx.To] == nil {
+			e.inventories[tx.To] = Assets{}
+		}
+		if e.inventories[tx.From] == nil {
+			e.inventories[tx.From] = Assets{}
+		}
+		e.inventories[tx.To][asset] -= qty
+		e.inventories[tx.From][asset] += qty
+	}
 }
 
 func (e *Economy) loadMint(mint Mint) {
@@ -308,6 +320,12 @@ func (e *Economy) loadMint(mint Mint) {
 
 func (e *Economy) loadBurn(burn Burn) {
 	e.balances[burn.From] -= burn.Amount
+	for asset, qty := range burn.Returns {
+		if e.inventories[burn.From] == nil {
+			e.inventories[burn.From] = Assets{}
+		}
+		e.inventories[burn.From][asset] += qty
+	}
 }
 
 func (e *Economy) loadData() (err error) {
@@ -336,10 +354,17 @@ func NewEconomy(data io.ReadWriteSeeker) (e *Economy, err error) {
 }
 
 func (e *Economy) appendEvent(event any, eventType string) error {
-	if _, err := e.data.Write([]byte(eventType + " ")); err != nil { // Lol good luck error handling this
-		fmt.Println(err.Error())
+	var w bytes.Buffer
+	w.WriteString(eventType)
+	w.WriteByte(' ')
+	if err := json.NewEncoder(&w).Encode(event); err != nil {
+		return fmt.Errorf("failed to encode event: %w", err)
 	}
-	return json.NewEncoder(e.data).Encode(event)
+
+	if _, err := e.data.Write(w.Bytes()); err != nil {
+		return fmt.Errorf("failed to write event to data: %w", err)
+	}
+	return nil
 }
 
 func (e *Economy) Transact(sent SentTx) (err error) {
@@ -348,28 +373,28 @@ func (e *Economy) Transact(sent SentTx) (err error) {
 	}
 
 	t := uint64(time.Now().UnixMilli())
-	if err = e.appendEvent(Tx{sent, t, RandId()}, "Transaction"); err != nil {
+	tx := Tx{sent, t, RandId()}
+	if err = e.appendEvent(tx, "Transaction"); err != nil {
 		return fmt.Errorf("failed to append transaction event: %w", err)
 	}
 
 	// successfully written
-	e.balances[sent.From] -= sent.Amount
-	e.balances[sent.To] += sent.Amount
+	e.loadTx(tx)
 	return
 }
 
-func (e *Economy) Mint(sent SentMint) (t uint64, err error) {
+func (e *Economy) Mint(sent SentMint) (err error) {
 	if err = e.validateMint(sent); err != nil {
-		return 0, fmt.Errorf("invalid mint: %w", err)
+		return fmt.Errorf("invalid mint: %w", err)
 	}
 
-	t = uint64(time.Now().UnixMilli())
-	if err = e.appendEvent(Mint{sent, t, RandId()}, "Mint"); err != nil {
-		return 0, fmt.Errorf("failed to append mint event: %w", err)
+	mint := Mint{sent, uint64(time.Now().UnixMilli()), RandId()}
+	if err = e.appendEvent(mint, "Mint"); err != nil {
+		return fmt.Errorf("failed to append mint event: %w", err)
 	}
 
 	// successfully written
-	e.balances[sent.To] += sent.Amount
+	e.loadMint(mint)
 	return
 }
 
@@ -379,23 +404,18 @@ func (e *Economy) Burn(sent SentBurn) (err error) {
 	}
 
 	t := uint64(time.Now().UnixMilli())
-	if err = e.appendEvent(Burn{sent, t, RandId()}, "Burn"); err != nil {
+	burn := Burn{sent, t, RandId()} // ₿urn ₿aby ₿urn
+	if err = e.appendEvent(burn, "Burn"); err != nil {
 		return fmt.Errorf("failed to append burn event: %w", err)
 	}
 
 	// successfully written
-	e.balances[sent.From] -= sent.Amount
+	e.loadBurn(burn)
 	return
 }
 
 func (e *Economy) Stipend(to User) (err error) {
-	time, err := e.Mint(SentMint{to, Currency(Stipend), "Stipend"})
-	if err != nil {
-		return
-	}
-
-	e.prevStipends[to] = time
-	return
+	return e.Mint(SentMint{to, Currency(Stipend), "Stipend"})
 }
 
 func (e *Economy) readTransactions() (ls []string, err error) {
