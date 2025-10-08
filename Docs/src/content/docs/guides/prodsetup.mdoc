@@ -15,32 +15,35 @@ You will need:
 
 -   A correctly configured or modified version of Mercury Core 
 -   Latest version of [Bun](https://bun.sh/) installed (expected as `bun`)
--   Latest version of [Docker](https://www.docker.com/) installed (expected as `docker`, optional)
-    -   Alternative container managers can be used, for example [Podman](https://podman.io/).
+-   Latest version of [Go](https://go.dev) installed (expected as `go`, [installation guide](/install/go))
+-   Latest version of [SurrealDB](https://surrealdb.com) installed (expected as `surreal`, [installation guide](/install/surrealdb))
 -   Latest version of [Caddy](https://caddyserver.com) installed (expected as `caddy`)
--   A terminal
--   A modern web browser (Early 2024 onwards for most major browsers)
--   A computer, as it would be painful to live without one, wouldn't it?
+-   A [server](/architecture/#server-hosting) to host it all on
+-   A terminal, either directly on the server or through remote access such as RDP, VNC, or SSH
+
+If you wish to use containers instead of SurrealDB and Go, install the latest version of a container manager such as [Docker](https://www.docker.com) (expected as `docker`, [installation guide](/install/docker)) or an alternative container manager like [Podman](https://podman.io) ([installation guide](/install/podman)).
 
 ## Instructions
 
 {% steps %}
 
-1. Copy the modified version of Mercury Core to your server.
+1. Copy the modified version of Mercury Core to your server and navigate to the root directory of the repository.
 
-2. Navigate to the **Site** directory.
+2. If not using containers, navigate to the **Economy** directory, and run `go build` to compile the Economy service.
 
-3. Copy the **Site/.env.example** file to **Site/.env** and modify it to set up the environment variables.
+3. Navigate to the **Site** directory.
 
-4. If you're using containers, run `docker compose up -d` to start the Database and Economy services.
+4. Copy the **Site/.env.example** file to **Site/.env** and modify it to set up the environment variables.
 
 5. Run `bun prod` to install dependencies and begin building.
 
 6. Run `caddy start` to start the Caddy reverse proxy server.
     -   You can also run `caddy reload` to reload the configuration file without restarting the server.
     -   If you're using Caddy with multiple configuration files, import the Caddyfile in the repository's root directory into a Caddyfile somewhere else, and run `caddy start` and `caddy reload` from there.
+	
+7. If using containers, run `docker compose up -d` to start the Database and Economy services.
 
-7. Run `bun ./build` (not to be confused with `bun build`) to start Mercury Core. This will start the Database and Economy services automatically if they are not already running.
+8. Run `bun ./build` (not to be confused with `bun build`) to start Mercury Core. This will start the Database and Economy services automatically if they are not already running.
 	{% aside type="tip" title="Running in the background" %}
 		Several methods can be used to run Mercury Core as a background process as well. Daemons, GNU Screen, containers, and PM2 all work for this purpose.
 	{% /aside %}
