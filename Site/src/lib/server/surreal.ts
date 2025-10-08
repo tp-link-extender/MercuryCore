@@ -6,7 +6,7 @@ import {
 } from "surrealdb"
 import { building } from "$app/environment"
 import initQuery from "$lib/server/init.surql"
-import logo from "$lib/server/logo"
+import logo from "$lib/server/logo" // because this is usually one of the first files loaded
 import startEconomy from "$lib/server/process/economy"
 import startSurreal from "$lib/server/process/surreal"
 
@@ -87,8 +87,8 @@ async function reconnect() {
 
 if (!building) {
 	await reconnect()
-	logo()
 	await db.query(initQuery)
+	logo()
 }
 
 type RecordIdTypes = {
