@@ -12,6 +12,6 @@ export async function SignData(data: string, assetId?: number) {
 	const signed = `${assetId ? `--rbxassetid%${assetId}%` : ""}\n${data}`
 	const sig = createSign("sha1")
 		.update(signed)
-		.sign(await Bun.file("../Assets/PrivateKey.pem").text(), "base64")
+		.sign(await Bun.file("../data/PrivateKey.pem").text(), "base64")
 	return `--rbxsig%${sig}%${signed}`
 }
