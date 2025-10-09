@@ -3,7 +3,7 @@ LET $u = CREATE ONLY user CONTENT {
 	bodyColours: $bodyColours,
 	email: $email,
 	hashedPassword: $hashedPassword,
-	permissionLevel: IF $key { 1 } ELSE { 5 },
+	permissionLevel: $permissionLevel,
 	username: $username,
 } RETURN VALUE id;
 # Return some user data

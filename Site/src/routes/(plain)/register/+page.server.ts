@@ -102,6 +102,7 @@ actions.register = async ({ request, cookies }) => {
 		email: email || "",
 		// I still love scrypt, though argon2 is better supported
 		hashedPassword: Bun.password.hashSync(password),
+		permissionLevel: 1,
 		bodyColours: config.DefaultBodyColors,
 		key,
 	})
@@ -142,6 +143,7 @@ actions.initialAccount = async ({ request, cookies }) => {
 		username,
 		email: "",
 		hashedPassword: Bun.password.hashSync(password),
+		permisisonLevel: 5,
 		bodyColours: config.DefaultBodyColors,
 	})
 
