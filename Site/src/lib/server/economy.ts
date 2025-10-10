@@ -5,23 +5,23 @@ const economyUrl = "localhost:2009"
 
 export const economyConnFailed = "Cannot connect to Economy service"
 
-type ReturnValue<T> = Promise<{ ok: true; value: T } | { ok: false }>
+export type ReturnValue<T> = Promise<{ ok: true; value: T } | { ok: false }>
 type ReturnErr = { ok: true } | { ok: false; msg: string }
 
 const tryFetch =
-	<T>(transform: (req: Response) => Promise<T>) =>
+	<T>(transform: (res: Response) => Promise<T>) =>
 	async (url: string): Promise<ReturnValue<T>> => {
 		try {
-			const req = await fetch(url)
-			if (req.status >= 400) return { ok: false }
-			return { ok: true, value: await transform(req) }
+			const res = await fetch(url)
+			if (!res.ok) return { ok: false }
+			return { ok: true, value: await transform(res) }
 		} catch {
 			return { ok: false }
 		}
 	}
 
-const tryFetchValue = tryFetch(async req => +(await req.text()))
-const tryFetchJson = <T>() => tryFetch(async req => (await req.json()) as T) // type assertion much?¿
+const tryFetchValue = tryFetch(async res => +(await res.text()))
+const tryFetchJson = <T>() => tryFetch(async res => (await res.json()) as T) // type assertion much?¿
 
 export const getStipend = () => tryFetchValue(`${economyUrl}/currentStipend`)
 export const getBalance = (user: string) =>

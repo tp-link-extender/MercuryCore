@@ -36,7 +36,8 @@
 			["Banners", "banners", "fa-bullhorn"],
 			["Accounts", "accounts", "fa-user"],
 			["Audit logs", "audit", "fa-book"],
-			["Registration keys", "regkeys", "fa-key"]
+			["Registration keys", "regkeys", "fa-key"],
+			["Gameservers", "gameservers", "fa-server"],
 		]
 		tabNames.unshift("Administration")
 	}
