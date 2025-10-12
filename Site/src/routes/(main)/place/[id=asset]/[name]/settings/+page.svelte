@@ -4,6 +4,7 @@
 	import Tab from "$components/Tab.svelte"
 	import TabData from "$components/TabData"
 	import TabNav from "$components/TabNav.svelte"
+	import DataForm from "./Data.svelte"
 	import NetworkForm from "./Network.svelte"
 	import PrivacyForm from "./Privacy.svelte"
 	import PrivatelinkForm from "./Privatelink.svelte"
@@ -15,8 +16,8 @@
 	let tabData = $state(
 		TabData(
 			data.url,
-			["View", "Network", "Privacy"],
-			["fa-eye", "fa-network-wired", "fa-eye-low-vision"]
+			["View", "Network", "Privacy", "Data"],
+			["fa-eye", "fa-network-wired", "fa-eye-low-vision", "fa-database"]
 		)
 	)
 </script>
@@ -64,5 +65,13 @@
 		{#key data.privateTicket}
 			<PrivacyForm {data} />
 		{/key}
+	</Tab>
+
+	<Tab bind:tabData>
+		<h2 class="text-xl">Data</h2>
+		<p class="grey-text">
+			Configure place data saved to {data.siteName}.
+		</p>
+		<DataForm {data} />
 	</Tab>
 </div>

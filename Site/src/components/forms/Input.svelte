@@ -1,9 +1,9 @@
 <script lang="ts">
-	import SubInput from "$components/forms/SubInput.svelte"
 	import type {
 		HTMLInputAttributes,
 		HTMLInputTypeAttribute
 	} from "svelte/elements"
+	import SubInput from "$components/forms/SubInput.svelte"
 
 	const {
 		name,

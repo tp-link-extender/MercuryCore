@@ -35,6 +35,9 @@ const privacySchema = type({
 	privateServer: "boolean",
 })
 const privatelinkSchema = type({} as never)
+const dataSchema = type({
+	file: "File",
+})
 
 type Place = {
 	created: string
@@ -81,6 +84,7 @@ export async function load({ locals, params }) {
 		ticketForm: await superValidate(arktype(ticketSchema)), // lmaooo it works
 		privacyForm: await superValidate(arktype(privacySchema)),
 		privatelinkForm: await superValidate(arktype(privatelinkSchema)),
+		dataForm: await superValidate(arktype(dataSchema)),
 	}
 }
 
@@ -161,4 +165,17 @@ actions.privatelink = async e => {
 		await superValidate(e.request, arktype(privatelinkSchema)),
 		"Regenerated!"
 	)
+}
+actions.data = async e => {
+	const id = await getData(e)
+	const formData = await e.request.formData()
+	const form = await superValidate(formData, arktype(dataSchema))
+	if (!form.valid) return formError(form)
+
+	const { file } = form.data
+	if (file.size > 5e6)
+		return formError(form, ["file"], ["File must be less than 5MB in size"])
+
+	await Bun.write(`../data/places/${id}`, file)
+	return message(form, "Place data updated successfully!")
 }

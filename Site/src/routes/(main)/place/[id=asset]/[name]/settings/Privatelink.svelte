@@ -1,7 +1,7 @@
 <script lang="ts">
+	import { superForm } from "sveltekit-superforms/client"
 	import { page } from "$app/state"
 	import fade from "$lib/fade"
-	import { superForm } from "sveltekit-superforms/client"
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
