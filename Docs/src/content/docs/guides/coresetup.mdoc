@@ -26,6 +26,14 @@ Under the usual vague definitions, "corescripts" could refer to *any* of the abo
 Loadscripts are loaded from the Site, each from their own specific URL paths.  
 Privileged assets are all loaded as if they were normal assets from the Site. However, they are instead loaded from a separate directory from the other assets to improve ease of setup, updating, and management. It would theoretically be possible to set up Mercury Core normally, and upload all these assets to the Site like normal assets, but this would be an inconvenient and tedious process, especially in development where Database resets may be common.
 
+## Signing
+
+Loadscripts, Corescripts, and Libraries all need to be signed with a private key to work in the Client. The public key corresponding to this private key must be patched into the Client binary to allow for trust checking to succeed.
+
+Once the private key generated and set up correctly, save it somewhere as **PrivateKey.pem**, and make sure to keep it secure and inaccessible to others. If this key is compromised, anyone could create and sign malicious scripts that would be trusted by the Client.
+
+Libraries and Corescripts are pre-signed by the script compiler in the example repository (see [Instructions](#instructions) below). Loadscripts are signed by the Site when they are served to the Client, as they may need to be modified before being sent (for example, to change asset IDs or use a specific URL for some parameters). Place the **PrivateKey.pem** file into the **data** directory of your Mercury Core repository to allow for signing of Loadscripts by the Site.
+
 ## Example scripts
 
 An example repository, holding most Loadscripts, Plugins, and Privileged assets for the 11 December 2013 Client (release 132) used in Mercury 2 can be found at [tp-link-extender/2013](https://github.com/tp-link-extender/2013).
