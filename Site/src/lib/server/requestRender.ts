@@ -75,7 +75,6 @@ export default async function (
 
 	const script = (await scriptFile.text())
 		.replaceAll("_BASE_URL", `"${config.Domain}"`)
-		.replaceAll("_THUMBNAIL_KEY", `"${RCC_KEY}"`)
 		.replaceAll("_RENDER_TYPE", `"${renderType}"`)
 		.replaceAll("_ASSET_ID", `"${relativeName}"`) // TODO: make not string
 		.replaceAll("_PING_URL", `"${pingUrl}"`)

@@ -24,7 +24,7 @@
 			<tr>
 				<th scope="col">ID</th>
 				<th scope="col">PID</th>
-				<th scope="col">Uptime</th>
+				<th scope="col">Start time</th>
 			</tr>
 		</thead>
 		<tbody>

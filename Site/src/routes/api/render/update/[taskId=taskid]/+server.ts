@@ -9,9 +9,11 @@ type Render = {
 	relativeId: number
 }
 
-export async function POST({ params, request, url }) {
-	const apiKey = url.searchParams.get("apiKey")
-	if (!apiKey || apiKey !== RCC_KEY) error(403, "Stfu")
+export async function POST({ params, request }) {
+	// get bearer token from header instead of insecure url
+	const auth = request.headers.get("Authorization")
+	if (!auth || !auth.startsWith("Bearer ") || auth.slice(7) !== RCC_KEY)
+		throw error(403, "Stfu")
 
 	const render = Record("render", params.taskId)
 	const [[task]] = await db.query<Render[][]>(renderQuery, { render })
