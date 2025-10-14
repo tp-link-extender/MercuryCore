@@ -22,7 +22,7 @@ export async function GET({ params }) {
 	const scriptFile = Bun.file("../data/server/loadscripts/host.lua")
 	const script = (await scriptFile.text())
 		.replaceAll("_BASE_URL", `"${config.Domain}"`)
-		.replaceAll("_MAP_LOCATION", `"${config.OrbiterURL}/${id}"`)
+		.replaceAll("_MAP_LOCATION", `"https://${config.Domain}/game/${id}"`)
 		.replaceAll("_SERVER_PORT", place.serverPort.toString())
 		.replaceAll("_SERVER_PRESENCE_URL", `"${serverPresenceUrl}"`)
 
