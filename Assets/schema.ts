@@ -20,6 +20,10 @@ export type Config = {
 	 */
 	RCCServiceProxyURL: string
 	/**
+	 * The URL of your Orbiter gameserver hoster. Requires a URL scheme.
+	 */
+	OrbiterURL: string
+	/**
 	 * The URI scheme to pass to the launcher when joining a game.
 	 */
 	LauncherURI: string

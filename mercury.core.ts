@@ -6,6 +6,7 @@ export default {
 	Domain: "localhost:5173",
 	DatabaseURL: "http://localhost:8000",
 	RCCServiceProxyURL: "http://localhost:64990",
+	OrbiterURL: "http://localhost:64991",
 	LauncherURI: "mercury-player:",
 	CurrencySymbol: "屌",
 	Pages: ["Statistics", "Forum", "Groups"],

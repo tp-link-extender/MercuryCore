@@ -28,6 +28,7 @@ const schema = type({
 	Domain: "string >= 1",
 	DatabaseURL: "string >= 1",
 	RCCServiceProxyURL: "string >= 1",
+	OrbiterURL: "string >= 1",
 	LauncherURI: "string >= 1",
 	CurrencySymbol: "string >= 1",
 	Pages: type.enumerated(...optionalPages).array(),
