@@ -47,6 +47,11 @@
 				label="Password"
 				type="password"
 				placeholder={"•".repeat(18)} />
+
+			<p>
+				Forgotten your password?
+				<a href="/recover" class="no-underline">Recover</a>
+			</p>
 		</Form>
 	{:else}
 		<h2>There are no users registered in the database yet!</h2>
