@@ -51,7 +51,7 @@ export async function GET({ url }) {
 	const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
 	const script = (await scriptFile.text())
 		.replaceAll("_PLACE_ID", placeId.toString())
-		.replaceAll("_SERVER_ADDRESS", gameSession.place.serverAddress)
+		.replaceAll("_SERVER_ADDRESS", gameSession.place.serverAddress) // TODO: quote
 		.replaceAll("_SERVER_PORT", gameSession.place.serverPort.toString())
 		.replaceAll("_CREATOR_ID", creatorUsername)
 		.replaceAll("_USER_ID", Math.floor(Math.random() * 1e9).toString()) // todo: tho not rly used 4 much atm

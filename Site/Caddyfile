@@ -20,3 +20,8 @@ xtcy.dev {
 
 	reverse_proxy localhost:4443
 }
+
+# Often required for some URLs
+www.xtcy.dev {
+	reverse_proxy localhost:4443
+}
