@@ -79,6 +79,12 @@ const schema = type({
 		}),
 		Emails: "boolean",
 	}),
+
+	Email: type({
+		Host: "string >= 1",
+		Port: "1 <= number <= 65535",
+		Username: "string >= 1",
+	}),
 })
 
 const parseResult = schema(rawconfig)

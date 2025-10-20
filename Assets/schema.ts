@@ -182,4 +182,22 @@ export type Config = {
 		 */
 		Emails: boolean
 	}
+
+	/**
+	 * Configuration for sending emails.
+	 */
+	Email: {
+		/**
+		 * The SMTP server host to use for sending emails.
+		 */
+		Host: string
+		/**
+		 * The SMTP server port to use for sending emails.
+		 */
+		Port: number
+		/**
+		 * The username to use for authentication with the SMTP server. The corresponding password should be configured in your environment variables.
+		 */
+		Username: string
+	}
 }

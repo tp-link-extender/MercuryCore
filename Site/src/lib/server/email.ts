@@ -1,42 +1,16 @@
 import { createTransport } from "nodemailer"
 import type Mail from "nodemailer/lib/mailer"
-import { SMTPServer } from "smtp-server"
-import { SMTP_PORT } from "$env/static/private"
 import config from "./config"
-
-const port = +SMTP_PORT || 4442
-
-console.log("Starting SMTP server...")
-let server: SMTPServer
-try {
-	server = new SMTPServer({
-		authOptional: true,
-	})
-} catch (error) {
-	console.error("Error creating SMTP server:", error)
-	throw error
-}
-
-server.listen(port, () =>
-	console.log(`SMTP server is listening on port ${port}`)
-)
-server.on("error", err => console.error("SMTP Server Error:", err))
-server.on("close", () => console.log("SMTP server has closed"))
 
 let transport: Mail
 try {
 	transport = createTransport({
-		host: "localhost",
-		port,
-		secure: false,
-		ignoreTLS: true,
-		tls: {
-			rejectUnauthorized: false,
+		host: config.Email.Host,
+		port: config.Email.Port,
+		auth: {
+			user: config.Email.Username,
+			pass: process.env.EMAIL_PASSWORD,
 		},
-		// connectionTimeout: 5000,
-		// dnsTimeout: 5000,
-		// socketTimeout: 5000,
-		// greetingTimeout: 5000,
 	})
 } catch (error) {
 	console.error("Error creating SMTP transport:", error)
