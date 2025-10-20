@@ -11,7 +11,7 @@
 	const formData = superForm(data.form)
 	export const snapshot = formData
 
-	const descriptions = [
+	const descriptions: [string, string][] = [
 		[
 			"Unique username",
 			"Make sure it is appropriate and between 3-21 characters. Letters A-Z, numbers 0-9, and underscores are allowed."
@@ -35,10 +35,7 @@
 
 <Waves />
 
-<LoginShell
-	name={data.siteName}
-	tagline={data.tagline}
-	{descriptions}>
+<LoginShell name={data.siteName} tagline={data.tagline} {descriptions}>
 	{#if data.users}
 		<h2>Create a free account</h2>
 		<p>
@@ -60,7 +57,7 @@
 					column
 					autocomplete="email"
 					name="email"
-					label="Email Address"
+					label="Email address"
 					type="email"
 					placeholder="{data.siteName}@{data.domain}" />
 			{/if}
@@ -77,7 +74,7 @@
 				column
 				autocomplete="new-password"
 				name="cpassword"
-				label="Confirm Password"
+				label="Confirm password"
 				type="password"
 				placeholder={"•".repeat(18)} />
 			{#if data.regKeysEnabled}
@@ -85,7 +82,7 @@
 					{formData}
 					column
 					name="regkey"
-					label="Registration Key"
+					label="Registration key"
 					placeholder="{data.prefix}r3g157r4ti0nk3yh3re1" />
 			{/if}
 		</Form>

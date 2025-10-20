@@ -15,13 +15,11 @@ const schema = type({
 	password: "1 <= string <= 6969",
 })
 
-export async function load() {
-	return {
-		form: await superValidate(arktype(schema)),
-		users: await accountRegistered(),
-		descriptions: Object.entries(config.Branding.Descriptions),
-	}
-}
+export const load = async () => ({
+	form: await superValidate(arktype(schema)),
+	users: await accountRegistered(),
+	descriptions: Object.entries(config.Branding.Descriptions),
+})
 
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ request, cookies }) => {
