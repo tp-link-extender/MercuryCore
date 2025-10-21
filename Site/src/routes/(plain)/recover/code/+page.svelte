@@ -14,7 +14,15 @@
 	const descriptions: [string, string][] = [
 		[
 			"Recovery code",
-			"Check your email account for the recovery code we sent you."
+			"If this email address is associated with an account, you should have received a recovery code. Enter it to access your account."
+		],
+		[
+			"Password reset",
+			"You'll also need to enter a new password so you can securely access your account again."
+		],
+		[
+			"Didn't receive an email?",
+			"Check your spam folder or try resubmitting your email address to receive a new recovery code."
 		]
 	]
 </script>
@@ -40,6 +48,23 @@
 			autocomplete="one-time-code"
 			name="code"
 			label="Recovery code"
-			placeholder="Enter the recovery code" />
+			placeholder="R3c0v4" />
+		<Input
+			{formData}
+			column
+			name="npassword"
+			label="New password"
+			type="password"
+			autocomplete="new-password"
+			placeholder={"•".repeat(23)}
+			help="Make sure your new password is unique." />
+		<Input
+			{formData}
+			column
+			name="cnpassword"
+			label="Confirm new password"
+			type="password"
+			placeholder={"•".repeat(23)}
+			autocomplete="new-password" />
 	</Form>
 </LoginShell>

@@ -117,6 +117,7 @@ DEFINE TABLE OVERWRITE recoveryCode SCHEMAFULL;
 	DEFINE FIELD OVERWRITE code ON recoveryCode TYPE string DEFAULT rand::string(6);
 	DEFINE FIELD OVERWRITE created ON recoveryCode TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE expires ON recoveryCode TYPE datetime DEFAULT time::now() + 1d;
+	DEFINE FIELD OVERWRITE used ON recoveryCode TYPE bool DEFAULT false;
 	DEFINE FIELD OVERWRITE user ON recoveryCode TYPE record<user>;
 
 DEFINE TABLE OVERWRITE regKey SCHEMAFULL;
