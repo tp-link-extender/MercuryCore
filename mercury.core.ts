@@ -3,7 +3,7 @@
 
 export default {
 	Name: "Mercury",
-	Domain: "localhost:5173",
+	Domain: "xtcy.dev",
 	DatabaseURL: "http://localhost:8000",
 	RCCServiceProxyURL: "http://localhost:64990",
 	OrbiterURL: "http://localhost:64991",
@@ -70,4 +70,10 @@ export default {
 		},
 		Emails: true,
 	},
+
+	Email: {
+		Host: "smtp.example.com",
+		Port: 587,
+		Username: "username",
+	}
 } satisfies import("./Assets/schema.ts").Config

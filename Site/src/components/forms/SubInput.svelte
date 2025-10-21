@@ -33,7 +33,7 @@
 		{name}
 		id={name}
 		{type}
-		class={{ "is-invalid": $errors[name] }}
+		class={[rest.class, { "is-invalid": $errors[name] }]}
 		style={type === "number"
 			? "width: 9rem"
 			: type === "color"
