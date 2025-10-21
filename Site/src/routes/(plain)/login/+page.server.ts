@@ -24,7 +24,7 @@ export async function load() {
 }
 
 export const actions: import("./$types").Actions = {}
-actions.default = async ({ request, cookies }) => {
+actions.default = async ({ cookies, request }) => {
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 

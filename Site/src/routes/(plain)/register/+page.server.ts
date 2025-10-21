@@ -43,7 +43,7 @@ export const load = async () => ({
 })
 
 export const actions: import("./$types").Actions = {}
-actions.register = async ({ request, cookies }) => {
+actions.register = async ({ cookies, request }) => {
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
@@ -54,7 +54,7 @@ actions.register = async ({ request, cookies }) => {
 		return formError(
 			form,
 			["password", "cpassword"],
-			[" ", "The specified passwords do not match"]
+			[" ", "Passwords do not match"]
 		)
 
 	const userCheck = await findWhere("user", "username = $username", {
@@ -116,7 +116,7 @@ actions.register = async ({ request, cookies }) => {
 	redirect(302, "/home")
 }
 // This is the initial account creation, which is only allowed if there are no existing users.
-actions.initialAccount = async ({ request, cookies }) => {
+actions.initialAccount = async ({ cookies, request }) => {
 	const form = await superValidate(request, arktype(schemaInitial))
 	if (!form.valid) return formError(form)
 

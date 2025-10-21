@@ -37,7 +37,7 @@ transport.use("stream", (mail, callback) => {
 })
 
 export async function sendEmail(to: string, subject: string, text: string) {
-	console.log(`Queuing email to ${to} with subject "${subject}"`)
+	console.log(`Queuing email to ${to}`)
 	const result = await transport.sendMail({
 		from: `${config.Name} <noreply@${config.Domain}>`,
 		to,
@@ -47,5 +47,4 @@ export async function sendEmail(to: string, subject: string, text: string) {
 	if (result.accepted.length > 0)
 		console.log(`Email to ${to} queued successfully`)
 	else console.error(`Failed to queue email to ${to}`)
-	console.log(result)
 }
