@@ -14,7 +14,7 @@ import regkeysQuery from "./regkeys.surql"
 
 const schema = type({
 	enableRegKeyCustom: "boolean | undefined",
-	regKeyCustom: "(3 <= string <= 50)? | undefined",
+	regKeyCustom: "(3 <= string <= 50) | undefined",
 	enableRegKeyExpiry: "boolean | undefined",
 	regKeyExpiry: "string | undefined",
 	regKeyUses: type("1 <= number <= 100").default(1),
