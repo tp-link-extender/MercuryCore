@@ -18,7 +18,7 @@ export default async () => {
 			console.error(
 				"The attempt to  automatically build the Economy service failed. Please build the service automatically, by navigating to the Economy folder and running `go build`, or make sure Go is installed and accessible as `go`."
 			)
-			console.error("https://docs.xtcy.dev/install/go/")
+			console.error("https://docs.mercs.dev/install/go/")
 			process.exit(1)
 		}
 	}

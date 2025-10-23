@@ -33,7 +33,7 @@ export default async () => {
 		console.error(
 			"Failed to start SurrealDB. Please make sure it is installed and accessible as `surreal`."
 		)
-		console.error("https://docs.xtcy.dev/install/surrealdb/")
+		console.error("https://docs.mercs.dev/install/surrealdb/")
 		process.exit(1)
 	}
 }

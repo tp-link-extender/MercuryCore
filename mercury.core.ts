@@ -3,7 +3,7 @@
 
 export default {
 	Name: "Mercury",
-	Domain: "xtcy.dev",
+	Domain: "mercs.dev",
 	DatabaseURL: "http://localhost:8000",
 	RCCServiceProxyURL: "http://localhost:64990",
 	OrbiterURL: "http://localhost:64991",
