@@ -29,15 +29,15 @@ If using a Lua script over SOAP, the script will instruct the service what to do
 
 Mercury Core communicates with RCC via a proxy server. This helps to ensure security, while also improving ease of communication with the service. In some cases, an RCC instance will produce invalid responses or gzip compress outputs based on their size, which a proxy server helps to prevent, as well as being able to downsize & de-alias images and compress responses into a more efficient binary format (as opposed to the standard Base64 encoding) to reduce network traffic and improve response speeds.
 
-{% aside type="danger" title="Available implementations" %}
-	An implementation of the proxy server is available at [gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff](https://gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff). However, this implementation is outdated and uses the old Base64 communication format. An updated version will be made available soon.
+{% aside type="tip" title="Available implementations" %}
+	An implementation of the proxy server is available at [tp-link-extender/RCCService/Proxy](https://github.com/tp-link-extender/RCCService/tree/main/Proxy). An older version, using the outdated Base64 communication format, can be found at [gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff](https://gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff).
 {% /aside %}
 
 The proxy server should run on port 64990. A **.env** file should be created in the same directory as the proxy server executable, with the following contents:
 
 ```
 IP=::1
-ENDPOINT=http://xtcy.dev/api/render/update
+ENDPOINT=http://mercs.dev/api/render/update
 RCC_KEY=password
 ```
 
