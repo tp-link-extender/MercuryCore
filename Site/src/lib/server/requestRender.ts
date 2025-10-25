@@ -71,8 +71,7 @@ export default async function (
 	if (!(await scriptFile.exists()))
 		throw new Error(`Script file for ${renderType} does not exist`)
 
-	// TODO: make sure that this works if the URL is remote
-	const pingUrl = `${config.RCCServiceProxyURL}/ping/${renderId}` // the proxy will handle sending to /api/render/update
+	const pingUrl = `http://localhost:64991/ping/${renderId}` // the proxy will handle sending to /api/render/update
 
 	const script = (await scriptFile.text())
 		.replaceAll("_BASE_URL", `"${config.Domain}"`)
