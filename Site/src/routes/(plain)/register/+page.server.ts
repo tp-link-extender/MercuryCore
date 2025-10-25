@@ -143,7 +143,7 @@ actions.initialAccount = async ({ cookies, request }) => {
 		username,
 		email: "",
 		hashedPassword: Bun.password.hashSync(password),
-		permisisonLevel: 5,
+		permissionLevel: 5,
 		bodyColours: config.DefaultBodyColors,
 	})
 
