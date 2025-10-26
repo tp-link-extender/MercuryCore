@@ -14,7 +14,7 @@ To upgrade Go to the latest version without going through the reinstallation pro
 ```
 module whatever
 
-go 1.25.1
+go 1.25.3
 ```
 
 Upon the next build or run command, Go will automatically download and use the specified version. If you're using a package manager, refer to its documentation for upgrade instructions.

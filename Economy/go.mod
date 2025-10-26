@@ -1,6 +1,6 @@
 module Economy
 
-go 1.23.2
+go 1.25.3
 
 require github.com/TwiN/go-color v1.4.1
 
