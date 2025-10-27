@@ -124,10 +124,16 @@ export async function handle(e) {
 	return await finish(e)
 }
 
-export async function handleError({ event, error }) {
-	const { user } = event.locals
+export async function handleError({ error }) {
+	if (typeof error === "object" && error != null) {
+		const status = (error as { status?: number }).status
+		if (status) {
+			console.error(status, red(error.toString()))
+			return
+		}
+	}
 
-	// Fancy error logging: time(?), user, and error
+	// Simple error logging (not a stack trace)
 	if (!config.Logging.FormattedErrors) console.error(error)
-	else console.error(time(), userLog(user), red(error as string))
+	else console.error(red(error as string))
 }
