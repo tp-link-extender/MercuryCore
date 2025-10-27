@@ -13,8 +13,7 @@
 				"noConsole": "off"
 			},
 			"nursery": {
-				"useExplicitType": "off",
-				"noSecrets": "off"
+				"useExplicitType": "off"
 			},
 			"style": {
 				"useLiteralEnumMembers": "error",
@@ -36,6 +35,11 @@
 				"noUselessElse": "error",
 				"useShorthandFunctionType": "error"
 			}
+		}
+	},
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
 		}
 	},
 	"javascript": {
