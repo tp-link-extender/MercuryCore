@@ -26,11 +26,17 @@ export async function graphicAsset(
 	const assetUrl = `http://${config.Domain}/asset?id=${imageAssetId}`
 
 	const assetFile = Bun.file(`xml/graphicAsset${assetType}.xml`)
-	const asset = (await assetFile.text())
-		.replaceAll("_CLASS", stringType[0])
-		.replaceAll("_CONTENT_NAME", stringType[1]) // Unused at the moment
-		.replaceAll("_STRING_NAME", stringType[2])
-		.replaceAll("_ASSET_URL", assetUrl)
+	// Combine multiple replaceAll into a single pass for better performance
+	const replacements: Record<string, string> = {
+		_CLASS: stringType[0],
+		_CONTENT_NAME: stringType[1], // Unused at the moment
+		_STRING_NAME: stringType[2],
+		_ASSET_URL: assetUrl,
+	}
+	const asset = (await assetFile.text()).replace(
+		/_CLASS|_CONTENT_NAME|_STRING_NAME|_ASSET_URL/g,
+		match => replacements[match]
+	)
 
 	await Bun.write(`../data/assets/${graphicAssetId}`, asset)
 }

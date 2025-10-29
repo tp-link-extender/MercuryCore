@@ -174,22 +174,21 @@ export async function transformTransactions(list: ReceivedTx[]) {
 		{ usersList: Array.from(users).map(u => Record("user", u)) }
 	)
 
-	const idsMap = new Map<string, BasicUser>()
+	// Use a single loop to build both maps
+	const idsMap = new Map<string, string>()
 	const usersMap = new Map<string, BasicUser>()
 	for (const user of queryUsers) {
-		idsMap.set(user.id, {
-			username: user.username,
-			status: user.status,
-		})
+		idsMap.set(user.id, user.username)
 		usersMap.set(user.username, {
 			username: user.username,
 			status: user.status,
 		})
 	}
 
+	// Transform transactions in place
 	for (const tx of list) {
-		if (tx.Type !== "Mint") tx.From = idsMap.get(tx.From)?.username || ""
-		if (tx.Type !== "Burn") tx.To = idsMap.get(tx.To)?.username || ""
+		if (tx.Type !== "Mint") tx.From = idsMap.get(tx.From) || ""
+		if (tx.Type !== "Burn") tx.To = idsMap.get(tx.To) || ""
 	}
 
 	return {

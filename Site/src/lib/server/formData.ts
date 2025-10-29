@@ -8,9 +8,6 @@
  */
 export default async function (request: Request) {
 	const entries = Object.fromEntries((await request.formData()).entries())
-	const data: { [_: string]: string } = {}
-	for (const i in entries)
-		if (Object.hasOwn(entries, i)) data[i] = entries[i] as string
-
-	return data
+	// Object.fromEntries already filters out non-own properties, so we can return directly
+	return entries as { [_: string]: string }
 }

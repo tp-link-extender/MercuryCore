@@ -73,11 +73,17 @@ export default async function (
 
 	const pingUrl = `http://localhost:64991/ping/${renderId}` // the proxy will handle sending to /api/render/update
 
-	const script = (await scriptFile.text())
-		.replaceAll("_BASE_URL", `"${config.Domain}"`)
-		.replaceAll("_RENDER_TYPE", `"${renderType}"`)
-		.replaceAll("_ASSET_ID", `"${relativeName}"`) // TODO: make not string
-		.replaceAll("_PING_URL", `"${pingUrl}"`)
+	// Combine multiple replaceAll into a single pass for better performance
+	const replacements: Record<string, string> = {
+		_BASE_URL: `"${config.Domain}"`,
+		_RENDER_TYPE: `"${renderType}"`,
+		_ASSET_ID: `"${relativeName}"`, // TODO: make not string
+		_PING_URL: `"${pingUrl}"`,
+	}
+	const script = (await scriptFile.text()).replace(
+		/_BASE_URL|_RENDER_TYPE|_ASSET_ID|_PING_URL/g,
+		match => replacements[match]
+	)
 
 	// console.log(
 	// 	`Sending render request to RCCService for render ID ${renderId}`
