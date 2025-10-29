@@ -1,3 +1,4 @@
 node_modules
 build
 .svelte-kit
+package-lock.json
