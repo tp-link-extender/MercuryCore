@@ -73,7 +73,16 @@
 		launch(() => joinUri)()
 	}
 
-	let tabData = $state(TabData(data.url, ["Description", "Game"]))
+	const tabs = ["Description", "Servers"]
+	const isOwner = data.place.ownerUser?.username === user?.username
+	if (isOwner || user.permissionLevel === 5) {
+		if (data.hosting === "Dedicated" || data.hosting === "Both")
+			tabs.push("Dedicated hosting")
+		if (data.hosting === "Selfhosting" || data.hosting === "Both")
+			tabs.push("Selfhosting")
+	}
+
+	let tabData = $state(TabData(data.url, tabs))
 	let tabData2 = $state(
 		TabData(data.url, ["Manual", "Autopilot"], undefined, "tab2")
 	)
@@ -236,7 +245,98 @@
 	</Tab>
 
 	<Tab bind:tabData>
-		{#if user?.permissionLevel === 5 || place.ownerUser?.username === user?.username}
+		<h4>Server List</h4>
+		{#if online}
+			<div class="card p-4 flex flex-row">
+				<div class="w-1/6">
+					<div class="pb-2">
+						Currently Playing: {place.players
+							.length}/{place.maxPlayers}
+					</div>
+					<button
+						onclick={placeLauncher}
+						id="join"
+						class="btn btn-sm btn-primary">
+						Join Server
+					</button>
+				</div>
+				<div class="w-5/6 flex gap-3">
+					{#each place.players as user}
+						<User {user} size="4.5rem" bg="darker" />
+					{/each}
+				</div>
+			</div>
+		{:else}
+			This server is offline.
+		{/if}
+	</Tab>
+
+	{#if tabs.includes("Dedicated hosting")}
+		<Tab bind:tabData>
+			<h3 class="pb-2">Dedicated hosting</h3>
+			<p>
+				To begin hosting your map for everybody to play, you need to
+				make sure that you are forwarding the port you wish to run the
+				server on. If you are unsure on how to host, there are many
+				resources available online on how to port forward on your
+				router.
+			</p>
+			<p>
+				If you have port forwarded already, it's time to get your server
+				running. Below are two methods of hosting &ndash; we recommend
+				using Autopilot to get started easily.
+			</p>
+			<div class="flex items-start mb-4">
+				<TabNav bind:tabData={tabData2} vertical class="pr-4 pl-0" />
+				<Tab bind:tabData={tabData2}>
+					<p>
+						You can host your server by opening your map in
+						<span class="px-1">
+							<button
+								class="btn btn-sm btn-tertiary"
+								onclick={launch(
+									() => `${data.scheme}1+launchmode:ide`
+								)}>
+								<fa fa-arrow-up-right-from-square></fa>
+								Studio
+							</button>
+						</span>
+						and then paste the following command into the command bar:
+					</p>
+					<code class="pr-2">{loadCommand}</code>
+					<button
+						onclick={() => {
+							navigator.clipboard.writeText(loadCommand)
+							copiedSuccess = true
+							setTimeout(() => (copiedSuccess = false), 4000)
+						}}
+						class="btn btn-sm btn-secondary py-1.5!"
+						aria-label="Copy command to clipboard">
+						<fa fa-copy></fa>
+					</button>
+					{#if copiedSuccess}
+						<small
+							id="copiedSuccess"
+							transition:fade
+							class="block text-yellow-500">
+							Successfully copied command to clipboard
+						</small>
+					{/if}
+				</Tab>
+				<Tab bind:tabData={tabData2}>
+					<Autopilot
+						{launch}
+						scheme={data.scheme}
+						serverTicket={place.serverTicket}
+						domain={data.domain}
+						siteName={data.siteName} />
+				</Tab>
+			</div>
+		</Tab>
+	{/if}
+
+	{#if tabs.includes("Selfhosting")}
+		<Tab bind:tabData>
 			<h3 class="pb-2">Hosting on {data.siteName}</h3>
 			<p>
 				To begin hosting your map for everybody to play, you need to
@@ -296,32 +396,8 @@
 						siteName={data.siteName} />
 				</Tab>
 			</div>
-		{/if}
-		<h4>Server List</h4>
-		{#if online}
-			<div class="card p-4 flex flex-row">
-				<div class="w-1/6">
-					<div class="pb-2">
-						Currently Playing: {place.players
-							.length}/{place.maxPlayers}
-					</div>
-					<button
-						onclick={placeLauncher}
-						id="join"
-						class="btn btn-sm btn-primary">
-						Join Server
-					</button>
-				</div>
-				<div class="w-5/6 flex gap-3">
-					{#each place.players as user}
-						<User {user} size="4.5rem" bg="darker" />
-					{/each}
-				</div>
-			</div>
-		{:else}
-			This server is offline.
-		{/if}
-	</Tab>
+		</Tab>
+	{/if}
 	<hr />
 	<div class="flex justify-around">
 		{#each statistics as [title, stat]}

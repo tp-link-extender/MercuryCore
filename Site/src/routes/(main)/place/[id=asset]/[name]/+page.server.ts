@@ -47,14 +47,17 @@ export async function load({ locals, params, url }) {
 		user: Record("user", user.id),
 		place: Record("place", id),
 	})
+	if (!place) error(404, "Place not found")
 
+	const isOwner = user.username === place.ownerUser.username
 	if (
-		!place ||
-		(user.username !== place.ownerUser.username &&
-			place.privateServer &&
-			privateTicket !== place.privateTicket)
+		!isOwner &&
+		place.privateServer &&
+		privateTicket !== place.privateTicket
 	)
 		error(404, "Place not found")
+
+	if (!isOwner || user.permissionLevel !== 5) place.serverTicket = ""
 
 	// ahh, reminds me of early Mercury 2
 	const slug = encode(place.name)
@@ -63,6 +66,7 @@ export async function load({ locals, params, url }) {
 
 	return {
 		scheme: config.LauncherURI,
+		hosting: config.Gameservers.Hosting,
 		slug,
 		place,
 		thumbnails: [id % thumbnails.length],
