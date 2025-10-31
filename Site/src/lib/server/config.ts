@@ -85,6 +85,10 @@ const schema = type({
 		Port: "1 <= number <= 65535",
 		Username: "string >= 1",
 	}),
+
+	Gameservers: type({
+		Hosting: type.enumerated("Selfhosted", "Dedicated", "Both"),
+	}),
 })
 
 const parseResult = schema(rawconfig)

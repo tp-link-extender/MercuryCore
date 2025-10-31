@@ -75,5 +75,9 @@ export default {
 		Host: "smtp.example.com",
 		Port: 587,
 		Username: "username",
-	}
+	},
+
+	Gameservers: {
+		Hosting: "Both",
+	},
 } satisfies import("./Assets/schema.ts").Config

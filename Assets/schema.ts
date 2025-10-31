@@ -200,4 +200,14 @@ export type Config = {
 		 */
 		Username: string
 	}
+
+	/**
+	 * Configuration for gameserver hosting.
+	 */
+	Gameservers: {
+		/**
+		 * The type of gameserver hosting to use.
+		 */
+		Hosting: "Selfhosted" | "Dedicated" | "Both"
+	}
 }
