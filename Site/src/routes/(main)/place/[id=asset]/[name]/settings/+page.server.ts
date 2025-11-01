@@ -107,6 +107,7 @@ actions.view = async e => {
 	if (!form.valid) return formError(form)
 
 	const { name, icon, description } = form.data
+	form.data.icon = undefined // make sure files don't get returned (they can't be serialised)
 
 	if (icon && icon.size > 0) {
 		if (icon.size > 1e6)
@@ -173,8 +174,9 @@ actions.data = async e => {
 	if (!form.valid) return formError(form)
 
 	const { file } = form.data
-	if (file.size > 5e6)
-		return formError(form, ["file"], ["File must be less than 5MB in size"])
+	form.data.file = undefined as unknown as File
+	if (file.size > 50e6)
+		return formError(form, ["file"], ["File must be less than 50MB in size"])
 
 	await Bun.write(`../data/places/${id}`, file)
 	return message(form, "Place data updated successfully!")
