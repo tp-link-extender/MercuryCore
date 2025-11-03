@@ -2,6 +2,7 @@ import { error, redirect } from "@sveltejs/kit"
 import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formData from "$lib/server/formData"
+import { getGameserver } from "$lib/server/orbiter"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
 import findPlaceQuery from "./findPlace.surql"
@@ -64,13 +65,18 @@ export async function load({ locals, params, url }) {
 	if (!couldMatch(place.name, params.name))
 		redirect(302, `/place/${id}/${slug}`)
 
+	const dedicatedProps: { dedicatedOnline?: boolean } = {}
+
 	const hosting = config.Gameservers.Hosting
 	if (hosting === "Dedicated hosting" || hosting === "Both") {
+		const status = await getGameserver(id)
+		dedicatedProps.dedicatedOnline = status.ok
 	}
 
 	return {
 		scheme: config.LauncherURI,
 		hosting,
+		...dedicatedProps,
 		slug,
 		place,
 		thumbnails: [id % thumbnails.length],

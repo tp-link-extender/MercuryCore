@@ -10,6 +10,7 @@
 	import { likeEnhance } from "$lib/like"
 	import Autopilot from "./Autopilot.svelte"
 	import customProtocol from "./customprotocol"
+	import DedicatedHosting from "./DedicatedHosting.svelte"
 	import Thumbnails from "./Thumbnails.svelte"
 
 	const { data } = $props()
@@ -271,67 +272,24 @@
 		{/if}
 	</Tab>
 
-	{#if tabs.includes("Dedicated hosting")}
+	{#if tabs.includes("Dedicated hosting") && data.dedicatedOnline != null}
 		<Tab bind:tabData>
 			<h3 class="pb-2">Dedicated hosting</h3>
 			<p>
-				To begin hosting your map for everybody to play, you need to
-				make sure that you are forwarding the port you wish to run the
-				server on. If you are unsure on how to host, there are many
-				resources available online on how to port forward on your
-				router.
+				Dedicated hosting allows you to run your map on our servers, so
+				that it has higher availability for players to join, or in cases
+				where selfhosting is not an option.
 			</p>
 			<p>
-				If you have port forwarded already, it's time to get your server
-				running. Below are two methods of hosting &ndash; we recommend
-				using Autopilot to get started easily.
+				This place's dedicated server is currently
+				{#if data.dedicatedOnline}
+					<b class="text-emerald-500">online.</b>
+				{:else}
+					<b class="text-red-500">offline.</b>
+				{/if}
 			</p>
-			<div class="flex items-start mb-4">
-				<TabNav bind:tabData={tabData2} vertical class="pr-4 pl-0" />
-				<Tab bind:tabData={tabData2}>
-					<p>
-						You can host your server by opening your map in
-						<span class="px-1">
-							<button
-								class="btn btn-sm btn-tertiary"
-								onclick={launch(
-									() => `${data.scheme}1+launchmode:ide`
-								)}>
-								<fa fa-arrow-up-right-from-square></fa>
-								Studio
-							</button>
-						</span>
-						and then paste the following command into the command bar:
-					</p>
-					<code class="pr-2">{loadCommand}</code>
-					<button
-						onclick={() => {
-							navigator.clipboard.writeText(loadCommand)
-							copiedSuccess = true
-							setTimeout(() => (copiedSuccess = false), 4000)
-						}}
-						class="btn btn-sm btn-secondary py-1.5!"
-						aria-label="Copy command to clipboard">
-						<fa fa-copy></fa>
-					</button>
-					{#if copiedSuccess}
-						<small
-							id="copiedSuccess"
-							transition:fade
-							class="block text-yellow-500">
-							Successfully copied command to clipboard
-						</small>
-					{/if}
-				</Tab>
-				<Tab bind:tabData={tabData2}>
-					<Autopilot
-						{launch}
-						scheme={data.scheme}
-						serverTicket={place.serverTicket}
-						domain={data.domain}
-						siteName={data.siteName} />
-				</Tab>
-			</div>
+
+			<DedicatedHosting online={data.dedicatedOnline} />
 		</Tab>
 	{/if}
 
