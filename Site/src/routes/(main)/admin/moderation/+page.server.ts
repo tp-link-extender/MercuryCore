@@ -14,10 +14,17 @@ import unbanQuery from "./unban.surql"
 const schema = type({
 	username: "3 <= string <= 21",
 	// enum to allow 1 to be selected initially
-	action: type.enumerated("1", "2", "3", "4").configure({
-		problem: "must be a valid moderation action",
+	action: type
+		.enumerated("Warning", "Ban", "Termination", "Unban")
+		.configure({
+			problem: "must be a valid moderation action",
+		}),
+	banDate: type("string | undefined").pipe(date => {
+		if (!date) return undefined
+		const d = new Date(date)
+		if (Number.isNaN(d.getTime())) throw new Error("Invalid date")
+		return d
 	}),
-	banDate: "string | undefined",
 	reason: "15 <= string <= 150",
 })
 
@@ -53,9 +60,7 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 	if (!form.valid) return formError(form)
 
 	const { username, action, banDate, reason } = form.data
-	const date = banDate ? new Date(banDate) : null
-	const intAction = +action
-	if (intAction === 2 && (date?.getTime() || 0) < Date.now())
+	if (action === "Ban" && (banDate?.getTime() || 0) < Date.now())
 		return formError(form, ["banDate"], ["Invalid date"])
 
 	type Moderatee = {
@@ -84,7 +89,7 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 		moderatee: Record("user", getModeratee.id),
 	}
 
-	if (intAction === 4) {
+	if (action === "Unban") {
 		// Unban
 		const foundUnban = await findWhere(
 			"moderation",
@@ -120,21 +125,22 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 			["User has already been moderated"]
 		)
 
-	const [moderationAction, note, actioned] = [
-		() => ["Warning", `Warn ${username}`, "warned"],
-		() => [
-			"Ban",
+	const actions: { [_: string]: () => [string, string] } = {
+		Warning: () => [`Warn ${username}`, "warned"],
+		Ban: () => [
 			`Ban ${username}`,
-			`banned until ${date?.toLocaleDateString()}`,
+			`banned until ${banDate?.toLocaleDateString()}`,
 		],
-		() => ["Termination", `Terminate ${username}`, "terminated"],
-	][intAction - 1]()
+		Termination: () => [`Terminate ${username}`, "terminated"],
+	}
+
+	const [note, actioned] = actions[action]()
 
 	await db.query(moderateQuery, {
 		...qParams,
 		reason,
-		moderationAction,
-		timeEnds: date || new Date(),
+		moderationAction: action,
+		timeEnds: banDate || new Date(),
 		note: `${note}: ${reason}`,
 	})
 

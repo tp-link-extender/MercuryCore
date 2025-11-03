@@ -1,4 +1,6 @@
 <script lang="ts">
+	// TODO: doesn't work without clientside JS because of the date input, fix
+
 	import { superForm } from "sveltekit-superforms/client"
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
@@ -22,12 +24,7 @@
 
 	const tomorrow = new Date(Date.now() + 86400e3).toISOString().slice(0, 10)
 
-	const moderationOptions: [string, string][] = [
-		["1", "Warning"],
-		["2", "Ban"],
-		["3", "Termination"],
-		["4", "Account Deletion"]
-	]
+	const moderationOptions = ["Warning", "Ban", "Termination", "Unban"]
 
 	let tabData = $state(TabData(data.url, ["User moderation"], ["fa-gavel"]))
 </script>
@@ -46,9 +43,9 @@
 	<Tab bind:tabData>
 		<Form
 			{formData}
-			submit={$form.action === "3" // 5:53 am and im bored as shit
+			submit={$form.action === "Termination" // 5:53 am and im bored as shit
 				? "<fa fa-explosion></fa> Nuke from orbit"
-				: $form.action === "4"
+				: $form.action === "Unban"
 					? "<fa fa-unlock></fa> Unban"
 					: "<fa fa-hammer-crash></fa> Moderate"}>
 			<Input {formData} name="username" label="Username" />
@@ -57,7 +54,7 @@
 				options={moderationOptions}
 				name="action"
 				label="Action" />
-			{#if $form.action === "2"}
+			{#if $form.action === "Ban"}
 				<div transition:fade>
 					<Input
 						{formData}
