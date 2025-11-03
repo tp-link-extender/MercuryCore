@@ -10,7 +10,6 @@
 	import { likeEnhance } from "$lib/like"
 	import Autopilot from "./Autopilot.svelte"
 	import customProtocol from "./customprotocol"
-	import DedicatedHosting from "./DedicatedHosting.svelte"
 	import Thumbnails from "./Thumbnails.svelte"
 
 	const { data } = $props()
@@ -76,12 +75,11 @@
 
 	const tabs = ["Description", "Servers"]
 	const isOwner = data.place.ownerUser?.username === user?.username
-	if (isOwner || user.permissionLevel === 5) {
-		if (data.hosting === "Dedicated" || data.hosting === "Both")
-			tabs.push("Dedicated hosting")
-		if (data.hosting === "Selfhosting" || data.hosting === "Both")
-			tabs.push("Selfhosting")
-	}
+	if (
+		(isOwner || user.permissionLevel === 5) &&
+		(data.hosting === "Selfhosting" || data.hosting === "Both")
+	)
+		tabs.push("Selfhosting")
 
 	let tabData = $state(TabData(data.url, tabs))
 	let tabData2 = $state(
@@ -271,27 +269,6 @@
 			This server is offline.
 		{/if}
 	</Tab>
-
-	{#if tabs.includes("Dedicated hosting") && data.dedicatedOnline != null}
-		<Tab bind:tabData>
-			<h3 class="pb-2">Dedicated hosting</h3>
-			<p>
-				Dedicated hosting allows you to run your map on our servers, so
-				that it has higher availability for players to join, or in cases
-				where selfhosting is not an option.
-			</p>
-			<p>
-				This place's dedicated server is currently
-				{#if data.dedicatedOnline}
-					<b class="text-emerald-500">online.</b>
-				{:else}
-					<b class="text-red-500">offline.</b>
-				{/if}
-			</p>
-
-			<DedicatedHosting online={data.dedicatedOnline} />
-		</Tab>
-	{/if}
 
 	{#if tabs.includes("Selfhosting")}
 		<Tab bind:tabData>
