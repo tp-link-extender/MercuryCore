@@ -6,7 +6,7 @@ const economyUrl = "localhost:2009"
 export const economyConnFailed = "Cannot connect to Economy service"
 
 export type ReturnValue<T> = Promise<{ ok: true; value: T } | { ok: false }>
-type ReturnErr = { ok: true } | { ok: false; msg: string }
+export type ReturnErr = { ok: true } | { ok: false; msg: string }
 
 const tryFetch =
 	<T>(transform: (res: Response) => Promise<T>) =>

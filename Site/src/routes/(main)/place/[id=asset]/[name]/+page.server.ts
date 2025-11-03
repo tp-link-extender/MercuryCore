@@ -64,9 +64,13 @@ export async function load({ locals, params, url }) {
 	if (!couldMatch(place.name, params.name))
 		redirect(302, `/place/${id}/${slug}`)
 
+	const hosting = config.Gameservers.Hosting
+	if (hosting === "Dedicated hosting" || hosting === "Both") {
+	}
+
 	return {
 		scheme: config.LauncherURI,
-		hosting: config.Gameservers.Hosting,
+		hosting,
 		slug,
 		place,
 		thumbnails: [id % thumbnails.length],
