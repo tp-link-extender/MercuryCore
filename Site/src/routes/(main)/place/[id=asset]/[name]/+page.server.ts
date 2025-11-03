@@ -111,13 +111,10 @@ actions.join = async ({ locals, params, request }) => {
 	if (foundModerated) error(403, "You cannot currently play games")
 
 	// Invalidate all game sessions and create valid playing
-	const [, [playing]] = await db.query<{ id: string }[][]>(
-		invalidatePlayingQuery,
-		{
-			user: Record("user", user.id),
-			place: placeR,
-		}
-	)
+	const [, [ticket]] = await db.query<string[][]>(invalidatePlayingQuery, {
+		user: Record("user", user.id),
+		place: placeR,
+	})
 
-	return { ticket: playing.id }
+	return { ticket }
 }

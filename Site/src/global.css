@@ -513,6 +513,8 @@ input[type="file"] {
 }
 
 input[type="checkbox"] {
+	height: 1.5rem;
+	width: 1.5rem;
 	cursor: pointer;
 
 	&:checked {
@@ -524,6 +526,10 @@ input[type="checkbox"] {
 		background-image: url(/indeterminate.svg);
 		animation: checkmark 0.15s ease-out;
 	}
+}
+
+input[type="number"] {
+	width: 10rem;
 }
 
 /* unused atm */
