@@ -25,7 +25,7 @@
 
 <form
 	use:enhance={enhanceRegen}
-	method="POST"
+	method="post"
 	action="/character?/{asset.wearing
 		? 'un'
 		: ''}equip&tab={currentTab}&id={asset.id}"

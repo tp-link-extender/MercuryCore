@@ -67,7 +67,7 @@
 								<li class="rounded-2">
 									<form
 										use:enhance={enhanceRegen}
-										method="POST"
+										method="post"
 										action="?/rerender">
 										<button
 											class="btn accent-text pl-4 pr-0 text-start">
@@ -194,7 +194,7 @@
 			{/if}
 		</p>
 
-		<form method="POST" action="?/buy" class="inline">
+		<form method="post" action="?/buy" class="inline">
 			<button class="btn btn-success">
 				{itsFree ? "Get" : "Buy now"}
 			</button>

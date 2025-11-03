@@ -1,7 +1,7 @@
 <script lang="ts">
+	import type { ClassValue } from "svelte/elements"
 	import { enhance } from "$app/forms"
 	import type { Scored } from "$lib/like"
-	import type { ClassValue } from "svelte/elements"
 
 	const {
 		comment,
@@ -20,7 +20,7 @@
 
 <form
 	use:enhance={likeEnhance}
-	method="POST"
+	method="post"
 	action="/api/like/comment/{comment.id}"
 	class={class_}>
 	<span class={{ "flex flex-col": !small }}>

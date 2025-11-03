@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
-	import Comment from "$components/Comment.svelte"
 	import type { UserType } from "$components/Comment.svelte"
+	import Comment from "$components/Comment.svelte"
 	import DeleteButton from "$components/DeleteButton.svelte"
 	import PinButton from "$components/PinButton.svelte"
 	import ReportButton from "$components/ReportButton.svelte"
@@ -122,7 +122,7 @@
 					replyingTo = ""
 					return refreshComments(e)
 				}}
-				method="POST"
+				method="post"
 				action="/comment/{comment.id}?/comment">
 				<label for="content" class="light-text pb-2">
 					Post a Reply

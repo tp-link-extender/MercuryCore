@@ -163,7 +163,7 @@
 					use:enhance={likeEnhance(place, p => {
 						place = p
 					})}
-					method="POST"
+					method="post"
 					action="/api/like/place/{place.id}?privateTicket={place.privateTicket}"
 					class="w-full pt-4 px-0 pb-2">
 					<div class="flex justify-between pb-2">

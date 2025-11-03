@@ -4,7 +4,7 @@
 
 	const {
 		id,
-		moderate = false,
+		moderate = false
 	}: {
 		id: string
 		moderate?: boolean
@@ -16,7 +16,7 @@
 <li class="rounded-2">
 	<form
 		use:enhance={refreshComments}
-		method="POST"
+		method="post"
 		action="/comment/{id}?/delete&action={text}"
 		class="inline">
 		<button

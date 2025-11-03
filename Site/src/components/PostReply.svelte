@@ -8,7 +8,7 @@
 	const { form, errors, message, constraints, enhance, delayed } = formData
 </script>
 
-<form use:enhance method="POST" action="?/comment" class="py-2">
+<form use:enhance method="post" action="?/comment" class="py-2">
 	<label for="content" class="light-text py-2">Post a comment</label>
 	<fieldset class="max-w-140 flex gap-4 items-end">
 		<textarea

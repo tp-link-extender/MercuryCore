@@ -26,7 +26,7 @@
 			</a>
 			<form
 				use:enhance
-				method="POST"
+				method="post"
 				action="?/{data.in ? 'leave' : 'join'}"
 				class="self-center">
 				<button

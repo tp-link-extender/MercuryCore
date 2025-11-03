@@ -115,7 +115,7 @@
 				</a>
 				<form
 					use:enhance
-					method="POST"
+					method="post"
 					action="/notifications?s={notification.id}">
 					<button
 						class="btn p-0 px-1 text-white hover:text-neutral-500"

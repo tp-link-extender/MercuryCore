@@ -66,7 +66,7 @@
 	<div class="grid lg:grid-cols-4 gap-4 pt-6">
 		<div class="<md:col-span-3 flex lg:flex-col gap-4">
 			<div class="card w-full p-4">
-				<form use:enhance={enhanceRegen} method="POST" action="?/regen">
+				<form use:enhance={enhanceRegen} method="post" action="?/regen">
 					<button class="btn btn-secondary w-full">
 						<fa fa-rotate></fa>
 						Regenerate
@@ -144,7 +144,7 @@
 			{#each brickColours as colour}
 				<form
 					use:enhance={enhanceRegen}
-					method="POST"
+					method="post"
 					action="?/paint&p={bodyPart}&c={colour}"
 					onsubmit={() => {
 						bodyParts[bodyPart] = colour

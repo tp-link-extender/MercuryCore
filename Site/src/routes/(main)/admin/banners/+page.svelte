@@ -77,7 +77,7 @@
 						<td>
 							<form
 								use:enhance
-								method="POST"
+								method="post"
 								action="?/delete&id={banner.id}">
 								<button
 									class="btn py-0 no-underline text-red-500">
@@ -87,7 +87,7 @@
 							</form>
 							<form
 								use:enhance
-								method="POST"
+								method="post"
 								action="?/{banner.active
 									? 'hide'
 									: 'show'}&id={banner.id}">
@@ -124,7 +124,7 @@
 							<form
 								use:enhance
 								bind:this={textLightForms[banner.id]}
-								method="POST"
+								method="post"
 								action="?/updateTextLight&id={banner.id}"
 								class="px-2">
 								<input

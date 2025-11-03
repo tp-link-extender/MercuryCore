@@ -21,7 +21,7 @@
 			pinned = !pinned
 			return refreshComments(e)
 		}}
-		method="POST"
+		method="post"
 		action="/comment/{id}?/pin&set={!pinned}"
 		class="inline">
 		<button

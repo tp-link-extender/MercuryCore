@@ -31,7 +31,7 @@
 					<div class="flex gap-2 px-2">
 						<form
 							use:enhance
-							method="POST"
+							method="post"
 							action="/user/{user.username}?/accept"
 							class="w-full">
 							<button class="btn btn-secondary w-full">
@@ -40,7 +40,7 @@
 						</form>
 						<form
 							use:enhance
-							method="POST"
+							method="post"
 							action="/user/{user.username}?/decline"
 							class="w-full">
 							<button class="btn btn-red-secondary w-full">

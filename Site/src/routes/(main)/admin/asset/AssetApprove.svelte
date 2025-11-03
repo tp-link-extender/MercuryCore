@@ -38,13 +38,13 @@
 	<div class="flex flex-col gap-1 p-3">
 		<form
 			use:enhance
-			method="POST"
+			method="post"
 			action="/admin/asset?/approve&id={asset.id}">
 			<button class="btn btn-sm btn-secondary w-full">Approve</button>
 		</form>
 		<form
 			use:enhance
-			method="POST"
+			method="post"
 			action="/admin/asset?/deny&id={asset.id}">
 			<button class="btn btn-sm btn-red-secondary w-full">Deny</button>
 		</form>
@@ -68,7 +68,7 @@
 
 		<form
 			use:enhance
-			method="POST"
+			method="post"
 			action="/admin/asset?/rerender&id={asset.id}"
 			class="w-full pb-3">
 			<button class="btn btn-lg btn-primary w-full">
@@ -100,7 +100,7 @@
 	<div class="flex flex-wrap gap-3">
 		<form
 			use:enhance
-			method="POST"
+			method="post"
 			action="/admin/asset?/purge&id={asset.id}">
 			<button class="btn btn-danger bg-red-900 border-red-900">
 				Yes, do as I say!

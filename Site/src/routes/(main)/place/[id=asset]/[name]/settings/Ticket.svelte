@@ -9,7 +9,7 @@
 	})
 </script>
 
-<form use:enhance method="POST" action="?/ticket&tab=Network">
+<form use:enhance method="post" action="?/ticket&tab=Network">
 	<fieldset class="flex flex-wrap pb-4">
 		<label for="ticket" class="w-full md:w-1/4">Server ticket</label>
 		<div class="w-full md:w-3/4">

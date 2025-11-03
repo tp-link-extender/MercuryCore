@@ -84,7 +84,7 @@
 							<li class="rounded-2">
 								<form
 									use:enhance
-									method="POST"
+									method="post"
 									action="/api?/logout">
 									<button class="btn text-red-500 pl-4 pr-0">
 										<fa

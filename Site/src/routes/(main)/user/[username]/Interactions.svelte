@@ -9,7 +9,7 @@
 	<form
 		use:enhance
 		in:fade
-		method="POST"
+		method="post"
 		action="?/{data.friends
 			? 'unfriend'
 			: data.outgoingRequest
@@ -39,7 +39,7 @@
 		<form
 			use:enhance
 			in:fade
-			method="POST"
+			method="post"
 			action="?/decline"
 			class="flex gap-2">
 			<button class="btn btn-red-secondary">Decline request</button>
@@ -48,7 +48,7 @@
 	<form
 		use:enhance
 		in:fade
-		method="POST"
+		method="post"
 		action="?/{data.following ? 'unfollow' : 'follow'}"
 		class="flex gap-2">
 		<button

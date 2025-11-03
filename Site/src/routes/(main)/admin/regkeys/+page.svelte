@@ -91,7 +91,7 @@
 						<td>
 							<form
 								use:enhance
-								method="POST"
+								method="post"
 								action="?/disable&id={regKey.id}">
 								<button
 									class="btn btn-sm no-underline text-red-500 my-0">

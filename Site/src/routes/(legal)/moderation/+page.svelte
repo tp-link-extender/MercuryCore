@@ -62,7 +62,7 @@
 					You may reactivate your account if you agree to follow our
 					Terms of Service.
 				</p>
-				<form use:enhance method="POST">
+				<form use:enhance method="post">
 					<button class={["btn btn-primary"]}>Reactivate</button>
 				</form>
 			{:else if actionType === "Ban"}
@@ -76,7 +76,7 @@
 						new Date(data.timeEnds).getTime()
 					)} if you agree to follow our Terms of Service.
 				</p>
-				<form use:enhance method="POST">
+				<form use:enhance method="post">
 					<button
 						class={[
 							"btn btn-primary",

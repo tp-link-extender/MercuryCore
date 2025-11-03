@@ -183,7 +183,7 @@
 						<form
 							use:enhance={enhanceRegen}
 							in:fade
-							method="POST"
+							method="post"
 							action="?/rerender"
 							class="absolute text-right end-0 pr-4">
 							<button class="btn btn-sm btn-tertiary">
