@@ -475,6 +475,53 @@ select,
 	text-align: left;
 }
 
+[data-melt-select-content] {
+	@apply m-0 border-none transition-opacity duration-300 rounded-xl p-2;
+	background: var(--darker);
+	filter: drop-shadow(0 10px 8px rgba(255, 255, 255, 0.04))
+		drop-shadow(0 0px 3px rgba(255, 255, 255, 0.1));
+
+	@starting-style {
+		opacity: 0;
+		translate: 0 2rem;
+	}
+
+	& ul {
+		list-style: none;
+		width: 10rem;
+		background: var(--darker);
+		margin: 0;
+	}
+
+	& a,
+	& button {
+		transition: background 0.2s !important;
+		width: 100%;
+		border: none;
+		text-align: start !important;
+	}
+
+	& a:hover,
+	& button:hover,
+	& a:focus,
+	& button:focus,
+	& a[data-highlighted],
+	& button[data-highlighted] {
+		color: var(--grey-text) !important;
+		background: rgba(119, 51, 255, 0.5);
+	}
+
+	& a:active,
+	& button:active {
+		background: rgba(102, 26, 255, 0.4);
+	}
+
+	& li {
+		padding: 0px;
+		transition: background 0.2s;
+	}
+}
+
 input {
 	margin: 0;
 }
@@ -587,7 +634,7 @@ input[type="number"] {
 	}
 }
 
-[popover]:not(#results) {
+[popover="auto"] {
 	@apply border-none transition-all duration-300 ease-in-out overflow-y-auto rounded-2 py-6;
 	background: var(--darker);
 	outline: transparent;
