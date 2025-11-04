@@ -1,31 +1,27 @@
 <script lang="ts">
-	import { type createAccordion, melt } from "@melt-ui/svelte"
+	import { Accordion } from "melt/builders"
 	import type { Snippet } from "svelte"
 	import type { HTMLAttributes } from "svelte/elements"
 	import NoScript from "$components/NoScript.svelte"
 	import YesScript from "$components/YesScript.svelte"
 
 	const {
-		accordion,
 		children,
 		...rest
 	}: {
-		accordion: ReturnType<typeof createAccordion>
-		children: Snippet
+		children: Snippet<[Accordion]>
 	} & HTMLAttributes<HTMLDivElement> = $props()
 
-	const {
-		elements: { root }
-	} = accordion
+	const accordion = new Accordion()
 </script>
 
 <NoScript>
 	<div {...rest}>
-		{@render children()}
+		{@render children(accordion)}
 	</div>
 </NoScript>
 <YesScript>
-	<div use:melt={$root} {...rest}>
-		{@render children()}
+	<div {...accordion.root} {...rest}>
+		{@render children(accordion)}
 	</div>
 </YesScript>

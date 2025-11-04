@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { createAccordion } from "@melt-ui/svelte"
 	import { applyAction, enhance } from "$app/forms"
 	import { invalidateAll } from "$app/navigation"
 	import Accordion from "$components/Accordion.svelte"
@@ -34,8 +33,6 @@
 			regenerating = false
 		}
 	}
-
-	let accordion = $state(createAccordion()) // Sometimes undefined for some probably crazy reason
 </script>
 
 <Head name={data.siteName} title={data.username} />
@@ -202,12 +199,16 @@
 			{#if data.places.length > 0}
 				<div class="pt-6">
 					<h2>Creations</h2>
-					<Accordion {accordion} class="flex flex-col gap-2">
-						{#each accordion ? data.places : [] as place}
-							<AccordionItem {accordion} title={place.name}>
-								<ProfilePlace {place} />
-							</AccordionItem>
-						{/each}
+					<Accordion class="flex flex-col gap-2">
+						{#snippet children(accordion)}
+							{#each data.places as place, id}
+								<AccordionItem
+									{accordion}
+									ai={{ id, title: place.name }}>
+									<ProfilePlace {place} />
+								</AccordionItem>
+							{/each}
+						{/snippet}
 					</Accordion>
 				</div>
 			{/if}

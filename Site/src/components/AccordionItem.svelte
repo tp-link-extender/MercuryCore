@@ -1,43 +1,43 @@
 <script lang="ts">
-	import NoScript from "$components/NoScript.svelte"
-	import YesScript from "$components/YesScript.svelte"
-	import { type createAccordion, melt } from "@melt-ui/svelte"
+	import type { Accordion, AccordionItem } from "melt/builders"
 	import type { Snippet } from "svelte"
 	import { slide } from "svelte/transition"
+	import NoScript from "$components/NoScript.svelte"
+	import YesScript from "$components/YesScript.svelte"
 
 	const {
 		accordion,
-		title,
+		ai,
 		children
 	}: {
-		accordion: ReturnType<typeof createAccordion>
-		title: string
+		accordion: Accordion
+		ai: AccordionItem<{
+			title: string
+		}>
 		children: Snippet
 	} = $props()
 
-	const {
-		elements: { content, item, trigger },
-		helpers: { isSelected }
-	} = accordion
+	const item = accordion.getItem(ai)
 </script>
 
 <NoScript>
 	<details name="details">
 		<summary class="bg-darker p-2 px-4 rounded-2 block">
-			{title}
+			{item.item.title}
 		</summary>
 		{@render children()}
 	</details>
 </NoScript>
 <YesScript>
-	<div use:melt={$item(title)}>
+	<div class="bg-darker rounded-2">
 		<button
-			use:melt={$trigger(title)}
-			class="btn light-text bg-darker p-2 px-4 rounded-2 w-full text-left text-base">
-			{title}
+			{...item.trigger}
+			class="btn light-text p-2 px-4 w-full text-(left base)">
+			{item.item.title}
 		</button>
-		{#if $isSelected(title)}
-			<div use:melt={$content(title)} transition:slide>
+
+		{#if item.isExpanded}
+			<div {...item.content} transition:slide>
 				{@render children()}
 			</div>
 		{/if}
