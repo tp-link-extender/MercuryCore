@@ -2,8 +2,6 @@
 	import { Accordion } from "melt/builders"
 	import type { Snippet } from "svelte"
 	import type { HTMLAttributes } from "svelte/elements"
-	import NoScript from "$components/NoScript.svelte"
-	import YesScript from "$components/YesScript.svelte"
 
 	const {
 		children,
@@ -15,13 +13,6 @@
 	const accordion = new Accordion()
 </script>
 
-<NoScript>
-	<div {...rest}>
-		{@render children(accordion)}
-	</div>
-</NoScript>
-<YesScript>
-	<div {...accordion.root} {...rest}>
-		{@render children(accordion)}
-	</div>
-</YesScript>
+<div {...accordion.root} {...rest}>
+	{@render children(accordion)}
+</div>

@@ -21,8 +21,8 @@
 </script>
 
 <NoScript>
-	<details name="details">
-		<summary class="bg-darker p-2 px-4 rounded-2 block">
+	<details name="details" class="bg-darker rounded-2">
+		<summary class="p-2 px-4 block">
 			{item.item.title}
 		</summary>
 		{@render children()}
