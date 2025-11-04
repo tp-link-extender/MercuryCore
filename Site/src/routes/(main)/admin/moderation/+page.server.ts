@@ -19,7 +19,7 @@ const schema = type({
 		.configure({
 			problem: "must be a valid moderation action",
 		}),
-	banDate: type("string | undefined").pipe(date => {
+	banDate: type("string | undefined").pipe.try(date => {
 		if (!date) return undefined
 		const d = new Date(date)
 		if (Number.isNaN(d.getTime())) throw new Error("Invalid date")

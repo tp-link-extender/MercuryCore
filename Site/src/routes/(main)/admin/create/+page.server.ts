@@ -12,7 +12,7 @@ import createQuery from "./create.surql"
 const schema = type({
 	type: type
 		.enumerated(...Object.values(types))
-		.pipe(t => {
+		.pipe.try(t => {
 			const num = typeToNumber[t]
 			if (!num) throw new Error("Invalid asset type")
 			return num

@@ -10,11 +10,6 @@
 	const formData = superForm(data.profileForm)
 	const { form } = formData
 
-	const themes: [string, string][] = data.themes.map((theme, i) => [
-		i.toString(),
-		theme
-	])
-
 	$effect(() => {
 		if (user.description) $form.description = user.description.text || ""
 	})
@@ -23,8 +18,8 @@
 <Form {formData} action="?/profile" submit="<fa fa-save></fa> Save changes">
 	<Select
 		{formData}
-		options={themes}
-		selected={user.theme.toString()}
+		options={Object.values(data.themes)}
+		selected={data.themes[user.theme.toString()]}
 		name="theme"
 		label="Theme" />
 

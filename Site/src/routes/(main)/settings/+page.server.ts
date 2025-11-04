@@ -9,9 +9,15 @@ import { db, Record } from "$lib/server/surreal"
 import passwordQuery from "./password.surql"
 import updateProfileQuery from "./updateProfile.surql"
 
+const themeNames = config.Themes.map(t => t.Name)
+
 const profileSchema = type({
 	description: "(string <= 1000) | undefined",
-	theme: type.enumerated("0", ...config.Themes.map((_, i) => i.toString())),
+	theme: type.enumerated(...themeNames).pipe.try(t => {
+		const index = themeNames.indexOf(t)
+		if (index === -1) throw new Error("must be a valid theme")
+		return index
+	}),
 })
 const passwordSchema = type({
 	cpassword: "string >= 1",
@@ -30,7 +36,7 @@ export const load = async () => ({
 	passwordForm: await superValidate(arktype(passwordSchema)),
 	sessionForm: await superValidate(arktype(sessionSchema)),
 	stylingForm: await superValidate(arktype(stylingSchema)),
-	themes: config.Themes.map(t => t.Name),
+	themes: themeNames,
 })
 
 export const actions: import("./$types").Actions = {}
@@ -44,7 +50,7 @@ actions.profile = async ({ locals, request }) => {
 	await db.query(updateProfileQuery, {
 		user: Record("user", user.id),
 		description,
-		theme: +(theme || 0),
+		theme,
 	})
 
 	return message(form, "Profile updated successfully!")
