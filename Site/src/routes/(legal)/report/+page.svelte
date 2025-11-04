@@ -4,28 +4,12 @@
 	import Select from "$components/forms/Select.svelte"
 	import Textarea from "$components/forms/Textarea.svelte"
 	import Head from "$components/Head.svelte"
+	import reports from "./reports"
 
 	const { data } = $props()
 
 	const formData = superForm(data.form)
 	export const snapshot = formData
-
-	const reports: [string, string][] = [
-		["AccountTheft", "Account theft"],
-		["Dating", "Dating"],
-		["Exploiting", "Exploiting"],
-		["Harassment", "Harassment or discrimination"],
-		["InappropriateContent", "Inappropriate content"],
-		[
-			"PersonalInformation",
-			"Personal information (displaying their own or asking for others')"
-		],
-		["Scamming", "Scamming"],
-		["Under13", "Suspected under 13 user"],
-		["Spam", "Spam"],
-		["Swearing", "Swearing"],
-		["Threats", "Threats"]
-	]
 </script>
 
 <Head name={data.siteName} title="Report {data.reportee}" />

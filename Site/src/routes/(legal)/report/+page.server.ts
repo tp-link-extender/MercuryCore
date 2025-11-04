@@ -8,23 +8,10 @@ import ratelimit from "$lib/server/ratelimit"
 import { db, Record, type RecordId } from "$lib/server/surreal"
 import getReporteeQuery from "./getReportee.surql"
 import reportQuery from "./report.surql"
+import reports from "./reports"
 
 const schema = type({
-	category: type
-		.enumerated(
-			"AccountTheft",
-			"Dating",
-			"Exploiting",
-			"Harassment",
-			"InappropriateContent",
-			"PersonalInformation",
-			"Scamming",
-			"Spam",
-			"Swearing",
-			"Threats",
-			"Under13"
-		)
-		.describe("a valid report category"),
+	category: type.enumerated(...reports).describe("a valid report category"),
 	note: "string | undefined",
 })
 
