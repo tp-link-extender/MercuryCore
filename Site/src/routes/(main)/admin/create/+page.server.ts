@@ -3,6 +3,7 @@ import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { arktype } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
+import types, { typeToNumber } from "$lib/assetTypes"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import { db, Record } from "$lib/server/surreal"
@@ -10,35 +11,12 @@ import createQuery from "./create.surql"
 
 const schema = type({
 	type: type
-		.enumerated(
-			1,
-			2,
-			3,
-			4,
-			5,
-			8,
-			10,
-			11,
-			12,
-			13,
-			16,
-			17,
-			18,
-			19,
-			24,
-			25,
-			26,
-			27,
-			28,
-			29,
-			30,
-			31,
-			32,
-			35,
-			37,
-			38,
-			42
-		)
+		.enumerated(...Object.values(types))
+		.pipe(t => {
+			const num = typeToNumber[t]
+			if (!num) throw new Error("Invalid asset type")
+			return num
+		})
 		.configure({
 			problem: "must be a valid asset type",
 		}),

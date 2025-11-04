@@ -38,7 +38,7 @@
 			submit="Create">
 			<Select
 				formData={formDataManual}
-				options={Object.entries(types)}
+				options={Object.values(types)}
 				name="type"
 				label="Asset type" />
 			<Input

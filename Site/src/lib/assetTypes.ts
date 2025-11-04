@@ -1,4 +1,4 @@
-export default Object.freeze({
+const types = Object.freeze({
 	1: "Image",
 	2: "T-Shirt",
 	3: "Audio",
@@ -26,4 +26,9 @@ export default Object.freeze({
 	37: "Code",
 	38: "Plugin",
 	42: "Face Accessory",
-} as { [_: string]: string })
+} as { [_: number]: string })
+
+export default types
+export const typeToNumber: { [_: string]: number } = Object.fromEntries(
+	Object.entries(types).map(([key, value]) => [value, +key])
+)

@@ -480,6 +480,7 @@ select,
 	background: var(--darker);
 	filter: drop-shadow(0 10px 8px rgba(255, 255, 255, 0.04))
 		drop-shadow(0 0px 3px rgba(255, 255, 255, 0.1));
+	max-height: min(50vh, 20rem);
 
 	@starting-style {
 		opacity: 0;
