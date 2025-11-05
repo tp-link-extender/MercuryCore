@@ -10,4 +10,13 @@ export default {
 		alias: { $components: "./src/components" },
 	},
 	vitePlugin: { inspector: { toggleKeyCombo: "control-i" } },
+
+	compilerOptions: {
+		// These become defaults in Svelte 6
+		runes: true,
+		modernAst: true,
+
+		// shorter hashes (normal hashes are svelte-{hash}). This doesn't work in development so expect a warning from vite-plugin-svelte, though works fine in production builds.
+		cssHash: ({ hash, filename }) => `s${hash(filename)}`,
+	},
 }

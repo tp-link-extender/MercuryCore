@@ -52,8 +52,5 @@
 		"@sveltejs/kit",
 		"esbuild",
 		"sharp"
-	],
-	"overrides": {
-		"unconfig": "0.3.10"
-	}
+	]
 }
