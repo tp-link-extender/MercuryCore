@@ -7,4 +7,6 @@ SELECT
 	FROM ->place)[0] AS place,
 	(SELECT permissionLevel, username
 	FROM <-user)[0] AS user
-FROM $playing;
+FROM ONLY $playing;
+
+UPDATE $playing SET valid = false;

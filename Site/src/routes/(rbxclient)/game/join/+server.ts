@@ -25,10 +25,6 @@ export async function GET({ url }) {
 
 	if (!clientTicket) error(400, "Invalid Request")
 
-	const playing = Record("playing", clientTicket)
-	const [[gameSession]] = await db.query<Session[][]>(joinQuery, { playing })
-	if (!gameSession) error(400, "Invalid Game Session")
-
 	const foundPrivatePlace = await findWhere(
 		"place",
 		"privateTicket = $privateServer",
@@ -37,7 +33,10 @@ export async function GET({ url }) {
 	if (privateServer && !foundPrivatePlace)
 		error(400, "Invalid Private Server")
 
-	await db.merge(playing, { valid: false })
+	const playing = Record("playing", clientTicket)
+	// also invalidates the session
+	const [gameSession] = await db.query<Session[]>(joinQuery, { playing })
+	if (!gameSession) error(400, "Invalid Game Session")
 
 	const placeId = gameSession.place.id
 	const creatorUsername = gameSession.place.ownerUser?.username

@@ -18,6 +18,7 @@
 
 	let place = $state(data.place)
 	let online = $derived(place.serverPing > Date.now() / 1000 - 35)
+	let currentPath = $derived(`/place/${place.id}/${data.slug}`)
 
 	const statistics = $derived([
 		// ["Activity", "0 visits"],
@@ -33,19 +34,32 @@
 	let installed = $state(true)
 	let success = $state(false)
 
-	const launch = (joinscripturl: () => string) => () => {
-		success = false
-		customProtocol(
-			joinscripturl(),
-			() => {
-				success = true
-				setTimeout(() => popover?.hidePopover(), 16000)
-			},
-			() => {
-				installed = false
-			}
-		)
+	function privateFetch() {
+		const body = new FormData()
+		body.append("privateTicket", place.privateTicket)
+		return { method: "POST", body }
 	}
+
+	// we don't want to start a server if the user is just opening studio to edit the place
+	const launch =
+		(joinscripturl: () => string, startServer = false) =>
+		() => {
+			success = false
+			customProtocol(
+				joinscripturl(),
+				async () => {
+					// this isn't a guarantee that the game has succeeded in launching, but it's a decent guess I guess??
+					if (startServer)
+						await fetch(`${currentPath}?/start`, privateFetch())
+
+					success = true
+					setTimeout(() => popover?.hidePopover(), 16000)
+				},
+				() => {
+					installed = false
+				}
+			)
+		}
 
 	let loadCommand = $derived(
 		`dofile "http://${data.domain}/game/host?ticket=${place.serverTicket}"`
@@ -54,14 +68,8 @@
 	async function placeLauncher() {
 		installed = true
 
-		const formdata = new FormData()
-		formdata.append("privateTicket", place.privateTicket)
-
 		// Get the joinscript URL
-		const response = await fetch(`/place/${place.id}/${data.slug}?/join`, {
-			method: "POST",
-			body: formdata
-		})
+		const response = await fetch(`${currentPath}?/join`, privateFetch())
 		const joinScriptData = deserialize(await response.text()) as {
 			status: number
 			data: { ticket: string }
@@ -70,7 +78,7 @@
 
 		// JoinScript is my favourite programming language (-i mean scripting language)
 		const joinUri = data.scheme + joinScriptData.data.ticket
-		launch(() => joinUri)()
+		launch(() => joinUri, true)()
 	}
 
 	const tabs = ["Description", "Servers"]

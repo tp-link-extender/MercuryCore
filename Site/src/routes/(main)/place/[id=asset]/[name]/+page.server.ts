@@ -2,7 +2,8 @@ import { error, redirect } from "@sveltejs/kit"
 import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formData from "$lib/server/formData"
-import { getGameserver } from "$lib/server/orbiter"
+import { getGameserver, startGameserver } from "$lib/server/orbiter"
+import ratelimit from "$lib/server/ratelimit"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
 import findPlaceQuery from "./findPlace.surql"
@@ -83,13 +84,10 @@ export async function load({ locals, params, url }) {
 	}
 }
 
-export const actions: import("./$types").Actions = {}
-actions.join = async ({ locals, params, request }) => {
-	const { user } = await authorise(locals)
+async function findPlace(request: Request, id: number, user: User) {
 	const data = await formData(request)
 	const privateTicket = data?.privateTicket
 
-	const id = +params.id
 	const placeR = Record("place", id)
 	const [[place]] = await db.query<FoundPlace[][]>(findPlaceQuery, {
 		place: placeR,
@@ -103,12 +101,26 @@ actions.join = async ({ locals, params, request }) => {
 	)
 		error(404, "Place not found")
 
+	return placeR
+}
+
+async function checkUser(locals: App.Locals) {
+	const { user } = await authorise(locals)
+
 	const foundModerated = await findWhere(
 		"moderation",
 		"out = $user AND active = true",
 		{ user: Record("user", user.id) }
 	)
 	if (foundModerated) error(403, "You cannot currently play games")
+
+	return user
+}
+
+export const actions: import("./$types").Actions = {}
+actions.join = async ({ locals, params, request }) => {
+	const user = await checkUser(locals)
+	const placeR = await findPlace(request, +params.id, user)
 
 	// Invalidate all game sessions and create valid playing
 	const [, [ticket]] = await db.query<string[][]>(invalidatePlayingQuery, {
@@ -117,4 +129,22 @@ actions.join = async ({ locals, params, request }) => {
 	})
 
 	return { ticket }
+}
+
+actions.start = async ({ locals, params, getClientAddress }) => {
+	await checkUser(locals)
+
+	const limit = ratelimit(null, "serverstart", getClientAddress, 20)
+	if (limit) return limit
+
+	const id = +params.id
+	const res = await startGameserver(id)
+	if (!res.ok) {
+		console.error(
+			"Failed to start dedicated gameserver for id",
+			id,
+			res.msg
+		)
+		error(500, "Failed to start dedicated server")
+	}
 }
