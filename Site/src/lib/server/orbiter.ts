@@ -44,7 +44,7 @@ async function fetchGameserver(
 }
 
 export const startGameserver = async (placeId: number) =>
-	fetchGameserver(placeId, "post")
+	fetchGameserver(placeId, "put")
 
 export const closeGameserver = async (placeId: number) =>
 	fetchGameserver(placeId, "delete")
