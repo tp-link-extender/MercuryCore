@@ -37,7 +37,7 @@
 	function privateFetch() {
 		const body = new FormData()
 		body.append("privateTicket", place.privateTicket)
-		return { method: "POST", body }
+		return { method: "post", body }
 	}
 
 	// we don't want to start a server if the user is just opening studio to edit the place

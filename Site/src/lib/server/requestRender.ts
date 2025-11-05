@@ -86,7 +86,7 @@ export default async function (
 		waiter,
 		// Uhh carrot just got the
 		fetch(`${config.RCCServiceProxyURL}/${renderId}`, {
-			method: "POST",
+			method: "post",
 			body: script,
 		}),
 	])

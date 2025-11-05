@@ -49,7 +49,7 @@
 		const lastPing = localStorage.getItem("lastPing")
 		if (lastPing && Date.now() - +lastPing < 30e3) return
 		await fetch("/api?/statusping", {
-			method: "POST",
+			method: "post",
 			body: new FormData()
 		})
 		localStorage.setItem("lastPing", Date.now().toString())

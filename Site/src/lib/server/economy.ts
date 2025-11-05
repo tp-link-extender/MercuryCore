@@ -67,7 +67,7 @@ export const getAdminTransactions = () =>
 export async function stipend(To: string) {
 	try {
 		await fetch(`${economyUrl}/stipend/${To}`, {
-			method: "POST",
+			method: "post",
 		})
 	} catch {}
 }
@@ -82,7 +82,7 @@ export async function transact(
 ): Promise<ReturnErr> {
 	try {
 		const res = await fetch(`${economyUrl}/transact`, {
-			method: "POST",
+			method: "post",
 			body: JSON.stringify({ From, To, Amount, Note, Link, Returns }),
 		})
 		if (res.status === 200) return { ok: true }
@@ -101,8 +101,13 @@ export async function burn(
 	Returns: { [_: number]: number }
 ): Promise<ReturnErr> {
 	try {
+		// Who's not entertained by my pain
+		// Who aint cash a cheque off my name
+		// When my campaign turned to a cam-pain
+		// We got $2.5 trillion stored on the blockchain
+		// Uh, ₿urn ₿aby ₿urn
 		const res = await fetch(`${economyUrl}/burn`, {
-			method: "POST",
+			method: "post",
 			body: JSON.stringify({ From, Amount, Note, Link, Returns }),
 		})
 		if (res.status === 200) return { ok: true }
