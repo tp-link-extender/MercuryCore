@@ -66,18 +66,11 @@ export async function load({ locals, params, url }) {
 	if (!couldMatch(place.name, params.name))
 		redirect(302, `/place/${id}/${slug}`)
 
-	const dedicatedProps: { dedicatedOnline?: boolean } = {}
-
-	const hosting = config.Gameservers.Hosting
-	if (hosting === "Dedicated hosting" || hosting === "Both") {
-		const status = await getGameserver(id)
-		dedicatedProps.dedicatedOnline = status.ok
-	}
+	// don't check gameserver status here or your mercury will slow to a crawl 
 
 	return {
 		scheme: config.LauncherURI,
-		hosting,
-		...dedicatedProps,
+		hosting: config.Gameservers.Hosting,
 		slug,
 		place,
 		thumbnails: [id % thumbnails.length],
