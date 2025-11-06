@@ -1,6 +1,5 @@
+import config from "$lib/server/config"
 import type { ReturnErr, ReturnValue } from "./economy"
-
-const orbiterUrl = "http://localhost:64991"
 
 type Gameserver = {
 	pid: number
@@ -11,7 +10,7 @@ type GameserverId = [number, Gameserver]
 
 export async function listGameservers(): ReturnValue<GameserverId[]> {
 	try {
-		const res = await fetch(orbiterUrl)
+		const res = await fetch(config.OrbiterURL)
 		if (!res.ok) return { ok: false }
 		return { ok: true, value: await res.json() }
 	} catch {
@@ -21,7 +20,7 @@ export async function listGameservers(): ReturnValue<GameserverId[]> {
 
 export async function getGameserver(placeId: number): ReturnValue<Gameserver> {
 	try {
-		const res = await fetch(`${orbiterUrl}/${placeId}`)
+		const res = await fetch(`${config.OrbiterURL}/${placeId}`)
 		if (!res.ok) return { ok: false }
 		return { ok: true, value: await res.json() }
 	} catch {
@@ -34,7 +33,7 @@ async function fetchGameserver(
 	method: string
 ): Promise<ReturnErr> {
 	try {
-		const res = await fetch(`${orbiterUrl}/${path}`, { method })
+		const res = await fetch(`${config.OrbiterURL}/${path}`, { method })
 		if (!res.ok) return { ok: false, msg: await res.text() }
 	} catch (err) {
 		const e = err as Error
