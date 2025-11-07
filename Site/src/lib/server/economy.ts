@@ -93,7 +93,7 @@ export async function transact(
 	}
 }
 
-export async function burn(
+async function burn(
 	From: string,
 	Amount: number,
 	Note: string,
@@ -124,7 +124,7 @@ const getFeeBasedPrice = (multiplier: number): number =>
 
 export const getAssetPrice = () => getFeeBasedPrice(75)
 export const getGroupPrice = () => getFeeBasedPrice(50)
-export const getPlacePrice = () => getFeeBasedPrice(50)
+// export const getPlacePrice = () => getFeeBasedPrice(50)
 
 export async function createAsset(
 	To: string,
@@ -142,21 +142,21 @@ export async function createAsset(
 	)
 }
 
-export async function createPlace(
-	To: string,
-	id: number,
-	name: string,
-	slug: string
-): Promise<ReturnErr> {
-	const price = getPlacePrice()
-	return await burn(
-		To,
-		price,
-		`Created place ${name}`,
-		`/place/${id}/${slug}`,
-		{}
-	)
-}
+// export async function createPlace(
+// 	To: string,
+// 	id: number,
+// 	name: string,
+// 	slug: string
+// ): Promise<ReturnErr> {
+// 	const price = getPlacePrice()
+// 	return await burn(
+// 		To,
+// 		price,
+// 		`Created place ${name}`,
+// 		`/place/${id}/${slug}`,
+// 		{}
+// 	)
+// }
 
 export async function createGroup(
 	To: string,

@@ -1,7 +1,6 @@
 import { type } from "arktype"
 import { arktype } from "sveltekit-superforms/adapters"
 import { superValidate } from "sveltekit-superforms/server"
-import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
 import createCommentQuery from "$lib/server/createComment.surql"
 import filter from "$lib/server/filter"
