@@ -2,7 +2,7 @@ import { error, redirect } from "@sveltejs/kit"
 import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formData from "$lib/server/formData"
-import { getGameserver, startGameserver } from "$lib/server/orbiter"
+import { startGameserver } from "$lib/server/orbiter"
 import ratelimit from "$lib/server/ratelimit"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
@@ -66,11 +66,12 @@ export async function load({ locals, params, url }) {
 	if (!couldMatch(place.name, params.name))
 		redirect(302, `/place/${id}/${slug}`)
 
-	// don't check gameserver status here or your mercury will slow to a crawl 
+	// don't check gameserver status here or your mercury will slow to a crawl
 
 	return {
 		scheme: config.LauncherURI,
 		hosting: config.Gameservers.Hosting,
+		orbiterURL: config.OrbiterPublicURL,
 		slug,
 		place,
 		thumbnails: [id % thumbnails.length],

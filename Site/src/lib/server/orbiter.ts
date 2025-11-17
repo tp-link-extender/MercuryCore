@@ -18,16 +18,6 @@ export async function listGameservers(): ReturnValue<GameserverId[]> {
 	}
 }
 
-export async function getGameserver(placeId: number): ReturnValue<Gameserver> {
-	try {
-		const res = await fetch(`${config.OrbiterPrivateURL}/${placeId}`)
-		if (!res.ok) return { ok: false }
-		return { ok: true, value: await res.json() }
-	} catch {
-		return { ok: false }
-	}
-}
-
 async function fetchGameserver(
 	path: string | number,
 	method: string

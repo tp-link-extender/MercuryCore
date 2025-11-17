@@ -1,12 +1,12 @@
 <script lang="ts">
 	const {
-		launch,
+		beginJoining,
 		scheme,
 		serverTicket,
 		domain,
 		siteName
 	}: {
-		launch: (joinscripturl: () => string) => () => void
+		beginJoining: (joinscripturl: () => string) => () => void
 		scheme: string
 		serverTicket: string
 		domain: string
@@ -15,7 +15,7 @@
 
 	let filepath = $state("")
 
-	const host = launch(
+	const host = beginJoining(
 		() =>
 			// TODO: fix hosting and map opening with correct URI scheme
 			`${scheme}1+launchmode:ide+script:http://${domain}/game/host?ticket=${serverTicket}&autopilot=${btoa(
@@ -43,7 +43,7 @@
 		aria-label="Map location" />
 	<button
 		class="btn btn-secondary"
-		onclick={launch(() => `${scheme}1+launchmode:maps`)}
+		onclick={beginJoining(() => `${scheme}1+launchmode:maps`)}
 		type="button">
 		<fa fa-arrow-up-right-from-square></fa>
 		Map Folder

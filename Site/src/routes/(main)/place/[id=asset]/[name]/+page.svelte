@@ -30,35 +30,69 @@
 
 	// Place Launcher
 
-	let popover = $state<HTMLDivElement>()
-	let installed = $state(true)
-	let success = $state(false)
+	type State =
+		| "not installed"
+		| "waiting"
+		| "starting"
+		| "ready"
+		| "success"
+		| "fail"
 
-	function privateFetch() {
+	let popover = $state<HTMLDivElement>()
+	let current = $state<State>("not installed")
+
+	function privateFetchParams() {
 		const body = new FormData()
 		body.append("privateTicket", place.privateTicket)
 		return { method: "post", body }
 	}
 
-	// we don't want to start a server if the user is just opening studio to edit the place
-	const launch =
-		(joinscripturl: () => string, startServer = false) =>
-		() => {
-			success = false
-			customProtocol(
-				joinscripturl(),
-				async () => {
-					// this isn't a guarantee that the game has succeeded in launching, but it's a decent guess I guess??
-					if (startServer)
-						await fetch(`${currentPath}?/start`, privateFetch())
+	const launch = (joinscripturl: () => string) => {
+		customProtocol(
+			joinscripturl(),
+			() => {
+				// this isn't a guarantee that the game has succeeded in launching, but it's a decent guess I guess??
+				current = "success"
+				setTimeout(() => popover?.hidePopover(), 16000)
+			},
+			() => {
+				current = "not installed"
+			}
+		)
+	}
 
-					success = true
-					setTimeout(() => popover?.hidePopover(), 16000)
-				},
-				() => {
-					installed = false
+	// we don't want to start a server if the user is just opening studio to edit the place
+	const beginJoining =
+		(joinscripturl: () => string, startServer = false) =>
+		async () => {
+			current = "waiting"
+
+			if (!startServer) {
+				launch(joinscripturl)
+				return
+			}
+
+			try {
+				await fetch(`${currentPath}?/start`, privateFetchParams())
+			} catch {
+				current = "fail"
+				return
+			}
+
+			const es = new EventSource(`${data.orbiterURL}/${place.id}`)
+			es.onmessage = event => {
+				const status = event.data
+				console.log("EVENTSOURCE", status)
+				if (status === "1") current = "starting"
+				else if (status === "2") {
+					current = "ready"
+					launch(joinscripturl)
+					es.close()
+				} else if (status === "0") {
+					current = "fail"
+					es.close()
 				}
-			)
+			}
 		}
 
 	let loadCommand = $derived(
@@ -66,10 +100,13 @@
 	)
 
 	async function placeLauncher() {
-		installed = true
+		current = "waiting"
 
 		// Get the joinscript URL
-		const response = await fetch(`${currentPath}?/join`, privateFetch())
+		const response = await fetch(
+			`${currentPath}?/join`,
+			privateFetchParams()
+		)
 		const joinScriptData = deserialize(await response.text()) as {
 			status: number
 			data: { ticket: string }
@@ -78,7 +115,7 @@
 
 		// JoinScript is my favourite programming language (-i mean scripting language)
 		const joinUri = data.scheme + joinScriptData.data.ticket
-		launch(() => joinUri, true)()
+		beginJoining(() => joinUri, true)()
 	}
 
 	const tabs = ["Description", "Servers"]
@@ -301,7 +338,7 @@
 						<span class="px-1">
 							<button
 								class="btn btn-sm btn-tertiary"
-								onclick={launch(
+								onclick={beginJoining(
 									() => `${data.scheme}1+launchmode:ide`
 								)}>
 								<fa fa-arrow-up-right-from-square></fa>
@@ -332,7 +369,7 @@
 				</Tab>
 				<Tab bind:tabData={tabData2}>
 					<Autopilot
-						{launch}
+						{beginJoining}
 						scheme={data.scheme}
 						serverTicket={place.serverTicket}
 						domain={data.domain}
@@ -355,24 +392,35 @@
 
 <div bind:this={popover} id="ready" popover="auto">
 	<div class="flex flex-col px-6 pt-6 text-center">
-		{#key installed}
-			<div class="self-center size-32 -translate-x-1/2">
-				<img
-					in:fade={{ duration: 500 }}
-					src="/assets/icon"
-					alt="{data.siteName} logo"
-					class="absolute"
-					width="128"
-					height="128" />
-			</div>
-		{/key}
-		{#if success}
+		<div class="self-center size-32 -translate-x-1/2">
+			<img
+				in:fade={{ duration: 500 }}
+				src="/assets/icon"
+				alt="{data.siteName} logo"
+				class="absolute"
+				width="128"
+				height="128" />
+		</div>
+		{#if current === "success"}
 			<span class="text-xl pt-6">
 				"{place.name}" is ready to play! Have fun!
 			</span>
-		{:else if installed}
+		{:else if current === "waiting"}
 			<span class="text-xl pt-6">
 				Get ready to join "{place.name}" by {place.ownerUser?.username}!
+			</span>
+		{:else if current === "starting"}
+			<span class="text-xl pt-6">
+				Starting server for "{place.name}"... This may take a minute.
+			</span>
+		{:else if current === "ready"}
+			<span class="text-xl pt-6">
+				The server for "{place.name}" is ready! Launching the game...
+			</span>
+		{:else if current === "fail"}
+			<span class="text-xl pt-6">
+				Failed to start the server for "{place.name}". Please try again
+				later.
 			</span>
 		{:else}
 			<span class="text-xl pt-6">
