@@ -10,7 +10,7 @@ type GameserverId = [number, Gameserver]
 
 export async function listGameservers(): ReturnValue<GameserverId[]> {
 	try {
-		const res = await fetch(config.OrbiterURL)
+		const res = await fetch(config.OrbiterPrivateURL)
 		if (!res.ok) return { ok: false }
 		return { ok: true, value: await res.json() }
 	} catch {
@@ -20,7 +20,7 @@ export async function listGameservers(): ReturnValue<GameserverId[]> {
 
 export async function getGameserver(placeId: number): ReturnValue<Gameserver> {
 	try {
-		const res = await fetch(`${config.OrbiterURL}/${placeId}`)
+		const res = await fetch(`${config.OrbiterPrivateURL}/${placeId}`)
 		if (!res.ok) return { ok: false }
 		return { ok: true, value: await res.json() }
 	} catch {
@@ -33,7 +33,7 @@ async function fetchGameserver(
 	method: string
 ): Promise<ReturnErr> {
 	try {
-		const res = await fetch(`${config.OrbiterURL}/${path}`, { method })
+		const res = await fetch(`${config.OrbiterPrivateURL}/${path}`, { method })
 		if (!res.ok) return { ok: false, msg: await res.text() }
 	} catch (err) {
 		const e = err as Error
