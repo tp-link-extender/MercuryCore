@@ -17,6 +17,7 @@ export async function GET({ params }) {
 	})
 	if (!place) error(404, "Place not found")
 
+	// TODO: move to url without param
 	const serverPresenceUrl = `https://${config.Domain}/game/serverpresence?ticket=${place.serverTicket}`
 
 	const scriptFile = Bun.file("../data/server/loadscripts/host.lua")
