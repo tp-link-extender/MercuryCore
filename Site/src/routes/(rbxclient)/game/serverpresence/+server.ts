@@ -3,10 +3,11 @@ import { db } from "$lib/server/surreal"
 import pingQuery from "./ping.surql"
 
 export async function GET({ request, url }) {
-	const ticket = url.searchParams.get("ticket") as string
-	if (!ticket) error(400, "Invalid Request")
 	if (request.headers.get("user-agent") !== "Roblox/WinInet")
 		error(400, "Good one")
+
+	const ticket = url.searchParams.get("ticket") as string
+	if (!ticket) error(400, "Invalid Request")
 
 	await db.query(pingQuery, { ticket })
 

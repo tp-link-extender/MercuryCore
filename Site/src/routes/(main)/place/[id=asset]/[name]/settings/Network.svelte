@@ -27,7 +27,7 @@
 		name="dedicated"
 		label="Dedicated server"
 		type="checkbox" />
-	{#if $form.dedicated}
+	{#if !$form.dedicated}
 		<div transition:fade>
 			<Input {formData} name="serverAddress" label="Address" />
 			<Input

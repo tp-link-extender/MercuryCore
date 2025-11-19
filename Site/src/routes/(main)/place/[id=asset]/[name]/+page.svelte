@@ -122,9 +122,9 @@
 	const isOwner = data.place.ownerUser?.username === user?.username
 	if (
 		(isOwner || user.permissionLevel === 5) &&
-		(data.hosting === "Selfhosting" || data.hosting === "Both")
+		(data.hosting === "Selfhosted" || data.hosting === "Both")
 	)
-		tabs.push("Selfhosting")
+		tabs.push("Selfhosted")
 
 	let tabData = $state(TabData(data.url, tabs))
 	let tabData2 = $state(
@@ -315,7 +315,7 @@
 		{/if}
 	</Tab>
 
-	{#if tabs.includes("Selfhosting")}
+	{#if tabs.includes("Selfhosted")}
 		<Tab bind:tabData>
 			<h3 class="pb-2">Hosting on {data.siteName}</h3>
 			<p>

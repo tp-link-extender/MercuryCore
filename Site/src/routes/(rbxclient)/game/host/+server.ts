@@ -5,9 +5,10 @@ import { db } from "$lib/server/surreal"
 import placeQuery from "./place.surql"
 
 export async function GET({ url }) {
-	const ticket = url.searchParams.get("ticket")
-	let mapLocation = url.searchParams.get("autopilot")
+	if (config.Gameservers.Hosting === "Dedicated")
+		error(400, "Selfhosted servers are not supported")
 
+	const ticket = url.searchParams.get("ticket")
 	if (!ticket) error(400, "Invalid Request")
 
 	const [[place]] = await db.query<{ serverPort: number }[][]>(placeQuery, {
@@ -19,6 +20,7 @@ export async function GET({ url }) {
 	// const serverId = placeData.id.toString()
 	const serverPresenceUrl = `https://${config.Domain}/game/serverpresence?ticket=${ticket}`
 
+	let mapLocation = url.searchParams.get("autopilot")
 	if (mapLocation) {
 		mapLocation = Buffer.from(mapLocation, "base64").toString()
 		if (mapLocation.slice(-5) !== ".rbxl") mapLocation = null
