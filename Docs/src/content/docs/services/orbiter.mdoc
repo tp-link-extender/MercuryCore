@@ -19,7 +19,9 @@ Mercury Core includes [configuration options](https://github.com/tp-link-extende
 
 The Orbiter service has been successfully tested on Windows and Linux operating systems. If the host OS is Linux, it will use [Wine](https://www.winehq.org) to run the Studio executable. As such, make sure it is installed, configured correctly to run 32-bit Windows applications, allows access to a virtual desktop if needed, and that it is accessible from the command line as `wine`.
 
-It's possible to disable the Studio 3D view by going into the Studio settings and setting the 'Graphics Mode' option to 'NoGraphics'. This can help reduce resource usage on the host machine, especially when running multiple gameservers, and prevent crashes on systems where hardware-accelerated graphics support is unavailable.
+It's possible to disable the Studio 3D view by navigating to File > Settings (or Tools > Settings if using the legacy SystemMenu UI instead of the RibbonBar) > Rendering and setting the 'graphicsMode' option to 'NoGraphics'. This can help reduce resource usage on the host machine, especially when running multiple gameservers, and prevent crashes on systems where hardware-accelerated graphics support is unavailable. This replaces the 3D view with the diagnostics window, and does not affect server functionality. Audio and other UI elements will still function as normal.
+
+![Changing graphicsMode option to NoGraphics, with Mercury Studio running on Linux](../../../assets/nographics.png)
 
 ## Management
 
