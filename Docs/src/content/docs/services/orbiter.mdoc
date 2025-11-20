@@ -1,0 +1,25 @@
+---
+title: Orbiter
+description: Details on the Orbiter service, Mercury's gameserver management system.
+---
+
+This page provides information about Mercury's Orbiter service, responsible for managing, starting, and stopping gameserver instances for the revival platform. An implementation of the Orbiter is available at the [tp-link-extender/RCCService](https://github.com/tp-link-extender/RCCService) repository.
+
+## Gameservers
+
+The process for starting a gameserver with the Orbiter is very similar to that of manually starting a selfhosted gameserver. Gameservers are simply Studio sessions that are started with a Host/Serve loadscript, which starts a network server on a specific port and listens for incoming player connections. The gameserver will load a specific place, and if the server's port is forwarded correctly, players can connect to the server with their Clients and play the game. The Serve loadscript, a similar version of the Host loadscript which runs in dedicated servers, includes a few functions that run periodically for server upkeep, including checking for inactive players to shut down the server once it has been empty for a certain amount of time.
+
+Mercury Core includes [configuration options](https://github.com/tp-link-extender/MercuryCore/blob/main/mercury.core.ts#L81-L83) for declaring whether selfhosted or dedicated servers should be used. When using dedicated servers, the Orbiter service is used to manage the gameserver instances, and the Orbiter is given special permissions to carry out required operations, for example getting place files in order to load them. When using selfhosted servers, gameservers are started manually by the server owner, and the Orbiter is not used.
+
+{% aside type="tip" title="Gameserver trust" %}
+	In the near future, Mercury Core will include support for gameservers to access certain API routes to enable ingame features such as friending/following other users and chat history. This will only be possible when using dedicated servers with the Orbiter, as selfhosted servers cannot be trusted to send legitimate requests.
+{% /aside %}
+
+## Management
+
+The Orbiter service needs to know the status of the gameservers it is managing, in order to ensure they are running smoothly, to take action if any issues arise, and to shut them down once they have completed. There are multiple ways this can be achieved:
+
+- Checking whether the server process is unresponsive, as the Studio session does not respond while a place file is loading. This system was used in [Polygon's Gameserver Arbiter](https://github.com/ProjectPolygon/PolygonGSArbiter-foss/blob/eddfd8fb5ab7b3500a5e1130fa43d35d203c698f/PolygonGSArbiter/JobManager.cs#L103-L132) while starting a server.
+- Getting the window title of the Studio session, which changes to no longer include the place name once the place has been closed with `DataModel:Shutdown()`. This system was also used in [Polygon's Gameserver Arbiter](https://github.com/ProjectPolygon/PolygonGSArbiter-foss/blob/eddfd8fb5ab7b3500a5e1130fa43d35d203c698f/PolygonGSArbiter/JobManager.cs#L27-L33), which periodically checked the window title once the server is running.
+
+Since the Mercury Client and Studio currently do not support sending HTTP requests (either with HttpService methods, which are currently disabled, or through methods on the DataModel class, which are not accessible due to permissions issues or are also disabled), systems that send requests directly from the gameserver to the Orbiter cannot be used.
