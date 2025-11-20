@@ -35,3 +35,4 @@ reloaded surrealdb-2.3.10
 Successfully loaded configuration file
 ```
 
+![Output on successful startup of Site](../../../assets/startup.png)
