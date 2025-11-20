@@ -24,7 +24,7 @@ export default defineConfig({
 				},
 				{
 					label: "Architecture",
-					slug: "architecture",
+					autogenerate: { directory: "architecture" },
 				},
 				{
 					label: "Services",
