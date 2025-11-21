@@ -26,6 +26,7 @@ const viewSchema = type({
 	description: "(string <= 1000) | undefined",
 })
 const networkSchema = type({
+	dedicated: "boolean",
 	serverAddress: serverAddressTest,
 	serverPort: serverPortTest,
 	maxPlayers: maxPlayersTest,
@@ -176,7 +177,11 @@ actions.data = async e => {
 	const { file } = form.data
 	form.data.file = undefined as unknown as File
 	if (file.size > 50e6)
-		return formError(form, ["file"], ["File must be less than 50MB in size"])
+		return formError(
+			form,
+			["file"],
+			["File must be less than 50MB in size"]
+		)
 
 	await Bun.write(`../data/places/${id}`, file)
 	return message(form, "Place data updated successfully!")

@@ -1,11 +1,9 @@
 import { error } from "@sveltejs/kit"
 import config from "$lib/server/config"
+import idToPort from "$lib/server/idToPort"
 import { SignData } from "$lib/server/sign"
 import { db, Record } from "$lib/server/surreal"
 import placeQuery from "./place.surql"
-
-// whatever
-const idToPort = (id: number) => 10000 + (id % 50000)
 
 type Place = {
 	id: number

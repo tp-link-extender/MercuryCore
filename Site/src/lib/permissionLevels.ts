@@ -7,4 +7,15 @@ const permissions = Object.freeze([
 	["crimson", "fa-scale-balanced", "Administrator"],
 ])
 
+const permissionMembershipTypes = Object.freeze([
+	"None",
+	"BuildersClub", // ig since we have little use for this @tm
+	"BuildersClub",
+	"TurboBuildersClub",
+	"OutrageousBuildersClub",
+])
+
+export const membershipType = (permissionLevel: number) =>
+	`Enum.MembershipType.${permissionMembershipTypes[permissionLevel - 1]}`
+
 export default (permissionLevel: number) => permissions[permissionLevel - 1]

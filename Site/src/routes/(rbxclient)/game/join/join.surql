@@ -1,6 +1,7 @@
 SELECT
 	(SELECT
 		record::id(id) AS id,
+		dedicated,
 		serverAddress,
 		serverPort,
 		(SELECT username FROM <-ownsPlace<-user)[0] AS ownerUser
