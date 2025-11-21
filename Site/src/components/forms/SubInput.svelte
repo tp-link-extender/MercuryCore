@@ -6,12 +6,14 @@
 
 	const {
 		name,
+		disabled = false,
 		type,
 		formData,
 		...rest
 	}: {
 		// Imported into Input.svelte to prevent code duplication
 		name: string
+		disabled: boolean
 		type: HTMLInputTypeAttribute
 		formData: import("sveltekit-superforms").SuperForm<any>
 	} & HTMLInputAttributes = $props()
@@ -24,7 +26,8 @@
 		bind:checked={$form[name]}
 		{name}
 		id={name}
-		type="checkbox" />
+		type="checkbox"
+		{disabled} />
 {:else}
 	<input
 		{...rest}
@@ -40,5 +43,6 @@
 				? "height: 2.5rem; border-radius: var(--rounding)"
 				: type === "date"
 					? "width: 11rem"
-					: null} />
+					: null}
+		{disabled} />
 {/if}

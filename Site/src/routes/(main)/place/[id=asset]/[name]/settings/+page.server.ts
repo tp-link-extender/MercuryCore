@@ -27,8 +27,8 @@ const viewSchema = type({
 })
 const networkSchema = type({
 	dedicated: "boolean",
-	serverAddress: serverAddressTest,
-	serverPort: serverPortTest,
+	serverAddress: serverAddressTest.optional(),
+	serverPort: serverPortTest.optional(),
 	maxPlayers: maxPlayersTest,
 })
 const ticketSchema = type({} as never) // I'm a genius
@@ -42,6 +42,7 @@ const dataSchema = type({
 
 type Place = {
 	created: string
+	dedicated: boolean
 	description: {
 		text: string
 		updated: string

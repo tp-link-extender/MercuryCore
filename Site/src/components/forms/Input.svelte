@@ -13,6 +13,7 @@
 		type = "text",
 		inline = false,
 		column = false,
+		disabled = false,
 		formData,
 		...rest
 	}: {
@@ -23,6 +24,7 @@
 		type?: HTMLInputTypeAttribute
 		inline?: boolean
 		column?: boolean
+		disabled?: boolean
 		formData: import("sveltekit-superforms").SuperForm<any>
 	} & HTMLInputAttributes = $props()
 
@@ -39,11 +41,11 @@
 		<!-- welp, boilerplate begets boilerplate -->
 		{#if after}
 			<div class="flex items-center">
-				<SubInput {...rest} {name} {type} {formData} />
+				<SubInput {...rest} {name} {type} {disabled} {formData} />
 				{@html after}
 			</div>
 		{:else}
-			<SubInput {...rest} {name} {type} {formData} />
+			<SubInput {...rest} {name} {type} {disabled} {formData} />
 		{/if}
 
 		{#if help}

@@ -131,6 +131,11 @@ table {
 select,
 input {
 	font-family: inherit;
+
+	&[disabled] {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
 }
 
 .light-text {
