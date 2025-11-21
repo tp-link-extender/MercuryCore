@@ -80,8 +80,8 @@
 			}
 
 			const es = new EventSource(`${data.orbiterURL}/${place.id}`)
-			es.onmessage = event => {
-				const status = event.data
+			es.onmessage = (e: MessageEvent<string>) => {
+				const status = e.data
 				console.log("EVENTSOURCE", status)
 				if (status === "1") current = "starting"
 				else if (status === "2") {
