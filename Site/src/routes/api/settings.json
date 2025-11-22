@@ -42,5 +42,7 @@
 
 	"FFlagTrimExtraSlashesAfterRobloxDomain": "False",
 	"FFlagStudioIntellesenseEnabled": "False",
-	"FFlagStudioShowToolboxByDefault": "False"
+	"FFlagStudioShowToolboxByDefault": "False",
+
+	"FFlagReconstructAssetUrl": "True"
 }

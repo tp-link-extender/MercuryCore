@@ -3745,6 +3745,8 @@
 		"FFlagWebViewProtocol": "True",
 		"FFlagRenderTC2Compress": "True",
 		"FFlagDebugForceMSAASamples": "16",
-		"DebugForceMSAASamples": "16"
+		"DebugForceMSAASamples": "16",
+
+		"FFlagReconstructAssetUrl": "True"
 	}
 }
