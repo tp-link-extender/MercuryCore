@@ -7,7 +7,7 @@ export default {
 	DatabaseURL: "http://localhost:8000",
 	RCCServiceProxyURL: "http://localhost:64990",
 	OrbiterPrivateURL: "http://localhost:64991",
-	OrbiterPublicURL: "http://localhost:64992",
+	OrbiterPublicDomain: "localhost:64992",
 	LauncherURI: "mercury-launcher:",
 	CurrencySymbol: "屌",
 	Pages: ["Statistics", "Forum", "Groups"],

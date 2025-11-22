@@ -71,7 +71,7 @@ export async function load({ locals, params, url }) {
 	return {
 		scheme: config.LauncherURI,
 		hosting: config.Gameservers.Hosting,
-		orbiterURL: config.OrbiterPublicURL,
+		orbiterURL: `https://${config.OrbiterPublicDomain}`,
 		slug,
 		place,
 		thumbnails: [id % thumbnails.length],

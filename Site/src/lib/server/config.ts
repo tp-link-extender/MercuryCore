@@ -29,7 +29,7 @@ const schema = type({
 	DatabaseURL: "string >= 1",
 	RCCServiceProxyURL: "string >= 1",
 	OrbiterPrivateURL: "string >= 1",
-	OrbiterPublicURL: "string >= 1",
+	OrbiterPublicDomain: "string >= 1", // public domain lol
 	LauncherURI: "string >= 1",
 	CurrencySymbol: "string >= 1",
 	Pages: type.enumerated(...optionalPages).array(),

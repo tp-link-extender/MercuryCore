@@ -24,9 +24,9 @@ export type Config = {
 	 */
 	OrbiterPrivateURL: string
 	/**
-	 * The URL of your Orbiter gameserver hoster, exposing the public API for use by a user's browser. Requires a URL scheme.
+	 * The domain name of your Orbiter gameserver hoster, exposing the public API for use by a user's browser.
 	 */
-	OrbiterPublicURL: string
+	OrbiterPublicDomain: string
 	/**
 	 * The URI scheme to pass to the launcher when joining a game.
 	 */

@@ -30,7 +30,7 @@ const serverDedicated = (dedicated: boolean) =>
 const serverInfo = (place: Session["place"]) =>
 	serverDedicated(place.dedicated)
 		? {
-				serverAddress: config.OrbiterPublicURL,
+				serverAddress: `http://${config.OrbiterPublicDomain}`,
 				serverPort: idToPort(place.id),
 			}
 		: place
