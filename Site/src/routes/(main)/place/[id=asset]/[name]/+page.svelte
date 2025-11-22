@@ -428,7 +428,7 @@
 			</span>
 			<a
 				class="btn btn-primary"
-				href="https://setup.{data.domain}/PlayerLauncher.exe">
+				href="https://setup.{data.domain}/{data.siteName}PlayerLauncher.exe">
 				Download 2013
 			</a>
 		{/if}
