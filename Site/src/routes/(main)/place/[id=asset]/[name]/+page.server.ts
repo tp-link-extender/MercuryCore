@@ -1,3 +1,4 @@
+import fs from "node:fs"
 import { error, redirect } from "@sveltejs/kit"
 import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
@@ -125,13 +126,19 @@ actions.join = async ({ locals, params, request }) => {
 	return { ticket }
 }
 
-actions.start = async ({ locals, params, getClientAddress }) => {
-	await checkUser(locals)
+actions.start = async ({ locals, params, request, getClientAddress }) => {
+	const user = await checkUser(locals)
 
 	const limit = ratelimit(null, "serverstart", getClientAddress, 20)
 	if (limit) return limit
 
 	const id = +params.id
+	await findPlace(request, id, user)
+
+	// check for existence of a place file
+	const placeFile = `../data/places/${id}`
+	if (!fs.existsSync(placeFile)) error(404, "Place file not found")
+
 	const res = await startGameserver(id)
 	if (!res.ok) {
 		console.error(
