@@ -177,11 +177,11 @@ actions.data = async e => {
 
 	const { file } = form.data
 	form.data.file = undefined as unknown as File
-	if (file.size > 50e6)
+	if (file.size > 100e6)
 		return formError(
 			form,
 			["file"],
-			["File must be less than 50MB in size"]
+			["File must be less than 100MB in size"]
 		)
 
 	await Bun.write(`../data/places/${id}`, file)
