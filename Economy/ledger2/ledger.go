@@ -194,8 +194,8 @@ func (s State) CanApply(t Transfer) error {
 	return nil
 }
 
-// ⚠️ DANGEROUS!! ⚠️
-func (s *State) forceApply(t Transfer) {
+// ⚠️ DANGEROUS!! ⚠️ Make sure you've called CanApply first!
+func (s *State) ForceApply(t Transfer) {
 	if t.From != nil {
 		src := (*s)[t.From.UserID]
 		dst := (*s)[t.To.UserID]
@@ -220,7 +220,7 @@ func (s *State) TryApply(t Transfer) error {
 		return err
 	}
 
-	s.forceApply(t)
+	s.ForceApply(t)
 	return nil
 }
 
@@ -306,13 +306,46 @@ func (e *Economy) Inventory(userID UserID) Items {
 	return inv
 }
 
-func (e *Economy) Transfer(t Transfer, timestamp TransferID) error {
+func (e *Economy) Transfer(tid TransferID, t Transfer) error {
 	// Validate the transfer
 	if t.From == nil && t.To == nil {
 		return fmt.Errorf("invalid transfer: must specify From or To")
 	}
 
 	// Process the transfer
+	if err := e.state.CanApply(t); err != nil {
+		return fmt.Errorf("validate transfer: %v", err)
+	}
+
+	// Append the transfer to the database
+	err := e.db.Update(func(tx *bolt.Tx) error {
+		bucket, err := tx.CreateBucketIfNotExists([]byte(bucketName))
+		if err != nil {
+			return fmt.Errorf("create bucket: %v", err)
+		}
+
+		key, err := tid.MarshalBinary()
+		if err != nil {
+			return fmt.Errorf("marshal transfer ID: %v", err)
+		}
+
+		value, err := t.MarshalBinary()
+		if err != nil {
+			return fmt.Errorf("marshal transfer: %v", err)
+		}
+
+		if err := bucket.Put(key, value); err != nil {
+			return fmt.Errorf("put transfer: %v", err)
+		}
+
+		return nil
+	})
+	if err != nil {
+		return fmt.Errorf("append transfer to db: %v", err)
+	}
+
+	// Apply the transfer to the in-memory state
+	e.state.ForceApply(t)
 	return nil
 }
 
@@ -326,6 +359,8 @@ func main() {
 	fmt.Println("Database opened successfully")
 
 	const user = UserID("test")
+
+	// TODO: allow for mints/burns by having only From or To
 
 	inv := economy.Inventory(user)
 	fmt.Printf("Inventory for user %s: %+v\n", user, inv)
