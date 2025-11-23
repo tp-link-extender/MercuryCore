@@ -3,9 +3,22 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"math/rand"
 
+	gonanoid "github.com/matoous/go-nanoid/v2"
 	bolt "go.etcd.io/bbolt"
 )
+
+const idchars = "0123456789abcdefghijklmnopqrstuvwxyz"
+
+func RandStringId() (id string) {
+	id, _ = gonanoid.Generate(idchars, 15) // doesn't error at runtime, really
+	return
+}
+
+func RandIntId() (id int) {
+	return rand.Intn(9e8) + 1e8 // 9 digit
+}
 
 // a user can own:
 
@@ -16,7 +29,6 @@ import (
 // singular assets (non-fungible):
 // - place/game (of a given ID), only 1 of each
 // - group (of a given ID), only 1 of each
-
 
 type Item string
 
@@ -32,7 +44,7 @@ func (it Item) Fungible() bool {
 }
 
 type ID struct {
-	Item  Item
+	Item
 	Value string
 }
 
@@ -54,10 +66,6 @@ func (id *ID) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
-func (id ID) Fungible() (bool, error) {
-	return id.Item.Fungible(), nil
-}
-
 func IDCurrency(currencyID uint) ID {
 	return ID{Item: ItemCurrency, Value: fmt.Sprint(currencyID)}
 }
@@ -66,47 +74,101 @@ func IDAsset(assetID uint) ID {
 	return ID{Item: ItemAsset, Value: fmt.Sprint(assetID)}
 }
 
+func RandIDAsset() ID {
+	return ID{Item: ItemAsset, Value: RandStringId()}
+}
+
 func IDPlace(placeID uint) ID {
 	return ID{Item: ItemPlace, Value: fmt.Sprint(placeID)}
+}
+
+func RandIDPlace() ID {
+	return ID{Item: ItemPlace, Value: RandStringId()}
 }
 
 func IDGroup(groupID string) ID {
 	return ID{Item: ItemGroup, Value: groupID}
 }
 
-func main() {
-	db, err := bolt.Open("mydb.db", 0600, nil)
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
+func RandIDGroup() ID {
+	return ID{Item: ItemGroup, Value: RandStringId()}
+}
 
-	fmt.Println("Database opened successfully")
+type (
+	Quantity  uint64
+	UserID    string // probably optimum
+	Inventory map[ID]Quantity
+	State     map[UserID]Inventory
+)
 
-	err = db.Update(func(tx *bolt.Tx) error {
-		bucket, err := tx.CreateBucketIfNotExists([]byte("test"))
-		if err != nil {
-			return err
-		}
+const bucketName = "ledger"
 
-		return bucket.Put([]byte("key"), []byte("value"))
-	})
-	if err != nil {
-		panic(err)
-	}
+func ReadState(db *bolt.DB) (State, error) {
+	state := make(State)
 
-	// read the value back
-	err = db.View(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket([]byte("test"))
+	err := db.View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket([]byte(bucketName))
 		if bucket == nil {
-			return fmt.Errorf("Bucket not found")
+			return nil // empty state
 		}
 
-		val := bucket.Get([]byte("key"))
-		fmt.Printf("The value of 'key' is: %s\n", val)
+		// return bucket.ForEach(func(k, v []byte) error {
 		return nil
 	})
 	if err != nil {
+		return nil, err
+	}
+
+	return state, nil
+}
+
+type Economy struct {
+	db    *bolt.DB
+	state State
+}
+
+func NewEconomy(dbPath string) (*Economy, error) {
+	db, err := bolt.Open(dbPath, 0600, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	state, err := ReadState(db)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Economy{db, state}, nil
+}
+
+func (e *Economy) Close() error {
+	e.state = nil
+	return e.db.Close()
+}
+
+func (e *Economy) Inventory(userID UserID) Inventory {
+	inv, ok := e.state[userID]
+	if !ok {
+		inv = make(Inventory)
+		e.state[userID] = inv
+	}
+	return inv
+}
+
+func main() {
+	economy, err := NewEconomy("mydb.db")
+	if err != nil {
 		panic(err)
 	}
+	defer economy.Close()
+
+	fmt.Println("Database opened successfully")
+
+	const user = UserID("test")
+
+	inv := economy.Inventory(user)
+	fmt.Printf("Inventory for user %s: %+v\n", user, inv)
+
+	stats := economy.db.Stats()
+	fmt.Printf("DB Stats: %+v\n", stats)
 }
