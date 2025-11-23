@@ -289,30 +289,43 @@
 	</Tab>
 
 	<Tab bind:tabData>
-		<h4>Server List</h4>
-		{#if online}
-			<div class="card p-4 flex flex-row">
-				<div class="w-1/6">
-					<div class="pb-2">
-						Currently Playing: {place.players
-							.length}/{place.maxPlayers}
-					</div>
-					<button
-						onclick={placeLauncher}
-						id="join"
-						class="btn btn-sm btn-primary">
-						Join Server
-					</button>
+		<h4>Server list</h4>
+		<!-- {#if online} -->
+		<div class="card p-4 flex flex-row">
+			<div class="w-1/6">
+				<div class="pb-2">
+					{place.players.length}/{place.maxPlayers} currently playing
 				</div>
-				<div class="w-5/6 flex gap-3">
-					{#each place.players as user}
-						<User {user} size="4.5rem" bg="darker" />
-					{/each}
-				</div>
+				<button
+					onclick={placeLauncher}
+					id="join"
+					class="btn btn-sm btn-primary">
+					Join server
+				</button>
+				{#if isOwner && tabs.includes("Selfhosted")}
+					<form
+						use:enhance
+						method="post"
+						action="?/close"
+						class="pt-2">
+						<button
+							onclick={placeLauncher}
+							id="join"
+							class="btn btn-sm btn-red-secondary">
+							Close server
+						</button>
+					</form>
+				{/if}
 			</div>
-		{:else}
+			<div class="w-5/6 flex gap-3 h-fit">
+				{#each place.players as user}
+					<User {user} size="4.5rem" bg="darker" />
+				{/each}
+			</div>
+		</div>
+		<!-- {:else}
 			This server is offline.
-		{/if}
+		{/if} -->
 	</Tab>
 
 	{#if tabs.includes("Selfhosted")}

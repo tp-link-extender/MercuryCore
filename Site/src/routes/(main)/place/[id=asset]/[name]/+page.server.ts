@@ -3,7 +3,7 @@ import { error, redirect } from "@sveltejs/kit"
 import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formData from "$lib/server/formData"
-import { startGameserver } from "$lib/server/orbiter"
+import { closeGameserver, startGameserver } from "$lib/server/orbiter"
 import ratelimit from "$lib/server/ratelimit"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
@@ -140,12 +140,24 @@ actions.start = async ({ locals, params, request, getClientAddress }) => {
 	if (!fs.existsSync(placeFile)) error(404, "Place file not found")
 
 	const res = await startGameserver(id)
-	if (!res.ok) {
-		console.error(
-			"Failed to start dedicated gameserver for id",
-			id,
-			res.msg
-		)
-		error(500, "Failed to start dedicated server")
-	}
+	if (res.ok) return
+
+	console.error("Failed to start dedicated gameserver for id", id, res.msg)
+	error(500, "Failed to start dedicated server")
+}
+
+actions.close = async ({ locals, params, request }) => {
+	const { user } = await authorise(locals)
+	const id = +params.id
+
+	const place = await findPlace(request, id, user)
+
+	if (user.username !== place.ownerUserame && user.permissionLevel < 4)
+		error(403, "You do not have permission to close this server.")
+
+	const res = await closeGameserver(id)
+	if (res.ok) return
+
+	console.error("Failed to close dedicated gameserver for id", id, res.msg)
+	error(500, "Failed to close dedicated server")
 }
