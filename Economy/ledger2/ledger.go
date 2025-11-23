@@ -2,8 +2,11 @@ package main
 
 import (
 	"bytes"
+	"encoding/binary"
+	"encoding/gob"
 	"fmt"
 	"math/rand"
+	"time"
 
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	bolt "go.etcd.io/bbolt"
@@ -57,12 +60,12 @@ func (id ID) MarshalBinary() ([]byte, error) {
 }
 
 func (id *ID) UnmarshalBinary(data []byte) error {
-	parts := bytes.SplitN(data, []byte(":"), 2)
-	if len(parts) != 2 {
+	i, v, found := bytes.Cut(data, []byte{':'})
+	if !found {
 		return fmt.Errorf("invalid ID format")
 	}
-	id.Item = Item(parts[0])
-	id.Value = string(parts[1])
+	id.Item = Item(i)
+	id.Value = string(v)
 	return nil
 }
 
@@ -95,13 +98,162 @@ func RandIDGroup() ID {
 }
 
 type (
-	Quantity  uint64
-	UserID    string // probably optimum
-	Inventory map[ID]Quantity
-	State     map[UserID]Inventory
+	Quantity uint64
+	UserID   string // probably optimum
+	Items    map[ID]Quantity
+	Send     struct {
+		UserID // The items are being REMOVED from this user and ADDED to another
+		Items
+	}
 )
 
+func (s Send) Valid() bool {
+	return s.UserID != "" && len(s.Items) > 0
+}
+
+type TransferID struct {
+	timestamp uint64
+	id        string
+}
+
+func MakeTransferID() TransferID {
+	return TransferID{
+		timestamp: uint64(time.Now().UnixNano()),
+		id:        RandStringId(),
+	}
+}
+
+func (t TransferID) MarshalBinary() ([]byte, error) {
+	bs := make([]byte, 8+len(t.id))
+	binary.BigEndian.PutUint64(bs[:8], t.timestamp)
+	copy(bs[8:], t.id)
+	return bs, nil
+}
+
+func (t *TransferID) UnmarshalBinary(data []byte) error {
+	if len(data) < 8 {
+		return fmt.Errorf("invalid TransferID data")
+	}
+	t.timestamp = binary.BigEndian.Uint64(data[:8])
+	t.id = string(data[8:])
+	return nil
+}
+
+// A transfer with a From and To is a transaction
+// A transfer with only a From is a burn
+// A transfer with only a To is a mint
+// A transfer with neither is INVALID!
+type Transfer struct {
+	From, To *Send
+}
+
+func (t Transfer) MarshalBinary() ([]byte, error) {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	if err := enc.Encode(t); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (t *Transfer) UnmarshalBinary(data []byte) error {
+	buf := bytes.NewReader(data)
+	dec := gob.NewDecoder(buf)
+	return dec.Decode(t)
+}
+
+func (t Transfer) Valid() bool {
+	if t.From == nil && t.To == nil ||
+		t.From != nil && !t.From.Valid() ||
+		t.To != nil && !t.To.Valid() {
+		return false
+	}
+	return true
+}
+
+type State map[UserID]Items
+
+func (s State) CanApply(t Transfer) error {
+	if !t.Valid() {
+		return fmt.Errorf("invalid transfer")
+	}
+
+	for _, p := range []*Send{t.From, t.To} {
+		if p == nil {
+			continue
+		}
+
+		inv := s[p.UserID]
+		for id, qty := range p.Items {
+			if inv[id] < qty {
+				return fmt.Errorf("insufficient quantity of item %v for user %s", id, p.UserID)
+			}
+		}
+	}
+
+	return nil
+}
+
+// ⚠️ DANGEROUS!! ⚠️
+func (s *State) forceApply(t Transfer) {
+	if t.From != nil {
+		src := (*s)[t.From.UserID]
+		dst := (*s)[t.To.UserID]
+		for id, qty := range t.From.Items {
+			src[id] -= qty
+			dst[id] += qty
+		}
+	}
+
+	if t.To != nil {
+		src := (*s)[t.To.UserID]
+		dst := (*s)[t.From.UserID]
+		for id, qty := range t.To.Items {
+			src[id] -= qty
+			dst[id] += qty
+		}
+	}
+}
+
+func (s *State) TryApply(t Transfer) error {
+	if err := s.CanApply(t); err != nil {
+		return err
+	}
+
+	s.forceApply(t)
+	return nil
+}
+
 const bucketName = "ledger"
+
+func applyKVPair(state *State) func(k, v []byte) error {
+	return func(k, v []byte) error {
+		var tid TransferID
+		if err := tid.UnmarshalBinary(k); err != nil {
+			return fmt.Errorf("decode transfer ID: %v", err)
+		}
+
+		fmt.Printf("ID: %v, Data: %x\n", tid, v)
+
+		// decode v into Transfer
+		var t Transfer
+		if err := t.UnmarshalBinary(v); err != nil {
+			return fmt.Errorf("decode transfer %v: %v", tid, err)
+		}
+
+		fmt.Printf("Decoded Transfer: %+v\n", t)
+		if !t.Valid() {
+			return fmt.Errorf("invalid transfer with ID %v", tid)
+		}
+
+		// apply transfer to state
+		if err := state.TryApply(t); err != nil {
+			return fmt.Errorf("failed to apply transfer %v: %v", tid, err)
+		}
+
+		return nil
+	}
+}
 
 func ReadState(db *bolt.DB) (State, error) {
 	state := make(State)
@@ -112,8 +264,7 @@ func ReadState(db *bolt.DB) (State, error) {
 			return nil // empty state
 		}
 
-		// return bucket.ForEach(func(k, v []byte) error {
-		return nil
+		return bucket.ForEach(applyKVPair(&state))
 	})
 	if err != nil {
 		return nil, err
@@ -146,13 +297,23 @@ func (e *Economy) Close() error {
 	return e.db.Close()
 }
 
-func (e *Economy) Inventory(userID UserID) Inventory {
+func (e *Economy) Inventory(userID UserID) Items {
 	inv, ok := e.state[userID]
 	if !ok {
-		inv = make(Inventory)
+		inv = make(Items)
 		e.state[userID] = inv
 	}
 	return inv
+}
+
+func (e *Economy) Transfer(t Transfer, timestamp TransferID) error {
+	// Validate the transfer
+	if t.From == nil && t.To == nil {
+		return fmt.Errorf("invalid transfer: must specify From or To")
+	}
+
+	// Process the transfer
+	return nil
 }
 
 func main() {
