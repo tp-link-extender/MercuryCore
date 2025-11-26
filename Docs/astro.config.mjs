@@ -44,6 +44,6 @@ export default defineConfig({
 			},
 			customCss: ["./src/global.css", "./src/fonts/font-face.css"],
 		}),
-		markdoc(),
+		markdoc({ allowHTML: true }), // <sup />
 	],
 })
