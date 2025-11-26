@@ -3,7 +3,7 @@ title: Bun
 description: Details on how to install Bun.
 ---
 
-[Bun](https://bun.sh) is a Javascript runtime used for running the Site service, and facilitates management and installation of dependencies. At the time of writing, the latest version is [**v1.3.2**](https://bun.com/blog/bun-v1.3.2).
+[Bun](https://bun.sh) is a Javascript runtime used for running the Site service, and facilitates management and installation of dependencies. At the time of writing, the latest version is [**v1.3.3**](https://bun.com/blog/bun-v1.3.3).
 
 Check out the [installation guide](https://bun.com/docs/installation) for detailed instructions, or install the latest version on Linux or macOS with the following shell command:
 
