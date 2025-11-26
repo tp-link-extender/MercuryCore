@@ -27,6 +27,10 @@ export default defineConfig({
 					autogenerate: { directory: "architecture" },
 				},
 				{
+					label: "Design",
+					autogenerate: { directory: "design" },
+				},
+				{
 					label: "Services",
 					autogenerate: { directory: "services" },
 				},
