@@ -16,13 +16,13 @@ a1b2c3d4e5f6g7h8i9j0
 
 In Mercury Core, these types of IDs are most visible in the URLs for comments and groups, place server and private tickets, and registration keys. While not visible for other entities, they are still used as the main identifiers for record lookups, even if other fields are used for display purposes.
 
-With 36 possible characters (26 letters + 10 digits) and a length of 20 characters, there are a total of 36^20 (approximately 1.34 × 10<sup>31</sup>) possible unique IDs. As such, the probability of a collision (two entities receiving the same ID) is low enough to never be of practical concern.
+With 36 possible characters (26 letters + 10 digits) and a length of 20 characters, there are a total of 36<sup>20</sup> (approximately 1.34 × 10<sup>31</sup>) possible unique IDs. As such, the probability of a collision (two entities receiving the same ID) is low enough to never be of practical concern.
 
 ## Numeric identifiers
 
 In addition to string IDs, Mercury Core also uses numeric IDs for certain entities. These are used solely for compatibility with the Client, Studio, or RCCService, and are limited to use in entities that interact with those systems.
 
-In some versions of the Client and Studio, numeric IDs are stored as 32-bit signed integers. As such, the maximum ID range is limited 2 147 483 647 (2<sup>31</sup> - 1). Mercury core limits numeric IDs to between 100 000 000 and 999 999 999 (9 digits) or between 10 000 000 and 99 999 999 (8 digits) to maintain compatibility with these limits.
+In some versions of the Client and Studio, numeric IDs are stored as 32-bit signed integers. As such, the maximum ID value is limited to 2 147 483 647 (2<sup>31</sup> - 1).
 
 {% aside type="caution" title="ID pitfalls" %}
 	Most Client and Studio API methods expect URL strings instead of numeric IDs, though functions that require numeric IDs are still present. Assets proxied or cached by Mercury Core from Roblox's Open Cloud API may use numeric IDs that exceed the 32-bit signed integer limit. These will cause issues if passed to an API method that requires a numeric ID. When using assets from Open Cloud, watch out for errors caused by their IDs, as they may be interpreted as negative (usually -2 147 483 648) by the Client or Studio.
@@ -31,4 +31,8 @@ In some versions of the Client and Studio, numeric IDs are stored as 32-bit sign
 
 	Negative IDs are possible to use in the Client and Studio, and most of the time do send requests to the Site with correctly formatted URLs. Their behaviour can best be described as "strange". We recommend only using positive numeric IDs to avoid any unexpected issues.
 {% /aside %}
+
+Mercury core forces numeric IDs to be between 100 000 000 and 999 999 999 (9 digits) or between 10 000 000 and 99 999 999 (8 digits) to maintain compatibility with these limits. All 8-digit IDs are used for Corescripts and Libraries, and all 9-digit IDs are used for Mercury assets.
+
+Collisions between 8-digit IDs are not a concern as they are statically assigned to Corescripts and Libraries. However, the 9-digit IDs, which are generated randomly with only 9 × 10<sup>8</sup> possible values, are more likely to experience collisions as more assets are created. We accept this risk as a tradeoff to maintain compatibility with the Client and Studio, without incurring the implementation complexity and other risks of using incremental IDs.
 
