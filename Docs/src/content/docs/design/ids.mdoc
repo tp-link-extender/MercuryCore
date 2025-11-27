@@ -36,3 +36,18 @@ Mercury core forces numeric IDs to be between 100 000 000 and 999 999 999 (9 dig
 
 Collisions between 8-digit IDs are not a concern as they are statically assigned to Corescripts and Libraries. However, the 9-digit IDs, which are generated randomly with only 9 × 10<sup>8</sup> possible values, are more likely to experience collisions as more assets are created. We accept this risk as a tradeoff to maintain compatibility with the Client and Studio, without incurring the implementation complexity and other risks of using incremental IDs.
 
+### Why not sequential numeric IDs?
+
+During early development of various Mercury systems and in small-scale testing, experiments were conducted using sequential numeric IDs for assets, users, and places. However, several issues were identified and encountered that led to the removal of sequential numeric IDs in favour of random IDs:
+
+- Extra database queries were required on record creation to determine the next available ID. These were stored as `stuff:increment` records in SurrealDB, as SurrealDB does not natively support auto-incrementing fields. This increased complexity of many query operations.
+- Parallelism would have been limited due to the difficulty of ensuring unique sequential IDs across multiple instances of the Site running at the same time and accessing the same database. This would have required additional locking mechanisms or coordination between instances.
+- Predictability of IDs led to a few large problems:
+  - Ability to easily enumerate through a large number of records could lead to unauthorised user data access or scraping of content. However, this is generally not a large security concern.
+  - ID generation for assets associated with each other, for example Decal assets and associated Image assets, would usually be created at the same time and in sequence. These correlated IDs, as a result of [Hyrum's law](https://www.hyrumslaw.com), ended up being depended upon by Mercury community developers. This would have either posed an ossification risk and difficulty of changing the ID generation method later, or would have resulted in breaking changes for developers.
+- Rollbacks of ID increments were necessary to prevent gaps in ID sequences. IDs for assets associated with each other would be incremented at the same time to ensure they were consecutive (see above for reasoning). If one of the creations failed, the increments would need to be rolled back to prevent gaps in the sequence.  
+Another example would be when a user would create an asset for a fee, the asset creation would succeed, but the payment would fail due to insufficient funds. In this case, the asset ID increment would need to be rolled back to prevent gaps. Despite all efforts to mitigate this, there were still edge cases where gaps would occur, leading to inconsistencies in the ID sequence.
+
+One of the benefits of sequential IDs is that they can be much shorter than random IDs while still maintaining uniqueness. Due to this, experiments were also conducted for hybrid random-sequential approaches (eg. increasing ID length when collisions occur). However, the added complexity and multiple queries needed to detect collisions outweighed the simplicity benefits of using longer random IDs.
+
+If using assets from Roblox's Open Cloud API, older assets tend use sequential numeric IDs, while newer assets tend to use random numeric IDs.
