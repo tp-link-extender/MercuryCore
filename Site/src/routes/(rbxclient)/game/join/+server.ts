@@ -63,11 +63,11 @@ export async function GET({ url }) {
 	const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
 	const script = (await scriptFile.text())
 		.replaceAll("_PLACE_ID", place.id.toString())
-		.replaceAll("_SERVER_ADDRESS", serverAddress) // TODO: quote
+		.replaceAll("_SERVER_ADDRESS", `"${serverAddress}"`)
 		.replaceAll("_SERVER_PORT", serverPort.toString())
 		.replaceAll("_CREATOR_ID", creatorUsername)
 		.replaceAll("_USER_ID", Math.floor(Math.random() * 1e9).toString()) // todo: tho not rly used 4 much atm
-		.replaceAll("_USER_NAME", user.username)
+		.replaceAll("_USERNAME", `"${user.username}"`)
 		.replaceAll("_MEMBERSHIP_TYPE", membershipType(user.permissionLevel))
 		.replaceAll("_CHAR_APPEARANCE", `"${charApp}"`)
 		.replaceAll("_PING_URL", `"${pingUrl}"`)
