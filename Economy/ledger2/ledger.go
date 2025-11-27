@@ -6,6 +6,7 @@ import (
 	"encoding/gob"
 	"fmt"
 	"math/rand"
+	"strings"
 	"time"
 
 	gonanoid "github.com/matoous/go-nanoid/v2"
@@ -15,7 +16,7 @@ import (
 const idchars = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 func RandStringId() (id string) {
-	id, _ = gonanoid.Generate(idchars, 15) // doesn't error at runtime, really
+	id, _ = gonanoid.Generate(idchars, 20) // doesn't error at runtime, really
 	return
 }
 
@@ -55,12 +56,16 @@ func (id ID) String() string {
 	return string(id.Item) + ":" + id.Value
 }
 
-func (id ID) MarshalBinary() ([]byte, error) {
+func (id ID) marshalBinary() []byte {
 	var buf bytes.Buffer
 	buf.WriteString(string(id.Item))
 	buf.WriteByte(':')
 	buf.WriteString(id.Value)
-	return buf.Bytes(), nil
+	return buf.Bytes()
+}
+
+func (id ID) MarshalBinary() ([]byte, error) {
+	return id.marshalBinary(), nil
 }
 
 func (id *ID) UnmarshalBinary(data []byte) error {
@@ -93,8 +98,11 @@ func RandIDPlace() ID {
 	return ID{Item: ItemPlace, Value: RandStringId()}
 }
 
-func IDGroup(groupID string) ID {
-	return ID{Item: ItemGroup, Value: groupID}
+func IDGroup(groupID string) (ID, error) {
+	if strings.Contains(groupID, "\000") {
+		return ID{}, fmt.Errorf("group ID contains invalid null byte")
+	}
+	return ID{Item: ItemGroup, Value: groupID}, nil
 }
 
 func RandIDGroup() ID {
@@ -102,13 +110,55 @@ func RandIDGroup() ID {
 }
 
 type (
-	Quantity   uint64
-	User       string // probably optimum
-	Items      map[ID]Quantity
+	Quantity uint64
+	Items    map[ID]Quantity
+)
+
+func (is Items) MarshalBinary() ([]byte, error) {
+	var buf bytes.Buffer
+
+	for id, qty := range is {
+		idBytes := id.marshalBinary()
+		buf.Write(idBytes)
+		buf.WriteByte(0) // separator
+		binary.Write(&buf, binary.BigEndian, qty)
+	}
+
+	return buf.Bytes(), nil
+}
+
+func (is *Items) UnmarshalBinary(data []byte) error {
+	*is = make(Items)
+	// parts := bytes.Split(data, []byte{0})
+	for len(data) > 0 {
+		sepI := bytes.IndexByte(data, 0)
+		if sepI == -1 {
+			sepI = len(data)
+		}
+
+		var id ID
+		if err := id.UnmarshalBinary(data[:sepI]); err != nil {
+			return fmt.Errorf("decode item ID: %v", err)
+		}
+
+		if len(data) < sepI+1+8 {
+			return fmt.Errorf("incomplete quantity data for item %v", id)
+		}
+		qty := binary.BigEndian.Uint64(data[sepI+1:][:8])
+		(*is)[id] = Quantity(qty)
+
+		data = data[sepI+1+8:]
+	}
+
+	return nil
+}
+
+type (
 	TransferID struct {
 		timestamp uint64
 		id        string
 	}
+	User string // probably optimum
 )
 
 const NilUser User = ""
@@ -142,12 +192,29 @@ type Send struct {
 	Items
 }
 
+func (s Send) String() string {
+	return fmt.Sprintf("[%s] -> %v", s.User, s.Items)
+}
+
+// func (s Send) MarshalBinary() ([]byte, error) {
+// 	var buf bytes.Buffer
+// 	// encode User
+// 	buf.WriteByte(uint8(len(s.User)))
+// 	buf.WriteString(string(s.User))
+
+// 	// encode Items
+// }
+
 // A transfer with a From and To is a transaction
 // A transfer with only a From is a burn
 // A transfer with only a To is a mint
 // A transfer with neither is INVALID!
 // The empty UserID refers to the nil account for mints/burns
 type Transfer [2]Send
+
+func (t Transfer) String() string {
+	return fmt.Sprintf("%s, %s", t[0], t[1])
+}
 
 func (t Transfer) Valid() bool {
 	// Can't have a transfer of nothing or between nobody
@@ -233,7 +300,7 @@ func applyKVPair(state *State) func(k, v []byte) error {
 			return fmt.Errorf("decode transfer %v: %v", tid, err)
 		}
 
-		fmt.Printf("Decoded Transfer: %+v\n", t)
+		fmt.Printf("Decoded %v: %+v\n", tid, t)
 		if !t.Valid() {
 			return fmt.Errorf("invalid transfer with ID %v", tid)
 		}
