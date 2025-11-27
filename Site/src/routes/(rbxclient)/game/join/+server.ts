@@ -39,7 +39,20 @@ export async function GET({ url }) {
 	const clientTicket = url.searchParams.get("ticket")
 	const privateServer = url.searchParams.get("privateServer") as string
 
-	if (!clientTicket) error(400, "Invalid Request")
+	if (!clientTicket) {
+		const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
+		const script = (await scriptFile.text())
+			.replaceAll("_PLACE_ID", "0")
+			.replaceAll("_SERVER_ADDRESS", `"localhost"`)
+			.replaceAll("_SERVER_PORT", "53640")
+			.replaceAll("_USER_ID", "0")
+			.replaceAll("_USERNAME", `"Player1"`)
+			.replaceAll("_MEMBERSHIP_TYPE", membershipType(0))
+			.replaceAll("_CHAR_APPEARANCE", `""`)
+			.replaceAll("_PING_URL", `""`)
+
+		return new Response(await SignData(script))
+	}
 
 	const foundPrivatePlace = await findWhere(
 		"place",
@@ -57,7 +70,7 @@ export async function GET({ url }) {
 	const { place, user } = gameSession
 	const { serverAddress, serverPort } = serverInfo(place)
 
-	const creatorUsername = place.ownerUser?.username
+	// const creatorUsername = place.ownerUser?.username;
 	const charApp = `http://${config.Domain}/asset/characterfetch/${user.username}`
 	const pingUrl = `http://${config.Domain}/game/clientpresence?ticket=${clientTicket}`
 	const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
@@ -65,7 +78,7 @@ export async function GET({ url }) {
 		.replaceAll("_PLACE_ID", place.id.toString())
 		.replaceAll("_SERVER_ADDRESS", `"${serverAddress}"`)
 		.replaceAll("_SERVER_PORT", serverPort.toString())
-		.replaceAll("_CREATOR_ID", creatorUsername)
+		// .replaceAll("_CREATOR_ID", creatorUsername)
 		.replaceAll("_USER_ID", Math.floor(Math.random() * 1e9).toString()) // todo: tho not rly used 4 much atm
 		.replaceAll("_USERNAME", `"${user.username}"`)
 		.replaceAll("_MEMBERSHIP_TYPE", membershipType(user.permissionLevel))
