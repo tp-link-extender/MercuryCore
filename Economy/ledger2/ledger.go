@@ -51,6 +51,10 @@ type ID struct {
 	Value string
 }
 
+func (id ID) String() string {
+	return string(id.Item) + ":" + id.Value
+}
+
 func (id ID) MarshalBinary() ([]byte, error) {
 	var buf bytes.Buffer
 	buf.WriteString(string(id.Item))
@@ -98,23 +102,16 @@ func RandIDGroup() ID {
 }
 
 type (
-	Quantity uint64
-	UserID   string // probably optimum
-	Items    map[ID]Quantity
-	Send     struct {
-		UserID // The items are being REMOVED from this user and ADDED to another
-		Items
+	Quantity   uint64
+	User       string // probably optimum
+	Items      map[ID]Quantity
+	TransferID struct {
+		timestamp uint64
+		id        string
 	}
 )
 
-func (s Send) Valid() bool {
-	return s.UserID != "" && len(s.Items) > 0
-}
-
-type TransferID struct {
-	timestamp uint64
-	id        string
-}
+const NilUser User = ""
 
 func MakeTransferID() TransferID {
 	return TransferID{
@@ -139,54 +136,48 @@ func (t *TransferID) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
+// A Send represents items being sent FROM a user
+type Send struct {
+	User
+	Items
+}
+
 // A transfer with a From and To is a transaction
 // A transfer with only a From is a burn
 // A transfer with only a To is a mint
 // A transfer with neither is INVALID!
-type Transfer struct {
-	From, To *Send
-}
-
-func (t Transfer) MarshalBinary() ([]byte, error) {
-	var buf bytes.Buffer
-	enc := gob.NewEncoder(&buf)
-	if err := enc.Encode(t); err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (t *Transfer) UnmarshalBinary(data []byte) error {
-	buf := bytes.NewReader(data)
-	dec := gob.NewDecoder(buf)
-	return dec.Decode(t)
-}
+// The empty UserID refers to the nil account for mints/burns
+type Transfer [2]Send
 
 func (t Transfer) Valid() bool {
-	if t.From == nil && t.To == nil ||
-		t.From != nil && !t.From.Valid() ||
-		t.To != nil && !t.To.Valid() {
-		return false
-	}
-	return true
+	// Can't have a transfer of nothing or between nobody
+	return (t[0].User != "" || t[1].User != "") && (t[0].Items != nil || t[1].Items != nil)
 }
 
-type State map[UserID]Items
+type State map[User]Items
+
+func (s *State) GetInventory(user User) Items {
+	inv, ok := (*s)[user]
+	if !ok {
+		inv = make(Items)
+		(*s)[user] = inv
+	}
+	return inv
+}
 
 func (s State) CanApply(t Transfer) error {
 	if !t.Valid() {
 		return fmt.Errorf("invalid transfer")
 	}
 
-	for _, p := range []*Send{t.From, t.To} {
-		if p == nil {
+	for _, send := range t {
+		if send.User == "" || send.Items == nil {
 			continue
 		}
-
-		inv := s[p.UserID]
-		for id, qty := range p.Items {
+		inv := s[send.User]
+		for id, qty := range send.Items {
 			if inv[id] < qty {
-				return fmt.Errorf("insufficient quantity of item %v for user %s", id, p.UserID)
+				return fmt.Errorf("insufficient quantity of item %v for user %s", id, send.User)
 			}
 		}
 	}
@@ -196,21 +187,23 @@ func (s State) CanApply(t Transfer) error {
 
 // ⚠️ DANGEROUS!! ⚠️ Make sure you've called CanApply first!
 func (s *State) ForceApply(t Transfer) {
-	if t.From != nil {
-		src := (*s)[t.From.UserID]
-		dst := (*s)[t.To.UserID]
-		for id, qty := range t.From.Items {
-			src[id] -= qty
-			dst[id] += qty
+	for i, send := range t {
+		if send.User != "" {
+			src := s.GetInventory(send.User)
+			for itemID, qty := range send.Items {
+				src[itemID] -= qty
+			}
 		}
-	}
 
-	if t.To != nil {
-		src := (*s)[t.To.UserID]
-		dst := (*s)[t.From.UserID]
-		for id, qty := range t.To.Items {
-			src[id] -= qty
-			dst[id] += qty
+		other := t[1-i]
+		if other.User == "" {
+			// nil user, we need not send anything to them
+			continue
+		}
+
+		dst := s.GetInventory(other.User)
+		for itemID, qty := range send.Items {
+			dst[itemID] += qty
 		}
 	}
 }
@@ -233,11 +226,10 @@ func applyKVPair(state *State) func(k, v []byte) error {
 			return fmt.Errorf("decode transfer ID: %v", err)
 		}
 
-		fmt.Printf("ID: %v, Data: %x\n", tid, v)
-
 		// decode v into Transfer
 		var t Transfer
-		if err := t.UnmarshalBinary(v); err != nil {
+		dec := gob.NewDecoder(bytes.NewReader(v))
+		if err := dec.Decode(&t); err != nil {
 			return fmt.Errorf("decode transfer %v: %v", tid, err)
 		}
 
@@ -297,7 +289,7 @@ func (e *Economy) Close() error {
 	return e.db.Close()
 }
 
-func (e *Economy) Inventory(userID UserID) Items {
+func (e *Economy) Inventory(userID User) Items {
 	inv, ok := e.state[userID]
 	if !ok {
 		inv = make(Items)
@@ -307,11 +299,6 @@ func (e *Economy) Inventory(userID UserID) Items {
 }
 
 func (e *Economy) Transfer(tid TransferID, t Transfer) error {
-	// Validate the transfer
-	if t.From == nil && t.To == nil {
-		return fmt.Errorf("invalid transfer: must specify From or To")
-	}
-
 	// Process the transfer
 	if err := e.state.CanApply(t); err != nil {
 		return fmt.Errorf("validate transfer: %v", err)
@@ -329,12 +316,13 @@ func (e *Economy) Transfer(tid TransferID, t Transfer) error {
 			return fmt.Errorf("marshal transfer ID: %v", err)
 		}
 
-		value, err := t.MarshalBinary()
-		if err != nil {
+		var buf bytes.Buffer
+		enc := gob.NewEncoder(&buf)
+		if err := enc.Encode(t); err != nil {
 			return fmt.Errorf("marshal transfer: %v", err)
 		}
 
-		if err := bucket.Put(key, value); err != nil {
+		if err := bucket.Put(key, buf.Bytes()); err != nil {
 			return fmt.Errorf("put transfer: %v", err)
 		}
 
@@ -347,24 +335,4 @@ func (e *Economy) Transfer(tid TransferID, t Transfer) error {
 	// Apply the transfer to the in-memory state
 	e.state.ForceApply(t)
 	return nil
-}
-
-func main() {
-	economy, err := NewEconomy("mydb.db")
-	if err != nil {
-		panic(err)
-	}
-	defer economy.Close()
-
-	fmt.Println("Database opened successfully")
-
-	const user = UserID("test")
-
-	// TODO: allow for mints/burns by having only From or To
-
-	inv := economy.Inventory(user)
-	fmt.Printf("Inventory for user %s: %+v\n", user, inv)
-
-	stats := economy.db.Stats()
-	fmt.Printf("DB Stats: %+v\n", stats)
 }
