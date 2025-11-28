@@ -149,6 +149,18 @@ func (is Items) String() string {
 	return "{" + strings.Join(parts, ", ") + "}"
 }
 
+func (is Items) Equal(other Items) bool {
+	if len(is) != len(other) {
+		return false
+	}
+	for id, qty := range is {
+		if other[id] != qty {
+			return false
+		}
+	}
+	return true
+}
+
 func (is Items) marshalBinary() []byte {
 	var buf bytes.Buffer
 
