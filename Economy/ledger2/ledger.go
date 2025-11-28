@@ -54,6 +54,10 @@ func (it Item) Fungible() bool {
 	return it == ItemCurrency || it == ItemAsset
 }
 
+func (it Item) Mintable() bool {
+	return it == ItemCurrency || it == ItemGroup || it == ItemSource || it == ItemPlace
+}
+
 func (it Item) CanOwn() bool {
 	return it == ItemUser || it == ItemGroup
 }
@@ -104,11 +108,8 @@ func IDAsset(assetID uint) ID {
 	return ID{Item: ItemAsset, Value: fmt.Sprint(assetID)}
 }
 
-func IDGroup(groupID string) (ID, error) {
-	if strings.Contains(groupID, "\000") {
-		return ID{}, errors.New("group ID contains invalid null byte")
-	}
-	return ID{Item: ItemGroup, Value: groupID}, nil
+func IDGroup(groupID string) ID {
+	return ID{Item: ItemGroup, Value: groupID}
 }
 
 func RandIDGroup() ID {
@@ -131,11 +132,8 @@ func RandIDPlace() ID {
 	return ID{Item: ItemPlace, Value: RandStringId()}
 }
 
-func IDUser(userID string) (ID, error) {
-	if strings.Contains(userID, "\000") {
-		return ID{}, errors.New("user ID contains invalid null byte")
-	}
-	return ID{Item: ItemUser, Value: userID}, nil
+func IDUser(userID string) ID {
+	return ID{Item: ItemUser, Value: userID}
 }
 
 type (
@@ -156,8 +154,8 @@ func (is Items) marshalBinary() []byte {
 
 	for id, qty := range is {
 		idBytes := id.marshalBinary()
+		buf.WriteByte(uint8(len(idBytes)))
 		buf.Write(idBytes)
-		buf.WriteByte(0) // separator
 		binary.Write(&buf, binary.BigEndian, qty)
 	}
 
@@ -171,24 +169,22 @@ func (is Items) marshalBinary() []byte {
 func (is *Items) UnmarshalBinary(data []byte) error {
 	*is = make(Items)
 	// parts := bytes.Split(data, []byte{0})
-	for len(data) > 0 {
-		sepI := bytes.IndexByte(data, 0)
-		if sepI == -1 {
-			sepI = len(data)
+	for i := 0; i < len(data); i += 8 {
+		l := int(data[i])
+		i++
+
+		if len(data)-i < l+8 {
+			return errors.New("incomplete item data")
 		}
 
 		var id ID
-		if err := id.UnmarshalBinary(data[:sepI]); err != nil {
+		if err := id.UnmarshalBinary(data[i:][:l]); err != nil {
 			return fmt.Errorf("decode item ID: %w", err)
 		}
+		i += l
 
-		if len(data) < sepI+1+8 {
-			return fmt.Errorf("incomplete quantity data for item %v", id)
-		}
-		qty := binary.BigEndian.Uint64(data[sepI+1:][:8])
+		qty := binary.BigEndian.Uint64(data[i:][:8])
 		(*is)[id] = Quantity(qty)
-
-		data = data[sepI+1+8:]
 	}
 
 	return nil
@@ -254,6 +250,9 @@ func (s Send) Valid() error {
 		}
 		if !i.Fungible() && qty > 1 {
 			return fmt.Errorf("item %v is non-fungible but has quantity %d", i, qty)
+		}
+		if s.Owner.IsNil() && !i.Mintable() {
+			return fmt.Errorf("item %v cannot be minted", i)
 		}
 	}
 	return nil

@@ -61,10 +61,7 @@ func encodeDecode(user ID) {
 }
 
 func main() {
-	user, err := IDUser("user1")
-	if err != nil {
-		panic(err) // user error lol
-	}
+	user := IDUser("user1")
 
 	encodeDecode(user)
 
