@@ -41,9 +41,10 @@ const (
 
 	// Non-fungible assets (users can only own 1 of these)
 
-	ItemGroup  Item = 'g'
-	ItemSource Item = 's'
-	ItemPlace  Item = 'p'
+	ItemGroup         Item = 'g'
+	ItemSource        Item = 's'
+	ItemLimitedSource Item = 'l'
+	ItemPlace         Item = 'p'
 
 	// Not ownable
 	ItemNil  Item = 0
@@ -55,13 +56,15 @@ func (it Item) Fungible() bool {
 }
 
 func (it Item) Mintable() bool {
-	return it == ItemCurrency || it == ItemGroup || it == ItemSource || it == ItemPlace
+	return it == ItemCurrency || it == ItemGroup || it == ItemSource || it == ItemLimitedSource || it == ItemPlace
 }
 
+// Whether an item can own other items
 func (it Item) CanOwn() bool {
-	return it == ItemUser || it == ItemGroup
+	return it == ItemUser || it == ItemGroup || it == ItemSource || it == ItemLimitedSource
 }
 
+// Whether an item can be owned by other items
 func (it Item) CanBeOwned() bool {
 	return it != ItemUser && it != ItemNil
 }
@@ -122,6 +125,14 @@ func IDSource(assetID uint) ID {
 
 func RandIDSource() ID {
 	return ID{Item: ItemSource, Value: RandStringId()}
+}
+
+func IDLimitedSource(assetID uint) ID {
+	return ID{Item: ItemLimitedSource, Value: fmt.Sprint(assetID)}
+}
+
+func RandIDLimitedSource() ID {
+	return ID{Item: ItemLimitedSource, Value: RandStringId()}
 }
 
 func IDPlace(placeID uint) ID {
