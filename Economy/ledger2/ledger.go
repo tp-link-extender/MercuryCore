@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"math/rand"
 	"strings"
@@ -23,27 +24,42 @@ func RandIntId() (id int) {
 	return rand.Intn(9e8) + 1e8 // 9 digit
 }
 
-// a user can own:
+// assets are the worst grey area ever
+// they are fungible, because users can own (as in have bought) multiple of the same asset ID
+// but also not, because only one user can own (as in being the seller) of an asset
+// HERE'S MY SOLUTION
+// we have 2 item types associated with assets: the asset itself, and the source of the asset
+// with the asset itself being fungible and the source being non-fungible
 
-// multiple assets (fungible):
-// - currency (of a given ID), with a quantity
-// - assets (of a given ID), with a quantity
-
-// singular assets (non-fungible):
-// - place/game (of a given ID), only 1 of each
-// - group (of a given ID), only 1 of each
-
-type Item string
+type Item byte
 
 const (
-	ItemCurrency Item = "currency"
-	ItemAsset    Item = "asset"
-	ItemPlace    Item = "place"
-	ItemGroup    Item = "group"
+	// Fungible assets (users can own any number of these)
+
+	ItemCurrency Item = 'c'
+	ItemAsset    Item = 'a'
+
+	// Non-fungible assets (users can only own 1 of these)
+
+	ItemGroup  Item = 'g'
+	ItemSource Item = 's'
+	ItemPlace  Item = 'p'
+
+	// Not ownable
+	ItemNil  Item = 0
+	ItemUser Item = 'u' // slavery 2.0
 )
 
 func (it Item) Fungible() bool {
 	return it == ItemCurrency || it == ItemAsset
+}
+
+func (it Item) CanOwn() bool {
+	return it == ItemUser || it == ItemGroup
+}
+
+func (it Item) CanBeOwned() bool {
+	return it != ItemUser && it != ItemNil
 }
 
 type ID struct {
@@ -55,12 +71,15 @@ func (id ID) String() string {
 	return string(id.Item) + ":" + id.Value
 }
 
+func (id ID) IsNil() bool {
+	return id.Item == ItemNil && id.Value == ""
+}
+
 func (id ID) marshalBinary() []byte {
-	var buf bytes.Buffer
-	buf.WriteString(string(id.Item))
-	buf.WriteByte(':')
-	buf.WriteString(id.Value)
-	return buf.Bytes()
+	bs := make([]byte, 1+len(id.Value))
+	bs[0] = byte(id.Item)
+	copy(bs[1:], id.Value)
+	return bs
 }
 
 // func (id ID) MarshalBinary() ([]byte, error) {
@@ -68,12 +87,12 @@ func (id ID) marshalBinary() []byte {
 // }
 
 func (id *ID) UnmarshalBinary(data []byte) error {
-	i, v, found := bytes.Cut(data, []byte{':'})
-	if !found {
-		return fmt.Errorf("invalid ID format")
+	if len(data) == 0 {
+		return errors.New("invalid ID")
 	}
-	id.Item = Item(i)
-	id.Value = string(v)
+
+	id.Item = Item(data[0])
+	id.Value = string(data[1:])
 	return nil
 }
 
@@ -85,8 +104,23 @@ func IDAsset(assetID uint) ID {
 	return ID{Item: ItemAsset, Value: fmt.Sprint(assetID)}
 }
 
-func RandIDAsset() ID {
-	return ID{Item: ItemAsset, Value: RandStringId()}
+func IDGroup(groupID string) (ID, error) {
+	if strings.Contains(groupID, "\000") {
+		return ID{}, errors.New("group ID contains invalid null byte")
+	}
+	return ID{Item: ItemGroup, Value: groupID}, nil
+}
+
+func RandIDGroup() ID {
+	return ID{Item: ItemGroup, Value: RandStringId()}
+}
+
+func IDSource(assetID uint) ID {
+	return ID{Item: ItemSource, Value: fmt.Sprint(assetID)}
+}
+
+func RandIDSource() ID {
+	return ID{Item: ItemSource, Value: RandStringId()}
 }
 
 func IDPlace(placeID uint) ID {
@@ -97,15 +131,11 @@ func RandIDPlace() ID {
 	return ID{Item: ItemPlace, Value: RandStringId()}
 }
 
-func IDGroup(groupID string) (ID, error) {
-	if strings.Contains(groupID, "\000") {
-		return ID{}, fmt.Errorf("group ID contains invalid null byte")
+func IDUser(userID string) (ID, error) {
+	if strings.Contains(userID, "\000") {
+		return ID{}, errors.New("user ID contains invalid null byte")
 	}
-	return ID{Item: ItemGroup, Value: groupID}, nil
-}
-
-func RandIDGroup() ID {
-	return ID{Item: ItemGroup, Value: RandStringId()}
+	return ID{Item: ItemUser, Value: userID}, nil
 }
 
 type (
@@ -149,7 +179,7 @@ func (is *Items) UnmarshalBinary(data []byte) error {
 
 		var id ID
 		if err := id.UnmarshalBinary(data[:sepI]); err != nil {
-			return fmt.Errorf("decode item ID: %v", err)
+			return fmt.Errorf("decode item ID: %w", err)
 		}
 
 		if len(data) < sepI+1+8 {
@@ -163,10 +193,6 @@ func (is *Items) UnmarshalBinary(data []byte) error {
 
 	return nil
 }
-
-type User string // probably optimum
-
-const NilUser User = ""
 
 type TransferID struct {
 	timestamp uint64
@@ -197,28 +223,48 @@ func (t TransferID) marshalBinary() []byte {
 
 func (t *TransferID) UnmarshalBinary(data []byte) error {
 	if len(data) < 8 {
-		return fmt.Errorf("invalid TransferID data")
+		return errors.New("invalid TransferID data")
 	}
 	t.timestamp = binary.BigEndian.Uint64(data[:8])
 	t.id = string(data[8:])
 	return nil
 }
 
-// A Send represents items being sent FROM a user
+// A Send represents items being sent FROM a user/group
 type Send struct {
-	User
+	Owner ID
 	Items
 }
 
 func (s Send) String() string {
-	return fmt.Sprintf("[%s] -> %v", s.User, s.Items)
+	return fmt.Sprintf("[%s] -> %v", s.Owner, s.Items)
+}
+
+func (s Send) Valid() error {
+	if !s.Owner.CanOwn() && !s.Owner.IsNil() {
+		return fmt.Errorf("owner %v cannot own items", s.Owner)
+	}
+
+	for i, qty := range s.Items {
+		if qty == 0 {
+			return fmt.Errorf("item %v has zero quantity", i)
+		}
+		if !i.CanBeOwned() {
+			return fmt.Errorf("item %v cannot be owned", i)
+		}
+		if !i.Fungible() && qty > 1 {
+			return fmt.Errorf("item %v is non-fungible but has quantity %d", i, qty)
+		}
+	}
+	return nil
 }
 
 func (s Send) marshalBinary() []byte {
 	var buf bytes.Buffer
-	// encode User
-	buf.WriteByte(uint8(len(s.User)))
-	buf.WriteString(string(s.User))
+	// encode Owner
+	ownerBytes := s.Owner.marshalBinary()
+	buf.WriteByte(byte(len(ownerBytes)))
+	buf.Write(ownerBytes)
 
 	// encode Items
 	buf.Write(s.Items.marshalBinary())
@@ -231,17 +277,21 @@ func (s Send) marshalBinary() []byte {
 
 func (s *Send) UnmarshalBinary(data []byte) error {
 	if len(data) < 1 {
-		return fmt.Errorf("invalid Send data")
+		return errors.New("invalid Send data")
 	}
 
-	l := 1 + int(data[0])
+	ownerLen := int(data[0])
+	l := 1 + ownerLen
 	if len(data) < l {
-		return fmt.Errorf("incomplete User data in Send")
+		return errors.New("incomplete Owner data in Send")
 	}
-	s.User = User(data[1:l])
+
+	if err := s.Owner.UnmarshalBinary(data[1:l]); err != nil {
+		return fmt.Errorf("decode owner: %w", err)
+	}
 
 	if err := s.Items.UnmarshalBinary(data[l:]); err != nil {
-		return fmt.Errorf("decode items: %v", err)
+		return fmt.Errorf("decode items: %w", err)
 	}
 
 	return nil
@@ -256,6 +306,22 @@ type Transfer [2]Send
 
 func (t Transfer) String() string {
 	return fmt.Sprintf("%s, %s", t[0], t[1])
+}
+
+func (t Transfer) Valid() error {
+	// Can't have a transfer of nothing or between nobody
+	if t[0].Owner.IsNil() && t[1].Owner.IsNil() {
+		return errors.New("transfer has no source or destination")
+	}
+	if t[0].Items == nil && t[1].Items == nil {
+		return errors.New("transfer has no items")
+	}
+	for i, send := range t {
+		if err := send.Valid(); err != nil {
+			return fmt.Errorf("invalid Send[%d]: %w", i, err)
+		}
+	}
+	return nil
 }
 
 func (t Transfer) marshalBinary() []byte {
@@ -276,79 +342,91 @@ func (t Transfer) marshalBinary() []byte {
 
 func (t *Transfer) UnmarshalBinary(data []byte) error {
 	if len(data) < 4 {
-		return fmt.Errorf("invalid Transfer data")
+		return errors.New("invalid Transfer data")
 	}
 
 	l := 4 + int(binary.BigEndian.Uint32(data[:4]))
 	if len(data) < l {
-		return fmt.Errorf("incomplete Send[0] data in Transfer")
+		return errors.New("incomplete Send[0] data in Transfer")
 	}
 
 	if err := t[0].UnmarshalBinary(data[4:l]); err != nil {
-		return fmt.Errorf("decode Send[0]: %v", err)
+		return fmt.Errorf("decode Send[0]: %w", err)
 	}
 
 	// we're never getting a 4GiB send
 	if err := t[1].UnmarshalBinary(data[l:]); err != nil {
-		return fmt.Errorf("decode Send[1]: %v", err)
+		return fmt.Errorf("decode Send[1]: %w", err)
 	}
 
 	return nil
 }
 
-func (t Transfer) Valid() bool {
-	// Can't have a transfer of nothing or between nobody
-	return (t[0].User != "" || t[1].User != "") && (t[0].Items != nil || t[1].Items != nil)
-}
+type State map[ID]Items
 
-type State map[User]Items
+func (s *State) GetInventory(id ID) Items {
+	// idk if we really want to do this
+	// if !id.CanOwn() {
+	// 	return nil, fmt.Errorf("%v cannot own items", id)
+	// }
 
-func (s *State) GetInventory(user User) Items {
-	inv, ok := (*s)[user]
+	inv, ok := (*s)[id]
 	if !ok {
 		inv = make(Items)
-		(*s)[user] = inv
+		(*s)[id] = inv
 	}
 	return inv
 }
 
 func (s State) CanApply(t Transfer) error {
-	if !t.Valid() {
-		return fmt.Errorf("invalid transfer")
+	if err := t.Valid(); err != nil {
+		return fmt.Errorf("invalid transfer: %w", err)
 	}
 
-	for _, send := range t {
-		if send.User == "" || send.Items == nil {
+	var errs []error
+
+	for i, send := range t {
+		if send.Owner.IsNil() || send.Items == nil {
 			continue
 		}
-		inv := s[send.User]
+		inv := s[send.Owner]
+		otherinv := s[t[1-i].Owner]
 		for id, qty := range send.Items {
 			if inv[id] < qty {
-				return fmt.Errorf("insufficient quantity of item %v for user %s", id, send.User)
+				errs = append(errs, fmt.Errorf("insufficient quantity of item %v for user %s", id, send.Owner))
+			}
+			if otherinv != nil {
+				// check for non-fungible item duplication
+				if !id.Fungible() && otherinv[id] > 0 {
+					errs = append(errs, fmt.Errorf("item %v already owned by user %s", id, t[1-i].Owner))
+				}
 			}
 		}
 	}
 
+	if len(errs) > 0 {
+		return errors.Join(errs...)
+	}
 	return nil
 }
 
 // ⚠️ DANGEROUS!! ⚠️ Make sure you've called CanApply first!
 func (s *State) ForceApply(t Transfer) {
 	for i, send := range t {
-		if send.User != "" {
-			src := s.GetInventory(send.User)
+		if !send.Owner.IsNil() {
+			src := s.GetInventory(send.Owner)
 			for itemID, qty := range send.Items {
 				src[itemID] -= qty
 			}
 		}
 
 		other := t[1-i]
-		if other.User == "" {
+		if other.Owner.IsNil() {
 			// nil user, we need not send anything to them
 			continue
 		}
 
-		dst := s.GetInventory(other.User)
+		dst := s.GetInventory(other.Owner)
 		for itemID, qty := range send.Items {
 			dst[itemID] += qty
 		}
@@ -370,23 +448,23 @@ func applyKVPair(state *State) func(k, v []byte) error {
 	return func(k, v []byte) error {
 		var tid TransferID
 		if err := tid.UnmarshalBinary(k); err != nil {
-			return fmt.Errorf("decode transfer ID: %v", err)
+			return fmt.Errorf("decode transfer ID: %w", err)
 		}
 
 		// decode v into Transfer
 		var t Transfer
 		if err := t.UnmarshalBinary(v); err != nil {
-			return fmt.Errorf("decode transfer %v: %v", tid, err)
+			return fmt.Errorf("decode transfer %v: %w", tid, err)
 		}
 
 		fmt.Printf("Decoded %v: %+v\n", tid, t)
-		if !t.Valid() {
-			return fmt.Errorf("invalid transfer with ID %v", tid)
+		if err := t.Valid(); err != nil {
+			return fmt.Errorf("invalid transfer with ID %v: %w", tid, err)
 		}
 
 		// apply transfer to state
 		if err := state.TryApply(t); err != nil {
-			return fmt.Errorf("failed to apply transfer %v: %v", tid, err)
+			return fmt.Errorf("failed to apply transfer %v: %w", tid, err)
 		}
 
 		return nil
@@ -415,12 +493,17 @@ type Economy struct {
 func NewEconomy(dbPath string) (*Economy, error) {
 	db, err := bolt.Open(dbPath, 0600, nil)
 	if err != nil {
-		return nil, fmt.Errorf("open db: %v", err)
+		return nil, fmt.Errorf("open db: %w", err)
 	}
+
+	// clear database
+	db.Update(func(tx *bolt.Tx) error {
+		return tx.DeleteBucket([]byte(bucketName))
+	})
 
 	state, err := ReadState(db)
 	if err != nil {
-		return nil, fmt.Errorf("read state: %v", err)
+		return nil, fmt.Errorf("read state: %w", err)
 	}
 
 	return &Economy{db, state}, nil
@@ -431,41 +514,35 @@ func (e *Economy) Close() error {
 	return e.db.Close()
 }
 
-func (e *Economy) Inventory(userID User) Items {
-	inv, ok := e.state[userID]
-	if !ok {
-		inv = make(Items)
-		e.state[userID] = inv
+func (e *Economy) Inventory(id ID) (Items, error) {
+	if !id.CanOwn() {
+		return nil, fmt.Errorf("%v cannot own items", id)
 	}
-	return inv
+
+	return e.state.GetInventory(id), nil
 }
 
 func (e *Economy) Transfer(tid TransferID, t Transfer) error {
 	// Process the transfer
 	if err := e.state.CanApply(t); err != nil {
-		return fmt.Errorf("validate transfer: %v", err)
+		return fmt.Errorf("validate transfer: %w", err)
 	}
 
 	// Append the transfer to the database
 	err := e.db.Update(func(tx *bolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists([]byte(bucketName))
 		if err != nil {
-			return fmt.Errorf("create bucket: %v", err)
+			return fmt.Errorf("create bucket: %w", err)
 		}
 
-		key := tid.marshalBinary()
-
-		// var buf bytes.Buffer
-		buf := t.marshalBinary()
-
-		if err := bucket.Put(key, buf); err != nil {
-			return fmt.Errorf("put transfer: %v", err)
+		if err := bucket.Put(tid.marshalBinary(), t.marshalBinary()); err != nil {
+			return fmt.Errorf("put transfer: %w", err)
 		}
 
 		return nil
 	})
 	if err != nil {
-		return fmt.Errorf("append transfer to db: %v", err)
+		return fmt.Errorf("append transfer to db: %w", err)
 	}
 
 	// Apply the transfer to the in-memory state
