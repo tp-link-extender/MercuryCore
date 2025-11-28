@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
-	"encoding/gob"
 	"fmt"
 	"math/rand"
 	"strings"
@@ -64,9 +63,9 @@ func (id ID) marshalBinary() []byte {
 	return buf.Bytes()
 }
 
-func (id ID) MarshalBinary() ([]byte, error) {
-	return id.marshalBinary(), nil
-}
+// func (id ID) MarshalBinary() ([]byte, error) {
+// 	return id.marshalBinary(), nil
+// }
 
 func (id *ID) UnmarshalBinary(data []byte) error {
 	i, v, found := bytes.Cut(data, []byte{':'})
@@ -114,7 +113,15 @@ type (
 	Items    map[ID]Quantity
 )
 
-func (is Items) MarshalBinary() ([]byte, error) {
+func (is Items) String() string {
+	var parts []string
+	for id, qty := range is {
+		parts = append(parts, fmt.Sprintf("%s: %d", id, qty))
+	}
+	return "{" + strings.Join(parts, ", ") + "}"
+}
+
+func (is Items) marshalBinary() []byte {
 	var buf bytes.Buffer
 
 	for id, qty := range is {
@@ -124,8 +131,12 @@ func (is Items) MarshalBinary() ([]byte, error) {
 		binary.Write(&buf, binary.BigEndian, qty)
 	}
 
-	return buf.Bytes(), nil
+	return buf.Bytes()
 }
+
+// func (is Items) MarshalBinary() ([]byte, error) {
+// 	return is.marshalBinary(), nil
+// }
 
 func (is *Items) UnmarshalBinary(data []byte) error {
 	*is = make(Items)
@@ -153,15 +164,18 @@ func (is *Items) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
-type (
-	TransferID struct {
-		timestamp uint64
-		id        string
-	}
-	User string // probably optimum
-)
+type User string // probably optimum
 
 const NilUser User = ""
+
+type TransferID struct {
+	timestamp uint64
+	id        string
+}
+
+func (t TransferID) String() string {
+	return fmt.Sprintf("%d-%s", t.timestamp, t.id)
+}
 
 func MakeTransferID() TransferID {
 	return TransferID{
@@ -170,12 +184,16 @@ func MakeTransferID() TransferID {
 	}
 }
 
-func (t TransferID) MarshalBinary() ([]byte, error) {
+func (t TransferID) marshalBinary() []byte {
 	bs := make([]byte, 8+len(t.id))
 	binary.BigEndian.PutUint64(bs[:8], t.timestamp)
 	copy(bs[8:], t.id)
-	return bs, nil
+	return bs
 }
+
+// func (t TransferID) MarshalBinary() ([]byte, error) {
+// 	return t.marshalBinary(), nil
+// }
 
 func (t *TransferID) UnmarshalBinary(data []byte) error {
 	if len(data) < 8 {
@@ -196,14 +214,38 @@ func (s Send) String() string {
 	return fmt.Sprintf("[%s] -> %v", s.User, s.Items)
 }
 
-// func (s Send) MarshalBinary() ([]byte, error) {
-// 	var buf bytes.Buffer
-// 	// encode User
-// 	buf.WriteByte(uint8(len(s.User)))
-// 	buf.WriteString(string(s.User))
+func (s Send) marshalBinary() []byte {
+	var buf bytes.Buffer
+	// encode User
+	buf.WriteByte(uint8(len(s.User)))
+	buf.WriteString(string(s.User))
 
-// 	// encode Items
+	// encode Items
+	buf.Write(s.Items.marshalBinary())
+	return buf.Bytes()
+}
+
+// func (s Send) MarshalBinary() ([]byte, error) {
+// 	return s.marshalBinary(), nil
 // }
+
+func (s *Send) UnmarshalBinary(data []byte) error {
+	if len(data) < 1 {
+		return fmt.Errorf("invalid Send data")
+	}
+
+	l := 1 + int(data[0])
+	if len(data) < l {
+		return fmt.Errorf("incomplete User data in Send")
+	}
+	s.User = User(data[1:l])
+
+	if err := s.Items.UnmarshalBinary(data[l:]); err != nil {
+		return fmt.Errorf("decode items: %v", err)
+	}
+
+	return nil
+}
 
 // A transfer with a From and To is a transaction
 // A transfer with only a From is a burn
@@ -214,6 +256,44 @@ type Transfer [2]Send
 
 func (t Transfer) String() string {
 	return fmt.Sprintf("%s, %s", t[0], t[1])
+}
+
+func (t Transfer) marshalBinary() []byte {
+	var buf bytes.Buffer
+
+	s0 := t[0].marshalBinary()
+	binary.Write(&buf, binary.BigEndian, uint32(len(s0)))
+
+	buf.Write(s0)
+	buf.Write(t[1].marshalBinary())
+
+	return buf.Bytes()
+}
+
+// func (t Transfer) MarshalBinary() ([]byte, error) {
+// 	return t.marshalBinary(), nil
+// }
+
+func (t *Transfer) UnmarshalBinary(data []byte) error {
+	if len(data) < 4 {
+		return fmt.Errorf("invalid Transfer data")
+	}
+
+	l := 4 + int(binary.BigEndian.Uint32(data[:4]))
+	if len(data) < l {
+		return fmt.Errorf("incomplete Send[0] data in Transfer")
+	}
+
+	if err := t[0].UnmarshalBinary(data[4:l]); err != nil {
+		return fmt.Errorf("decode Send[0]: %v", err)
+	}
+
+	// we're never getting a 4GiB send
+	if err := t[1].UnmarshalBinary(data[l:]); err != nil {
+		return fmt.Errorf("decode Send[1]: %v", err)
+	}
+
+	return nil
 }
 
 func (t Transfer) Valid() bool {
@@ -295,8 +375,7 @@ func applyKVPair(state *State) func(k, v []byte) error {
 
 		// decode v into Transfer
 		var t Transfer
-		dec := gob.NewDecoder(bytes.NewReader(v))
-		if err := dec.Decode(&t); err != nil {
+		if err := t.UnmarshalBinary(v); err != nil {
 			return fmt.Errorf("decode transfer %v: %v", tid, err)
 		}
 
@@ -325,11 +404,7 @@ func ReadState(db *bolt.DB) (State, error) {
 
 		return bucket.ForEach(applyKVPair(&state))
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	return state, nil
+	return state, err
 }
 
 type Economy struct {
@@ -340,12 +415,12 @@ type Economy struct {
 func NewEconomy(dbPath string) (*Economy, error) {
 	db, err := bolt.Open(dbPath, 0600, nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("open db: %v", err)
 	}
 
 	state, err := ReadState(db)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("read state: %v", err)
 	}
 
 	return &Economy{db, state}, nil
@@ -378,18 +453,12 @@ func (e *Economy) Transfer(tid TransferID, t Transfer) error {
 			return fmt.Errorf("create bucket: %v", err)
 		}
 
-		key, err := tid.MarshalBinary()
-		if err != nil {
-			return fmt.Errorf("marshal transfer ID: %v", err)
-		}
+		key := tid.marshalBinary()
 
-		var buf bytes.Buffer
-		enc := gob.NewEncoder(&buf)
-		if err := enc.Encode(t); err != nil {
-			return fmt.Errorf("marshal transfer: %v", err)
-		}
+		// var buf bytes.Buffer
+		buf := t.marshalBinary()
 
-		if err := bucket.Put(key, buf.Bytes()); err != nil {
+		if err := bucket.Put(key, buf); err != nil {
 			return fmt.Errorf("put transfer: %v", err)
 		}
 
