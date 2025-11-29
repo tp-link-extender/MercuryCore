@@ -43,9 +43,9 @@ func TestMint(t *testing.T) {
 	mintTest(economy, t, currency, user1)
 }
 
-func createSourceTest(economy *Economy, t *testing.T, user OwnerUser, currency ItemCurrency) OwnerSource {
+func createSourceTest(economy *Economy, t *testing.T, user OwnerUser, currency ItemCurrency) OwnerUnlimitedSource {
 	iou := ItemOwner{user}
-	src := OwnerSource{false, 1}
+	src := OwnerUnlimitedSource{1}
 	ios := ItemOwner{src}
 
 	tf := Transfer{
@@ -78,7 +78,7 @@ func createSourceTest(economy *Economy, t *testing.T, user OwnerUser, currency I
 	return src
 }
 
-func purchaseAssetTest(economy *Economy, t *testing.T, user OwnerUser, currency ItemCurrency, src OwnerSource) {
+func purchaseAssetTest(economy *Economy, t *testing.T, user OwnerUser, currency ItemCurrency, src OwnerUnlimitedSource) {
 	iou := ItemOwner{user}
 	ios := ItemOwner{src}
 

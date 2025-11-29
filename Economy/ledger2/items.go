@@ -26,7 +26,7 @@ type Item interface {
 	Fungible() bool
 	Mintable() bool
 	CanOwn() bool
-	CanBeOwned() bool
+	Owned() bool
 }
 
 type ItemCurrency struct {
@@ -56,7 +56,7 @@ func (ItemCurrency) CanOwn() bool {
 	return false
 }
 
-func (ItemCurrency) CanBeOwned() bool {
+func (ItemCurrency) Owned() bool {
 	return true
 }
 
@@ -91,7 +91,7 @@ func (ItemAsset) CanOwn() bool {
 	return false
 }
 
-func (ItemAsset) CanBeOwned() bool {
+func (ItemAsset) Owned() bool {
 	return true
 }
 
@@ -123,7 +123,7 @@ func (ItemPlace) CanOwn() bool {
 	return false
 }
 
-func (ItemPlace) CanBeOwned() bool {
+func (ItemPlace) Owned() bool {
 	return true
 }
 
@@ -134,7 +134,8 @@ type OwnerType uint8
 const (
 	OwnerTypeUser OwnerType = iota + 1
 	OwnerTypeGroup
-	OwnerTypeSource
+	OwnerTypeLimitedSource
+	OwnerTypeUnlimitedSource
 )
 
 type Owner interface {
@@ -166,22 +167,33 @@ func (it OwnerGroup) Serialise() []byte {
 	return append([]byte{byte(OwnerTypeGroup)}, []byte(it.ID)...)
 }
 
-type OwnerSource struct {
-	limited bool
-	ID      uint64
+type OwnerLimitedSource struct {
+	ID uint64
 }
 
-func (OwnerSource) OwnerType() OwnerType {
-	return OwnerTypeSource
+func (OwnerLimitedSource) OwnerType() OwnerType {
+	return OwnerTypeLimitedSource
 }
 
-func (i OwnerSource) Serialise() []byte {
-	buf := make([]byte, 10)
-	buf[0] = byte(OwnerTypeSource)
-	if i.limited {
-		buf[1] = 1
-	}
-	binary.BigEndian.PutUint64(buf[2:], i.ID)
+func (i OwnerLimitedSource) Serialise() []byte {
+	buf := make([]byte, 9)
+	buf[0] = byte(OwnerTypeLimitedSource)
+	binary.BigEndian.PutUint64(buf[1:], i.ID)
+	return buf
+}
+
+type OwnerUnlimitedSource struct {
+	ID uint64
+}
+
+func (OwnerUnlimitedSource) OwnerType() OwnerType {
+	return OwnerTypeUnlimitedSource
+}
+
+func (i OwnerUnlimitedSource) Serialise() []byte {
+	buf := make([]byte, 9)
+	buf[0] = byte(OwnerTypeUnlimitedSource)
+	binary.BigEndian.PutUint64(buf[1:], i.ID)
 	return buf
 }
 
@@ -197,13 +209,18 @@ func DeserialiseOwner(data []byte) (Owner, error) {
 		return OwnerUser{ID: string(data[1:])}, nil
 	case OwnerTypeGroup:
 		return OwnerGroup{ID: string(data[1:])}, nil
-	case OwnerTypeSource:
-		if l != 10 {
-			return nil, fmt.Errorf("invalid source owner length: %d", l)
+	case OwnerTypeLimitedSource:
+		if l != 9 {
+			return nil, fmt.Errorf("invalid limited source owner length: %d", l)
 		}
-		limited := data[1] != 0
-		id := binary.BigEndian.Uint64(data[2:])
-		return OwnerSource{limited: limited, ID: id}, nil
+		id := binary.BigEndian.Uint64(data[1:])
+		return OwnerLimitedSource{ID: id}, nil
+	case OwnerTypeUnlimitedSource:
+		if l != 9 {
+			return nil, fmt.Errorf("invalid unlimited source owner length: %d", l)
+		}
+		id := binary.BigEndian.Uint64(data[1:])
+		return OwnerUnlimitedSource{ID: id}, nil
 	}
 
 	return nil, fmt.Errorf("unknown Owner type: %d", ot)
@@ -215,10 +232,14 @@ type ItemOwner struct {
 
 func (i ItemOwner) String() string {
 	switch i.Owner.OwnerType() {
-	case OwnerTypeGroup:
-		return fmt.Sprintf("group:%s", i.Owner)
 	case OwnerTypeUser:
-		return fmt.Sprintf("user:%s", i.Owner)
+		return "user"
+	case OwnerTypeGroup:
+		return "group"
+	case OwnerTypeLimitedSource:
+		return "limited source"
+	case OwnerTypeUnlimitedSource:
+		return "unlimited source"
 	}
 	return "unknown"
 }
@@ -240,15 +261,15 @@ func (ItemOwner) Fungible() bool {
 }
 
 func (i ItemOwner) Mintable() bool {
-	return i.Owner.OwnerType() == OwnerTypeGroup
+	return i.Owner.OwnerType() != OwnerTypeUser
 }
 
 func (ItemOwner) CanOwn() bool {
 	return true
 }
 
-func (i ItemOwner) CanBeOwned() bool {
-	return i.Owner.OwnerType() == OwnerTypeGroup
+func (i ItemOwner) Owned() bool {
+	return i.Owner.OwnerType() != OwnerTypeUser
 }
 
 func (i ItemOwner) IsNil() bool {

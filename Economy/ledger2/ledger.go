@@ -148,7 +148,7 @@ func (s Send) Valid() error {
 		if qty == 0 {
 			return fmt.Errorf("item %v has zero quantity", i)
 		}
-		if !i.CanBeOwned() {
+		if !i.Owned() {
 			return fmt.Errorf("item %v cannot be owned", i)
 		}
 		if !i.Fungible() && qty > 1 {
@@ -159,6 +159,19 @@ func (s Send) Valid() error {
 		}
 	}
 	return nil
+}
+
+// TODO: also check if the unlimited source has the same ID as the asset itself
+func (s Send) UnlimitedSourceAssetMint() bool {
+	if s.Owner.OwnerType() != OwnerTypeUnlimitedSource {
+		return false
+	}
+	for id := range s.Items {
+		if id.Type() != ItemTypeAsset {
+			return false
+		}
+	}
+	return true
 }
 
 func (s Send) marshalBinary() []byte {
@@ -299,7 +312,8 @@ func (s State) CanApply(t Transfer) error {
 		inv := s[send.Owner]
 		otherinv := s[t[1-i].Owner]
 		for id, qty := range send.Items {
-			if inv[id] < qty {
+			// check if it's an asset mint from an unlimited source, if it is then skip this check
+			if !send.UnlimitedSourceAssetMint() && inv[id] < qty {
 				errs = append(errs, fmt.Errorf("insufficient quantity of item %v for user %s", id, send.Owner))
 			}
 			if otherinv != nil {
@@ -421,7 +435,7 @@ func (e *Economy) Close() error {
 	return e.db.Close()
 }
 
-func (e *Economy) Inventory(id ItemOwner) (Items) {
+func (e *Economy) Inventory(id ItemOwner) Items {
 	return e.state.GetInventory(id)
 }
 
