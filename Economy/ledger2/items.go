@@ -103,7 +103,7 @@ func (ItemAsset) CanBeOwned() bool {
 
 type ItemSource struct {
 	limited bool
-	ID      string
+	ID      uint64
 }
 
 func (ItemSource) Type() ItemType {
@@ -111,13 +111,12 @@ func (ItemSource) Type() ItemType {
 }
 
 func (it ItemSource) Serialise() []byte {
-	buf := []byte{byte(ItemTypeSource)}
+	buf := make([]byte, 10)
+	buf[0] = byte(ItemTypeSource)
 	if it.limited {
-		buf = append(buf, 1)
-	} else {
-		buf = append(buf, 0)
+		buf[1] = 1
 	}
-	buf = append(buf, []byte(it.ID)...)
+	binary.BigEndian.PutUint64(buf[2:], it.ID)
 	return buf
 }
 
@@ -139,6 +138,10 @@ func (it ItemSource) CanBeOwned() bool {
 
 type ItemPlace struct {
 	ID string
+}
+
+func RandIDPlace() ItemPlace {
+	return ItemPlace{ID: RandStringId()}
 }
 
 func (ItemPlace) Type() ItemType {
@@ -176,6 +179,18 @@ const (
 type ItemOwner struct {
 	OwnerType
 	ID string
+}
+
+func (i ItemOwner) String() string {
+	switch i.OwnerType {
+	case OwnerTypeNil:
+		return "nil"
+	case OwnerTypeGroup:
+		return "group:" + i.ID
+	case OwnerTypeUser:
+		return "user:" + i.ID
+	}
+	return "unknown"
 }
 
 func (i ItemOwner) Type() ItemType {
@@ -264,11 +279,11 @@ func DeserialiseItem(data []byte) (Item, error) {
 	// case ItemTypeGroup:
 	// 	return ItemOwner{OwnerType: OwnerTypeGroup, ID: string(data)}, nil
 	case ItemTypeSource:
-		if l < 2 {
+		if l != 10 {
 			return nil, fmt.Errorf("invalid source item length: %d", l)
 		}
 		limited := data[1] != 0
-		id := string(data[2:])
+		id := binary.BigEndian.Uint64(data[2:])
 		return ItemSource{limited: limited, ID: id}, nil
 	case ItemTypePlace:
 		return ItemPlace{ID: string(data[1:])}, nil
