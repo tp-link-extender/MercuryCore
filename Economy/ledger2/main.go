@@ -38,7 +38,7 @@ func encodeDecode(user OwnerUser) {
 	// send
 
 	transfer := Transfer{
-		{Owner: ItemOwner{user}},
+		{Owner: user},
 		{Items: items},
 	}
 	if err := transfer.Valid(); err != nil {
@@ -77,7 +77,7 @@ func main() {
 	tid := MakeTransferID()
 	if err = economy.Transfer(tid, Transfer{
 		{
-			Owner: ItemOwner{user},
+			Owner: user,
 		},
 		{
 			Items: Items{
@@ -89,6 +89,6 @@ func main() {
 		panic(err)
 	}
 
-	inv := economy.Inventory(ItemOwner{user})
+	inv := economy.Inventory(user)
 	fmt.Printf("Inventory for user %s: %+v\n", user, inv)
 }

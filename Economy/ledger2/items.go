@@ -15,8 +15,8 @@ const (
 	ItemTypeAsset    ItemType = 'a'
 
 	// Non-fungible assets (users can only own 1 of these)
-	ItemTypePlace ItemType = 'p'
 
+	ItemTypePlace ItemType = 'p'
 	ItemTypeOwner ItemType = 'o'
 )
 
@@ -227,7 +227,7 @@ func DeserialiseOwner(data []byte) (Owner, error) {
 }
 
 type ItemOwner struct {
-	Owner
+	Owner Owner // don't embed, because we don't want ItemOwner to satisfy Owner
 }
 
 func (i ItemOwner) String() string {

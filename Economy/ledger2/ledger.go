@@ -135,8 +135,8 @@ func (t *TransferID) UnmarshalBinary(data []byte) error {
 
 // A Send represents items being sent FROM a user/group
 type Send struct {
-	Owner ItemOwner
-	Items
+	Owner Owner // again no embed pls (not as much of an issue here)
+	Items Items
 }
 
 func (s Send) String() string {
@@ -154,7 +154,7 @@ func (s Send) Valid() error {
 		if !i.Fungible() && qty > 1 {
 			return fmt.Errorf("item %v is non-fungible but has quantity %d", i, qty)
 		}
-		if s.Owner.IsNil() && !i.Mintable() {
+		if s.Owner == nil && !i.Mintable() {
 			return fmt.Errorf("item %v cannot be minted", i)
 		}
 	}
@@ -177,7 +177,7 @@ func (s Send) UnlimitedSourceAssetMint() bool {
 func (s Send) marshalBinary() []byte {
 	var buf bytes.Buffer
 	// encode Owner
-	ownerBytes := s.Owner.Serialise()
+	ownerBytes := ItemOwner{s.Owner}.Serialise()
 	buf.WriteByte(byte(len(ownerBytes)))
 	buf.Write(ownerBytes)
 
@@ -208,7 +208,7 @@ func (s *Send) UnmarshalBinary(data []byte) error {
 	if err != nil {
 		return fmt.Errorf("decode owner: %w", err)
 	}
-	s.Owner = owner
+	s.Owner = owner.Owner
 
 	if err := s.Items.UnmarshalBinary(data[l:]); err != nil {
 		return fmt.Errorf("decode items: %w", err)
@@ -230,7 +230,7 @@ func (t Transfer) String() string {
 
 func (t Transfer) Valid() error {
 	// Can't have a transfer of nothing or between nobody
-	if t[0].Owner.IsNil() && t[1].Owner.IsNil() {
+	if t[0].Owner == nil && t[1].Owner == nil {
 		return errors.New("transfer has no source or destination")
 	}
 	if t[0].Items == nil && t[1].Items == nil {
@@ -284,16 +284,23 @@ func (t *Transfer) UnmarshalBinary(data []byte) error {
 
 type State map[Item]Items
 
-func (s *State) GetInventory(id Item) Items {
+func (s *State) GetInventory(id Owner) Items {
 	// idk if we really want to do this
 	// if !id.CanOwn() {
 	// 	return nil, fmt.Errorf("%v cannot own items", id)
 	// }
+	io := ItemOwner{id}
 
-	inv, ok := (*s)[id]
+	inv, ok := (*s)[io]
 	if !ok {
 		inv = make(Items)
-		(*s)[id] = inv
+		(*s)[io] = inv
+	}
+
+	for id, qty := range inv {
+		if qty == 0 {
+			delete(inv, id)
+		}
 	}
 	return inv
 }
@@ -306,11 +313,11 @@ func (s State) CanApply(t Transfer) error {
 	var errs []error
 
 	for i, send := range t {
-		if send.Owner.IsNil() || send.Items == nil {
+		if send.Owner == nil || send.Items == nil {
 			continue
 		}
-		inv := s[send.Owner]
-		otherinv := s[t[1-i].Owner]
+		inv := s[ItemOwner{send.Owner}]
+		otherinv := s[ItemOwner{t[1-i].Owner}]
 		for id, qty := range send.Items {
 			// check if it's an asset mint from an unlimited source, if it is then skip this check
 			if !send.UnlimitedSourceAssetMint() && inv[id] < qty {
@@ -334,7 +341,7 @@ func (s State) CanApply(t Transfer) error {
 // ⚠️ DANGEROUS!! ⚠️ Make sure you've called CanApply first!
 func (s *State) ForceApply(t Transfer) {
 	for i, send := range t {
-		if !send.Owner.IsNil() {
+		if send.Owner != nil {
 			src := s.GetInventory(send.Owner)
 			for itemID, qty := range send.Items {
 				src[itemID] -= qty
@@ -342,7 +349,7 @@ func (s *State) ForceApply(t Transfer) {
 		}
 
 		other := t[1-i]
-		if other.Owner.IsNil() {
+		if other.Owner == nil {
 			// nil user, we need not send anything to them
 			continue
 		}
@@ -435,7 +442,7 @@ func (e *Economy) Close() error {
 	return e.db.Close()
 }
 
-func (e *Economy) Inventory(id ItemOwner) Items {
+func (e *Economy) Inventory(id Owner) Items {
 	return e.state.GetInventory(id)
 }
 

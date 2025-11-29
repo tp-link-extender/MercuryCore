@@ -6,13 +6,12 @@ import (
 )
 
 func mintTest(economy *Economy, t *testing.T, currency ItemCurrency, user OwnerUser) {
-	iou := ItemOwner{user}
 	xinv := Items{
 		currency: 100,
 	}
 
 	tf := Transfer{
-		{Owner: iou},
+		{Owner: user},
 		{Items: xinv},
 	}
 
@@ -20,7 +19,7 @@ func mintTest(economy *Economy, t *testing.T, currency ItemCurrency, user OwnerU
 		t.Fatalf("transfer: %v", err)
 	}
 
-	if inv := economy.Inventory(iou); !inv.Equal(xinv) {
+	if inv := economy.Inventory(user); !inv.Equal(xinv) {
 		t.Fatalf("expected inventory %v, got %v", xinv, inv)
 	}
 }
@@ -44,13 +43,12 @@ func TestMint(t *testing.T) {
 }
 
 func createSourceTest(economy *Economy, t *testing.T, user OwnerUser, currency ItemCurrency) OwnerUnlimitedSource {
-	iou := ItemOwner{user}
 	src := OwnerUnlimitedSource{1}
 	ios := ItemOwner{src}
 
 	tf := Transfer{
 		{
-			Owner: iou,
+			Owner: user,
 			Items: Items{
 				currency: 50,
 			},
@@ -66,31 +64,28 @@ func createSourceTest(economy *Economy, t *testing.T, user OwnerUser, currency I
 		t.Fatalf("transfer: %v", err)
 	}
 
-	expected := Items{
+	xinv := Items{
 		currency: 50,
 		ios:      1,
 	}
 
-	if inv := economy.Inventory(iou); !inv.Equal(expected) {
-		t.Fatalf("expected inventory %v, got %v", expected, inv)
+	if inv := economy.Inventory(user); !inv.Equal(xinv) {
+		t.Fatalf("expected inventory %v, got %v", xinv, inv)
 	}
 
 	return src
 }
 
 func purchaseAssetTest(economy *Economy, t *testing.T, user OwnerUser, currency ItemCurrency, src OwnerUnlimitedSource) {
-	iou := ItemOwner{user}
-	ios := ItemOwner{src}
-
 	tf := Transfer{
 		{
-			Owner: iou,
+			Owner: user,
 			Items: Items{
 				currency: 50,
 			},
 		},
 		{
-			Owner: ios,
+			Owner: src,
 			Items: Items{
 				ItemAsset{false, src.ID}: 1,
 			},
@@ -99,6 +94,14 @@ func purchaseAssetTest(economy *Economy, t *testing.T, user OwnerUser, currency 
 
 	if err := economy.Transfer(MakeTransferID(), tf); err != nil {
 		t.Fatalf("transfer: %v", err)
+	}
+
+	xinv := Items{
+		ItemOwner{src}: 1,
+	}
+
+	if inv := economy.Inventory(user); !inv.Equal(xinv) {
+		t.Fatalf("expected inventory %v, got %v", xinv, inv)
 	}
 }
 
