@@ -132,8 +132,7 @@ func (ItemPlace) CanBeOwned() bool {
 type OwnerType uint8
 
 const (
-	OwnerTypeNil OwnerType = iota
-	OwnerTypeUser
+	OwnerTypeUser OwnerType = iota + 1
 	OwnerTypeGroup
 	OwnerTypeSource
 )
@@ -141,16 +140,6 @@ const (
 type Owner interface {
 	OwnerType() OwnerType
 	Serialise() []byte
-}
-
-type OwnerNil struct{}
-
-func (OwnerNil) OwnerType() OwnerType {
-	return OwnerTypeNil
-}
-
-func (OwnerNil) Serialise() []byte {
-	return []byte{byte(OwnerTypeNil)}
 }
 
 type OwnerUser struct {
@@ -204,8 +193,6 @@ func DeserialiseOwner(data []byte) (Owner, error) {
 	ot := OwnerType(data[0])
 	l := len(data)
 	switch ot {
-	case OwnerTypeNil:
-		return OwnerNil{}, nil
 	case OwnerTypeUser:
 		return OwnerUser{ID: string(data[1:])}, nil
 	case OwnerTypeGroup:
@@ -227,9 +214,7 @@ type ItemOwner struct {
 }
 
 func (i ItemOwner) String() string {
-	switch i.OwnerType() {
-	case OwnerTypeNil:
-		return "nil"
+	switch i.Owner.OwnerType() {
 	case OwnerTypeGroup:
 		return fmt.Sprintf("group:%s", i.Owner)
 	case OwnerTypeUser:
@@ -243,10 +228,10 @@ func (i ItemOwner) Type() ItemType {
 }
 
 func (i ItemOwner) Serialise() []byte {
-	item := i.Owner.Serialise()
-	buf := make([]byte, 1+len(item))
-	buf[0] = byte(ItemTypeOwner)
-	copy(buf[1:], item)
+	buf := []byte{byte(ItemTypeOwner)}
+	if i.Owner != nil {
+		buf = append(buf, i.Owner.Serialise()...)
+	}
 	return buf
 }
 
@@ -255,7 +240,7 @@ func (ItemOwner) Fungible() bool {
 }
 
 func (i ItemOwner) Mintable() bool {
-	return i.OwnerType() == OwnerTypeGroup
+	return i.Owner.OwnerType() == OwnerTypeGroup
 }
 
 func (ItemOwner) CanOwn() bool {
@@ -263,11 +248,11 @@ func (ItemOwner) CanOwn() bool {
 }
 
 func (i ItemOwner) CanBeOwned() bool {
-	return i.OwnerType() == OwnerTypeGroup
+	return i.Owner.OwnerType() == OwnerTypeGroup
 }
 
 func (i ItemOwner) IsNil() bool {
-	return i.OwnerType() == OwnerTypeNil
+	return i.Owner == nil
 }
 
 func DeserialiseItemOwner(data []byte) (ItemOwner, error) {
@@ -283,8 +268,6 @@ func DeserialiseItemOwner(data []byte) (ItemOwner, error) {
 			return ItemOwner{}, fmt.Errorf("decode group item: %w", err)
 		}
 		return ItemOwner{i}, nil
-	case OwnerTypeNil:
-		return ItemOwner{OwnerNil{}}, nil
 	case OwnerTypeUser:
 		i, err := DeserialiseOwner(data[1:])
 		if err != nil {

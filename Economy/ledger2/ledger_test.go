@@ -55,9 +55,11 @@ func createSourceTest(economy *Economy, t *testing.T, user OwnerUser, currency I
 				currency: 50,
 			},
 		},
-		{Items: Items{
-			ios: 1,
-		}},
+		{
+			Items: Items{
+				ios: 1,
+			},
+		},
 	}
 
 	if err := economy.Transfer(MakeTransferID(), tf); err != nil {
@@ -79,7 +81,7 @@ func createSourceTest(economy *Economy, t *testing.T, user OwnerUser, currency I
 func purchaseAssetTest(economy *Economy, t *testing.T, user OwnerUser, currency ItemCurrency, src OwnerSource) {
 	iou := ItemOwner{user}
 	ios := ItemOwner{src}
-	
+
 	tf := Transfer{
 		{
 			Owner: iou,
