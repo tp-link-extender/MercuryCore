@@ -5,13 +5,14 @@ import (
 	"testing"
 )
 
-func mintTest(economy *Economy, t *testing.T, currency ItemCurrency, user ItemOwner) {
+func mintTest(economy *Economy, t *testing.T, currency ItemCurrency, user OwnerUser) {
+	iou := ItemOwner{user}
 	xinv := Items{
 		currency: 100,
 	}
 
 	tf := Transfer{
-		{Owner: user},
+		{Owner: iou},
 		{Items: xinv},
 	}
 
@@ -19,7 +20,7 @@ func mintTest(economy *Economy, t *testing.T, currency ItemCurrency, user ItemOw
 		t.Fatalf("transfer: %v", err)
 	}
 
-	if inv := economy.Inventory(user); !inv.Equal(xinv) {
+	if inv := economy.Inventory(iou); !inv.Equal(xinv) {
 		t.Fatalf("expected inventory %v, got %v", xinv, inv)
 	}
 }
@@ -37,23 +38,25 @@ func TestMint(t *testing.T) {
 
 	// let there be rocks
 	currency := ItemCurrency{0}
-	user1 := ItemOwner{OwnerTypeUser, "user1"}
+	user1 := OwnerUser{"user1"}
 
 	mintTest(economy, t, currency, user1)
 }
 
-func createSourceTest(economy *Economy, t *testing.T, user ItemOwner, currency ItemCurrency) ItemSource {
-	src := ItemSource{false, 1}
+func createSourceTest(economy *Economy, t *testing.T, user OwnerUser, currency ItemCurrency) OwnerSource {
+	iou := ItemOwner{user}
+	src := OwnerSource{false, 1}
+	ios := ItemOwner{src}
 
 	tf := Transfer{
 		{
-			Owner: user,
+			Owner: iou,
 			Items: Items{
 				currency: 50,
 			},
 		},
 		{Items: Items{
-			src: 1,
+			ios: 1,
 		}},
 	}
 
@@ -63,26 +66,29 @@ func createSourceTest(economy *Economy, t *testing.T, user ItemOwner, currency I
 
 	expected := Items{
 		currency: 50,
-		src:      1,
+		ios:      1,
 	}
 
-	if inv := economy.Inventory(user); !inv.Equal(expected) {
+	if inv := economy.Inventory(iou); !inv.Equal(expected) {
 		t.Fatalf("expected inventory %v, got %v", expected, inv)
 	}
 
 	return src
 }
 
-func purchaseAssetTest(economy *Economy, t *testing.T, user ItemOwner, currency ItemCurrency, src ItemSource) {
+func purchaseAssetTest(economy *Economy, t *testing.T, user OwnerUser, currency ItemCurrency, src OwnerSource) {
+	iou := ItemOwner{user}
+	ios := ItemOwner{src}
+	
 	tf := Transfer{
 		{
-			Owner: user,
+			Owner: iou,
 			Items: Items{
 				currency: 50,
 			},
 		},
 		{
-			// Owner: src,
+			Owner: ios,
 			Items: Items{
 				ItemAsset{false, src.ID}: 1,
 			},
@@ -106,7 +112,7 @@ func TestCreateSource(t *testing.T) {
 	defer economy.Close()
 
 	currency1 := ItemCurrency{1}
-	user2 := ItemOwner{OwnerTypeUser, "user2"}
+	user2 := OwnerUser{"user2"}
 
 	mintTest(economy, t, currency1, user2)
 	src := createSourceTest(economy, t, user2, currency1)

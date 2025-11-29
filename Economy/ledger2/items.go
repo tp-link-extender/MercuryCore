@@ -15,15 +15,9 @@ const (
 	ItemTypeAsset    ItemType = 'a'
 
 	// Non-fungible assets (users can only own 1 of these)
+	ItemTypePlace ItemType = 'p'
 
-	ItemTypeGroup  ItemType = 'g'
-	ItemTypeSource ItemType = 's'
-	ItemTypePlace  ItemType = 'p'
-
-	// Not ownable
-
-	ItemTypeNil  ItemType = 0
-	ItemTypeUser ItemType = 'u' // slavery 2.0
+	ItemTypeOwner ItemType = 'o'
 )
 
 type Item interface {
@@ -101,41 +95,6 @@ func (ItemAsset) CanBeOwned() bool {
 	return true
 }
 
-type ItemSource struct {
-	limited bool
-	ID      uint64
-}
-
-func (ItemSource) Type() ItemType {
-	return ItemTypeSource
-}
-
-func (it ItemSource) Serialise() []byte {
-	buf := make([]byte, 10)
-	buf[0] = byte(ItemTypeSource)
-	if it.limited {
-		buf[1] = 1
-	}
-	binary.BigEndian.PutUint64(buf[2:], it.ID)
-	return buf
-}
-
-func (it ItemSource) Fungible() bool {
-	return false
-}
-
-func (it ItemSource) Mintable() bool {
-	return true
-}
-
-func (it ItemSource) CanOwn() bool {
-	return true
-}
-
-func (it ItemSource) CanBeOwned() bool {
-	return true
-}
-
 type ItemPlace struct {
 	ID string
 }
@@ -168,52 +127,126 @@ func (ItemPlace) CanBeOwned() bool {
 	return true
 }
 
+// owners
+
 type OwnerType uint8
 
 const (
-	OwnerTypeNil   OwnerType = 0
-	OwnerTypeUser  OwnerType = 1
-	OwnerTypeGroup OwnerType = 2
+	OwnerTypeNil OwnerType = iota
+	OwnerTypeUser
+	OwnerTypeGroup
+	OwnerTypeSource
 )
 
-type ItemOwner struct {
-	OwnerType
+type Owner interface {
+	OwnerType() OwnerType
+	Serialise() []byte
+}
+
+type OwnerNil struct{}
+
+func (OwnerNil) OwnerType() OwnerType {
+	return OwnerTypeNil
+}
+
+func (OwnerNil) Serialise() []byte {
+	return []byte{byte(OwnerTypeNil)}
+}
+
+type OwnerUser struct {
 	ID string
 }
 
+func (OwnerUser) OwnerType() OwnerType {
+	return OwnerTypeUser
+}
+
+func (it OwnerUser) Serialise() []byte {
+	return append([]byte{byte(OwnerTypeUser)}, []byte(it.ID)...)
+}
+
+type OwnerGroup struct {
+	ID string
+}
+
+func (OwnerGroup) OwnerType() OwnerType {
+	return OwnerTypeGroup
+}
+
+func (it OwnerGroup) Serialise() []byte {
+	return append([]byte{byte(OwnerTypeGroup)}, []byte(it.ID)...)
+}
+
+type OwnerSource struct {
+	limited bool
+	ID      uint64
+}
+
+func (OwnerSource) OwnerType() OwnerType {
+	return OwnerTypeSource
+}
+
+func (i OwnerSource) Serialise() []byte {
+	buf := make([]byte, 10)
+	buf[0] = byte(OwnerTypeSource)
+	if i.limited {
+		buf[1] = 1
+	}
+	binary.BigEndian.PutUint64(buf[2:], i.ID)
+	return buf
+}
+
+func DeserialiseOwner(data []byte) (Owner, error) {
+	if len(data) == 0 {
+		return nil, errors.New("empty data")
+	}
+
+	ot := OwnerType(data[0])
+	l := len(data)
+	switch ot {
+	case OwnerTypeNil:
+		return OwnerNil{}, nil
+	case OwnerTypeUser:
+		return OwnerUser{ID: string(data[1:])}, nil
+	case OwnerTypeGroup:
+		return OwnerGroup{ID: string(data[1:])}, nil
+	case OwnerTypeSource:
+		if l != 10 {
+			return nil, fmt.Errorf("invalid source owner length: %d", l)
+		}
+		limited := data[1] != 0
+		id := binary.BigEndian.Uint64(data[2:])
+		return OwnerSource{limited: limited, ID: id}, nil
+	}
+
+	return nil, fmt.Errorf("unknown Owner type: %d", ot)
+}
+
+type ItemOwner struct {
+	Owner
+}
+
 func (i ItemOwner) String() string {
-	switch i.OwnerType {
+	switch i.OwnerType() {
 	case OwnerTypeNil:
 		return "nil"
 	case OwnerTypeGroup:
-		return "group:" + i.ID
+		return fmt.Sprintf("group:%s", i.Owner)
 	case OwnerTypeUser:
-		return "user:" + i.ID
+		return fmt.Sprintf("user:%s", i.Owner)
 	}
 	return "unknown"
 }
 
 func (i ItemOwner) Type() ItemType {
-	if i.OwnerType == OwnerTypeNil {
-		return ItemTypeNil
-	}
-	if i.OwnerType == OwnerTypeGroup {
-		return ItemTypeGroup
-	}
-	return ItemTypeUser
+	return ItemTypeOwner
 }
 
 func (i ItemOwner) Serialise() []byte {
-	buf := make([]byte, 1+len(i.ID))
-	switch i.OwnerType {
-	case OwnerTypeNil:
-		buf[0] = byte(ItemTypeNil)
-	case OwnerTypeGroup:
-		buf[0] = byte(ItemTypeGroup)
-	case OwnerTypeUser:
-		buf[0] = byte(ItemTypeUser)
-	}
-	copy(buf[1:], []byte(i.ID))
+	item := i.Owner.Serialise()
+	buf := make([]byte, 1+len(item))
+	buf[0] = byte(ItemTypeOwner)
+	copy(buf[1:], item)
 	return buf
 }
 
@@ -222,7 +255,7 @@ func (ItemOwner) Fungible() bool {
 }
 
 func (i ItemOwner) Mintable() bool {
-	return i.OwnerType == OwnerTypeGroup
+	return i.OwnerType() == OwnerTypeGroup
 }
 
 func (ItemOwner) CanOwn() bool {
@@ -230,11 +263,11 @@ func (ItemOwner) CanOwn() bool {
 }
 
 func (i ItemOwner) CanBeOwned() bool {
-	return i.OwnerType == OwnerTypeGroup
+	return i.OwnerType() == OwnerTypeGroup
 }
 
 func (i ItemOwner) IsNil() bool {
-	return i.OwnerType == OwnerTypeNil
+	return i.OwnerType() == OwnerTypeNil
 }
 
 func DeserialiseItemOwner(data []byte) (ItemOwner, error) {
@@ -242,14 +275,22 @@ func DeserialiseItemOwner(data []byte) (ItemOwner, error) {
 		return ItemOwner{}, errors.New("empty data")
 	}
 
-	it := ItemType(data[0])
+	it := OwnerType(data[0])
 	switch it {
-	case ItemTypeGroup:
-		return ItemOwner{OwnerType: OwnerTypeGroup, ID: string(data[1:])}, nil
-	case ItemTypeNil:
-		return ItemOwner{OwnerType: OwnerTypeNil}, nil
-	case ItemTypeUser:
-		return ItemOwner{OwnerType: OwnerTypeUser, ID: string(data[1:])}, nil
+	case OwnerTypeGroup:
+		i, err := DeserialiseOwner(data[1:])
+		if err != nil {
+			return ItemOwner{}, fmt.Errorf("decode group item: %w", err)
+		}
+		return ItemOwner{i}, nil
+	case OwnerTypeNil:
+		return ItemOwner{OwnerNil{}}, nil
+	case OwnerTypeUser:
+		i, err := DeserialiseOwner(data[1:])
+		if err != nil {
+			return ItemOwner{}, fmt.Errorf("decode user item: %w", err)
+		}
+		return ItemOwner{i}, nil
 	}
 
 	return ItemOwner{}, fmt.Errorf("unknown ItemOwner type: %d", it)
@@ -276,19 +317,10 @@ func DeserialiseItem(data []byte) (Item, error) {
 		limited := data[1] != 0
 		id := binary.BigEndian.Uint64(data[2:])
 		return ItemAsset{limited: limited, ID: id}, nil
-	// case ItemTypeGroup:
-	// 	return ItemOwner{OwnerType: OwnerTypeGroup, ID: string(data)}, nil
-	case ItemTypeSource:
-		if l != 10 {
-			return nil, fmt.Errorf("invalid source item length: %d", l)
-		}
-		limited := data[1] != 0
-		id := binary.BigEndian.Uint64(data[2:])
-		return ItemSource{limited: limited, ID: id}, nil
 	case ItemTypePlace:
 		return ItemPlace{ID: string(data[1:])}, nil
-	case ItemTypeNil, ItemTypeUser, ItemTypeGroup:
-		return DeserialiseItemOwner(data)
+	case ItemTypeOwner:
+		return DeserialiseItemOwner(data[1:])
 	}
 
 	return nil, fmt.Errorf("unknown Item type: %d", it)

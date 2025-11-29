@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func encodeDecode(owner ItemOwner) {
+func encodeDecode(user OwnerUser) {
 	tid := MakeTransferID()
 	fmt.Printf("Transfer ID: %v\n", tid)
 
@@ -38,7 +38,7 @@ func encodeDecode(owner ItemOwner) {
 	// send
 
 	transfer := Transfer{
-		{Owner: owner},
+		{Owner: ItemOwner{user}},
 		{Items: items},
 	}
 	if err := transfer.Valid(); err != nil {
@@ -61,9 +61,9 @@ func encodeDecode(owner ItemOwner) {
 }
 
 func main() {
-	owner := ItemOwner{OwnerTypeUser, "user1"}
+	user := OwnerUser{"user1"}
 
-	encodeDecode(owner)
+	encodeDecode(user)
 
 	economy, err := NewEconomy("mydb.db")
 	if err != nil {
@@ -77,7 +77,7 @@ func main() {
 	tid := MakeTransferID()
 	if err = economy.Transfer(tid, Transfer{
 		{
-			Owner: owner,
+			Owner: ItemOwner{user},
 		},
 		{
 			Items: Items{
@@ -89,6 +89,6 @@ func main() {
 		panic(err)
 	}
 
-	inv := economy.Inventory(owner)
-	fmt.Printf("Inventory for user %s: %+v\n", owner, inv)
+	inv := economy.Inventory(ItemOwner{user})
+	fmt.Printf("Inventory for user %s: %+v\n", user, inv)
 }
