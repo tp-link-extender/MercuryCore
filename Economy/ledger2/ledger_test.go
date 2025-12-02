@@ -98,6 +98,7 @@ func purchaseAssetTest(economy *Economy, t *testing.T, user OwnerUser, currency 
 
 	xinv := Items{
 		ItemOwner{src}: 1,
+		ItemAsset{false, src.ID}: 1,
 	}
 
 	if inv := economy.Inventory(user); !inv.Equal(xinv) {

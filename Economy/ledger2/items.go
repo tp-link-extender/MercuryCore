@@ -22,6 +22,7 @@ const (
 
 type Item interface {
 	Type() ItemType
+	String() string
 	Serialise() []byte
 	Fungible() bool
 	Mintable() bool
@@ -35,6 +36,10 @@ type ItemCurrency struct {
 
 func (ItemCurrency) Type() ItemType {
 	return ItemTypeCurrency
+}
+
+func (i ItemCurrency) String() string {
+	return fmt.Sprintf("currency(%d)", i.ID)
 }
 
 func (i ItemCurrency) Serialise() []byte {
@@ -67,6 +72,13 @@ type ItemAsset struct {
 
 func (ItemAsset) Type() ItemType {
 	return ItemTypeAsset
+}
+
+func (i ItemAsset) String() string {
+	if i.limited {
+		return fmt.Sprintf("limited-asset(%d)", i.ID)
+	}
+	return fmt.Sprintf("unlimited-asset(%d)", i.ID)
 }
 
 func (i ItemAsset) Serialise() []byte {
@@ -107,6 +119,10 @@ func (ItemPlace) Type() ItemType {
 	return ItemTypePlace
 }
 
+func (i ItemPlace) String() string {
+	return fmt.Sprintf("place(%s)", i.ID)
+}
+
 func (it ItemPlace) Serialise() []byte {
 	return append([]byte{byte(ItemTypePlace)}, []byte(it.ID)...)
 }
@@ -140,6 +156,7 @@ const (
 
 type Owner interface {
 	OwnerType() OwnerType
+	String() string
 	Serialise() []byte
 }
 
@@ -149,6 +166,10 @@ type OwnerUser struct {
 
 func (OwnerUser) OwnerType() OwnerType {
 	return OwnerTypeUser
+}
+
+func (it OwnerUser) String() string {
+	return fmt.Sprintf("user(%s)", it.ID)
 }
 
 func (it OwnerUser) Serialise() []byte {
@@ -163,6 +184,10 @@ func (OwnerGroup) OwnerType() OwnerType {
 	return OwnerTypeGroup
 }
 
+func (it OwnerGroup) String() string {
+	return fmt.Sprintf("group(%s)", it.ID)
+}
+
 func (it OwnerGroup) Serialise() []byte {
 	return append([]byte{byte(OwnerTypeGroup)}, []byte(it.ID)...)
 }
@@ -173,6 +198,10 @@ type OwnerLimitedSource struct {
 
 func (OwnerLimitedSource) OwnerType() OwnerType {
 	return OwnerTypeLimitedSource
+}
+
+func (it OwnerLimitedSource) String() string {
+	return fmt.Sprintf("limited-source(%d)", it.ID)
 }
 
 func (i OwnerLimitedSource) Serialise() []byte {
@@ -188,6 +217,10 @@ type OwnerUnlimitedSource struct {
 
 func (OwnerUnlimitedSource) OwnerType() OwnerType {
 	return OwnerTypeUnlimitedSource
+}
+
+func (it OwnerUnlimitedSource) String() string {
+	return fmt.Sprintf("unlimited-source(%d)", it.ID)
 }
 
 func (i OwnerUnlimitedSource) Serialise() []byte {
@@ -230,22 +263,12 @@ type ItemOwner struct {
 	Owner Owner // don't embed, because we don't want ItemOwner to satisfy Owner
 }
 
-func (i ItemOwner) String() string {
-	switch i.Owner.OwnerType() {
-	case OwnerTypeUser:
-		return "user"
-	case OwnerTypeGroup:
-		return "group"
-	case OwnerTypeLimitedSource:
-		return "limited source"
-	case OwnerTypeUnlimitedSource:
-		return "unlimited source"
-	}
-	return "unknown"
-}
-
 func (i ItemOwner) Type() ItemType {
 	return ItemTypeOwner
+}
+
+func (i ItemOwner) String() string {
+	return i.Owner.String()
 }
 
 func (i ItemOwner) Serialise() []byte {
