@@ -18,7 +18,30 @@ In both cases, the economy can be used as a powerful tool to incentivise player 
 
 First, it's important to work out what platform behaviours are best to encourage or discourage. Common choices include:
 
-- todo
+- Creation of high-quality places, for example being well-made, technically impressive, highly rated by users, or popular.
+- Regular user engagement &ndash; logging in frequently, spending time on the platform, or interacting with many other users.
+- Creation of user-generated content like development assets, models, or scripts that can be shared with other users.
+- Participation in the community through forums, groups, or social features.
+- Participation in the economy itself through buying and trading items, or by creating and selling assets at a price that reflects their perceived value.
+- Avoiding negative behaviours such as scamming, spamming, or harassment.
+- Referral of active, engaged, and well-behaved new users to the platform.
+- Professional or mature conduct such as adhering to community guidelines, reporting issues, or helping other users.
+- Providing feedback to help improve the platform.
+
+Once the desired behaviours are identified, appropriate incentives can be designed. Examples of these may include:
+
+- Stipends for logging in regularly, for example weekly, daily, or every 12-16 hours.
+  - These can be scaled based on user activity, for example giving larger stipends to users who log in more frequently, or made contributions to the site in this time.
+- Limiting the number of messages or forum posts a user can make, and requiring a small fee to make additional posts, to discourage spamming.
+- Economic rewards from participating in a trading system in positive ways, such as making fair trades.
+  - This could be in a form of cashback rewards, or more subtle incentives such as reduced fees or improved selling prices for assets they own.
+  - It is common for the trading scene (LMaD) to become a huge part of a platform's economy if it's rewarding enough to participate in. In some cases, this can be so successful as to overshadow other aspects of the platform. In these cases, fees and rewards could be automatically or manually adjusted to encourage spending in other areas of the platform.
+- Controlling the growth of the platform by attaching currency bonuses or costs to an existing registration key system.
+  - Growth could be boosted by giving currency rewards to users that refer new users, incentivising them to publicise the platform.
+  - Growth could be limited by requiring users to pay a currency fee to create a registration key, resulting in fewer keys being created and shared.
+  - Using a combination of both, for example a small fee to create a key but a larger reward for referring new users, can balance growth and control spam registrations.
+
+Choose carefully, as misaligned incentives can have adverse effects on the platform's economy and user behaviour. Regularly reviews and adjustment of incentives based on observed outcomes is important to ensure they continue to align with the goals of the revival platform. Complex and interconnected systems may require extra testing or careful planning to get right, and even then might not be intuitive enough to users for the intended effects to be produced. Therefore in some cases it would be better to start with a simple economy structure, note the outcomes, and then gradually introduce more complexity as needed along with the growth of the platform.
 
 ## Previous systems
 
