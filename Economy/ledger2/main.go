@@ -58,6 +58,18 @@ func encodeDecode(user OwnerUser) {
 		fmt.Printf("       Send: %+v\n", newSend)
 		fmt.Println()
 	}
+
+	fmt.Printf("   Transfer: %+v\n", transfer)
+
+	b = transfer.marshalBinary()
+	fmt.Printf(" Marshalled: %d\n", len(b))
+
+	var newTransfer Transfer
+	if err := newTransfer.UnmarshalBinary(b); err != nil {
+		panic(err)
+	}
+	fmt.Printf("   Transfer: %+v\n", newTransfer)
+	fmt.Println()
 }
 
 func main() {
@@ -82,7 +94,7 @@ func main() {
 		{
 			Items: Items{
 				ItemCurrency{0}: 100,
-				RandIDPlace():   1,
+				RandPlace():   1,
 			},
 		},
 	}); err != nil {

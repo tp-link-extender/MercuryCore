@@ -111,8 +111,8 @@ type ItemPlace struct {
 	ID string
 }
 
-func RandIDPlace() ItemPlace {
-	return ItemPlace{ID: RandStringId()}
+func RandPlace() ItemPlace {
+	return ItemPlace{RandStringId()}
 }
 
 func (ItemPlace) Type() ItemType {
@@ -271,6 +271,9 @@ func (i ItemOwner) Type() ItemType {
 }
 
 func (i ItemOwner) String() string {
+	if i.Owner == nil {
+		return "owner(nil)"
+	}
 	return i.Owner.String()
 }
 
