@@ -148,7 +148,8 @@ func (ItemPlace) Owned() bool {
 type OwnerType uint8
 
 const (
-	OwnerTypeUser OwnerType = iota + 1
+	OwnerTypeNil OwnerType = iota
+	OwnerTypeUser
 	OwnerTypeGroup
 	OwnerTypeLimitedSource
 	OwnerTypeUnlimitedSource
@@ -238,6 +239,8 @@ func DeserialiseOwner(data []byte) (Owner, error) {
 	ot := OwnerType(data[0])
 	l := len(data)
 	switch ot {
+	case OwnerTypeNil:
+		return nil, nil
 	case OwnerTypeUser:
 		return OwnerUser{ID: string(data[1:])}, nil
 	case OwnerTypeGroup:
@@ -272,7 +275,10 @@ func (i ItemOwner) String() string {
 }
 
 func (i ItemOwner) Serialise() []byte {
-	buf := []byte{byte(ItemTypeOwner)}
+	if i.Owner == nil {
+		return []byte{byte(OwnerTypeNil)}
+	}
+	buf := []byte{byte(i.Owner.OwnerType())}
 	if i.Owner != nil {
 		buf = append(buf, i.Owner.Serialise()...)
 	}
@@ -299,30 +305,6 @@ func (i ItemOwner) IsNil() bool {
 	return i.Owner == nil
 }
 
-func DeserialiseItemOwner(data []byte) (ItemOwner, error) {
-	if len(data) == 0 {
-		return ItemOwner{}, errors.New("empty data")
-	}
-
-	it := OwnerType(data[0])
-	switch it {
-	case OwnerTypeGroup:
-		i, err := DeserialiseOwner(data[1:])
-		if err != nil {
-			return ItemOwner{}, fmt.Errorf("decode group item: %w", err)
-		}
-		return ItemOwner{i}, nil
-	case OwnerTypeUser:
-		i, err := DeserialiseOwner(data[1:])
-		if err != nil {
-			return ItemOwner{}, fmt.Errorf("decode user item: %w", err)
-		}
-		return ItemOwner{i}, nil
-	}
-
-	return ItemOwner{}, fmt.Errorf("unknown ItemOwner type: %d", it)
-}
-
 func DeserialiseItem(data []byte) (Item, error) {
 	if len(data) == 0 {
 		return nil, errors.New("empty data")
@@ -336,7 +318,7 @@ func DeserialiseItem(data []byte) (Item, error) {
 			return nil, fmt.Errorf("invalid currency item length: %d", l)
 		}
 		id := binary.BigEndian.Uint64(data[1:])
-		return ItemCurrency{ID: id}, nil
+		return ItemCurrency{id}, nil
 	case ItemTypeAsset:
 		if l != 10 {
 			return nil, fmt.Errorf("invalid asset item length: %d", l)
@@ -345,9 +327,13 @@ func DeserialiseItem(data []byte) (Item, error) {
 		id := binary.BigEndian.Uint64(data[2:])
 		return ItemAsset{limited: limited, ID: id}, nil
 	case ItemTypePlace:
-		return ItemPlace{ID: string(data[1:])}, nil
+		return ItemPlace{string(data[1:])}, nil
 	case ItemTypeOwner:
-		return DeserialiseItemOwner(data[1:])
+		o, err := DeserialiseOwner(data[1:])
+		if err != nil {
+			return nil, fmt.Errorf("decode owner: %w", err)
+		}
+		return ItemOwner{o}, nil
 	}
 
 	return nil, fmt.Errorf("unknown Item type: %d", it)

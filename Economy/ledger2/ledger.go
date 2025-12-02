@@ -140,6 +140,9 @@ type Send struct {
 }
 
 func (s Send) String() string {
+	if s.Owner == nil {
+		return fmt.Sprintf("[] -> %v", s.Items)
+	}
 	return fmt.Sprintf("[%s] -> %v", s.Owner, s.Items)
 }
 
@@ -201,14 +204,11 @@ func (s *Send) UnmarshalBinary(data []byte) error {
 		return errors.New("incomplete Owner data in Send")
 	}
 
-	// if err := s.Owner.UnmarshalBinary(data[1:l]); err != nil {
-	// 	return fmt.Errorf("decode owner: %w", err)
-	// }
-	owner, err := DeserialiseItemOwner(data[1:l])
+	o, err := DeserialiseOwner(data[1:l])
 	if err != nil {
 		return fmt.Errorf("decode owner: %w", err)
 	}
-	s.Owner = owner.Owner
+	s.Owner = o
 
 	if err := s.Items.UnmarshalBinary(data[l:]); err != nil {
 		return fmt.Errorf("decode items: %w", err)
