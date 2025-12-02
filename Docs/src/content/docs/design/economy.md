@@ -40,8 +40,13 @@ Once the desired behaviours are identified, appropriate incentives can be design
   - Growth could be boosted by giving currency rewards to users that refer new users, incentivising them to publicise the platform.
   - Growth could be limited by requiring users to pay a currency fee to create a registration key, resulting in fewer keys being created and shared.
   - Using a combination of both, for example a small fee to create a key but a larger reward for referring new users, can balance growth and control spam registrations.
+- Controlling the availability of assets or catalog items by providing currency costs or rewards for their creation.
+  - This could be requiring a higher cost to create them based on their supply (for limited items) or price, to incentivise users to create items at a cost that users are willing to pay. The initial investment required to create the item may encourage creators to carefully consider the demand for the item before creating it.
+- Liquidity incentives for selling or buying assets, such as higher fees for users that hold large quantities of valueable assets without selling them, or higher stipends for users that frequently sell or trade assets.
 
 Choose carefully, as misaligned incentives can have adverse effects on the platform's economy and user behaviour. Regularly reviews and adjustment of incentives based on observed outcomes is important to ensure they continue to align with the goals of the revival platform. Complex and interconnected systems may require extra testing or careful planning to get right, and even then might not be intuitive enough to users for the intended effects to be produced. Therefore in some cases it would be better to start with a simple economy structure, note the outcomes, and then gradually introduce more complexity as needed along with the growth of the platform.
+
+It is key to remember that the economy is not physically tied to the real world, so may not need to reflect it and its systems directly. The main purpose of an economy should be to meet the needs of its users &ndash; in the context of a revival platform, this means providing a fun and engaging experience for users.
 
 ## Previous systems
 
