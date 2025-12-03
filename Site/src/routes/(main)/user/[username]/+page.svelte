@@ -225,7 +225,7 @@
 									total: data.groupsOwned.length
 								}}
 								class="card bg-darker no-underline"
-								href="/groups/{group.name}">
+								href="/groups/{group.id}">
 								<div class="p-2">
 									<span class="float-start">
 										{group.name}
@@ -248,9 +248,12 @@
 					{#each data.groups as group, num}
 						<div class="py-2">
 							<a
-								in:fade={{ num, total: data.groups.length }}
+								in:fade={{
+									num,
+									total: data.groups.length
+								}}
 								class="card bg-darker no-underline"
-								href="/groups/{group.name}">
+								href="/groups/{group.id}">
 								<div class="p-2">
 									<span class="float-start">
 										{group.name}

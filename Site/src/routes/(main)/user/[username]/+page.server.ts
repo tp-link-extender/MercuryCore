@@ -3,6 +3,7 @@ import { authorise } from "$lib/server/auth"
 import formData from "$lib/server/formData"
 import requestRender from "$lib/server/requestRender"
 import { db, Record, type RecordId } from "$lib/server/surreal"
+import type { Group } from "../../groups/+page.server"
 import type { RequestEvent } from "./$types.d"
 import acceptExistingQuery from "./acceptExisting.surql"
 import alreadyFriendsQuery from "./alreadyFriends.surql"
@@ -28,14 +29,8 @@ interface User extends BasicUser {
 	followingCount: number
 	friendCount: number
 	friends: boolean
-	groups: {
-		memberCount: number
-		name: string
-	}[]
-	groupsOwned: {
-		memberCount: number
-		name: string
-	}[]
+	groups: Group[]
+	groupsOwned: Group[]
 	incomingRequest: boolean
 	outgoingRequest: boolean
 	permissionLevel: number
