@@ -32,10 +32,7 @@
 		}
 	}
 
-	let comments = $state(data.asset.comments)
-	$effect(() => {
-		comments = data.asset.comments
-	})
+	let comments = $derived(data.asset.comments)
 
 	let formData = $derived(superForm(data.form))
 

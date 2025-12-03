@@ -5,22 +5,38 @@
 	import Pagination from "$components/Pagination.svelte"
 	import TabData from "$components/TabData"
 	import TabNav from "$components/TabNav.svelte"
+	import { getAssets } from "./data.remote"
 
 	const { data } = $props()
 
-	const tabTypes: { [_: string]: number } = {
+	const tabTypes = {
 		Hats: 8,
 		"T-Shirts": 2,
 		Shirts: 11,
 		Pants: 12,
 		Decals: 13,
 		Faces: 18
-	}
+	} as const
 
 	let tabData = $state(TabData(data.url, Object.keys(tabTypes)))
 
-	let assets = $derived(
-		data.assets.filter(a => a.type === tabTypes[tabData.currentTab])
+	// $inspect("tabData", tabData.currentTab)
+
+	// let assets = $derived(
+	// 	data.assets.filter(a => a.type === tabTypes[tabData.currentTab])
+	// )
+
+	function currentPage() {
+		const pageQ = page.url.searchParams.get("p") || "1"
+		const pp = +pageQ
+		return Number.isNaN(pp) ? 1 : Math.round(pp)
+	}
+
+	const { assets, pages } = $derived(
+		await getAssets({
+			page: currentPage(),
+			type: tabTypes[tabData.currentTab as keyof typeof tabTypes]
+		})
 	)
 </script>
 
@@ -102,12 +118,12 @@
 						<Asset
 							{asset}
 							{num}
-							total={data.assets.length}
+							total={assets.length}
 							symbol={data.currencySymbol} />
 					{/each}
 				</div>
 				{#key page.url}
-					<Pagination totalPages={data.pages} />
+					<Pagination totalPages={pages} />
 				{/key}
 			{:else}
 				<h2 class="pt-12 text-center">

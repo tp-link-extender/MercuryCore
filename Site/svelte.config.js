@@ -8,6 +8,10 @@ export default {
 	kit: {
 		adapter: adapter(),
 		alias: { $components: "./src/components" },
+
+		experimental: {
+			remoteFunctions: true,
+		},
 	},
 	vitePlugin: { inspector: { toggleKeyCombo: "control-i" } },
 
@@ -18,5 +22,9 @@ export default {
 
 		// shorter hashes (normal hashes are svelte-{hash}). This doesn't work in development so expect a warning from vite-plugin-svelte, though works fine in production builds.
 		cssHash: ({ hash, filename }) => `s${hash(filename)}`,
+
+		experimental: {
+			async: true,
+		},
 	},
 }
