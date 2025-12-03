@@ -136,7 +136,7 @@ actions.comment = async ({ locals, params, request, getClientAddress }) => {
 		`
 			SELECT
 				record::id(<-created[0]<-user[0].id) AS creatorId
-			FROM ONLY $asset WHERE visibility = "Visible"`,
+			FROM ONLY $asset`,
 		{ asset: Record("asset", id) }
 	)
 	if (!getAsset) error(404)
