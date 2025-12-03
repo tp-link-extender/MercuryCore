@@ -14,7 +14,7 @@
 
 	const { data } = $props()
 
-	const { user } = data
+	let { user } = $derived(data)
 
 	let place = $state(data.place)
 	let online = $derived(place.serverPing > Date.now() / 1000 - 35)

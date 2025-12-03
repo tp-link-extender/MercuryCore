@@ -13,7 +13,7 @@
 
 	const { data, form } = $props()
 
-	const { user } = data
+	let { user } = $derived(data)
 
 	let perms = $state(permissionLevels(data.permissionLevel))
 	$effect(() => {

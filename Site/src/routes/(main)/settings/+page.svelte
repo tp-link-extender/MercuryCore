@@ -10,7 +10,7 @@
 
 	const { data } = $props()
 
-	const { user } = data
+	let { user } = $derived(data)
 
 	let tabData = $state(
 		TabData(

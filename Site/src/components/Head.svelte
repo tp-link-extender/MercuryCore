@@ -1,7 +1,7 @@
 <script lang="ts">
-	const {
+	let {
 		name,
-		title = name,
+		title,
 		description = "",
 		ogImage = ""
 	}: {
@@ -10,10 +10,12 @@
 		description?: string
 		ogImage?: string
 	} = $props()
+
+	let t = $derived(title || name)
 </script>
 
 <svelte:head>
-	<title>{title} - {name}</title>
+	<title>{t} - {name}</title>
 	{#if description}
 		<meta name="description" content={description} />
 	{/if}

@@ -45,9 +45,13 @@
 		class?: ClassValue
 	} = $props()
 
-	const style = `width: ${size}; max-width: ${size}; height: ${size}; min-height: ${size}`
-	const style2 = `${style}; background: var(--${bg})`
-	const pfpstyle = `${style2}; --hover: var(--${transitionBackgrounds[bg]})`
+	let style = $derived(
+		`width: ${size}; max-width: ${size}; height: ${size}; min-height: ${size}`
+	)
+	let style2 = $derived(`${style}; background: var(--${bg})`)
+	let pfpstyle = $derived(
+		`${style2}; --hover: var(--${transitionBackgrounds[bg]})`
+	)
 </script>
 
 {#if image}

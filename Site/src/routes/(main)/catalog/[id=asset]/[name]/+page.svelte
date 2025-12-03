@@ -16,7 +16,7 @@
 
 	const { data, form } = $props()
 
-	const { user } = data
+	let { user } = $derived(data)
 	const fee = (data.currentFee * data.asset.price).toFixed(2)
 	const totalPrice = (1 + data.currentFee) * data.asset.price
 	const itsFree = data.asset.price === 0 // IT'S FREEEEEEEEEEEEEE

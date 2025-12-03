@@ -4,9 +4,11 @@
 	const { place }: { place: import("./$types").PageData["places"][0] } =
 		$props()
 
-	const slug = encode(place.name)
-	const ratio = Math.floor(
-		(place.likeCount / (place.likeCount + place.dislikeCount)) * 100
+	let slug = $derived(encode(place.name))
+	let ratio = $derived(
+		Math.floor(
+			(place.likeCount / (place.likeCount + place.dislikeCount)) * 100
+		)
 	)
 </script>
 

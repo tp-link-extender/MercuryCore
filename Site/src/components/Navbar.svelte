@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { untrack } from "svelte"
 	import { slide } from "svelte/transition"
 	import { enhance } from "$app/forms"
 	import Search from "$components/Search.svelte"
@@ -6,27 +7,42 @@
 
 	const { data }: { data: import("../routes/$types").LayoutData } = $props()
 
-	const { user } = data
-	const nav1 = [
-		// ["Home", "/", "fa-house-chimney"],
-		["Games", "/games", "fa-mountain-sun"],
-		["Catalog", "/catalog", "fa-book-open-cover"],
-		["Create", "/develop", "fa-plus"]
-	]
-	if (data.pages.includes("Forum"))
-		nav1.push(["Forum", "/forum", "fa-messages"])
-	if (data.pages.includes("Groups"))
-		nav1.push(["Groups", "/groups", "fa-people-group"])
+	let { user } = $derived(data)
 
-	const usernav = [
-		["fa-money-bill-transfer", "Economy", "/economy"],
-		["fa-user-group", "Friends", "/requests"],
-		["fa-box-open-full", "Inventory", "/inventory"],
-		["fa-user-pen", "Character", "/character"],
-		["fa-gears", "Settings", "/settings"]
-	]
-	if (user && user.permissionLevel >= 4)
-		usernav.unshift(["fa-diamond-half-stroke", "Admin", "/admin"])
+	let nav1: [string, string, string][] = $state([])
+	$effect(() => {
+		nav1 = [
+			// ["Home", "/", "fa-house-chimney"],
+			["Games", "/games", "fa-mountain-sun"],
+			["Catalog", "/catalog", "fa-book-open-cover"],
+			["Create", "/develop", "fa-plus"]
+		]
+		untrack(() => {
+			if (data.pages.includes("Forum"))
+				nav1.push(["Forum", "/forum", "fa-messages"])
+			if (data.pages.includes("Groups"))
+				nav1.push(["Groups", "/groups", "fa-people-group"])
+		})
+	})
+
+	// sing, sing, sing (https://www.youtube.com/watch?v=c0pJzW8pxWU)
+	let usernav: [string, string, string][] = $state([])
+
+	$effect(() => {
+		usernav = [
+			["fa-money-bill-transfer", "Economy", "/economy"],
+			["fa-user-group", "Friends", "/requests"],
+			["fa-box-open-full", "Inventory", "/inventory"],
+			["fa-user-pen", "Character", "/character"],
+			["fa-gears", "Settings", "/settings"]
+		]
+		untrack(() => {
+			// have fun with your infinite effect loops lmaooo
+			// "Why is my Mercury Core suddenly running really slow?"
+			if (user && user.permissionLevel >= 4)
+				usernav.unshift(["fa-diamond-half-stroke", "Admin", "/admin"])
+		})
+	})
 </script>
 
 <nav class="py-0 justify-start z-11">

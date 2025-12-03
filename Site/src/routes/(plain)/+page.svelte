@@ -6,9 +6,9 @@
 
 	const { data } = $props()
 
-	const [, c1, c2] = data.stipend.ok
-		? beautifyCurrency(data.stipend.value)
-		: ["", "", ""]
+	let [, c1, c2] = $derived(
+		data.stipend.ok ? beautifyCurrency(data.stipend.value) : ["", "", ""]
+	)
 
 	const systems = [
 		{

@@ -14,7 +14,7 @@
 
 	const { data } = $props()
 
-	const { user } = data
+	let { user } = $derived(data)
 
 	let comment = $state(data.comment)
 	$effect(() => {

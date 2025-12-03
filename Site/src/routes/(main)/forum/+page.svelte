@@ -5,7 +5,7 @@
 
 	const { data } = $props()
 
-	const { user } = data
+	let { user } = $derived(data)
 </script>
 
 <Head name={data.siteName} title="Forum" />

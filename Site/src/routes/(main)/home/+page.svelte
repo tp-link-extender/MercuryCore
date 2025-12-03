@@ -10,7 +10,7 @@
 
 	const { data } = $props()
 
-	const { user } = data
+	let { user } = $derived(data)
 	const formData = superForm(data.form)
 	export const snapshot = formData
 </script>

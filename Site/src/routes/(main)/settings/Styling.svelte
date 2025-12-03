@@ -1,11 +1,11 @@
 <script lang="ts">
+	import { superForm } from "sveltekit-superforms/client"
 	import Codearea from "$components/forms/Codearea.svelte"
 	import Form from "$components/forms/Form.svelte"
-	import { superForm } from "sveltekit-superforms/client"
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	const { user } = data
+	let { user } = $derived(data)
 	const formData = superForm(data.stylingForm)
 	const { form } = formData
 

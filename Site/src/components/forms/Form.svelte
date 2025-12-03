@@ -22,7 +22,7 @@
 		children: Snippet
 	} & HTMLFormAttributes = $props()
 
-	const { errors, message, enhance, delayed } = formData
+	let { errors, message, enhance, delayed } = $derived(formData)
 
 	// use:enhance may not be used on forms that aren't method === "post"
 	// const use = method?.toLowerCase() === "post" ? enhance : () => {}
