@@ -7,7 +7,7 @@
 
 	const { data } = $props()
 
-	const formData = superForm(data.form)
+	let formData = $derived(superForm(data.form))
 	export const snapshot = formData
 
 	const [, c1, c2] = beautifyCurrency(data.price)

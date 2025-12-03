@@ -17,9 +17,9 @@
 	const { data, form } = $props()
 
 	let { user } = $derived(data)
-	const fee = (data.currentFee * data.asset.price).toFixed(2)
-	const totalPrice = (1 + data.currentFee) * data.asset.price
-	const itsFree = data.asset.price === 0 // IT'S FREEEEEEEEEEEEEE
+	let fee = $derived((data.currentFee * data.asset.price).toFixed(2))
+	let totalPrice = $derived((1 + data.currentFee) * data.asset.price)
+	let itsFree = $derived(data.asset.price === 0) // IT'S FREEEEEEEEEEEEEE
 
 	let regenerating = $state(false)
 
@@ -37,7 +37,7 @@
 		comments = data.asset.comments
 	})
 
-	const formData = superForm(data.form)
+	let formData = $derived(superForm(data.form))
 
 	let tabData = $state(TabData(data.url, ["Recommended", "Comments"]))
 </script>

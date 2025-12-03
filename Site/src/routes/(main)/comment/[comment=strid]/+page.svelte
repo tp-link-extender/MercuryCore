@@ -25,7 +25,7 @@
 		if (result.type === "success") await invalidateAll()
 		comment = data.comment
 	}
-	const formData = superForm(data.form)
+	let formData = $derived(superForm(data.form))
 
 	// let topReply = $derived(replies[0])
 	// let parentPost = $derived(topReply.parentPost)

@@ -9,7 +9,7 @@
 		data: import("./$types").PageData
 	} = $props()
 
-	const formData = superForm(data.networkForm)
+	let formData = $derived(superForm(data.networkForm))
 	let { form } = $derived(formData)
 
 	if (data.dedicated) $form.dedicated = data.dedicated

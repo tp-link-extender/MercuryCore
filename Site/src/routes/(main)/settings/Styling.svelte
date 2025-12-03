@@ -6,7 +6,7 @@
 	const { data }: { data: import("./$types").PageData } = $props()
 
 	let { user } = $derived(data)
-	const formData = superForm(data.stylingForm)
+	let formData = $derived(superForm(data.stylingForm))
 	let { form } = $derived(formData)
 
 	$form.css =

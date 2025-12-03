@@ -7,7 +7,7 @@
 	const { data }: { data: import("./$types").PageData } = $props()
 
 	let { user } = $derived(data)
-	const formData = superForm(data.profileForm)
+	let formData = $derived(superForm(data.profileForm))
 	let { form } = $derived(formData)
 
 	$effect(() => {

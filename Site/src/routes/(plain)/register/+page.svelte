@@ -8,7 +8,7 @@
 
 	const { data } = $props()
 
-	const formData = superForm(data.form)
+	let formData = $derived(superForm(data.form))
 	export const snapshot = formData
 
 	const descriptions: [string, string][] = [

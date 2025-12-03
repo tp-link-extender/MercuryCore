@@ -23,7 +23,7 @@
 	)
 	let textLightForms: { [_: string]: HTMLFormElement } = $state({})
 
-	const formData = superForm(data.form)
+	let formData = $derived(superForm(data.form))
 	export const snapshot = formData
 	const { message } = formData
 </script>

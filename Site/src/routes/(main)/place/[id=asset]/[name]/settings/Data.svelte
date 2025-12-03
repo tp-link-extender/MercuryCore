@@ -5,7 +5,7 @@
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	const formData = superForm(data.viewForm)
+	let formData = $derived(superForm(data.viewForm))
 </script>
 
 <Form
