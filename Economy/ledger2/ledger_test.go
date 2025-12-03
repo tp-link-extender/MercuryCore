@@ -153,6 +153,10 @@ func createPlaceTest(economy *Economy, t *testing.T, user OwnerUser, currency It
 	if inv := economy.Inventory(user); !inv.Equal(xinv) {
 		t.Fatalf("expected inventory %v, got %v", xinv, inv)
 	}
+
+	if err := economy.Transfer(MakeTransferID(), tf); err == nil {
+		t.Fatalf("expected error on duplicate transfer, got nil")
+	}
 }
 
 func TestCreatePlace(t *testing.T) {
