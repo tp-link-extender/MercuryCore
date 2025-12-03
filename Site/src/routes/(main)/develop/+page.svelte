@@ -8,10 +8,10 @@
 	const { data } = $props()
 
 	const assetTypes = [
-		["Shirts", "🧥", "11"],
-		["T-Shirts", "👕", "2"],
-		["Pants", "👖", "12"],
-		["Decals", "🖼️", "13"]
+		["Shirts", "🧥", "Shirt"],
+		["T-Shirts", "👕", "T-Shirt"],
+		["Pants", "👖", "Pants"],
+		["Decals", "🖼️", "Decal"]
 	]
 
 	let tabData = $state(TabData(data.url, ["Create" /*, "Creations" */]))

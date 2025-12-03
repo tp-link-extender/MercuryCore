@@ -6,6 +6,7 @@
 	import Textarea from "$components/forms/Textarea.svelte"
 	import Head from "$components/Head.svelte"
 	import beautifyCurrency from "$lib/beautifyCurrency"
+	import assetTypes from "./assetTypes"
 
 	const { data } = $props()
 
@@ -13,13 +14,6 @@
 	export const snapshot = formData
 
 	let [, c1, c2] = $derived(beautifyCurrency(data.price))
-
-	const assets: { [_: number]: string } = Object.freeze({
-		2: "T-Shirt",
-		11: "Shirt",
-		12: "Pants",
-		13: "Decal"
-	})
 </script>
 
 <Head name={data.siteName} title="Develop - Create" />
@@ -40,7 +34,7 @@
 	class="ctnr pt-8 max-w-200 light-text">
 	<Select
 		{formData}
-		options={Object.entries(assets)}
+		options={assetTypes}
 		selected={data.assetType}
 		name="type"
 		label="Asset type" />

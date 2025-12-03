@@ -9,16 +9,15 @@ import { db, findWhere, Record } from "$lib/server/surreal"
 import assocreportQuery from "./assocreport.surql"
 import moderateQuery from "./moderate.surql"
 import moderateeQuery from "./moderatee.surql"
+import moderationOptions from "./moderationOptions"
 import unbanQuery from "./unban.surql"
 
 const schema = type({
 	username: "3 <= string <= 21",
 	// enum to allow 1 to be selected initially
-	action: type
-		.enumerated("Warning", "Ban", "Termination", "Unban")
-		.configure({
-			problem: "must be a valid moderation action",
-		}),
+	action: type.enumerated(...moderationOptions).configure({
+		problem: "must be a valid moderation action",
+	}),
 	banDate: type("string | undefined").pipe.try(date => {
 		if (!date) return undefined
 		const d = new Date(date)

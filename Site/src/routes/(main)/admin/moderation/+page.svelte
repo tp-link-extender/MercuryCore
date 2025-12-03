@@ -11,20 +11,19 @@
 	import Tab from "$components/Tab.svelte"
 	import TabData from "$components/TabData"
 	import fade from "$lib/fade"
+	import moderationOptions from "./moderationOptions"
 
 	const { data } = $props()
 
-	const formData = superForm(data.form)
+	let formData = $derived(superForm(data.form))
 	export const snapshot = formData
-	const { form } = formData
+	let { form } = $derived(formData)
 
 	$effect(() => {
 		if (data.report) $form.reason = data.report.note
 	})
 
 	const tomorrow = new Date(Date.now() + 86400e3).toISOString().slice(0, 10)
-
-	const moderationOptions = ["Warning", "Ban", "Termination", "Unban"]
 
 	let tabData = $state(TabData(data.url, ["User moderation"], ["fa-gavel"]))
 </script>
