@@ -10,7 +10,7 @@
 	} = $props()
 
 	const formData = superForm(data.networkForm)
-	const { form } = formData
+	let { form } = $derived(formData)
 
 	if (data.dedicated) $form.dedicated = data.dedicated
 	if (data.serverAddress) $form.serverAddress = data.serverAddress

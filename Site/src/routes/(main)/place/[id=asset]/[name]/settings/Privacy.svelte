@@ -6,7 +6,7 @@
 	const { data }: { data: import("./$types").PageData } = $props()
 
 	const formData = superForm(data.privacyForm)
-	const { form } = formData
+	let { form } = $derived(formData)
 
 	if (data.privateServer) $form.privateServer = data.privateServer
 </script>

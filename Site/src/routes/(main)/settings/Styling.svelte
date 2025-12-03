@@ -7,7 +7,7 @@
 
 	let { user } = $derived(data)
 	const formData = superForm(data.stylingForm)
-	const { form } = formData
+	let { form } = $derived(formData)
 
 	$form.css =
 		user.css || "/* Enter your CSS here! Maximum 10 000 characters. */\n"

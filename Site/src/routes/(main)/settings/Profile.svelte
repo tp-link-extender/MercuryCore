@@ -8,7 +8,7 @@
 
 	let { user } = $derived(data)
 	const formData = superForm(data.profileForm)
-	const { form } = formData
+	let { form } = $derived(formData)
 
 	$effect(() => {
 		if (user.description) $form.description = user.description.text || ""

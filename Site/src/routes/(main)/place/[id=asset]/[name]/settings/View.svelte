@@ -8,7 +8,7 @@
 	const { data }: { data: import("./$types").PageData } = $props()
 
 	const formData = superForm(data.viewForm)
-	const { form } = formData
+	let { form } = $derived(formData)
 
 	$effect(() => {
 		if (data.description && !get(formData.form).description)

@@ -14,7 +14,7 @@
 
 	const formData = superForm(data.form)
 	export const snapshot = formData
-	const { form } = formData
+	let { form } = $derived(formData)
 
 	const tomorrow = new Date(Date.now() + 86400e3).toISOString().slice(0, 10)
 
