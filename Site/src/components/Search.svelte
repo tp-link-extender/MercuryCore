@@ -22,9 +22,8 @@
 	const searchResults: HTMLElement[] = $state([])
 
 	let searchCategories: [string, string][] = $state([])
-	$effect(() => {
+	function updSearchCategories() {
 		searchCategories = [
-			["Games", "games"],
 			["Users", "users"],
 			["Places", "places"],
 			["Catalog", "assets"]
@@ -33,7 +32,9 @@
 			if (pages.includes("Groups"))
 				searchCategories.push(["Groups", "groups"])
 		})
-	})
+	}
+	updSearchCategories()
+	$effect(updSearchCategories)
 
 	function keydown(
 		e: KeyboardEvent & {

@@ -17,8 +17,7 @@
 	type Page = number | null
 
 	let pages: Page[] = $state([])
-
-	$effect(() => {
+	function updPages() {
 		pages = []
 		untrack(() => {
 			pages.push(1)
@@ -28,7 +27,9 @@
 			if (currentPage + 1 < totalPages) pages.push(0)
 			if (totalPages > 1) pages.push(totalPages)
 		})
-	})
+	}
+	updPages()
+	$effect(updPages)
 
 	const disabled = "opacity-50 pointer-events-none"
 </script>

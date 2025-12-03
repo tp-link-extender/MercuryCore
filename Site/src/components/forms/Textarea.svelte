@@ -22,7 +22,7 @@
 		formData: import("sveltekit-superforms").SuperForm<any>
 	} & HTMLTextareaAttributes = $props()
 
-	const { form, errors, constraints } = formData
+	let { form, errors, constraints } = $derived(formData)
 
 	// TODO: prevent tabs in textarea caused by... the formatter....
 	$effect(() => {

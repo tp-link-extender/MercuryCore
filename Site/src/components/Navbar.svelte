@@ -10,7 +10,7 @@
 	let { user } = $derived(data)
 
 	let nav1: [string, string, string][] = $state([])
-	$effect(() => {
+	function updNav1() {
 		nav1 = [
 			// ["Home", "/", "fa-house-chimney"],
 			["Games", "/games", "fa-mountain-sun"],
@@ -23,12 +23,13 @@
 			if (data.pages.includes("Groups"))
 				nav1.push(["Groups", "/groups", "fa-people-group"])
 		})
-	})
+	}
+	updNav1()
+	$effect(updNav1)
 
 	// sing, sing, sing (https://www.youtube.com/watch?v=c0pJzW8pxWU)
 	let usernav: [string, string, string][] = $state([])
-
-	$effect(() => {
+	function updUsernav() {
 		usernav = [
 			["fa-money-bill-transfer", "Economy", "/economy"],
 			["fa-user-group", "Friends", "/requests"],
@@ -42,7 +43,9 @@
 			if (user && user.permissionLevel >= 4)
 				usernav.unshift(["fa-diamond-half-stroke", "Admin", "/admin"])
 		})
-	})
+	}
+	updUsernav()
+	$effect(updUsernav)
 </script>
 
 <nav class="py-0 justify-start z-11">

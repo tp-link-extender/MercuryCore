@@ -28,7 +28,7 @@
 		formData: import("sveltekit-superforms").SuperForm<any>
 	} & HTMLInputAttributes = $props()
 
-	const { errors } = formData
+	let { errors } = $derived(formData)
 </script>
 
 <div class="flex flex-wrap {inline ? 'flex-1' : 'pb-8'}">

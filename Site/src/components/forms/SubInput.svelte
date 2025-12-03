@@ -17,7 +17,8 @@
 		type: HTMLInputTypeAttribute
 		formData: import("sveltekit-superforms").SuperForm<any>
 	} & HTMLInputAttributes = $props()
-	const { form, errors, constraints } = formData
+
+	let { form, errors, constraints } = $derived(formData)
 </script>
 
 {#if type === "checkbox"}
