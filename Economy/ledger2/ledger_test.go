@@ -5,9 +5,11 @@ import (
 	"testing"
 )
 
-func mintTest(economy *Economy, t *testing.T, currency ItemCurrency, user OwnerUser) {
+func mintTest(economy *Economy, t *testing.T, currency Currency, user User) {
 	xinv := Items{
-		currency: 100,
+		Many: ItemsMany{
+			currency: 100,
+		},
 	}
 
 	tf := Transfer{
@@ -36,25 +38,29 @@ func TestMint(t *testing.T) {
 	defer economy.Close()
 
 	// let there be rocks
-	currency := ItemCurrency{0}
-	user1 := OwnerUser{"user1"}
+	currency := Currency{0}
+	user1 := User{"user1"}
 
 	mintTest(economy, t, currency, user1)
 }
 
-func createSourceTest(economy *Economy, t *testing.T, user OwnerUser, currency ItemCurrency) OwnerUnlimitedSource {
-	src := OwnerUnlimitedSource{1}
+func createSourceTest(economy *Economy, t *testing.T, user User, currency Currency) UnlimitedSource {
+	src := UnlimitedSource{1}
 
 	tf := Transfer{
 		{
 			Owner: user,
 			Items: Items{
-				currency: 50,
+				Many: ItemsMany{
+					currency: 50,
+				},
 			},
 		},
 		{
 			Items: Items{
-				ItemOwner{src}: 1,
+				One: ItemsOne{
+					src: {},
+				},
 			},
 		},
 	}
@@ -64,8 +70,12 @@ func createSourceTest(economy *Economy, t *testing.T, user OwnerUser, currency I
 	}
 
 	xinv := Items{
-		currency:       50,
-		ItemOwner{src}: 1,
+		One: ItemsOne{
+			src: {},
+		},
+		Many: ItemsMany{
+			currency: 50,
+		},
 	}
 
 	if inv := economy.Inventory(user); !inv.Equal(xinv) {
@@ -75,18 +85,22 @@ func createSourceTest(economy *Economy, t *testing.T, user OwnerUser, currency I
 	return src
 }
 
-func purchaseAssetTest(economy *Economy, t *testing.T, user OwnerUser, currency ItemCurrency, src OwnerUnlimitedSource) {
+func purchaseAssetTest(economy *Economy, t *testing.T, user User, currency Currency, src UnlimitedSource) {
 	tf := Transfer{
 		{
 			Owner: user,
 			Items: Items{
-				currency: 50,
+				Many: ItemsMany{
+					currency: 10,
+				},
 			},
 		},
 		{
 			Owner: src,
 			Items: Items{
-				ItemAsset{false, src.ID}: 1,
+				One: ItemsOne{
+					src.Create(): {},
+				},
 			},
 		},
 	}
@@ -96,8 +110,10 @@ func purchaseAssetTest(economy *Economy, t *testing.T, user OwnerUser, currency 
 	}
 
 	xinv := Items{
-		ItemOwner{src}:           1,
-		ItemAsset{false, src.ID}: 1,
+		One: ItemsOne{
+			src:          {},
+			src.Create(): {},
+		},
 	}
 
 	if inv := economy.Inventory(user); !inv.Equal(xinv) {
@@ -115,27 +131,31 @@ func TestCreateSource(t *testing.T) {
 	}
 	defer economy.Close()
 
-	currency1 := ItemCurrency{1}
-	user2 := OwnerUser{"user2"}
+	currency1 := Currency{1}
+	user2 := User{"user2"}
 
 	mintTest(economy, t, currency1, user2)
 	src := createSourceTest(economy, t, user2, currency1)
 	purchaseAssetTest(economy, t, user2, currency1, src)
 }
 
-func createPlaceTest(economy *Economy, t *testing.T, user OwnerUser, currency ItemCurrency) {
+func createPlaceTest(economy *Economy, t *testing.T, user User, currency Currency) {
 	place := RandPlace()
 
 	tf := Transfer{
 		{
 			Owner: user,
 			Items: Items{
-				currency: 10,
+				Many: ItemsMany{
+					currency: 10,
+				},
 			},
 		},
 		{
 			Items: Items{
-				place: 1,
+				One: ItemsOne{
+					place: {},
+				},
 			},
 		},
 	}
@@ -145,8 +165,12 @@ func createPlaceTest(economy *Economy, t *testing.T, user OwnerUser, currency It
 	}
 
 	xinv := Items{
-		currency: 90,
-		place:    1,
+		One: ItemsOne{
+			place: {},
+		},
+		Many: ItemsMany{
+			currency: 90,
+		},
 	}
 
 	if inv := economy.Inventory(user); !inv.Equal(xinv) {
@@ -168,8 +192,8 @@ func TestCreatePlace(t *testing.T) {
 	}
 	defer economy.Close()
 
-	currency2 := ItemCurrency{2}
-	user3 := OwnerUser{"user3"}
+	currency2 := Currency{2}
+	user3 := User{"user3"}
 
 	mintTest(economy, t, currency2, user3)
 	createPlaceTest(economy, t, user3, currency2)

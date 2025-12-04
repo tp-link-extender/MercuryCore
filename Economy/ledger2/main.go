@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func encodeDecode(user OwnerUser) {
+func encodeDecode(user User) {
 	tid := MakeTransferID()
 	fmt.Printf("Transfer ID: %v\n", tid)
 
@@ -19,7 +19,9 @@ func encodeDecode(user OwnerUser) {
 	// items
 
 	items := Items{
-		ItemCurrency{0}: 100,
+		Many: ItemsMany{
+			Currency{0}: 100,
+		},
 	}
 
 	fmt.Printf("      Items: %+v\n", items)
@@ -73,7 +75,7 @@ func encodeDecode(user OwnerUser) {
 }
 
 func main() {
-	user := OwnerUser{"user1"}
+	user := User{"user1"}
 
 	encodeDecode(user)
 
@@ -93,8 +95,12 @@ func main() {
 		},
 		{
 			Items: Items{
-				ItemCurrency{0}: 100,
-				RandPlace():   1,
+				One: ItemsOne{
+					RandPlace(): {},
+				},
+				Many: ItemsMany{
+					Currency{0}: 500,
+				},
 			},
 		},
 	}); err != nil {

@@ -20,16 +20,6 @@ const (
 	ItemTypeOwner ItemType = 'o'
 )
 
-type Item interface {
-	Type() ItemType
-	String() string
-	Serialise() []byte
-	Fungible() bool
-	Mintable() bool
-	CanOwn() bool
-	Owned() bool
-}
-
 type ItemCurrency struct {
 	ID uint64
 }
@@ -109,10 +99,6 @@ func (ItemAsset) Owned() bool {
 
 type ItemPlace struct {
 	ID string
-}
-
-func RandPlace() ItemPlace {
-	return ItemPlace{RandStringId()}
 }
 
 func (ItemPlace) Type() ItemType {

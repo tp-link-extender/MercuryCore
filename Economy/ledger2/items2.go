@@ -1,79 +1,70 @@
 package main
 
-type (
-	CanOwnOne  interface{ CanOwnOne() }
-	CanOwnMany interface{ CanOwnMany() }
-	Mintable   interface{ Mintable() }
-	Owner      interface{ Owner() }
-	Single     interface{ Single() }
+import (
+	"fmt"
+	"strings"
 )
 
-type Currency struct {
-	ID uint64
+type ItemsOne map[CanOwnOne]struct{}
+
+func (i ItemsOne) String() string {
+	parts := make([]string, 0, len(i))
+	for id := range i {
+		parts = append(parts, id.String())
+	}
+	return "{" + strings.Join(parts, ", ") + "}"
 }
 
-func (Currency) Mintable()   {}
-func (Currency) CanOwnMany() {}
+func (i ItemsOne) Equal(other ItemsOne) bool {
+	if len(i) != len(other) {
+		return false
+	}
 
-type LimitedAsset struct {
-	ID uint64
+	for id := range i {
+		if _, ok := other[id]; !ok {
+			return false
+		}
+	}
+
+	return true
 }
-
-func (LimitedAsset) CanOwnMany() {}
-
-type UnlimitedAsset struct {
-	ID uint64
-}
-
-func (UnlimitedAsset) CanOwnOne() {}
-
-type Place struct {
-	ID string
-}
-
-func (Place) CanOwnOne() {}
-func (Place) Mintable()  {}
-func (Place) Single()    {}
-
-type User struct {
-	ID string
-}
-
-func (User) Owner()  {}
-func (User) Single() {}
-
-type Group struct {
-	ID string
-}
-
-func (Group) CanOwnOne() {}
-func (Group) Owner()     {}
-func (Group) Single()    {}
-
-type LimitedSource struct {
-	ID uint64
-}
-
-func (LimitedSource) CanOwnOne() {}
-func (LimitedSource) Mintable()  {}
-func (LimitedSource) Owner()     {}
-func (LimitedSource) Single()    {}
-
-type UnlimitedSource struct {
-	ID uint64
-}
-
-func (UnlimitedSource) CanOwnOne() {}
-func (UnlimitedSource) Mintable()  {}
-func (UnlimitedSource) Owner()     {}
-func (UnlimitedSource) Single()    {}
 
 type (
 	Quantity  uint64
-	ItemsOne  map[CanOwnOne]struct{}
 	ItemsMany map[CanOwnMany]Quantity
-	Items     struct {
-		One  ItemsOne
-		Many ItemsMany
-	}
 )
+
+func (i ItemsMany) String() string {
+	parts := make([]string, 0, len(i))
+	for id, qty := range i {
+		parts = append(parts, fmt.Sprintf("%s: %d", id.String(), qty))
+	}
+	return "{" + strings.Join(parts, ", ") + "}"
+}
+
+func (i ItemsMany) Equal(other ItemsMany) bool {
+	if len(i) != len(other) {
+		return false
+	}
+
+	for id := range i {
+		if qty, ok := other[id]; !ok || qty != i[id] {
+			return false
+		}
+	}
+
+	return true
+}
+
+type Items struct {
+	One  ItemsOne
+	Many ItemsMany
+}
+
+func (i Items) String() string {
+	return fmt.Sprintf("Items{\n\t One: %s,\n\tMany: %s\n}", i.One.String(), i.Many.String())
+}
+
+func (i Items) Equal(other Items) bool {
+	return i.One.Equal(other.One) && i.Many.Equal(other.Many)
+}
