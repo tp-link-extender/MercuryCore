@@ -1,32 +1,144 @@
 package main
 
 import (
+	"bytes"
+	"encoding/binary"
 	"fmt"
+	"io"
 	"strings"
 )
 
+func SerialiseNumeric(i NumericItem) []byte {
+	idbuf := make([]byte, 9)
+	idbuf[0] = byte(i.Type())
+	binary.BigEndian.PutUint64(idbuf[1:], i.ID())
+	return idbuf
+}
+
+func SerialiseString(i StringItem) []byte {
+	idstr := i.ID()
+	id := make([]byte, 2+len(idstr))
+	id[0] = byte(i.Type())
+	id[1] = byte(len(idstr))
+	copy(id[2:], idstr)
+	return id
+}
+
+func DeserialiseItem2(r io.Reader) (Item, error) {
+	var typeByte [1]byte
+	if _, err := r.Read(typeByte[:]); err != nil {
+		return nil, fmt.Errorf("read type: %w", err)
+	}
+
+	t := Type(typeByte[0])
+	if t == TypeUser || t == TypeGroup {
+		var lenbuf [1]byte
+		if _, err := r.Read(lenbuf[:]); err != nil {
+			return nil, fmt.Errorf("read string id length: %w", err)
+		}
+		idlen := int(lenbuf[0])
+
+		idbuf := make([]byte, idlen)
+		if _, err := r.Read(idbuf); err != nil {
+			return nil, fmt.Errorf("read string id: %w", err)
+		}
+		id := string(idbuf)
+
+		if t == TypeUser {
+			return User{id}, nil
+		}
+		return Group{id}, nil
+	}
+
+	var idbuf [8]byte
+	if _, err := r.Read(idbuf[:]); err != nil {
+		return nil, fmt.Errorf("read numeric id: %w", err)
+	}
+	id := binary.BigEndian.Uint64(idbuf[:])
+
+	switch t {
+	case TypeCurrency:
+		return Currency{id}, nil
+	case TypeLimitedAsset:
+		return LimitedAsset{id}, nil
+	case TypeUnlimitedAsset:
+		return UnlimitedAsset{id}, nil
+	case TypeLimitedSource:
+		return LimitedSource{id}, nil
+	case TypeUnlimitedSource:
+		return UnlimitedSource{id}, nil
+	case TypePlace:
+		return Place{id}, nil
+	}
+
+	return nil, fmt.Errorf("unknown Type: %d", t)
+}
+
 type ItemsOne map[CanOwnOne]struct{}
 
-func (i ItemsOne) String() string {
-	parts := make([]string, 0, len(i))
-	for id := range i {
-		parts = append(parts, id.String())
+func (is ItemsOne) String() string {
+	parts := make([]string, 0, len(is))
+	for i := range is {
+		parts = append(parts, i.String())
 	}
 	return "{" + strings.Join(parts, ", ") + "}"
 }
 
-func (i ItemsOne) Equal(other ItemsOne) bool {
-	if len(i) != len(other) {
+func (is ItemsOne) Equal(other ItemsOne) bool {
+	if len(is) != len(other) {
 		return false
 	}
 
-	for id := range i {
-		if _, ok := other[id]; !ok {
+	for i := range is {
+		if _, ok := other[i]; !ok {
 			return false
 		}
 	}
 
 	return true
+}
+
+func (is ItemsOne) Serialise() ([]byte, error) {
+	b := &bytes.Buffer{}
+
+	var lbuf [4]byte
+	binary.BigEndian.PutUint32(lbuf[:], uint32(len(is)))
+	b.Write(lbuf[:])
+
+	for i := range is {
+		if ni, ok := i.(NumericItem); ok {
+			b.Write(SerialiseNumeric(ni))
+			continue
+		}
+		if si, ok := i.(StringItem); ok {
+			b.Write(SerialiseString(si))
+			continue
+		}
+		return nil, fmt.Errorf("unknown CanOwnOne type: %T", i)
+	}
+	return b.Bytes(), nil
+}
+
+func DeserialiseItemsOne(r io.Reader) (ItemsOne, error) {
+	var lbuf [4]byte
+	if _, err := r.Read(lbuf[:]); err != nil {
+		return nil, fmt.Errorf("read items one length: %w", err)
+	}
+	l := binary.BigEndian.Uint32(lbuf[:])
+
+	is := make(ItemsOne, l)
+	for range l {
+		i, err := DeserialiseItem2(r)
+		if err != nil {
+			return nil, fmt.Errorf("deserialise item: %w", err)
+		}
+		coo, ok := i.(CanOwnOne)
+		if !ok {
+			return nil, fmt.Errorf("item is not CanOwnOne: %T", i)
+		}
+		is[coo] = struct{}{}
+	}
+	return is, nil
 }
 
 type (

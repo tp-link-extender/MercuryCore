@@ -12,15 +12,15 @@ import (
 	bolt "go.etcd.io/bbolt"
 )
 
+func RandNumericId() (id uint64) {
+	return uint64(rand.Intn(9e8) + 1e8) // 9 digit
+}
+
 const idchars = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 func RandStringId() (id string) {
 	id, _ = gonanoid.Generate(idchars, 20) // doesn't error at runtime, really
 	return
-}
-
-func RandIntId() (id int) {
-	return rand.Intn(9e8) + 1e8 // 9 digit
 }
 
 // assets are the worst grey area ever
