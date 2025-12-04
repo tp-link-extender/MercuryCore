@@ -282,19 +282,18 @@ func (t *Transfer) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
-type State map[Item]Items
+type State map[Owner]Items
 
 func (s *State) GetInventory(id Owner) Items {
 	// idk if we really want to do this
 	// if !id.CanOwn() {
 	// 	return nil, fmt.Errorf("%v cannot own items", id)
 	// }
-	io := ItemOwner{id}
 
-	inv, ok := (*s)[io]
+	inv, ok := (*s)[id]
 	if !ok {
 		inv = make(Items)
-		(*s)[io] = inv
+		(*s)[id] = inv
 	}
 
 	for id, qty := range inv {
@@ -313,14 +312,14 @@ func (s State) CanApply(t Transfer) error {
 	var errs []error
 
 	for i, send := range t {
-		if send.Owner == nil || send.Items == nil {
+		if send.Items == nil {
 			continue
 		}
-		inv := s[ItemOwner{send.Owner}]
-		otherinv := s[ItemOwner{t[1-i].Owner}]
+		inv := s[send.Owner]
+		otherinv := s[t[1-i].Owner]
 		for id, qty := range send.Items {
 			// check if it's an asset mint from an unlimited source, if it is then skip this check
-			if !send.UnlimitedSourceAssetMint() && inv[id] < qty {
+			if send.Owner != nil && !send.UnlimitedSourceAssetMint() && inv[id] < qty {
 				errs = append(errs, fmt.Errorf("insufficient quantity of item %v for user %s", id, send.Owner))
 			}
 			if otherinv != nil {
