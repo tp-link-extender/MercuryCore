@@ -80,78 +80,89 @@ func (s Send) String() string {
 }
 
 func (s Send) Valid() error {
-	// for i, qty := range s.Items {
-	// 	if qty == 0 {
-	// 		return fmt.Errorf("item %v has zero quantity", i)
-	// 	}
-	// 	if !i.Owned() {
-	// 		return fmt.Errorf("item %v cannot be owned", i)
-	// 	}
-	// 	if !i.Fungible() && qty > 1 {
-	// 		return fmt.Errorf("item %v is non-fungible but has quantity %d", i, qty)
-	// 	}
-	// 	if s.Owner == nil && !i.Mintable() {
-	// 		return fmt.Errorf("item %v cannot be minted", i)
-	// 	}
-	// }
-	return nil
-}
-
-// TODO: also check if the unlimited source has the same ID as the asset itself
-func (s Send) UnlimitedSourceAssetMint() bool {
-	if s.Owner.OwnerType() != OwnerTypeUnlimitedSource {
-		return false
-	}
-	for id := range s.Items {
-		if id.Type() != ItemTypeAsset {
-			return false
+	for i := range s.Items.One {
+		if s.Owner == nil && !IsMintable(i) {
+			return fmt.Errorf("CanOwnOne %v cannot be minted", i)
 		}
 	}
-	return true
-}
-
-func (s Send) marshalBinary() []byte {
-	if s.Owner == nil {
-		return []byte{1, byte(OwnerTypeNil)}
+	for i, qty := range s.Items.Many {
+		if qty == 0 {
+			return fmt.Errorf("CanOwnMany %v has zero quantity", i)
+		}
+		if s.Owner == nil && !IsMintable(i) {
+			return fmt.Errorf("CanOwnMany %v cannot be minted", i)
+		}
 	}
-
-	var buf bytes.Buffer
-	// encode Owner
-	ownerBytes := s.Owner.Serialise()
-	buf.WriteByte(byte(len(ownerBytes)))
-	buf.Write(ownerBytes)
-
-	// encode Items
-	buf.Write(s.Items.marshalBinary())
-	return buf.Bytes()
+	return nil
 }
 
-// func (s Send) MarshalBinary() ([]byte, error) {
-// 	return s.marshalBinary(), nil
+// func (s Send) marshalBinary() []byte {
+// 	if s.Owner == nil {
+// 		return []byte{1, byte(OwnerTypeNil)}
+// 	}
+
+// 	var buf bytes.Buffer
+// 	// encode Owner
+// 	ownerBytes := s.Owner.Serialise()
+// 	buf.WriteByte(byte(len(ownerBytes)))
+// 	buf.Write(ownerBytes)
+
+// 	// encode Items
+// 	buf.Write(s.Items.marshalBinary())
+// 	return buf.Bytes()
 // }
 
-func (s *Send) UnmarshalBinary(data []byte) error {
-	if len(data) < 1 {
-		return errors.New("invalid Send data")
+// // func (s Send) MarshalBinary() ([]byte, error) {
+// // 	return s.marshalBinary(), nil
+// // }
+
+// func (s *Send) UnmarshalBinary(data []byte) error {
+// 	if len(data) < 1 {
+// 		return errors.New("invalid Send data")
+// 	}
+
+// 	ownerLen := int(data[0])
+// 	l := 1 + ownerLen
+// 	if len(data) < l {
+// 		return errors.New("incomplete Owner data in Send")
+// 	}
+
+// 	o, err := DeserialiseOwner(data[1:l])
+// 	if err != nil {
+// 		return fmt.Errorf("decode owner: %w", err)
+// 	}
+// 	s.Owner = o
+
+// 	if err := s.Items.UnmarshalBinary(data[l:]); err != nil {
+// 		return fmt.Errorf("decode items: %w", err)
+// 	}
+
+// 	return nil
+// }
+
+func (s Send) Serialise() []byte {
+	var buf bytes.Buffer
+
+	if s.Owner == nil {
+		buf.WriteByte(1)
+		buf.WriteByte(byte(OwnerTypeNil))
+		return buf.Bytes()
 	}
 
-	ownerLen := int(data[0])
-	l := 1 + ownerLen
-	if len(data) < l {
-		return errors.New("incomplete Owner data in Send")
+	// encode Owner
+	ok := SerialiseItem2(s.Owner, &buf)
+	if !ok {
+		panic(fmt.Sprintf("unknown Owner type: %T", s.Owner))
 	}
 
-	o, err := DeserialiseOwner(data[1:l])
+	// encode Items
+	b, err := s.Items.Serialise()
 	if err != nil {
-		return fmt.Errorf("decode owner: %w", err)
+		panic(fmt.Sprintf("failed to serialise Items: %v", err))
 	}
-	s.Owner = o
+	buf.Write(b)
 
-	if err := s.Items.UnmarshalBinary(data[l:]); err != nil {
-		return fmt.Errorf("decode items: %w", err)
-	}
-
-	return nil
+	return buf.Bytes()
 }
 
 // A transfer with a From and To is a transaction
@@ -259,7 +270,7 @@ func (s State) CanApply(t Transfer) error {
 			if send.Owner != nil && !inv.One.Has(item) {
 				errs = append(errs, fmt.Errorf("item %v not owned by user %s", item, send.Owner))
 			}
-			
+
 			// check for non-fungible item duplication
 			if otherinv.One.Has(item) {
 				errs = append(errs, fmt.Errorf("item %v already owned by user %s", item, t[1-i].Owner))

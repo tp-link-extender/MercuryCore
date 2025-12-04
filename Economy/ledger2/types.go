@@ -13,7 +13,7 @@ const (
 	TypeLimitedSource
 	TypeUnlimitedSource
 	TypePlace
-	
+
 	// string ID types
 
 	TypeUser
@@ -60,6 +60,11 @@ type (
 		Single()
 	}
 )
+
+func IsMintable(i Item) bool {
+	_, ok := i.(Mintable)
+	return ok
+}
 
 type Currency struct {
 	id uint64
@@ -115,7 +120,6 @@ func (i UnlimitedAsset) ID() uint64 {
 }
 
 func (UnlimitedAsset) CanOwnOne() {}
-
 
 type LimitedSource struct {
 	id uint64
