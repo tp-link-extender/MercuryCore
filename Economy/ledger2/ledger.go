@@ -31,11 +31,6 @@ func RandIntId() (id int) {
 // we have 2 item types associated with assets: the asset itself, and the source of the asset
 // with the asset itself being fungible and the source being non-fungible
 
-type (
-	Quantity uint64
-	Items    map[Item]Quantity
-)
-
 func (is Items) String() string {
 	var parts []string
 	for id, qty := range is {

@@ -30,10 +30,6 @@ type Item interface {
 	Owned() bool
 }
 
-type Ownable interface {
-	Ownable() bool
-}
-
 type ItemCurrency struct {
 	ID uint64
 }
@@ -159,12 +155,6 @@ const (
 	OwnerTypeUnlimitedSource
 )
 
-type Owner interface {
-	OwnerType() OwnerType
-	String() string
-	Serialise() []byte
-}
-
 type OwnerUser struct {
 	ID string
 }
@@ -182,7 +172,7 @@ func (it OwnerUser) Serialise() []byte {
 }
 
 type OwnableOwner interface {
-	Ownable
+	CanOwnMany
 	Owner
 }
 
