@@ -178,9 +178,13 @@ func (s Send) UnlimitedSourceAssetMint() bool {
 }
 
 func (s Send) marshalBinary() []byte {
+	if s.Owner == nil {
+		return  []byte{1, byte(OwnerTypeNil)}
+	}
+
 	var buf bytes.Buffer
 	// encode Owner
-	ownerBytes := ItemOwner{s.Owner}.Serialise()
+	ownerBytes := s.Owner.Serialise()
 	buf.WriteByte(byte(len(ownerBytes)))
 	buf.Write(ownerBytes)
 
