@@ -30,6 +30,10 @@ type Item interface {
 	Owned() bool
 }
 
+type Ownable interface {
+	Ownable() bool
+}
+
 type ItemCurrency struct {
 	ID uint64
 }
@@ -177,8 +181,17 @@ func (it OwnerUser) Serialise() []byte {
 	return append([]byte{byte(OwnerTypeUser)}, []byte(it.ID)...)
 }
 
+type OwnableOwner interface {
+	Ownable
+	Owner
+}
+
 type OwnerGroup struct {
 	ID string
+}
+
+func (OwnerGroup) Ownable() bool {
+	return true
 }
 
 func (OwnerGroup) OwnerType() OwnerType {
@@ -195,6 +208,10 @@ func (it OwnerGroup) Serialise() []byte {
 
 type OwnerLimitedSource struct {
 	ID uint64
+}
+
+func (OwnerLimitedSource) Ownable() bool {
+	return true
 }
 
 func (OwnerLimitedSource) OwnerType() OwnerType {
@@ -216,6 +233,10 @@ type OwnerUnlimitedSource struct {
 	ID uint64
 }
 
+func (OwnerUnlimitedSource) Ownable() bool {
+	return true
+}
+
 func (OwnerUnlimitedSource) OwnerType() OwnerType {
 	return OwnerTypeUnlimitedSource
 }
@@ -231,7 +252,7 @@ func (i OwnerUnlimitedSource) Serialise() []byte {
 	return buf
 }
 
-func DeserialiseOwner(data []byte) (Owner, error) {
+func DeserialiseOwnableOwner(data []byte) (OwnableOwner, error) {
 	if len(data) == 0 {
 		return nil, errors.New("empty data")
 	}
@@ -239,10 +260,6 @@ func DeserialiseOwner(data []byte) (Owner, error) {
 	ot := OwnerType(data[0])
 	l := len(data)
 	switch ot {
-	case OwnerTypeNil:
-		return nil, nil
-	case OwnerTypeUser:
-		return OwnerUser{ID: string(data[1:])}, nil
 	case OwnerTypeGroup:
 		return OwnerGroup{ID: string(data[1:])}, nil
 	case OwnerTypeLimitedSource:
@@ -262,8 +279,23 @@ func DeserialiseOwner(data []byte) (Owner, error) {
 	return nil, fmt.Errorf("unknown Owner type: %d", ot)
 }
 
+func DeserialiseOwner(data []byte) (Owner, error) {
+	if len(data) == 0 {
+		return nil, errors.New("empty data")
+	}
+
+	switch OwnerType(data[0]) {
+	case OwnerTypeNil:
+		return nil, nil
+	case OwnerTypeUser:
+		return OwnerUser{ID: string(data[1:])}, nil
+	}
+
+	return DeserialiseOwnableOwner(data)
+}
+
 type ItemOwner struct {
-	Owner Owner // don't embed, because we don't want ItemOwner to satisfy Owner
+	Owner OwnableOwner // don't embed, because we don't want ItemOwner to satisfy Owner
 }
 
 func (i ItemOwner) Type() ItemType {
@@ -332,7 +364,7 @@ func DeserialiseItem(data []byte) (Item, error) {
 	case ItemTypePlace:
 		return ItemPlace{string(data[1:])}, nil
 	case ItemTypeOwner:
-		o, err := DeserialiseOwner(data[1:])
+		o, err := DeserialiseOwnableOwner(data[1:])
 		if err != nil {
 			return nil, fmt.Errorf("decode owner: %w", err)
 		}

@@ -44,7 +44,6 @@ func TestMint(t *testing.T) {
 
 func createSourceTest(economy *Economy, t *testing.T, user OwnerUser, currency ItemCurrency) OwnerUnlimitedSource {
 	src := OwnerUnlimitedSource{1}
-	ios := ItemOwner{src}
 
 	tf := Transfer{
 		{
@@ -55,7 +54,7 @@ func createSourceTest(economy *Economy, t *testing.T, user OwnerUser, currency I
 		},
 		{
 			Items: Items{
-				ios: 1,
+				ItemOwner{src}: 1,
 			},
 		},
 	}
@@ -65,8 +64,8 @@ func createSourceTest(economy *Economy, t *testing.T, user OwnerUser, currency I
 	}
 
 	xinv := Items{
-		currency: 50,
-		ios:      1,
+		currency:       50,
+		ItemOwner{src}: 1,
 	}
 
 	if inv := economy.Inventory(user); !inv.Equal(xinv) {
