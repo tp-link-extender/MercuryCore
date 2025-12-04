@@ -6,20 +6,6 @@ import (
 	"fmt"
 )
 
-type ItemType byte
-
-const (
-	// Fungible assets (users can own any number of these)
-
-	ItemTypeCurrency ItemType = 'c'
-	ItemTypeAsset    ItemType = 'a'
-
-	// Non-fungible assets (users can only own 1 of these)
-
-	ItemTypePlace ItemType = 'p'
-	ItemTypeOwner ItemType = 'o'
-)
-
 type ItemCurrency struct {
 	ID uint64
 }

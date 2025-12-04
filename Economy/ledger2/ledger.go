@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
-	"strings"
 	"time"
 
 	gonanoid "github.com/matoous/go-nanoid/v2"
@@ -30,26 +29,6 @@ func RandIntId() (id int) {
 // HERE'S MY SOLUTION
 // we have 2 item types associated with assets: the asset itself, and the source of the asset
 // with the asset itself being fungible and the source being non-fungible
-
-func (is Items) String() string {
-	var parts []string
-	for id, qty := range is {
-		parts = append(parts, fmt.Sprintf("%s: %d", id, qty))
-	}
-	return "{" + strings.Join(parts, ", ") + "}"
-}
-
-func (is Items) Equal(other Items) bool {
-	if len(is) != len(other) {
-		return false
-	}
-	for id, qty := range is {
-		if other[id] != qty {
-			return false
-		}
-	}
-	return true
-}
 
 func (is Items) marshalBinary() []byte {
 	var buf bytes.Buffer
@@ -174,7 +153,7 @@ func (s Send) UnlimitedSourceAssetMint() bool {
 
 func (s Send) marshalBinary() []byte {
 	if s.Owner == nil {
-		return  []byte{1, byte(OwnerTypeNil)}
+		return []byte{1, byte(OwnerTypeNil)}
 	}
 
 	var buf bytes.Buffer
@@ -417,7 +396,7 @@ type Economy struct {
 }
 
 func NewEconomy(dbPath string) (*Economy, error) {
-	db, err := bolt.Open(dbPath, 0600, nil)
+	db, err := bolt.Open(dbPath, 0o600, nil)
 	if err != nil {
 		return nil, fmt.Errorf("open db: %w", err)
 	}
