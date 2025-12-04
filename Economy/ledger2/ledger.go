@@ -30,47 +30,6 @@ func RandStringId() (id string) {
 // we have 2 item types associated with assets: the asset itself, and the source of the asset
 // with the asset itself being fungible and the source being non-fungible
 
-func (is Items) marshalBinary() []byte {
-	var buf bytes.Buffer
-
-	for i, qty := range is {
-		idBytes := i.Serialise()
-		buf.WriteByte(uint8(len(idBytes)))
-		buf.Write(idBytes)
-		binary.Write(&buf, binary.BigEndian, qty)
-	}
-
-	return buf.Bytes()
-}
-
-// func (is Items) MarshalBinary() ([]byte, error) {
-// 	return is.marshalBinary(), nil
-// }
-
-func (is *Items) UnmarshalBinary(data []byte) error {
-	*is = make(Items)
-	// parts := bytes.Split(data, []byte{0})
-	for i := 0; i < len(data); i += 8 {
-		l := int(data[i])
-		i++
-
-		if len(data)-i < l+8 {
-			return errors.New("incomplete item data")
-		}
-
-		id, err := DeserialiseItem(data[i:][:l])
-		if err != nil {
-			return fmt.Errorf("decode item ID: %w", err)
-		}
-		i += l
-
-		qty := binary.BigEndian.Uint64(data[i:][:8])
-		(*is)[id] = Quantity(qty)
-	}
-
-	return nil
-}
-
 type TransferID struct {
 	timestamp uint64
 	id        string
@@ -121,20 +80,20 @@ func (s Send) String() string {
 }
 
 func (s Send) Valid() error {
-	for i, qty := range s.Items {
-		if qty == 0 {
-			return fmt.Errorf("item %v has zero quantity", i)
-		}
-		if !i.Owned() {
-			return fmt.Errorf("item %v cannot be owned", i)
-		}
-		if !i.Fungible() && qty > 1 {
-			return fmt.Errorf("item %v is non-fungible but has quantity %d", i, qty)
-		}
-		if s.Owner == nil && !i.Mintable() {
-			return fmt.Errorf("item %v cannot be minted", i)
-		}
-	}
+	// for i, qty := range s.Items {
+	// 	if qty == 0 {
+	// 		return fmt.Errorf("item %v has zero quantity", i)
+	// 	}
+	// 	if !i.Owned() {
+	// 		return fmt.Errorf("item %v cannot be owned", i)
+	// 	}
+	// 	if !i.Fungible() && qty > 1 {
+	// 		return fmt.Errorf("item %v is non-fungible but has quantity %d", i, qty)
+	// 	}
+	// 	if s.Owner == nil && !i.Mintable() {
+	// 		return fmt.Errorf("item %v cannot be minted", i)
+	// 	}
+	// }
 	return nil
 }
 
@@ -211,7 +170,7 @@ func (t Transfer) Valid() error {
 	if t[0].Owner == nil && t[1].Owner == nil {
 		return errors.New("transfer has no source or destination")
 	}
-	if t[0].Items == nil && t[1].Items == nil {
+	if t[0].Items.IsEmpty() && t[1].Items.IsEmpty() {
 		return errors.New("transfer has no items")
 	}
 	for i, send := range t {
@@ -270,13 +229,14 @@ func (s *State) GetInventory(id Owner) Items {
 
 	inv, ok := (*s)[id]
 	if !ok {
-		inv = make(Items)
+		inv = Items{}
 		(*s)[id] = inv
+		return inv
 	}
 
-	for id, qty := range inv {
+	for i, qty := range inv.Many {
 		if qty == 0 {
-			delete(inv, id)
+			delete(inv.Many, i)
 		}
 	}
 	return inv
@@ -290,21 +250,24 @@ func (s State) CanApply(t Transfer) error {
 	var errs []error
 
 	for i, send := range t {
-		if send.Items == nil {
+		if send.Items.IsEmpty() {
 			continue
 		}
 		inv := s[send.Owner]
 		otherinv := s[t[1-i].Owner]
-		for id, qty := range send.Items {
-			// check if it's an asset mint from an unlimited source, if it is then skip this check
-			if send.Owner != nil && !send.UnlimitedSourceAssetMint() && inv[id] < qty {
-				errs = append(errs, fmt.Errorf("insufficient quantity of item %v for user %s", id, send.Owner))
+		for item := range send.Items.One {
+			if send.Owner != nil && !inv.One.Has(item) {
+				errs = append(errs, fmt.Errorf("item %v not owned by user %s", item, send.Owner))
 			}
-			if otherinv != nil {
-				// check for non-fungible item duplication
-				if !id.Fungible() && otherinv[id] > 0 {
-					errs = append(errs, fmt.Errorf("item %v already owned by user %s", id, t[1-i].Owner))
-				}
+			
+			// check for non-fungible item duplication
+			if otherinv.One.Has(item) {
+				errs = append(errs, fmt.Errorf("item %v already owned by user %s", item, t[1-i].Owner))
+			}
+		}
+		for item, qty := range send.Items.Many {
+			if send.Owner != nil && inv.Many[item] < qty {
+				errs = append(errs, fmt.Errorf("insufficient quantity of item %v for user %s", item, send.Owner))
 			}
 		}
 	}
@@ -320,8 +283,11 @@ func (s *State) ForceApply(t Transfer) {
 	for i, send := range t {
 		if send.Owner != nil {
 			src := s.GetInventory(send.Owner)
-			for itemID, qty := range send.Items {
-				src[itemID] -= qty
+			for item := range send.Items.One {
+				delete(src.One, item)
+			}
+			for item, qty := range send.Items.Many {
+				src.Many[item] -= qty
 			}
 		}
 
@@ -332,8 +298,11 @@ func (s *State) ForceApply(t Transfer) {
 		}
 
 		dst := s.GetInventory(other.Owner)
-		for itemID, qty := range send.Items {
-			dst[itemID] += qty
+		for item := range send.Items.One {
+			dst.One[item] = struct{}{}
+		}
+		for item, qty := range send.Items.Many {
+			dst.Many[item] += qty
 		}
 	}
 }

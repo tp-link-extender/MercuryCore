@@ -109,6 +109,11 @@ func (is ItemsOne) Equal(other ItemsOne) bool {
 	return true
 }
 
+func (is ItemsOne) Has(i CanOwnOne) bool {
+	_, ok := is[i]
+	return ok
+}
+
 func (is ItemsOne) Serialise(b *bytes.Buffer) error {
 	var lbuf [4]byte
 	// watch out don't have more than 4 billion inventory items lolll
@@ -226,6 +231,10 @@ func (i Items) String() string {
 
 func (i Items) Equal(other Items) bool {
 	return i.One.Equal(other.One) && i.Many.Equal(other.Many)
+}
+
+func (i Items) IsEmpty() bool {
+	return len(i.One) == 0 && len(i.Many) == 0
 }
 
 func (is Items) Serialise() ([]byte, error) {
