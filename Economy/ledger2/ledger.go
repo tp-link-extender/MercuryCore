@@ -119,11 +119,13 @@ func DeserialiseSend(r io.Reader) (Send, error) {
 		return s, fmt.Errorf("decode owner: %w", err)
 	}
 
-	owner, ok := ownerItem.(Owner)
-	if !ok {
-		return s, fmt.Errorf("item is not Owner: %T", ownerItem)
+	if ownerItem != nil {
+		owner, ok := ownerItem.(Owner)
+		if !ok {
+			return s, fmt.Errorf("item is not Owner: %T", ownerItem)
+		}
+		s.Owner = owner
 	}
-	s.Owner = owner
 
 	// decode Items
 	s.Items, err = DeserialiseItems(r)
@@ -258,10 +260,10 @@ func (s *State) ForceApply(t Transfer) {
 
 		dst := s.GetInventory(other.Owner)
 		for item := range send.Items.One {
-			dst.One[item] = struct{}{}
+			dst.One.Add(item)
 		}
 		for item, qty := range send.Items.Many {
-			dst.Many[item] += qty
+			dst.Many.Add(item, qty)
 		}
 	}
 }

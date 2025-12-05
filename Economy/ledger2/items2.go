@@ -120,6 +120,13 @@ func (is ItemsOne) Has(i CanOwnOne) bool {
 	return ok
 }
 
+func (is *ItemsOne) Add(i CanOwnOne) {
+	if *is == nil {
+		*is = make(ItemsOne)
+	}
+	(*is)[i] = struct{}{}
+}
+
 func (is ItemsOne) Serialise(b *bytes.Buffer) error {
 	var lbuf [4]byte
 	// watch out don't have more than 4 billion inventory items lolll
@@ -179,6 +186,13 @@ func (i ItemsMany) Equal(other ItemsMany) bool {
 		}
 	}
 	return true
+}
+
+func (i *ItemsMany) Add(item CanOwnMany, qty Quantity) {
+	if *i == nil {
+		*i = make(ItemsMany)
+	}
+	(*i)[item] += qty
 }
 
 func (is ItemsMany) Serialise(b *bytes.Buffer) error {
