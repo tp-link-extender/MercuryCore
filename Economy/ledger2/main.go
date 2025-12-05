@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"bytes"
+	"fmt"
+)
 
 func encodeDecode(user User) {
 	tid := MakeTransferID()
@@ -26,12 +29,14 @@ func encodeDecode(user User) {
 
 	fmt.Printf("      Items: %+v\n", items)
 
-	b = items.marshalBinary()
-	fmt.Printf(" Marshalled: %d\n", len(b))
+	ibuf := &bytes.Buffer{}
+	if err := items.Serialise(ibuf); err != nil {
+		panic(err)
+	}
+	fmt.Printf(" Marshalled: %d\n", ibuf.Len())
 
-	var newItems Items
-
-	if err := newItems.UnmarshalBinary(b); err != nil {
+	newItems, err := DeserialiseItems(ibuf)
+	if err != nil {
 		panic(err)
 	}
 	fmt.Printf("      Items: %+v\n", newItems)
@@ -50,11 +55,12 @@ func encodeDecode(user User) {
 	for _, send := range transfer {
 		fmt.Printf("       Send: %+v\n", send)
 
-		b := send.marshalBinary()
-		fmt.Printf(" Marshalled: %d\n", len(b))
+		sbuf := &bytes.Buffer{}
+		send.Serialise(sbuf)
+		fmt.Printf(" Marshalled: %d\n", sbuf.Len())
 
-		var newSend Send
-		if err := newSend.UnmarshalBinary(b); err != nil {
+		newSend, err := DeserialiseSend(sbuf)
+		if err != nil {
 			panic(err)
 		}
 		fmt.Printf("       Send: %+v\n", newSend)
@@ -63,11 +69,12 @@ func encodeDecode(user User) {
 
 	fmt.Printf("   Transfer: %+v\n", transfer)
 
-	b = transfer.marshalBinary()
-	fmt.Printf(" Marshalled: %d\n", len(b))
+	tbuf := &bytes.Buffer{}
+	transfer.Serialise(tbuf)
+	fmt.Printf(" Marshalled: %d\n", tbuf.Len())
 
-	var newTransfer Transfer
-	if err := newTransfer.UnmarshalBinary(b); err != nil {
+	newTransfer, err := DeserialiseTransfer(tbuf)
+	if err != nil {
 		panic(err)
 	}
 	fmt.Printf("   Transfer: %+v\n", newTransfer)

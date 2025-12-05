@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"io"
 	"math/rand"
 	"time"
 
@@ -96,73 +97,41 @@ func (s Send) Valid() error {
 	return nil
 }
 
-// func (s Send) marshalBinary() []byte {
-// 	if s.Owner == nil {
-// 		return []byte{1, byte(OwnerTypeNil)}
-// 	}
-
-// 	var buf bytes.Buffer
-// 	// encode Owner
-// 	ownerBytes := s.Owner.Serialise()
-// 	buf.WriteByte(byte(len(ownerBytes)))
-// 	buf.Write(ownerBytes)
-
-// 	// encode Items
-// 	buf.Write(s.Items.marshalBinary())
-// 	return buf.Bytes()
-// }
-
-// // func (s Send) MarshalBinary() ([]byte, error) {
-// // 	return s.marshalBinary(), nil
-// // }
-
-// func (s *Send) UnmarshalBinary(data []byte) error {
-// 	if len(data) < 1 {
-// 		return errors.New("invalid Send data")
-// 	}
-
-// 	ownerLen := int(data[0])
-// 	l := 1 + ownerLen
-// 	if len(data) < l {
-// 		return errors.New("incomplete Owner data in Send")
-// 	}
-
-// 	o, err := DeserialiseOwner(data[1:l])
-// 	if err != nil {
-// 		return fmt.Errorf("decode owner: %w", err)
-// 	}
-// 	s.Owner = o
-
-// 	if err := s.Items.UnmarshalBinary(data[l:]); err != nil {
-// 		return fmt.Errorf("decode items: %w", err)
-// 	}
-
-// 	return nil
-// }
-
-func (s Send) Serialise() []byte {
-	var buf bytes.Buffer
-
-	if s.Owner == nil {
-		buf.WriteByte(1)
-		buf.WriteByte(byte(TypeNil))
-		return buf.Bytes()
-	}
-
+func (s Send) Serialise(b *bytes.Buffer) {
 	// encode Owner
-	ok := SerialiseItem2(s.Owner, &buf)
+	ok := SerialiseItem2(s.Owner, b)
 	if !ok {
 		panic(fmt.Sprintf("unknown Owner type: %T", s.Owner))
 	}
 
 	// encode Items
-	b, err := s.Items.Serialise()
-	if err != nil {
+	if err := s.Items.Serialise(b); err != nil {
 		panic(fmt.Sprintf("failed to serialise Items: %v", err))
 	}
-	buf.Write(b)
+}
 
-	return buf.Bytes()
+func DeserialiseSend(r io.Reader) (Send, error) {
+	var s Send
+
+	// decode Owner
+	ownerItem, err := DeserialiseItem2(r)
+	if err != nil {
+		return s, fmt.Errorf("decode owner: %w", err)
+	}
+
+	owner, ok := ownerItem.(Owner)
+	if !ok {
+		return s, fmt.Errorf("item is not Owner: %T", ownerItem)
+	}
+	s.Owner = owner
+
+	// decode Items
+	s.Items, err = DeserialiseItems(r)
+	if err != nil {
+		return s, fmt.Errorf("decode items: %w", err)
+	}
+
+	return s, nil
 }
 
 // A transfer with a From and To is a transaction
@@ -192,42 +161,21 @@ func (t Transfer) Valid() error {
 	return nil
 }
 
-func (t Transfer) marshalBinary() []byte {
-	var buf bytes.Buffer
-
-	s0 := t[0].marshalBinary()
-	binary.Write(&buf, binary.BigEndian, uint32(len(s0)))
-
-	buf.Write(s0)
-	buf.Write(t[1].marshalBinary())
-
-	return buf.Bytes()
+func (t Transfer) Serialise(b *bytes.Buffer) {
+	t[0].Serialise(b)
+	t[1].Serialise(b)
 }
 
-// func (t Transfer) MarshalBinary() ([]byte, error) {
-// 	return t.marshalBinary(), nil
-// }
-
-func (t *Transfer) UnmarshalBinary(data []byte) error {
-	if len(data) < 4 {
-		return errors.New("invalid Transfer data")
+func DeserialiseTransfer(r io.Reader) (t Transfer, err error) {
+	if t[0], err = DeserialiseSend(r); err != nil {
+		return Transfer{}, fmt.Errorf("decode Send[0]: %w", err)
 	}
 
-	l := 4 + int(binary.BigEndian.Uint32(data[:4]))
-	if len(data) < l {
-		return errors.New("incomplete Send[0] data in Transfer")
+	if t[1], err = DeserialiseSend(r); err != nil {
+		return Transfer{}, fmt.Errorf("decode Send[1]: %w", err)
 	}
 
-	if err := t[0].UnmarshalBinary(data[4:l]); err != nil {
-		return fmt.Errorf("decode Send[0]: %w", err)
-	}
-
-	// we're never getting a 4GiB send
-	if err := t[1].UnmarshalBinary(data[l:]); err != nil {
-		return fmt.Errorf("decode Send[1]: %w", err)
-	}
-
-	return nil
+	return
 }
 
 type State map[Owner]Items
@@ -337,8 +285,8 @@ func applyKVPair(state *State) func(k, v []byte) error {
 		}
 
 		// decode v into Transfer
-		var t Transfer
-		if err := t.UnmarshalBinary(v); err != nil {
+		t, err := DeserialiseTransfer(bytes.NewReader(v))
+		if err != nil {
 			return fmt.Errorf("decode transfer %v: %w", tid, err)
 		}
 
@@ -416,7 +364,9 @@ func (e *Economy) Transfer(tid TransferID, t Transfer) error {
 			return fmt.Errorf("create bucket: %w", err)
 		}
 
-		if err := bucket.Put(tid.marshalBinary(), t.marshalBinary()); err != nil {
+		buf := &bytes.Buffer{}
+		t.Serialise(buf)
+		if err := bucket.Put(tid.marshalBinary(), buf.Bytes()); err != nil {
 			return fmt.Errorf("put transfer: %w", err)
 		}
 

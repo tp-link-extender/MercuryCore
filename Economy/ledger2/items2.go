@@ -25,7 +25,9 @@ func SerialiseString(i StringItem) []byte {
 }
 
 func SerialiseItem2(i Item, b *bytes.Buffer) bool {
-	if ni, ok := i.(NumericItem); ok {
+	if i == nil {
+		b.WriteByte(byte(TypeNil))
+	} else if ni, ok := i.(NumericItem); ok {
 		b.Write(SerialiseNumeric(ni))
 	} else if si, ok := i.(StringItem); ok {
 		b.Write(SerialiseString(si))
@@ -42,6 +44,10 @@ func DeserialiseItem2(r io.Reader) (Item, error) {
 	}
 
 	t := Type(typeByte[0])
+	if t == TypeNil {
+		return nil, nil
+	}
+
 	if t == TypeUser || t == TypeGroup {
 		var lenbuf [1]byte
 		if _, err := r.Read(lenbuf[:]); err != nil {
@@ -237,18 +243,16 @@ func (i Items) IsEmpty() bool {
 	return len(i.One) == 0 && len(i.Many) == 0
 }
 
-func (is Items) Serialise() ([]byte, error) {
-	b := &bytes.Buffer{}
-
+func (is Items) Serialise(b *bytes.Buffer) error {
 	if err := is.One.Serialise(b); err != nil {
-		return nil, fmt.Errorf("serialise ItemsOne: %w", err)
+		return fmt.Errorf("serialise ItemsOne: %w", err)
 	}
 
 	if err := is.Many.Serialise(b); err != nil {
-		return nil, fmt.Errorf("serialise ItemsMany: %w", err)
+		return fmt.Errorf("serialise ItemsMany: %w", err)
 	}
 
-	return b.Bytes(), nil
+	return nil
 }
 
 func DeserialiseItems(r io.Reader) (Items, error) {
