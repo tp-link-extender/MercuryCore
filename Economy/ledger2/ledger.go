@@ -47,24 +47,20 @@ func MakeTransferID() TransferID {
 	}
 }
 
-func (t TransferID) marshalBinary() []byte {
+func (t TransferID) Serialise() []byte {
 	bs := make([]byte, 8+len(t.id))
 	binary.BigEndian.PutUint64(bs[:8], t.timestamp)
 	copy(bs[8:], t.id)
 	return bs
 }
 
-// func (t TransferID) MarshalBinary() ([]byte, error) {
-// 	return t.marshalBinary(), nil
-// }
-
-func (t *TransferID) UnmarshalBinary(data []byte) error {
+func DeserialiseTransferID(data []byte) (t TransferID, err error) {
 	if len(data) < 8 {
-		return errors.New("invalid TransferID data")
+		return TransferID{}, errors.New("invalid TransferID data")
 	}
 	t.timestamp = binary.BigEndian.Uint64(data[:8])
 	t.id = string(data[8:])
-	return nil
+	return
 }
 
 // A Send represents items being sent FROM a user/group
@@ -95,6 +91,13 @@ func (s Send) Valid() error {
 		}
 	}
 	return nil
+}
+
+func (s Send) Equal(other Send) bool {
+	if s.Owner != other.Owner {
+		return false
+	}
+	return s.Items.Equal(other.Items)
 }
 
 // TODO: also check if the unlimited source has the same ID as the asset itself
@@ -175,6 +178,10 @@ func (t Transfer) Valid() error {
 		}
 	}
 	return nil
+}
+
+func (t Transfer) Equal(other Transfer) bool {
+	return t[0].Equal(other[0]) && t[1].Equal(other[1])
 }
 
 func (t Transfer) Serialise(b *bytes.Buffer) {
@@ -300,8 +307,8 @@ const bucketName = "ledger"
 
 func applyKVPair(state *State) func(k, v []byte) error {
 	return func(k, v []byte) error {
-		var tid TransferID
-		if err := tid.UnmarshalBinary(k); err != nil {
+		tid, err := DeserialiseTransferID(k)
+		if err != nil {
 			return fmt.Errorf("decode transfer ID: %w", err)
 		}
 
@@ -387,7 +394,7 @@ func (e *Economy) Transfer(tid TransferID, t Transfer) error {
 
 		buf := &bytes.Buffer{}
 		t.Serialise(buf)
-		if err := bucket.Put(tid.marshalBinary(), buf.Bytes()); err != nil {
+		if err := bucket.Put(tid.Serialise(), buf.Bytes()); err != nil {
 			return fmt.Errorf("put transfer: %w", err)
 		}
 
