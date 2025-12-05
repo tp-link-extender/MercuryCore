@@ -145,7 +145,7 @@ func (s Send) Serialise() []byte {
 
 	if s.Owner == nil {
 		buf.WriteByte(1)
-		buf.WriteByte(byte(OwnerTypeNil))
+		buf.WriteByte(byte(TypeNil))
 		return buf.Bytes()
 	}
 
