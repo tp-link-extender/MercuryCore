@@ -6,9 +6,7 @@ import (
 	"testing"
 )
 
-func TestEncodeDecode(t *testing.T) {
-	user := User{"testuser"}
-
+func TestEncTransferID(t *testing.T) {
 	tid := MakeTransferID()
 
 	b := tid.Serialise()
@@ -24,8 +22,35 @@ func TestEncodeDecode(t *testing.T) {
 	if tid != newTid {
 		t.Fatalf("expected TransferID %v, got %v", tid, newTid)
 	}
+}
 
-	// items
+func TestEncItemsOne(t *testing.T) {
+	items := Items{
+		One: ItemsOne{
+			RandPlace(): {},
+		},
+	}
+
+	ibuf := &bytes.Buffer{}
+	if err := items.Serialise(ibuf); err != nil {
+		t.Fatalf("Items.Serialise: %v", err)
+	}
+
+	if ibuf.Len() != 17 {
+		t.Fatalf("expected serialised Items length 17, got %d", ibuf.Len())
+	}
+
+	newItems, err := DeserialiseItems(ibuf)
+	if err != nil {
+		t.Fatalf("DeserialiseItems: %v", err)
+	}
+
+	if !items.Equal(newItems) {
+		t.Fatalf("expected Items %v, got %v", items, newItems)
+	}
+}
+
+func encItemsMany(t *testing.T) Items {
 	items := Items{
 		Many: ItemsMany{
 			Currency{0}: 100,
@@ -49,8 +74,10 @@ func TestEncodeDecode(t *testing.T) {
 	if !items.Equal(newItems) {
 		t.Fatalf("expected Items %v, got %v", items, newItems)
 	}
+	return items
+}
 
-	// send
+func encTransfer(t *testing.T, user User, items Items) {
 	transfer := Transfer{
 		{Owner: user},
 		{Items: items},
@@ -88,6 +115,13 @@ func TestEncodeDecode(t *testing.T) {
 	if !transfer.Equal(newTransfer) {
 		t.Fatalf("expected Transfer %v, got %v", transfer, newTransfer)
 	}
+}
+
+func TestEncodeDecode(t *testing.T) {
+	user := User{"testuser"}
+	items := encItemsMany(t)
+
+	encTransfer(t, user, items)
 }
 
 func mintTest(economy *Economy, t *testing.T, currency Currency, user User) {
