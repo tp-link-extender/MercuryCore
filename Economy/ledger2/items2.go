@@ -246,7 +246,7 @@ type Items struct {
 }
 
 func (i Items) String() string {
-	return fmt.Sprintf("Items{\n\t One: %s,\n\tMany: %s\n}", i.One.String(), i.Many.String())
+	return fmt.Sprintf("Items {\n\t One %s\n\tMany %s\n}", i.One.String(), i.Many.String())
 }
 
 func (i Items) Equal(other Items) bool {

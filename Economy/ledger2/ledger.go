@@ -180,9 +180,9 @@ func DeserialiseTransfer(r io.Reader) (t Transfer, err error) {
 	return
 }
 
-type State map[Owner]Items
+type State map[Owner]*Items
 
-func (s *State) GetInventory(id Owner) Items {
+func (s *State) GetInventory(id Owner) *Items {
 	// idk if we really want to do this
 	// if !id.CanOwn() {
 	// 	return nil, fmt.Errorf("%v cannot own items", id)
@@ -190,7 +190,7 @@ func (s *State) GetInventory(id Owner) Items {
 
 	inv, ok := (*s)[id]
 	if !ok {
-		inv = Items{}
+		inv = &Items{}
 		(*s)[id] = inv
 		return inv
 	}
@@ -200,6 +200,7 @@ func (s *State) GetInventory(id Owner) Items {
 			delete(inv.Many, i)
 		}
 	}
+	(*s)[id] = inv
 	return inv
 }
 
@@ -214,8 +215,8 @@ func (s State) CanApply(t Transfer) error {
 		if send.Items.IsEmpty() {
 			continue
 		}
-		inv := s[send.Owner]
-		otherinv := s[t[1-i].Owner]
+		inv := s.GetInventory(send.Owner)
+		otherinv := s.GetInventory(t[1-i].Owner)
 		for item := range send.Items.One {
 			if send.Owner != nil && !inv.One.Has(item) {
 				errs = append(errs, fmt.Errorf("item %v not owned by user %s", item, send.Owner))
@@ -259,12 +260,15 @@ func (s *State) ForceApply(t Transfer) {
 		}
 
 		dst := s.GetInventory(other.Owner)
+		// fmt.Printf("Starting inventory for %v: %v\n", other.Owner, dst)
 		for item := range send.Items.One {
 			dst.One.Add(item)
 		}
 		for item, qty := range send.Items.Many {
 			dst.Many.Add(item, qty)
 		}
+		// fmt.Printf("Ending inventory for %v: %v\n", other.Owner, dst)
+		// fmt.Printf("Ending inventory for %v: %v\n", other.Owner, s.GetInventory(other.Owner))
 	}
 }
 
@@ -349,7 +353,7 @@ func (e *Economy) Close() error {
 	return e.db.Close()
 }
 
-func (e *Economy) Inventory(id Owner) Items {
+func (e *Economy) Inventory(id Owner) *Items {
 	return e.state.GetInventory(id)
 }
 
