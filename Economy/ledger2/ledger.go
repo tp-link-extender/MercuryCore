@@ -97,6 +97,20 @@ func (s Send) Valid() error {
 	return nil
 }
 
+// TODO: also check if the unlimited source has the same ID as the asset itself
+func (s Send) UnlimitedSourceAssetMint() bool {
+	ous, ok := s.Owner.(UnlimitedSource)
+	if !ok {
+		return false
+	}
+
+	return s.Items.Equal(Items{
+		One: ItemsOne{
+			UnlimitedAsset{ous.id}: {},
+		},
+	})
+}
+
 func (s Send) Serialise(b *bytes.Buffer) {
 	// encode Owner
 	ok := SerialiseItem2(s.Owner, b)
@@ -218,7 +232,8 @@ func (s State) CanApply(t Transfer) error {
 		inv := s.GetInventory(send.Owner)
 		otherinv := s.GetInventory(t[1-i].Owner)
 		for item := range send.Items.One {
-			if send.Owner != nil && !inv.One.Has(item) {
+			// check if it's an asset mint from an unlimited source, if it is then skip this check
+			if send.Owner != nil && !send.UnlimitedSourceAssetMint() && !inv.One.Has(item) {
 				errs = append(errs, fmt.Errorf("item %v not owned by user %s", item, send.Owner))
 			}
 

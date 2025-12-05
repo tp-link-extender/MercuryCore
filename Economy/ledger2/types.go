@@ -7,7 +7,7 @@ type Type uint8
 const (
 	// number ID types
 
-	TypeNil Type = iota
+	TypeNil      Type = iota
 	TypeCurrency Type = iota
 	TypeLimitedAsset
 	TypeUnlimitedAsset
@@ -22,23 +22,20 @@ const (
 )
 
 type (
-	NumericID interface {
-		ID() uint64
-	}
-	StringID interface {
-		ID() string
-	}
 	Item interface {
 		String() string
+		// only used for serialisation atm
 		Type() Type
 	}
 	NumericItem interface {
 		Item
-		NumericID
+		// only used for serialisation atm
+		ID() uint64
 	}
 	StringItem interface {
 		Item
-		StringID
+		// only used for serialisation atm
+		ID() string
 	}
 	CanOwnOne interface {
 		Item

@@ -114,6 +114,9 @@ func purchaseAssetTest(economy *Economy, t *testing.T, user User, currency Curre
 			src:          {},
 			src.Create(): {},
 		},
+		Many: ItemsMany{
+			currency: 40,
+		},
 	}
 
 	if inv := economy.Inventory(user); !inv.Equal(xinv) {

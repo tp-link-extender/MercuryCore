@@ -105,13 +105,11 @@ func (is ItemsOne) Equal(other ItemsOne) bool {
 	if len(is) != len(other) {
 		return false
 	}
-
 	for i := range is {
 		if _, ok := other[i]; !ok {
 			return false
 		}
 	}
-
 	return true
 }
 
