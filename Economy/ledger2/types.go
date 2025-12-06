@@ -30,7 +30,9 @@ type (
 	NumericItem interface {
 		Item
 		// only used for serialisation atm
-		ID() uint64
+		// also uint32 because if anything bigger than that is needed then string IDs should be used instead
+		// as for negative IDs......... lmao
+		ID() uint32
 	}
 	StringItem interface {
 		Item
@@ -65,7 +67,7 @@ func IsMintable(i Item) bool {
 }
 
 type Currency struct {
-	id uint64
+	id uint32
 }
 
 func (i Currency) String() string {
@@ -76,7 +78,7 @@ func (Currency) Type() Type {
 	return TypeCurrency
 }
 
-func (i Currency) ID() uint64 {
+func (i Currency) ID() uint32 {
 	return i.id
 }
 
@@ -84,7 +86,7 @@ func (Currency) Mintable()   {}
 func (Currency) CanOwnMany() {}
 
 type LimitedAsset struct {
-	id uint64
+	id uint32
 }
 
 func (i LimitedAsset) String() string {
@@ -95,14 +97,14 @@ func (LimitedAsset) Type() Type {
 	return TypeLimitedAsset
 }
 
-func (i LimitedAsset) ID() uint64 {
+func (i LimitedAsset) ID() uint32 {
 	return i.id
 }
 
 func (LimitedAsset) CanOwnMany() {}
 
 type UnlimitedAsset struct {
-	id uint64
+	id uint32
 }
 
 func (i UnlimitedAsset) String() string {
@@ -113,14 +115,14 @@ func (UnlimitedAsset) Type() Type {
 	return TypeUnlimitedAsset
 }
 
-func (i UnlimitedAsset) ID() uint64 {
+func (i UnlimitedAsset) ID() uint32 {
 	return i.id
 }
 
 func (UnlimitedAsset) CanOwnOne() {}
 
 type LimitedSource struct {
-	id uint64
+	id uint32
 }
 
 func (i LimitedSource) String() string {
@@ -131,7 +133,7 @@ func (LimitedSource) Type() Type {
 	return TypeLimitedSource
 }
 
-func (i LimitedSource) ID() uint64 {
+func (i LimitedSource) ID() uint32 {
 	return i.id
 }
 
@@ -145,7 +147,7 @@ func (i LimitedSource) Create() LimitedAsset {
 }
 
 type UnlimitedSource struct {
-	id uint64
+	id uint32
 }
 
 func (i UnlimitedSource) String() string {
@@ -156,7 +158,7 @@ func (UnlimitedSource) Type() Type {
 	return TypeUnlimitedSource
 }
 
-func (i UnlimitedSource) ID() uint64 {
+func (i UnlimitedSource) ID() uint32 {
 	return i.id
 }
 
@@ -170,7 +172,7 @@ func (i UnlimitedSource) Create() UnlimitedAsset {
 }
 
 type Place struct {
-	id uint64
+	id uint32
 }
 
 func (i Place) String() string {
@@ -181,7 +183,7 @@ func (Place) Type() Type {
 	return TypePlace
 }
 
-func (i Place) ID() uint64 {
+func (i Place) ID() uint32 {
 	return i.id
 }
 

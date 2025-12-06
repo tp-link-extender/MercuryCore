@@ -13,8 +13,8 @@ import (
 	bolt "go.etcd.io/bbolt"
 )
 
-func RandNumericId() (id uint64) {
-	return uint64(rand.Intn(9e8) + 1e8) // 9 digit
+func RandNumericId() (id uint32) {
+	return uint32(rand.Intn(9e8) + 1e8) // 9 digit
 }
 
 const idchars = "0123456789abcdefghijklmnopqrstuvwxyz"

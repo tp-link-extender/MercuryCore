@@ -9,9 +9,9 @@ import (
 )
 
 func SerialiseNumeric(i NumericItem) []byte {
-	idbuf := make([]byte, 9)
+	idbuf := make([]byte, 5)
 	idbuf[0] = byte(i.Type())
-	binary.BigEndian.PutUint64(idbuf[1:], i.ID())
+	binary.BigEndian.PutUint32(idbuf[1:], i.ID())
 	return idbuf
 }
 
@@ -49,13 +49,12 @@ func DeserialiseItem2(r io.Reader) (Item, error) {
 	}
 
 	if t == TypeUser || t == TypeGroup {
-		var lenbuf [1]byte
-		if _, err := r.Read(lenbuf[:]); err != nil {
+		var lenByte [1]byte
+		if _, err := r.Read(lenByte[:]); err != nil {
 			return nil, fmt.Errorf("read string id length: %w", err)
 		}
-		idlen := int(lenbuf[0])
 
-		idbuf := make([]byte, idlen)
+		idbuf := make([]byte, lenByte[0])
 		if _, err := r.Read(idbuf); err != nil {
 			return nil, fmt.Errorf("read string id: %w", err)
 		}
@@ -67,13 +66,12 @@ func DeserialiseItem2(r io.Reader) (Item, error) {
 		return Group{id}, nil
 	}
 
-	var idbuf [8]byte
+	var idbuf [4]byte
 	if _, err := r.Read(idbuf[:]); err != nil {
 		return nil, fmt.Errorf("read numeric id: %w", err)
 	}
-	id := binary.BigEndian.Uint64(idbuf[:])
 
-	switch t {
+	switch id := binary.BigEndian.Uint32(idbuf[:]); t {
 	case TypeCurrency:
 		return Currency{id}, nil
 	case TypeLimitedAsset:

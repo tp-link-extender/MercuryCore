@@ -10,8 +10,10 @@ func TestEncTransferID(t *testing.T) {
 	tid := MakeTransferID()
 
 	b := tid.Serialise()
-	if len(b) != 28 {
-		t.Fatalf("expected serialised TransferID length 28, got %d", len(b))
+
+	const expLen = 28
+	if len(b) != expLen {
+		t.Fatalf("expected serialised TransferID length %d, got %d", expLen, len(b))
 	}
 
 	newTid, err := DeserialiseTransferID(b)
@@ -36,8 +38,9 @@ func TestEncItemsOne(t *testing.T) {
 		t.Fatalf("Items.Serialise: %v", err)
 	}
 
-	if ibuf.Len() != 17 {
-		t.Fatalf("expected serialised Items length 17, got %d", ibuf.Len())
+	const expLen = 13
+	if ibuf.Len() != expLen {
+		t.Fatalf("expected serialised Items length %d, got %d", expLen, ibuf.Len())
 	}
 
 	newItems, err := DeserialiseItems(ibuf)
@@ -62,8 +65,9 @@ func encItemsMany(t *testing.T) Items {
 		t.Fatalf("Items.Serialise: %v", err)
 	}
 
-	if ibuf.Len() != 25 {
-		t.Fatalf("expected serialised Items length 25, got %d", ibuf.Len())
+	const expLen = 21
+	if ibuf.Len() != expLen {
+		t.Fatalf("expected serialised Items length %d, got %d", expLen, ibuf.Len())
 	}
 
 	newItems, err := DeserialiseItems(ibuf)
@@ -103,8 +107,9 @@ func encTransfer(t *testing.T, user User, items Items) {
 	tbuf := &bytes.Buffer{}
 	transfer.Serialise(tbuf)
 
-	if tbuf.Len() != 44 {
-		t.Fatalf("expected serialised Transfer length 44, got %d", tbuf.Len())
+	const expLen = 40
+	if tbuf.Len() != expLen {
+		t.Fatalf("expected serialised Transfer length %d, got %d", expLen, tbuf.Len())
 	}
 
 	newTransfer, err := DeserialiseTransfer(tbuf)
