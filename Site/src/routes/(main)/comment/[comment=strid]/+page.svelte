@@ -16,14 +16,10 @@
 
 	let { user } = $derived(data)
 
-	let comment = $state(data.comment)
-	$effect(() => {
-		comment = data.comment
-	})
+	let comment = $derived(data.comment)
 
 	async function onResult({ result }: { result: ActionResult }) {
 		if (result.type === "success") await invalidateAll()
-		comment = data.comment
 	}
 	let formData = $derived(superForm(data.form))
 

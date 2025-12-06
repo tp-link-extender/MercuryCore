@@ -10,7 +10,7 @@
 		moderate?: boolean
 	} = $props()
 
-	const text = moderate ? "remove" : "delete"
+	let text = $derived(moderate ? "remove" : "delete")
 </script>
 
 <li class="rounded-2">

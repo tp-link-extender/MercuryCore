@@ -3,7 +3,7 @@
 
 	const { data } = $props()
 
-	const [
+	let [
 		users,
 		places,
 		groups,
@@ -11,7 +11,7 @@
 		friendships,
 		followerships,
 		comments
-	] = data.stats
+	] = $derived(data.stats)
 </script>
 
 <Head name={data.siteName} title="Statistics" />

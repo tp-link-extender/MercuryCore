@@ -15,7 +15,7 @@
 		class?: ClassValue
 	} = $props()
 
-	const smallClass = small ? "size-6 p-0" : "p-1"
+	let smallClass = $derived(small ? "size-6 p-0" : "p-1")
 </script>
 
 <form
