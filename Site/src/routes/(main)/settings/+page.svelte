@@ -55,7 +55,7 @@
 	</Tab>
 
 	<Tab bind:tabData>
-		<h2 class="text-xl pb-4">Styling</h2>
+		<h2 class="text-xl pb-6">Styling</h2>
 		<Styling {data} />
 	</Tab>
 </div>
