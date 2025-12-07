@@ -1,13 +1,8 @@
 <script lang="ts">
-	import { page } from "$app/state"
-	import Asset from "$components/Asset.svelte"
 	import Head from "$components/Head.svelte"
-	import Pagination from "$components/Pagination.svelte"
 	import TabData from "$components/TabData"
 	import TabNav from "$components/TabNav.svelte"
-	import { getAssets } from "./data.remote"
-
-	const { data } = $props()
+	import Assets from "./Assets.svelte"
 
 	const tabTypes = {
 		Hats: 8,
@@ -18,26 +13,9 @@
 		Faces: 18
 	} as const
 
+	const { data } = $props()
+
 	let tabData = $state(TabData(data.url, Object.keys(tabTypes)))
-
-	// $inspect("tabData", tabData.currentTab)
-
-	// let assets = $derived(
-	// 	data.assets.filter(a => a.type === tabTypes[tabData.currentTab])
-	// )
-
-	function currentPage() {
-		const pageQ = page.url.searchParams.get("p") || "1"
-		const pp = +pageQ
-		return Number.isNaN(pp) ? 1 : Math.round(pp)
-	}
-
-	const { assets, pages } = $derived(
-		await getAssets({
-			page: currentPage(),
-			type: tabTypes[tabData.currentTab as keyof typeof tabTypes]
-		})
-	)
 </script>
 
 <Head name={data.siteName} title="Catalog" />
@@ -111,25 +89,21 @@
 		<div>
 			<TabNav bind:tabData justify class="<sm:hidden" />
 			<TabNav bind:tabData vertical class="sm:hidden pb-4" />
-			{#if assets.length > 0}
-				<div
-					class="grid gap-4 grid-cols-2 xl:grid-cols-7 md:grid-cols-6 sm:grid-cols-3">
-					{#each assets as asset, num (asset.id)}
-						<Asset
-							{asset}
-							{num}
-							total={assets.length}
-							symbol={data.currencySymbol} />
-					{/each}
-				</div>
-				{#key page.url}
-					<Pagination totalPages={pages} />
-				{/key}
-			{:else}
-				<h2 class="pt-12 text-center">
-					No {tabData.currentTab} available.
-				</h2>
-			{/if}
+
+			<svelte:boundary>
+				<Assets {data} {tabTypes} {tabData} />
+
+				{#snippet failed(_, reset)}
+					<div class="text-center">
+						<p class="text-red-600 pt-12 pb-2">
+							An error occurred while loading the assets.
+						</p>
+						<button class="btn btn-tertiary btn-sm" onclick={reset}>
+							Retry
+						</button>
+					</div>
+				{/snippet}
+			</svelte:boundary>
 		</div>
 	</div>
 </div>

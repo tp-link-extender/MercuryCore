@@ -15,6 +15,8 @@ export const getAssets = query(
 			args
 		)
 
+		// track https://github.com/sveltejs/kit/issues/14398 and https://github.com/sveltejs/kit/issues/14932
+
 		return { assets, pages }
 	}
 )
