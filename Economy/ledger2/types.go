@@ -234,6 +234,10 @@ func (Group) CanOwnOne() {}
 func (Group) Owner()     {}
 func (Group) Single()    {}
 
+func RandGroup() Group {
+	return Group{RandStringId()}
+}
+
 // checks
 var (
 	_ Item = Currency{}

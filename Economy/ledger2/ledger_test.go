@@ -56,7 +56,7 @@ func TestEncItemsOne(t *testing.T) {
 func encItemsMany(t *testing.T) Items {
 	items := Items{
 		Many: ItemsMany{
-			Currency{0}: 100,
+			Currency{}: 100,
 		},
 	}
 
@@ -181,13 +181,11 @@ func createSourceTest(e *Economy, t *testing.T, user User, currency Currency) Un
 				},
 			},
 		},
-		{
-			Items: Items{
-				One: ItemsOne{
-					src: {},
-				},
+		{Items: Items{
+			One: ItemsOne{
+				src: {},
 			},
-		},
+		}},
 	}
 
 	if err := e.Transfer(MakeTransferID(), tf); err != nil {
@@ -280,13 +278,11 @@ func createPlaceTest(e *Economy, t *testing.T, user User, currency Currency) {
 				},
 			},
 		},
-		{
-			Items: Items{
-				One: ItemsOne{
-					place: {},
-				},
+		{Items: Items{
+			One: ItemsOne{
+				place: {},
 			},
-		},
+		}},
 	}
 
 	if err := e.Transfer(MakeTransferID(), tf); err != nil {

@@ -402,3 +402,83 @@ func (e *Economy) Transfer(tid TransferID, t Transfer) error {
 	e.state.ForceApply(t)
 	return nil
 }
+
+// Abstractions
+type EconomyAbstraction struct {
+	e                                                                *Economy
+	defaultCurrency                                                  Currency
+	placePrice, groupPrice, limitedSourcePrice, unlimitedSourcePrice Quantity
+}
+
+func (ea *EconomyAbstraction) MintCurrency(user User, amount Quantity) (TransferID, error) {
+	tf := Transfer{
+		{Owner: user},
+		{Items: Items{
+			Many: ItemsMany{
+				ea.defaultCurrency: amount,
+			},
+		}},
+	}
+
+	tid := MakeTransferID()
+	if err := ea.e.Transfer(tid, tf); err != nil {
+		return TransferID{}, fmt.Errorf("mint currency transfer %v: %w", tid, err)
+	}
+
+	return tid, nil
+}
+
+func (ea *EconomyAbstraction) CreatePlace(user User) (Place, TransferID, error) {
+	place := RandPlace()
+
+	// tf (the fuck)
+	tf := Transfer{
+		{
+			Owner: user,
+			Items: Items{
+				Many: ItemsMany{
+					ea.defaultCurrency: ea.placePrice,
+				},
+			},
+		},
+		{Items: Items{
+			One: ItemsOne{
+				place: {},
+			},
+		}},
+	}
+
+	tid := MakeTransferID()
+	if err := ea.e.Transfer(tid, tf); err != nil {
+		return Place{}, TransferID{}, fmt.Errorf("create place transfer %v: %w", tid, err)
+	}
+
+	return place, tid, nil
+}
+
+func (ea *EconomyAbstraction) CreateGroup(user User) (Group, TransferID, error) {
+	group := RandGroup()
+
+	tf := Transfer{
+		{
+			Owner: user,
+			Items: Items{
+				Many: ItemsMany{
+					ea.defaultCurrency: ea.groupPrice,
+				},
+			},
+		},
+		{Items: Items{
+			One: ItemsOne{
+				group: {},
+			},
+		}},
+	}
+
+	tid := MakeTransferID()
+	if err := ea.e.Transfer(tid, tf); err != nil {
+		return Group{}, TransferID{}, fmt.Errorf("create group transfer %v: %w", tid, err)
+	}
+
+	return group, tid, nil
+}

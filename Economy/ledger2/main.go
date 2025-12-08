@@ -16,19 +16,15 @@ func main() {
 
 	tid := MakeTransferID()
 	if err = e.Transfer(tid, Transfer{
-		{
-			Owner: user,
-		},
-		{
-			Items: Items{
-				One: ItemsOne{
-					RandPlace(): {},
-				},
-				Many: ItemsMany{
-					Currency{0}: 500,
-				},
+		{Owner: user},
+		{Items: Items{
+			One: ItemsOne{
+				RandPlace(): {},
 			},
-		},
+			Many: ItemsMany{
+				Currency{0}: 500,
+			},
+		}},
 	}); err != nil {
 		panic(err)
 	}
