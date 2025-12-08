@@ -428,6 +428,60 @@ func (ea *EconomyAbstraction) MintCurrency(user User, amount Quantity) (Transfer
 	return tid, nil
 }
 
+func (ea *EconomyAbstraction) CreateLimitedSource(user User) (LimitedSource, TransferID, error) {
+	src := RandLimitedSource()
+
+	tf := Transfer{
+		{
+			Owner: user,
+			Items: Items{
+				Many: ItemsMany{
+					ea.defaultCurrency: ea.limitedSourcePrice,
+				},
+			},
+		},
+		{Items: Items{
+			One: ItemsOne{
+				src: {},
+			},
+		}},
+	}
+
+	tid := MakeTransferID()
+	if err := ea.e.Transfer(tid, tf); err != nil {
+		return LimitedSource{}, TransferID{}, fmt.Errorf("create limited source transfer %v: %w", tid, err)
+	}
+
+	return src, tid, nil
+}
+
+func (ea *EconomyAbstraction) CreateUnlimitedSource(user User) (UnlimitedSource, TransferID, error) {
+	src := RandUnlimitedSource()
+
+	tf := Transfer{
+		{
+			Owner: user,
+			Items: Items{
+				Many: ItemsMany{
+					ea.defaultCurrency: ea.unlimitedSourcePrice,
+				},
+			},
+		},
+		{Items: Items{
+			One: ItemsOne{
+				src: {},
+			},
+		}},
+	}
+
+	tid := MakeTransferID()
+	if err := ea.e.Transfer(tid, tf); err != nil {
+		return UnlimitedSource{}, TransferID{}, fmt.Errorf("create unlimited source transfer %v: %w", tid, err)
+	}
+
+	return src, tid, nil
+}
+
 func (ea *EconomyAbstraction) CreatePlace(user User) (Place, TransferID, error) {
 	place := RandPlace()
 

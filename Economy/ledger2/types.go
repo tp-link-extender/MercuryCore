@@ -146,6 +146,10 @@ func (i LimitedSource) Create() LimitedAsset {
 	return LimitedAsset{i.id}
 }
 
+func RandLimitedSource() LimitedSource {
+	return LimitedSource{RandNumericId()}
+}
+
 type UnlimitedSource struct {
 	id uint32
 }
@@ -169,6 +173,10 @@ func (UnlimitedSource) Single()    {}
 
 func (i UnlimitedSource) Create() UnlimitedAsset {
 	return UnlimitedAsset{i.id}
+}
+
+func RandUnlimitedSource() UnlimitedSource {
+	return UnlimitedSource{RandNumericId()}
 }
 
 type Place struct {
@@ -237,15 +245,3 @@ func (Group) Single()    {}
 func RandGroup() Group {
 	return Group{RandStringId()}
 }
-
-// checks
-var (
-	_ Item = Currency{}
-	_ Item = LimitedAsset{}
-	_ Item = UnlimitedAsset{}
-	_ Item = Place{}
-	_ Item = User{}
-	_ Item = Group{}
-	_ Item = LimitedSource{}
-	_ Item = UnlimitedSource{}
-)
