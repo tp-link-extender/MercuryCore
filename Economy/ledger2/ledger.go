@@ -318,7 +318,6 @@ func applyKVPair(state *State) func(k, v []byte) error {
 			return fmt.Errorf("decode transfer %v: %w", tid, err)
 		}
 
-		fmt.Printf("Decoded %v: %+v\n", tid, t)
 		if err := t.Valid(); err != nil {
 			return fmt.Errorf("invalid transfer with ID %v: %w", tid, err)
 		}
@@ -356,11 +355,6 @@ func NewEconomy(dbPath string) (*Economy, error) {
 	if err != nil {
 		return nil, fmt.Errorf("open db: %w", err)
 	}
-
-	// clear database
-	db.Update(func(tx *bolt.Tx) error {
-		return tx.DeleteBucket([]byte(bucketName))
-	})
 
 	state, err := ReadState(db)
 	if err != nil {

@@ -129,7 +129,7 @@ func TestEncodeDecode(t *testing.T) {
 	encTransfer(t, user, items)
 }
 
-func mintTest(economy *Economy, t *testing.T, currency Currency, user User) {
+func mintTest(e *Economy, t *testing.T, currency Currency, user User) {
 	xinv := Items{
 		Many: ItemsMany{
 			currency: 100,
@@ -141,11 +141,11 @@ func mintTest(economy *Economy, t *testing.T, currency Currency, user User) {
 		{Items: xinv},
 	}
 
-	if err := economy.Transfer(MakeTransferID(), tf); err != nil {
+	if err := e.Transfer(MakeTransferID(), tf); err != nil {
 		t.Fatalf("transfer: %v", err)
 	}
 
-	if inv := economy.Inventory(user); !inv.Equal(xinv) {
+	if inv := e.Inventory(user); !inv.Equal(xinv) {
 		t.Fatalf("expected inventory %v, got %v", xinv, inv)
 	}
 }
@@ -153,22 +153,23 @@ func mintTest(economy *Economy, t *testing.T, currency Currency, user User) {
 func TestMint(t *testing.T) {
 	// create temp file
 	name := os.TempDir() + "/ledger_test.db"
+	os.Remove(name)
 	defer os.Remove(name)
 
-	economy, err := NewEconomy(name)
+	e, err := NewEconomy(name)
 	if err != nil {
 		t.Fatalf("create economy: %v", err)
 	}
-	defer economy.Close()
+	defer e.Close()
 
 	// let there be rocks
 	currency := Currency{0}
 	user1 := User{"user1"}
 
-	mintTest(economy, t, currency, user1)
+	mintTest(e, t, currency, user1)
 }
 
-func createSourceTest(economy *Economy, t *testing.T, user User, currency Currency) UnlimitedSource {
+func createSourceTest(e *Economy, t *testing.T, user User, currency Currency) UnlimitedSource {
 	src := UnlimitedSource{1}
 
 	tf := Transfer{
@@ -189,7 +190,7 @@ func createSourceTest(economy *Economy, t *testing.T, user User, currency Curren
 		},
 	}
 
-	if err := economy.Transfer(MakeTransferID(), tf); err != nil {
+	if err := e.Transfer(MakeTransferID(), tf); err != nil {
 		t.Fatalf("transfer: %v", err)
 	}
 
@@ -202,14 +203,14 @@ func createSourceTest(economy *Economy, t *testing.T, user User, currency Curren
 		},
 	}
 
-	if inv := economy.Inventory(user); !inv.Equal(xinv) {
+	if inv := e.Inventory(user); !inv.Equal(xinv) {
 		t.Fatalf("expected inventory %v, got %v", xinv, inv)
 	}
 
 	return src
 }
 
-func purchaseAssetTest(economy *Economy, t *testing.T, user User, currency Currency, src UnlimitedSource) {
+func purchaseAssetTest(e *Economy, t *testing.T, user User, currency Currency, src UnlimitedSource) {
 	tf := Transfer{
 		{
 			Owner: user,
@@ -229,7 +230,7 @@ func purchaseAssetTest(economy *Economy, t *testing.T, user User, currency Curre
 		},
 	}
 
-	if err := economy.Transfer(MakeTransferID(), tf); err != nil {
+	if err := e.Transfer(MakeTransferID(), tf); err != nil {
 		t.Fatalf("transfer: %v", err)
 	}
 
@@ -243,30 +244,31 @@ func purchaseAssetTest(economy *Economy, t *testing.T, user User, currency Curre
 		},
 	}
 
-	if inv := economy.Inventory(user); !inv.Equal(xinv) {
+	if inv := e.Inventory(user); !inv.Equal(xinv) {
 		t.Fatalf("expected inventory %v, got %v", xinv, inv)
 	}
 }
 
 func TestCreateSource(t *testing.T) {
 	name := os.TempDir() + "/ledger_test.db"
+	os.Remove(name)
 	defer os.Remove(name)
 
-	economy, err := NewEconomy(name)
+	e, err := NewEconomy(name)
 	if err != nil {
 		t.Fatalf("create economy: %v", err)
 	}
-	defer economy.Close()
+	defer e.Close()
 
 	currency1 := Currency{1}
 	user2 := User{"user2"}
 
-	mintTest(economy, t, currency1, user2)
-	src := createSourceTest(economy, t, user2, currency1)
-	purchaseAssetTest(economy, t, user2, currency1, src)
+	mintTest(e, t, currency1, user2)
+	src := createSourceTest(e, t, user2, currency1)
+	purchaseAssetTest(e, t, user2, currency1, src)
 }
 
-func createPlaceTest(economy *Economy, t *testing.T, user User, currency Currency) {
+func createPlaceTest(e *Economy, t *testing.T, user User, currency Currency) {
 	place := RandPlace()
 
 	tf := Transfer{
@@ -287,7 +289,7 @@ func createPlaceTest(economy *Economy, t *testing.T, user User, currency Currenc
 		},
 	}
 
-	if err := economy.Transfer(MakeTransferID(), tf); err != nil {
+	if err := e.Transfer(MakeTransferID(), tf); err != nil {
 		t.Fatalf("transfer: %v", err)
 	}
 
@@ -300,28 +302,71 @@ func createPlaceTest(economy *Economy, t *testing.T, user User, currency Currenc
 		},
 	}
 
-	if inv := economy.Inventory(user); !inv.Equal(xinv) {
+	if inv := e.Inventory(user); !inv.Equal(xinv) {
 		t.Fatalf("expected inventory %v, got %v", xinv, inv)
 	}
 
-	if err := economy.Transfer(MakeTransferID(), tf); err == nil {
+	if err := e.Transfer(MakeTransferID(), tf); err == nil {
 		t.Fatalf("expected error on duplicate transfer, got nil")
 	}
 }
 
 func TestCreatePlace(t *testing.T) {
 	name := os.TempDir() + "/ledger_test.db"
+	os.Remove(name)
 	defer os.Remove(name)
 
-	economy, err := NewEconomy(name)
+	e, err := NewEconomy(name)
 	if err != nil {
 		t.Fatalf("create economy: %v", err)
 	}
-	defer economy.Close()
+	defer e.Close()
 
 	currency2 := Currency{2}
 	user3 := User{"user3"}
 
-	mintTest(economy, t, currency2, user3)
-	createPlaceTest(economy, t, user3, currency2)
+	mintTest(e, t, currency2, user3)
+	createPlaceTest(e, t, user3, currency2)
+}
+
+func TestReopen(t *testing.T) {
+	name := os.TempDir() + "/ledger_test.db"
+	os.Remove(name)
+	defer os.Remove(name)
+
+	currency3 := Currency{3}
+	user4 := User{"user4"}
+
+	const qty = 100
+
+	for i := Quantity(qty); i < 10*qty; i += qty {
+		e, err := NewEconomy(name)
+		if err != nil {
+			t.Fatalf("create economy: %v", err)
+		}
+
+		tf := Transfer{
+			{Owner: user4},
+			{Items: Items{
+				Many: ItemsMany{
+					currency3: qty,
+				},
+			}},
+		}
+
+		if err := e.Transfer(MakeTransferID(), tf); err != nil {
+			t.Fatalf("transfer: %v", err)
+		}
+
+		xinv := Items{
+			Many: ItemsMany{
+				currency3: i,
+			},
+		}
+
+		if inv := e.Inventory(user4); !inv.Equal(xinv) {
+			t.Fatalf("expected inventory %v, got %v", xinv, inv)
+		}
+		e.Close()
+	}
 }
