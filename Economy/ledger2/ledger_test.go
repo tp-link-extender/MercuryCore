@@ -366,3 +366,46 @@ func TestReopen(t *testing.T) {
 		e.Close()
 	}
 }
+
+func TestAbstractions(t *testing.T) {
+	name := os.TempDir() + "/ledger_test.db"
+	os.Remove(name)
+	defer os.Remove(name)
+
+	e, err := NewEconomy(name)
+	if err != nil {
+		t.Fatalf("create economy: %v", err)
+	}
+	defer e.Close()
+
+	ea := EconomyAbstraction{
+		economy:              e,
+		placePrice:           10,
+		groupPrice:           10,
+		limitedSourcePrice:   100,
+		unlimitedSourcePrice: 10,
+	}
+
+	user := User{"testuser"}
+
+	if _, err := ea.MintCurrency(user, 100); err != nil {
+		t.Fatalf("MintCurrency: %v", err)
+	}
+	
+	if ea.Balance(user) != 100 {
+		t.Fatalf("expected balance 100, got %d", ea.Balance(user))
+	}
+
+	place, _, err := ea.CreatePlace(user)
+	if err != nil {
+		t.Fatalf("CreatePlace: %v", err)
+	}
+
+	if ea.Balance(user) != 90 {
+		t.Fatalf("expected balance 90, got %d", ea.Balance(user))
+	}
+
+	if !ea.OwnsOne(user, place) {
+		t.Fatalf("expected user to own place %v", place)
+	}
+}

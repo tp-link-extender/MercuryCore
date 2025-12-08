@@ -405,9 +405,23 @@ func (e *Economy) Transfer(tid TransferID, t Transfer) error {
 
 // Abstractions
 type EconomyAbstraction struct {
-	e                                                                *Economy
+	economy                                                          *Economy
 	defaultCurrency                                                  Currency
 	placePrice, groupPrice, limitedSourcePrice, unlimitedSourcePrice Quantity
+}
+
+func (ea *EconomyAbstraction) OwnsOne(user Owner, item CanOwnOne) bool {
+	inv := ea.economy.Inventory(user)
+	return inv.One.Has(item)
+}
+
+func (ea *EconomyAbstraction) OwnsMany(user Owner, item CanOwnMany) Quantity {
+	inv := ea.economy.Inventory(user)
+	return inv.Many[item]
+}
+
+func (ea *EconomyAbstraction) Balance(user Owner) Quantity {
+	return ea.OwnsMany(user, ea.defaultCurrency)
 }
 
 func (ea *EconomyAbstraction) MintCurrency(user User, amount Quantity) (TransferID, error) {
@@ -421,7 +435,7 @@ func (ea *EconomyAbstraction) MintCurrency(user User, amount Quantity) (Transfer
 	}
 
 	tid := MakeTransferID()
-	if err := ea.e.Transfer(tid, tf); err != nil {
+	if err := ea.economy.Transfer(tid, tf); err != nil {
 		return TransferID{}, fmt.Errorf("mint currency transfer %v: %w", tid, err)
 	}
 
@@ -448,7 +462,7 @@ func (ea *EconomyAbstraction) CreateLimitedSource(user User) (LimitedSource, Tra
 	}
 
 	tid := MakeTransferID()
-	if err := ea.e.Transfer(tid, tf); err != nil {
+	if err := ea.economy.Transfer(tid, tf); err != nil {
 		return LimitedSource{}, TransferID{}, fmt.Errorf("create limited source transfer %v: %w", tid, err)
 	}
 
@@ -475,7 +489,7 @@ func (ea *EconomyAbstraction) CreateUnlimitedSource(user User) (UnlimitedSource,
 	}
 
 	tid := MakeTransferID()
-	if err := ea.e.Transfer(tid, tf); err != nil {
+	if err := ea.economy.Transfer(tid, tf); err != nil {
 		return UnlimitedSource{}, TransferID{}, fmt.Errorf("create unlimited source transfer %v: %w", tid, err)
 	}
 
@@ -503,7 +517,7 @@ func (ea *EconomyAbstraction) CreatePlace(user User) (Place, TransferID, error) 
 	}
 
 	tid := MakeTransferID()
-	if err := ea.e.Transfer(tid, tf); err != nil {
+	if err := ea.economy.Transfer(tid, tf); err != nil {
 		return Place{}, TransferID{}, fmt.Errorf("create place transfer %v: %w", tid, err)
 	}
 
@@ -530,7 +544,7 @@ func (ea *EconomyAbstraction) CreateGroup(user User) (Group, TransferID, error) 
 	}
 
 	tid := MakeTransferID()
-	if err := ea.e.Transfer(tid, tf); err != nil {
+	if err := ea.economy.Transfer(tid, tf); err != nil {
 		return Group{}, TransferID{}, fmt.Errorf("create group transfer %v: %w", tid, err)
 	}
 
