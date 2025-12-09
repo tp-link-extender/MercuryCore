@@ -513,6 +513,7 @@ func TestAbstractions2(t *testing.T) {
 		}
 	}
 
+	const price1 = 15
 	source, _, err := e.CreateUnlimitedSource(users[0])
 	if err != nil {
 		t.Fatalf("CreateUnlimitedSource: %v", err)
@@ -520,5 +521,26 @@ func TestAbstractions2(t *testing.T) {
 
 	if !e.OwnsOne(users[0], source) {
 		t.Fatalf("expected user to own source %v", source)
+	}
+
+	if e.Balance(users[0]) != 90 {
+		t.Fatalf("expected balance 90, got %d", e.Balance(users[0]))
+	}
+
+	asset, _, err := e.BuyUnlimitedAsset(users[1], source, price1)
+	if err != nil {
+		t.Fatalf("BuyUnlimitedAsset: %v", err)
+	}
+
+	if !e.OwnsOne(users[1], asset) {
+		t.Fatalf("expected user to own asset %v", asset)
+	}
+
+	if e.Balance(users[1]) != 85 {
+		t.Fatalf("expected balance 85, got %d", e.Balance(users[1]))
+	}
+
+	if e.Balance(users[0]) != 105 {
+		t.Fatalf("expected balance 105, got %d", e.Balance(users[0]))
 	}
 }
