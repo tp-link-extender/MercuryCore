@@ -378,7 +378,7 @@ func TestAbstractions(t *testing.T) {
 	}
 	defer l.Close()
 
-	ea := EconomyAbstraction{
+	e := Economy{
 		ledger:               l,
 		placePrice:           10,
 		groupPrice:           10,
@@ -388,24 +388,24 @@ func TestAbstractions(t *testing.T) {
 
 	user := User{"testuser"}
 
-	if _, err := ea.MintCurrency(user, 100); err != nil {
+	if _, err := e.MintCurrency(user, 100); err != nil {
 		t.Fatalf("MintCurrency: %v", err)
 	}
 
-	if ea.Balance(user) != 100 {
-		t.Fatalf("expected balance 100, got %d", ea.Balance(user))
+	if e.Balance(user) != 100 {
+		t.Fatalf("expected balance 100, got %d", e.Balance(user))
 	}
 
-	place, _, err := ea.CreatePlace(user)
+	place, _, err := e.CreatePlace(user)
 	if err != nil {
 		t.Fatalf("CreatePlace: %v", err)
 	}
 
-	if ea.Balance(user) != 90 {
-		t.Fatalf("expected balance 90, got %d", ea.Balance(user))
+	if e.Balance(user) != 90 {
+		t.Fatalf("expected balance 90, got %d", e.Balance(user))
 	}
 
-	if !ea.OwnsOne(user, place) {
+	if !e.OwnsOne(user, place) {
 		t.Fatalf("expected user to own place %v", place)
 	}
 }

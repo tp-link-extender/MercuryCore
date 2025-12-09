@@ -462,47 +462,47 @@ func (l *Ledger) Transfer(tid TransferID, t Transfer) error {
 }
 
 // Abstractions
-type EconomyAbstraction struct {
+type Economy struct {
 	ledger                                                           *Ledger
 	defaultCurrency                                                  Currency
 	placePrice, groupPrice, limitedSourcePrice, unlimitedSourcePrice Quantity
 }
 
-func (ea *EconomyAbstraction) OwnsOne(user Owner, item CanOwnOne) bool {
+func (e *Economy) OwnsOne(user Owner, item CanOwnOne) bool {
 	// ea ledger
 	// it's in the name
-	inv := ea.ledger.Inventory(user)
+	inv := e.ledger.Inventory(user)
 	return inv.One.Has(item)
 }
 
-func (ea *EconomyAbstraction) OwnsMany(user Owner, item CanOwnMany) Quantity {
-	inv := ea.ledger.Inventory(user)
+func (e *Economy) OwnsMany(user Owner, item CanOwnMany) Quantity {
+	inv := e.ledger.Inventory(user)
 	return inv.Many[item]
 }
 
-func (ea *EconomyAbstraction) Balance(user Owner) Quantity {
-	return ea.OwnsMany(user, ea.defaultCurrency)
+func (e *Economy) Balance(user Owner) Quantity {
+	return e.OwnsMany(user, e.defaultCurrency)
 }
 
-func (ea *EconomyAbstraction) MintCurrency(user User, amount Quantity) (TransferID, error) {
+func (e *Economy) MintCurrency(user User, amount Quantity) (TransferID, error) {
 	tf := Transfer{
 		{Owner: user},
 		{Items: Items{
 			Many: ItemsMany{
-				ea.defaultCurrency: amount,
+				e.defaultCurrency: amount,
 			},
 		}},
 	}
 
 	tid := MakeTransferID()
-	if err := ea.ledger.Transfer(tid, tf); err != nil {
+	if err := e.ledger.Transfer(tid, tf); err != nil {
 		return TransferID{}, fmt.Errorf("mint currency transfer %v: %w", tid, err)
 	}
 
 	return tid, nil
 }
 
-func (ea *EconomyAbstraction) CreateLimitedSource(user User) (LimitedSource, TransferID, error) {
+func (e *Economy) CreateLimitedSource(user User) (LimitedSource, TransferID, error) {
 	src := RandLimitedSource()
 
 	tf := Transfer{
@@ -510,7 +510,7 @@ func (ea *EconomyAbstraction) CreateLimitedSource(user User) (LimitedSource, Tra
 			Owner: user,
 			Items: Items{
 				Many: ItemsMany{
-					ea.defaultCurrency: ea.limitedSourcePrice,
+					e.defaultCurrency: e.limitedSourcePrice,
 				},
 			},
 		},
@@ -522,14 +522,14 @@ func (ea *EconomyAbstraction) CreateLimitedSource(user User) (LimitedSource, Tra
 	}
 
 	tid := MakeTransferID()
-	if err := ea.ledger.Transfer(tid, tf); err != nil {
+	if err := e.ledger.Transfer(tid, tf); err != nil {
 		return LimitedSource{}, TransferID{}, fmt.Errorf("create limited source transfer %v: %w", tid, err)
 	}
 
 	return src, tid, nil
 }
 
-func (ea *EconomyAbstraction) CreateUnlimitedSource(user User) (UnlimitedSource, TransferID, error) {
+func (e *Economy) CreateUnlimitedSource(user User) (UnlimitedSource, TransferID, error) {
 	src := RandUnlimitedSource()
 
 	tf := Transfer{
@@ -537,7 +537,7 @@ func (ea *EconomyAbstraction) CreateUnlimitedSource(user User) (UnlimitedSource,
 			Owner: user,
 			Items: Items{
 				Many: ItemsMany{
-					ea.defaultCurrency: ea.unlimitedSourcePrice,
+					e.defaultCurrency: e.unlimitedSourcePrice,
 				},
 			},
 		},
@@ -549,14 +549,14 @@ func (ea *EconomyAbstraction) CreateUnlimitedSource(user User) (UnlimitedSource,
 	}
 
 	tid := MakeTransferID()
-	if err := ea.ledger.Transfer(tid, tf); err != nil {
+	if err := e.ledger.Transfer(tid, tf); err != nil {
 		return UnlimitedSource{}, TransferID{}, fmt.Errorf("create unlimited source transfer %v: %w", tid, err)
 	}
 
 	return src, tid, nil
 }
 
-func (ea *EconomyAbstraction) CreatePlace(user User) (Place, TransferID, error) {
+func (e *Economy) CreatePlace(user User) (Place, TransferID, error) {
 	place := RandPlace()
 
 	// tf (the fuck)
@@ -565,7 +565,7 @@ func (ea *EconomyAbstraction) CreatePlace(user User) (Place, TransferID, error) 
 			Owner: user,
 			Items: Items{
 				Many: ItemsMany{
-					ea.defaultCurrency: ea.placePrice,
+					e.defaultCurrency: e.placePrice,
 				},
 			},
 		},
@@ -577,14 +577,14 @@ func (ea *EconomyAbstraction) CreatePlace(user User) (Place, TransferID, error) 
 	}
 
 	tid := MakeTransferID()
-	if err := ea.ledger.Transfer(tid, tf); err != nil {
+	if err := e.ledger.Transfer(tid, tf); err != nil {
 		return Place{}, TransferID{}, fmt.Errorf("create place transfer %v: %w", tid, err)
 	}
 
 	return place, tid, nil
 }
 
-func (ea *EconomyAbstraction) CreateGroup(user User) (Group, TransferID, error) {
+func (e *Economy) CreateGroup(user User) (Group, TransferID, error) {
 	group := RandGroup()
 
 	tf := Transfer{
@@ -592,7 +592,7 @@ func (ea *EconomyAbstraction) CreateGroup(user User) (Group, TransferID, error) 
 			Owner: user,
 			Items: Items{
 				Many: ItemsMany{
-					ea.defaultCurrency: ea.groupPrice,
+					e.defaultCurrency: e.groupPrice,
 				},
 			},
 		},
@@ -604,7 +604,7 @@ func (ea *EconomyAbstraction) CreateGroup(user User) (Group, TransferID, error) 
 	}
 
 	tid := MakeTransferID()
-	if err := ea.ledger.Transfer(tid, tf); err != nil {
+	if err := e.ledger.Transfer(tid, tf); err != nil {
 		return Group{}, TransferID{}, fmt.Errorf("create group transfer %v: %w", tid, err)
 	}
 
