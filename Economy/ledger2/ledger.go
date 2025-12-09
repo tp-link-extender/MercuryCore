@@ -184,35 +184,22 @@ func (t Transfer) Swap() Transfer {
 }
 
 func isSale(t Transfer) bool {
-	if _, ok := t[0].Owner.(User); !ok {
-		return false
-	}
-
-	switch t[1].Owner.(type) {
+	switch t[0].Owner.(type) {
 	case LimitedSource, UnlimitedSource:
 	default:
 		return false
 	}
 
-	// check that one side is only currency
-	if len(t[0].Items.One) > 0 {
-		return false
-	}
-
-	for item := range t[1].Items.Many {
-		if _, ok := item.(Currency); !ok {
-			return false
-		}
-	}
-
-	return true
+	_, ok := t[1].Owner.(User)
+	return ok
 }
 
 // This is how an angel dies
 // I blame it on my own sick pride
 // Blame it on my ADD, baby
 func (t Transfer) Sale() bool {
-	if t[0].Owner == nil || t[1].Owner == nil || t[0].Items.IsEmpty() || t[1].Items.IsEmpty() {
+	// items could be empty on one side if the item is free or smth
+	if t[0].Owner == nil || t[1].Owner == nil || t[0].Items.IsEmpty() && t[1].Items.IsEmpty() {
 		return false
 	}
 
@@ -392,23 +379,24 @@ func (s *State) ForceApply(t Transfer) {
 			oOne := s.GetOwnersOne(item)
 			oOne.Add(other.Owner)
 		}
-		for item, qty := range send.Items.Many {
-			if sale {
-				if _, ok := item.(Currency); ok {
-					switch src := other.Owner.(type) {
-					case LimitedSource:
-						s.addToSourceOwner(src, item, qty)
-						continue
-					case UnlimitedSource:
-						s.addToSourceOwner(src, item, qty)
-						continue
-					}
-				}
-			}
 
-			dst.Many.Add(item, qty)
-			oMany := s.GetOwnersMany(item)
-			oMany.Add(other.Owner, qty)
+		if !sale {
+			for item, qty := range send.Items.Many {
+				dst.Many.Add(item, qty)
+				oMany := s.GetOwnersMany(item)
+				oMany.Add(other.Owner, qty)
+			}
+			continue
+		}
+
+		// TODO:
+		// If the source owner is a user, this is handled correctly, items are added to their inventory
+		// If the source owner is a group, this should work fine (funds should have to be withdrawn from groups manually)
+		// we could make it the same for sources though I don't really see why
+		for item, qty := range send.Items.Many {
+			if src, ok := other.Owner.(CanOwnOne); ok {
+				s.addToSourceOwner(src, item, qty)
+			}
 		}
 		// fmt.Printf("Ending inventory for %v: %v\n", other.Owner, dst)
 		// fmt.Printf("Ending inventory for %v: %v\n", other.Owner, s.GetInventory(other.Owner))
