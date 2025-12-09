@@ -7,8 +7,8 @@ type Type uint8
 const (
 	// number ID types
 
-	TypeNil      Type = iota
-	TypeCurrency Type = iota
+	TypeNil Type = iota
+	TypeCurrency
 	TypeLimitedAsset
 	TypeUnlimitedAsset
 	TypeLimitedSource

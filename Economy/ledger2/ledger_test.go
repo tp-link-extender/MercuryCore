@@ -208,7 +208,7 @@ func createSourceTest(l *Ledger, t *testing.T, user User, currency Currency) Unl
 	return src
 }
 
-func purchaseAssetTest(l *Ledger, t *testing.T, user User, currency Currency, src UnlimitedSource) {
+func buyAssetTest(l *Ledger, t *testing.T, user User, currency Currency, src UnlimitedSource) {
 	tf := Transfer{
 		{
 			Owner: user,
@@ -263,7 +263,7 @@ func TestCreateSource(t *testing.T) {
 
 	mintTest(l, t, currency1, user2)
 	src := createSourceTest(l, t, user2, currency1)
-	purchaseAssetTest(l, t, user2, currency1, src)
+	buyAssetTest(l, t, user2, currency1, src)
 }
 
 func createPlaceTest(l *Ledger, t *testing.T, user User, currency Currency) {
@@ -324,6 +324,7 @@ func TestCreatePlace(t *testing.T) {
 	mintTest(l, t, currency2, user3)
 	createPlaceTest(l, t, user3, currency2)
 }
+
 func createGroupTest(l *Ledger, t *testing.T, user User, currency Currency) {
 	group := RandGroup()
 
@@ -425,7 +426,7 @@ func TestReopen(t *testing.T) {
 	}
 }
 
-func TestAbstractions(t *testing.T) {
+func TestAbstractions1(t *testing.T) {
 	name := os.TempDir() + "/ledger_test.db"
 	os.Remove(name)
 	defer os.Remove(name)
@@ -465,5 +466,59 @@ func TestAbstractions(t *testing.T) {
 
 	if !e.OwnsOne(user, place) {
 		t.Fatalf("expected user to own place %v", place)
+	}
+
+	group, _, err := e.CreateGroup(user)
+	if err != nil {
+		t.Fatalf("CreateGroup: %v", err)
+	}
+
+	if e.Balance(user) != 80 {
+		t.Fatalf("expected balance 80, got %d", e.Balance(user))
+	}
+
+	if !e.OwnsOne(user, group) {
+		t.Fatalf("expected user to own group %v", group)
+	}
+}
+
+func TestAbstractions2(t *testing.T) {
+	name := os.TempDir() + "/ledger_test.db"
+	os.Remove(name)
+	defer os.Remove(name)
+
+	l, err := NewLedger(name)
+	if err != nil {
+		t.Fatalf("create ledger: %v", err)
+	}
+	defer l.Close()
+
+	e := Economy{
+		ledger:               l,
+		placePrice:           10,
+		groupPrice:           10,
+		limitedSourcePrice:   100,
+		unlimitedSourcePrice: 10,
+	}
+
+	users := [3]User{
+		{"user0"},
+		{"user1"},
+		{"user2"},
+	}
+
+	for _, user := range users {
+		if _, err := e.MintCurrency(user, 100); err != nil {
+			t.Fatalf("MintCurrency: %v", err)
+		}
+	}
+
+	source, _, err := e.CreateUnlimitedSource(users[0])
+	if err != nil {
+		t.Fatalf("CreateUnlimitedSource: %v", err)
+	}
+
+	if !e.OwnsOne(users[0], source) {
+		t.Fatalf("expected user to own source %v", source)
 	}
 }

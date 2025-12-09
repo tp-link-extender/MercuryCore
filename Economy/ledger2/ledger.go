@@ -236,11 +236,6 @@ func makeState() State {
 }
 
 func (s *State) GetInventory(id Owner) *Items {
-	// idk if we really want to do this
-	// if !id.CanOwn() {
-	// 	return nil, fmt.Errorf("%v cannot own items", id)
-	// }
-
 	inv, ok := s.ownerItems[id]
 	if !ok {
 		inv = &Items{}
@@ -480,6 +475,19 @@ func (e *Economy) OwnsMany(user Owner, item CanOwnMany) Quantity {
 	return inv.Many[item]
 }
 
+func (e *Economy) OwnersOne(item CanOwnOne) OwnersOne {
+	return *e.ledger.state.GetOwnersOne(item)
+}
+
+func (e *Economy) OwnersMany(item CanOwnMany) OwnersMany {
+	return *e.ledger.state.GetOwnersMany(item)
+}
+
+func (e *Economy) Inventory(user Owner) Items {
+	inv := *e.ledger.Inventory(user)
+	return inv
+}
+
 func (e *Economy) Balance(user Owner) Quantity {
 	return e.OwnsMany(user, e.defaultCurrency)
 }
@@ -609,4 +617,64 @@ func (e *Economy) CreateGroup(user User) (Group, TransferID, error) {
 	}
 
 	return group, tid, nil
+}
+
+func (e *Economy) BuyUnlimitedAsset(user User, src UnlimitedSource, priceEach Quantity) (UnlimitedAsset, TransferID, error) {
+	asset := src.Create()
+
+	tf := Transfer{
+		{
+			Owner: user,
+			Items: Items{
+				Many: ItemsMany{
+					e.defaultCurrency: priceEach,
+				},
+			},
+		},
+		{
+			Owner: src,
+			Items: Items{
+				One: ItemsOne{
+					asset: {},
+				},
+			},
+		},
+	}
+
+	tid := MakeTransferID()
+	if err := e.ledger.Transfer(tid, tf); err != nil {
+		return UnlimitedAsset{}, TransferID{}, fmt.Errorf("buy unlimited asset transfer %v: %w", tid, err)
+	}
+
+	return asset, tid, nil
+}
+
+func (e *Economy) BuyLimitedAsset(user User, src LimitedSource, priceEach, qty Quantity) (LimitedAsset, TransferID, error) {
+	asset := src.Create()
+
+	tf := Transfer{
+		{
+			Owner: user,
+			Items: Items{
+				Many: ItemsMany{
+					e.defaultCurrency: priceEach * qty,
+				},
+			},
+		},
+		{
+			Owner: src,
+			Items: Items{
+				Many: ItemsMany{
+					asset: qty,
+				},
+			},
+		},
+	}
+
+	tid := MakeTransferID()
+	if err := e.ledger.Transfer(tid, tf); err != nil {
+		return LimitedAsset{}, TransferID{}, fmt.Errorf("buy limited asset transfer %v: %w", tid, err)
+	}
+
+	return asset, tid, nil
 }
