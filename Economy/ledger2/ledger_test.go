@@ -324,6 +324,64 @@ func TestCreatePlace(t *testing.T) {
 	mintTest(l, t, currency2, user3)
 	createPlaceTest(l, t, user3, currency2)
 }
+func createGroupTest(l *Ledger, t *testing.T, user User, currency Currency) {
+	group := RandGroup()
+
+	tf := Transfer{
+		{
+			Owner: user,
+			Items: Items{
+				Many: ItemsMany{
+					currency: 10,
+				},
+			},
+		},
+		{Items: Items{
+			One: ItemsOne{
+				group: {},
+			},
+		}},
+	}
+
+	if err := l.Transfer(MakeTransferID(), tf); err != nil {
+		t.Fatalf("transfer: %v", err)
+	}
+
+	xinv := Items{
+		One: ItemsOne{
+			group: {},
+		},
+		Many: ItemsMany{
+			currency: 90,
+		},
+	}
+
+	if inv := l.Inventory(user); !inv.Equal(xinv) {
+		t.Fatalf("expected inventory %v, got %v", xinv, inv)
+	}
+
+	if err := l.Transfer(MakeTransferID(), tf); err == nil {
+		t.Fatalf("expected error on duplicate transfer, got nil")
+	}
+}
+
+func TestCreateGroup(t *testing.T) {
+	name := os.TempDir() + "/ledger_test.db"
+	os.Remove(name)
+	defer os.Remove(name)
+
+	l, err := NewLedger(name)
+	if err != nil {
+		t.Fatalf("create ledger: %v", err)
+	}
+	defer l.Close()
+
+	currency2 := Currency{2}
+	user3 := User{"user3"}
+
+	mintTest(l, t, currency2, user3)
+	createGroupTest(l, t, user3, currency2)
+}
 
 func TestReopen(t *testing.T) {
 	name := os.TempDir() + "/ledger_test.db"

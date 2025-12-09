@@ -215,7 +215,7 @@ func (i User) ID() string {
 	return i.id
 }
 
-func (User) Owner()  {}
+func (User) Owner() {}
 
 type Group struct {
 	id string
@@ -234,6 +234,7 @@ func (i Group) ID() string {
 }
 
 func (Group) CanOwnOne() {}
+func (Group) Mintable()  {}
 func (Group) Owner()     {}
 func (Group) Single()    {}
 
