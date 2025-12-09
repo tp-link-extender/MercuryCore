@@ -118,7 +118,8 @@ func (is ItemsOne) Has(i CanOwnOne) bool {
 
 func (is *ItemsOne) Add(i CanOwnOne) {
 	if *is == nil {
-		*is = make(ItemsOne)
+		*is = ItemsOne{i: struct{}{}}
+		return
 	}
 	(*is)[i] = struct{}{}
 }
@@ -186,7 +187,8 @@ func (i ItemsMany) Equal(other ItemsMany) bool {
 
 func (i *ItemsMany) Add(item CanOwnMany, qty Quantity) {
 	if *i == nil {
-		*i = make(ItemsMany)
+		*i = ItemsMany{item: qty}
+		return
 	}
 	(*i)[item] += qty
 }

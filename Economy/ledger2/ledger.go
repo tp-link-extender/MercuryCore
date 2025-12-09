@@ -109,7 +109,7 @@ func (s Send) UnlimitedSourceAssetMint() bool {
 
 	return s.Items.Equal(Items{
 		One: ItemsOne{
-			UnlimitedAsset{ous.id}: {},
+			ous.Create(): {},
 		},
 	})
 }
@@ -201,7 +201,39 @@ func DeserialiseTransfer(r io.Reader) (t Transfer, err error) {
 	return
 }
 
-type State map[Owner]*Items
+type OwnersOne map[Owner]struct{}
+
+func (os *OwnersOne) Add(o Owner) {
+	if *os == nil {
+		*os = OwnersOne{o: struct{}{}}
+		return
+	}
+	(*os)[o] = struct{}{}
+}
+
+type OwnersMany map[Owner]Quantity
+
+func (os *OwnersMany) Add(o Owner, qty Quantity) {
+	if *os == nil {
+		*os = OwnersMany{o: qty}
+		return
+	}
+	(*os)[o] += qty
+}
+
+type State struct {
+	ownerItems     map[Owner]*Items
+	itemOwnersOne  map[CanOwnOne]*OwnersOne
+	itemOwnersMany map[CanOwnMany]*OwnersMany
+}
+
+func makeState() State {
+	return State{
+		ownerItems: make(map[Owner]*Items),
+		itemOwnersOne: make(map[CanOwnOne]*OwnersOne),
+		itemOwnersMany: make(map[CanOwnMany]*OwnersMany),
+	}
+}
 
 func (s *State) GetInventory(id Owner) *Items {
 	// idk if we really want to do this
@@ -209,10 +241,10 @@ func (s *State) GetInventory(id Owner) *Items {
 	// 	return nil, fmt.Errorf("%v cannot own items", id)
 	// }
 
-	inv, ok := (*s)[id]
+	inv, ok := s.ownerItems[id]
 	if !ok {
 		inv = &Items{}
-		(*s)[id] = inv
+		s.ownerItems[id] = inv
 		return inv
 	}
 
@@ -221,8 +253,26 @@ func (s *State) GetInventory(id Owner) *Items {
 			delete(inv.Many, i)
 		}
 	}
-	(*s)[id] = inv
+	s.ownerItems[id] = inv
 	return inv
+}
+
+func (s *State) GetOwnersOne(item CanOwnOne) *OwnersOne {
+	owners, ok := s.itemOwnersOne[item]
+	if !ok {
+		owners = &OwnersOne{}
+		s.itemOwnersOne[item] = owners
+	}
+	return owners
+}
+
+func (s *State) GetOwnersMany(item CanOwnMany) *OwnersMany {
+	owners, ok := s.itemOwnersMany[item]
+	if !ok {
+		owners = &OwnersMany{}
+		s.itemOwnersMany[item] = owners
+	}
+	return owners
 }
 
 func (s State) CanApply(t Transfer) error {
@@ -269,9 +319,13 @@ func (s *State) ForceApply(t Transfer) {
 			src := s.GetInventory(send.Owner)
 			for item := range send.Items.One {
 				delete(src.One, item)
+				oOne := s.GetOwnersOne(item)
+				delete(*oOne, send.Owner)
 			}
 			for item, qty := range send.Items.Many {
 				src.Many[item] -= qty
+				oMany := s.GetOwnersMany(item)
+				(*oMany)[send.Owner] -= qty
 			}
 		}
 
@@ -285,9 +339,13 @@ func (s *State) ForceApply(t Transfer) {
 		// fmt.Printf("Starting inventory for %v: %v\n", other.Owner, dst)
 		for item := range send.Items.One {
 			dst.One.Add(item)
+			oOne := s.GetOwnersOne(item)
+			oOne.Add(other.Owner)
 		}
 		for item, qty := range send.Items.Many {
 			dst.Many.Add(item, qty)
+			oMany := s.GetOwnersMany(item)
+			oMany.Add(other.Owner, qty)
 		}
 		// fmt.Printf("Ending inventory for %v: %v\n", other.Owner, dst)
 		// fmt.Printf("Ending inventory for %v: %v\n", other.Owner, s.GetInventory(other.Owner))
@@ -332,7 +390,7 @@ func applyKVPair(state *State) func(k, v []byte) error {
 }
 
 func ReadState(db *bolt.DB) (State, error) {
-	state := make(State)
+	state := makeState()
 
 	err := db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket([]byte(bucketName))
@@ -365,7 +423,7 @@ func NewEconomy(dbPath string) (*Economy, error) {
 }
 
 func (e *Economy) Close() error {
-	e.state = nil
+	e.state = State{}
 	return e.db.Close()
 }
 

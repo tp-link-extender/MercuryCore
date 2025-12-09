@@ -55,10 +55,6 @@ type (
 		Item
 		Owner()
 	}
-	Single interface {
-		Item
-		Single()
-	}
 )
 
 func IsMintable(i Item) bool {
@@ -143,7 +139,7 @@ func (LimitedSource) Owner()     {}
 func (LimitedSource) Single()    {}
 
 func (i LimitedSource) Create() LimitedAsset {
-	return LimitedAsset{i.id}
+	return LimitedAsset(i)
 }
 
 func RandLimitedSource() LimitedSource {
@@ -172,7 +168,7 @@ func (UnlimitedSource) Owner()     {}
 func (UnlimitedSource) Single()    {}
 
 func (i UnlimitedSource) Create() UnlimitedAsset {
-	return UnlimitedAsset{i.id}
+	return UnlimitedAsset(i)
 }
 
 func RandUnlimitedSource() UnlimitedSource {
@@ -220,7 +216,6 @@ func (i User) ID() string {
 }
 
 func (User) Owner()  {}
-func (User) Single() {}
 
 type Group struct {
 	id string
