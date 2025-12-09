@@ -100,7 +100,6 @@ func (s Send) Equal(other Send) bool {
 	return s.Items.Equal(other.Items)
 }
 
-// TODO: also check if the unlimited source has the same ID as the asset itself
 func (s Send) UnlimitedSourceAssetMint() bool {
 	ous, ok := s.Owner.(UnlimitedSource)
 	if !ok {
@@ -178,6 +177,46 @@ func (t Transfer) Valid() error {
 		}
 	}
 	return nil
+}
+
+func (t Transfer) Swap() Transfer {
+	return Transfer{t[1], t[0]}
+}
+
+func isSale(t Transfer) bool {
+	if _, ok := t[0].Owner.(User); !ok {
+		return false
+	}
+
+	switch t[1].Owner.(type) {
+	case LimitedSource, UnlimitedSource:
+	default:
+		return false
+	}
+
+	// check that one side is only currency
+	if len(t[0].Items.One) > 0 {
+		return false
+	}
+
+	for item := range t[1].Items.Many {
+		if _, ok := item.(Currency); !ok {
+			return false
+		}
+	}
+
+	return true
+}
+
+// This is how an angel dies
+// I blame it on my own sick pride
+// Blame it on my ADD, baby
+func (t Transfer) Sale() bool {
+	if t[0].Owner == nil || t[1].Owner == nil || t[0].Items.IsEmpty() || t[1].Items.IsEmpty() {
+		return false
+	}
+
+	return isSale(t) || isSale(t.Swap())
 }
 
 func (t Transfer) Equal(other Transfer) bool {
@@ -307,8 +346,24 @@ func (s State) CanApply(t Transfer) error {
 	return nil
 }
 
+func (s *State) addToSourceOwner(src CanOwnOne, item CanOwnMany, qty Quantity) {
+	// add currency to to source owner
+	var oo Owner
+	for owner := range *s.GetOwnersOne(src) {
+		oo = owner
+		break
+	}
+	rdst := s.GetInventory(oo)
+
+	rdst.Many.Add(item, qty)
+	oMany := s.GetOwnersMany(item)
+	oMany.Add(oo, qty)
+}
+
 // ⚠️ DANGEROUS!! ⚠️ Make sure you've called CanApply first!
 func (s *State) ForceApply(t Transfer) {
+	sale := t.Sale()
+
 	for i, send := range t {
 		if send.Owner != nil {
 			src := s.GetInventory(send.Owner)
@@ -338,6 +393,19 @@ func (s *State) ForceApply(t Transfer) {
 			oOne.Add(other.Owner)
 		}
 		for item, qty := range send.Items.Many {
+			if sale {
+				if _, ok := item.(Currency); ok {
+					switch src := other.Owner.(type) {
+					case LimitedSource:
+						s.addToSourceOwner(src, item, qty)
+						continue
+					case UnlimitedSource:
+						s.addToSourceOwner(src, item, qty)
+						continue
+					}
+				}
+			}
+
 			dst.Many.Add(item, qty)
 			oMany := s.GetOwnersMany(item)
 			oMany.Add(other.Owner, qty)
@@ -619,7 +687,7 @@ func (e *Economy) CreateGroup(user User) (Group, TransferID, error) {
 	return group, tid, nil
 }
 
-func (e *Economy) BuyUnlimitedAsset(user User, src UnlimitedSource, priceEach Quantity) (UnlimitedAsset, TransferID, error) {
+func (e *Economy) BuyUnlimitedAsset(user User, src UnlimitedSource, price Quantity) (UnlimitedAsset, TransferID, error) {
 	asset := src.Create()
 
 	tf := Transfer{
@@ -627,7 +695,7 @@ func (e *Economy) BuyUnlimitedAsset(user User, src UnlimitedSource, priceEach Qu
 			Owner: user,
 			Items: Items{
 				Many: ItemsMany{
-					e.defaultCurrency: priceEach,
+					e.defaultCurrency: price,
 				},
 			},
 		},

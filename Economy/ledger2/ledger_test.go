@@ -197,7 +197,7 @@ func createSourceTest(l *Ledger, t *testing.T, user User, currency Currency) Unl
 			src: {},
 		},
 		Many: ItemsMany{
-			currency: 50,
+			currency: 50, // user bought asset from themselves, so balance unchanged
 		},
 	}
 
@@ -238,7 +238,7 @@ func buyAssetTest(l *Ledger, t *testing.T, user User, currency Currency, src Unl
 			src.Create(): {},
 		},
 		Many: ItemsMany{
-			currency: 40,
+			currency: 50,
 		},
 	}
 
@@ -542,5 +542,9 @@ func TestAbstractions2(t *testing.T) {
 
 	if e.Balance(users[0]) != 105 {
 		t.Fatalf("expected balance 105, got %d", e.Balance(users[0]))
+	}
+
+	if e.Balance(source) != 0 {
+		t.Fatalf("expected source balance 0, got %d", e.Balance(source))
 	}
 }
