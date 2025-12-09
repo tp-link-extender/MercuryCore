@@ -229,8 +229,8 @@ type State struct {
 
 func makeState() State {
 	return State{
-		ownerItems: make(map[Owner]*Items),
-		itemOwnersOne: make(map[CanOwnOne]*OwnersOne),
+		ownerItems:     make(map[Owner]*Items),
+		itemOwnersOne:  make(map[CanOwnOne]*OwnersOne),
 		itemOwnersMany: make(map[CanOwnMany]*OwnersMany),
 	}
 }
@@ -403,12 +403,12 @@ func ReadState(db *bolt.DB) (State, error) {
 	return state, err
 }
 
-type Economy struct {
+type Ledger struct {
 	db    *bolt.DB
 	state State
 }
 
-func NewEconomy(dbPath string) (*Economy, error) {
+func NewLedger(dbPath string) (*Ledger, error) {
 	db, err := bolt.Open(dbPath, 0o600, nil)
 	if err != nil {
 		return nil, fmt.Errorf("open db: %w", err)
@@ -419,26 +419,26 @@ func NewEconomy(dbPath string) (*Economy, error) {
 		return nil, fmt.Errorf("read state: %w", err)
 	}
 
-	return &Economy{db, state}, nil
+	return &Ledger{db, state}, nil
 }
 
-func (e *Economy) Close() error {
-	e.state = State{}
-	return e.db.Close()
+func (l *Ledger) Close() error {
+	l.state = State{}
+	return l.db.Close()
 }
 
-func (e *Economy) Inventory(id Owner) *Items {
-	return e.state.GetInventory(id)
+func (l *Ledger) Inventory(id Owner) *Items {
+	return l.state.GetInventory(id)
 }
 
-func (e *Economy) Transfer(tid TransferID, t Transfer) error {
+func (l *Ledger) Transfer(tid TransferID, t Transfer) error {
 	// Process the transfer
-	if err := e.state.CanApply(t); err != nil {
+	if err := l.state.CanApply(t); err != nil {
 		return fmt.Errorf("validate transfer: %w", err)
 	}
 
 	// Append the transfer to the database
-	err := e.db.Update(func(tx *bolt.Tx) error {
+	err := l.db.Update(func(tx *bolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists([]byte(bucketName))
 		if err != nil {
 			return fmt.Errorf("create bucket: %w", err)
@@ -457,24 +457,26 @@ func (e *Economy) Transfer(tid TransferID, t Transfer) error {
 	}
 
 	// Apply the transfer to the in-memory state
-	e.state.ForceApply(t)
+	l.state.ForceApply(t)
 	return nil
 }
 
 // Abstractions
 type EconomyAbstraction struct {
-	economy                                                          *Economy
+	ledger                                                           *Ledger
 	defaultCurrency                                                  Currency
 	placePrice, groupPrice, limitedSourcePrice, unlimitedSourcePrice Quantity
 }
 
 func (ea *EconomyAbstraction) OwnsOne(user Owner, item CanOwnOne) bool {
-	inv := ea.economy.Inventory(user)
+	// ea ledger
+	// it's in the name
+	inv := ea.ledger.Inventory(user)
 	return inv.One.Has(item)
 }
 
 func (ea *EconomyAbstraction) OwnsMany(user Owner, item CanOwnMany) Quantity {
-	inv := ea.economy.Inventory(user)
+	inv := ea.ledger.Inventory(user)
 	return inv.Many[item]
 }
 
@@ -493,7 +495,7 @@ func (ea *EconomyAbstraction) MintCurrency(user User, amount Quantity) (Transfer
 	}
 
 	tid := MakeTransferID()
-	if err := ea.economy.Transfer(tid, tf); err != nil {
+	if err := ea.ledger.Transfer(tid, tf); err != nil {
 		return TransferID{}, fmt.Errorf("mint currency transfer %v: %w", tid, err)
 	}
 
@@ -520,7 +522,7 @@ func (ea *EconomyAbstraction) CreateLimitedSource(user User) (LimitedSource, Tra
 	}
 
 	tid := MakeTransferID()
-	if err := ea.economy.Transfer(tid, tf); err != nil {
+	if err := ea.ledger.Transfer(tid, tf); err != nil {
 		return LimitedSource{}, TransferID{}, fmt.Errorf("create limited source transfer %v: %w", tid, err)
 	}
 
@@ -547,7 +549,7 @@ func (ea *EconomyAbstraction) CreateUnlimitedSource(user User) (UnlimitedSource,
 	}
 
 	tid := MakeTransferID()
-	if err := ea.economy.Transfer(tid, tf); err != nil {
+	if err := ea.ledger.Transfer(tid, tf); err != nil {
 		return UnlimitedSource{}, TransferID{}, fmt.Errorf("create unlimited source transfer %v: %w", tid, err)
 	}
 
@@ -575,7 +577,7 @@ func (ea *EconomyAbstraction) CreatePlace(user User) (Place, TransferID, error) 
 	}
 
 	tid := MakeTransferID()
-	if err := ea.economy.Transfer(tid, tf); err != nil {
+	if err := ea.ledger.Transfer(tid, tf); err != nil {
 		return Place{}, TransferID{}, fmt.Errorf("create place transfer %v: %w", tid, err)
 	}
 
@@ -602,7 +604,7 @@ func (ea *EconomyAbstraction) CreateGroup(user User) (Group, TransferID, error) 
 	}
 
 	tid := MakeTransferID()
-	if err := ea.economy.Transfer(tid, tf); err != nil {
+	if err := ea.ledger.Transfer(tid, tf); err != nil {
 		return Group{}, TransferID{}, fmt.Errorf("create group transfer %v: %w", tid, err)
 	}
 

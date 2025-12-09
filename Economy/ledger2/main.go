@@ -5,17 +5,17 @@ import "fmt"
 func main() {
 	user := User{"user1"}
 
-	e, err := NewEconomy("mydb.db")
+	l, err := NewLedger("mydb.db")
 	if err != nil {
 		panic(err)
 	}
-	defer e.Close()
+	defer l.Close()
 
 	fmt.Println("Database opened successfully")
 	fmt.Println()
 
 	tid := MakeTransferID()
-	if err = e.Transfer(tid, Transfer{
+	if err = l.Transfer(tid, Transfer{
 		{Owner: user},
 		{Items: Items{
 			One: ItemsOne{
@@ -29,6 +29,6 @@ func main() {
 		panic(err)
 	}
 
-	inv := e.Inventory(user)
+	inv := l.Inventory(user)
 	fmt.Printf("Inventory for user %s: %+v\n", user, inv)
 }

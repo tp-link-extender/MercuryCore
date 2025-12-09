@@ -129,7 +129,7 @@ func TestEncodeDecode(t *testing.T) {
 	encTransfer(t, user, items)
 }
 
-func mintTest(e *Economy, t *testing.T, currency Currency, user User) {
+func mintTest(l *Ledger, t *testing.T, currency Currency, user User) {
 	xinv := Items{
 		Many: ItemsMany{
 			currency: 100,
@@ -141,11 +141,11 @@ func mintTest(e *Economy, t *testing.T, currency Currency, user User) {
 		{Items: xinv},
 	}
 
-	if err := e.Transfer(MakeTransferID(), tf); err != nil {
+	if err := l.Transfer(MakeTransferID(), tf); err != nil {
 		t.Fatalf("transfer: %v", err)
 	}
 
-	if inv := e.Inventory(user); !inv.Equal(xinv) {
+	if inv := l.Inventory(user); !inv.Equal(xinv) {
 		t.Fatalf("expected inventory %v, got %v", xinv, inv)
 	}
 }
@@ -156,20 +156,20 @@ func TestMint(t *testing.T) {
 	os.Remove(name)
 	defer os.Remove(name)
 
-	e, err := NewEconomy(name)
+	l, err := NewLedger(name)
 	if err != nil {
-		t.Fatalf("create economy: %v", err)
+		t.Fatalf("create ledger: %v", err)
 	}
-	defer e.Close()
+	defer l.Close()
 
 	// let there be rocks
 	currency := Currency{0}
 	user1 := User{"user1"}
 
-	mintTest(e, t, currency, user1)
+	mintTest(l, t, currency, user1)
 }
 
-func createSourceTest(e *Economy, t *testing.T, user User, currency Currency) UnlimitedSource {
+func createSourceTest(l *Ledger, t *testing.T, user User, currency Currency) UnlimitedSource {
 	src := UnlimitedSource{1}
 
 	tf := Transfer{
@@ -188,7 +188,7 @@ func createSourceTest(e *Economy, t *testing.T, user User, currency Currency) Un
 		}},
 	}
 
-	if err := e.Transfer(MakeTransferID(), tf); err != nil {
+	if err := l.Transfer(MakeTransferID(), tf); err != nil {
 		t.Fatalf("transfer: %v", err)
 	}
 
@@ -201,14 +201,14 @@ func createSourceTest(e *Economy, t *testing.T, user User, currency Currency) Un
 		},
 	}
 
-	if inv := e.Inventory(user); !inv.Equal(xinv) {
+	if inv := l.Inventory(user); !inv.Equal(xinv) {
 		t.Fatalf("expected inventory %v, got %v", xinv, inv)
 	}
 
 	return src
 }
 
-func purchaseAssetTest(e *Economy, t *testing.T, user User, currency Currency, src UnlimitedSource) {
+func purchaseAssetTest(l *Ledger, t *testing.T, user User, currency Currency, src UnlimitedSource) {
 	tf := Transfer{
 		{
 			Owner: user,
@@ -228,7 +228,7 @@ func purchaseAssetTest(e *Economy, t *testing.T, user User, currency Currency, s
 		},
 	}
 
-	if err := e.Transfer(MakeTransferID(), tf); err != nil {
+	if err := l.Transfer(MakeTransferID(), tf); err != nil {
 		t.Fatalf("transfer: %v", err)
 	}
 
@@ -242,7 +242,7 @@ func purchaseAssetTest(e *Economy, t *testing.T, user User, currency Currency, s
 		},
 	}
 
-	if inv := e.Inventory(user); !inv.Equal(xinv) {
+	if inv := l.Inventory(user); !inv.Equal(xinv) {
 		t.Fatalf("expected inventory %v, got %v", xinv, inv)
 	}
 }
@@ -252,21 +252,21 @@ func TestCreateSource(t *testing.T) {
 	os.Remove(name)
 	defer os.Remove(name)
 
-	e, err := NewEconomy(name)
+	l, err := NewLedger(name)
 	if err != nil {
-		t.Fatalf("create economy: %v", err)
+		t.Fatalf("create ledger: %v", err)
 	}
-	defer e.Close()
+	defer l.Close()
 
 	currency1 := Currency{1}
 	user2 := User{"user2"}
 
-	mintTest(e, t, currency1, user2)
-	src := createSourceTest(e, t, user2, currency1)
-	purchaseAssetTest(e, t, user2, currency1, src)
+	mintTest(l, t, currency1, user2)
+	src := createSourceTest(l, t, user2, currency1)
+	purchaseAssetTest(l, t, user2, currency1, src)
 }
 
-func createPlaceTest(e *Economy, t *testing.T, user User, currency Currency) {
+func createPlaceTest(l *Ledger, t *testing.T, user User, currency Currency) {
 	place := RandPlace()
 
 	tf := Transfer{
@@ -285,7 +285,7 @@ func createPlaceTest(e *Economy, t *testing.T, user User, currency Currency) {
 		}},
 	}
 
-	if err := e.Transfer(MakeTransferID(), tf); err != nil {
+	if err := l.Transfer(MakeTransferID(), tf); err != nil {
 		t.Fatalf("transfer: %v", err)
 	}
 
@@ -298,11 +298,11 @@ func createPlaceTest(e *Economy, t *testing.T, user User, currency Currency) {
 		},
 	}
 
-	if inv := e.Inventory(user); !inv.Equal(xinv) {
+	if inv := l.Inventory(user); !inv.Equal(xinv) {
 		t.Fatalf("expected inventory %v, got %v", xinv, inv)
 	}
 
-	if err := e.Transfer(MakeTransferID(), tf); err == nil {
+	if err := l.Transfer(MakeTransferID(), tf); err == nil {
 		t.Fatalf("expected error on duplicate transfer, got nil")
 	}
 }
@@ -312,17 +312,17 @@ func TestCreatePlace(t *testing.T) {
 	os.Remove(name)
 	defer os.Remove(name)
 
-	e, err := NewEconomy(name)
+	l, err := NewLedger(name)
 	if err != nil {
-		t.Fatalf("create economy: %v", err)
+		t.Fatalf("create ledger: %v", err)
 	}
-	defer e.Close()
+	defer l.Close()
 
 	currency2 := Currency{2}
 	user3 := User{"user3"}
 
-	mintTest(e, t, currency2, user3)
-	createPlaceTest(e, t, user3, currency2)
+	mintTest(l, t, currency2, user3)
+	createPlaceTest(l, t, user3, currency2)
 }
 
 func TestReopen(t *testing.T) {
@@ -336,9 +336,9 @@ func TestReopen(t *testing.T) {
 	const qty = 100
 
 	for i := Quantity(qty); i < 10*qty; i += qty {
-		e, err := NewEconomy(name)
+		l, err := NewLedger(name)
 		if err != nil {
-			t.Fatalf("create economy: %v", err)
+			t.Fatalf("create ledger: %v", err)
 		}
 
 		tf := Transfer{
@@ -350,7 +350,7 @@ func TestReopen(t *testing.T) {
 			}},
 		}
 
-		if err := e.Transfer(MakeTransferID(), tf); err != nil {
+		if err := l.Transfer(MakeTransferID(), tf); err != nil {
 			t.Fatalf("transfer: %v", err)
 		}
 
@@ -360,10 +360,10 @@ func TestReopen(t *testing.T) {
 			},
 		}
 
-		if inv := e.Inventory(user4); !inv.Equal(xinv) {
+		if inv := l.Inventory(user4); !inv.Equal(xinv) {
 			t.Fatalf("expected inventory %v, got %v", xinv, inv)
 		}
-		e.Close()
+		l.Close()
 	}
 }
 
@@ -372,14 +372,14 @@ func TestAbstractions(t *testing.T) {
 	os.Remove(name)
 	defer os.Remove(name)
 
-	e, err := NewEconomy(name)
+	l, err := NewLedger(name)
 	if err != nil {
-		t.Fatalf("create economy: %v", err)
+		t.Fatalf("create ledger: %v", err)
 	}
-	defer e.Close()
+	defer l.Close()
 
 	ea := EconomyAbstraction{
-		economy:              e,
+		ledger:               l,
 		placePrice:           10,
 		groupPrice:           10,
 		limitedSourcePrice:   100,
@@ -391,7 +391,7 @@ func TestAbstractions(t *testing.T) {
 	if _, err := ea.MintCurrency(user, 100); err != nil {
 		t.Fatalf("MintCurrency: %v", err)
 	}
-	
+
 	if ea.Balance(user) != 100 {
 		t.Fatalf("expected balance 100, got %d", ea.Balance(user))
 	}
