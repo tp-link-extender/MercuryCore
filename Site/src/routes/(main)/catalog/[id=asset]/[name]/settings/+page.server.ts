@@ -1,4 +1,6 @@
 import { error } from "@sveltejs/kit"
+import { type } from "arktype"
+import { superValidate } from "sveltekit-superforms/server"
 import { authorise } from "$lib/server/auth"
 import { db, Record } from "$lib/server/surreal"
 import { encode } from "$lib/urlName"
@@ -12,11 +14,19 @@ type Asset = {
 		text: string
 		updated: Date
 	}
+	forSale: boolean
 	name: string
 	price: number
 	type: number
 	visibility: string
 }
+
+const schema = type({
+	// This is how I show my love
+	// I made it in my mind because
+	// I blame it on my ADD, baby
+	forSale: "boolean",
+})
 
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
@@ -30,5 +40,14 @@ export async function load({ locals, params }) {
 	return {
 		...asset,
 		slug: encode(asset.name),
+		form: await superValidate(arktype(schema)),
 	}
+}
+
+actions.default = async ({ locals, params, request }) => {
+	const { user } = await authorise(locals)
+	const form = await superValidate(request, arktype(schema))
+	if (!form.valid) return formError(form)
+
+	const id = +params.id
 }
