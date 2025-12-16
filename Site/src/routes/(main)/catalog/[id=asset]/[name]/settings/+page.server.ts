@@ -7,6 +7,7 @@ import formError from "$lib/server/formError"
 import { db, Record } from "$lib/server/surreal"
 import { encode } from "$lib/urlName"
 import assetQuery from "./asset.surql"
+import assetCheckQuery from "./asset.surql"
 
 type Asset = {
 	id: string
@@ -37,29 +38,53 @@ export async function load({ locals, params }) {
 		asset: Record("asset", id),
 		user: Record("user", user.id),
 	})
-	if (!asset || !asset.creator) error(404, "Not Found")
+	if (!asset) error(404, "Not Found")
 
 	return {
 		...asset,
 		slug: encode(asset.name),
-		form: await superValidate(arktype(schema)),
+		form: await superValidate(
+			{
+				name: asset.name,
+				forSale: asset.forSale,
+			},
+			arktype(schema)
+		),
 	}
 }
 
 export const actions: import("./$types").Actions = {}
+
+type AssetCheck = {
+	id: string
+	created: Date
+	creatorId: string
+	description: {
+		text: string
+		updated: Date
+	}
+	forSale: boolean
+	name: string
+	price: number
+	type: number
+	visibility: string
+}
+
 actions.default = async ({ locals, params, request }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
 	const id = +params.id
-	const [[asset]] = await db.query<Asset[][]>(assetQuery, {
+	const [[asset]] = await db.query<AssetCheck[][]>(assetCheckQuery, {
 		asset: Record("asset", id),
 		user: Record("user", user.id),
 	})
-	if (!asset || !asset.creator) error(404, "Not Found")
-	if (asset.creator.id !== user.id)
+	if (!asset) error(404, "Not Found")
+	if (asset.creatorId !== user.id || user.permissionLevel < 4)
 		error(403, "You do not have permission to edit this asset")
+
+	await db.merge(Record("asset", id), form.data)
 
 	return message(form, "Asset data updated successfully!")
 }
