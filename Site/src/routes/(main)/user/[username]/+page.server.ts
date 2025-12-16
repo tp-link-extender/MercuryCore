@@ -21,7 +21,7 @@ interface User extends BasicUser {
 	description: {
 		id: string
 		text: string
-		updated: string
+		updated: Date
 	}
 	follower: boolean
 	followerCount: number

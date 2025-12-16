@@ -45,7 +45,7 @@ type Place = {
 	dedicated: boolean
 	description: {
 		text: string
-		updated: string
+		updated: Date
 	}
 	id: string // graah
 	maxPlayers: number
@@ -57,7 +57,7 @@ type Place = {
 	serverPing: number
 	serverPort: number
 	serverTicket: string
-	updated: string
+	updated: Date
 }
 
 async function placeQuery(id: number) {
