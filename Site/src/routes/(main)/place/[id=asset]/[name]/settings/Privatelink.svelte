@@ -5,9 +5,9 @@
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	const { message, enhance, delayed } = superForm(data.privatelinkForm, {
+	let { message, enhance, delayed } = $derived(superForm(data.privatelinkForm, {
 		id: "privatelink"
-	})
+	}))
 
 	let value = $derived(
 		encodeURI(

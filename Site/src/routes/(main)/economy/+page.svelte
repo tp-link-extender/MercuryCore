@@ -6,7 +6,7 @@
 
 	const { data } = $props()
 
-	const [c1, c2, c3, c4] = beautifyCurrency(data.balance)
+	let [c1, c2, c3, c4] = $derived(beautifyCurrency(data.balance))
 </script>
 
 <Head name={data.siteName} title="Economy" />

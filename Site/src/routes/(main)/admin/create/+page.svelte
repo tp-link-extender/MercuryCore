@@ -12,7 +12,7 @@
 
 	const { data } = $props()
 
-	const formDataManual = superForm(data.form)
+	let formDataManual = $derived(superForm(data.form))
 
 	let tabData = $state(
 		TabData(data.url, ["Asset creation"], ["fa-file-circle-plus"])

@@ -4,9 +4,9 @@
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	const { message, enhance, delayed } = superForm(data.ticketForm, {
+	let { message, enhance, delayed } = $derived(superForm(data.ticketForm, {
 		id: "ticket"
-	})
+	}))
 </script>
 
 <form use:enhance method="post" action="?/ticket&tab=Network">

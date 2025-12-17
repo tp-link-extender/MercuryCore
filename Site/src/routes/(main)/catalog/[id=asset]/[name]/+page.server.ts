@@ -36,6 +36,7 @@ type Asset = {
 		text: string
 		updated: Date
 	}
+	forSale: boolean
 	name: string
 	owned: boolean
 	price: number

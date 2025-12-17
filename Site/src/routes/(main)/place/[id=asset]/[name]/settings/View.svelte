@@ -28,7 +28,9 @@
 		label="Place icon"
 		type="file"
 		accept="image/*" />
-	<hr class="grey-text" />
+
+	<hr class="grey-text pb-6" />
+
 	<Textarea
 		{formData}
 		name="description"

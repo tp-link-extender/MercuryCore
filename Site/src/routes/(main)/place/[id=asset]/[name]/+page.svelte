@@ -119,7 +119,7 @@
 	}
 
 	const tabs = ["Description", "Servers"]
-	const isOwner = data.place.ownerUser?.username === user?.username
+	const isOwner = data.place.ownerUser?.username === user.username
 	if (
 		(isOwner || user.permissionLevel === 5) &&
 		(data.hosting === "Selfhosted" || data.hosting === "Both")
@@ -148,7 +148,7 @@
 			<div class="card bg-darker p-4 pb-6 block">
 				<div class="flex justify-between">
 					<h1 class="text-2xl">{place.name}</h1>
-					{#if place.ownerUser?.username === user?.username || user?.permissionLevel >= 4}
+					{#if place.ownerUser?.username === user.username || user.permissionLevel >= 4}
 						<div>
 							<a
 								aria-label="Place settings"

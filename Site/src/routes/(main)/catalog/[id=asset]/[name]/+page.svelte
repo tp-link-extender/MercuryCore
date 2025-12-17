@@ -32,10 +32,7 @@
 		}
 	}
 
-	let comments = $state(data.asset.comments)
-	$effect(() => {
-		comments = data.asset.comments
-	})
+	let comments = $derived(data.asset.comments)
 
 	let formData = $derived(superForm(data.form))
 
@@ -59,28 +56,41 @@
 		<div class="light-text w-full">
 			<div class="flex justify-between">
 				<h1>{data.asset.name}</h1>
-				{#if user.permissionLevel >= 5 && [8, 11, 12].includes(data.asset.type)}
-					<span class="dropdown pl-2 pt-2">
-						<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
-						<div class="dropdown-content">
-							<ul class="p-2 rounded-3">
-								<li class="rounded-2">
-									<form
-										use:enhance={enhanceRegen}
-										method="post"
-										action="?/rerender">
-										<button
-											class="btn accent-text pl-4 pr-0 text-start">
-											<fa fa-arrows-rotate class="pr-2">
-											</fa>
-											<b>Rerender</b>
-										</button>
-									</form>
-								</li>
-							</ul>
+
+				<div class="flex flex-col items-center">
+					{#if data.asset.creator.username === user.username || user.permissionLevel >= 4}
+						<div>
+							<a
+								aria-label="Asset settings"
+								href="/catalog/{data.asset.id}/{data.slug}/settings"
+								class="btn btn-sm btn-secondary">
+								<fa fa-sliders></fa>
+							</a>
 						</div>
-					</span>
-				{/if}
+					{/if}
+					{#if user.permissionLevel >= 5 && [8, 11, 12].includes(data.asset.type)}
+						<span class="dropdown pt-2">
+							<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
+							<div class="dropdown-content">
+								<ul class="p-2 rounded-3">
+									<li class="rounded-2">
+										<form
+											use:enhance={enhanceRegen}
+											method="post"
+											action="?/rerender">
+											<button
+												class="btn accent-text pl-4 pr-0 text-start">
+												<fa fa-arrows-rotate class="pr-2">
+												</fa>
+												<b>Rerender</b>
+											</button>
+										</form>
+									</li>
+								</ul>
+							</div>
+						</span>
+					{/if}
+				</div>
 			</div>
 			<div class="flex">
 				<strong class="pr-2">by:</strong>

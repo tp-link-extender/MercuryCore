@@ -35,10 +35,11 @@
 			Back to place
 		</a>
 	</div>
+
 	<TabNav bind:tabData />
 	<Tab bind:tabData>
 		<h2 class="text-xl">Server view</h2>
-		<p class="grey-text">
+		<p class="grey-text pb-6">
 			Change the title and description of your server.
 		</p>
 		<ViewForm {data} />
@@ -46,7 +47,7 @@
 
 	<Tab bind:tabData>
 		<h2 class="text-xl">Network</h2>
-		<p class="grey-text">
+		<p class="grey-text pb-6">
 			Change the network configurations of your server.
 		</p>
 		<TicketForm {data} />
@@ -57,7 +58,7 @@
 
 	<Tab bind:tabData>
 		<h2 class="text-xl">Privacy</h2>
-		<p class="grey-text">
+		<p class="grey-text pb-6">
 			Enable private server to make your game only accessible to those
 			with the link.
 		</p>
@@ -69,7 +70,7 @@
 
 	<Tab bind:tabData>
 		<h2 class="text-xl">Data</h2>
-		<p class="grey-text">
+		<p class="grey-text pb-6">
 			Configure place data saved to {data.siteName}.
 		</p>
 		<DataForm {data} />

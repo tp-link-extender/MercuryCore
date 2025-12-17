@@ -9,7 +9,7 @@
 		Ban: "Ban",
 		Termination: "Termination"
 	}
-	const actionType = moderationAction[data.type]
+	let actionType = $derived(moderationAction[data.type])
 
 	const s = (n: number) => (n > 1 ? "s" : "")
 	function formatDateDiff(date: number) {

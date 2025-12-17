@@ -5,8 +5,8 @@
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	const formDataPassword = superForm(data.passwordForm)
-	const formDataSession = superForm(data.sessionForm)
+	let formDataPassword = $derived(superForm(data.passwordForm))
+	let formDataSession = $derived(superForm(data.sessionForm))
 </script>
 
 <h3 class="text-base pb-4 pt-2">Change password</h3>

@@ -21,7 +21,7 @@ interface Place extends FoundPlace {
 	created: string
 	description: {
 		text: string
-		updated: string
+		updated: Date
 	}
 	dislikeCount: number
 	dislikes: boolean
@@ -37,7 +37,7 @@ interface Place extends FoundPlace {
 	}[]
 	serverPing: number
 	serverTicket: string
-	updated: string
+	updated: Date
 }
 
 const thumbnails = config.Images.DefaultPlaceThumbnails

@@ -55,5 +55,5 @@
 		{formData}
 		type="checkbox"
 		name="privateServer"
-		label="Private server?" />
+		label="Private server" />
 </Form>
