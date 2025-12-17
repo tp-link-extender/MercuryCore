@@ -32,7 +32,7 @@ const errors: { [_: string]: string } = Object.freeze({
 })
 
 export const actions: import("./$types").Actions = {}
-actions.default = async ({ locals, request }) => {
+actions.default = async ({ fetch: f, locals, request }) => {
 	exclude("Groups")
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, arktype(schema))
@@ -55,7 +55,7 @@ actions.default = async ({ locals, request }) => {
 			["A group with this name already exists"]
 		)
 
-	const created = await createGroup(user.id, name)
+	const created = await createGroup(f, user.id, name)
 	if (!created.ok) return formError(form, ["other"], [created.msg])
 
 	await db.query(createQuery, {

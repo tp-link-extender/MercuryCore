@@ -43,7 +43,7 @@ export const load = async () => ({
 })
 
 export const actions: import("./$types").Actions = {}
-actions.register = async ({ cookies, request }) => {
+actions.register = async ({ fetch: f, cookies, request }) => {
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
@@ -108,7 +108,7 @@ actions.register = async ({ cookies, request }) => {
 	})
 
 	try {
-		await requestRender("Avatar", user.id.toString(), username)
+		await requestRender(f, "Avatar", user.id.toString(), username)
 	} catch {}
 
 	cookies.set(cookieName, await createSession(user), cookieOptions)
@@ -116,7 +116,7 @@ actions.register = async ({ cookies, request }) => {
 	redirect(302, "/home")
 }
 // This is the initial account creation, which is only allowed if there are no existing users.
-actions.initialAccount = async ({ cookies, request }) => {
+actions.initialAccount = async ({ fetch: f, cookies, request }) => {
 	const form = await superValidate(request, arktype(schemaInitial))
 	if (!form.valid) return formError(form)
 
@@ -148,7 +148,7 @@ actions.initialAccount = async ({ cookies, request }) => {
 	})
 
 	try {
-		await requestRender("Avatar", user.id.toString(), username)
+		await requestRender(f, "Avatar", user.id.toString(), username)
 	} catch {}
 
 	cookies.set(cookieName, await createSession(user), cookieOptions)

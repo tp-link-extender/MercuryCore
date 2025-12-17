@@ -96,7 +96,7 @@ async function findPlace(request: Request, id: number, user: User) {
 	)
 		error(404, "Place not found")
 
-	return placeR
+	return place
 }
 
 async function checkUser(locals: App.Locals) {
@@ -126,7 +126,13 @@ actions.join = async ({ locals, params, request }) => {
 	return { ticket }
 }
 
-actions.start = async ({ locals, params, request, getClientAddress }) => {
+actions.start = async ({
+	fetch: f,
+	locals,
+	params,
+	request,
+	getClientAddress,
+}) => {
 	const user = await checkUser(locals)
 
 	const limit = ratelimit(null, "serverstart", getClientAddress, 20)
@@ -139,23 +145,23 @@ actions.start = async ({ locals, params, request, getClientAddress }) => {
 	const placeFile = `../data/places/${id}`
 	if (!fs.existsSync(placeFile)) error(404, "Place file not found")
 
-	const res = await startGameserver(id)
+	const res = await startGameserver(f, id)
 	if (res.ok) return
 
 	console.error("Failed to start dedicated gameserver for id", id, res.msg)
 	error(500, "Failed to start dedicated server")
 }
 
-actions.close = async ({ locals, params, request }) => {
+actions.close = async ({ fetch: f, locals, params, request }) => {
 	const { user } = await authorise(locals)
 	const id = +params.id
 
 	const place = await findPlace(request, id, user)
 
-	if (user.username !== place.ownerUserame && user.permissionLevel < 4)
+	if (user.username !== place.ownerUsername && user.permissionLevel < 4)
 		error(403, "You do not have permission to close this server.")
 
-	const res = await closeGameserver(id)
+	const res = await closeGameserver(f, id)
 	if (res.ok) return
 
 	console.error("Failed to close dedicated gameserver for id", id, res.msg)

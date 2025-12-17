@@ -20,6 +20,7 @@ type Render = {
  * @param wait Whether to wait for the render to be completed before resolving.
  */
 export default async function (
+	f: typeof globalThis.fetch,
 	renderType: RenderType,
 	relativeId: string | number,
 	relativeName = relativeId,
@@ -85,7 +86,7 @@ export default async function (
 	await Promise.all([
 		waiter,
 		// Uhh carrot just got the
-		fetch(`${config.RCCServiceProxyURL}/${renderId}`, {
+		f(`${config.RCCServiceProxyURL}/${renderId}`, {
 			method: "post",
 			body: script,
 		}),

@@ -72,9 +72,9 @@ async function getEquipData(e: RequestEvent) {
 	return { user, id, asset }
 }
 
-async function rerender(user: User) {
+async function rerender(f: typeof globalThis.fetch, user: User) {
 	try {
-		await requestRender("Avatar", user.id, user.username, true)
+		await requestRender(f, "Avatar", user.id, user.username, true)
 		return {
 			avatar: `/api/avatar/${user.username}-body?r=${Math.random()}`,
 		}
@@ -84,7 +84,7 @@ async function rerender(user: User) {
 	}
 }
 
-async function paint({ locals, url }: RequestEvent) {
+async function paint({ fetch: f, locals, url }: RequestEvent) {
 	const { user } = await authorise(locals)
 	const bodyPartQuery = url.searchParams.get("p")
 	const bodyColour = url.searchParams.get("c") as string
@@ -104,15 +104,15 @@ async function paint({ locals, url }: RequestEvent) {
 
 	db.merge(Record("user", user.id), { bodyColours: currentColours })
 
-	return await rerender(user)
+	return await rerender(f, user)
 }
-async function regen({ locals, getClientAddress }: RequestEvent) {
+async function regen({ fetch: f, locals, getClientAddress }: RequestEvent) {
 	const { user } = await authorise(locals)
 
 	const limit = ratelimit(null, "regen", getClientAddress, 2)
 	if (limit) return limit
 
-	return await rerender(user)
+	return await rerender(f, user)
 }
 async function equip(e: RequestEvent) {
 	const { user, id, asset, error } = await getEquipData(e)
@@ -133,7 +133,7 @@ async function equip(e: RequestEvent) {
 		...(oneEquippable.includes(asset.type) ? asset : {}),
 	})
 
-	return await rerender(user)
+	return await rerender(e.fetch, user)
 }
 async function unequip(e: RequestEvent) {
 	const { user, id, error } = await getEquipData(e)
@@ -144,7 +144,7 @@ async function unequip(e: RequestEvent) {
 		asset: Record("asset", id),
 	})
 
-	return await rerender(user)
+	return await rerender(e.fetch, user)
 }
 export const actions: import("./$types").Actions = {
 	paint,

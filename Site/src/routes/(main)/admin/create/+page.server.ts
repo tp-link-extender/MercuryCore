@@ -46,7 +46,7 @@ actions.default = async ({ locals, request }) => {
 	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
 
 	const { asset, description, name, price, type: assetType } = data
-	form.data.asset = null // make sure to return as a POJO
+	form.data.asset = null as unknown as File// make sure to return as a POJO
 
 	const [, id] = await db.query<string[]>(createQuery, {
 		description,
@@ -59,7 +59,7 @@ actions.default = async ({ locals, request }) => {
 	await Bun.write(`../data/assets/${id}`, await asset.arrayBuffer())
 
 	// we'll just assume it's a model 4 now
-	// await requestRender("Model", id)
+	// await requestRender(f, "Model", id)
 
 	redirect(302, `/catalog/${id}`)
 }

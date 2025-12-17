@@ -67,7 +67,7 @@ async function loadUserAsset(id: number) {
 	return response(script)
 }
 
-async function loadOpenCloudAsset(id: number) {
+async function loadOpenCloudAsset(f: typeof globalThis.fetch, id: number) {
 	const cachepath = `../data/assetcache/${id}`
 	const file = Bun.file(cachepath)
 	if (await file.exists()) {
@@ -76,7 +76,7 @@ async function loadOpenCloudAsset(id: number) {
 	}
 
 	try {
-		const req = await fetch(
+		const req = await f(
 			`https://apis.roblox.com/asset-delivery-api/v1/assetId/${id}`,
 			{ headers: { "X-API-Key": OPEN_CLOUD_KEY } }
 		)
@@ -86,7 +86,7 @@ async function loadOpenCloudAsset(id: number) {
 		const location = json.location
 		if (!location) return
 
-		const res = await fetch(location)
+		const res = await f(location)
 		if (!res.ok) return
 
 		// cache the asset
@@ -101,7 +101,7 @@ async function loadOpenCloudAsset(id: number) {
 	}
 }
 
-export async function GET({ url }) {
+export async function GET({ fetch: f, url }) {
 	const assetId = url.searchParams.get("id")
 	if (!assetId || !intRegex.test(assetId)) error(400, "Invalid Request")
 
@@ -116,7 +116,7 @@ export async function GET({ url }) {
 	const result2 = await loadUserAsset(id)
 	if (result2) return result2
 
-	const result3 = await loadOpenCloudAsset(id)
+	const result3 = await loadOpenCloudAsset(f, id)
 	if (result3) return result3
 
 	error(404, "Not Found")

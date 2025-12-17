@@ -70,7 +70,7 @@ actions.default = async ({ locals, request }) => {
 	const slug = encode(name)
 	const id = randomAssetId() // listen, this still isn't great, but whatever atp
 
-	// const created = await createPlace(user.id, id, name, slug)
+	// const created = await createPlace(f, user.id, id, name, slug)
 	// if (!created.ok) return formError(form, ["other"], [created.msg])
 
 	await db.query(createQuery, {
