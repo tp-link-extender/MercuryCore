@@ -80,7 +80,7 @@ actions.rerender = async e => {
 	if (limit) return limit
 
 	try {
-		await requestRender("Clothing", id)
+		await requestRender(e.fetch, "Clothing", id)
 	} catch (e) {
 		console.error(e)
 		fail(500, { msg: "Failed to request render" })

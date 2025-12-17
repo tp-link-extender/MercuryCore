@@ -49,13 +49,13 @@ const assetNums: { [_: string]: number } = Object.freeze({
 	Decal: 13,
 })
 export const actions: import("./$types").Actions = {}
-actions.default = async ({ locals, request, getClientAddress }) => {
+actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
 	const { type, name, description, price, asset } = form.data
-	form.data.asset = null // make sure to return as a POJO
+	form.data.asset = null as unknown as File // make sure to return as a POJO
 
 	if (asset.size === 0)
 		return formError(form, ["asset"], ["You must upload an asset"])
@@ -86,7 +86,7 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 			case "Shirt":
 			case "Pants":
 				saveImages[0] = await clothingAsset(asset)
-				saveImages[1] = (id: number) => requestRender("Clothing", id)
+				saveImages[1] = (id: number) => requestRender(f, "Clothing", id)
 				break
 
 			case "Decal":
@@ -96,20 +96,20 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 				])
 				break
 
-			case "Face":
-				if (user.permissionLevel < 3)
-					return formError(
-						form,
-						["type"],
-						[
-							"You do not have permission to upload this type of asset",
-						]
-					)
-				saveImages = await Promise.all([
-					imageAsset(asset),
-					thumbnail(asset),
-				])
-				break
+			// case "Face":
+			// 	if (user.permissionLevel < 3)
+			// 		return formError(
+			// 			form,
+			// 			["type"],
+			// 			[
+			// 				"You do not have permission to upload this type of asset",
+			// 			]
+			// 		)
+			// 	saveImages = await Promise.all([
+			// 		imageAsset(asset),
+			// 		thumbnail(asset),
+			// 	])
+			// 	break
 			default:
 		}
 	} catch (e) {
@@ -121,7 +121,7 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 	const imageAssetId = randomAssetId()
 	const id = randomAssetId()
 
-	const created = await createAsset(user.id, id, name, slug)
+	const created = await createAsset(f, user.id, id, name, slug)
 	if (!created.ok) return formError(form, ["other"], [created.msg])
 
 	await db.query(createAssetQuery, {

@@ -115,7 +115,7 @@ async function rerender(e: RequestEvent) {
 	const user2 = await getData(e)
 
 	try {
-		await requestRender("Avatar", user2.id, user2.username, true)
+		await requestRender(e.fetch, "Avatar", user2.id, user2.username, true)
 		return {
 			avatarBody: `/api/avatar/${e.params.username}-body?r=${Math.random()}`,
 			avatar: `/api/avatar/${e.params.username}?r=${Math.random()}`,
