@@ -9,7 +9,7 @@ Mercury Core includes an external transaction, asset ownership, and currency man
 
 The Economy service maintains a ledger of all transactions, recording details such as the sender and receiver, what was exchanged, timestamps, and a unique transaction ID. This ledger is crucial for auditing purposes and ensuring transparency in all economic activities.
 
-The ledger is designed to be immutable, meaning that once a transaction is recorded, it cannot be altered or deleted. This allows the ledger to be treated as a single source of truth for all economic activities within the platform &ndash; user balances and inventories are always derived from the ledger.
+The ledger is designed to be immutable, meaning that once a transaction is recorded, it cannot be altered or deleted. This allows the ledger to be treated as a single source of truth for all economic activities within the platform &ndash; user balances and inventories are always derived from the ledger, and it's easy for a balance/inventory history to be reconstructed from the ledger if needed.
 
 ## Incentives
 
