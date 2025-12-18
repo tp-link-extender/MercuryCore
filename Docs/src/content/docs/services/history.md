@@ -7,6 +7,10 @@ This page outlines a broad history of Mercury development and the various compon
 
 Each project listed had a similar goal of reviving an MMO game platform, and each project shared some members of the development team. Small revival projects from before Krypton are not listed here.
 
+## Project Polygon
+
+Project Polygon was a revival started in late 2020 by pizzaboxer. Polygon's codebase used predominantly PHP as the backend programming language, and it had multiple clients available for users to play with. Polygon was mainly developed by pizzaboxer, however taskmanager (the owner of all of the following revivals) contributed significantly to the development of Polygon's website. Due to this, pizzaboxer assisted with the development of Mercury 1 and it's predecessor, Krypton by using an earlier version of Polygon source code as the backend. Krypton and Mercury 1 did not sync any changes done to Polygon - so even though Polygon finished development in 2021, this was not reflected within Krypton and Mercury 1 (they were still based on the early Polygon source). In conclusion, Polygon is the grandfather of all revivals prior to Mercury 2.
+
 ## Krypton
 
 Krypton was a revival platform developed in late 2020 and early 2021, built upon an earlier version of the [Project Polygon source code](https://github.com/ProjectPolygon/polygon-website-foss)[^1] and hosted on the domain [kryptoni.xyz (archive link)](https://web.archive.org/web/20210118181413/http://kryptoni.xyz/). Krypton used a late 2011 version of the Client and Studio. It shut down in April 2021.
