@@ -58,11 +58,12 @@
 				<h1>{data.asset.name}</h1>
 
 				<div class="flex flex-col items-center">
-					{#if data.asset.creator.username === user.username || user.permissionLevel >= 4}
+					{#if data.asset.isCreator || user.permissionLevel >= 4}
 						<div>
 							<a
 								aria-label="Asset settings"
-								href="/catalog/{data.asset.id}/{data.slug}/settings"
+								href="/catalog/{data.asset
+									.id}/{data.slug}/settings"
 								class="btn btn-sm btn-secondary">
 								<fa fa-sliders></fa>
 							</a>
@@ -80,7 +81,9 @@
 											action="?/rerender">
 											<button
 												class="btn accent-text pl-4 pr-0 text-start">
-												<fa fa-arrows-rotate class="pr-2">
+												<fa
+													fa-arrows-rotate
+													class="pr-2">
 												</fa>
 												<b>Rerender</b>
 											</button>
@@ -125,42 +128,46 @@
 					</p>
 				</div>
 				<div class="w-full md:w-2/3 flex flex-row-reverse">
-					<div class="card light-text p-4">
-						{#if itsFree}
-							<b class="pb-2">Free</b>
-						{:else}
-							<table>
-								<tbody>
-									<tr>
-										<td>Price</td>
-										<td class="text-emerald-600">
-											{data.currencySymbol}
-											{data.asset.price}
-										</td>
-									</tr>
-									<tr>
-										<td>Fee</td>
-										<td class="text-yellow-500">
-											{data.currencySymbol}
-											{fee}
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						{/if}
-						{#if !data.asset.owned}
-							<button popovertarget="buy" class="btn btn-success">
-								<strong class="text-xl">
-									{itsFree ? "Get" : "Buy now"}
+					{#if data.asset.forSale}
+						<div class="card light-text p-4">
+							{#if itsFree}
+								<b class="pb-2">Free</b>
+							{:else}
+								<table>
+									<tbody>
+										<tr>
+											<td>Price</td>
+											<td class="text-emerald-600">
+												{data.currencySymbol}
+												{data.asset.price}
+											</td>
+										</tr>
+										<tr>
+											<td>Fee</td>
+											<td class="text-yellow-500">
+												{data.currencySymbol}
+												{fee}
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							{/if}
+							{#if !data.asset.owned}
+								<button
+									popovertarget="buy"
+									class="btn btn-success">
+									<strong class="text-xl">
+										{itsFree ? "Get" : "Buy now"}
+									</strong>
+								</button>
+							{:else}
+								<strong
+									class="btn btn-dark bg-a3 pointer-events-none text-xl">
+									Owned
 								</strong>
-							</button>
-						{:else}
-							<strong
-								class="btn btn-dark bg-a3 pointer-events-none text-xl">
-								Owned
-							</strong>
-						{/if}
-					</div>
+							{/if}
+						</div>
+					{/if}
 				</div>
 			</div>
 		</div>

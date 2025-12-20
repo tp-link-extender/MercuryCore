@@ -37,6 +37,7 @@ type Asset = {
 		updated: Date
 	}
 	forSale: boolean
+	isCreator: boolean
 	name: string
 	owned: boolean
 	price: number
@@ -168,6 +169,7 @@ actions.buy = async e => {
 			id: string
 			username: string
 		}
+		forSale: boolean
 		name: string
 		owned: boolean
 		price: number
@@ -181,6 +183,7 @@ actions.buy = async e => {
 	if (asset.owned) error(400, "You already own this item")
 	if (asset.visibility !== "Visible")
 		error(400, "This item hasn't been approved yet")
+	if (!asset.forSale) error(400, "This item is not for sale")
 
 	if (asset.price > 0) {
 		// todo work out how free assets are supposed to work

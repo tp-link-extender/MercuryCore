@@ -1,7 +1,7 @@
 SELECT
 	*,
 	record::id(id) AS id,
-	SELECT VALUE record::id(id) AS id FROM <-created<-user AS creatorId,
+	(SELECT VALUE id FROM <-created<-user)[0] = $user AS isCreator,
 
 	(SELECT text, updated FROM $parent.description
 	ORDER BY updated)[$] AS description
