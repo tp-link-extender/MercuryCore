@@ -24,7 +24,7 @@
 		// multiple?: boolean
 		options: string[]
 		selected?: string
-		formData: import("sveltekit-superforms").SuperForm<any>
+		formData: import("$lib/validate").SuperForm<any>
 	} = $props()
 
 	let { form, errors, constraints } = $derived(formData)

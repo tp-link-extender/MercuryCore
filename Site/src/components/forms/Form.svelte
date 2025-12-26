@@ -18,7 +18,7 @@
 		inline?: boolean
 		nopad?: boolean // Don't pad the icon on the submit button
 		// method?: HTMLFormAttributes["method"]
-		formData: import("sveltekit-superforms").SuperForm<any>
+		formData: import("$lib/validate").SuperForm<any>
 		children: Snippet
 	} & HTMLFormAttributes = $props()
 

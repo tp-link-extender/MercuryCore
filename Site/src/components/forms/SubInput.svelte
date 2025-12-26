@@ -15,7 +15,7 @@
 		name: string
 		disabled: boolean
 		type: HTMLInputTypeAttribute
-		formData: import("sveltekit-superforms").SuperForm<any>
+		formData: import("$lib/validate").SuperForm<any>
 	} & HTMLInputAttributes = $props()
 
 	let { form, errors, constraints } = $derived(formData)
