@@ -2,12 +2,11 @@ import fs from "node:fs"
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
 import sharp from "sharp"
-import { arktype } from "sveltekit-superforms/adapters"
-import { message, superValidate } from "sveltekit-superforms/server"
 import { authorise } from "$lib/server/auth"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import { db, Record } from "$lib/server/surreal"
+import { arktype, message, superValidate } from "$lib/server/validate"
 import {
 	maxPlayersTest,
 	serverAddressTest,

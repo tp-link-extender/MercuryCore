@@ -1,7 +1,5 @@
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
-import { superValidate } from "sveltekit-superforms"
-import { arktype } from "sveltekit-superforms/adapters"
 import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
 import commentType from "$lib/server/commentType"
@@ -10,6 +8,7 @@ import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, Record } from "$lib/server/surreal"
+import { arktype, superValidate } from "$lib/server/validate"
 import removeCommentQuery from "./removeComment.surql"
 
 const schema = type({
