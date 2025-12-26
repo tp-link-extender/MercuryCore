@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
 	import Select from "$components/forms/Select.svelte"
@@ -9,6 +8,7 @@
 	import Tab from "$components/Tab.svelte"
 	import TabData from "$components/TabData"
 	import types from "$lib/assetTypes"
+	import { superForm } from "$lib/validate"
 
 	const { data } = $props()
 

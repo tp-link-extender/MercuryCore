@@ -1,7 +1,6 @@
 <script lang="ts">
 	// TODO: doesn't work without clientside JS because of the date input, fix
 
-	import { superForm } from "sveltekit-superforms/client"
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
 	import Select from "$components/forms/Select.svelte"
@@ -11,6 +10,7 @@
 	import Tab from "$components/Tab.svelte"
 	import TabData from "$components/TabData"
 	import fade from "$lib/fade"
+	import { superForm } from "$lib/validate"
 	import moderationOptions from "./moderationOptions"
 
 	const { data } = $props()
