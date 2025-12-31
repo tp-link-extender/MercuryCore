@@ -1,4 +1,4 @@
-mercs.dev {
+localhost {
 	rewrite /Asset /asset
 	rewrite /Asset/ /asset
 	rewrite /Asset/Default.ashx /asset
@@ -19,10 +19,12 @@ mercs.dev {
 	rewrite /Setting/QuietGet/ClientSharedSettings/* /api/clientsharedsettings
 	rewrite /Setting/QuietGet/ClientAppSettings/* /api/clientappsettings
 
-	reverse_proxy localhost:4443
+	rewrite /My/Places.aspx /ide/places
+
+	reverse_proxy localhost:5173
 }
 
 # Often required for some URLs
-www.mercs.dev {
-	reverse_proxy localhost:4443
+www.localhost:5173 {
+	reverse_proxy localhost:5173
 }

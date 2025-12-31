@@ -16,5 +16,8 @@ export default defineConfig({
 		sveltekit(),
 		devtoolsJson(),
 	],
+	server: {
+    	allowedHosts: ["mercury.test"]
+  	},
 	ssr: { noExternal: ["d3-interpolate"] },
 })
