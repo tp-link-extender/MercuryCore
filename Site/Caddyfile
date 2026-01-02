@@ -23,8 +23,3 @@ localhost {
 
 	reverse_proxy localhost:5173
 }
-
-# Often required for some URLs
-www.localhost:5173 {
-	reverse_proxy localhost:5173
-}
