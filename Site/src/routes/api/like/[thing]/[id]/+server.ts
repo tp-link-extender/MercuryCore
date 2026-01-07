@@ -24,18 +24,18 @@ export async function POST({ locals, params, request, url }) {
 	if (!action) error(400, "Missing action")
 	if (!actions.includes(action)) error(400, "Invalid action")
 
-	let id: string | number = params.id
+	const { id } = params
 	const t = params.thing as (typeof things)[number]
 	if (!things.includes(t)) error(400, "Invalid thing")
 
 	if (t === "place" && assetRegex.test(id)) {
-		id = +id
+		const nid = +id
 		const [ok] = await db.query<boolean[]>(
 			`
 				SELECT VALUE !privateServer OR privateTicket == $ticket
 				FROM ONLY $place`,
 			{
-				place: Record("place", id),
+				place: Record("place", nid),
 				ticket: url.searchParams.get("privateTicket"),
 			}
 		)
