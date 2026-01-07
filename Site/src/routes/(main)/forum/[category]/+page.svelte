@@ -7,7 +7,7 @@
 
 	const { data } = $props()
 
-	let posts = $state(data.posts)
+	const posts = $state((() => data.posts)())
 </script>
 
 <Head name={data.siteName} title="{data.name} - Forum" />
