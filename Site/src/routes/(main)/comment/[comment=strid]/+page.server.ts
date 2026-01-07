@@ -90,8 +90,8 @@ actions.pin = async ({ locals, params, url, getClientAddress }) => {
 
 	const [[ok]] = await db.query<1[][]>(
 		`
-			UPDATE $comment WHERE type != ["status"]
-				SET pinned = $pinned RETURN VALUE 1`,
+			UPDATE $comment SET pinned = $pinned
+				WHERE type != ["status"] RETURN VALUE 1`,
 		{
 			comment: Record("comment", params.comment),
 			pinned: url.searchParams.get("set") === "true",
