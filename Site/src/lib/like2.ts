@@ -1,4 +1,5 @@
-import type { SubmitFunction } from "@sveltejs/kit"
+import type { RemoteForm, SubmitFunction } from "@sveltejs/kit"
+import { invalidateAll } from "$app/navigation"
 
 export type Scored = {
 	dislikeCount?: number
@@ -21,7 +22,7 @@ function unlike(t: Scored) {
 	t.likes = false
 }
 
-const fns: { [_: string]: (t: Scored) => void } = Object.freeze({
+export const likeFns: { [_: string]: (t: Scored) => void } = Object.freeze({
 	dislike: t => {
 		if (t.score != null) t.score--
 		if (t.dislikeCount != null) t.dislikeCount++
@@ -38,10 +39,25 @@ const fns: { [_: string]: (t: Scored) => void } = Object.freeze({
 	unlike,
 })
 
-// set allows for reactivity (no, renaming to like.svelte.ts doesn't work)
-export const likeEnhance =
-	(t: Scored): SubmitFunction =>
-	({ formData }) => {
-		fns[formData.get("action")?.toString() || ""](t)
-		return () => {} // yes, very necessary
+type Data = {
+	id: string
+	action: "like" | "unlike" | "dislike" | "undislike"
+}
+
+export type LikeForm = RemoteForm<Data, void>
+export type LikeEnhance = ReturnType<LikeForm["enhance"]>
+
+// reactivity actually works now, huh
+// also TypeScript moment here
+
+export const likeEnhance: (t: Scored) => Parameters<LikeForm["enhance"]>[0] =
+	t => {
+		console.log("START")
+		return async ({ data, submit }) => {
+			console.log(t)
+			likeFns[data.action](t)
+			console.log(t)
+
+			await submit()
+		}
 	}

@@ -1,16 +1,15 @@
 <script lang="ts">
 	import type { ClassValue } from "svelte/elements"
-	import { enhance } from "$app/forms"
-	import type { Scored } from "$lib/like"
+	import type { LikeEnhance, Scored } from "$lib/like2"
 
-	const {
+	let {
 		comment,
-		likeEnhance,
+		likeForm,
 		small = false,
 		class: class_ = ""
 	}: {
 		comment: Scored & { id: string }
-		likeEnhance: import("@sveltejs/kit").SubmitFunction
+		likeForm: LikeEnhance
 		small?: boolean
 		class?: ClassValue
 	} = $props()
@@ -18,11 +17,8 @@
 	let smallClass = $derived(small ? "size-6 p-0" : "p-1")
 </script>
 
-<form
-	use:enhance={likeEnhance}
-	method="post"
-	action="/api/like/comment/{comment.id}"
-	class={class_}>
+<form {...likeForm} class={class_}>
+	<input type="hidden" name="id" value={comment.id} />
 	<span class={{ "flex flex-col": !small }}>
 		<button
 			name="action"

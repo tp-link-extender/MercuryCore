@@ -1,4 +1,5 @@
 import { error, redirect } from "@sveltejs/kit"
+import { getRequestEvent, query } from "$app/server"
 import type { Scored } from "$lib/like"
 import { authorise } from "$lib/server/auth"
 import exclude from "$lib/server/exclude"
@@ -12,13 +13,14 @@ interface Post extends PreviewPost, Scored {
 }
 
 type Category = {
-	description: string
 	name: string
 	posts: Post[]
 }
 
-export async function load({ locals, params, url }) {
+export const getCategory = query(async () => {
 	exclude("Forum")
+
+	const { locals, params, url } = getRequestEvent()
 	const { user } = await authorise(locals)
 	const pageQ = url.searchParams.get("p") || "1"
 	const page = Number.isNaN(+pageQ) ? 1 : Math.round(+pageQ)
@@ -36,4 +38,4 @@ export async function load({ locals, params, url }) {
 	if (page > pages) redirect(303, `/forum/${params.category}?p=${pages}`)
 
 	return { ...category, pages }
-}
+})
