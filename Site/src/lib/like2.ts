@@ -1,12 +1,11 @@
-import type { RemoteForm, SubmitFunction } from "@sveltejs/kit"
-import { invalidateAll } from "$app/navigation"
+import type { RemoteForm } from "@sveltejs/kit"
 
 export type Scored = {
 	dislikeCount?: number
 	dislikes: boolean
 	likeCount?: number
 	likes: boolean
-	score?: number
+	score: number
 }
 
 function undislike(t: Scored) {
@@ -24,15 +23,15 @@ function unlike(t: Scored) {
 
 export const likeFns: { [_: string]: (t: Scored) => void } = Object.freeze({
 	dislike: t => {
+		unlike(t)
 		if (t.score != null) t.score--
 		if (t.dislikeCount != null) t.dislikeCount++
-		unlike(t)
 		t.dislikes = true
 	},
 	like: t => {
+		undislike(t)
 		if (t.score != null) t.score++
 		if (t.likeCount != null) t.likeCount++
-		undislike(t)
 		t.likes = true
 	},
 	undislike,
@@ -46,18 +45,3 @@ type Data = {
 
 export type LikeForm = RemoteForm<Data, void>
 export type LikeEnhance = ReturnType<LikeForm["enhance"]>
-
-// reactivity actually works now, huh
-// also TypeScript moment here
-
-export const likeEnhance: (t: Scored) => Parameters<LikeForm["enhance"]>[0] =
-	t => {
-		console.log("START")
-		return async ({ data, submit }) => {
-			console.log(t)
-			likeFns[data.action](t)
-			console.log(t)
-
-			await submit()
-		}
-	}

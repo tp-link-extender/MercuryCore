@@ -2,7 +2,8 @@
 	import CommentLike from "$components/CommentLike.svelte"
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
-	import type { LikeEnhance } from "$lib/like2"
+	import type { LikeForm } from "$lib/like2"
+	import type { getCategory } from "./category.remote"
 
 	const {
 		likeForm,
@@ -10,9 +11,9 @@
 		post,
 		total
 	}: {
-		likeForm: LikeEnhance
+		likeForm: Omit<LikeForm, "for">
 		num: number
-		post: import("./$types").PageData["posts"][number]
+		post: Awaited<ReturnType<typeof getCategory>>["posts"][number]
 		total: number
 	} = $props()
 

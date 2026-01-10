@@ -1,6 +1,7 @@
 import { error, redirect } from "@sveltejs/kit"
+import { type } from "arktype"
 import { getRequestEvent, query } from "$app/server"
-import type { Scored } from "$lib/like"
+import type { Scored } from "$lib/like2"
 import { authorise } from "$lib/server/auth"
 import exclude from "$lib/server/exclude"
 import { db, Record } from "$lib/server/surreal"
@@ -17,25 +18,28 @@ type Category = {
 	posts: Post[]
 }
 
-export const getCategory = query(async () => {
+const schema = type("string")
+
+export const getCategory = query(schema, async name => {
 	exclude("Forum")
 
-	const { locals, params, url } = getRequestEvent()
+	const { locals, url } = getRequestEvent()
 	const { user } = await authorise(locals)
+
 	const pageQ = url.searchParams.get("p") || "1"
 	const page = Number.isNaN(+pageQ) ? 1 : Math.round(+pageQ)
-	if (page < 1) redirect(303, `/forum/${params.category}?p=1`)
+	if (page < 1) redirect(303, `/forum/${name}?p=1`)
 
 	const [category, pages] = await db.query<[Category, number]>(
 		categoryQuery,
 		{
-			...params,
+			category: name,
 			page,
 			user: Record("user", user.id),
 		}
 	)
 	if (!category) error(404, "Not Found")
-	if (page > pages) redirect(303, `/forum/${params.category}?p=${pages}`)
+	if (page > pages) redirect(303, `/forum/${name}?p=${pages}`)
 
 	return { ...category, pages }
 })

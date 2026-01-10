@@ -1,15 +1,15 @@
 <script lang="ts">
 	import type { ClassValue } from "svelte/elements"
-	import type { LikeEnhance, Scored } from "$lib/like2"
+	import { type LikeForm, likeFns, type Scored } from "$lib/like2"
 
 	let {
-		comment,
+		comment = $bindable(),
 		likeForm,
 		small = false,
 		class: class_ = ""
 	}: {
 		comment: Scored & { id: string }
-		likeForm: LikeEnhance
+		likeForm: Omit<LikeForm, "for">
 		small?: boolean
 		class?: ClassValue
 	} = $props()
@@ -17,7 +17,13 @@
 	let smallClass = $derived(small ? "size-6 p-0" : "p-1")
 </script>
 
-<form {...likeForm} class={class_}>
+<form
+	{...likeForm.enhance(o => {
+		likeFns[o.data.action](comment)
+		comment = comment
+		o.submit()
+	})}
+	class={class_}>
 	<input type="hidden" name="id" value={comment.id} />
 	<span class={{ "flex flex-col": !small }}>
 		<button

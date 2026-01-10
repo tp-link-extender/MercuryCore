@@ -3,13 +3,12 @@
 	import Breadcrumbs from "$components/Breadcrumbs.svelte"
 	import Head from "$components/Head.svelte"
 	import Pagination from "$components/Pagination.svelte"
-	import { likeFns } from "$lib/like2"
 	import { likeForm } from "../../like.remote"
 	import { getCategory } from "./category.remote"
 	import ForumPost from "./ForumPost.svelte"
 
 	const { data } = $props()
-	const category = getCategory()
+	const category = getCategory(data.categoryName)
 </script>
 
 <!-- no, there is unfortunately no alternative -->
@@ -36,14 +35,7 @@
 					{@const likePost = likeForm.for(post.id)}
 
 					<ForumPost
-						likeForm={likePost.enhance(o =>
-							o.submit().updates(
-								category.withOverride(c => {
-									likeFns[o.data.action](c.posts[num])
-									return c
-								})
-							)
-						)}
+						likeForm={likePost}
 						{num}
 						{post}
 						total={posts.length} />

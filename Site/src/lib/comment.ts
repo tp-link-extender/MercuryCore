@@ -1,4 +1,4 @@
-import type { Scored } from "$lib/like"
+import type { Scored } from "$lib/like2"
 
 export interface Comment extends Scored {
 	id: string
@@ -7,7 +7,7 @@ export interface Comment extends Scored {
 		text: string
 		updated: Date
 	}[]
-	comments: []
+	comments: Comment[]
 	created: Date
 	parentId: string
 	pinned: boolean
