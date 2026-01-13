@@ -67,4 +67,8 @@ Some of Mercury 2's related projects were already available as open source, such
 
 Immediately after the shutdown of Mercury 2, the plan was made to take everything that was not already made open source as a separate component, and polish it for release as a self-hostable and customisable version of Mercury, called Mercury Core.
 
+Through the remainder of June, many components of the Mercury 2 repository that were now no longer subject to backwards compatibility requirements of the Client, Studio, and database structure were refactored or otherwise improved. Many parts of the site were removed entirely or significantly restructured to make use of more standard tools than the niche utilities previously used for development. Mercury-specific pages, like Studio/IDE browser testing, real-time site update testing, landing pages, and maintenance screens were removed to make the codebase more adaptable to a wider variety of revival platform branding needs. The new Economy service began its integration into the Site.
+
+In July, the codebase continued to be restructured, with better database data models, [removal of various sequential IDs](/design/ids#why-not-sequential-numeric-ids), formatting and styling improvements, and the start of a repository rebranding. The configurability of the platform was improved, including introducing the **mercury.core.ts** file as the main way to customise many aspects of the Site.
+
 [^1]: The Project Polygon FOSS source code listed at this link differs slightly from the version used to develop Mercury 1 and is missing the commit history.
