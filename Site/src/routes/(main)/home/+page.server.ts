@@ -25,6 +25,9 @@ type Status = {
 	id: string
 	author: BasicUser
 	created: Date
+	pinned: boolean
+	replies: number
+	visibility: "Visible" | "Moderated" | "Deleted"
 	currentContent: string
 }
 

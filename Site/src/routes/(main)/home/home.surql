@@ -18,6 +18,10 @@ SELECT
 	author,
 	created,
 	pinned,
+	count(
+		SELECT 1
+		FROM comment WHERE type = ["status", record::id($parent.id)]
+	) AS replies,
 	visibility,
 	(SELECT text, updated FROM $parent.content
 	ORDER BY updated)[$].text AS currentContent
