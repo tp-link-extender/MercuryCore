@@ -24,9 +24,6 @@
 	}
 	let formData = $derived(superForm(data.form))
 
-	// let topReply = $derived(replies[0])
-	// let parentPost = $derived(topReply.parentPost)
-
 	const elide = (c: string) => (c.length > 50 ? `${c.slice(0, 50)}...` : c)
 
 	function getBreadcrumb(c: Awaited<typeof comment>): [string, string][] {
