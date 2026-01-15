@@ -17,7 +17,7 @@
 		children: Snippet
 	} = $props()
 
-	const item = accordion.getItem(ai)
+	let item = $derived(accordion.getItem(ai))
 </script>
 
 <NoScript>

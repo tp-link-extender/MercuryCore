@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
 	import Form from "$components/forms/Form.svelte"
 	import Select from "$components/forms/Select.svelte"
 	import Textarea from "$components/forms/Textarea.svelte"
+	import { superForm } from "$lib/validate"
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	const { user } = data
-	const formData = superForm(data.profileForm)
-	const { form } = formData
+	let { user } = $derived(data)
+	let formData = $derived(superForm(data.profileForm))
+	let { form } = $derived(formData)
 
 	$effect(() => {
 		if (user.description) $form.description = user.description.text || ""

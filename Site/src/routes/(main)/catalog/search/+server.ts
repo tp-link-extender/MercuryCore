@@ -1,5 +1,5 @@
-import { db } from "$lib/server/surreal"
 import { json } from "@sveltejs/kit"
+import { db } from "$lib/server/surreal"
 import type { Asset } from "../+page.server"
 import catalogQuery from "../catalog.surql"
 

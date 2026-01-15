@@ -18,11 +18,11 @@
 		inline?: boolean
 		nopad?: boolean // Don't pad the icon on the submit button
 		// method?: HTMLFormAttributes["method"]
-		formData: import("sveltekit-superforms").SuperForm<any>
+		formData: import("$lib/validate").SuperForm<any>
 		children: Snippet
 	} & HTMLFormAttributes = $props()
 
-	const { errors, message, enhance, delayed } = formData
+	let { errors, message, enhance, delayed } = $derived(formData)
 
 	// use:enhance may not be used on forms that aren't method === "post"
 	// const use = method?.toLowerCase() === "post" ? enhance : () => {}

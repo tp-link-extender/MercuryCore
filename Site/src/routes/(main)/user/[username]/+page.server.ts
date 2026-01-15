@@ -3,6 +3,7 @@ import { authorise } from "$lib/server/auth"
 import formData from "$lib/server/formData"
 import requestRender from "$lib/server/requestRender"
 import { db, Record, type RecordId } from "$lib/server/surreal"
+import type { Group } from "../../groups/+page.server"
 import type { RequestEvent } from "./$types.d"
 import acceptExistingQuery from "./acceptExisting.surql"
 import alreadyFriendsQuery from "./alreadyFriends.surql"
@@ -20,7 +21,7 @@ interface User extends BasicUser {
 	description: {
 		id: string
 		text: string
-		updated: string
+		updated: Date
 	}
 	follower: boolean
 	followerCount: number
@@ -28,14 +29,8 @@ interface User extends BasicUser {
 	followingCount: number
 	friendCount: number
 	friends: boolean
-	groups: {
-		memberCount: number
-		name: string
-	}[]
-	groupsOwned: {
-		memberCount: number
-		name: string
-	}[]
+	groups: Group[]
+	groupsOwned: Group[]
 	incomingRequest: boolean
 	outgoingRequest: boolean
 	permissionLevel: number
@@ -120,7 +115,7 @@ async function rerender(e: RequestEvent) {
 	const user2 = await getData(e)
 
 	try {
-		await requestRender("Avatar", user2.id, user2.username, true)
+		await requestRender(e.fetch, "Avatar", user2.id, user2.username, true)
 		return {
 			avatarBody: `/api/avatar/${e.params.username}-body?r=${Math.random()}`,
 			avatar: `/api/avatar/${e.params.username}?r=${Math.random()}`,

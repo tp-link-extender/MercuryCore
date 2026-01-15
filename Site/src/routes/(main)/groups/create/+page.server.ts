@@ -1,12 +1,11 @@
 import { error, redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { arktype } from "sveltekit-superforms/adapters"
-import { superValidate } from "sveltekit-superforms/server"
 import { authorise } from "$lib/server/auth"
 import { createGroup, getGroupPrice } from "$lib/server/economy"
 import exclude from "$lib/server/exclude"
 import formError from "$lib/server/formError"
 import { db, findWhere, Record } from "$lib/server/surreal"
+import { arktype, superValidate } from "$lib/server/validate"
 import createQuery from "./create.surql"
 
 const schema = type({
@@ -32,7 +31,7 @@ const errors: { [_: string]: string } = Object.freeze({
 })
 
 export const actions: import("./$types").Actions = {}
-actions.default = async ({ locals, request }) => {
+actions.default = async ({ fetch: f, locals, request }) => {
 	exclude("Groups")
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, arktype(schema))
@@ -55,7 +54,7 @@ actions.default = async ({ locals, request }) => {
 			["A group with this name already exists"]
 		)
 
-	const created = await createGroup(user.id, name)
+	const created = await createGroup(f, user.id, name)
 	if (!created.ok) return formError(form, ["other"], [created.msg])
 
 	await db.query(createQuery, {

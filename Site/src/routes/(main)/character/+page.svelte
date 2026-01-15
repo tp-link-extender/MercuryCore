@@ -8,7 +8,7 @@
 
 	const { data, form } = $props()
 
-	const { user } = data
+	let { user } = $derived(data)
 
 	let regenerating = $state(false)
 

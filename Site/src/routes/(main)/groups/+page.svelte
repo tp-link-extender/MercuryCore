@@ -4,7 +4,7 @@
 	import Head from "$components/Head.svelte"
 	import Pagination from "$components/Pagination.svelte"
 
-	const { data } = $props()
+	let { data } = $props()
 </script>
 
 <Head name={data.siteName} title="Groups" />

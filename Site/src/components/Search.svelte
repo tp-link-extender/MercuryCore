@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { untrack } from "svelte"
 	import { browser } from "$app/environment"
 	import { goto } from "$app/navigation"
 
@@ -20,12 +21,20 @@
 	let searchInput = $state<HTMLInputElement>()
 	const searchResults: HTMLElement[] = $state([])
 
-	const searchCategories = [
-		["Users", "users"],
-		["Places", "places"],
-		["Catalog", "assets"]
-	]
-	if (pages.includes("Groups")) searchCategories.push(["Groups", "groups"])
+	let searchCategories: [string, string][] = $state([])
+	function updSearchCategories() {
+		searchCategories = [
+			["Users", "users"],
+			["Places", "places"],
+			["Catalog", "assets"]
+		]
+		untrack(() => {
+			if (pages.includes("Groups"))
+				searchCategories.push(["Groups", "groups"])
+		})
+	}
+	updSearchCategories()
+	$effect(updSearchCategories)
 
 	function keydown(
 		e: KeyboardEvent & {

@@ -21,9 +21,11 @@
 		total: number
 	} = $props()
 
-	const slug = encode(place.name)
-	const ratio = place.likeCount / (place.likeCount + place.dislikeCount)
-	const percentage = Math.floor(ratio * 100)
+	let slug = $derived(encode(place.name))
+	let ratio = $derived(
+		place.likeCount / (place.likeCount + place.dislikeCount)
+	)
+	let percentage = $derived(Math.floor(ratio * 100))
 
 	let online = $derived(place.serverPing > Date.now() / 1000 - 35)
 </script>

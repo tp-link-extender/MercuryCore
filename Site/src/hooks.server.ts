@@ -119,7 +119,7 @@ export async function handle(e) {
 	)
 		redirect(302, "/moderation")
 
-	await stipend(user.id)
+	await stipend(e.event.fetch, user.id)
 
 	return await finish(e)
 }

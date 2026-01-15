@@ -1,25 +1,19 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
 	import Select from "$components/forms/Select.svelte"
 	import Textarea from "$components/forms/Textarea.svelte"
 	import Head from "$components/Head.svelte"
 	import beautifyCurrency from "$lib/beautifyCurrency"
+	import { superForm } from "$lib/validate"
+	import assetTypes from "./assetTypes"
 
 	const { data } = $props()
 
-	const formData = superForm(data.form)
+	let formData = $derived(superForm(data.form))
 	export const snapshot = formData
 
-	const [, c1, c2] = beautifyCurrency(data.price)
-
-	const assets: { [_: number]: string } = Object.freeze({
-		2: "T-Shirt",
-		11: "Shirt",
-		12: "Pants",
-		13: "Decal"
-	})
+	let [, c1, c2] = $derived(beautifyCurrency(data.price))
 </script>
 
 <Head name={data.siteName} title="Develop - Create" />
@@ -40,7 +34,7 @@
 	class="ctnr pt-8 max-w-200 light-text">
 	<Select
 		{formData}
-		options={Object.entries(assets)}
+		options={assetTypes}
 		selected={data.assetType}
 		name="type"
 		label="Asset type" />

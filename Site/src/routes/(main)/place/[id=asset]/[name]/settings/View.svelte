@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { get } from "svelte/store"
-	import { superForm } from "sveltekit-superforms/client"
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
 	import Textarea from "$components/forms/Textarea.svelte"
+	import { superForm } from "$lib/validate"
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	const formData = superForm(data.viewForm)
-	const { form } = formData
+	let formData = $derived(superForm(data.viewForm))
+	let { form } = $derived(formData)
 
 	$effect(() => {
 		if (data.description && !get(formData.form).description)
@@ -28,7 +28,9 @@
 		label="Place icon"
 		type="file"
 		accept="image/*" />
-	<hr class="grey-text" />
+
+	<hr class="grey-text pb-6" />
+
 	<Textarea
 		{formData}
 		name="description"

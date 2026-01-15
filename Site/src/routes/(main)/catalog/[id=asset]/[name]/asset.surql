@@ -2,6 +2,7 @@ SELECT
 	*,
 	record::id(id) AS id,
 	(SELECT status, username FROM <-created<-user)[0] AS creator,
+	(SELECT VALUE id FROM <-created<-user)[0] = $user AS isCreator,
 	count(<-ownsAsset<-user) AS sold,
 	$user IN <-ownsAsset<-user.id AS owned,
 

@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
+	import { superForm } from "$lib/validate"
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	const formDataPassword = superForm(data.passwordForm)
-	const formDataSession = superForm(data.sessionForm)
+	let formDataPassword = $derived(superForm(data.passwordForm))
+	let formDataSession = $derived(superForm(data.sessionForm))
 </script>
 
 <h3 class="text-base pb-4 pt-2">Change password</h3>

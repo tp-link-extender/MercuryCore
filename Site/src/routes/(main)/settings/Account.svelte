@@ -1,7 +1,7 @@
 <script lang="ts">
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	const { user } = data
+	let { user } = $derived(data)
 </script>
 
 <div class="form-group flex flex-wrap">

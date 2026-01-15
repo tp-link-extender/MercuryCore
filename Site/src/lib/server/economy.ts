@@ -10,9 +10,12 @@ export type ReturnErr = { ok: true } | { ok: false; msg: string }
 
 const tryFetch =
 	<T>(transform: (res: Response) => Promise<T>) =>
-	async (url: string): Promise<ReturnValue<T>> => {
+	async (
+		f: typeof globalThis.fetch,
+		url: string
+	): Promise<ReturnValue<T>> => {
 		try {
-			const res = await fetch(url)
+			const res = await f(url)
 			if (!res.ok) return { ok: false }
 			return { ok: true, value: await transform(res) }
 		} catch {
@@ -23,9 +26,10 @@ const tryFetch =
 const tryFetchValue = tryFetch(async res => +(await res.text()))
 const tryFetchJson = <T>() => tryFetch(async res => (await res.json()) as T) // type assertion much?¿
 
-export const getStipend = () => tryFetchValue(`${economyUrl}/currentStipend`)
-export const getBalance = (user: string) =>
-	tryFetchValue(`${economyUrl}/balance/${user}`)
+export const getStipend = (f: typeof globalThis.fetch) =>
+	tryFetchValue(f, `${economyUrl}/currentStipend`)
+export const getBalance = (f: typeof globalThis.fetch, user: string) =>
+	tryFetchValue(f, `${economyUrl}/balance/${user}`)
 
 type BaseTx = {
 	Note: string
@@ -58,21 +62,20 @@ type TxTypes =
 
 type ReceivedTx = BaseTx & TxTypes
 
-export const getTransactions = (user: string) =>
-	tryFetchJson<ReceivedTx[]>()(`${economyUrl}/transactions/${user}`)
-export const getAdminTransactions = () =>
-	tryFetchJson<ReceivedTx[]>()(`${economyUrl}/transactions`)
+export const getTransactions = (f: typeof globalThis.fetch, user: string) =>
+	tryFetchJson<ReceivedTx[]>()(f, `${economyUrl}/transactions/${user}`)
+export const getAdminTransactions = (f: typeof globalThis.fetch) =>
+	tryFetchJson<ReceivedTx[]>()(f, `${economyUrl}/transactions`)
 
 // doin nothing with returns rn
-export async function stipend(To: string) {
+export async function stipend(f: typeof globalThis.fetch, To: string) {
 	try {
-		await fetch(`${economyUrl}/stipend/${To}`, {
-			method: "post",
-		})
+		await f(`${economyUrl}/stipend/${To}`, { method: "post" })
 	} catch {}
 }
 
 export async function transact(
+	f: typeof globalThis.fetch,
 	From: string,
 	To: string,
 	Amount: number,
@@ -81,7 +84,7 @@ export async function transact(
 	Returns: { [_: number]: number }
 ): Promise<ReturnErr> {
 	try {
-		const res = await fetch(`${economyUrl}/transact`, {
+		const res = await f(`${economyUrl}/transact`, {
 			method: "post",
 			body: JSON.stringify({ From, To, Amount, Note, Link, Returns }),
 		})
@@ -94,6 +97,7 @@ export async function transact(
 }
 
 async function burn(
+	f: typeof globalThis.fetch,
 	From: string,
 	Amount: number,
 	Note: string,
@@ -106,7 +110,7 @@ async function burn(
 		// When my campaign turned to a cam-pain
 		// We got $2.5 trillion stored on the blockchain
 		// Uh, ₿urn ₿aby ₿urn
-		const res = await fetch(`${economyUrl}/burn`, {
+		const res = await f(`${economyUrl}/burn`, {
 			method: "post",
 			body: JSON.stringify({ From, Amount, Note, Link, Returns }),
 		})
@@ -127,6 +131,7 @@ export const getGroupPrice = () => getFeeBasedPrice(50)
 // export const getPlacePrice = () => getFeeBasedPrice(50)
 
 export async function createAsset(
+	f: typeof globalThis.fetch,
 	To: string,
 	id: number,
 	name: string,
@@ -134,6 +139,7 @@ export async function createAsset(
 ): Promise<ReturnErr> {
 	const price = getAssetPrice()
 	return await burn(
+		f,
 		To,
 		price,
 		`Created asset ${name}`,
@@ -143,6 +149,7 @@ export async function createAsset(
 }
 
 // export async function createPlace(
+// 	f: typeof globalThis.fetch,
 // 	To: string,
 // 	id: number,
 // 	name: string,
@@ -150,6 +157,7 @@ export async function createAsset(
 // ): Promise<ReturnErr> {
 // 	const price = getPlacePrice()
 // 	return await burn(
+// 		fee,
 // 		To,
 // 		price,
 // 		`Created place ${name}`,
@@ -159,11 +167,19 @@ export async function createAsset(
 // }
 
 export async function createGroup(
+	f: typeof globalThis.fetch,
 	To: string,
 	name: string
 ): Promise<ReturnErr> {
 	const price = getGroupPrice()
-	return await burn(To, price, `Created group ${name}`, `/groups/${name}`, {})
+	return await burn(
+		f,
+		To,
+		price,
+		`Created group ${name}`,
+		`/groups/${name}`,
+		{}
+	)
 }
 
 export async function transformTransactions(list: ReceivedTx[]) {

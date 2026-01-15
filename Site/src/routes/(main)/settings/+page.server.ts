@@ -1,11 +1,10 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { arktype } from "sveltekit-superforms/adapters"
-import { message, superValidate } from "sveltekit-superforms/server"
 import { authorise, cookieName, invalidateAllSessions } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import { db, Record } from "$lib/server/surreal"
+import { arktype, message, superValidate } from "$lib/server/validate"
 import passwordQuery from "./password.surql"
 import updateProfileQuery from "./updateProfile.surql"
 

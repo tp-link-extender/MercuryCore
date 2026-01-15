@@ -1,7 +1,5 @@
 import { error, fail, redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { arktype } from "sveltekit-superforms/adapters"
-import { superValidate } from "sveltekit-superforms/server"
 import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
 import createCommentQuery from "$lib/server/createComment.surql"
@@ -16,6 +14,7 @@ import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { db, find, Record } from "$lib/server/surreal"
+import { arktype, superValidate } from "$lib/server/validate"
 import { couldMatch, encode } from "$lib/urlName"
 import type { RequestEvent } from "./$types"
 import assetQuery from "./asset.surql"
@@ -36,6 +35,8 @@ type Asset = {
 		text: string
 		updated: Date
 	}
+	forSale: boolean
+	isCreator: boolean
 	name: string
 	owned: boolean
 	price: number
@@ -53,7 +54,7 @@ const noTexts = Object.freeze([
 ])
 const failTexts = Object.freeze(["Bruh", "Okay", "Aight", "Rip", "Aw man..."])
 
-export async function load({ locals, params }) {
+export async function load({ fetch: f, locals, params }) {
 	const { user } = await authorise(locals)
 	const id = +params.id
 	const [[asset]] = await db.query<Asset[][]>(assetQuery, {
@@ -66,7 +67,7 @@ export async function load({ locals, params }) {
 	if (!couldMatch(asset.name, params.name))
 		redirect(302, `/catalog/${id}/${slug}`)
 
-	const balance = await getBalance(user.id)
+	const balance = await getBalance(f, user.id)
 	if (!balance.ok) error(500, economyConnFailed)
 
 	return {
@@ -90,7 +91,7 @@ async function getBuyData(e: RequestEvent) {
 }
 
 // actions that return things are here because of sveltekit typescript limitations
-async function rerender({ locals, params }: RequestEvent) {
+async function rerender({ fetch: f, locals, params }: RequestEvent) {
 	await authorise(locals, 5)
 
 	const id = +params.id
@@ -108,7 +109,7 @@ async function rerender({ locals, params }: RequestEvent) {
 
 	if ([8, 11, 12].includes(asset.type))
 		try {
-			await requestRender(asset.type === 8 ? "Model" : "Clothing", id)
+			await requestRender(f, asset.type === 8 ? "Model" : "Clothing", id)
 			const icon = `/catalog/${id}/${asset.name}/icon?r=${Math.random()}`
 			return { icon }
 		} catch (e) {
@@ -136,7 +137,7 @@ actions.comment = async ({ locals, params, request, getClientAddress }) => {
 		`
 			SELECT
 				record::id(<-created[0]<-user[0].id) AS creatorId
-			FROM ONLY $asset WHERE visibility = "Visible"`,
+			FROM ONLY $asset`,
 		{ asset: Record("asset", id) }
 	)
 	if (!getAsset) error(404)
@@ -167,6 +168,7 @@ actions.buy = async e => {
 			id: string
 			username: string
 		}
+		forSale: boolean
 		name: string
 		owned: boolean
 		price: number
@@ -180,10 +182,12 @@ actions.buy = async e => {
 	if (asset.owned) error(400, "You already own this item")
 	if (asset.visibility !== "Visible")
 		error(400, "This item hasn't been approved yet")
+	if (!asset.forSale) error(400, "This item is not for sale")
 
 	if (asset.price > 0) {
 		// todo work out how free assets are supposed to work
 		const tx = await transact(
+			e.fetch,
 			user.id,
 			asset.creator.id,
 			asset.price,

@@ -1,5 +1,4 @@
 (SELECT
-	description,
 	name,
 	(SELECT
 		record::id(id) AS id,

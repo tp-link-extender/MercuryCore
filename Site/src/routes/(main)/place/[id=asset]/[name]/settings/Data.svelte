@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
+	import { superForm } from "$lib/validate"
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	const formData = superForm(data.viewForm)
+	let formData = $derived(superForm(data.viewForm))
 </script>
 
 <Form

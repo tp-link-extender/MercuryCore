@@ -4,7 +4,7 @@ import { error, redirect } from "@sveltejs/kit"
 import { db, Record } from "$lib/server/surreal"
 import cachedAssetQuery from "./cache.surql"
 
-export async function GET({ url }) {
+export async function GET({ fetch: f, url }) {
 	const width = +(url.searchParams.get("wd") as string)
 	const height = +(url.searchParams.get("ht") as string)
 	const assetId = +(url.searchParams.get("aid") as string)
@@ -25,9 +25,7 @@ export async function GET({ url }) {
 		format: "Png",
 		isCircular: "false",
 	})
-	const thumb = await fetch(
-		`https://thumbnails.roblox.com/v1/assets?${params}`
-	)
+	const thumb = await f(`https://thumbnails.roblox.com/v1/assets?${params}`)
 
 	if (thumb.status !== 200) error(400, "Invalid asset")
 

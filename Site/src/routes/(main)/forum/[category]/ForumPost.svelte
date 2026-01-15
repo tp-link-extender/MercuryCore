@@ -2,15 +2,18 @@
 	import CommentLike from "$components/CommentLike.svelte"
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
-	import { likeEnhance } from "$lib/like"
+	import type { LikeForm } from "$lib/like2"
+	import type { getCategory } from "./category.remote"
 
-	let {
-		post = $bindable(),
+	const {
+		likeForm,
 		num,
+		post,
 		total
 	}: {
-		post: import("./$types").PageData["posts"][number]
+		likeForm: Omit<LikeForm, "for">
 		num: number
+		post: Awaited<ReturnType<typeof getCategory>>["posts"][number]
 		total: number
 	} = $props()
 
@@ -25,10 +28,8 @@
 	]}>
 	<CommentLike
 		class={["bg-a p-1 z-1", { "opacity-33": hidden }]}
-		comment={post}
-		likeEnhance={likeEnhance(post, c => {
-			post = c
-		})} />
+		{likeForm}
+		comment={post} />
 	<div class={["pl-2 flex flex-col w-full", { "opacity-33": hidden }]}>
 		<div class="flex pt-4 px-4 justify-between items-center w-full">
 			<User user={post.author} full />

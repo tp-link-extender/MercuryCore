@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
 	import { page } from "$app/state"
+	import { superForm } from "$lib/validate"
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	const { message, enhance, delayed } = superForm(data.ticketForm, {
+	let { message, enhance, delayed } = $derived(superForm(data.ticketForm, {
 		id: "ticket"
-	})
+	}))
 </script>
 
 <form use:enhance method="post" action="?/ticket&tab=Network">

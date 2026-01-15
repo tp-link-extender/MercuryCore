@@ -12,10 +12,12 @@
 	import { slide } from "svelte/transition"
 	import fade from "$lib/fade"
 	import type { Comment } from "$lib/comment"
+	import type { LikeForm } from "$lib/like2"
 
 	// Some have to be bindable to allow them to keep state, either on element/component destroy or on page change
 	let {
-		comment = $bindable(),
+		likeForm,
+		comment,
 		depth = 0,
 		num,
 		// postAuthorName,
@@ -23,6 +25,7 @@
 		replyingTo = $bindable(),
 		user
 	}: {
+		likeForm: LikeForm
 		comment: Comment
 		depth?: number
 		num: number
@@ -50,6 +53,7 @@
 			</button>
 		</span>
 
+		{commentsCollapsed?.[comment.id]}
 		{#if commentsCollapsed?.[comment.id]}
 			<!-- delay transition in -->
 			<button
@@ -73,7 +77,8 @@
 		{:else}
 			<div transition:slide class="min-w-full pe-10">
 				<CommentMain
-					bind:comment
+					{likeForm}
+					{comment}
 					{depth}
 					bind:commentsCollapsed
 					bind:replyingTo

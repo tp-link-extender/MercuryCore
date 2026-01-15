@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
 	import { enhance } from "$app/forms"
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
@@ -9,12 +8,13 @@
 	import TabData from "$components/TabData"
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
+	import { superForm } from "$lib/validate"
 
 	const { data } = $props()
 
-	const formData = superForm(data.form)
+	let formData = $derived(superForm(data.form))
 	export const snapshot = formData
-	const { form } = formData
+	let { form } = $derived(formData)
 
 	const tomorrow = new Date(Date.now() + 86400e3).toISOString().slice(0, 10)
 

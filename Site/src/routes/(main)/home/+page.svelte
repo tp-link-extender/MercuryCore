@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
 	import Head from "$components/Head.svelte"
 	import Place from "$components/Place.svelte"
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
+	import { superForm } from "$lib/validate"
 	import Status from "./Status.svelte"
 
 	const { data } = $props()
 
-	const { user } = data
-	const formData = superForm(data.form)
+	let { user } = $derived(data)
+	let formData = $derived(superForm(data.form))
 	export const snapshot = formData
 </script>
 

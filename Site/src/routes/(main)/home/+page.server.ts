@@ -1,12 +1,11 @@
 import { type } from "arktype"
-import { arktype } from "sveltekit-superforms/adapters"
-import { superValidate } from "sveltekit-superforms/server"
 import { authorise } from "$lib/server/auth"
 import createCommentQuery from "$lib/server/createComment.surql"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, Record } from "$lib/server/surreal"
+import { arktype, superValidate } from "$lib/server/validate"
 import homeQuery from "./home.surql"
 
 const schema = type({
@@ -26,6 +25,9 @@ type Status = {
 	id: string
 	author: BasicUser
 	created: Date
+	pinned: boolean
+	replies: number
+	visibility: "Visible" | "Moderated" | "Deleted"
 	currentContent: string
 }
 

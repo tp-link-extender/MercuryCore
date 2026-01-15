@@ -6,6 +6,7 @@ mercs.dev {
 	rewrite /Game/Studio.ashx /game/studio
 	rewrite /Game/Visit.ashx /game/visit
 	rewrite /Game/Join.ashx /game/join
+	rewrite /game/gameserver.ashx /game/gameserver
 	rewrite /Game/MachineConfiguration.ashx /game/machineconfiguration
 	rewrite /Game/ClientPresence /game/clientpresence
 	rewrite /Game/ServerPresence /game/serverpresence

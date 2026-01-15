@@ -7,13 +7,13 @@ import {
 	transformTransactions,
 } from "$lib/server/economy"
 
-export async function load({ locals }) {
+export async function load({ fetch: f, locals }) {
 	const { user } = await authorise(locals)
 
-	const balance = await getBalance(user.id)
+	const balance = await getBalance(f, user.id)
 	if (!balance.ok) error(500, economyConnFailed)
 
-	const transactions = await getTransactions(user.id)
+	const transactions = await getTransactions(f, user.id)
 	if (!transactions.ok) error(500, "Failed to fetch transactions")
 
 	return {

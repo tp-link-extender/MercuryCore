@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
 	import Textarea from "$components/forms/Textarea.svelte"
 	import Head from "$components/Head.svelte"
+	import { superForm } from "$lib/validate"
 
 	// import beautifyCurrency from "$lib/beautifyCurrency"
 
 	const { data } = $props()
 
-	const formData = superForm(data.form)
+	let formData = $derived(superForm(data.form))
 	export const snapshot = formData
 
 	// const [, c1, c2] = beautifyCurrency(data.price)
@@ -55,5 +55,5 @@
 		{formData}
 		type="checkbox"
 		name="privateServer"
-		label="Private server?" />
+		label="Private server" />
 </Form>

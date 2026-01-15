@@ -12,7 +12,7 @@
 		currencySymbol: string
 	} = $props()
 
-	const [, c1, c2] = beautifyCurrency(transaction.Amount)
+	let [, c1, c2] = $derived(beautifyCurrency(transaction.Amount))
 </script>
 
 <td>

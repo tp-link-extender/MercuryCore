@@ -58,8 +58,9 @@ export const cookieOptions = Object.freeze({
 export async function authorise(
 	{ session, user }: { session: string | null; user: User | null },
 	level?: number
-) {
-	if (!session || !user) redirect(302, "/login")
+) {	if (!session || !user)
+		// TODO: get session and user from getRequestEvent() locals
+		redirect(302, "/login")
 	if (level && user.permissionLevel < level)
 		error(403, "You do not have permission to access this page.")
 
