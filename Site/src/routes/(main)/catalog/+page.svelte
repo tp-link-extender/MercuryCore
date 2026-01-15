@@ -10,7 +10,8 @@
 		Shirts: 11,
 		Pants: 12,
 		Decals: 13,
-		Faces: 18
+		Faces: 18,
+		Gear: 19
 	} as const
 
 	const { data } = $props()

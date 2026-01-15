@@ -6,7 +6,7 @@ import catalogQuery from "./catalog.surql"
 
 export const getAssets = query(
 	type({
-		type: type.enumerated(2, 8, 11, 12, 13, 18),
+		type: type.enumerated(2, 8, 11, 12, 13, 18, 19),
 		page: type("number.integer >= 1"),
 	}),
 	async args => {
