@@ -38,6 +38,7 @@ export default defineConfig({
 					label: "Guides",
 					autogenerate: { directory: "guides" },
 				},
+				"history",
 			],
 			components: {
 				Head: "./src/components/Head.astro",
