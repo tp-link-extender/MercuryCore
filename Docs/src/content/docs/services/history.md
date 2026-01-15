@@ -9,7 +9,9 @@ Each project listed had a similar goal of reviving an MMO game platform, and eac
 
 ## Project Polygon
 
-Project Polygon was a revival started in late 2020 by pizzaboxer. Polygon's codebase used predominantly PHP as the backend programming language, and it had multiple clients available for users to play with. Polygon was mainly developed by pizzaboxer, however taskmanager (the owner of all of the following revivals) contributed significantly to the development of Polygon's website. Due to this, pizzaboxer assisted with the development of Mercury 1 and it's predecessor, Krypton by using an earlier version of Polygon source code as the backend. Krypton and Mercury 1 did not sync any changes done to Polygon - so even though Polygon finished development in 2021, this was not reflected within Krypton and Mercury 1 (they were still based on the early Polygon source). In conclusion, Polygon is the grandfather of all revivals prior to Mercury 2.
+Project Polygon was a revival started in late 2020. Polygon's codebase used predominantly PHP as the backend programming language, and it had multiple clients available for users to play with, including 2012. Future Mercury developers made significant contributions to Polygon's website code, and in turn, Polygon developers later assisted with the development of Krypton and Mercury 1 by providing versions of Polygon's source code for these platforms to be built upon.
+
+Krypton and Mercury 1 did not sync any changes done to Polygon &ndash; from the beginning of development, no code was merged between Polygon and Krypton/Mercury 1. Polygon finished development in 2021, and eventually shut down in July 2022.
 
 ## Krypton
 
@@ -19,7 +21,7 @@ Krypton was a revival platform developed in late 2020 and early 2021, built upon
 
 The first version of Mercury started development as a rebranding and improvement of the Krypton codebase in May 2021, and was hosted at [banland.xyz (archive link)](https://web.archive.org/web/20210803231644/https://banland.xyz/). Mercury 1 used the late 2013 Client and Studio.
 
-Mercury 1 peaked at around 300 users before it shut down in September 2021 and merged with Project Polygon. A [functional archive](https://files.heliodex.cf/mercury-website.zip) of the original Mercury 1 website is available.
+Mercury 1 peaked at around 300 users before it shut down in September 2021 and merged with Project Polygon. A [functional archive](https://files.heliodex.cf/mercury-website.zip)[^2] of the original Mercury 1 website is available.
 
 ## Krypton X
 
@@ -31,7 +33,7 @@ A [non-functional archive](https://files.heliodex.cf/krypton-website.zip) of the
 
 In June 2022, development started on prototypes for a new revival platform. Multiple prototypes were produced, some in PHP and others with a JS-based backend, some using components from existing codebases and others built from scratch. The placeholder name "Renova" was used for this assortment of prototypes. These prototypes were never fully functional platforms, though had a number of useful features for testing purposes.
 
-Many of the features from some prototypes of Renova were later integrated into Mercury 2. If you were to scroll back far enough in Mercury Core's [commit history](https://github.com/tp-link-extender/MercuryCore/commits/), you may be able to find some references to Renova.
+Many of the features from some prototypes of Renova were later integrated into Mercury 2. Scrolling back far enough in Mercury Core's [commit history](https://github.com/tp-link-extender/MercuryCore/commits/), it's even possible to find some references to Renova.
 
 ## Mercury 2
 
@@ -65,10 +67,20 @@ Some of Mercury 2's related projects were already available as open source, such
 
 ## Mercury Core
 
-Immediately after the shutdown of Mercury 2, the plan was made to take everything that was not already made open source as a separate component, and polish it for release as a self-hostable and customisable version of Mercury, called Mercury Core.
+Immediately after the shutdown of Mercury 2, the plan was made to take everything that was not already made open source as a separate component and polish it for release as a self-hostable and customisable version of Mercury, called Mercury Core.
 
 Through the remainder of June, many components of the Mercury 2 repository that were now no longer subject to backwards compatibility requirements of the Client, Studio, and database structure were refactored or otherwise improved. Many parts of the site were removed entirely or significantly restructured to make use of more standard tools than the niche utilities previously used for development. Mercury-specific pages, like Studio/IDE browser testing, real-time site update testing, landing pages, and maintenance screens were removed to make the codebase more adaptable to a wider variety of revival platform branding needs. The new Economy service began its integration into the Site.
 
 In July, the codebase continued to be restructured, with better database data models, [removal of various sequential IDs](/design/ids#why-not-sequential-numeric-ids), formatting and styling improvements, and the start of a repository rebranding. The configurability of the platform was improved, including introducing the **mercury.core.ts** file as the main way to customise many aspects of the Site.
 
+Through the beginning of August, the full integration of the Economy service into the site was completed, and more documentation was added to the README file to help new users get started. Pagination was added to various parts of the site to improve handling with lots of data, and more configuration options were added to the **mercury.core.ts** file.
+
+On 21 August 2024, the Mercury Core GitHub repository was renamed (it was previously called mercuryv2) and [silently made public](https://github.com/tp-link-extender/MercuryCore/commit/4b6e5143206aac1fac6eb00d37e6972fd163873c) without announcement[^3]. Some contributions were made during this time, though these were not accepted until the official public release.
+
+On 6 September 2024, Mercury Core was officially made public with an announcement on various social media platforms, chat groups, and forums where Mercury 2 had previously been promoted. The repository included a full commit history from the start of Mercury 2 development in July 2022 up to the public release, allowing anyone to trace back changes made throughout development.
+
 [^1]: The Project Polygon FOSS source code listed at this link differs slightly from the version used to develop Mercury 1 and is missing the commit history.
+
+[^2]: This archive includes Git history for changes made to Mercury 1. Changes made to the Project Polygon codebase before it was used to develop Mercury 1 are not included.
+
+[^3]: This led to the misconception that Mercury Core had been open source from the beginning of Mercury 2 development, which is not the case.
