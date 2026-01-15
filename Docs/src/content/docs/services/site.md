@@ -17,7 +17,7 @@ On successful startup, the Site will display output similar to the following:
 Starting SurrealDB...
 Starting Economy service (../Economy/Economy)...
 connecting to database
-reloaded surrealdb-2.4.0
+reloaded surrealdb-2.4.1
 
   ██▙    ▟██ Started
   ███▙  ▟███ ▟████▙ ▗████▛▗█████▌██   ██ ▟████▙▝█▙    ▗█▛

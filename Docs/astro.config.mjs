@@ -27,6 +27,10 @@ export default defineConfig({
 					autogenerate: { directory: "architecture" },
 				},
 				{
+					label: "Design",
+					autogenerate: { directory: "design" },
+				},
+				{
 					label: "Services",
 					autogenerate: { directory: "services" },
 				},
@@ -40,6 +44,6 @@ export default defineConfig({
 			},
 			customCss: ["./src/global.css", "./src/fonts/font-face.css"],
 		}),
-		markdoc(),
+		markdoc({ allowHTML: true }), // <sup />
 	],
 })
