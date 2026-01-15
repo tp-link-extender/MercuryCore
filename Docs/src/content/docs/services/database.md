@@ -28,7 +28,7 @@ Y88b  d88P Y88b 888 888     888     Y8b.     888  888 888 888  .d88P 888   d88P
  'Y8888P'   'Y88888 888     888      'Y8888  'Y888888 888 8888888P'  8888888P'
 
 
-2038-01-19T03:14:07.119628Z  INFO surreal::env: Running 2.4.0 for linux on x86_64
+2038-01-19T03:14:07.119628Z  INFO surreal::env: Running 2.4.1 for linux on x86_64
 2038-01-19T03:14:07.120154Z  INFO surrealdb::core::kvs::ds: Starting kvs store at surrealkv://data/surreal
 2038-01-19T03:14:07.120164Z  INFO surrealdb::core::kvs::surrealkv: Setting maximum segment size: 536870912
 2038-01-19T03:14:07.120166Z  INFO surrealdb::core::kvs::surrealkv: Setting maximum value threshold: 64
@@ -63,7 +63,7 @@ In some cases, the database may fail to start due to filesystem permission issue
 An example of potential output could be as follows:
 
 ```log
-2038-01-19T03:14:07.740481Z  INFO surreal::env: Running 2.4.0 for linux on x86_64
+2038-01-19T03:14:07.740481Z  INFO surreal::env: Running 2.4.1 for linux on x86_64
 2038-01-19T03:14:07.741021Z  INFO surrealdb::core::kvs::ds: Starting kvs store at surrealkv://data/surreal
 2038-01-19T03:14:07.741047Z  INFO surrealdb::core::kvs::surrealkv: Setting maximum segment size: 536870912
 2038-01-19T03:14:07.741051Z  INFO surrealdb::core::kvs::surrealkv: Setting maximum value threshold: 64
