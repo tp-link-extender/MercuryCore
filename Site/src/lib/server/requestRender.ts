@@ -30,7 +30,7 @@ export default async function (
 	// 	`Requesting render of type ${renderType} for ${relativeId} (${relativeName})`
 	// )
 
-	const params = { renderType, relativeId }
+	const params = Object.freeze({ renderType, relativeId })
 	const [, , render] = await db.query<Render[]>(renderQuery, params)
 	if (render && render.status !== "Error") return
 

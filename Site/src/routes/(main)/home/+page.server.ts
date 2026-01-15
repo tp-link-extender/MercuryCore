@@ -31,22 +31,22 @@ type Status = {
 	currentContent: string
 }
 
+// lazy eval 💞
+const greets: readonly ((u: string) => string)[] = Object.freeze([
+	u => `Hi, ${u}!`,
+	u => `Hello, ${u}!`,
+])
+
 export async function load({ locals }) {
 	const { user } = await authorise(locals)
 	// (main)/+layout.server.ts will handle most redirects for logged-out users, but sometimes errors for this page.
-
-	// lazy eval 💞
-	const greets = [
-		() => `Hi, ${user.username}!`,
-		() => `Hello, ${user.username}!`,
-	]
 
 	const [places, friends, feed] = await db.query<
 		[Place[], BasicUser[], Status[]]
 	>(homeQuery, { user: Record("user", user.id) })
 
 	return {
-		greet: greets[Math.floor(Math.random() * greets.length)](),
+		greet: greets[Math.floor(Math.random() * greets.length)](user.username),
 		form: await superValidate(arktype(schema)),
 		places,
 		friends,

@@ -82,10 +82,10 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 	const limit = ratelimit(form, "moderateUser", getClientAddress, 30)
 	if (limit) return limit
 
-	const qParams = {
+	const qParams = Object.freeze({
 		user: Record("user", user.id),
 		moderatee: Record("user", getModeratee.id),
-	}
+	})
 
 	if (action === "Unban") {
 		// Unban

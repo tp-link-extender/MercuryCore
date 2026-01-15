@@ -7,12 +7,12 @@
 
 	const { data } = $props()
 
-	const assetTypes = [
+	const assetTypes = Object.freeze([
 		["Shirts", "🧥", "Shirt"],
 		["T-Shirts", "👕", "T-Shirt"],
 		["Pants", "👖", "Pants"],
 		["Decals", "🖼️", "Decal"]
-	]
+	])
 
 	let tabData = $state(TabData(data.url, ["Create" /*, "Creations" */]))
 	// let tabData2 = $state(

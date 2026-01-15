@@ -1,5 +1,5 @@
-import { db } from "$lib/server/surreal"
 import { error } from "@sveltejs/kit"
+import { db } from "$lib/server/surreal"
 import searchAssetsQuery from "./searchAssets.surql"
 import searchGroupsQuery from "./searchGroups.surql"
 import searchPlacesQuery from "./searchPlaces.surql"
@@ -31,7 +31,8 @@ export async function load({ url }) {
 	const category = url.searchParams.get("c")?.toLowerCase() || ""
 	if (!query) error(400, "Missing search query")
 
-	const param = { query }
+	// just freeze it bruh
+	const param = Object.freeze({ query })
 
 	// TODO: make this full-text search because that would be much nicer
 	switch (category) {
