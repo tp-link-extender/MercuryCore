@@ -1,53 +1,212 @@
-@import "./vars.styl"
+:root,
+html,
+body,
+main {
+  background: #100f0e;
+  color: #f6f4f3;
+}
 
-:root
-html
-body
-main
-	background background
-	color light-text
+a {
+  color: #8b52ff;
+  transition: 0.2s color;
+}
 
-a
-	color hsl(260 100% 66%)
-	transition 0.2s color
-	&:hover
-		&:not(.btn):not(.light-text)
-			color hsl(260 100% 60%)
-		&.light-text
-			color var(--grey-text)
+a:hover:not(.btn):not(.light-text) {
+  color: #73f;
+}
 
-.light-text
-	color light-text
-.grey-text
-	color grey-text
+a:hover.light-text {
+  color: #8c8b8a;
+}
 
-.bg-darker
-	background darker
+.light-text {
+  color: #f6f4f3;
+}
 
-input
-	background accent
-	color light-text
-	border 1px solid accent2
-	&:active:not(:disabled)
-		box-shadow 0 0 0 2px #5c29c2 !important
-	&:focus:not(:active):not(:disabled)
-		box-shadow 0 0 0 2px background, 0 0 0 3px #5c29c2
+.grey-text {
+  color: #8c8b8a;
+}
 
-lightstyles = primary secondary red-secondary first success danger dark
-darkstyles = warning info light
-styles = primary secondary tertiary quatenary red-secondary red-tertiary first success danger warning info light dark
+.bg-darker {
+  background: #0a0908;
+}
 
-for style in styles
-	.btn-{style}
-		&:active:not(:disabled)
-			box-shadow 0 0 0 2px #5c29c2 !important
-		&:focus:not(:active):not(:disabled)
-			box-shadow 0 0 0 2px background, 0 0 0 4px #5c29c2
-		&:disabled
-			opacity 0.5
+input {
+  background: #1f1d1c;
+  color: #f6f4f3;
+  border: 1px solid #363433;
+}
 
-.is-invalid
-	background-position 99% 0.5rem
+input:active:not(:disabled) {
+  box-shadow: 0 0 0 2px #5c29c2 !important;
+}
 
-.text-red-5
-	color rgb(239 68 68)
+input:focus:not(:active):not(:disabled) {
+  box-shadow: 0 0 0 2px #100f0e, 0 0 0 3px #5c29c2;
+}
+
+.btn-primary:active:not(:disabled) {
+  box-shadow: 0 0 0 2px #5c29c2 !important;
+}
+
+.btn-primary:focus:not(:active):not(:disabled) {
+  box-shadow: 0 0 0 2px #100f0e, 0 0 0 4px #5c29c2;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+}
+
+.btn-secondary:active:not(:disabled) {
+  box-shadow: 0 0 0 2px #5c29c2 !important;
+}
+
+.btn-secondary:focus:not(:active):not(:disabled) {
+  box-shadow: 0 0 0 2px #100f0e, 0 0 0 4px #5c29c2;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+}
+
+.btn-tertiary:active:not(:disabled) {
+  box-shadow: 0 0 0 2px #5c29c2 !important;
+}
+
+.btn-tertiary:focus:not(:active):not(:disabled) {
+  box-shadow: 0 0 0 2px #100f0e, 0 0 0 4px #5c29c2;
+}
+
+.btn-tertiary:disabled {
+  opacity: 0.5;
+}
+
+.btn-quatenary:active:not(:disabled) {
+  box-shadow: 0 0 0 2px #5c29c2 !important;
+}
+
+.btn-quatenary:focus:not(:active):not(:disabled) {
+  box-shadow: 0 0 0 2px #100f0e, 0 0 0 4px #5c29c2;
+}
+
+.btn-quatenary:disabled {
+  opacity: 0.5;
+}
+
+.btn-red-secondary:active:not(:disabled) {
+  box-shadow: 0 0 0 2px #5c29c2 !important;
+}
+
+.btn-red-secondary:focus:not(:active):not(:disabled) {
+  box-shadow: 0 0 0 2px #100f0e, 0 0 0 4px #5c29c2;
+}
+
+.btn-red-secondary:disabled {
+  opacity: 0.5;
+}
+
+.btn-red-tertiary:active:not(:disabled) {
+  box-shadow: 0 0 0 2px #5c29c2 !important;
+}
+
+.btn-red-tertiary:focus:not(:active):not(:disabled) {
+  box-shadow: 0 0 0 2px #100f0e, 0 0 0 4px #5c29c2;
+}
+
+.btn-red-tertiary:disabled {
+  opacity: 0.5;
+}
+
+.btn-first:active:not(:disabled) {
+  box-shadow: 0 0 0 2px #5c29c2 !important;
+}
+
+.btn-first:focus:not(:active):not(:disabled) {
+  box-shadow: 0 0 0 2px #100f0e, 0 0 0 4px #5c29c2;
+}
+
+.btn-first:disabled {
+  opacity: 0.5;
+}
+
+.btn-success:active:not(:disabled) {
+  box-shadow: 0 0 0 2px #5c29c2 !important;
+}
+
+.btn-success:focus:not(:active):not(:disabled) {
+  box-shadow: 0 0 0 2px #100f0e, 0 0 0 4px #5c29c2;
+}
+
+.btn-success:disabled {
+  opacity: 0.5;
+}
+
+.btn-danger:active:not(:disabled) {
+  box-shadow: 0 0 0 2px #5c29c2 !important;
+}
+
+.btn-danger:focus:not(:active):not(:disabled) {
+  box-shadow: 0 0 0 2px #100f0e, 0 0 0 4px #5c29c2;
+}
+
+.btn-danger:disabled {
+  opacity: 0.5;
+}
+
+.btn-warning:active:not(:disabled) {
+  box-shadow: 0 0 0 2px #5c29c2 !important;
+}
+
+.btn-warning:focus:not(:active):not(:disabled) {
+  box-shadow: 0 0 0 2px #100f0e, 0 0 0 4px #5c29c2;
+}
+
+.btn-warning:disabled {
+  opacity: 0.5;
+}
+
+.btn-info:active:not(:disabled) {
+  box-shadow: 0 0 0 2px #5c29c2 !important;
+}
+
+.btn-info:focus:not(:active):not(:disabled) {
+  box-shadow: 0 0 0 2px #100f0e, 0 0 0 4px #5c29c2;
+}
+
+.btn-info:disabled {
+  opacity: 0.5;
+}
+
+.btn-light:active:not(:disabled) {
+  box-shadow: 0 0 0 2px #5c29c2 !important;
+}
+
+.btn-light:focus:not(:active):not(:disabled) {
+  box-shadow: 0 0 0 2px #100f0e, 0 0 0 4px #5c29c2;
+}
+
+.btn-light:disabled {
+  opacity: 0.5;
+}
+
+.btn-dark:active:not(:disabled) {
+  box-shadow: 0 0 0 2px #5c29c2 !important;
+}
+
+.btn-dark:focus:not(:active):not(:disabled) {
+  box-shadow: 0 0 0 2px #100f0e, 0 0 0 4px #5c29c2;
+}
+
+.btn-dark:disabled {
+  opacity: 0.5;
+}
+
+.is-invalid {
+  background-position: 99% 0.5rem;
+}
+
+.text-red-5 {
+  color: #ef4444;
+}
+
+

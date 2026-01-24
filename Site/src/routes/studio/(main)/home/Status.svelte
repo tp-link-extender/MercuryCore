@@ -19,16 +19,19 @@
 	</p>
 </div>
 
-<style lang="stylus">
-	+-md()
-		.statusheader
-			flex-direction column
-		.report
-			width 100%
-			padding-top 0.5rem
-			display flex
-			justify-content space-between
-
-	.card
-		border 1px solid var(--accent2)
+<style>
+	@media (max-width: 767px) {
+		.statusheader {
+			flex-direction: column;
+		}
+		.report {
+			width: 100%;
+			padding-top: 0.5rem;
+			display: flex;
+			justify-content: space-between;
+		}
+	}
+	.card {
+		border: 1px solid var(--accent2);
+	}
 </style>

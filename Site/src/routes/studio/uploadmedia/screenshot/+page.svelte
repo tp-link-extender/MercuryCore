@@ -18,8 +18,8 @@
 	<p>Hey, you just took a screenshot in Mercury! You could:</p>
 	<ul>
 		<li>
-			Open <button on:click={openPictures} class="btn btn-sm btn-primary">
-				<far fa-folder-open />
+			Open <button onclick={openPictures} class="btn btn-sm btn-primary">
+				<fa fa-folder-open></fa>
 				My Pictures
 			</button>
 			to check it out!
@@ -28,7 +28,7 @@
 	</ul>
 	<hr class="divider-bottom" />
 	<button class="btn btn-sm btn-danger">
-		<fa fa-ban />
+		<fa fa-ban></fa>
 		Not interested
 	</button>
 	<p class="text-white">Hey Kakarot, I think they found us</p>

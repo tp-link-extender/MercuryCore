@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { dev } from "$app/environment"
 
-	import "/src/global.styl"
-	import "/src/fontawesome.styl"
+	import "/src/global.css"
+	import "/src/icons.css"
 	import "uno.css"
-	import "/src/routes/studio/studio.styl"
+	import "/src/routes/studio/studio.css"
 
-	export let data
+	const { data, children } = $props()
 </script>
 
 <svelte:head>
@@ -35,4 +35,4 @@
 	</script>
 </svelte:head>
 
-<slot />
+{@render children()}

@@ -2,7 +2,7 @@
 	import Waves from "./Waves.svelte"
 </script>
 
-<div id="gradientbg" class="size-full fixed" />
+<div id="gradientbg" class="size-full fixed"></div>
 
 <Waves />
 
@@ -18,14 +18,15 @@
 				href="/studio/login"
 				class="inline btn btn-secondary">
 				<b>Log in</b>
-				<fa fa-right-to-bracket class="pl-1" />
+				<fa fa-right-to-bracket class="pl-1"></fa>
 			</a>
 		</div>
 	</div>
 </div>
 
-<style lang="stylus">
-	#gradientbg
-		background url(/fallbackgradient.png)
-		background-size cover
+<style>
+	#gradientbg {
+		background: url(/fallbackgradient.png);
+		background-size: cover;
+	}
 </style>

@@ -38,13 +38,14 @@
 
 <span class="w-full h-full absolute top-0 overflow-hidden pointer-events-none">
 	<div class="w-full fixed bottom-0">
-		<div id="w1" class="absolute -top-198px h-198px w-1536" />
-		<div id="w2" class="absolute -top-174px h-198px w-1536" />
+		<div id="w1" class="absolute -top-198px h-198px w-1536"></div>
+		<div id="w2" class="absolute -top-174px h-198px w-1536"></div>
 	</div>
 </span>
 
-<style lang="stylus">
-	div div
-		background url("/landing/wave.svg") repeat-x
-		transform translate3d(0px, 0px, 0px)
+<style>
+	div div {
+		background: url("/landing/wave.svg") repeat-x;
+		transform: translate3d(0px, 0px, 0px);
+	}
 </style>

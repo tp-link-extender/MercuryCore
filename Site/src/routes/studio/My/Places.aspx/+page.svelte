@@ -10,11 +10,11 @@
 				<p>yeah game</p>
 				<div>
 					<div class="float-start">
-						<fa class="thumbs-up" />
+						<fa class="thumbs-up"></fa>
 						50%
 					</div>
 					<div class="float-right">
-						<fa class="user" />
+						<fa class="user"></fa>
 						12
 					</div>
 				</div>
@@ -23,51 +23,64 @@
 	{/each}
 </div>
 
-<style lang="stylus">
-	@import "../../vars"
+<style>
+	a {
+		text-align: center;
+		text-decoration: none;
+		border-radius: 0.5rem;
+		overflow: hidden;
+		margin: none;
+		width: 10rem;
+		display: inline-block;
+		margin: 0.5rem;
+		color: light-text;
+	}
 
-	a
-		text-align center
-		text-decoration none
-		border-radius 0.5rem
-		overflow hidden
-		margin none
-		width 10rem
-		display inline-block
-		margin 0.5rem
-		color light-text
+	fa {
+		font-family: faSolid;
+		color: grey-text;
+		line-height: 1;
+	}
 
-	fa
-		font-family faSolid
-		color grey-text
-		line-height 1
-	.thumbs-up::before
-		content "\f164"
-	.user::before
-		content "\f007"
+	.thumbs-up::before {
+		content: "\f164";
+	}
 
-	.text
-		background-color darker
-		padding 0.7rem
-		margin-top -0.5rem
-		padding-bottom 1.8rem
-	p
-		margin 0
-		margin-bottom 0.5rem
+	.user::before {
+		content: "\f007";
+	}
 
-	.float-right
-		float right
-	.float-start
-		float left
+	.text {
+		background-color: darker;
+		padding: 0.7rem;
+		margin-top: -0.5rem;
+		padding-bottom: 1.8rem;
+	}
 
-	img
-		width 10rem
-		height 10rem
+	p {
+		margin: 0;
+		margin-bottom: 0.5rem;
+	}
 
-	h1
-		text-align center
+	.float-right {
+		float: right;
+	}
 
-	#all
-		width fit-content
-		text-align center
+	.float-start {
+		float: left;
+	}
+
+	img {
+		width: 10rem;
+		height: 10rem;
+	}
+
+	h1 {
+		text-align: center;
+	}
+
+	#all {
+		width: fit-content;
+		text-align: center;
+	}
 </style>
