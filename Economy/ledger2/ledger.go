@@ -516,7 +516,18 @@ func (l *Ledger) Transfer(tid TransferID, t Transfer) error {
 type Economy struct {
 	ledger                                                           *Ledger
 	defaultCurrency                                                  Currency
-	placePrice, groupPrice, limitedSourcePrice, unlimitedSourcePrice Quantity
+	PlacePrice, GroupPrice, LimitedSourcePrice, UnlimitedSourcePrice Quantity
+}
+
+func NewEconomy(ledger *Ledger, placePrice, groupPrice, limitedSourcePrice, unlimitedSourcePrice Quantity) (*Economy) {
+	return &Economy{
+		ledger:               ledger,
+		// default 0 currency
+		PlacePrice:           placePrice,
+		GroupPrice:           groupPrice,
+		LimitedSourcePrice:   limitedSourcePrice,
+		UnlimitedSourcePrice: unlimitedSourcePrice,
+	}
 }
 
 func (e *Economy) OwnsOne(user Owner, item CanOwnOne) bool {
@@ -574,7 +585,7 @@ func (e *Economy) CreateLimitedSource(user User) (LimitedSource, TransferID, err
 			Owner: user,
 			Items: Items{
 				Many: ItemsMany{
-					e.defaultCurrency: e.limitedSourcePrice,
+					e.defaultCurrency: e.LimitedSourcePrice,
 				},
 			},
 		},
@@ -601,7 +612,7 @@ func (e *Economy) CreateUnlimitedSource(user User) (UnlimitedSource, TransferID,
 			Owner: user,
 			Items: Items{
 				Many: ItemsMany{
-					e.defaultCurrency: e.unlimitedSourcePrice,
+					e.defaultCurrency: e.UnlimitedSourcePrice,
 				},
 			},
 		},
@@ -629,7 +640,7 @@ func (e *Economy) CreatePlace(user User) (Place, TransferID, error) {
 			Owner: user,
 			Items: Items{
 				Many: ItemsMany{
-					e.defaultCurrency: e.placePrice,
+					e.defaultCurrency: e.PlacePrice,
 				},
 			},
 		},
@@ -656,7 +667,7 @@ func (e *Economy) CreateGroup(user User) (Group, TransferID, error) {
 			Owner: user,
 			Items: Items{
 				Many: ItemsMany{
-					e.defaultCurrency: e.groupPrice,
+					e.defaultCurrency: e.GroupPrice,
 				},
 			},
 		},

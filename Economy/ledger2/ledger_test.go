@@ -437,13 +437,7 @@ func TestAbstractions1(t *testing.T) {
 	}
 	defer l.Close()
 
-	e := Economy{
-		ledger:               l,
-		placePrice:           10,
-		groupPrice:           10,
-		limitedSourcePrice:   100,
-		unlimitedSourcePrice: 10,
-	}
+	e := NewEconomy(l, 10, 10, 100, 10)
 
 	user := User{"testuser"}
 
@@ -493,13 +487,7 @@ func TestAbstractions2(t *testing.T) {
 	}
 	defer l.Close()
 
-	e := Economy{
-		ledger:               l,
-		placePrice:           10,
-		groupPrice:           10,
-		limitedSourcePrice:   100,
-		unlimitedSourcePrice: 10,
-	}
+	e := NewEconomy(l, 10, 10, 100, 10)
 
 	users := [3]User{
 		{"user0"},

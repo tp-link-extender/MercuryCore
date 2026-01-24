@@ -14,19 +14,21 @@ func main() {
 	fmt.Println("Database opened successfully")
 	fmt.Println()
 
-	tid := MakeTransferID()
-	if err = l.Transfer(tid, Transfer{
-		{Owner: user},
-		{Items: Items{
-			One: ItemsOne{
-				RandPlace(): {},
-			},
-			Many: ItemsMany{
-				Currency{0}: 500,
-			},
-		}},
-	}); err != nil {
+	e := NewEconomy(l, 10, 10, 100, 10)
+
+	if _, err := e.MintCurrency(user, 15); err != nil {
 		panic(err)
+	}
+
+	place, _, err := e.CreatePlace(user)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Created place: %s\n", place)
+
+	if !e.OwnsOne(user, place) {
+		panic("user should own the place")
 	}
 
 	inv := l.Inventory(user)
