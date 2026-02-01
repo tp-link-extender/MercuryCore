@@ -1,7 +1,7 @@
 <div class="loginForm py-8 mt-8">
   <div class="hero-text py-8 mt-8">
-    <h1>Login to Mercury</h1>
-    <small>Login to Mercury to create or update your places! <br> Don't have an account? <a href="https://mercs.dev">Sign up!</a></small>
+    <h1>Login to Mercury Studio</h1>
+    <small>Login to Mercury Studio to create or update your places! <br> Don't have an account? <a href="https://mercs.dev">Sign up!</a></small>
   </div>
   <div class="login container mx-auto py-5">
     <form>
