@@ -1,10 +1,7 @@
 <script lang="ts">
 	import { dev } from "$app/environment"
 
-	import "/src/global.css"
-	import "/src/icons.css"
-	import "uno.css"
-	import "/src/routes/studio/studio.css"
+	import "/src/studio.css"
 
 	const { data, children } = $props()
 </script>
@@ -21,7 +18,7 @@
 	{/if}
 
 	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+		src="//ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 	<script>
 		window.onerror = function (msg, url, line) {
 			alert("Message: " + msg + "\nUrl: " + url + "\nLine: " + line)

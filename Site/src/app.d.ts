@@ -48,6 +48,7 @@ declare global {
 		interface Locals {
 			session: string | null
 			user: User | null
+			isStudio: boolean
 		}
 	}
 }

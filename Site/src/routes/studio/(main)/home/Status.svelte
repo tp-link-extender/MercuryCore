@@ -1,5 +1,6 @@
 <script lang="ts">
-	export let status: import("./$types").PageData["feed"][0]
+	const { status }: { status: import("./$types").PageData["feed"][0] } =
+		$props()
 </script>
 
 <div class="card p-3">

@@ -1,64 +1,49 @@
 <script lang="ts">
+	import Form from "$components/forms/Form.svelte"
+	import Input from "$components/forms/Input.svelte"
 	import { superForm } from "sveltekit-superforms/client"
-	import LoginShell from "../LoginShell.svelte"
 
-	export let data
-	const formData = superForm(data.form, {
-		onResult: ({ result }) =>
-			// Reload to get the new session after redirecting to homepage
-			result.type === "redirect" ? window.location.reload() : null
-	})
+	const { data } = $props()
 
-	export const snapshot = formData
-
-	const descriptions = [
-		[
-			"Endless possibilites",
-			"Create or play your favourite games and customise your character with items on our catalog."
-		],
-		[
-			"New features",
-			"In addition to full client usability, additional features such as security fixes, QoL fixes and an easy to use website make your experience better."
-		],
-		[
-			"Same nostalgia",
-			"All of our clients will remain as vanilla as possible, to make sure it's exactly as you remember it."
-		]
-	]
+	const formData = superForm(data.form)
 </script>
 
-<!-- 🌊 WAVES 🌊 DON'T 🌊 DIE 🌊 -->
-<!-- <Waves /> -->
+<div class="container mx-auto w-100 pb-8 pt-16">
+	<div class="hero-text pb-8 pt-16">
+		<h1>Log in to Mercury Studio</h1>
+		<small>
+			Log in to Mercury Studio to create or update your places! <br />
+			Don't have an account? Register one!
+		</small>
+	</div>
+	<Form {formData} class="pt-6" submit="Log in">
+		<Input
+			{formData}
+			column
+			autocomplete="username"
+			name="username"
+			label="Username"
+			placeholder="Username" />
+		<Input
+			{formData}
+			column
+			autocomplete="current-password"
+			name="password"
+			label="Password"
+			type="password"
+			placeholder={"•".repeat(18)} />
+	</Form>
+</div>
 
-<LoginShell {descriptions}>
-	{#if data.users}
-		<h2>Log into your account</h2>
-
-		<Form {formData} class="pt-6" submit="Log in">
-			<Input
-				{formData}
-				column
-				name="username"
-				label="Username"
-				placeholder="Username" />
-			<Input
-				{formData}
-				column
-				name="password"
-				label="Password"
-				type="password"
-				placeholder="Password" />
-		</Form>
-	{:else}
-		<h2>There are no users registered in the database yet!</h2>
-		<p class="pt-4">
-			Perhaps you've just set up the Mercury 2 source code. Perhaps you've
-			already set it up, and something has gone terribly wrong with your
-			database.
-		</p>
-		<p class="pt-2">
-			If it's the former, head to this page in a web browser for further
-			instructions.
-		</p>
-	{/if}
-</LoginShell>
+<style>
+	a {
+		text-decoration: none;
+		color: #8b52f0;
+	}
+	.hero-text {
+		text-align: center;
+	}
+	button {
+		width: 100%;
+	}
+</style>

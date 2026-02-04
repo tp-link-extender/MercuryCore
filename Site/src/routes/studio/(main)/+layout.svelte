@@ -1,4 +1,7 @@
 <script lang="ts">
+	import StudioNavbar from "$components/StudioNavbar.svelte"
+	import StudioFooter from "$components/StudioFooter.svelte"
+
 	const { data } = $props()
 </script>
 
@@ -8,7 +11,7 @@
 -->
 <StudioNavbar {data} />
 
-<main class="h-90% bg-darker">
+<main class="bg-darker h-90%">
 	<!-- <slot /> -->
 	Yeah
 </main>

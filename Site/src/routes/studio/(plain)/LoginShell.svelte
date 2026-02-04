@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let descriptions: string[][]
+	const { descriptions }: { descriptions: string[][] } = $props()
 </script>
 
 <div class="light-text overflow-hidden h-full">
@@ -12,7 +12,7 @@
 			Home
 		</a>
 		<h1 class="sf font-bold pb-6 text-14">
-			Mercury 2 <span class="opacity-50">rc</span>
+			Mercury 3 <span class="opacity-50">beta</span>
 		</h1>
 
 		{#each descriptions as [title, description]}
