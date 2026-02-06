@@ -20,7 +20,8 @@ http://localhost {
 	rewrite /Setting/QuietGet/ClientSharedSettings/* /api/clientsharedsettings
 	rewrite /Setting/QuietGet/ClientAppSettings/* /api/clientappsettings
 
-	rewrite /My/Places.aspx /studio/places
+	rewrite /My/Places.aspx /studio/home
+	rewrite /IDE/ClientToolbox.aspx /studio/toolbox
 
 	reverse_proxy localhost:5173
 }

@@ -16,20 +16,13 @@
 				src="/assets/icon"
 				alt="{data.siteName} logo"
 				class="size-8 opacity-50" />
-			<a href="/" class="no-underline pl-2">{data.siteName}</a>
+			<a href="/" class="no-underline pl-2">{data.siteName} Studio</a>
 			{#if data.tagline}
 				<span class="grey-text pl-1">&ndash;</span>
 				<span class="grey-text pl-1">
 					{data.tagline}
 				</span>
 			{/if}
-		</div>
-		<div class="sm:text-right <sm:pt-4">
-			<div class="flex <sm:flex-col sm:gap-3 justify-end pb-2">
-				{#if data.user && data.pages.includes("Statistics")}
-					<a class="light-text" href="/statistics">Statistics</a>
-				{/if}
-			</div>
 		</div>
 	</div>
 </footer>

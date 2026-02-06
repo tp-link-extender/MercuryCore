@@ -1,0 +1,1 @@
+SELECT id, name FROM asset WHERE type = 13
