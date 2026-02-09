@@ -34,7 +34,7 @@
 		"arktype": "^2.1.29",
 		"d3-interpolate": "^3.0.1",
 		"melt": "^0.44.0",
-		"nodemailer": "^7.0.12",
+		"nodemailer": "^8.0.1",
 		"nprogress": "^0.2.0",
 		"picocolors": "^1.1.1",
 		"sharp": "^0.34.5",
