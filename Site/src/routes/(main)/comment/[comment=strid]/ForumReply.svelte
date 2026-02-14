@@ -3,14 +3,17 @@
 	import PinButton from "$components/PinButton.svelte"
 	import ReportButton from "$components/ReportButton.svelte"
 	import User from "$components/User.svelte"
-	import { likeEnhance } from "$lib/like"
+	import type { LikeForm } from "$lib/like2"
+	import type { getComment } from "./comment.remote"
 
 	let {
 		comment,
+		likeForm,
 		onResult,
 		user
 	}: {
-		comment: import("./$types").PageData["comment"]
+		comment: Awaited<ReturnType<typeof getComment>>["comments"][number]
+		likeForm: Omit<LikeForm, "for">
 		onResult: (result: {
 			result: import("@sveltejs/kit").ActionResult
 		}) => Promise<void>
@@ -41,12 +44,7 @@
 	</p>
 
 	<div class="flex gap-2">
-		<CommentLike
-			{comment}
-			likeEnhance={likeEnhance(comment, c => {
-				comment = c
-			})}
-			small />
+		<CommentLike {comment} {likeForm} small />
 
 		<span class="dropdown">
 			<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>

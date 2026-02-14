@@ -1,13 +1,13 @@
 <script lang="ts">
 	import Codearea from "$components/forms/Codearea.svelte"
 	import Form from "$components/forms/Form.svelte"
-	import { superForm } from "sveltekit-superforms/client"
+	import { superForm } from "$lib/validate"
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	const { user } = data
-	const formData = superForm(data.stylingForm)
-	const { form } = formData
+	let { user } = $derived(data)
+	let formData = $derived(superForm(data.stylingForm))
+	let { form } = $derived(formData)
 
 	$form.css =
 		user.css || "/* Enter your CSS here! Maximum 10 000 characters. */\n"

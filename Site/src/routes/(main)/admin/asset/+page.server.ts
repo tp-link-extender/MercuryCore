@@ -40,10 +40,10 @@ async function getData({ locals, url }: RequestEvent) {
 	if (!assetRegex.test(assetId)) error(400, `Invalid asset ID: ${assetId}`)
 	const id = +assetId
 
-	const params = {
+	const params = Object.freeze({
 		user: Record("user", user.id),
 		asset: Record("asset", id),
-	}
+	})
 	const [[asset]] = await db.query<{ name: string }[][]>(
 		"SELECT name FROM $asset",
 		params
@@ -80,7 +80,7 @@ actions.rerender = async e => {
 	if (limit) return limit
 
 	try {
-		await requestRender("Clothing", id)
+		await requestRender(e.fetch, "Clothing", id)
 	} catch (e) {
 		console.error(e)
 		fail(500, { msg: "Failed to request render" })

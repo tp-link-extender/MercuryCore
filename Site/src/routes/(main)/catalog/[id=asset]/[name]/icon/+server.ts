@@ -11,6 +11,8 @@ type Asset = {
 	imageAssetId: number
 }
 
+const noRenderTypes = Object.freeze([1, 18])
+
 export async function GET({ locals, params }) {
 	const { user } = await authorise(locals)
 	const id = +params.id
@@ -25,7 +27,7 @@ export async function GET({ locals, params }) {
 		redirect(302, "/error/mQuestion.svg")
 
 	const dirs = ["thumbnails"]
-	if (asset.type === 1) dirs.push("assets") // load from assets dir as well
+	if (noRenderTypes.includes(asset.type)) dirs.push("assets") // load from assets dir as well
 
 	for (const f of dirs.map(d => `../data/${d}/${id}`)) {
 		const file = Bun.file(f)

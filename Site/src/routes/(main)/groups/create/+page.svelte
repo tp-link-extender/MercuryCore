@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
 	import Head from "$components/Head.svelte"
 	import beautifyCurrency from "$lib/beautifyCurrency"
+	import { superForm } from "$lib/validate"
 
 	const { data } = $props()
 
-	const formData = superForm(data.form)
+	let formData = $derived(superForm(data.form))
 	export const snapshot = formData
 
 	const [, c1, c2] = beautifyCurrency(data.price)

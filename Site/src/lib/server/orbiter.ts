@@ -8,9 +8,11 @@ type Gameserver = {
 
 type GameserverId = [number, Gameserver]
 
-export async function listGameservers(): ReturnValue<GameserverId[]> {
+export async function listGameservers(
+	f: typeof globalThis.fetch
+): ReturnValue<GameserverId[]> {
 	try {
-		const res = await fetch(config.OrbiterPrivateURL)
+		const res = await f(config.OrbiterPrivateURL)
 		if (!res.ok) return { ok: false }
 		return { ok: true, value: await res.json() }
 	} catch {
@@ -19,11 +21,12 @@ export async function listGameservers(): ReturnValue<GameserverId[]> {
 }
 
 async function fetchGameserver(
+	f: typeof globalThis.fetch,
 	path: string | number,
 	method: string
 ): Promise<ReturnErr> {
 	try {
-		const res = await fetch(`${config.OrbiterPrivateURL}/${path}`, { method })
+		const res = await f(`${config.OrbiterPrivateURL}/${path}`, { method })
 		if (!res.ok) return { ok: false, msg: await res.text() }
 	} catch (err) {
 		const e = err as Error
@@ -32,8 +35,12 @@ async function fetchGameserver(
 	return { ok: true }
 }
 
-export const startGameserver = async (placeId: number) =>
-	fetchGameserver(placeId, "put")
+export const startGameserver = async (
+	f: typeof globalThis.fetch,
+	placeId: number
+) => fetchGameserver(f, placeId, "put")
 
-export const closeGameserver = async (placeId: number) =>
-	fetchGameserver(placeId, "delete")
+export const closeGameserver = async (
+	f: typeof globalThis.fetch,
+	placeId: number
+) => fetchGameserver(f, placeId, "delete")

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
+	import { superForm } from "$lib/validate"
 
 	const {
 		data
@@ -9,8 +9,8 @@
 		data: import("./$types").PageData
 	} = $props()
 
-	const formData = superForm(data.networkForm)
-	const { form } = formData
+	let formData = $derived(superForm(data.networkForm))
+	let { form } = $derived(formData)
 
 	if (data.dedicated) $form.dedicated = data.dedicated
 	if (data.serverAddress) $form.serverAddress = data.serverAddress

@@ -1,12 +1,11 @@
 import fs from "node:fs"
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { arktype } from "sveltekit-superforms/adapters"
-import { superValidate } from "sveltekit-superforms/server"
 import types, { typeToNumber } from "$lib/assetTypes"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import { db, Record } from "$lib/server/surreal"
+import { arktype, superValidate } from "$lib/server/validate"
 import createQuery from "./create.surql"
 
 const schema = type({
@@ -46,7 +45,7 @@ actions.default = async ({ locals, request }) => {
 	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
 
 	const { asset, description, name, price, type: assetType } = data
-	form.data.asset = null // make sure to return as a POJO
+	form.data.asset = null as unknown as File // make sure to return as a POJO
 
 	const [, id] = await db.query<string[]>(createQuery, {
 		description,
@@ -59,7 +58,7 @@ actions.default = async ({ locals, request }) => {
 	await Bun.write(`../data/assets/${id}`, await asset.arrayBuffer())
 
 	// we'll just assume it's a model 4 now
-	// await requestRender("Model", id)
+	// await requestRender(f, "Model", id)
 
 	redirect(302, `/catalog/${id}`)
 }

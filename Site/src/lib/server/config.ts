@@ -20,7 +20,7 @@ if (!cwd.endsWith("Site")) {
 
 const brickColourEnum = type.or(...brickColoursStrings)
 
-const optionalPages = ["Statistics", "Groups", "Forum"] as const
+const optionalPages = Object.freeze(["Statistics", "Groups", "Forum"] as const)
 export type OptionalPage = (typeof optionalPages)[number]
 
 const schema = type({

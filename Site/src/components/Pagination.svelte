@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { untrack } from "svelte"
 	import { page } from "$app/state"
 
 	const { totalPages }: { totalPages: number } = $props()
@@ -15,12 +16,20 @@
 
 	type Page = number | null
 
-	let pages: Page[] = []
-	pages.push(1)
-	if (currentPage > 2) pages.push(0)
-	if (currentPage !== 1 && currentPage !== totalPages) pages.push(currentPage)
-	if (currentPage + 1 < totalPages) pages.push(0)
-	if (totalPages > 1) pages.push(totalPages)
+	let pages: Page[] = $state([])
+	function updPages() {
+		pages = []
+		untrack(() => {
+			pages.push(1)
+			if (currentPage > 2) pages.push(0)
+			if (currentPage !== 1 && currentPage !== totalPages)
+				pages.push(currentPage)
+			if (currentPage + 1 < totalPages) pages.push(0)
+			if (totalPages > 1) pages.push(totalPages)
+		})
+	}
+	updPages()
+	$effect(updPages)
 
 	const disabled = "opacity-50 pointer-events-none"
 </script>

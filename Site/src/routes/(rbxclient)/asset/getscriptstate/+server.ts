@@ -1,1 +1,1 @@
-export const GET = () => new Response("0 0 0 0")
+export const GET = () => new Response("0 0 1 0")

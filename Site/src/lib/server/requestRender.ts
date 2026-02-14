@@ -20,6 +20,7 @@ type Render = {
  * @param wait Whether to wait for the render to be completed before resolving.
  */
 export default async function (
+	f: typeof globalThis.fetch,
 	renderType: RenderType,
 	relativeId: string | number,
 	relativeName = relativeId,
@@ -29,7 +30,7 @@ export default async function (
 	// 	`Requesting render of type ${renderType} for ${relativeId} (${relativeName})`
 	// )
 
-	const params = { renderType, relativeId }
+	const params = Object.freeze({ renderType, relativeId })
 	const [, , render] = await db.query<Render[]>(renderQuery, params)
 	if (render && render.status !== "Error") return
 
@@ -71,7 +72,7 @@ export default async function (
 	if (!(await scriptFile.exists()))
 		throw new Error(`Script file for ${renderType} does not exist`)
 
-	const pingUrl = `http://localhost:64991/ping/${renderId}` // the proxy will handle sending to /api/render/update
+	const pingUrl = `http://localhost:64990/ping/${renderId}` // the proxy will handle sending to /api/render/update
 
 	const script = (await scriptFile.text())
 		.replaceAll("_BASE_URL", `"${config.Domain}"`)
@@ -85,7 +86,7 @@ export default async function (
 	await Promise.all([
 		waiter,
 		// Uhh carrot just got the
-		fetch(`${config.RCCServiceProxyURL}/${renderId}`, {
+		f(`${config.RCCServiceProxyURL}/${renderId}`, {
 			method: "post",
 			body: script,
 		}),

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
 	import Head from "$components/Head.svelte"
@@ -7,14 +6,19 @@
 	import Tab from "$components/Tab.svelte"
 	import TabData from "$components/TabData"
 	import User from "$components/User.svelte"
+	import { superForm } from "$lib/validate"
 
 	const { data } = $props()
 
-	const formData = superForm(data.form)
+	let formData = $derived(superForm(data.form))
 	export const snapshot = formData
 
 	let tabData = $state(
-		TabData(data.url, ["Change user password", "Users"], ["fa-key", "fa-user"])
+		TabData(
+			data.url,
+			["Change user password", "Users"],
+			["fa-key", "fa-user"]
+		)
 	)
 </script>
 
@@ -48,7 +52,7 @@
 			<tbody>
 				{#each data.users as user}
 					<tr>
-						<td><User {user} full thin bg="accent"/></td>
+						<td><User {user} full thin bg="accent" /></td>
 					</tr>
 				{/each}
 			</tbody>
@@ -61,4 +65,3 @@
 		background: var(--darker);
 	}
 </style>
-

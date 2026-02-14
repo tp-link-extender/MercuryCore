@@ -6,11 +6,11 @@
 
 	const { data } = $props()
 
-	const [, c1, c2] = data.stipend.ok
-		? beautifyCurrency(data.stipend.value)
-		: ["", "", ""]
+	let [, c1, c2] = $derived(
+		data.stipend.ok ? beautifyCurrency(data.stipend.value) : ["", "", ""]
+	)
 
-	const systems = [
+	let systems = $derived([
 		{
 			name: "Mercury Core",
 			ok: true,
@@ -38,8 +38,8 @@
 			],
 			err: "Unable to connect to the service"
 		}
-	]
-	const working = systems.every(s => s.ok)
+	])
+	let working = $derived(systems.every(s => s.ok))
 </script>
 
 <Head name={data.siteName} title={data.siteName} description={data.siteName} />

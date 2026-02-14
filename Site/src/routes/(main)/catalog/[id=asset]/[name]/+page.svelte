@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
 	import { applyAction, enhance } from "$app/forms"
 	import { invalidateAll } from "$app/navigation"
 	import Comment from "$components/Comment.svelte"
@@ -10,16 +9,17 @@
 	import TabNav from "$components/TabNav.svelte"
 	import User from "$components/User.svelte"
 	import types from "$lib/assetTypes"
+	import { superForm } from "$lib/validate"
 
 	let replyingTo = $state("")
 	let commentsCollapsed = $state({})
 
 	const { data, form } = $props()
 
-	const { user } = data
-	const fee = (data.currentFee * data.asset.price).toFixed(2)
-	const totalPrice = (1 + data.currentFee) * data.asset.price
-	const itsFree = data.asset.price === 0 // IT'S FREEEEEEEEEEEEEE
+	let { user } = $derived(data)
+	let fee = $derived((data.currentFee * data.asset.price).toFixed(2))
+	let totalPrice = $derived((1 + data.currentFee) * data.asset.price)
+	let itsFree = $derived(data.asset.price === 0) // IT'S FREEEEEEEEEEEEEE
 
 	let regenerating = $state(false)
 
@@ -32,12 +32,9 @@
 		}
 	}
 
-	let comments = $state(data.asset.comments)
-	$effect(() => {
-		comments = data.asset.comments
-	})
+	let comments = $derived(data.asset.comments)
 
-	const formData = superForm(data.form)
+	let formData = $derived(superForm(data.form))
 
 	let tabData = $state(TabData(data.url, ["Recommended", "Comments"]))
 </script>
@@ -59,28 +56,44 @@
 		<div class="light-text w-full">
 			<div class="flex justify-between">
 				<h1>{data.asset.name}</h1>
-				{#if user.permissionLevel >= 5 && [8, 11, 12].includes(data.asset.type)}
-					<span class="dropdown pl-2 pt-2">
-						<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
-						<div class="dropdown-content">
-							<ul class="p-2 rounded-3">
-								<li class="rounded-2">
-									<form
-										use:enhance={enhanceRegen}
-										method="post"
-										action="?/rerender">
-										<button
-											class="btn accent-text pl-4 pr-0 text-start">
-											<fa fa-arrows-rotate class="pr-2">
-											</fa>
-											<b>Rerender</b>
-										</button>
-									</form>
-								</li>
-							</ul>
+
+				<div class="flex flex-col items-center">
+					{#if data.asset.isCreator || user.permissionLevel >= 4}
+						<div>
+							<a
+								aria-label="Asset settings"
+								href="/catalog/{data.asset
+									.id}/{data.slug}/settings"
+								class="btn btn-sm btn-secondary">
+								<fa fa-sliders></fa>
+							</a>
 						</div>
-					</span>
-				{/if}
+					{/if}
+					{#if user.permissionLevel >= 5 && [8, 11, 12].includes(data.asset.type)}
+						<span class="dropdown pt-2">
+							<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
+							<div class="dropdown-content">
+								<ul class="p-2 rounded-3">
+									<li class="rounded-2">
+										<form
+											use:enhance={enhanceRegen}
+											method="post"
+											action="?/rerender">
+											<button
+												class="btn accent-text pl-4 pr-0 text-start">
+												<fa
+													fa-arrows-rotate
+													class="pr-2">
+												</fa>
+												<b>Rerender</b>
+											</button>
+										</form>
+									</li>
+								</ul>
+							</div>
+						</span>
+					{/if}
+				</div>
 			</div>
 			<div class="flex">
 				<strong class="pr-2">by:</strong>
@@ -115,42 +128,46 @@
 					</p>
 				</div>
 				<div class="w-full md:w-2/3 flex flex-row-reverse">
-					<div class="card light-text p-4">
-						{#if itsFree}
-							<b class="pb-2">Free</b>
-						{:else}
-							<table>
-								<tbody>
-									<tr>
-										<td>Price</td>
-										<td class="text-emerald-600">
-											{data.currencySymbol}
-											{data.asset.price}
-										</td>
-									</tr>
-									<tr>
-										<td>Fee</td>
-										<td class="text-yellow-500">
-											{data.currencySymbol}
-											{fee}
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						{/if}
-						{#if !data.asset.owned}
-							<button popovertarget="buy" class="btn btn-success">
-								<strong class="text-xl">
-									{itsFree ? "Get" : "Buy now"}
+					{#if data.asset.forSale}
+						<div class="card light-text p-4">
+							{#if itsFree}
+								<b class="pb-2">Free</b>
+							{:else}
+								<table>
+									<tbody>
+										<tr>
+											<td>Price</td>
+											<td class="text-emerald-600">
+												{data.currencySymbol}
+												{data.asset.price}
+											</td>
+										</tr>
+										<tr>
+											<td>Fee</td>
+											<td class="text-yellow-500">
+												{data.currencySymbol}
+												{fee}
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							{/if}
+							{#if !data.asset.owned}
+								<button
+									popovertarget="buy"
+									class="btn btn-success">
+									<strong class="text-xl">
+										{itsFree ? "Get" : "Buy now"}
+									</strong>
+								</button>
+							{:else}
+								<strong
+									class="btn btn-dark bg-a3 pointer-events-none text-xl">
+									Owned
 								</strong>
-							</button>
-						{:else}
-							<strong
-								class="btn btn-dark bg-a3 pointer-events-none text-xl">
-								Owned
-							</strong>
-						{/if}
-					</div>
+							{/if}
+						</div>
+					{/if}
 				</div>
 			</div>
 		</div>

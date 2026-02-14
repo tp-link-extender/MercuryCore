@@ -24,27 +24,29 @@
 		// multiple?: boolean
 		options: string[]
 		selected?: string
-		formData: import("sveltekit-superforms").SuperForm<any>
+		formData: import("$lib/validate").SuperForm<any>
 	} = $props()
 
-	const { form, errors, constraints } = formData
+	let { form, errors, constraints } = $derived(formData)
 
 	let trigger = $state<HTMLElement>()
-	let dropdown = $state<HTMLElement>()
+	// let dropdown = $state<HTMLElement>()
 
-	const select = new Select<string>({
-		value: selected,
-		onValueChange: val => {
-			$form[name] = val
-		}
+	let select = $derived(
+		new Select<string>({
+			value: selected,
+			onValueChange: val => {
+				$form[name] = val
+			}
 
-		// floatingConfig: {
-		// 	onCompute: a => {
-		// 		console.log(a)
-		// 		a.floatingApply(dropdown)
-		// 	}
-		// }
-	})
+			// floatingConfig: {
+			// 	onCompute: a => {
+			// 		console.log(a)
+			// 		a.floatingApply(dropdown)
+			// 	}
+			// }
+		})
+	)
 </script>
 
 <div class="flex flex-wrap pb-8">

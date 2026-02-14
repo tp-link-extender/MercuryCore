@@ -1,0 +1,86 @@
+---
+title: History
+description: Details on Mercury Core's history and development.
+---
+
+This page outlines a broad history of Mercury development and the various components of platforms that became part of Mercury Core. 
+
+Each project listed had a similar goal of reviving an MMO game platform, and each project shared some members of the development team. Small revival projects from before Krypton are not listed here.
+
+## Project Polygon
+
+Project Polygon was a revival started in late 2020. Polygon's codebase used predominantly PHP as the backend programming language, and it had multiple clients available for users to play with, including 2012. Future Mercury developers made significant contributions to Polygon's website code, and in turn, Polygon developers later assisted with the development of Krypton and Mercury 1 by providing versions of Polygon's source code for these platforms to be built upon.
+
+Krypton and Mercury 1 did not sync any changes done to Polygon &ndash; from the beginning of development, no code was merged between Polygon and Krypton/Mercury 1. Polygon finished development in 2021, and eventually shut down in July 2022.
+
+## Krypton
+
+Krypton was a revival platform developed in late 2020 and early 2021, built upon an earlier version of the [Project Polygon source code](https://github.com/ProjectPolygon/polygon-website-foss)[^1] and hosted on the domain [kryptoni.xyz (archive link)](https://web.archive.org/web/20210118181413/http://kryptoni.xyz/). Krypton used a late 2011 version of the Client and Studio. It shut down in April 2021.
+
+## Mercury 1
+
+The first version of Mercury started development as a rebranding and improvement of the Krypton codebase in May 2021, and was hosted at [banland.xyz (archive link)](https://web.archive.org/web/20210803231644/https://banland.xyz/). Mercury 1 used the late 2013 Client and Studio.
+
+Mercury 1 peaked at around 300 users before it shut down in September 2021 and merged with Project Polygon. A [functional archive](https://files.heliodex.cf/mercury-website.zip)[^2] of the original Mercury 1 website is available.
+
+## Krypton X
+
+From early to mid 2022, some developments were made on a successor to Mercury 1 and Krypton named Krypton X, also hosted at [banland.xyz (archive link)](https://web.archive.org/web/20220517195738/https://banland.xyz/). Krypton X used the same late 2011 Client and Studio as Krypton.
+
+A [non-functional archive](https://files.heliodex.cf/krypton-website.zip) of the Krypton X website is available.
+
+## Renova
+
+In June 2022, development started on prototypes for a new revival platform. Multiple prototypes were produced, some in PHP and others with a JS-based backend, some using components from existing codebases and others built from scratch. The placeholder name "Renova" was used for this assortment of prototypes. These prototypes were never fully functional platforms, though had a number of useful features for testing purposes.
+
+Many of the features from some prototypes of Renova were later integrated into Mercury 2. Scrolling back far enough in Mercury Core's [commit history](https://github.com/tp-link-extender/MercuryCore/commits/), it's even possible to find some references to Renova.
+
+## Mercury 2
+
+In July 2022, development started on a spiritual successor to Mercury 1 named Mercury 2. Mercury 2 used a JS-based stack with [SvelteKit](/architecture/stack), different to any other revival platform apart from some experimental prototypes from Renova. This meant large chunks of code from existing PHP-based platforms could not be used, so most components had to be built from scratch.
+
+Mercury 2 quickly moved from an alpha development stage to a closed beta testing stage. At the end of July 2022, Project Polygon announced the [shutdown of their platform](https://web.archive.org/web/20220729233714/https://polygon.pizzaboxer.xyz/farewell?ReturnUrl=%2F). At this time, Mercury 2 was not yet ready for public use, so Polygon users migrated to other revival platforms. Development continued, mainly adding pages and features, improving frontend design, and improving database design.
+
+At the beginning of 2023, improvements continued to be made, including a new RedisGraph database to go alongside the existing PostgreSQL database in order to simplify social graph queries. Development accelerated, and a hosted version of Mercury 2 was released on the same domain used for Mercury 2, [banland.xyz (archive link)](https://web.archive.org/web/20230119011856/https://banland.xyz/). By the end of January, testing was beginning for multiplayer game launching, and ~30 beta testers were registered on site.
+
+In February 2023, the ability to join games from the site was added, using the same late 2013 client as Mercury 1. This allowed work to start on Client development, as well as a slightly improved Setup deployer. Due to the shutdown of Tadah, another similar project, and its rebranding of Kapish and shutting down again, a small influx of users resulted from those platforms, ending up with ~40 users by the end of February. Throughout March work continued on more site features including the forums, and ended the month with ~50 users.  
+April introduced optimisations for the site and client scripts. May began with a new notification display system, then a simple avatar profile picture system with a custom 3D renderer (not RCCService). A replacement of the legacy Items system with a new Assets system was also worked on during this time.
+
+During June and July, work was focussed on improving the moderation systems, as well as a new bottom navigation bar on the site to replace the old hamburger menu design, allowing for easier navigation on small screens and better loading & accessibility.  
+For August, the client scripts were rewritten from [YueScript](https://yuescript.org) into [Luau](https://luau.org), which made type-safety in the scripts possible. This also opened up the possibility of using existing Luau libraries in Mercury, so testing began on getting libraries such as [Roact](https://github.com/Heliodex/1fileroact) and [Fusion](https://github.com/Heliodex/1filefusion) working in the 2013 client. By the beginning of September, Fusion was available to use in Client and Studio scripts, and [Red](https://github.com/Heliodex/1filered) was tested and working as well.
+
+September also saw the start of work on a new database system for Merury 2 &ndash; replacing the previously fractured 2-database solution with a unified database on [SurrealDB](https://surrealdb.com). An improved beta tester acceptance system was also worked on, to allow for users to be more easily accepted back onto the site after the completion of the database rewrite in October requiring a site reset. October also brought better renders with RCCService replacing the previous custom 3D renderer, and the site was private for a short period while RCCService stability was tested and improved. A number of live Mercury News sessions were held during this time to show off work on the site, renders, and Luau library use, including parts of the [melt](https://github.com/Heliodex/melt) suite of tools.
+
+The first [video teaser](https://www.youtube.com/watch?v=5pjAjzH1J5A) was released at the beginning of November and new beta testers were accepted and allowed back onto the site, and the rest of the month was spent attempting various fixes for the site and RCCService stability. December brought better site styling and removal of many unused styling components.
+
+2024 began with the [removal of remaining Bootstrap components](https://gist.github.com/Heliodex/1792db65c74fd8a7fb0c61a27d48ac1b), resulting in much smaller bundle sizes, improved site responsiveness, and a more consistent aesthetic across the site with styling using [UnoCSS](https://unocss.dev) rules and [Stylus](https://stylus-lang.com) stylesheets. A new, faster setup deployer was also introduced, as well as a simple RCCService proxy to allow secure hosting on a remote VPS, better stability, and lower bandwidth requirements. This also simplified the site code for dealing with requesting RCCService renders. UI and form element improvements were introduced to take advantage of browsers with JS enabled.
+
+In February, plenty more UI improvements were made, and Mercury 2 moved from a closed beta to a release candidate stage, making it easier to obtain an invite key, and allowing applications to be managed and accepted via a Discord bot. March introduced the ability for the site to run with [Bun](/install/bun) instead of [Node.js](https://nodejs.org), though Node was still primarily used for development purposes. Once the bot and its associated API on the site were both stable, a huge influx of over 200 applications were received, and the site grew to 120 registered users by the end of March. 
+
+Mercury 2 moved to the domain [mercury2.com (archive link)](https://web.archive.org/web/20240423190637/https://mercury2.com/) in April 2024, following the April Fools CSS rewrite. Some work continued on the site, including allowing users to customise their site styling through CSS and moving various library functions to use Bun equivalents, and more attempts were made at getting the DLL hook working to enable more features in the Client and Studio. At this point, the previous client that worked with the old **banland.xyz** domain no longer worked with the site, and we planned to use the DLL hook to restore functionality rather than going through the patching process again.
+
+Mercury then went on a short development hiatus and returned in mid-May with more fixes for database functions, and more attempts at making client integration work through a DLL hook, with plans to soon integrate a basic anti-cheat system. Users continued to be accepted onto the site at a slower rate. Through the start of June, some experiments were made with an updated economy system and various other updates on the site, while further progress on the DLL hook remained slow and difficult to advance.
+
+Eventually, it was decided that DLL hooking was not feasible, and with no good way to connect the Client and Studio to the rest of the platform, it was decided to [shut down Mercury 2](https://web.archive.org/web/20250622030340/http://mercury2.com/) on 22 June 2024. At the time of shutdown, Mercury 2 had just over 150 registered users.
+
+Some of Mercury 2's related projects were already available as open source, such as [melt](https://github.com/Heliodex/melt). Many other components, including the Setup deployer, 2013 scripts and tools, RCCService proxy, application settings JSON, and Discord bot were all made available as well.
+
+## Mercury Core
+
+Immediately after the shutdown of Mercury 2, the plan was made to take everything that was not already made open source as a separate component and polish it for release as a self-hostable and customisable version of Mercury, called Mercury Core.
+
+Through the remainder of June, many components of the Mercury 2 repository that were now no longer subject to backwards compatibility requirements of the Client, Studio, and database structure were refactored or otherwise improved. Many parts of the site were removed entirely or significantly restructured to make use of more standard tools than the niche utilities previously used for development. Mercury-specific pages, like Studio/IDE browser testing, real-time site update testing, landing pages, and maintenance screens were removed to make the codebase more adaptable to a wider variety of revival platform branding needs. The new Economy service began its integration into the Site.
+
+In July, the codebase continued to be restructured, with better database data models, [removal of various sequential IDs](/design/ids#why-not-sequential-numeric-ids), formatting and styling improvements, and the start of a repository rebranding. The configurability of the platform was improved, including introducing the **mercury.core.ts** file as the main way to customise many aspects of the Site.
+
+Through the beginning of August, the full integration of the Economy service into the site was completed, and more documentation was added to the README file to help new users get started. Pagination was added to various parts of the site to improve handling with lots of data, and more configuration options were added to the **mercury.core.ts** file.
+
+On 21 August 2024, the Mercury Core GitHub repository was renamed (it was previously called mercuryv2) and [silently made public](https://github.com/tp-link-extender/MercuryCore/commit/4b6e5143206aac1fac6eb00d37e6972fd163873c) without announcement[^3]. Some contributions were made during this time, though these were not accepted until the official public release.
+
+On 6 September 2024, Mercury Core was officially made public with an announcement on various social media platforms, chat groups, and forums where Mercury 2 had previously been promoted. The repository included a full commit history from the start of Mercury 2 development in July 2022 up to the public release, allowing anyone to trace back changes made throughout development.
+
+[^1]: The Project Polygon FOSS source code listed at this link differs slightly from the version used to develop Mercury 1 and is missing the commit history.
+
+[^2]: This archive includes Git history for changes made to Mercury 1. Changes made to the Project Polygon codebase before it was used to develop Mercury 1 are not included.
+
+[^3]: This led to the misconception that Mercury Core had been open source from the beginning of Mercury 2 development, which is not the case.

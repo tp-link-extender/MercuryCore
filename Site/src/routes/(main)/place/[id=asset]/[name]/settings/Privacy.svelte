@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
+	import { superForm } from "$lib/validate"
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	const formData = superForm(data.privacyForm)
-	const { form } = formData
+	let formData = $derived(superForm(data.privacyForm))
+	let { form } = $derived(formData)
 
 	if (data.privateServer) $form.privateServer = data.privateServer
 </script>

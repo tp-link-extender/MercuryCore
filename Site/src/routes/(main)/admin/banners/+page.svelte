@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
 	import { enhance } from "$app/forms"
 	import { invalidate } from "$app/navigation"
 	import { page } from "$app/state"
@@ -11,6 +10,7 @@
 	import Tab from "$components/Tab.svelte"
 	import TabData from "$components/TabData"
 	import User from "$components/User.svelte"
+	import { superForm } from "$lib/validate"
 
 	const { data } = $props()
 
@@ -23,7 +23,7 @@
 	)
 	let textLightForms: { [_: string]: HTMLFormElement } = $state({})
 
-	const formData = superForm(data.form)
+	let formData = $derived(superForm(data.form))
 	export const snapshot = formData
 	const { message } = formData
 </script>

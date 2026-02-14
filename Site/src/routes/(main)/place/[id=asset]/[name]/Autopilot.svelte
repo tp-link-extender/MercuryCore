@@ -15,12 +15,14 @@
 
 	let filepath = $state("")
 
-	const host = beginJoining(
-		() =>
-			// TODO: fix hosting and map opening with correct URI scheme
-			`${scheme}1+launchmode:ide+script:http://${domain}/game/host?ticket=${serverTicket}&autopilot=${btoa(
-				filepath
-			)}`
+	let host = $derived(
+		beginJoining(
+			() =>
+				// TODO: fix hosting and map opening with correct URI scheme
+				`${scheme}1+launchmode:ide+script:http://${domain}/game/host?ticket=${serverTicket}&autopilot=${btoa(
+					filepath
+				)}`
+		)
 	)
 </script>
 

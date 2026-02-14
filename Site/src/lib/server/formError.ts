@@ -1,7 +1,7 @@
 // Returns a custom error for a superForm
 
 import { fail } from "@sveltejs/kit"
-import type { SuperValidated } from "sveltekit-superforms"
+import type { SuperValidated } from "$lib/server/validate"
 
 /**
  * Returns a custom error for a superForm.

@@ -15,9 +15,10 @@
 		name: string
 		disabled: boolean
 		type: HTMLInputTypeAttribute
-		formData: import("sveltekit-superforms").SuperForm<any>
+		formData: import("$lib/validate").SuperForm<any>
 	} & HTMLInputAttributes = $props()
-	const { form, errors, constraints } = formData
+
+	let { form, errors, constraints } = $derived(formData)
 </script>
 
 {#if type === "checkbox"}

@@ -1,8 +1,5 @@
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
-import { superValidate } from "sveltekit-superforms"
-import { arktype } from "sveltekit-superforms/adapters"
-import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
 import commentType from "$lib/server/commentType"
 import createCommentQuery from "$lib/server/createComment.surql"
@@ -10,6 +7,7 @@ import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, Record } from "$lib/server/surreal"
+import { arktype, superValidate } from "$lib/server/validate"
 import removeCommentQuery from "./removeComment.surql"
 
 const schema = type({
@@ -17,23 +15,10 @@ const schema = type({
 	replyId: "string | undefined",
 })
 
-export async function load({ locals, params }) {
-	const { user } = await authorise(locals)
-
-	const [[comment]] = await db.query<Comment[][]>(
-		"fn::getComments($comment, 0, $user)",
-		{
-			comment: Record("comment", params.comment),
-			user: Record("user", user.id),
-		}
-	)
-	if (!comment) error(404, "Comment not found")
-
-	return {
-		comment,
-		form: await superValidate(arktype(schema)),
-	}
-}
+export const load = async ({ params }) => ({
+	commentId: params.comment,
+	form: await superValidate(arktype(schema)),
+})
 
 export const actions: import("./$types").Actions = {}
 actions.comment = async ({ locals, params, request, getClientAddress }) => {
@@ -91,8 +76,8 @@ actions.pin = async ({ locals, params, url, getClientAddress }) => {
 
 	const [[ok]] = await db.query<1[][]>(
 		`
-			UPDATE $comment WHERE type != ["status"]
-				SET pinned = $pinned RETURN VALUE 1`,
+			UPDATE $comment SET pinned = $pinned
+				WHERE type != ["status"] RETURN VALUE 1`,
 		{
 			comment: Record("comment", params.comment),
 			pinned: url.searchParams.get("set") === "true",

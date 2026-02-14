@@ -21,7 +21,7 @@ interface Place extends FoundPlace {
 	created: string
 	description: {
 		text: string
-		updated: string
+		updated: Date
 	}
 	dislikeCount: number
 	dislikes: boolean
@@ -37,7 +37,7 @@ interface Place extends FoundPlace {
 	}[]
 	serverPing: number
 	serverTicket: string
-	updated: string
+	updated: Date
 }
 
 const thumbnails = config.Images.DefaultPlaceThumbnails
@@ -96,7 +96,7 @@ async function findPlace(request: Request, id: number, user: User) {
 	)
 		error(404, "Place not found")
 
-	return placeR
+	return [place, placeR] as const
 }
 
 async function checkUser(locals: App.Locals) {
@@ -115,7 +115,7 @@ async function checkUser(locals: App.Locals) {
 export const actions: import("./$types").Actions = {}
 actions.join = async ({ locals, params, request }) => {
 	const user = await checkUser(locals)
-	const placeR = await findPlace(request, +params.id, user)
+	const [_, placeR] = await findPlace(request, +params.id, user)
 
 	// Invalidate all game sessions and create valid playing
 	const [, [ticket]] = await db.query<string[][]>(invalidatePlayingQuery, {
@@ -126,7 +126,13 @@ actions.join = async ({ locals, params, request }) => {
 	return { ticket }
 }
 
-actions.start = async ({ locals, params, request, getClientAddress }) => {
+actions.start = async ({
+	fetch: f,
+	locals,
+	params,
+	request,
+	getClientAddress,
+}) => {
 	const user = await checkUser(locals)
 
 	const limit = ratelimit(null, "serverstart", getClientAddress, 20)
@@ -139,23 +145,23 @@ actions.start = async ({ locals, params, request, getClientAddress }) => {
 	const placeFile = `../data/places/${id}`
 	if (!fs.existsSync(placeFile)) error(404, "Place file not found")
 
-	const res = await startGameserver(id)
+	const res = await startGameserver(f, id)
 	if (res.ok) return
 
 	console.error("Failed to start dedicated gameserver for id", id, res.msg)
 	error(500, "Failed to start dedicated server")
 }
 
-actions.close = async ({ locals, params, request }) => {
+actions.close = async ({ fetch: f, locals, params, request }) => {
 	const { user } = await authorise(locals)
 	const id = +params.id
 
-	const place = await findPlace(request, id, user)
+	const [place] = await findPlace(request, id, user)
 
-	if (user.username !== place.ownerUserame && user.permissionLevel < 4)
+	if (user.username !== place.ownerUsername && user.permissionLevel < 4)
 		error(403, "You do not have permission to close this server.")
 
-	const res = await closeGameserver(id)
+	const res = await closeGameserver(f, id)
 	if (res.ok) return
 
 	console.error("Failed to close dedicated gameserver for id", id, res.msg)

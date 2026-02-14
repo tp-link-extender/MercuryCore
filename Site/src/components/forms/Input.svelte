@@ -25,10 +25,10 @@
 		inline?: boolean
 		column?: boolean
 		disabled?: boolean
-		formData: import("sveltekit-superforms").SuperForm<any>
+		formData: import("$lib/validate").SuperForm<any>
 	} & HTMLInputAttributes = $props()
 
-	const { errors } = formData
+	let { errors } = $derived(formData)
 </script>
 
 <div class="flex flex-wrap {inline ? 'flex-1' : 'pb-8'}">

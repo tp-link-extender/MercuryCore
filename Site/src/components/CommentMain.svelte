@@ -6,18 +6,20 @@
 	import PinButton from "$components/PinButton.svelte"
 	import ReportButton from "$components/ReportButton.svelte"
 	import type { Comment as CommentType } from "$lib/comment"
-	import { likeEnhance } from "$lib/like"
+	import type { LikeForm } from "$lib/like2"
 	import { refreshComments } from "$lib/refreshComments"
 	import CommentLike from "./CommentLike.svelte"
 
 	let {
-		comment = $bindable(),
+		likeForm,
+		comment,
 		depth = 0,
 		// postAuthorName,
 		commentsCollapsed = $bindable(),
 		replyingTo = $bindable(),
 		user
 	}: {
+		likeForm: LikeForm
 		comment: CommentType
 		depth?: number
 		// postAuthorName: string
@@ -25,6 +27,8 @@
 		replyingTo: string
 		user: UserType
 	} = $props()
+
+	const likeFormFor = likeForm.for(comment.id)
 
 	let content = $state("") // Allows current reply to not be lost on clicking to another reply
 
@@ -67,10 +71,8 @@
 	{#if replyingTo !== comment.id}
 		<CommentLike
 			class={["inline pr-2", { "opacity-33": hidden }]}
+			likeForm={likeFormFor}
 			{comment}
-			likeEnhance={likeEnhance(comment, c => {
-				comment = c
-			})}
 			small />
 		{#if !hidden}
 			<a
@@ -120,7 +122,7 @@
 			<form
 				use:enhance={e => {
 					replyingTo = ""
-					return refreshComments(e)
+					return refreshComments()
 				}}
 				method="post"
 				action="/comment/{comment.id}?/comment">
@@ -164,10 +166,11 @@
 	</a>
 {/if}
 
-{#each comment.comments as _, num}
+{#each comment.comments as c, num (c.id)}
 	<!-- Get READY for some RECURSION!!! -->
 	<Comment
-		bind:comment={comment.comments[num]}
+		comment={c}
+		{likeForm}
 		depth={depth + 1}
 		{num}
 		bind:commentsCollapsed

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { untrack } from "svelte"
 	import AdminLink from "$components/AdminLink.svelte"
 	import Head from "$components/Head.svelte"
 	import SidebarShell from "$components/SidebarShell.svelte"
@@ -8,9 +9,9 @@
 
 	const { data } = $props()
 
-	const { user, totalmem, freemem } = data
+	let { user, totalmem, freemem } = $derived(data)
 
-	const perms = permissionLevels(user.permissionLevel)
+	let perms = $derived(permissionLevels(user.permissionLevel))
 	const _uno = [
 		"fa-user",
 		"fa-check",
@@ -19,28 +20,37 @@
 		"fa-scale-balanced"
 	]
 
-	const panel: { [_: string]: [string, string, string][] } = $state({
-		Moderation: [
-			["User moderation", "moderation", "fa-user-slash"],
-			["Abuse reports", "reports", "fa-flag"],
-			["Asset approval", "asset", "fa-file-circle-check"],
-			["Render queue", "renderqueue", "fa-file-image"]
-		],
-		Catalog: [["Asset creation", "create", "fa-file-circle-plus"]],
-		Economy: [["Transactions", "transactions", "fa-money-bill-transfer"]]
-	})
-	const tabNames = ["Moderation", "Catalog", "Economy", "Statistics"]
+	let panel: { [_: string]: [string, string, string][] } = $state({})
+	let tabNames: string[] = $state([])
 
-	if (user.permissionLevel === 5) {
-		panel.Administration = [
-			["Banners", "banners", "fa-bullhorn"],
-			["Accounts", "accounts", "fa-user"],
-			["Audit logs", "audit", "fa-book"],
-			["Registration keys", "regkeys", "fa-key"],
-			["Gameservers", "gameservers", "fa-server"],
-		]
-		tabNames.unshift("Administration")
+	function updPanel() {
+		panel = {
+			Moderation: [
+				["User moderation", "moderation", "fa-user-slash"],
+				["Abuse reports", "reports", "fa-flag"],
+				["Asset approval", "asset", "fa-file-circle-check"],
+				["Render queue", "renderqueue", "fa-file-image"]
+			],
+			Catalog: [["Asset creation", "create", "fa-file-circle-plus"]],
+			Economy: [
+				["Transactions", "transactions", "fa-money-bill-transfer"]
+			]
+		}
+		tabNames = ["Moderation", "Catalog", "Economy", "Statistics"]
+		if (user.permissionLevel !== 5) return
+		untrack(() => {
+			panel.Administration = [
+				["Banners", "banners", "fa-bullhorn"],
+				["Accounts", "accounts", "fa-user"],
+				["Audit logs", "audit", "fa-book"],
+				["Registration keys", "regkeys", "fa-key"],
+				["Gameservers", "gameservers", "fa-server"]
+			]
+			tabNames.unshift("Administration")
+		})
 	}
+	updPanel()
+	$effect(updPanel)
 
 	let tabData = $state(
 		TabData(data.url, tabNames, [
@@ -52,10 +62,10 @@
 		])
 	)
 
-	const mbUsed = (totalmem - freemem) / 1e3 ** 2
+	let mbUsed = $derived((totalmem - freemem) / 1e3 ** 2)
 	// they done let gbs in the door
-	const gbUsed = mbUsed / 1e3
-	const gbTotal = totalmem / 1e3 ** 3
+	let gbUsed = $derived(mbUsed / 1e3)
+	let gbTotal = $derived(totalmem / 1e3 ** 3)
 </script>
 
 <Head name={data.siteName} title="Admin" />

@@ -5,6 +5,7 @@ DEFINE TABLE OVERWRITE asset SCHEMAFULL;
 	DEFINE FIELD OVERWRITE id ON asset TYPE int;
 	DEFINE FIELD OVERWRITE created ON asset TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE description ON asset FLEXIBLE TYPE array DEFAULT ALWAYS [];
+	DEFINE FIELD OVERWRITE forSale ON asset TYPE bool DEFAULT true;
 	DEFINE FIELD OVERWRITE name ON asset TYPE string;
 	DEFINE FIELD OVERWRITE price ON asset TYPE int DEFAULT 0;
 	DEFINE FIELD OVERWRITE type ON asset TYPE int;
@@ -147,6 +148,8 @@ DEFINE TABLE OVERWRITE session SCHEMAFULL;
 	DEFINE FIELD OVERWRITE created ON session TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE expires ON session TYPE datetime DEFAULT time::now() + 30d;
 
+# the awesomest table in Mercury Core
+# What's in it? Nobody knooooowssssssss
 DEFINE TABLE OVERWRITE stuff SCHEMALESS;
 
 DEFINE TABLE OVERWRITE user SCHEMAFULL;

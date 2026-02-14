@@ -1,13 +1,15 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
 	import { page } from "$app/state"
 	import fade from "$lib/fade"
+	import { superForm } from "$lib/validate"
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	const { message, enhance, delayed } = superForm(data.privatelinkForm, {
-		id: "privatelink"
-	})
+	let { message, enhance, delayed } = $derived(
+		superForm(data.privatelinkForm, {
+			id: "privatelink"
+		})
+	)
 
 	let value = $derived(
 		encodeURI(
