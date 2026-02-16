@@ -54,9 +54,11 @@ func (t TransferID) Serialise() []byte {
 	return bs
 }
 
+var errInvalidTransferID = errors.New("invalid TransferID")
+
 func DeserialiseTransferID(data []byte) (t TransferID, err error) {
 	if len(data) < 8 {
-		return TransferID{}, errors.New("invalid TransferID data")
+		return TransferID{}, errInvalidTransferID
 	}
 	t.timestamp = binary.BigEndian.Uint64(data[:8])
 	t.id = string(data[8:])
@@ -122,7 +124,7 @@ func (s Send) Serialise(b *bytes.Buffer) {
 
 	// encode Items
 	if err := s.Items.Serialise(b); err != nil {
-		panic(fmt.Sprintf("failed to serialise Items: %v", err))
+		panic(fmt.Sprintf("serialise Items: %v", err))
 	}
 }
 
@@ -163,13 +165,18 @@ func (t Transfer) String() string {
 	return fmt.Sprintf("%s, %s", t[0], t[1])
 }
 
+var (
+	errNoSourceOrDestination = errors.New("transfer has no source or destination")
+	errNoItems               = errors.New("transfer has no items")
+)
+
 func (t Transfer) Valid() error {
 	// Can't have a transfer of nothing or between nobody
 	if t[0].Owner == nil && t[1].Owner == nil {
-		return errors.New("transfer has no source or destination")
+		return errNoSourceOrDestination
 	}
 	if t[0].Items.IsEmpty() && t[1].Items.IsEmpty() {
-		return errors.New("transfer has no items")
+		return errNoItems
 	}
 	for i, send := range t {
 		if err := send.Valid(); err != nil {
@@ -433,7 +440,7 @@ func applyKVPair(state *State) func(k, v []byte) error {
 
 		// apply transfer to state
 		if err := state.TryApply(t); err != nil {
-			return fmt.Errorf("failed to apply transfer %v: %w", tid, err)
+			return fmt.Errorf("apply transfer %v: %w", tid, err)
 		}
 
 		return nil
@@ -519,9 +526,9 @@ type Economy struct {
 	PlacePrice, GroupPrice, LimitedSourcePrice, UnlimitedSourcePrice Quantity
 }
 
-func NewEconomy(ledger *Ledger, placePrice, groupPrice, limitedSourcePrice, unlimitedSourcePrice Quantity) (*Economy) {
+func NewEconomy(ledger *Ledger, placePrice, groupPrice, limitedSourcePrice, unlimitedSourcePrice Quantity) *Economy {
 	return &Economy{
-		ledger:               ledger,
+		ledger: ledger,
 		// default 0 currency
 		PlacePrice:           placePrice,
 		GroupPrice:           groupPrice,
