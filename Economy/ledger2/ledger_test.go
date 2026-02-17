@@ -426,6 +426,90 @@ func TestReopen(t *testing.T) {
 	}
 }
 
+func TestTransferHistory(t *testing.T) {
+	// create temp file
+	name := os.TempDir() + "/ledger_test.db"
+	os.Remove(name)
+	defer os.Remove(name)
+
+	l, err := NewLedger(name)
+	if err != nil {
+		t.Fatalf("create ledger: %v", err)
+	}
+	defer l.Close()
+
+	// let there be rocks
+	currency4 := Currency{4}
+	user5 := User{"user5"}
+
+	tf := Transfer{
+		{Owner: user5},
+		{Items: Items{
+			Many: ItemsMany{
+				currency4: 100,
+			},
+		}},
+	}
+
+	if err := l.Transfer(MakeTransferID(), tf); err != nil {
+		t.Fatalf("transfer: %v", err)
+	}
+
+	history, err := l.TransferHistory(1)
+	if err != nil {
+		t.Fatalf("TransferHistory: %v", err)
+	}
+
+	if len(history) != 1 {
+		t.Fatalf("expected transfer history length 1, got %d", len(history))
+	}
+
+	if !history[0].Transfer.Equal(tf) {
+		t.Fatalf("expected transfer %v, got %v", tf, history[0])
+	}
+}
+
+func TestGetTransfer(t *testing.T) {
+	// create temp file
+	name := os.TempDir() + "/ledger_test.db"
+	os.Remove(name)
+	defer os.Remove(name)
+
+	l, err := NewLedger(name)
+	if err != nil {
+		t.Fatalf("create ledger: %v", err)
+	}
+	defer l.Close()
+
+	// let there be rocks
+	currency4 := Currency{4}
+	user5 := User{"user5"}
+
+	tf := Transfer{
+		{Owner: user5},
+		{Items: Items{
+			Many: ItemsMany{
+				currency4: 100,
+			},
+		}},
+	}
+
+	tid := MakeTransferID()
+	if err := l.Transfer(tid, tf); err != nil {
+		t.Fatalf("transfer: %v", err)
+	}
+
+	// i love titanfall 2
+	tf2, err := l.GetTransfer(tid)
+	if err != nil {
+		t.Fatalf("GetTransfer: %v", err)
+	}
+
+	if !tf2.Equal(tf) {
+		t.Fatalf("expected transfer %v, got %v", tf, tf2)
+	}
+}
+
 func TestAbstractions1(t *testing.T) {
 	name := os.TempDir() + "/ledger_test.db"
 	os.Remove(name)

@@ -559,6 +559,32 @@ func (l *Ledger) TransferHistory(n int) (twids []TransferWithID, err error) {
 	})
 }
 
+func (l *Ledger) GetTransfer(tid TransferID) (t Transfer, err error) {
+	return t, l.db.View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(bucketNameBytes)
+		if bucket == nil {
+			return nil
+		}
+
+		v := bucket.Get(tid.Serialise())
+		if v == nil {
+			return nil
+		}
+
+		var err2 error
+		t, err2 = DeserialiseTransfer(bytes.NewReader(v))
+		if err2 != nil {
+			return fmt.Errorf("decode transfer: %w", err2)
+		}
+
+		return nil
+	})
+}
+
+func (l *Ledger) Find(template Transfer) (twid TransferWithID, err error) {
+	return
+}
+
 // Abstractions
 type Economy struct {
 	ledger                                                           *Ledger
