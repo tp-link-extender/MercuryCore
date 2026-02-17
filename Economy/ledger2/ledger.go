@@ -54,11 +54,11 @@ func (t TransferID) Serialise() []byte {
 	return bs
 }
 
-var errInvalidTransferID = errors.New("invalid TransferID")
+var ErrInvalidTransferID = errors.New("invalid TransferID")
 
 func DeserialiseTransferID(data []byte) (t TransferID, err error) {
 	if len(data) < 8 {
-		return TransferID{}, errInvalidTransferID
+		return TransferID{}, ErrInvalidTransferID
 	}
 	t.timestamp = binary.BigEndian.Uint64(data[:8])
 	t.id = string(data[8:])
@@ -75,7 +75,7 @@ func (s Send) String() string {
 	if s.Owner == nil {
 		return fmt.Sprintf("[] -> %v", s.Items)
 	}
-	return fmt.Sprintf("[%s] -> %v", s.Owner, s.Items)
+	return fmt.Sprintf("%s -> %v", s.Owner, s.Items)
 }
 
 func (s Send) Valid() error {
@@ -165,18 +165,27 @@ func (t Transfer) String() string {
 	return fmt.Sprintf("%s, %s", t[0], t[1])
 }
 
+type TransferWithID struct {
+	ID       TransferID
+	Transfer Transfer
+}
+
+func (t TransferWithID) String() string {
+	return fmt.Sprintf("%s: %s", t.ID, t.Transfer)
+}
+
 var (
-	errNoSourceOrDestination = errors.New("transfer has no source or destination")
-	errNoItems               = errors.New("transfer has no items")
+	ErrNoSourceOrDestination = errors.New("transfer has no source or destination")
+	ErrNoItems               = errors.New("transfer has no items")
 )
 
 func (t Transfer) Valid() error {
 	// Can't have a transfer of nothing or between nobody
 	if t[0].Owner == nil && t[1].Owner == nil {
-		return errNoSourceOrDestination
+		return ErrNoSourceOrDestination
 	}
 	if t[0].Items.IsEmpty() && t[1].Items.IsEmpty() {
-		return errNoItems
+		return ErrNoItems
 	}
 	for i, send := range t {
 		if err := send.Valid(); err != nil {
@@ -421,6 +430,8 @@ func (s *State) TryApply(t Transfer) error {
 
 const bucketName = "ledger"
 
+var bucketNameBytes = []byte(bucketName)
+
 func applyKVPair(state *State) func(k, v []byte) error {
 	return func(k, v []byte) error {
 		tid, err := DeserialiseTransferID(k)
@@ -451,7 +462,7 @@ func ReadState(db *bolt.DB) (State, error) {
 	state := makeState()
 
 	err := db.View(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket([]byte(bucketName))
+		bucket := tx.Bucket(bucketNameBytes)
 		if bucket == nil {
 			return nil // empty state
 		}
@@ -497,7 +508,7 @@ func (l *Ledger) Transfer(tid TransferID, t Transfer) error {
 
 	// Append the transfer to the database
 	err := l.db.Update(func(tx *bolt.Tx) error {
-		bucket, err := tx.CreateBucketIfNotExists([]byte(bucketName))
+		bucket, err := tx.CreateBucketIfNotExists(bucketNameBytes)
 		if err != nil {
 			return fmt.Errorf("create bucket: %w", err)
 		}
@@ -517,6 +528,35 @@ func (l *Ledger) Transfer(tid TransferID, t Transfer) error {
 	// Apply the transfer to the in-memory state
 	l.state.ForceApply(t)
 	return nil
+}
+
+func (l *Ledger) TransferHistory(n int) (twids []TransferWithID, err error) {
+	return twids, l.db.View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(bucketNameBytes)
+		if bucket == nil {
+			return nil // no transfers
+		}
+
+		c := bucket.Cursor()
+		for k, v := c.Last(); v != nil && len(twids) < n; k, v = c.Prev() {
+			t, err := DeserialiseTransfer(bytes.NewReader(v))
+			if err != nil {
+				return fmt.Errorf("decode transfer: %w", err)
+			}
+
+			id, err := DeserialiseTransferID(k)
+			if err != nil {
+				return fmt.Errorf("decode transfer ID: %w", err)
+			}
+
+			twids = append(twids, TransferWithID{
+				ID:       id,
+				Transfer: t,
+			})
+		}
+
+		return nil
+	})
 }
 
 // Abstractions

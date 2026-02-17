@@ -33,4 +33,14 @@ func main() {
 
 	inv := l.Inventory(user)
 	fmt.Printf("Inventory for user %s: %+v\n", user, inv)
+
+	history, err := l.TransferHistory(3)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Transfer history:\n")
+	for _, t := range history {
+		fmt.Printf("- %s\n", t)
+	}
 }

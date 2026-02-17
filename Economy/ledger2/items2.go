@@ -244,7 +244,22 @@ type Items struct {
 }
 
 func (i Items) String() string {
-	return fmt.Sprintf("Items {\n\t One %s\n\tMany %s\n}", i.One.String(), i.Many.String())
+	if i.One == nil && i.Many == nil {
+		return "Items {}"
+	}
+
+	var b strings.Builder
+	b.WriteString("Items {")
+	if len(i.One) > 0 {
+		b.WriteString("\n\tOne ")
+		b.WriteString(i.One.String())
+	}
+	if len(i.Many) > 0 {
+		b.WriteString("\n\tMany ")
+		b.WriteString(i.Many.String())
+	}
+	b.WriteByte('}')
+	return b.String()
 }
 
 func (i Items) Equal(other Items) bool {
