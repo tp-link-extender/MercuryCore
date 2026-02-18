@@ -129,7 +129,7 @@ func TestEncodeDecode(t *testing.T) {
 	encTransfer(t, user, items)
 }
 
-func mintTest(l *Ledger, t *testing.T, currency Currency, user User) {
+func mintTest(l *Ledger, t *testing.T, currency Currency, user User) TransferID {
 	xinv := Items{
 		Many: ItemsMany{
 			currency: 100,
@@ -141,13 +141,16 @@ func mintTest(l *Ledger, t *testing.T, currency Currency, user User) {
 		{Items: xinv},
 	}
 
-	if err := l.Transfer(MakeTransferID(), tf); err != nil {
+	tid := MakeTransferID()
+	if err := l.Transfer(tid, tf); err != nil {
 		t.Fatalf("transfer: %v", err)
 	}
 
 	if inv := l.Inventory(user); !inv.Equal(xinv) {
 		t.Fatalf("expected inventory %v, got %v", xinv, inv)
 	}
+
+	return tid
 }
 
 func TestMint(t *testing.T) {
@@ -167,6 +170,33 @@ func TestMint(t *testing.T) {
 	user1 := User{"user1"}
 
 	mintTest(l, t, currency, user1)
+}
+
+func TestStipend(t *testing.T) {
+	// create temp file
+	name := os.TempDir() + "/ledger_test.db"
+	os.Remove(name)
+	defer os.Remove(name)
+
+	l, err := NewLedger(name)
+	if err != nil {
+		t.Fatalf("create ledger: %v", err)
+	}
+	defer l.Close()
+
+	// let there be rocks
+	currency := Currency{0}
+	user1 := User{"user1"}
+
+	tid := mintTest(l, t, currency, user1)
+	tid2, ok := l.GetUserLastStipend(user1)
+
+	if !ok {
+		t.Fatalf("expected last stipend for user %v, got none", user1)
+	}
+	if tid != tid2 {
+		t.Fatalf("expected last stipend %v, got %v", tid, tid2)
+	}
 }
 
 func createSourceTest(l *Ledger, t *testing.T, user User, currency Currency) UnlimitedSource {
@@ -438,7 +468,6 @@ func TestTransferHistory(t *testing.T) {
 	}
 	defer l.Close()
 
-	// let there be rocks
 	currency4 := Currency{4}
 	user5 := User{"user5"}
 
@@ -481,15 +510,14 @@ func TestGetTransfer(t *testing.T) {
 	}
 	defer l.Close()
 
-	// let there be rocks
-	currency4 := Currency{4}
-	user5 := User{"user5"}
+	currency5 := Currency{5}
+	user6 := User{"user6"}
 
 	tf := Transfer{
-		{Owner: user5},
+		{Owner: user6},
 		{Items: Items{
 			Many: ItemsMany{
-				currency4: 100,
+				currency5: 100,
 			},
 		}},
 	}

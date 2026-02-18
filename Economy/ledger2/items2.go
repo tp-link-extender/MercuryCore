@@ -258,7 +258,7 @@ func (i Items) String() string {
 		b.WriteString("\n\tMany ")
 		b.WriteString(i.Many.String())
 	}
-	b.WriteByte('}')
+	b.WriteString("\n}")
 	return b.String()
 }
 

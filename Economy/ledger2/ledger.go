@@ -215,11 +215,33 @@ func isSale(t Transfer) bool {
 // Blame it on my ADD, baby
 func (t Transfer) Sale() bool {
 	// items could be empty on one side if the item is free or smth
-	if t[0].Owner == nil || t[1].Owner == nil || t[0].Items.IsEmpty() && t[1].Items.IsEmpty() {
+	if t[0].Items.IsEmpty() && t[1].Items.IsEmpty() {
 		return false
 	}
 
 	return isSale(t) || isSale(t.Swap())
+}
+
+func isStipend(t Transfer) bool {
+	// A stipend has a nil owner and only currency in one direction, and a user on the other
+	if t[0].Owner != nil || t[1].Owner == nil || t[0].Items.IsEmpty() || !t[1].Items.IsEmpty() || len(t[0].Items.One) > 0 || len(t[0].Items.Many) != 1 {
+		return false
+	}
+
+	if _, ok := t[1].Owner.(User); !ok {
+		return false
+	}
+
+	for i := range t[0].Items.Many {
+		_, ok := i.(Currency)
+		return ok // there's only one item here
+	}
+
+	return false // never reached i guess
+}
+
+func (t Transfer) Stipend() bool {
+	return isStipend(t) || isStipend(t.Swap())
 }
 
 func (t Transfer) Equal(other Transfer) bool {
@@ -264,16 +286,18 @@ func (os *OwnersMany) Add(o Owner, qty Quantity) {
 }
 
 type State struct {
-	ownerItems     map[Owner]*Items
-	itemOwnersOne  map[CanOwnOne]*OwnersOne
-	itemOwnersMany map[CanOwnMany]*OwnersMany
+	ownerItems      map[Owner]*Items
+	itemOwnersOne   map[CanOwnOne]*OwnersOne
+	itemOwnersMany  map[CanOwnMany]*OwnersMany
+	userLastStipend map[User]TransferID
 }
 
 func makeState() State {
 	return State{
-		ownerItems:     make(map[Owner]*Items),
-		itemOwnersOne:  make(map[CanOwnOne]*OwnersOne),
-		itemOwnersMany: make(map[CanOwnMany]*OwnersMany),
+		ownerItems:      make(map[Owner]*Items),
+		itemOwnersOne:   make(map[CanOwnOne]*OwnersOne),
+		itemOwnersMany:  make(map[CanOwnMany]*OwnersMany),
+		userLastStipend: make(map[User]TransferID),
 	}
 }
 
@@ -432,7 +456,18 @@ const bucketName = "ledger"
 
 var bucketNameBytes = []byte(bucketName)
 
-func applyKVPair(state *State) func(k, v []byte) error {
+func (s *State) updateStipend(tid TransferID, t Transfer) {
+	for _, send := range t {
+		user, ok := send.Owner.(User)
+		if !ok {
+			continue
+		}
+		s.userLastStipend[user] = tid
+		return
+	}
+}
+
+func (s *State) applyKVPair() func(k, v []byte) error {
 	return func(k, v []byte) error {
 		tid, err := DeserialiseTransferID(k)
 		if err != nil {
@@ -450,8 +485,12 @@ func applyKVPair(state *State) func(k, v []byte) error {
 		}
 
 		// apply transfer to state
-		if err := state.TryApply(t); err != nil {
+		if err := s.TryApply(t); err != nil {
 			return fmt.Errorf("apply transfer %v: %w", tid, err)
+		}
+
+		if t.Stipend() {
+			s.updateStipend(tid, t)
 		}
 
 		return nil
@@ -459,7 +498,7 @@ func applyKVPair(state *State) func(k, v []byte) error {
 }
 
 func ReadState(db *bolt.DB) (State, error) {
-	state := makeState()
+	s := makeState()
 
 	err := db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(bucketNameBytes)
@@ -467,9 +506,9 @@ func ReadState(db *bolt.DB) (State, error) {
 			return nil // empty state
 		}
 
-		return bucket.ForEach(applyKVPair(&state))
+		return bucket.ForEach(s.applyKVPair())
 	})
-	return state, err
+	return s, err
 }
 
 type Ledger struct {
@@ -483,12 +522,12 @@ func NewLedger(dbPath string) (*Ledger, error) {
 		return nil, fmt.Errorf("open db: %w", err)
 	}
 
-	state, err := ReadState(db)
+	s, err := ReadState(db)
 	if err != nil {
 		return nil, fmt.Errorf("read state: %w", err)
 	}
 
-	return &Ledger{db, state}, nil
+	return &Ledger{db, s}, nil
 }
 
 func (l *Ledger) Close() error {
@@ -523,6 +562,10 @@ func (l *Ledger) Transfer(tid TransferID, t Transfer) error {
 	})
 	if err != nil {
 		return fmt.Errorf("append transfer to db: %w", err)
+	}
+
+	if t.Stipend() {
+		l.state.updateStipend(tid, t)
 	}
 
 	// Apply the transfer to the in-memory state
@@ -581,8 +624,9 @@ func (l *Ledger) GetTransfer(tid TransferID) (t Transfer, err error) {
 	})
 }
 
-func (l *Ledger) Find(template Transfer) (twid TransferWithID, err error) {
-	return
+func (l *Ledger) GetUserLastStipend(user User) (TransferID, bool) {
+	tid, ok := l.state.userLastStipend[user]
+	return tid, ok
 }
 
 // Abstractions
