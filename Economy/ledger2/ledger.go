@@ -631,12 +631,13 @@ func (l *Ledger) GetUserLastStipend(user User) (TransferID, bool) {
 
 // Abstractions
 type Economy struct {
-	ledger                                                           *Ledger
-	defaultCurrency                                                  Currency
-	PlacePrice, GroupPrice, LimitedSourcePrice, UnlimitedSourcePrice Quantity
+	ledger                                                                          *Ledger
+	defaultCurrency                                                                 Currency
+	PlacePrice, GroupPrice, LimitedSourcePrice, UnlimitedSourcePrice, StipendAmount Quantity
+	StipendTime                                                                     time.Duration
 }
 
-func NewEconomy(ledger *Ledger, placePrice, groupPrice, limitedSourcePrice, unlimitedSourcePrice Quantity) *Economy {
+func NewEconomy(ledger *Ledger, placePrice, groupPrice, limitedSourcePrice, unlimitedSourcePrice, stipendAmount Quantity, stipendTime time.Duration) *Economy {
 	return &Economy{
 		ledger: ledger,
 		// default 0 currency
@@ -644,6 +645,8 @@ func NewEconomy(ledger *Ledger, placePrice, groupPrice, limitedSourcePrice, unli
 		GroupPrice:           groupPrice,
 		LimitedSourcePrice:   limitedSourcePrice,
 		UnlimitedSourcePrice: unlimitedSourcePrice,
+		StipendAmount:        stipendAmount,
+		StipendTime:          stipendTime,
 	}
 }
 
@@ -689,6 +692,36 @@ func (e *Economy) MintCurrency(user User, amount Quantity) (TransferID, error) {
 	tid := MakeTransferID()
 	if err := e.ledger.Transfer(tid, tf); err != nil {
 		return TransferID{}, fmt.Errorf("mint currency transfer %v: %w", tid, err)
+	}
+
+	return tid, nil
+}
+
+var ErrStipendNotReady = errors.New("stipend not available yet")
+
+func (e *Economy) Stipend(user User, amount Quantity) (TransferID, error) {
+	lastStipend, ok := e.ledger.GetUserLastStipend(user)
+	if ok || time.Since(time.Unix(0, int64(lastStipend.timestamp))) < e.StipendTime {
+		return TransferID{}, ErrStipendNotReady
+	}
+
+	tf := Transfer{
+		{Owner: user},
+		{Items: Items{
+			Many: ItemsMany{
+				e.defaultCurrency: amount,
+			},
+		}},
+	}
+
+	// we built the check, now test it
+	if !tf.Stipend() {
+		return TransferID{}, fmt.Errorf("invalid stipend transfer: %v", tf)
+	}
+
+	tid := MakeTransferID()
+	if err := e.ledger.Transfer(tid, tf); err != nil {
+		return TransferID{}, fmt.Errorf("stipend transfer %v: %w", tid, err)
 	}
 
 	return tid, nil

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os"
 	"testing"
+	"time"
 )
 
 func TestEncTransferID(t *testing.T) {
@@ -549,7 +550,7 @@ func TestAbstractions1(t *testing.T) {
 	}
 	defer l.Close()
 
-	e := NewEconomy(l, 10, 10, 100, 10)
+	e := NewEconomy(l, 10, 10, 100, 10, 10, time.Hour*12)
 
 	user := User{"testuser"}
 
@@ -599,7 +600,7 @@ func TestAbstractions2(t *testing.T) {
 	}
 	defer l.Close()
 
-	e := NewEconomy(l, 10, 10, 100, 10)
+	e := NewEconomy(l, 10, 10, 100, 10, 10, time.Hour*12)
 
 	users := [3]User{
 		{"user0"},
@@ -646,5 +647,33 @@ func TestAbstractions2(t *testing.T) {
 
 	if e.Balance(source) != 0 {
 		t.Fatalf("expected source balance 0, got %d", e.Balance(source))
+	}
+}
+
+func TestAbstractions3(t *testing.T) {
+	name := os.TempDir() + "/ledger_test.db"
+	os.Remove(name)
+	defer os.Remove(name)
+
+	l, err := NewLedger(name)
+	if err != nil {
+		t.Fatalf("create ledger: %v", err)
+	}
+	defer l.Close()
+
+	e := NewEconomy(l, 10, 10, 100, 10, 10, time.Hour*12)
+	
+	user := User{"testuser3"}
+
+	if _, err := e.Stipend(user, 10); err != nil {
+		t.Fatalf("Stipend: %v", err)
+	}
+
+	if _, err := e.Stipend(user, 10); err != ErrStipendNotReady {
+		t.Fatalf("expected ErrStipendNotReady, got %v", err)
+	}
+
+	if e.Balance(user) != 10 {
+		t.Fatalf("expected balance 10, got %d", e.Balance(user))
 	}
 }
