@@ -1,0 +1,79 @@
+p {
+	margin: 0;
+	padding-bottom: 1rem;
+}
+
+hr {
+	margin: 1rem 0;
+	color: inherit;
+	border: 0;
+	border-top: 1px solid;
+	opacity: 0.25;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin: 0;
+	font-weight: 550;
+	line-height: 1.2;
+}
+
+h1 {
+	font-weight: 300;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+textarea {
+	resize: vertical;
+	font-family: inherit;
+}
+
+fieldset {
+	min-width: 0;
+	padding: 0;
+	margin: 0;
+	border: 0;
+}
+
+label {
+	display: inline-block;
+}
+
+select,
+input {
+	font-family: inherit;
+}
+select[disabled],
+input[disabled] {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+input {
+	margin: 0;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="date"],
+input:not([type]),
+textarea {
+	display: block;
+	width: 100%;
+	padding: 0.7rem 1rem;
+}
+
+input[type="number"] {
+	width: 10rem;
+}

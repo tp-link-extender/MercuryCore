@@ -1,0 +1,45 @@
+{{ define "content" }}
+<div class="container">
+	<div class="hero-text">
+		<h1>Log in to Mercury Studio</h1>
+		<small>
+			Log in to Mercury Studio to create or update your places! <br />
+			Don't have an account? Register one!
+		</small>
+	</div>
+	<form method="post">
+		<label for="username">Username</label>
+		<input autocomplete="username" name="username" label="Username" placeholder="Username" />
+
+		<label for="password">Password</label>
+		<input autocomplete="current-password" name="password" label="Password" type="password"
+			placeholder="••••••••••••••••••" />
+
+		<button class="btn btn-primary">Log in</button>
+	</form>
+</div>
+
+<style>
+	.container {
+		margin: 0 auto;
+		max-width: 25rem;
+		padding-top: 4rem;
+		padding-bottom: 2rem;
+	}
+
+	a {
+		text-decoration: none;
+		color: #8b52f0;
+	}
+
+	.hero-text {
+		text-align: center;
+		padding-top: 4rem;
+		padding-bottom: 2rem;
+	}
+
+	button {
+		width: 100%;
+	}
+</style>
+{{ end }}

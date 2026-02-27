@@ -2,8 +2,8 @@ package main
 
 import "net/http"
 
-func loadnone(w http.ResponseWriter, r *http.Request) (Data, error) {
-	return Data{}, nil
+func loadnone(w http.ResponseWriter, r *http.Request, data Data) (Data, error) {
+	return data, nil
 }
 
 var root = Component{
@@ -23,5 +23,10 @@ var pageIndex = Component{
 
 var pageNotFound = Component{
 	Name:   "pages/404",
+	Loader: loadnone,
+}
+
+var login = Component{
+	Name:   "pages/login",
 	Loader: loadnone,
 }

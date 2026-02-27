@@ -26,7 +26,7 @@ func MergeData(maps ...Data) Data {
 
 type Component struct {
 	Name   string
-	Loader func(http.ResponseWriter, *http.Request) (Data, error)
+	Loader func(http.ResponseWriter, *http.Request, Data) (Data, error)
 }
 
 type ErrorRedirect struct {
@@ -55,7 +55,7 @@ func handle(Pages []Component) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := make(Data)
 		for _, p := range Pages {
-			nd, err := p.Loader(w, r)
+			nd, err := p.Loader(w, r, data)
 			if err != nil {
 				if redirect, ok := err.(ErrorRedirect); ok {
 					http.Redirect(w, r, redirect.URL, redirect.Code)
@@ -74,8 +74,12 @@ func handle(Pages []Component) http.HandlerFunc {
 }
 
 func main() {
-	http.HandleFunc("/{$}", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		handle([]Component{root, loggedOut, pageIndex})(w, r)
+	})
+
+	http.HandleFunc("GET /login", func(w http.ResponseWriter, r *http.Request) {
+		handle([]Component{root, loggedOut, login})(w, r)
 	})
 
 	// static assets and 404s
