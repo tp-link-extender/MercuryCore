@@ -8,7 +8,7 @@
 	const formData = superForm(data.form)
 </script>
 
-<div class="container mx-auto w-100 pb-8 pt-16">
+<div class="mx-auto w-100 pb-8 pt-16">
 	<div class="hero-text pb-8 pt-16">
 		<h1>Log in to Mercury Studio</h1>
 		<small>

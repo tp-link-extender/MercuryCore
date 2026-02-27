@@ -5,9 +5,9 @@
 
 <main>
 	<!-- <slot /> -->
-	<div class="container mx-auto">
+	<div class="mx-auto">
 		<h1 class="text-center">Toolbox</h1>
-		<div class="container mx-auto mt-8 pb-16">
+		<div class="mx-auto mt-8 pb-16">
 			<div id="all">
 				{#each data.assets as asset}
 					<a href="/place" class="game-link">
