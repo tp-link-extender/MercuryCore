@@ -20,3 +20,8 @@ var pageIndex = Component{
 	Name:   "pages/index",
 	Loader: loadnone,
 }
+
+var pageNotFound = Component{
+	Name:   "pages/404",
+	Loader: loadnone,
+}
