@@ -27,21 +27,17 @@ DEFINE TABLE OVERWRITE banner SCHEMAFULL;
 	DEFINE FIELD OVERWRITE textLight ON banner TYPE bool;
 
 DEFINE TABLE OVERWRITE comment SCHEMAFULL;
-	DEFINE FIELD OVERWRITE author ON comment VALUE <future> {
-		(SELECT status, username FROM <-createdComment<-user)[0]
-	};
+	DEFINE FIELD OVERWRITE author ON comment COMPUTED
+		(SELECT status, username FROM <-createdComment<-user)[0];
 	DEFINE FIELD OVERWRITE content ON comment FLEXIBLE TYPE array;
 	DEFINE FIELD OVERWRITE created ON comment TYPE datetime DEFAULT time::now();
-	DEFINE FIELD OVERWRITE dislikes ON comment VALUE <future> {
-		($user IN <-dislikes<-user.id) 
-	};
-	DEFINE FIELD OVERWRITE likes ON comment VALUE <future> {
-		($user IN <-likes<-user.id) 
-	};
+	DEFINE FIELD OVERWRITE dislikes ON comment VALUE COMPUTED
+		$user IN <-dislikes<-user.id;
+	DEFINE FIELD OVERWRITE likes ON comment VALUE COMPUTED
+		$user IN <-likes<-user.id;
 	DEFINE FIELD OVERWRITE pinned ON comment TYPE bool DEFAULT false;
-	DEFINE FIELD OVERWRITE score ON comment VALUE <future> {
-		count(<-likes) - count(<-dislikes)
-	};
+	DEFINE FIELD OVERWRITE score ON comment VALUE COMPUTED
+		count(<-likes) - count(<-dislikes);
 	DEFINE FIELD OVERWRITE type ON comment FLEXIBLE TYPE array;
 		# ["status"] -> status post
 		# ["status", "{status id}"] -> status post comment
@@ -163,15 +159,14 @@ DEFINE TABLE OVERWRITE user SCHEMAFULL;
 	DEFINE FIELD OVERWRITE hashedPassword ON user TYPE string;
 	DEFINE FIELD OVERWRITE lastOnline ON user TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE permissionLevel ON user TYPE int;
-	DEFINE FIELD OVERWRITE status ON user VALUE <future> {
-		(IF ->playing[WHERE valid AND ping > time::now() - 35s] {
+	DEFINE FIELD OVERWRITE status ON user VALUE COMPUTED
+		IF ->playing[WHERE valid AND ping > time::now() - 35s] {
 			"Playing"
 		} ELSE IF lastOnline > time::now() - 35s {
 			"Online"
 		} ELSE {
 			"Offline"
-		}) # dk y parens r needed
-	};
+		}; # parens no longer needed
 	DEFINE FIELD OVERWRITE theme ON user TYPE int DEFAULT 0;
 	DEFINE FIELD OVERWRITE username ON user TYPE string;
 DEFINE INDEX IF NOT EXISTS usernameI ON user COLUMNS username UNIQUE;
