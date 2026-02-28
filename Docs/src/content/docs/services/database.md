@@ -5,7 +5,7 @@ description: Details on the database design and how the service is used in Mercu
 
 This page provides information about the database used in Mercury Core, including its design, structure, and how it integrates with other services.
 
-Mercury Core uses [SurrealDB](https://surrealdb.com) as its primary database solution. 
+Mercury Core uses [SurrealDB](https://surrealdb.com) as its primary database solution. By default, Surreal is started on port 8000, and will fail to start if that port is already in use. If you have started the database before, it may already be running in the background, and you may wish to stop it before starting a new instance.
 
 ## Startup
 
@@ -77,7 +77,7 @@ The WebSocket versions of the connection are broadly recommended over the HTTP v
 
 ### Filesystem permissions
 
-In some cases, the database may fail to start due to filesystem permission issues. This can occur if the user running the Mercury Core service does not have the necessary permissions to read or write to the database files.
+In some cases, the database may fail to start due to filesystem permission issues. This can occur if the user running the database service does not have the necessary permissions to read or write to the database files.
 
 An example of potential output could be as follows:
 

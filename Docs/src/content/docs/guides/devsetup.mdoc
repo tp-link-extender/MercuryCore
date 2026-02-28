@@ -50,3 +50,37 @@ If you wish to use containers instead of SurrealDB and Go, install the latest ve
 	{% /aside %}
 
 {% /steps %}
+
+After following these steps, you should have a local development server set up for Mercury Core. More information on the development server is available on the [Site service page](/services/site).
+
+## Common issues
+
+### Filesystem permissions
+
+In some cases, the development server may fail to start due to filesystem permission issues. This can occur if the user running the development server does not have the necessary permissions to read or write to files or directories where dependencies are installed.
+
+An example of potential output could be as follows:
+
+```
+error when starting dev server:
+Error: EACCES: permission denied
+    at writeFileSync (unknown)
+    at write (~/MercuryCore/Site/node_modules/@sveltejs/kit/src/core/sync/utils.js:29:5)
+    at write_if_changed (~/MercuryCore/Site/node_modules/@sveltejs/kit/src/core/sync/utils.js:18:3)
+    at write_tsconfig (~/MercuryCore/Site/node_modules/@sveltejs/kit/src/core/sync/write_tsconfig.js:47:2)
+    at init (~/MercuryCore/Site/node_modules/@sveltejs/kit/src/core/sync/sync.js:17:2)
+    at dev (~/MercuryCore/Site/node_modules/@sveltejs/kit/src/exports/vite/dev/index.js:58:7)
+    at configureServer (~/MercuryCore/Site/node_modules/@sveltejs/kit/src/exports/vite/index.js:968:17)
+    at _createServer (~/MercuryCore/Site/node_modules/vite/dist/node/chunks/node.js:26529:97)
+    at async <anonymous> (~/MercuryCore/Site/node_modules/vite/dist/node/cli.js:572:24)
+    at processTicksAndRejections (native:7:39)
+error: script "dev" exited with code 1
+```
+
+### Hot reloading
+
+If you are using WSL2 on Windows, the server may not correctly reflect the changes you make if the repository is stored on the Windows drive. To fix this, move the repository into a folder managed by WSL, or alternatively add the following to the default export of the **vite.config.ts** configuration file:
+
+```ts
+server: { watch: { usePolling: true } },
+```
