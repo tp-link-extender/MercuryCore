@@ -280,7 +280,7 @@ span {
 	@apply border-l-0;
 }
 .btn-tertiary {
-	background: hsl(0 0 12%);
+	background: hsl(0 0 12);
 	color: hsl(var(--hue) 100 66);
 	--un-ring-color: hsl(var(--hue) 75 55);
 	&:hover:not(:disabled),
@@ -346,7 +346,6 @@ span {
 .btn-red-tertiary,
 .btn-success,
 .btn-danger,
-.btn-light,
 .btn-dark {
 	@apply border-1 ring-offset-neutral-900;
 	transition:
