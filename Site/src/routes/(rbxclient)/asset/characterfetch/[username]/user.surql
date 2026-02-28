@@ -1,5 +1,5 @@
 SELECT
 	bodyColours,
 	(SELECT record::id(id) AS id
-	FROM ->wearing->asset).id AS wearing
+	FROM $parent->wearing->asset).id AS wearing
 FROM user WHERE username = $username;
