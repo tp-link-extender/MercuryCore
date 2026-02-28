@@ -7,7 +7,9 @@ DEFINE TABLE OVERWRITE asset SCHEMAFULL;
 	# privileged assets are 8 digits, user-uploaded assets are 9 (max is 2^31-1 = 2147483647 (usually), we need numeric ids for reasons... eugh)
 	DEFINE FIELD OVERWRITE id ON asset TYPE int;
 	DEFINE FIELD OVERWRITE created ON asset TYPE datetime DEFAULT time::now();
-	DEFINE FIELD OVERWRITE description ON asset TYPE array DEFAULT ALWAYS [];
+	DEFINE FIELD OVERWRITE description ON asset TYPE array<object> DEFAULT ALWAYS [];
+		DEFINE FIELD OVERWRITE description.*.text ON asset TYPE string;
+		DEFINE FIELD OVERWRITE description.*.updated ON asset TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE forSale ON asset TYPE bool DEFAULT true;
 	DEFINE FIELD OVERWRITE name ON asset TYPE string;
 	DEFINE FIELD OVERWRITE price ON asset TYPE int DEFAULT 0;
@@ -32,7 +34,9 @@ DEFINE TABLE OVERWRITE banner SCHEMAFULL;
 DEFINE TABLE OVERWRITE comment SCHEMAFULL;
 	DEFINE FIELD OVERWRITE author ON comment COMPUTED
 		(SELECT status, username FROM $this<-createdComment<-user)[0];
-	DEFINE FIELD OVERWRITE content ON comment TYPE array<object> FLEXIBLE;
+	DEFINE FIELD OVERWRITE content ON comment TYPE array<object> DEFAULT ALWAYS [];
+		DEFINE FIELD OVERWRITE content.*.text ON comment TYPE string;
+		DEFINE FIELD OVERWRITE content.*.updated ON comment TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE created ON comment TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE dislikes ON comment COMPUTED
 		($user IN $this<-dislikes<-user.id);
@@ -101,7 +105,9 @@ DEFINE TABLE OVERWRITE place SCHEMAFULL;
 	DEFINE FIELD OVERWRITE created ON place TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE dedicated ON place TYPE bool DEFAULT false;
 	DEFINE FIELD OVERWRITE deleted ON place TYPE bool DEFAULT false;
-	DEFINE FIELD OVERWRITE description ON place TYPE array;
+	DEFINE FIELD OVERWRITE description ON place TYPE array<object> DEFAULT ALWAYS [];
+		DEFINE FIELD OVERWRITE description.*.text ON place TYPE string;
+		DEFINE FIELD OVERWRITE description.*.updated ON place TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE maxPlayers ON place TYPE int DEFAULT 0;
 	DEFINE FIELD OVERWRITE name ON place TYPE string DEFAULT "";
 	DEFINE FIELD OVERWRITE privateServer ON place TYPE bool DEFAULT false;
@@ -153,10 +159,18 @@ DEFINE TABLE OVERWRITE stuff SCHEMALESS;
 
 DEFINE TABLE OVERWRITE user SCHEMAFULL;
 	DEFINE FIELD OVERWRITE admin ON user TYPE bool DEFAULT false; # Only the first account should be admin
-	DEFINE FIELD OVERWRITE bodyColours ON user TYPE object FLEXIBLE;
+	DEFINE FIELD OVERWRITE bodyColours ON user TYPE object;
+		DEFINE FIELD OVERWRITE bodyColours.Head ON user TYPE int;
+		DEFINE FIELD OVERWRITE bodyColours.LeftArm ON user TYPE int;
+		DEFINE FIELD OVERWRITE bodyColours.LeftLeg ON user TYPE int;
+		DEFINE FIELD OVERWRITE bodyColours.RightArm ON user TYPE int;
+		DEFINE FIELD OVERWRITE bodyColours.RightLeg ON user TYPE int;
+		DEFINE FIELD OVERWRITE bodyColours.Torso ON user TYPE int;
 	DEFINE FIELD OVERWRITE created ON user TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE css ON user TYPE string DEFAULT ALWAYS "";
-	DEFINE FIELD OVERWRITE description ON user TYPE array DEFAULT ALWAYS [];
+	DEFINE FIELD OVERWRITE description ON user TYPE array<object> DEFAULT ALWAYS [];
+		DEFINE FIELD OVERWRITE description.*.text ON user TYPE string;
+		DEFINE FIELD OVERWRITE description.*.updated ON user TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE email ON user TYPE string
 		ASSERT string::is_email($value) OR $value == "";
 	DEFINE FIELD OVERWRITE hashedPassword ON user TYPE string;

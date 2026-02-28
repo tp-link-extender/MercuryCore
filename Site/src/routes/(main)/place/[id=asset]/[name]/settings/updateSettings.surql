@@ -8,6 +8,5 @@ UPDATE $place SET name = $name;
 IF $og.description.text != $description {
 	UPDATE $place SET description += {
 		text: $description,
-		updated: time::now(),
 	};
 };

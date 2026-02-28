@@ -10,7 +10,6 @@ LET $asset = CREATE ONLY asset CONTENT {
 	id: $id,
 	description: [{
 		text: $description,
-		updated: time::now(),
 	}],
 	name: $name,
 	price: $price,

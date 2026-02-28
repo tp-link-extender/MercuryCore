@@ -8,6 +8,5 @@ UPDATE $user SET theme = $theme;
 IF $og.description.text != $description {
 	UPDATE $user SET description += {
 		text: $description,
-		updated: time::now(),
 	}
 };

@@ -2,7 +2,6 @@ LET $place = CREATE ONLY place CONTENT {
 	id: $id,
 	description: [{
 		text: $description,
-		updated: time::now(),
 	}],
 	maxPlayers: $maxPlayers,
 	name: $name,
