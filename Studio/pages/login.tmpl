@@ -8,15 +8,23 @@
 		</small>
 	</div>
 	<form method="post">
-		<label for="username">Username</label>
-		<input autocomplete="username" name="username" label="Username" placeholder="Username" />
+		<fieldset>
+			<div>
+				<label for="username">Username</label>
+				<input required autocomplete="username" name="username" placeholder="Username" />
+			</div>
 
-		<label for="password">Password</label>
-		<input autocomplete="current-password" name="password" label="Password" type="password"
-			placeholder="••••••••••••••••••" />
+			<div>
+				<label for="password">Password</label>
+				<input required autocomplete="current-password" name="password" type="password"
+					placeholder="••••••••••••••••••" />
+			</div>
 
-		<button class="btn btn-primary">Log in</button>
+			<button class="btn btn-primary">Log in</button>
+		</fieldset>
 	</form>
+
+	<!-- error go here -->
 </div>
 
 <style>

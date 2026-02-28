@@ -42,6 +42,11 @@ code {
 	color: #d63384;
 }
 
+a.light-text,
+a > p {
+	transition: 0.2s color;
+}
+
 p {
 	margin: 0;
 	padding-bottom: 1rem;
@@ -147,12 +152,12 @@ input {
 	color: var(--grey-text);
 }
 
-.accent-text {
+.accent-text,
+a {
 	color: hsl(var(--hue) 100 66);
 }
 
 a {
-	color: hsl(var(--hue) 100 66);
 	transition: 0.2s color;
 }
 
@@ -251,11 +256,6 @@ img[src^="/api/avatar"] {
 p,
 span {
 	color: var(--light-text);
-}
-
-.form-select {
-	padding: 0.5rem 3rem 0.5rem 1rem;
-	background-position: right 1rem center;
 }
 
 .btn-primary {
@@ -366,7 +366,6 @@ span {
 .btn-primary,
 .btn-secondary,
 .btn-red-secondary,
-.btn-first,
 .btn-success,
 .btn-danger,
 .btn-dark {
