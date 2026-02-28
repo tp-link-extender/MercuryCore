@@ -20,7 +20,6 @@ FROM $sess<-hasSession<-user)[0];
 IF $s {
 	IF $s.expires < time::now() {
 		DELETE $s;
-		$s = NONE;
 	} ELSE IF $s.expires + 15d < time::now() {
 		$s.expires = time::now() + 30d;
 	};
