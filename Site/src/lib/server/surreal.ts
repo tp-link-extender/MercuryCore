@@ -28,7 +28,12 @@ if (!building) {
 
 await new Promise(resolve => setTimeout(resolve, 500))
 
-export const db = new Surreal()
+export const db = new Surreal({
+	codecOptions: {
+		// SurrealDB dates would require custom serialisation/transformers, and we don't need the precision they provide
+		useNativeDates: true,
+	},
+})
 
 // Retry queries
 // const ogq = db.query.bind(db)
@@ -62,10 +67,10 @@ async function reconnect() {
 			await db.connect(realUrl, {
 				namespace: "main",
 				database: "main",
-				authentication: () => ({
+				authentication: {
 					username: "root", // security B)
 					password: "root",
-				}),
+				},
 			})
 			console.log("reloaded", await version())
 			break

@@ -33,7 +33,7 @@ declare global {
 		}
 		created: string
 		email: string
-		lastOnline: string
+		lastOnline: Date
 		permissionLevel: number
 		css: string
 		theme: number
