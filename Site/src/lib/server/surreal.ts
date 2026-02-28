@@ -1,4 +1,9 @@
-import { type Query, Surreal, RecordId as SurrealRecordId } from "surrealdb"
+import {
+	type Query,
+	Surreal,
+	RecordId as SurrealRecordId,
+	Table,
+} from "surrealdb"
 import { building } from "$app/environment"
 import initQuery from "$lib/server/init.surql"
 import logo from "$lib/server/logo" // because this is usually one of the first files loaded
@@ -129,6 +134,41 @@ type RecordIdTypes = {
 	user: string
 	wearing: string
 }
+
+export const Asset = new Table("asset")
+export const AuditLog = new Table("auditLog")
+export const Banner = new Table("banner")
+export const Comment = new Table("comment")
+export const Created = new Table("created")
+export const CreatedAsset = new Table("createdAsset")
+export const Dislikes = new Table("dislikes")
+export const Follows = new Table("follows")
+export const ForumCategory = new Table("forumCategory")
+export const Friends = new Table("friends")
+export const Group = new Table("group")
+export const HasSession = new Table("hasSession")
+export const ImageAsset = new Table("imageAsset")
+export const In = new Table("in")
+export const Likes = new Table("likes")
+export const Moderation = new Table("moderation")
+export const Notification = new Table("notification")
+export const OwnsAsset = new Table("ownsAsset")
+export const OwnsGroup = new Table("ownsGroup")
+export const OwnsPlace = new Table("ownsPlace")
+export const Place = new Table("place")
+export const Playing = new Table("playing")
+export const Posted = new Table("posted")
+export const RecentlyWorn = new Table("recentlyWorn")
+export const RegKey = new Table("regKey")
+export const Render = new Table("render")
+export const Report = new Table("report")
+export const Request = new Table("request")
+export const Session = new Table("session")
+export const Stuff = new Table("stuff")
+export const ThumbnailCache = new Table("thumbnailCache")
+export const Used = new Table("used")
+export const User = new Table("user")
+export const Wearing = new Table("wearing")
 
 // Ensure type safety when creating record ids
 export type RecordId<T extends keyof RecordIdTypes> = SurrealRecordId<T>

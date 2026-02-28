@@ -79,7 +79,9 @@ actions.password = async ({ locals, request }) => {
 	if (!Bun.password.verifySync(cpassword, hashedPassword))
 		return formError(form, ["cpassword"], ["Incorrect password"])
 
-	await db.merge(userR, { hashedPassword: Bun.password.hashSync(npassword) })
+	await db
+		.update(userR)
+		.merge({ hashedPassword: Bun.password.hashSync(npassword) })
 
 	return message(form, "Password updated successfully!")
 }
@@ -110,7 +112,7 @@ actions.styling = async ({ locals, request }) => {
 	const { css } = form.data
 	if (css === "undefined") return message(form, "Styling already saved!")
 
-	await db.merge(Record("user", user.id), { css })
+	await db.update(Record("user", user.id)).merge({ css })
 
 	return message(form, "Styling updated successfully!")
 }

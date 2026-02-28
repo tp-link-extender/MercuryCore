@@ -2,7 +2,7 @@ import { type } from "arktype"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
-import { db, Record } from "$lib/server/surreal"
+import { Banner, db, Record } from "$lib/server/surreal"
 import { arktype, message, superValidate } from "$lib/server/validate"
 import type { RequestEvent } from "./$types.d"
 import activeCountQuery from "./activeCount.surql"
@@ -15,7 +15,7 @@ const schema = type({
 	bannerBody: "string | undefined",
 })
 
-type Banner = {
+type BannerType = {
 	// bruce, it's been five years
 	id: string
 	active: boolean
@@ -28,7 +28,7 @@ type Banner = {
 export async function load({ locals }) {
 	await authorise(locals, 5)
 
-	const [banners] = await db.query<Banner[][]>(bannersQuery)
+	const [banners] = await db.query<BannerType[][]>(bannersQuery)
 	return { banners, form: await superValidate(arktype(schema)) }
 }
 
@@ -55,7 +55,7 @@ const showHide = (action: string) => async (e: RequestEvent) => {
 	if (active && (await bannerActiveCount()) >= 3)
 		return message(form, "Too many active banners")
 
-	await db.merge(Record("banner", id), { active })
+	await db.update(Record("banner", id)).merge({ active })
 }
 
 export const actions: import("./$types").Actions = {}
@@ -71,7 +71,7 @@ actions.create = async e => {
 	const limit = ratelimit(form, "createBanner", e.getClientAddress, 30)
 	if (limit) return limit
 
-	await db.insert("banner", {
+	await db.insert(Banner, {
 		active: true,
 		deleted: false,
 		body: bannerText,
@@ -89,7 +89,7 @@ actions.delete = async e => {
 	const id = e.url.searchParams.get("id")
 	if (!id) return message(form, "Missing fields")
 
-	await db.merge(Record("banner", id), { deleted: true })
+	await db.update(Record("banner", id)).merge({ deleted: true })
 }
 actions.updateBody = async e => {
 	const { form, error } = await getData(e)
@@ -99,7 +99,7 @@ actions.updateBody = async e => {
 	const { bannerBody } = form.data
 	if (!bannerBody || !id) return message(form, "Missing fields")
 
-	await db.merge(Record("banner", id), { body: bannerBody })
+	await db.update(Record("banner", id)).merge({ body: bannerBody })
 }
 actions.updateTextLight = async e => {
 	const { form, error } = await getData(e)
@@ -109,7 +109,9 @@ actions.updateTextLight = async e => {
 	const { bannerTextLight } = form.data
 	if (!id) return message(form, "Missing fields")
 
-	await db.merge(Record("banner", id), { textLight: !!bannerTextLight })
+	await db
+		.update(Record("banner", id))
+		.merge({ textLight: !!bannerTextLight })
 }
 actions.show = showHide("show")
 actions.hide = showHide("hide")

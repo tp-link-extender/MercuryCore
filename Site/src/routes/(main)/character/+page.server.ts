@@ -102,7 +102,7 @@ async function paint({ fetch: f, locals, url }: RequestEvent) {
 
 	currentColours[bodyPart] = +bodyColour
 
-	db.merge(Record("user", user.id), { bodyColours: currentColours })
+	db.update(Record("user", user.id)).merge({ bodyColours: currentColours })
 
 	return await rerender(f, user)
 }
