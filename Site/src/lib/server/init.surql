@@ -1,10 +1,15 @@
 # Overwrites are needed to ensure that the schema is correct when changing in dev mode/on deployment
 
+DEFINE NAMESPACE OVERWRITE main;
+DEFINE DATABASE OVERWRITE main STRICT;
+
 DEFINE TABLE OVERWRITE asset SCHEMAFULL;
 	# privileged assets are 8 digits, user-uploaded assets are 9 (max is 2^31-1 = 2147483647 (usually), we need numeric ids for reasons... eugh)
 	DEFINE FIELD OVERWRITE id ON asset TYPE int;
 	DEFINE FIELD OVERWRITE created ON asset TYPE datetime DEFAULT time::now();
-	DEFINE FIELD OVERWRITE description ON asset FLEXIBLE TYPE array DEFAULT ALWAYS [];
+	DEFINE FIELD OVERWRITE description ON asset TYPE array<object> DEFAULT ALWAYS [];
+		DEFINE FIELD OVERWRITE description.*.text ON asset TYPE string;
+		DEFINE FIELD OVERWRITE description.*.updated ON asset TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE forSale ON asset TYPE bool DEFAULT true;
 	DEFINE FIELD OVERWRITE name ON asset TYPE string;
 	DEFINE FIELD OVERWRITE price ON asset TYPE int DEFAULT 0;
@@ -27,22 +32,20 @@ DEFINE TABLE OVERWRITE banner SCHEMAFULL;
 	DEFINE FIELD OVERWRITE textLight ON banner TYPE bool;
 
 DEFINE TABLE OVERWRITE comment SCHEMAFULL;
-	DEFINE FIELD OVERWRITE author ON comment VALUE <future> {
-		(SELECT status, username FROM <-createdComment<-user)[0]
-	};
-	DEFINE FIELD OVERWRITE content ON comment FLEXIBLE TYPE array;
+	DEFINE FIELD OVERWRITE author ON comment COMPUTED
+		(SELECT status, username FROM $this<-createdComment<-user)[0];
+	DEFINE FIELD OVERWRITE content ON comment TYPE array<object> DEFAULT ALWAYS [];
+		DEFINE FIELD OVERWRITE content.*.text ON comment TYPE string;
+		DEFINE FIELD OVERWRITE content.*.updated ON comment TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE created ON comment TYPE datetime DEFAULT time::now();
-	DEFINE FIELD OVERWRITE dislikes ON comment VALUE <future> {
-		($user IN <-dislikes<-user.id) 
-	};
-	DEFINE FIELD OVERWRITE likes ON comment VALUE <future> {
-		($user IN <-likes<-user.id) 
-	};
+	DEFINE FIELD OVERWRITE dislikes ON comment COMPUTED
+		($user IN $this<-dislikes<-user.id);
+	DEFINE FIELD OVERWRITE likes ON comment COMPUTED
+		($user IN $this<-likes<-user.id);
 	DEFINE FIELD OVERWRITE pinned ON comment TYPE bool DEFAULT false;
-	DEFINE FIELD OVERWRITE score ON comment VALUE <future> {
-		count(<-likes) - count(<-dislikes)
-	};
-	DEFINE FIELD OVERWRITE type ON comment FLEXIBLE TYPE array;
+	DEFINE FIELD OVERWRITE score ON comment COMPUTED
+		count(<-likes) - count(<-dislikes);
+	DEFINE FIELD OVERWRITE type ON comment TYPE array;
 		# ["status"] -> status post
 		# ["status", "{status id}"] -> status post comment
 		# ["forum", "{category id}"] -> forum post
@@ -102,15 +105,17 @@ DEFINE TABLE OVERWRITE place SCHEMAFULL;
 	DEFINE FIELD OVERWRITE created ON place TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE dedicated ON place TYPE bool DEFAULT false;
 	DEFINE FIELD OVERWRITE deleted ON place TYPE bool DEFAULT false;
-	DEFINE FIELD OVERWRITE description ON place FLEXIBLE TYPE array;
+	DEFINE FIELD OVERWRITE description ON place TYPE array<object> DEFAULT ALWAYS [];
+		DEFINE FIELD OVERWRITE description.*.text ON place TYPE string;
+		DEFINE FIELD OVERWRITE description.*.updated ON place TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE maxPlayers ON place TYPE int DEFAULT 0;
 	DEFINE FIELD OVERWRITE name ON place TYPE string DEFAULT "";
 	DEFINE FIELD OVERWRITE privateServer ON place TYPE bool DEFAULT false;
-	DEFINE FIELD OVERWRITE privateTicket ON place TYPE string DEFAULT rand::guid();
+	DEFINE FIELD OVERWRITE privateTicket ON place TYPE string DEFAULT rand::id();
 	DEFINE FIELD OVERWRITE serverAddress ON place TYPE string DEFAULT "";
 	DEFINE FIELD OVERWRITE serverPing ON place TYPE int DEFAULT 0;
 	DEFINE FIELD OVERWRITE serverPort ON place TYPE int;
-	DEFINE FIELD OVERWRITE serverTicket ON place TYPE string DEFAULT rand::guid();
+	DEFINE FIELD OVERWRITE serverTicket ON place TYPE string DEFAULT rand::id();
 	DEFINE FIELD OVERWRITE updated ON place TYPE datetime DEFAULT time::now();
 
 DEFINE TABLE OVERWRITE createdComment SCHEMAFULL TYPE RELATION FROM user TO comment;
@@ -154,24 +159,31 @@ DEFINE TABLE OVERWRITE stuff SCHEMALESS;
 
 DEFINE TABLE OVERWRITE user SCHEMAFULL;
 	DEFINE FIELD OVERWRITE admin ON user TYPE bool DEFAULT false; # Only the first account should be admin
-	DEFINE FIELD OVERWRITE bodyColours ON user FLEXIBLE TYPE object;
+	DEFINE FIELD OVERWRITE bodyColours ON user TYPE object;
+		DEFINE FIELD OVERWRITE bodyColours.Head ON user TYPE int;
+		DEFINE FIELD OVERWRITE bodyColours.LeftArm ON user TYPE int;
+		DEFINE FIELD OVERWRITE bodyColours.LeftLeg ON user TYPE int;
+		DEFINE FIELD OVERWRITE bodyColours.RightArm ON user TYPE int;
+		DEFINE FIELD OVERWRITE bodyColours.RightLeg ON user TYPE int;
+		DEFINE FIELD OVERWRITE bodyColours.Torso ON user TYPE int;
 	DEFINE FIELD OVERWRITE created ON user TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE css ON user TYPE string DEFAULT ALWAYS "";
-	DEFINE FIELD OVERWRITE description ON user FLEXIBLE TYPE array DEFAULT ALWAYS [];
+	DEFINE FIELD OVERWRITE description ON user TYPE array<object> DEFAULT ALWAYS [];
+		DEFINE FIELD OVERWRITE description.*.text ON user TYPE string;
+		DEFINE FIELD OVERWRITE description.*.updated ON user TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE email ON user TYPE string
-		ASSERT string::is::email($value) OR $value == "";
+		ASSERT string::is_email($value) OR $value == "";
 	DEFINE FIELD OVERWRITE hashedPassword ON user TYPE string;
 	DEFINE FIELD OVERWRITE lastOnline ON user TYPE datetime DEFAULT time::now();
 	DEFINE FIELD OVERWRITE permissionLevel ON user TYPE int;
-	DEFINE FIELD OVERWRITE status ON user VALUE <future> {
-		(IF ->playing[WHERE valid AND ping > time::now() - 35s] {
+	DEFINE FIELD OVERWRITE status ON user COMPUTED
+		IF ->playing[WHERE valid AND ping > time::now() - 35s] {
 			"Playing"
 		} ELSE IF lastOnline > time::now() - 35s {
 			"Online"
 		} ELSE {
 			"Offline"
-		}) # dk y parens r needed
-	};
+		}; # parens no longer needed
 	DEFINE FIELD OVERWRITE theme ON user TYPE int DEFAULT 0;
 	DEFINE FIELD OVERWRITE username ON user TYPE string;
 DEFINE INDEX IF NOT EXISTS usernameI ON user COLUMNS username UNIQUE;
@@ -230,16 +242,16 @@ DEFINE FUNCTION OVERWRITE fn::getComments($comment: record<comment>, $depth: num
 		(IF type[0] == "forum" {
 			{
 				category: (SELECT VALUE name
-					FROM ONLY type::thing("forumCategory", type[1])),
+					FROM ONLY type::record("forumCategory", type[1])),
 				post: IF type[2] {
 					(SELECT fn::currentContent(id) AS currentContent
-						FROM ONLY type::thing("comment", type[2])).currentContent
+						FROM ONLY type::record("comment", type[2])).currentContent
 				},
 			}
 		} ELSE IF type[0] == "asset" {
 			{
 				asset: (SELECT VALUE name
-					FROM ONLY type::thing("asset", type[1])),
+					FROM ONLY type::record("asset", type[1])),
 			}
 		}) AS info
 	FROM $comment;

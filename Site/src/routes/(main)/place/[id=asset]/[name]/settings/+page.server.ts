@@ -146,7 +146,7 @@ actions.network = async e => {
 	const form = await superValidate(e.request, arktype(networkSchema))
 	if (!form.valid) return formError(form)
 
-	await db.merge(Record("place", id), form.data)
+	await db.update(Record("place", id)).merge(form.data)
 	return message(form, "Network settings updated successfully!")
 }
 actions.privacy = async e => {
@@ -156,7 +156,7 @@ actions.privacy = async e => {
 
 	const { privateServer } = form.data
 
-	await db.merge(Record("place", id), { privateServer })
+	await db.update(Record("place", id)).merge({ privateServer })
 	return message(form, "Privacy settings updated successfully!")
 }
 actions.privatelink = async e => {

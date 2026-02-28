@@ -5,7 +5,7 @@ SELECT
 	record::id(id) AS id,
 	maxPlayers,
 	name,
-	(SELECT status, username FROM <-ownsPlace<-user)[0] AS owner,
+	(SELECT status, username FROM $parent<-ownsPlace<-user)[0] AS owner,
 	privateServer,
 	privateTicket,
 	serverAddress,

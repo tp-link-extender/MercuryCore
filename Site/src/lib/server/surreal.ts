@@ -1,8 +1,8 @@
 import {
-	type Prettify,
-	type QueryParameters,
+	type Query,
 	Surreal,
 	RecordId as SurrealRecordId,
+	Table,
 } from "surrealdb"
 import { building } from "$app/environment"
 import initQuery from "$lib/server/init.surql"
@@ -33,24 +33,31 @@ if (!building) {
 
 await new Promise(resolve => setTimeout(resolve, 500))
 
-export const db = new Surreal()
+export const db = new Surreal({
+	codecOptions: {
+		// SurrealDB dates would require custom serialisation/transformers, and we don't need the precision they provide
+		useNativeDates: true,
+	},
+})
 
 // Retry queries
 const ogq = db.query.bind(db)
 const retriable = "This transaction can be retried"
 
 // oof
-db.query = async <T extends unknown[]>(
-	...args: QueryParameters
-): Promise<Prettify<T>> => {
+// also bad types but who cares
+db.query = async <R extends unknown[]>(
+	query: string,
+	bindings?: Record<string, unknown>
+): Query<R> => {
 	try {
-		return (await ogq(...args)) as Prettify<T>
+		return await ogq(query, bindings)
 	} catch (err) {
 		const e = err as Error
 		if (!e.message.endsWith(retriable)) throw e
 		console.log("Retrying query:", e.message)
 	}
-	return await db.query(...args)
+	return await db.query(query, bindings)
 }
 
 export const version = db.version.bind(db)
@@ -66,7 +73,7 @@ async function reconnect() {
 			await db.connect(realUrl, {
 				namespace: "main",
 				database: "main",
-				auth: {
+				authentication: {
 					username: "root", // security B)
 					password: "root",
 				},
@@ -127,6 +134,41 @@ type RecordIdTypes = {
 	user: string
 	wearing: string
 }
+
+export const Asset = new Table("asset")
+export const AuditLog = new Table("auditLog")
+export const Banner = new Table("banner")
+export const Comment = new Table("comment")
+export const Created = new Table("created")
+export const CreatedAsset = new Table("createdAsset")
+export const Dislikes = new Table("dislikes")
+export const Follows = new Table("follows")
+export const ForumCategory = new Table("forumCategory")
+export const Friends = new Table("friends")
+export const Group = new Table("group")
+export const HasSession = new Table("hasSession")
+export const ImageAsset = new Table("imageAsset")
+export const In = new Table("in")
+export const Likes = new Table("likes")
+export const Moderation = new Table("moderation")
+export const Notification = new Table("notification")
+export const OwnsAsset = new Table("ownsAsset")
+export const OwnsGroup = new Table("ownsGroup")
+export const OwnsPlace = new Table("ownsPlace")
+export const Place = new Table("place")
+export const Playing = new Table("playing")
+export const Posted = new Table("posted")
+export const RecentlyWorn = new Table("recentlyWorn")
+export const RegKey = new Table("regKey")
+export const Render = new Table("render")
+export const Report = new Table("report")
+export const Request = new Table("request")
+export const Session = new Table("session")
+export const Stuff = new Table("stuff")
+export const ThumbnailCache = new Table("thumbnailCache")
+export const Used = new Table("used")
+export const User = new Table("user")
+export const Wearing = new Table("wearing")
 
 // Ensure type safety when creating record ids
 export type RecordId<T extends keyof RecordIdTypes> = SurrealRecordId<T>

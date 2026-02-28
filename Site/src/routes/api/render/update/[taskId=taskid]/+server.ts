@@ -46,7 +46,7 @@ export async function POST({ params, request }) {
 	}
 
 	if (status === "Rendering") {
-		await db.merge(render, { status: "Rendering" })
+		await db.update(render).merge({ status: "Rendering" })
 		return new Response()
 	}
 	if (status !== "Completed") return new Response()

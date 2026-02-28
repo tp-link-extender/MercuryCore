@@ -3,11 +3,7 @@ title: SurrealDB
 description: Details on how to install SurrealDB.
 ---
 
-[SurrealDB](https://surrealdb.com) is a multi-model database that combines the flexibility of document databases with the power of graph databases. It is used as the main data storage mechanism for Mercury Core. At the time of writing, the latest version is [**v2.4.1**](https://github.com/surrealdb/surrealdb/releases/tag/v2.4.1).
-
-{% aside title="Future updates" %}
-	SurrealDB v3 is currently in development, and is expected to bring a number of breaking changes, similarly to the upgrade to v2 in [#355](https://github.com/tp-link-extender/MercuryCore/issues/355). Once it is released and stable, Mercury Core will likely be updated to support it.
-{% /aside %}
+[SurrealDB](https://surrealdb.com) is a multi-model database that combines the flexibility of document databases with the power of graph databases. It is used as the main data storage mechanism for Mercury Core. At the time of writing, the latest version is [**v3.0.1**](https://github.com/surrealdb/surrealdb/releases/tag/v3.0.1).
 
 Check out the [installation guide](https://surrealdb.com/docs/surrealdb/installation) for detailed instructions, or install the latest version on Linux or macOS with the following shell command:
 

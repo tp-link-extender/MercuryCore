@@ -34,7 +34,9 @@ actions.default = async ({ cookies, request }) => {
 	})
 	if (!userR) return formError(form, ["code"], ["Invalid recovery code"])
 
-	await db.merge(userR, { hashedPassword: Bun.password.hashSync(npassword) })
+	await db
+		.update(userR)
+		.merge({ hashedPassword: Bun.password.hashSync(npassword) })
 	cookies.set(cookieName, await createSession(userR), cookieOptions)
 
 	redirect(302, "/home")

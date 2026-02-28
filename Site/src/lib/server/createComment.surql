@@ -1,7 +1,6 @@
 LET $c = CREATE ONLY comment CONTENT {
 	content: [{
 		text: $content,
-		updated: time::now(),
 	}],
 	type: $type,
 };

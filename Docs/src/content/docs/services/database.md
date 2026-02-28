@@ -28,18 +28,37 @@ Y88b  d88P Y88b 888 888     888     Y8b.     888  888 888 888  .d88P 888   d88P
  'Y8888P'   'Y88888 888     888      'Y8888  'Y888888 888 8888888P'  8888888P'
 
 
-2038-01-19T03:14:07.119628Z  INFO surreal::env: Running 2.4.1 for linux on x86_64
-2038-01-19T03:14:07.120154Z  INFO surrealdb::core::kvs::ds: Starting kvs store at surrealkv://data/surreal
-2038-01-19T03:14:07.120164Z  INFO surrealdb::core::kvs::surrealkv: Setting maximum segment size: 536870912
-2038-01-19T03:14:07.120166Z  INFO surrealdb::core::kvs::surrealkv: Setting maximum value threshold: 64
-2038-01-19T03:14:07.187947Z  INFO surrealdb::core::kvs::surrealkv: Setting maximum value cache size: 15304316928
-2038-01-19T03:14:07.187968Z  INFO surrealdb::core::kvs::surrealkv: Wait for disk sync acknowledgement: false
-2038-01-19T03:14:07.283928Z  INFO surrealdb::core::kvs::ds: Started kvs store at data/surreal with versions disabled
-2038-01-19T03:14:07.284608Z  INFO surreal::dbs: Initialising credentials user=root
-2038-01-19T03:14:07.284864Z  WARN surrealdb::core::kvs::ds: Credentials were provided, but existing root users were found. The root user 'root' will not be created
-2038-01-19T03:14:07.284871Z  WARN surrealdb::core::kvs::ds: Consider removing the --user and --pass arguments from the server start command
-2038-01-19T03:14:07.301045Z  INFO surrealdb::net: Listening for a system shutdown signal.
-2038-01-19T03:14:07.301057Z  INFO surrealdb::net: Started web server on 127.0.0.1:8000
+2038-01-19T03:14:07.640032Z  INFO surrealdb_server::env: Running 3.0.1 for linux on x86_64
+2038-01-19T03:14:07.640049Z  INFO surrealdb::core::kvs::ds: Starting kvs store at relative path surrealkv://data/surreal
+2038-01-19T03:14:07.640649Z  INFO surrealdb::core::kvs::surrealkv: Enabling value log separation: true
+2038-01-19T03:14:07.740677Z  INFO surrealdb::core::kvs::surrealkv: Setting value log max file size: 268435456
+2038-01-19T03:14:07.740689Z  INFO surrealdb::core::kvs::surrealkv: Setting value log threshold: 4096
+2038-01-19T03:14:07.740691Z  INFO surrealdb::core::kvs::surrealkv: Versioning enabled: false with retention period: 0ns
+2038-01-19T03:14:07.740692Z  INFO surrealdb::core::kvs::surrealkv: Versioning with versioned_index: false
+2038-01-19T03:14:07.816428Z  INFO surrealdb::core::kvs::surrealkv: Setting block cache capacity: 15303714816
+2038-01-19T03:14:07.816442Z  INFO surrealdb::core::kvs::surrealkv: Setting block size: 65536
+2038-01-19T03:14:07.816465Z  INFO surrealkv::lsm: === Starting LSM tree initialization ===
+2038-01-19T03:14:07.816467Z  INFO surrealkv::lsm: Database path: "data/surreal"
+2038-01-19T03:14:07.816527Z  INFO surrealkv::levels: Loading manifest from "data/surreal/manifest/00000000000000000000.manifest"
+2038-01-19T03:14:07.816609Z  INFO surrealkv::levels: Manifest loaded successfully: version=1, log_number=9, last_sequence=18926, tables=9, levels=6
+2038-01-19T03:14:07.816727Z  INFO surrealkv::lsm: Manifest state: log_number=9, last_sequence=18926
+2038-01-19T03:14:07.816731Z  INFO surrealkv::wal::recovery: Starting WAL recovery from directory: "data/surreal/wal"
+2038-01-19T03:14:07.816742Z  INFO surrealkv::wal::recovery: Replaying WAL segments #00000000000000000009 to #00000000000000000009
+2038-01-19T03:14:07.816984Z  INFO surrealkv::wal::recovery: WAL recovery complete: 0 batches across 0 segments, 0 memtables created, max_seq_num=None
+2038-01-19T03:14:07.817046Z  INFO surrealkv::lsm: === LSM tree initialization complete ===
+2038-01-19T03:14:07.841220Z  INFO surrealdb::core::kvs::surrealkv: Sync mode: every transaction commit
+2038-01-19T03:14:07.841236Z  INFO surrealdb::core::kvs::surrealkv: Grouped commit: enabled (timeout=5000000ns, wait_threshold=12, max_batch_size=4096)
+2038-01-19T03:14:07.841298Z  INFO surrealdb::core::kvs::ds: Started surrealkv kvs store
+2038-01-19T03:14:07.841805Z  INFO surreal::dbs: Operation succeeded operation="check_version" attempts=1
+2038-01-19T03:14:07.842192Z  INFO surreal::dbs: Initialising credentials user=root
+2038-01-19T03:14:07.842565Z  WARN surrealdb::core::kvs::ds: Credentials were provided, but existing root users were found. The root user 'root' will not be created
+2038-01-19T03:14:07.842585Z  INFO surreal::dbs: Operation succeeded operation="initialise_credentials" attempts=1
+2038-01-19T03:14:07.842576Z  WARN surrealdb::core::kvs::ds: Consider removing the --user and --pass arguments from the server start command
+2038-01-19T03:14:07.972126Z  INFO surreal::dbs: Operation succeeded operation="Insert node" attempts=1
+2038-01-19T03:14:07.973186Z  INFO surreal::dbs: Operation succeeded operation="Expire nodes" attempts=1
+2038-01-19T03:14:07.975329Z  INFO surreal::dbs: Operation succeeded operation="Remove nodes" attempts=1
+2038-01-19T03:14:07.979977Z  INFO surrealdb::net: Started web server on 127.0.0.1:8000
+2038-01-19T03:14:07.980039Z  INFO surrealdb::net: Listening for a system shutdown signal.
 ```
 
 Omitting the `surrealkv://data/surreal` path argument will cause SurrealDB to use an in-memory database, which is useful for testing purposes. You may see a warning about the root user account already existing; which is normal if you have started the database before.
@@ -63,14 +82,16 @@ In some cases, the database may fail to start due to filesystem permission issue
 An example of potential output could be as follows:
 
 ```log
-2038-01-19T03:14:07.740481Z  INFO surreal::env: Running 2.4.1 for linux on x86_64
-2038-01-19T03:14:07.741021Z  INFO surrealdb::core::kvs::ds: Starting kvs store at surrealkv://data/surreal
-2038-01-19T03:14:07.741047Z  INFO surrealdb::core::kvs::surrealkv: Setting maximum segment size: 536870912
-2038-01-19T03:14:07.741051Z  INFO surrealdb::core::kvs::surrealkv: Setting maximum value threshold: 64
-2038-01-19T03:14:07.805631Z  INFO surrealdb::core::kvs::surrealkv: Setting maximum value cache size: 15304321024
-2038-01-19T03:14:07.805646Z  INFO surrealdb::core::kvs::surrealkv: Wait for disk sync acknowledgement: false
-2038-01-19T03:14:07.805673Z  INFO surrealdb::core::kvs::ds: Started kvs store at surreal with versions disabled
-2038-01-19T03:14:07.805687Z ERROR surreal::cli: There was a problem with the database: There was a problem with the underlying datastore: Log error: IO error: kind=permission denied, message=Permission denied (os error 13)
+2038-01-19T03:14:07.436374Z  INFO surrealdb_server::env: Running 3.0.1 for linux on x86_64
+2038-01-19T03:14:07.436400Z  INFO surrealdb::core::kvs::ds: Starting kvs store at relative path surrealkv://data/surreal
+2038-01-19T03:14:07.437518Z  INFO surrealdb::core::kvs::surrealkv: Enabling value log separation: true
+2038-01-19T03:14:07.521204Z  INFO surrealdb::core::kvs::surrealkv: Setting value log max file size: 268435456
+2038-01-19T03:14:07.521216Z  INFO surrealdb::core::kvs::surrealkv: Setting value log threshold: 4096
+2038-01-19T03:14:07.521217Z  INFO surrealdb::core::kvs::surrealkv: Versioning enabled: false with retention period: 0ns
+2038-01-19T03:14:07.521218Z  INFO surrealdb::core::kvs::surrealkv: Versioning with versioned_index: false
+2038-01-19T03:14:07.591389Z  INFO surrealdb::core::kvs::surrealkv: Setting block cache capacity: 15303714816
+2038-01-19T03:14:07.591404Z  INFO surrealdb::core::kvs::surrealkv: Setting block size: 65536
+2038-01-19T03:14:07.591810Z ERROR surrealdb_server::cli: There was a problem with the datastore: IO error: Permission denied (os error 13)
 Goodbye!
 [process exited with code 1]
 ```

@@ -12,6 +12,5 @@ UPDATE $asset MERGE {
 IF $og.description.text != $description {
 	UPDATE $asset SET description += {
 		text: $description,
-		updated: time::now(),
 	};
 };
