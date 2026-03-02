@@ -78,7 +78,7 @@ async function reconnect() {
 					password: "root",
 				},
 			})
-			console.log("reloaded", await version())
+			console.log("reloaded", (await version()).version)
 			break
 		} catch (err) {
 			const e = err as Error
