@@ -288,3 +288,8 @@ DEFINE FUNCTION OVERWRITE fn::filterInventory($thing: object, $user: record<user
 DEFINE FUNCTION OVERWRITE fn::filterGames($thing: object) {
 	RETURN !$thing.privateServer AND !$thing.deleted
 };
+
+# remember to get ya parameters in the right order here
+DEFINE FUNCTION OVERWRITE fn::search($query: string, $match: string) {
+	RETURN string::similarity::fuzzy($query, $match) > 0;
+};

@@ -8,4 +8,4 @@ SELECT
 	count(<-likes) AS likeCount,
 	count(<-dislikes) AS dislikeCount
 FROM place
-WHERE name ~ $query AND !privateServer AND !deleted;
+WHERE fn::search(name, $query) AND fn::filterGames($this);
