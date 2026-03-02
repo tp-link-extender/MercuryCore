@@ -221,22 +221,3 @@ export async function findWhere(
 	)
 	return res
 }
-
-/**
- * Runs a set of SurrealQL statements against the database.
- * Identical to db.query(), but provides an improved set of error messages for large queries.
- * @param query - Specifies the SurrealQL statements.
- * @param bindings - Assigns variables which can be used in the query.
- */
-// export async function bigQuery<T extends unknown[]>(...args: QueryParameters) {
-// 	const raw = await db.queryRaw<T>(...args)
-// 	const errors = raw.filter(({ status }) => status === "ERR")
-// 	if (errors.length > 0) {
-// 		const errorMessages = errors
-// 			.map(({ result }, i) => `[${i}]: ${result}`)
-// 			.join("\n")
-// 		throw new Error(`SurrealDB query error:\n${errorMessages}`)
-// 	}
-
-// 	return raw.map(({ result }) => result) as T
-// }
