@@ -96,7 +96,6 @@ actions.register = async ({ fetch: f, cookies, request }) => {
 	}
 
 	const [, user] = await db.query<RecordId<"user">[]>(createUserQuery, {
-		admin: false,
 		username,
 		email: email || "",
 		// I still love scrypt, though argon2 is better supported
@@ -138,7 +137,6 @@ actions.initialAccount = async ({ fetch: f, cookies, request }) => {
 	// This is the kind of stuff that always breaks due to never getting tested
 	// Remember: untested === unworking
 	const [, user] = await db.query<RecordId<"user">[]>(createUserQuery, {
-		admin: true,
 		username,
 		email: "",
 		hashedPassword: Bun.password.hashSync(password),

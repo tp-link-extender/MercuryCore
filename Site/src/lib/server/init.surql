@@ -158,7 +158,7 @@ DEFINE TABLE OVERWRITE session SCHEMAFULL;
 DEFINE TABLE OVERWRITE stuff SCHEMALESS;
 
 DEFINE TABLE OVERWRITE user SCHEMAFULL;
-	DEFINE FIELD OVERWRITE admin ON user TYPE bool DEFAULT false; # Only the first account should be admin
+	DEFINE FIELD OVERWRITE admin ON user TYPE bool DEFAULT count(SELECT 1 FROM user) == 0; # Only the first account should be admin
 	DEFINE FIELD OVERWRITE bodyColours ON user TYPE object;
 		DEFINE FIELD OVERWRITE bodyColours.Head ON user TYPE int;
 		DEFINE FIELD OVERWRITE bodyColours.LeftArm ON user TYPE int;
