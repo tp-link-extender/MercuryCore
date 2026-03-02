@@ -1,5 +1,6 @@
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
+import { AlreadyExistsError } from "surrealdb"
 import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
@@ -78,19 +79,23 @@ actions.create = async e => {
 	const limit = ratelimit(form, "createRegKey", e.getClientAddress, 30)
 	if (limit) return limit
 
-	const [result] = await db.query<unknown[]>(createQuery, {
-		regKeyCustom,
-		creator: Record("user", user.id),
-		expiry,
-		regKeyUses,
-	})
+	try {
+		await db.query<unknown[]>(createQuery, {
+			regKeyCustom,
+			creator: Record("user", user.id),
+			expiry,
+			regKeyUses,
+		})
+	} catch (e) {
+		// honestly we should really use these error types more, idk if the only just got added or what idc
+		if (!(e instanceof AlreadyExistsError)) throw e
+		return errMessage(form, "This registration key already exists")
+	}
 
-	return result.status === "ERR"
-		? errMessage(form, "This registration key already exists")
-		: message(
-				form,
-				"Key created successfully! Check the Keys tab for your new key."
-			)
+	message(
+		form,
+		"Key created successfully! Check the Keys tab for your new key."
+	)
 }
 actions.disable = async e => {
 	const { user, form, error } = await getData(e)
