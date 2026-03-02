@@ -3,7 +3,12 @@ import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { Banner, db, Record } from "$lib/server/surreal"
-import { arktype, message, superValidate } from "$lib/server/validate"
+import {
+	arktype,
+	errMessage,
+	message,
+	superValidate,
+} from "$lib/server/validate"
 import type { RequestEvent } from "./$types.d"
 import activeCountQuery from "./activeCount.surql"
 import bannersQuery from "./banners.surql"
@@ -49,11 +54,11 @@ const showHide = (action: string) => async (e: RequestEvent) => {
 	if (error) return error
 
 	const id = e.url.searchParams.get("id")
-	if (!id) return message(form, "Missing fields")
+	if (!id) return errMessage(form, "Missing fields")
 
 	const active = action === "show"
 	if (active && (await bannerActiveCount()) >= 3)
-		return message(form, "Too many active banners")
+		return errMessage(form, "Too many active banners")
 
 	await db.update(Record("banner", id)).merge({ active })
 }
@@ -64,9 +69,9 @@ actions.create = async e => {
 	if (error) return error
 
 	const { bannerText, bannerColour, bannerTextLight } = form.data
-	if (!bannerText || !bannerColour) return message(form, "Missing fields")
+	if (!bannerText || !bannerColour) return errMessage(form, "Missing fields")
 	if ((await bannerActiveCount()) >= 3)
-		return message(form, "Too many active banners")
+		return errMessage(form, "Too many active banners")
 
 	const limit = ratelimit(form, "createBanner", e.getClientAddress, 30)
 	if (limit) return limit
@@ -87,7 +92,7 @@ actions.delete = async e => {
 	if (error) return error
 
 	const id = e.url.searchParams.get("id")
-	if (!id) return message(form, "Missing fields")
+	if (!id) return errMessage(form, "Missing fields")
 
 	await db.update(Record("banner", id)).merge({ deleted: true })
 }
@@ -97,7 +102,7 @@ actions.updateBody = async e => {
 
 	const id = e.url.searchParams.get("id")
 	const { bannerBody } = form.data
-	if (!bannerBody || !id) return message(form, "Missing fields")
+	if (!bannerBody || !id) return errMessage(form, "Missing fields")
 
 	await db.update(Record("banner", id)).merge({ body: bannerBody })
 }
@@ -107,7 +112,7 @@ actions.updateTextLight = async e => {
 
 	const id = e.url.searchParams.get("id")
 	const { bannerTextLight } = form.data
-	if (!id) return message(form, "Missing fields")
+	if (!id) return errMessage(form, "Missing fields")
 
 	await db
 		.update(Record("banner", id))

@@ -4,7 +4,12 @@ import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, Record, type RecordId } from "$lib/server/surreal"
-import { arktype, message, superValidate } from "$lib/server/validate"
+import {
+	arktype,
+	errMessage,
+	message,
+	superValidate,
+} from "$lib/server/validate"
 import getReporteeQuery from "./getReportee.surql"
 import reportQuery from "./report.surql"
 import reports from "./reports"
@@ -51,7 +56,7 @@ actions.default = async ({ locals, request, url, getClientAddress }) => {
 	if (!username || !reportUrl) error(400, "Missing fields")
 
 	const reportee = await getReportee(username)
-	if (!reportee) return message(form, "Invalid user")
+	if (!reportee) return errMessage(form, "Invalid user")
 
 	const limit = ratelimit(form, "report", getClientAddress, 120)
 	if (limit) return limit

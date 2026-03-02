@@ -5,7 +5,12 @@ import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, Record } from "$lib/server/surreal"
-import { arktype, message, superValidate } from "$lib/server/validate"
+import {
+	arktype,
+	errMessage,
+	message,
+	superValidate,
+} from "$lib/server/validate"
 import type { RequestEvent } from "./$types"
 import createQuery from "./create.surql"
 import disabledQuery from "./disabled.surql"
@@ -13,7 +18,7 @@ import regkeysQuery from "./regkeys.surql"
 
 const schema = type({
 	enableRegKeyCustom: "boolean | undefined",
-	regKeyCustom: "(3 <= string <= 50) | undefined",
+	regKeyCustom: "(3 <= string <= 50 | undefined)?",
 	enableRegKeyExpiry: "boolean | undefined",
 	regKeyExpiry: "string | undefined",
 	regKeyUses: type("1 <= number <= 100").default(1),
@@ -63,7 +68,7 @@ actions.create = async e => {
 		(!!enableRegKeyCustom && !regKeyCustom) ||
 		(!!enableRegKeyExpiry && !regKeyExpiry)
 	)
-		return message(form, "Missing fields")
+		return errMessage(form, "Missing fields")
 
 	const expiry = regKeyExpiry ? new Date(regKeyExpiry) : undefined
 
@@ -73,7 +78,7 @@ actions.create = async e => {
 	const limit = ratelimit(form, "createRegKey", e.getClientAddress, 30)
 	if (limit) return limit
 
-	const [result] = await db.queryRaw<unknown[]>(createQuery, {
+	const [result] = await db.query<unknown[]>(createQuery, {
 		regKeyCustom,
 		creator: Record("user", user.id),
 		expiry,
@@ -81,7 +86,7 @@ actions.create = async e => {
 	})
 
 	return result.status === "ERR"
-		? message(form, "This registration key already exists")
+		? errMessage(form, "This registration key already exists")
 		: message(
 				form,
 				"Key created successfully! Check the Keys tab for your new key."
@@ -91,15 +96,14 @@ actions.disable = async e => {
 	const { user, form, error } = await getData(e)
 	if (error) return error
 	const id = e.url.searchParams.get("id")
-	if (!id) return message(form, "Missing fields")
+	if (!id) return errMessage(form, "Missing fields")
 
 	const [[key]] =
 		await db.query<({ disabled: boolean } | null)[][]>(disabledQuery)
 	if (key?.disabled)
-		return message(
+		return errMessage(
 			form,
-			"Registration key is already disabled or has already ran out of uses",
-			{ status: 400 }
+			"Registration key is already disabled or has already ran out of uses"
 		)
 
 	await db.query(

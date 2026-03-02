@@ -3,7 +3,12 @@ import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, Record } from "$lib/server/surreal"
-import { arktype, message, superValidate } from "$lib/server/validate"
+import {
+	arktype,
+	errMessage,
+	message,
+	superValidate,
+} from "$lib/server/validate"
 import { usernameTest } from "$lib/typeTests"
 import updatePasswordQuery from "./updatePassword.surql"
 import usersQuery from "./users.surql"
@@ -42,9 +47,7 @@ actions.changePassword = async ({ locals, request, getClientAddress }) => {
 			username: username,
 		})
 	} catch {
-		return message(form, "Invalid credentials", {
-			status: 400,
-		})
+		return errMessage(form, "Invalid credentials")
 	}
 
 	await db.run("fn::auditLog", [
