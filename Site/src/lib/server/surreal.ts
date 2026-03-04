@@ -9,6 +9,7 @@ import initQuery from "$lib/server/init.surql"
 import logo from "$lib/server/logo" // because this is usually one of the first files loaded
 import startEconomy from "$lib/server/process/economy"
 import startSurreal from "$lib/server/process/surreal"
+import config from "$lib/server/config"
 
 if (!building) {
 	try {
@@ -62,15 +63,14 @@ db.query = async <R extends unknown[]>(
 
 export const version = db.version.bind(db)
 
-const url = "localhost:8000"
-const realUrl = new URL(`ws://${url}`) // must be ws:// to prevent token expiration, http:// will expire after 1 hour by default
+const url = new URL(`ws://${config.DatabaseDomain}`) // must be ws:// to prevent token expiration, http:// will expire after 1 hour by default
 
 async function reconnect() {
 	for (let attempt = 0; ; attempt++)
 		try {
 			await db.close() // doesn't do anything if not connected
 			console.log("connecting to database")
-			await db.connect(realUrl, {
+			await db.connect(url, {
 				namespace: "main",
 				database: "main",
 				authentication: {

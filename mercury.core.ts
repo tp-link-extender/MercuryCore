@@ -4,7 +4,7 @@
 export default {
 	Name: "Mercury",
 	Domain: "mercs.dev",
-	DatabaseURL: "http://localhost:8000",
+	DatabaseDomain: "localhost:8000",
 	RCCServiceProxyURL: "http://localhost:64990",
 	OrbiterPrivateURL: "http://localhost:64991",
 	OrbiterPublicDomain: "localhost:64992",

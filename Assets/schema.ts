@@ -12,9 +12,9 @@ export type Config = {
 	 */
 	Domain: string
 	/**
-	 * The URL of your database server.
+	 * The domain name of your database server. Make sure to include the port if necessary.
 	 */
-	DatabaseURL: string
+	DatabaseDomain: string
 	/**
 	 * The URL of your RCC proxy server. Requires a URL scheme.
 	 */
