@@ -10,6 +10,7 @@
 	import User from "$components/User.svelte"
 	import types from "$lib/assetTypes"
 	import { superForm } from "$lib/validate"
+	import { likeForm } from "../../../like.remote"
 
 	let replyingTo = $state("")
 	let commentsCollapsed = $state({})
@@ -182,7 +183,8 @@
 		{#if comments.length > 0}
 			{#each comments as _, num}
 				<Comment
-					bind:comment={comments[num]}
+					{likeForm}
+					comment={comments[num]}
 					{num}
 					bind:commentsCollapsed
 					bind:replyingTo

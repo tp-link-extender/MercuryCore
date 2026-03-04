@@ -43,8 +43,6 @@ export async function load({ locals, params }) {
 	})
 	if (!asset) error(404, "Not Found")
 
-	console.log(asset)
-
 	return {
 		...asset,
 		slug: encode(asset.name),
