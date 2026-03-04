@@ -27,13 +27,15 @@ const serverDedicated = (dedicated: boolean) =>
 		? dedicated
 		: config.Gameservers.Hosting === "Dedicated"
 
-const serverInfo = (place: Session["place"]) =>
-	serverDedicated(place.dedicated)
-		? {
-				serverAddress: config.OrbiterPublicDomain, // no scheme
-				serverPort: idToPort(place.id),
-			}
-		: place
+function serverInfo(place: Session["place"]) {
+	if (!serverDedicated(place.dedicated)) return place;
+
+	const url = new URL(config.OrbiterPublicURL)
+	return {
+		serverAddress: url.host + url.pathname, // no scheme, the address doesn't usually have a path anyway but just in case
+		serverPort: idToPort(place.id),
+	}
+}
 
 export async function GET({ url }) {
 	const clientTicket = url.searchParams.get("ticket")
