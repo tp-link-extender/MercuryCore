@@ -6,6 +6,7 @@ import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import { db, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
+import { isXML } from "$lib/server/xml.js"
 import createQuery from "./create.surql"
 
 const schema = type({
@@ -40,12 +41,16 @@ actions.default = async ({ locals, request }) => {
 	if (!form.valid) return formError(form)
 
 	const { data } = form
+	const { asset, description, name, price, type: assetType } = data
+	form.data.asset = null as unknown as File // make sure to return as a POJO
+
+	// to prevent faces being uploaded as images
+	const buf = await asset.arrayBuffer()
+	if (assetType === 18 && !isXML(buf))
+		return formError(form, ["asset"], ["Face assets must be in XML format"])
 
 	if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
 	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
-
-	const { asset, description, name, price, type: assetType } = data
-	form.data.asset = null as unknown as File // make sure to return as a POJO
 
 	const [, id] = await db.query<string[]>(createQuery, {
 		description,
@@ -55,7 +60,7 @@ actions.default = async ({ locals, request }) => {
 		user: Record("user", user.id),
 	})
 
-	await Bun.write(`../data/assets/${id}`, await asset.arrayBuffer())
+	await Bun.write(`../data/assets/${id}`, buf)
 
 	// we'll just assume it's a model 4 now
 	// await requestRender(f, "Model", id)
