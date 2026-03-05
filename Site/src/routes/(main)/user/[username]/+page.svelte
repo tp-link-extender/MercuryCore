@@ -270,12 +270,16 @@
 			</div>
 		{/if}
 		<div class="col-span-2">
-			{#if data.posts.length > 0}
-				<h2 class="pt-6">Latest feed posts</h2>
+			{#if data.comments.length > 0}
+				<h2 class="pt-6">Latest comments</h2>
 				<div class="grid md:grid-cols-2 gap-4">
-					{#each data.posts.sort((a, b) => b.created.getTime() - a.created.getTime()) as status, num}
+					{#each data.comments.sort((a, b) => b.created.getTime() - a.created.getTime()) as comment, num}
 						<div
-							in:fade={{ num, total: data.posts.length, max: 9 }}
+							in:fade={{
+								num,
+								total: data.comments.length,
+								max: 9
+							}}
 							class="card bg-darker p-3 h-full">
 							<div id="user" class="flex pb-2 justify-between">
 								<User
@@ -285,11 +289,11 @@
 									image
 									bg="accent" />
 								<span class="italic flex-end">
-									{status.created.toLocaleString()}
+									{comment.created.toLocaleString()}
 								</span>
 							</div>
 							<p class="text-start mb-0">
-								{status.content[0].text}
+								{comment.content.text}
 							</p>
 						</div>
 					{/each}

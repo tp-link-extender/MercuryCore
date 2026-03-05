@@ -11,8 +11,8 @@ SELECT
 		*,
 		record::id(id) AS id,
 		(SELECT text, updated FROM $parent.content
-		ORDER BY updated DESC) AS content
-	FROM $parent->created->statusPost LIMIT 40) AS posts,
+		ORDER BY updated DESC)[$] AS content
+	FROM $parent->createdComment->comment LIMIT 40) AS comments,
 
 	(SELECT
 		record::id(id) AS id,
