@@ -77,7 +77,6 @@ actions.create = async e => {
 	if (limit) return limit
 
 	await db.insert(Banner, {
-		active: true,
 		deleted: false,
 		body: bannerText,
 		bgColour: bannerColour,
