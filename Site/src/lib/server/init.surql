@@ -283,17 +283,20 @@ DEFINE FUNCTION OVERWRITE fn::getComments($comment: record<comment>, $depth: num
 		visibility,
 		(IF type[0] == "forum" {
 			{
+				type: "forum", // for easier switching n things
 				category: (SELECT VALUE name
-					FROM ONLY type::record("forumCategory", type[1])),
+					FROM ONLY type::record("forumCategory", $this.type[1])),
 				post: IF type[2] {
 					(SELECT fn::currentContent($this.content) AS currentContent
-						FROM ONLY type::record("comment", type[2])).currentContent
+						FROM ONLY type::record("comment", $this.type[2])).currentContent
 				},
 			}
 		} ELSE IF type[0] == "asset" {
 			{
+				type: "asset",
 				asset: (SELECT VALUE name
-					FROM ONLY type::record("asset", type[1])),
+					FROM ONLY type::record("asset", $this.type[1])),
+				slug: "", // replaced l8r
 			}
 		}) AS info
 	FROM $comment;

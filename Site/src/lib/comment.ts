@@ -13,8 +13,15 @@ export interface Comment extends Scored {
 	pinned: boolean
 	type: string[]
 	visibility: string
-	info: {
-		category?: string
-		post?: string
-	}
+	info?:
+		| {
+				type: "forum"
+				category: string
+				post: string
+		  }
+		| {
+				type: "asset"
+				asset: string
+				slug: string
+		  }
 }

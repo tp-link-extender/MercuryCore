@@ -30,30 +30,25 @@
 		const { info, type } = c
 
 		if (type[0] === "status") return [["Status", "/"]]
+		if (!info) return []
 
-		if (type[0] === "asset")
+		if (info.type === "asset")
 			return [
 				["Catalog", "/catalog"],
-				["Asset", "/catalog"]
+				["Asset", `/catalog/${type[1]}/${info.slug}`]
 			]
 
-		if (type.length === 2)
-			return [
-				["Forum", "/forum"],
-				[
-					info.category || "Category",
-					`/forum/${info.category?.toLowerCase()}`
-				]
-			]
-
-		return [
+		const start: [string, string][] = [
 			["Forum", "/forum"],
 			[
 				info.category || "Category",
 				`/forum/${info.category?.toLowerCase()}`
-			],
-			[elide(info.post || "Post"), `/comment/${type[2]}`]
+			]
 		]
+
+		if (type.length === 2) return start
+
+		return [...start, [elide(info.post || "Post"), `/comment/${type[2]}`]]
 	}
 </script>
 
