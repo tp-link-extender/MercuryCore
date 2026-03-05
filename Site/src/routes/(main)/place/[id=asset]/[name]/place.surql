@@ -1,8 +1,7 @@
 SELECT
 	record::id(id) AS id,
 	name,
-	(SELECT text, updated FROM $parent.description
-	ORDER BY updated)[$] AS description,
+	fn::currentContent($this.description) AS description,
 	serverPing,
 	serverTicket,
 	privateServer,

@@ -237,7 +237,7 @@ DEFINE FUNCTION OVERWRITE fn::assetId() {
 	RETURN rand::int(100_000_000, 999_999_999);
 };
 
-DEFINE FUNCTION OVERWRITE fn::auditLog($action: string, $note: string, $user: record) {
+DEFINE FUNCTION OVERWRITE fn::auditLog($action: string, $note: string, $user: record<user>) {
 	CREATE auditLog CONTENT {
 		action: $action,
 		note: $note,
@@ -249,8 +249,8 @@ DEFINE FUNCTION OVERWRITE fn::clampPages($count: number, $pages: number) {
 	RETURN math::max([math::ceil(<float> $count / 50), 1]);
 };
 
-DEFINE FUNCTION OVERWRITE fn::currentContent($thing: record) {
-	RETURN (SELECT text, updated FROM $thing.content
+DEFINE FUNCTION OVERWRITE fn::currentContent($thing: array) {
+	RETURN (SELECT text, updated FROM $thing
 	ORDER BY updated)[$].text
 };
 
@@ -286,7 +286,7 @@ DEFINE FUNCTION OVERWRITE fn::getComments($comment: record<comment>, $depth: num
 				category: (SELECT VALUE name
 					FROM ONLY type::record("forumCategory", type[1])),
 				post: IF type[2] {
-					(SELECT fn::currentContent(id) AS currentContent
+					(SELECT fn::currentContent($this.content) AS currentContent
 						FROM ONLY type::record("comment", type[2])).currentContent
 				},
 			}

@@ -13,10 +13,7 @@ type Asset = {
 	id: string
 	created: Date
 	creator: BasicUser
-	description: {
-		text: string
-		updated: Date
-	}
+	description: string
 	forSale: boolean
 	name: string
 	price: number
@@ -50,7 +47,7 @@ export async function load({ locals, params }) {
 			{
 				name: asset.name,
 				forSale: asset.forSale,
-				description: asset.description.text,
+				description: asset.description,
 				price: asset.price,
 			},
 			arktype(schema)
@@ -61,18 +58,7 @@ export async function load({ locals, params }) {
 export const actions: import("./$types").Actions = {}
 
 type AssetCheck = {
-	id: string
-	created: Date
 	isCreator: boolean
-	description: {
-		text: string
-		updated: Date
-	}
-	forSale: boolean
-	name: string
-	price: number
-	type: number
-	visibility: string
 }
 
 actions.default = async ({ locals, params, request }) => {

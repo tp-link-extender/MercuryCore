@@ -1,7 +1,6 @@
 SELECT
 	dedicated,
-	(SELECT text, updated FROM $parent.description
-	ORDER BY updated)[$] AS description,
+	fn::currentContent($this.description) AS description,
 	record::id(id) AS id,
 	maxPlayers,
 	name,

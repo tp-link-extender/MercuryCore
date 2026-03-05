@@ -24,8 +24,7 @@ SELECT
 	# )
 	0 AS replies,
 	visibility,
-	(SELECT text, updated FROM $parent.content
-	ORDER BY updated)[$].text AS currentContent
+	fn::currentContent($this.content) AS currentContent
 FROM comment WHERE type = ["status"]
 ORDER BY pinned DESC, created DESC
 LIMIT 40;

@@ -110,7 +110,7 @@
 			</div>
 			<p class="pt-2">
 				{#if data.asset.description}
-					{data.asset.description.text}
+					{data.asset.description}
 				{:else}
 					<em>No description available</em>
 				{/if}

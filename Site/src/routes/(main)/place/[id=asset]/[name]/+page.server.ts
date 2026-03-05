@@ -19,10 +19,7 @@ type FoundPlace = {
 
 interface Place extends FoundPlace {
 	created: string
-	description: {
-		text: string
-		updated: Date
-	}
+	description: string
 	dislikeCount: number
 	dislikes: boolean
 	id: number

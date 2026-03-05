@@ -6,8 +6,7 @@ SELECT
 	count(<-ownsAsset<-user) AS sold,
 	$user IN <-ownsAsset<-user.id AS owned,
 
-	(SELECT text, updated FROM $parent.description
-	ORDER BY updated)[$] AS description,
+	fn::currentContent($this.description) AS description,
 
 	array::flatten(
 		SELECT VALUE fn::getComments($this.id, 1, $user)

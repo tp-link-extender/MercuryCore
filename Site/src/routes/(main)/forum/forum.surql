@@ -4,8 +4,7 @@ SELECT
 		record::id(id) AS id,
 		author,
 		created,
-		(SELECT text, updated FROM $parent.content
-		ORDER BY updated)[$].text AS currentContent
+		fn::currentContent($this.content) AS currentContent
 	FROM comment
 	WHERE type = ["forum", record::id($parent.id)]
 		AND visibility = "Visible"

@@ -1,7 +1,7 @@
 LET $s = SELECT id, expires FROM ONLY $sess;
 LET $u = (SELECT
     record::id(id) AS id,
-	(SELECT text, updated FROM $parent.description ORDER BY updated)[$] AS description,
+	fn::currentContent($this.description) AS description,
     bodyColours,
     # created,
     IF email {

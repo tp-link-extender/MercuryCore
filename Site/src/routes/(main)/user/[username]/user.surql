@@ -5,13 +5,11 @@ SELECT
 	number,
 	permissionLevel,
 	status,
-	(SELECT text, updated FROM $parent.description
-	ORDER BY updated)[$] AS description,
+	fn::currentContent($this.description) AS description,
 	(SELECT
 		*,
 		record::id(id) AS id,
-		(SELECT text, updated FROM $parent.content
-		ORDER BY updated DESC)[$] AS content
+		fn::currentContent($this.content) AS content
 	FROM $parent->createdComment->comment LIMIT 40) AS comments,
 
 	(SELECT

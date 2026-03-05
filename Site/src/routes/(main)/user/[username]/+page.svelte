@@ -293,7 +293,7 @@
 								</span>
 							</div>
 							<p class="text-start mb-0">
-								{comment.content.text}
+								{comment.content}
 							</p>
 						</div>
 					{/each}

@@ -285,7 +285,7 @@
 	<TabNav bind:tabData justify />
 
 	<Tab bind:tabData>
-		{place.description.text || ""}
+		{place.description || ""}
 	</Tab>
 
 	<Tab bind:tabData>

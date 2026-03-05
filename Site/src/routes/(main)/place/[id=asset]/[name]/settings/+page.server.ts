@@ -42,10 +42,7 @@ const dataSchema = type({
 type Place = {
 	created: string
 	dedicated: boolean
-	description: {
-		text: string
-		updated: Date
-	}
+	description: string
 	id: string // graah
 	maxPlayers: number
 	name: string

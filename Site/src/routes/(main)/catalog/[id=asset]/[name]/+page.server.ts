@@ -31,10 +31,7 @@ type Asset = {
 	comments: Comment[]
 	created: Date
 	creator: BasicUser
-	description: {
-		text: string
-		updated: Date
-	}
+	description: string
 	forSale: boolean
 	isCreator: boolean
 	name: string
