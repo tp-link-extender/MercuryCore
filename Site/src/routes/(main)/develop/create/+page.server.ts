@@ -91,7 +91,7 @@ actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 			case "Decal":
 				saveImages = await Promise.all([
 					imageAsset(asset),
-					thumbnail(asset),
+					thumbnail(await asset.arrayBuffer()),
 				])
 				break
 

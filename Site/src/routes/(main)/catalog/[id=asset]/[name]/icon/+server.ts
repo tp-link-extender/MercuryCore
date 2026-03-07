@@ -1,6 +1,6 @@
 import { error, redirect } from "@sveltejs/kit"
 import { authorise } from "$lib/server/auth"
-import { tShirtThumbnail } from "$lib/server/imageAsset"
+import { thumbnail, tShirtThumbnail } from "$lib/server/imageAsset"
 import { db, Record } from "$lib/server/surreal"
 import assetQuery from "./asset.surql"
 
@@ -11,7 +11,7 @@ type Asset = {
 	imageAssetId: number
 }
 
-const noRenderTypes = Object.freeze([1, 18])
+const noRenderTypes = Object.freeze([1])
 
 export async function GET({ locals, params }) {
 	const { user } = await authorise(locals)
@@ -43,7 +43,13 @@ export async function GET({ locals, params }) {
 				tShirtThumbnail(await file.arrayBuffer()).then(f => f(id))
 			break
 		}
-		default:
+		case 18: {
+			// Recreate the icon thumbnail
+			const file = Bun.file(`../data/assets/${asset.imageAssetId}`)
+			if (await file.exists())
+				thumbnail(await file.arrayBuffer()).then(f => f(id))
+			break
+		}
 	}
 
 	redirect(302, "/dots.png")
