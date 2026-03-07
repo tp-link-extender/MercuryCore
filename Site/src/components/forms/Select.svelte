@@ -22,7 +22,7 @@
 		help?: string
 		disabled?: boolean
 		// multiple?: boolean
-		options: string[]
+		options: readonly string[]
 		selected?: string
 		formData: import("$lib/validate").SuperForm<any>
 	} = $props()
@@ -66,7 +66,7 @@
 				{#each options as opt}
 					<option
 						value={opt}
-						selected={opt === (selected ? selected : select.value)}>
+						selected={opt === (selected || select.value)}>
 						{opt}
 					</option>
 				{/each}

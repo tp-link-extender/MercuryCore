@@ -11,7 +11,8 @@
 		["Shirts", "🧥", "Shirt"],
 		["T-Shirts", "👕", "T-Shirt"],
 		["Pants", "👖", "Pants"],
-		["Decals", "🖼️", "Decal"]
+		["Decals", "🖼️", "Decal"],
+		["Faces", "😏", "Face"]
 	])
 
 	let tabData = $state(TabData(data.url, ["Create" /*, "Creations" */]))
