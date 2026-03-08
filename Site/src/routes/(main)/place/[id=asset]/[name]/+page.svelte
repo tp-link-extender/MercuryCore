@@ -308,10 +308,7 @@
 						method="post"
 						action="?/close"
 						class="pt-2">
-						<button
-							onclick={placeLauncher}
-							id="join"
-							class="btn btn-sm btn-red-secondary">
+						<button id="close" class="btn btn-sm btn-red-secondary">
 							Close server
 						</button>
 					</form>
