@@ -22,7 +22,7 @@ mercs.dev {
 	reverse_proxy localhost:4443
 }
 
-# Often required for some URLs
-www.mercs.dev {
+# Insecure HTTP version, not to be accessed via the browser
+http://www.mercs.dev {
 	reverse_proxy localhost:4443
 }

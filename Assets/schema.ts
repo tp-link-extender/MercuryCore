@@ -12,6 +12,10 @@ export type Config = {
 	 */
 	Domain: string
 	/**
+	 * The version of your revival's domain to use for insecure HTTP requests. This is necessary for a lot of requests that don't support HTTPS. It shouldn't be the same as Domain, as the insecure domain shouldn't be used by a user to access normal site pages.
+	 */
+	DomainInsecure: string
+	/**
 	 * The URL of your RCC proxy server. Requires a URL scheme.
 	 */
 	RCCServiceProxyURL: string
