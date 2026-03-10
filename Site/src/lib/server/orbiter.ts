@@ -12,7 +12,7 @@ export async function listGameservers(
 	f: typeof globalThis.fetch
 ): ReturnValue<GameserverId[]> {
 	try {
-		const res = await f(config.OrbiterPrivateURL)
+		const res = await f(config.Orbiter.PrivateURL)
 		if (!res.ok) return { ok: false }
 		return { ok: true, value: await res.json() }
 	} catch {
@@ -26,7 +26,7 @@ async function fetchGameserver(
 	method: string
 ): Promise<ReturnErr> {
 	try {
-		const res = await f(`${config.OrbiterPrivateURL}/${path}`, { method })
+		const res = await f(`${config.Orbiter.PrivateURL}/${path}`, { method })
 		if (!res.ok) return { ok: false, msg: await res.text() }
 	} catch (err) {
 		const e = err as Error

@@ -4,13 +4,25 @@
 export default {
 	Name: "Mercury",
 	Domain: "mercs.dev",
-	DatabaseDomain: "localhost:8000",
+	DomainInsecure: "www.mercs.dev",
 	RCCServiceProxyURL: "http://localhost:64990",
-	OrbiterPrivateURL: "http://localhost:64991",
-	OrbiterPublicURL: "http://localhost:64992",
 	LauncherURI: "mercury-launcher:",
 	CurrencySymbol: "屌",
 	Pages: ["Statistics", "Forum", "Groups"],
+
+	Database: {
+		AutoStart: true,
+		Domain: "localhost:8000",
+	},
+
+	Economy: {
+		AutoStart: true,
+	},
+
+	Orbiter: {
+		PrivateURL: "http://localhost:64991",
+		PublicURL: "http://localhost:64992",
+	},
 
 	// 'noob' colours
 	DefaultBodyColors: {

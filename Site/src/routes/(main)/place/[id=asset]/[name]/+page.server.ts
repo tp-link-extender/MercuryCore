@@ -69,7 +69,7 @@ export async function load({ locals, params, url }) {
 	return {
 		scheme: config.LauncherURI,
 		hosting: config.Gameservers.Hosting,
-		orbiterURL: config.OrbiterPublicURL,
+		orbiterURL: config.Orbiter.PublicURL,
 		slug,
 		place,
 		thumbnails: [id % thumbnails.length],
