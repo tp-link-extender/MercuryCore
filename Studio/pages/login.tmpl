@@ -11,15 +11,24 @@
 		<fieldset>
 			<div>
 				<label for="username">Username</label>
-				<input required autocomplete="username" name="username" placeholder="Username" value="{{ .username }}"
-					{{ if .invalid.username }} class="is-invalid" {{ end }} />
+				<input required autocomplete="username" name="username" placeholder="Username"
+					value="{{ .username.Value }}" {{ if and .password (gt (len .username.Errors) 0) }}
+					class="is-invalid" {{ end }} />
+
+				{{ range .username.Errors }}
+				<small class="formerror">{{ . }}</small>
+				{{ end }}
 			</div>
 
 			<div>
 				<label for="password">Password</label>
 				<input required autocomplete="current-password" name="password" type="password"
-					placeholder="••••••••••••••••••" value="{{ .password }}" {{ if .invalid.password }}
-					class="is-invalid" {{ end }} />
+					placeholder="••••••••••••••••••" value="{{ .password.Value }}" {{ if and .password (gt (len
+					.password.Errors) 0) }} class="is-invalid" {{ end }} />
+
+				{{ range .password.Errors }}
+				<small class="formerror">{{ . }}</small>
+				{{ end }}
 			</div>
 
 			<button class="btn btn-primary">Log in</button>

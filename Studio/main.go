@@ -55,6 +55,10 @@ func handle(Pages []Component) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := make(Data)
 		for _, p := range Pages {
+			if p.Loader == nil {
+				continue
+			}
+
 			nd, err := p.Loader(w, r, data)
 			if err != nil {
 				if redirect, ok := err.(*ErrorRedirect); ok {
