@@ -33,7 +33,7 @@ const serverDedicated = (dedicated: boolean) =>
 function serverInfo(place: Session["place"]): ServerAddress {
 	if (!serverDedicated(place.dedicated)) return place
 
-	const url = new URL(config.OrbiterPublicURL)
+	const url = new URL(config.Orbiter.PublicURL)
 	return {
 		serverHostname: url.hostname, // no scheme, the address doesn't usually have a path anyway
 		serverPort: idToPort(place.id),

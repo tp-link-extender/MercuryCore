@@ -26,10 +26,7 @@ export type OptionalPage = (typeof optionalPages)[number]
 const schema = type({
 	Name: "string >= 1",
 	Domain: "string >= 1",
-	// DatabaseDomain: "string >= 1",
 	RCCServiceProxyURL: "string >= 1",
-	// OrbiterPrivateURL: "string >= 1",
-	// OrbiterPublicURL: "string >= 1",
 	LauncherURI: "string >= 1",
 	CurrencySymbol: "string >= 1",
 	Pages: type.enumerated(...optionalPages).array(),
