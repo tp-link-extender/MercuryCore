@@ -30,12 +30,12 @@ type Component struct {
 }
 
 type ErrorRedirect struct {
-	URL  string
+	Path string
 	Code int
 }
 
 func (e ErrorRedirect) Error() string {
-	return fmt.Sprintf("redirect to %s with code %d", e.URL, e.Code)
+	return fmt.Sprintf("redirect to %s with code %d", e.Path, e.Code)
 }
 
 func handle(Pages []Component) http.HandlerFunc {
@@ -57,14 +57,15 @@ func handle(Pages []Component) http.HandlerFunc {
 		for _, p := range Pages {
 			nd, err := p.Loader(w, r, data)
 			if err != nil {
-				if redirect, ok := err.(ErrorRedirect); ok {
-					http.Redirect(w, r, redirect.URL, redirect.Code)
+				if redirect, ok := err.(*ErrorRedirect); ok {
+					http.Redirect(w, r, redirect.Path, redirect.Code)
 					return
 				}
 				http.Error(w, "loader error: "+err.Error(), http.StatusInternalServerError)
 				return
 			}
-			data = MergeData(data, nd)
+			// data = MergeData(data, nd)
+			data = nd
 		}
 
 		if err := tmpl.Execute(w, data); err != nil {
@@ -78,7 +79,7 @@ func main() {
 		handle([]Component{root, loggedOut, pageIndex})(w, r)
 	})
 
-	http.HandleFunc("GET /login", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 		handle([]Component{root, loggedOut, login})(w, r)
 	})
 

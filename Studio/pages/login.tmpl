@@ -11,13 +11,15 @@
 		<fieldset>
 			<div>
 				<label for="username">Username</label>
-				<input required autocomplete="username" name="username" placeholder="Username" />
+				<input required autocomplete="username" name="username" placeholder="Username" value="{{ .username }}"
+					{{ if .invalid.username }} class="is-invalid" {{ end }} />
 			</div>
 
 			<div>
 				<label for="password">Password</label>
 				<input required autocomplete="current-password" name="password" type="password"
-					placeholder="••••••••••••••••••" />
+					placeholder="••••••••••••••••••" value="{{ .password }}" {{ if .invalid.password }}
+					class="is-invalid" {{ end }} />
 			</div>
 
 			<button class="btn btn-primary">Log in</button>

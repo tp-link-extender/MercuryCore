@@ -16,9 +16,16 @@ var loggedOut = Component{
 	Loader: loadnone,
 }
 
+func loadindex(w http.ResponseWriter, r *http.Request, data Data) (Data, error) {
+	return data, &ErrorRedirect{
+		Path:  "/login",
+		Code: 302,
+	}
+}
+
 var pageIndex = Component{
 	Name:   "pages/index",
-	Loader: loadnone,
+	Loader: loadindex,
 }
 
 var pageNotFound = Component{
@@ -26,7 +33,15 @@ var pageNotFound = Component{
 	Loader: loadnone,
 }
 
+func loadlogin(w http.ResponseWriter, r *http.Request, data Data) (Data, error) {
+	if r.Method != "POST" {
+		return data, nil
+	}
+
+	return data, nil
+}
+
 var login = Component{
 	Name:   "pages/login",
-	Loader: loadnone,
+	Loader: loadlogin,
 }
