@@ -5,6 +5,21 @@ description: Details on the Orbiter service, Mercury's gameserver management sys
 
 This page provides information about Mercury's Orbiter service, responsible for managing, starting, and stopping gameserver instances for the revival platform. An implementation of the Orbiter is available at the [tp-link-extender/RCCService](https://github.com/tp-link-extender/RCCService) repository.
 
+## Starting
+
+Upon starting the Orbiter, it will attempt to download the latest version of the Setup package, as distributed on the Setup domain configured in the **.env** file. If this is successful, or if the latest version is already downloaded, the Orbiter will start accepting connections on 2 ports: a private management port for communication with the Site and only accepting connections from IP addresses configured in the **.env** file (by default on port 64991), and a public status port for accepting connections from browsers to report the status of gameserver instances (on port 64992 in dev, and on normal HTTP/HTTPS ports of 80 and 443 in production).
+
+The Orbiter's **.env** file, placed in the same directory as its running executable, should have contents similar to the following:
+
+```
+ENV=dev
+DOMAIN=localhost:5173
+SETUPDOMAIN=setup.mercs.dev
+IPV4=127.0.0.1
+IPV6=::1
+GAMESERVER_KEY=password
+```
+
 ## Gameservers
 
 The process for starting a gameserver with the Orbiter is very similar to that of manually starting a selfhosted gameserver. Gameservers are simply Studio sessions that are started with a Host/Serve loadscript, which starts a network server on a specific port and listens for incoming player connections. The gameserver will load a specific place, and if the server's port is forwarded correctly, players can connect to the server with their Clients and play the game. The Serve loadscript, a similar version of the Host loadscript which runs in dedicated servers, includes a few functions that run periodically for server upkeep, including checking for inactive players to shut down the server once it has been empty for a certain amount of time.
@@ -18,6 +33,8 @@ Mercury Core includes [configuration options](https://github.com/tp-link-extende
 ## Platforms
 
 The Orbiter service has been successfully tested on Windows and Linux operating systems. If the host OS is Linux, it will use [Wine](https://www.winehq.org) to run the Studio executable. As such, make sure it is installed, configured correctly to run 32-bit Windows applications, allows access to a virtual desktop if needed, and that it is accessible from the command line as `wine`.
+
+By default, the Orbiter will start a display server with Wayland (using Weston in headless mode) on Linux, and specify a suitable `DISPLAY` environment variable (:0) for the Studio session to use. This can be replaced with Xvfb or a physical/non-headless display if issues are encountered.
 
 It's possible to disable the Studio 3D view by navigating to File > Settings (or Tools > Settings if using the legacy SystemMenu UI instead of the RibbonBar) > Rendering and setting the 'graphicsMode' option to 'NoGraphics'. This can help reduce resource usage on the host machine, especially when running multiple gameservers, and prevent crashes on systems where hardware-accelerated graphics support is unavailable. This replaces the 3D view with the diagnostics window, and does not affect server functionality. Audio and other UI elements will still function as normal.
 
