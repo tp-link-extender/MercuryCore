@@ -1,4 +1,8 @@
 {{ define "content" }}
+
+{{ $username := .Data.username }}
+{{ $password := .Data.password }}
+
 <div class="container">
 	<div class="hero-text">
 		<h1>Log in to Mercury Studio</h1>
@@ -12,10 +16,10 @@
 			<div>
 				<label for="username">Username</label>
 				<input required autocomplete="username" name="username" placeholder="Username"
-					value="{{ .username.Value }}" {{ if and .password (gt (len .username.Errors) 0) }}
+					value="{{ $username.Value }}" {{ if and $password (gt (len $username.Errors) 0) }}
 					class="is-invalid" {{ end }} />
 
-				{{ range .username.Errors }}
+				{{ range $username.Errors }}
 				<small class="formerror">{{ . }}</small>
 				{{ end }}
 			</div>
@@ -23,10 +27,10 @@
 			<div>
 				<label for="password">Password</label>
 				<input required autocomplete="current-password" name="password" type="password"
-					placeholder="••••••••••••••••••" value="{{ .password.Value }}" {{ if and .password (gt (len
-					.password.Errors) 0) }} class="is-invalid" {{ end }} />
+					placeholder="••••••••••••••••••" value="{{ $password.Value }}" {{ if and $password (gt (len
+					$password.Errors) 0) }} class="is-invalid" {{ end }} />
 
-				{{ range .password.Errors }}
+				{{ range $password.Errors }}
 				<small class="formerror">{{ . }}</small>
 				{{ end }}
 			</div>

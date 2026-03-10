@@ -40,13 +40,13 @@ func MakeInputResponse() InputResponse {
 	}
 }
 
-func loadlogin(w http.ResponseWriter, r *http.Request, data Data) (Data, error) {
+func loadlogin(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
 	if r.Method != "POST" {
-		return data, nil
+		return d, nil
 	}
 
 	if err := r.ParseForm(); err != nil {
-		return nil, fmt.Errorf("parse form: %w", err)
+		return d, fmt.Errorf("parse form: %w", err)
 	}
 
 	username := r.Form.Get("username")
@@ -64,9 +64,9 @@ func loadlogin(w http.ResponseWriter, r *http.Request, data Data) (Data, error) 
 	rUsername.Value = username
 	rPassword.Value = password
 
-	data["username"] = rUsername
-	data["password"] = rPassword
-	return data, nil
+	d.Data["username"] = rUsername
+	d.Data["password"] = rPassword
+	return d, nil
 }
 
 var login = Component{

@@ -12,16 +12,24 @@ const (
 	ext = ".tmpl"
 )
 
-type Data map[string]any
+// type Data map[string]any
+type Data struct {
+	User any
+	Data map[string]any
+}
 
-func MergeData(maps ...Data) Data {
-	merged := make(Data)
-	for _, m := range maps {
-		for k, v := range m {
-			merged[k] = v
-		}
+func MakeData() Data {
+	return Data{
+		Data: make(map[string]any),
 	}
-	return merged
+}
+
+func (d Data) Merge(d2 Data) Data {
+	d.User = d2.User
+	for k, v := range d2.Data {
+		d.Data[k] = v
+	}
+	return d
 }
 
 type Component struct {
@@ -53,7 +61,7 @@ func handle(Pages []Component) http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		data := make(Data)
+		data := MakeData()
 		for _, p := range Pages {
 			if p.Loader == nil {
 				continue
