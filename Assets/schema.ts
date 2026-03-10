@@ -33,7 +33,7 @@ export type Config = {
 	Pages: ("Statistics" | "Groups" | "Forum")[]
 
 	/**
-	 * Configuration for the databse server, run with SurrealDB.
+	 * Configuration for the database server, run with SurrealDB.
 	 */
 	Database: {
 		/**
@@ -51,7 +51,7 @@ export type Config = {
 	 */
 	Economy: {
 		/**
-		 * Whether to automatically start the Economy service when starting Mercury Core. . It will attempt to build the Economy service from source with Go if the executable cannot be found.
+		 * Whether to automatically start the Economy service when starting Mercury Core. It will attempt to build the Economy service from source with Go if the executable cannot be found.
 		 */
 		AutoStart: boolean
 	}
