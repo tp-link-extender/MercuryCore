@@ -20,19 +20,31 @@ if (!cwd.endsWith("Site")) {
 
 const brickColourEnum = type.or(...brickColoursStrings)
 
-const optionalPages = ["Statistics", "Groups", "Forum"] as const
+const optionalPages = Object.freeze(["Statistics", "Groups", "Forum"] as const)
 export type OptionalPage = (typeof optionalPages)[number]
 
 const schema = type({
 	Name: "string >= 1",
 	Domain: "string >= 1",
-	DatabaseURL: "string >= 1",
+	DomainInsecure: "string >= 1",
 	RCCServiceProxyURL: "string >= 1",
-	OrbiterPrivateURL: "string >= 1",
-	OrbiterPublicDomain: "string >= 1", // public domain lol
 	LauncherURI: "string >= 1",
 	CurrencySymbol: "string >= 1",
 	Pages: type.enumerated(...optionalPages).array(),
+
+	Database: type({
+		AutoStart: "boolean",
+		Domain: "string >= 1",
+	}),
+
+	Economy: type({
+		AutoStart: "boolean",
+	}),
+
+	Orbiter: type({
+		PrivateURL: "string >= 1",
+		PublicURL: "string >= 1",
+	}),
 
 	DefaultBodyColors: type({
 		Head: brickColourEnum,

@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { page } from "$app/state"
 
-	const {
-		formData
-	}: { formData: import("sveltekit-superforms").SuperForm<any> } = $props()
+	const { formData }: { formData: import("$lib/validate").SuperForm<any> } =
+		$props()
 
 	const { form, errors, message, constraints, enhance, delayed } = formData
 </script>

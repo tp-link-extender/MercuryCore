@@ -1,10 +1,9 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { arktype } from "sveltekit-superforms/adapters"
-import { superValidate } from "sveltekit-superforms/server"
 import { cookieName, cookieOptions, createSession } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import { db, type RecordId } from "$lib/server/surreal"
+import { arktype, superValidate } from "$lib/server/validate"
 import findUserQuery from "./findUser.surql"
 
 const schema = type({
@@ -35,7 +34,9 @@ actions.default = async ({ cookies, request }) => {
 	})
 	if (!userR) return formError(form, ["code"], ["Invalid recovery code"])
 
-	await db.merge(userR, { hashedPassword: Bun.password.hashSync(npassword) })
+	await db
+		.update(userR)
+		.merge({ hashedPassword: Bun.password.hashSync(npassword) })
 	cookies.set(cookieName, await createSession(userR), cookieOptions)
 
 	redirect(302, "/home")

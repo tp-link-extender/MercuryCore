@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { get } from "svelte/store"
-	import { superForm } from "sveltekit-superforms/client"
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
 	import Textarea from "$components/forms/Textarea.svelte"
+	import { superForm } from "$lib/validate"
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
@@ -12,7 +12,7 @@
 
 	$effect(() => {
 		if (data.description && !get(formData.form).description)
-			$form.description = data.description.text
+			$form.description = data.description
 	})
 </script>
 

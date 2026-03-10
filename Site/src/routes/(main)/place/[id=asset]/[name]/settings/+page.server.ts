@@ -2,12 +2,11 @@ import fs from "node:fs"
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
 import sharp from "sharp"
-import { arktype } from "sveltekit-superforms/adapters"
-import { message, superValidate } from "sveltekit-superforms/server"
 import { authorise } from "$lib/server/auth"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import { db, Record } from "$lib/server/surreal"
+import { arktype, message, superValidate } from "$lib/server/validate"
 import {
 	maxPlayersTest,
 	serverAddressTest,
@@ -43,10 +42,7 @@ const dataSchema = type({
 type Place = {
 	created: string
 	dedicated: boolean
-	description: {
-		text: string
-		updated: Date
-	}
+	description: string
 	id: string // graah
 	maxPlayers: number
 	name: string
@@ -147,7 +143,7 @@ actions.network = async e => {
 	const form = await superValidate(e.request, arktype(networkSchema))
 	if (!form.valid) return formError(form)
 
-	await db.merge(Record("place", id), form.data)
+	await db.update(Record("place", id)).merge(form.data)
 	return message(form, "Network settings updated successfully!")
 }
 actions.privacy = async e => {
@@ -157,7 +153,7 @@ actions.privacy = async e => {
 
 	const { privateServer } = form.data
 
-	await db.merge(Record("place", id), { privateServer })
+	await db.update(Record("place", id)).merge({ privateServer })
 	return message(form, "Privacy settings updated successfully!")
 }
 actions.privatelink = async e => {

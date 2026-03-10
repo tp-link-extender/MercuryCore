@@ -1,13 +1,12 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { arktype } from "sveltekit-superforms/adapters"
-import { superValidate } from "sveltekit-superforms/server"
 import { dev } from "$app/environment"
 import config from "$lib/server/config"
 import { sendEmail } from "$lib/server/email"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db } from "$lib/server/surreal"
+import { arktype, superValidate } from "$lib/server/validate"
 import recoveryQuery from "./recovery.surql"
 
 const schema = type({
@@ -45,8 +44,8 @@ actions.default = async ({ cookies, request, getClientAddress }) => {
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
-	// const limit = ratelimit(form, "recover", getClientAddress, 30)
-	// if (limit) return limit
+	const limit = ratelimit(form, "recover", getClientAddress, 30)
+	if (limit) return limit
 
 	const { email } = form.data
 	cookies.set("recoverEmail", email, cookieOptions)

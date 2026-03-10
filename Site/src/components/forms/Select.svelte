@@ -22,9 +22,9 @@
 		help?: string
 		disabled?: boolean
 		// multiple?: boolean
-		options: string[]
+		options: readonly string[]
 		selected?: string
-		formData: import("sveltekit-superforms").SuperForm<any>
+		formData: import("$lib/validate").SuperForm<any>
 	} = $props()
 
 	let { form, errors, constraints } = $derived(formData)
@@ -66,7 +66,7 @@
 				{#each options as opt}
 					<option
 						value={opt}
-						selected={opt === (selected ? selected : select.value)}>
+						selected={opt === (selected || select.value)}>
 						{opt}
 					</option>
 				{/each}

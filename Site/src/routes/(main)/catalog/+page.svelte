@@ -4,14 +4,15 @@
 	import TabNav from "$components/TabNav.svelte"
 	import Assets from "./Assets.svelte"
 
-	const tabTypes = {
+	const tabTypes = Object.freeze({
 		Hats: 8,
 		"T-Shirts": 2,
 		Shirts: 11,
 		Pants: 12,
 		Decals: 13,
-		Faces: 18
-	} as const
+		Faces: 18,
+		Gear: 19
+	} as const)
 
 	const { data } = $props()
 

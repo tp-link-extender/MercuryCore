@@ -1,5 +1,3 @@
 UPDATE (SELECT * FROM $user->playing) SET valid = false;
-RELATE $user->playing->$place CONTENT {
-	ping: time::now(), # todo: check
-	valid: true,
-} RETURN VALUE record::id(id);
+# todo: check ping is correct (server hasn't actually pung)
+RELATE $user->playing->$place RETURN VALUE record::id(id);

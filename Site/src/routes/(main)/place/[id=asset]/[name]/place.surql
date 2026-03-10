@@ -1,8 +1,7 @@
 SELECT
 	record::id(id) AS id,
 	name,
-	(SELECT text, updated FROM $parent.description
-	ORDER BY updated)[$] AS description,
+	fn::currentContent($this.description) AS description,
 	serverPing,
 	serverTicket,
 	privateServer,
@@ -11,11 +10,11 @@ SELECT
 	updated,
 	maxPlayers,
 	(SELECT username, status
-	FROM <-ownsPlace<-user)[0] AS ownerUser,
+	FROM $parent<-ownsPlace<-user)[0] AS ownerUser,
 	(SELECT
 		in.username AS username,
 		"Playing" AS status # duh
-	FROM <-playing
+	FROM $parent<-playing
 	WHERE valid AND ping > time::now() - 35s) AS players,
 
 	count(SELECT 1 FROM $parent<-likes) AS likeCount,

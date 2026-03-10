@@ -1,7 +1,7 @@
 LET $s = SELECT id, expires FROM ONLY $sess;
 LET $u = (SELECT
     record::id(id) AS id,
-	(SELECT text, updated FROM $parent.description ORDER BY updated)[$] AS description,
+	fn::currentContent($this.description) AS description,
     bodyColours,
     # created,
     IF email {
@@ -20,7 +20,6 @@ FROM $sess<-hasSession<-user)[0];
 IF $s {
 	IF $s.expires < time::now() {
 		DELETE $s;
-		$s = NONE;
 	} ELSE IF $s.expires + 15d < time::now() {
 		$s.expires = time::now() + 30d;
 	};

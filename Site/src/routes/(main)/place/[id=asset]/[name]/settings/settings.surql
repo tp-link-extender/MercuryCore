@@ -1,11 +1,10 @@
 SELECT
 	dedicated,
-	(SELECT text, updated FROM $parent.description
-	ORDER BY updated)[$] AS description,
+	fn::currentContent($this.description) AS description,
 	record::id(id) AS id,
 	maxPlayers,
 	name,
-	(SELECT status, username FROM <-ownsPlace<-user)[0] AS owner,
+	(SELECT status, username FROM $parent<-ownsPlace<-user)[0] AS owner,
 	privateServer,
 	privateTicket,
 	serverAddress,

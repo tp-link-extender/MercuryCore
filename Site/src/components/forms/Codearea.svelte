@@ -13,7 +13,7 @@
 		help?: string
 		placeholder?: string
 		rows?: number
-		formData: import("sveltekit-superforms").SuperForm<any>
+		formData: import("$lib/validate").SuperForm<any>
 	} = $props()
 
 	const { form, errors, constraints } = formData

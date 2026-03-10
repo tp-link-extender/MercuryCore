@@ -1,11 +1,10 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { arktype } from "sveltekit-superforms/adapters"
-import { message, superValidate } from "sveltekit-superforms/server"
 import { authorise, cookieName, invalidateAllSessions } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import { db, Record } from "$lib/server/surreal"
+import { arktype, message, superValidate } from "$lib/server/validate"
 import passwordQuery from "./password.surql"
 import updateProfileQuery from "./updateProfile.surql"
 
@@ -80,7 +79,9 @@ actions.password = async ({ locals, request }) => {
 	if (!Bun.password.verifySync(cpassword, hashedPassword))
 		return formError(form, ["cpassword"], ["Incorrect password"])
 
-	await db.merge(userR, { hashedPassword: Bun.password.hashSync(npassword) })
+	await db
+		.update(userR)
+		.merge({ hashedPassword: Bun.password.hashSync(npassword) })
 
 	return message(form, "Password updated successfully!")
 }
@@ -111,7 +112,7 @@ actions.styling = async ({ locals, request }) => {
 	const { css } = form.data
 	if (css === "undefined") return message(form, "Styling already saved!")
 
-	await db.merge(Record("user", user.id), { css })
+	await db.update(Record("user", user.id)).merge({ css })
 
 	return message(form, "Styling updated successfully!")
 }

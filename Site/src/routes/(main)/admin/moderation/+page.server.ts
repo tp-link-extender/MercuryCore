@@ -1,11 +1,10 @@
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
-import { arktype } from "sveltekit-superforms/adapters"
-import { message, superValidate } from "sveltekit-superforms/server"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, findWhere, Record } from "$lib/server/surreal"
+import { arktype, message, superValidate } from "$lib/server/validate"
 import assocreportQuery from "./assocreport.surql"
 import moderateQuery from "./moderate.surql"
 import moderateeQuery from "./moderatee.surql"
@@ -83,10 +82,10 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 	const limit = ratelimit(form, "moderateUser", getClientAddress, 30)
 	if (limit) return limit
 
-	const qParams = {
+	const qParams = Object.freeze({
 		user: Record("user", user.id),
 		moderatee: Record("user", getModeratee.id),
-	}
+	})
 
 	if (action === "Unban") {
 		// Unban

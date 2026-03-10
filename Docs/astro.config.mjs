@@ -27,6 +27,10 @@ export default defineConfig({
 					autogenerate: { directory: "architecture" },
 				},
 				{
+					label: "Design",
+					autogenerate: { directory: "design" },
+				},
+				{
 					label: "Services",
 					autogenerate: { directory: "services" },
 				},
@@ -34,12 +38,13 @@ export default defineConfig({
 					label: "Guides",
 					autogenerate: { directory: "guides" },
 				},
+				"history",
 			],
 			components: {
 				Head: "./src/components/Head.astro",
 			},
 			customCss: ["./src/global.css", "./src/fonts/font-face.css"],
 		}),
-		markdoc(),
+		markdoc({ allowHTML: true }), // <sup />
 	],
 })

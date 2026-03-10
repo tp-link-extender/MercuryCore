@@ -1,6 +1,6 @@
 import { error, redirect } from "@sveltejs/kit"
 import { authorise } from "$lib/server/auth"
-import { tShirtThumbnail } from "$lib/server/imageAsset"
+import { thumbnail, tShirtThumbnail } from "$lib/server/imageAsset"
 import { db, Record } from "$lib/server/surreal"
 import assetQuery from "./asset.surql"
 
@@ -10,6 +10,8 @@ type Asset = {
 	type: number
 	imageAssetId: number
 }
+
+const noRenderTypes = Object.freeze([1])
 
 export async function GET({ locals, params }) {
 	const { user } = await authorise(locals)
@@ -25,7 +27,7 @@ export async function GET({ locals, params }) {
 		redirect(302, "/error/mQuestion.svg")
 
 	const dirs = ["thumbnails"]
-	if (asset.type === 1) dirs.push("assets") // load from assets dir as well
+	if (noRenderTypes.includes(asset.type)) dirs.push("assets") // load from assets dir as well
 
 	for (const f of dirs.map(d => `../data/${d}/${id}`)) {
 		const file = Bun.file(f)
@@ -41,7 +43,13 @@ export async function GET({ locals, params }) {
 				tShirtThumbnail(await file.arrayBuffer()).then(f => f(id))
 			break
 		}
-		default:
+		case 18: {
+			// Recreate the icon thumbnail
+			const file = Bun.file(`../data/assets/${asset.imageAssetId}`)
+			if (await file.exists())
+				thumbnail(await file.arrayBuffer()).then(f => f(id))
+			break
+		}
 	}
 
 	redirect(302, "/dots.png")

@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
 	import Form from "$components/forms/Form.svelte"
 	import Select from "$components/forms/Select.svelte"
 	import Textarea from "$components/forms/Textarea.svelte"
 	import Head from "$components/Head.svelte"
+	import { superForm } from "$lib/validate"
 	import reports from "./reports"
 
 	const { data } = $props()

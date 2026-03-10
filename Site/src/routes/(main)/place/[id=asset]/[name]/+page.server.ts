@@ -19,10 +19,7 @@ type FoundPlace = {
 
 interface Place extends FoundPlace {
 	created: string
-	description: {
-		text: string
-		updated: Date
-	}
+	description: string
 	dislikeCount: number
 	dislikes: boolean
 	id: number
@@ -72,7 +69,7 @@ export async function load({ locals, params, url }) {
 	return {
 		scheme: config.LauncherURI,
 		hosting: config.Gameservers.Hosting,
-		orbiterURL: `https://${config.OrbiterPublicDomain}`,
+		orbiterURL: config.Orbiter.PublicURL,
 		slug,
 		place,
 		thumbnails: [id % thumbnails.length],
@@ -96,7 +93,7 @@ async function findPlace(request: Request, id: number, user: User) {
 	)
 		error(404, "Place not found")
 
-	return place
+	return [place, placeR] as const
 }
 
 async function checkUser(locals: App.Locals) {
@@ -115,7 +112,7 @@ async function checkUser(locals: App.Locals) {
 export const actions: import("./$types").Actions = {}
 actions.join = async ({ locals, params, request }) => {
 	const user = await checkUser(locals)
-	const placeR = await findPlace(request, +params.id, user)
+	const [_, placeR] = await findPlace(request, +params.id, user)
 
 	// Invalidate all game sessions and create valid playing
 	const [, [ticket]] = await db.query<string[][]>(invalidatePlayingQuery, {
@@ -156,7 +153,7 @@ actions.close = async ({ fetch: f, locals, params, request }) => {
 	const { user } = await authorise(locals)
 	const id = +params.id
 
-	const place = await findPlace(request, id, user)
+	const [place] = await findPlace(request, id, user)
 
 	if (user.username !== place.ownerUsername && user.permissionLevel < 4)
 		error(403, "You do not have permission to close this server.")

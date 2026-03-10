@@ -1,5 +1,4 @@
 (SELECT
-	description,
 	name,
 	(SELECT
 		record::id(id) AS id,
@@ -10,8 +9,7 @@
 		pinned,
 		score,
 		visibility,
-		(SELECT text, updated FROM $parent.content
-		ORDER BY updated)[$].text AS currentContent
+		fn::currentContent($this.content) AS currentContent
 	FROM comment WHERE type = ["forum", record::id($parent.id)]
 		AND visibility = "Visible"
 	ORDER BY pinned DESC, score DESC

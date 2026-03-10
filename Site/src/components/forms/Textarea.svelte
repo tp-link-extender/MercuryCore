@@ -19,7 +19,7 @@
 		rows?: number
 		lowpad?: boolean
 		defaultValue?: string
-		formData: import("sveltekit-superforms").SuperForm<any>
+		formData: import("$lib/validate").SuperForm<any>
 	} & HTMLTextareaAttributes = $props()
 
 	let { form, errors, constraints } = $derived(formData)

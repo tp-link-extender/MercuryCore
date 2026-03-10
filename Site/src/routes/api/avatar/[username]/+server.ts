@@ -1,7 +1,6 @@
 import fs from "node:fs"
 import { error } from "@sveltejs/kit"
-import type { RecordId } from "surrealdb"
-import { db } from "$lib/server/surreal"
+import { db, type RecordId } from "$lib/server/surreal"
 
 export async function GET({ params, url }) {
 	let { username } = params

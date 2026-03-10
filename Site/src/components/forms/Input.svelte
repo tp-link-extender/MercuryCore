@@ -25,7 +25,7 @@
 		inline?: boolean
 		column?: boolean
 		disabled?: boolean
-		formData: import("sveltekit-superforms").SuperForm<any>
+		formData: import("$lib/validate").SuperForm<any>
 	} & HTMLInputAttributes = $props()
 
 	let { errors } = $derived(formData)

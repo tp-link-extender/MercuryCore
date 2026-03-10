@@ -1,7 +1,5 @@
 import { error, fail, redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { arktype } from "sveltekit-superforms/adapters"
-import { superValidate } from "sveltekit-superforms/server"
 import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
 import createCommentQuery from "$lib/server/createComment.surql"
@@ -16,6 +14,7 @@ import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { db, find, Record } from "$lib/server/surreal"
+import { arktype, superValidate } from "$lib/server/validate"
 import { couldMatch, encode } from "$lib/urlName"
 import type { RequestEvent } from "./$types"
 import assetQuery from "./asset.surql"
@@ -32,11 +31,9 @@ type Asset = {
 	comments: Comment[]
 	created: Date
 	creator: BasicUser
-	description: {
-		text: string
-		updated: Date
-	}
+	description: string
 	forSale: boolean
+	isCreator: boolean
 	name: string
 	owned: boolean
 	price: number
@@ -168,6 +165,7 @@ actions.buy = async e => {
 			id: string
 			username: string
 		}
+		forSale: boolean
 		name: string
 		owned: boolean
 		price: number
@@ -181,6 +179,7 @@ actions.buy = async e => {
 	if (asset.owned) error(400, "You already own this item")
 	if (asset.visibility !== "Visible")
 		error(400, "This item hasn't been approved yet")
+	if (!asset.forSale) error(400, "This item is not for sale")
 
 	if (asset.price > 0) {
 		// todo work out how free assets are supposed to work

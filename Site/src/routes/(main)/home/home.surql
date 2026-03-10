@@ -3,7 +3,7 @@ SELECT
 	name,
 	serverPing,
 	count(
-		SELECT 1 FROM <-playing WHERE valid AND ping > time::now() - 35s
+		SELECT 1 FROM $parent<-playing WHERE valid AND ping > time::now() - 35s
 	) AS playerCount,
 	count(<-likes) AS likeCount,
 	count(<-dislikes) AS dislikeCount
@@ -18,9 +18,13 @@ SELECT
 	author,
 	created,
 	pinned,
+	# count(
+	# 	SELECT 1
+	# 	FROM comment WHERE type = ["status", record::id($parent.id)]
+	# )
+	0 AS replies,
 	visibility,
-	(SELECT text, updated FROM $parent.content
-	ORDER BY updated)[$].text AS currentContent
+	fn::currentContent($this.content) AS currentContent
 FROM comment WHERE type = ["status"]
 ORDER BY pinned DESC, created DESC
 LIMIT 40;

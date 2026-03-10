@@ -1,8 +1,8 @@
 // TODO: Possibly move this to the database instead of server state
 
 import { fail } from "@sveltejs/kit"
-import type { SuperValidated } from "sveltekit-superforms"
-import { message } from "sveltekit-superforms/server"
+import type { SuperValidated } from "$lib/server/validate"
+import { message } from "$lib/server/validate"
 
 const ratelimitTimewindow = new Map<string, number>()
 const ratelimitRequests = new Map<string, number>()

@@ -1,4 +1,27 @@
+mercs.dev {
+	rewrite /Game/Studio.ashx /game/studio
+	rewrite /Game/Visit.ashx /game/visit
+	rewrite /Game/Join.ashx /game/join
+	rewrite /game/gameserver.ashx /game/gameserver
+	rewrite /Game/MachineConfiguration.ashx /game/machineconfiguration
+	rewrite /Game/ClientPresence /game/clientpresence
+	rewrite /Game/ServerPresence /game/serverpresence
+	rewrite /Game/Host /game/host
+	rewrite /Asset/GetScriptState.ashx /asset/getscriptstate
+	rewrite /Game/Tools/InsertAsset.ashx /game/tools/insertasset
+	rewrite /Game/Tools/ThumbnailAsset.ashx /game/tools/thumbnailasset
+	rewrite /UploadMedia/PostImage.aspx /studio/uploadmedia/screenshot
 
+	rewrite /Setting/QuietGet/ClientSharedSettings/* /api/clientsharedsettings
+	rewrite /Setting/QuietGet/ClientAppSettings/* /api/clientappsettings
+
+	reverse_proxy localhost:4443
+}
+
+# Insecure HTTP version, not to be accessed via the browser
+http://www.mercs.dev {
+	reverse_proxy localhost:4443
+}
 http://localhost {
 	reverse_proxy localhost:4444
 }

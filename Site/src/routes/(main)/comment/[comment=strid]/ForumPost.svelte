@@ -4,14 +4,17 @@
 	import PinButton from "$components/PinButton.svelte"
 	import ReportButton from "$components/ReportButton.svelte"
 	import User from "$components/User.svelte"
-	import { likeEnhance } from "$lib/like"
+	import type { LikeForm } from "$lib/like2"
+	import type { getComment } from "./comment.remote"
 
-	let {
+	const {
 		comment,
+		likeForm,
 		onResult,
 		user
 	}: {
-		comment: import("./$types").PageData["comment"]
+		comment: Awaited<ReturnType<typeof getComment>>
+		likeForm: Omit<LikeForm, "for">
 		onResult: (result: {
 			result: import("@sveltejs/kit").ActionResult
 		}) => Promise<void>
@@ -26,12 +29,7 @@
 		"post card bg-darker flex-row border-(1px solid)",
 		{ "border-green-5!": comment.pinned }
 	]}>
-	<CommentLike
-		class="bg-a p-1 rounded-l-1"
-		{comment}
-		likeEnhance={likeEnhance(comment, c => {
-			comment = c
-		})} />
+	<CommentLike class="bg-a p-1 rounded-l-1" {comment} {likeForm} />
 	<div class="p-4 pl-6 no-underline w-full">
 		<div class="flex pb-4">
 			<div class="flex justify-between items-center w-full">

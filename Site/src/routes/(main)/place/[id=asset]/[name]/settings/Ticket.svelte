@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms/client"
 	import { page } from "$app/state"
+	import { superForm } from "$lib/validate"
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
