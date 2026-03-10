@@ -13,8 +13,12 @@ export default {
 		AutoStart: true,
 		Domain: "localhost:8000",
 	},
-	Orbiter: {
+
+	Economy: {
 		AutoStart: true,
+	},
+
+	Orbiter: {
 		PrivateURL: "http://localhost:64991",
 		PublicURL: "http://localhost:64992",
 	},

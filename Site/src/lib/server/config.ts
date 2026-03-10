@@ -36,8 +36,11 @@ const schema = type({
 		Domain: "string >= 1",
 	}),
 
-	Orbiter: type({
+	Economy: type({
 		AutoStart: "boolean",
+	}),
+
+	Orbiter: type({
 		PrivateURL: "string >= 1",
 		PublicURL: "string >= 1",
 	}),

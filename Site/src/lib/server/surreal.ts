@@ -5,31 +5,33 @@ import {
 	Table,
 } from "surrealdb"
 import { building } from "$app/environment"
+import config from "$lib/server/config"
 import initQuery from "$lib/server/init.surql"
 import logo from "$lib/server/logo" // because this is usually one of the first files loaded
 import startEconomy from "$lib/server/process/economy"
 import startSurreal from "$lib/server/process/surreal"
-import config from "$lib/server/config"
 
 if (!building) {
-	try {
-		startSurreal()
-	} catch (e) {
-		console.log(e)
-		console.error(
-			"Failed to start SurrealDB. Make sure it is installed and accessible as `surreal`."
-		)
-		process.exit(1)
-	}
-	try {
-		startEconomy()
-	} catch (e) {
-		console.log(e)
-		console.error(
-			"Failed to start the Economy service. Make sure it is built and accessible at Economy/Economy."
-		)
-		process.exit(1)
-	}
+	if (config.Database.AutoStart)
+		try {
+			startSurreal()
+		} catch (e) {
+			console.log(e)
+			console.error(
+				"Failed to start SurrealDB. Make sure it is installed and accessible as `surreal`."
+			)
+			process.exit(1)
+		}
+	if (config.Economy.AutoStart)
+		try {
+			startEconomy()
+		} catch (e) {
+			console.log(e)
+			console.error(
+				"Failed to start the Economy service. Make sure it is built and accessible at Economy/Economy."
+			)
+			process.exit(1)
+		}
 }
 
 await new Promise(resolve => setTimeout(resolve, 500))

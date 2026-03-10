@@ -43,13 +43,19 @@ export type Config = {
 	}
 
 	/**
+	 * Configuration for the Economy service.
+	 */
+	Economy: {
+		/**
+		 * Whether to automatically start the Economy service when starting Mercury Core. . It will attempt to build the Economy service from source with Go if the executable cannot be found.
+		 */
+		AutoStart: boolean
+	}
+
+	/**
 	 * Configuration for the Orbiter gameserver hoster.
 	 */
 	Orbiter: {
-		/**
-		 * Whether to automatically start the Orbiter gameserver hoster when starting Mercury Core. It will attempt to build the Orbiter from source with Go if the executable cannot be found.
-		 */
-		AutoStart: boolean
 		/**
 		 * The URL of your Orbiter gameserver hoster, exposing the private API for use by the Site. Requires a URL scheme.
 		 */
