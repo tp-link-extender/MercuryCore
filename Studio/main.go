@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -12,9 +13,13 @@ const (
 	ext = ".tmpl"
 )
 
+type User struct {
+	id, username string
+}
+
 // type Data map[string]any
 type Data struct {
-	User any
+	User *User
 	Data map[string]any
 }
 
@@ -48,15 +53,14 @@ func (e ErrorRedirect) Error() string {
 
 func handle(Pages []Component) http.HandlerFunc {
 	lp := len(Pages)
+
+	var noRender bool
+
 	files := make([]string, lp)
 	for i, p := range Pages {
 		files[i] = p.Name + ext
-	}
-
-	tmpl, err := template.ParseFiles(files...)
-	if err != nil {
-		return func(w http.ResponseWriter, r *http.Request) {
-			http.Error(w, "template error: "+err.Error(), http.StatusInternalServerError)
+		if p.Name == "" {
+			noRender = true
 		}
 	}
 
@@ -80,8 +84,23 @@ func handle(Pages []Component) http.HandlerFunc {
 			data = nd
 		}
 
+		if noRender {
+			// just json encode the data bruh
+			w.Header().Set("Content-Type", "application/json")
+			if err := json.NewEncoder(w).Encode(data); err != nil {
+				http.Error(w, "json encode error: "+err.Error(), http.StatusInternalServerError)
+			}
+			return
+		}
+
+		tmpl, err := template.ParseFiles(files...)
+		if err != nil {
+			http.Error(w, "template parse error: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		if err := tmpl.Execute(w, data); err != nil {
-			http.Error(w, "template error: "+err.Error(), http.StatusInternalServerError)
+			http.Error(w, "template exec error: "+err.Error(), http.StatusInternalServerError)
 		}
 	}
 }
@@ -92,7 +111,11 @@ func main() {
 	})
 
 	http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
-		handle([]Component{root, loggedOut, login})(w, r)
+		handle([]Component{root, loggedOut, pageLogin})(w, r)
+	})
+
+	http.HandleFunc("/home", func(w http.ResponseWriter, r *http.Request) {
+		handle([]Component{root, loggedIn, pageHome})(w, r)
 	})
 
 	// static assets and 404s

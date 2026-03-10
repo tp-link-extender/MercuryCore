@@ -5,28 +5,67 @@ import (
 	"net/http"
 )
 
+func loadroot(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
+	return d, nil
+}
+
 var root = Component{
-	Name: "root",
+	Name:   "root",
+	Loader: loadroot,
+}
+
+func loadloggedIn(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
+	if d.User != nil {
+		return d, nil
+	}
+
+	return d, &ErrorRedirect{
+		Path: "/login",
+		Code: 302,
+	}
+}
+
+var loggedIn = Component{
+	Name:   "layouts/loggedin",
+	Loader: loadloggedIn,
+}
+
+func loadloggedOut(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
+	if d.User == nil {
+		return d, nil
+	}
+
+	return d, &ErrorRedirect{
+		Path: "/home",
+		Code: 302,
+	}
 }
 
 var loggedOut = Component{
-	Name: "layouts/loggedout",
+	Name:   "layouts/loggedout",
+	Loader: loadloggedOut,
 }
 
-func loadindex(w http.ResponseWriter, r *http.Request, data Data) (Data, error) {
-	return data, &ErrorRedirect{
+var pageNotFound = Component{
+	Name: "pages/404",
+}
+
+func loadindex(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
+	if d.User != nil {
+		return d, &ErrorRedirect{
+			Path: "/home",
+			Code: 302,
+		}
+	}
+
+	return d, &ErrorRedirect{
 		Path: "/login",
 		Code: 302,
 	}
 }
 
 var pageIndex = Component{
-	Name:   "pages/index",
 	Loader: loadindex,
-}
-
-var pageNotFound = Component{
-	Name: "pages/404",
 }
 
 type InputResponse struct {
@@ -69,7 +108,11 @@ func loadlogin(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
 	return d, nil
 }
 
-var login = Component{
+var pageLogin = Component{
 	Name:   "pages/login",
 	Loader: loadlogin,
+}
+
+var pageHome = Component{
+	Name: "pages/home",
 }
