@@ -21,6 +21,7 @@ export async function load({ locals, request }) {
 		user,
 		notifications: await getNotifications(user),
 		url: request.url,
+		isStudio: locals.isStudio,
 		domain: config.Domain,
 		currencySymbol: config.CurrencySymbol,
 		siteName: config.Name,

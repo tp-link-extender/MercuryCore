@@ -1,0 +1,53 @@
+{{ define "content" }}
+<div class="container">
+	<div class="hero-text">
+		<h1>Log in to Mercury Studio</h1>
+		<small>
+			Log in to Mercury Studio to create or update your places! <br />
+			Don't have an account? Register one!
+		</small>
+	</div>
+	<form method="post">
+		<fieldset>
+			<div>
+				<label for="username">Username</label>
+				<input required autocomplete="username" name="username" placeholder="Username" />
+			</div>
+
+			<div>
+				<label for="password">Password</label>
+				<input required autocomplete="current-password" name="password" type="password"
+					placeholder="••••••••••••••••••" />
+			</div>
+
+			<button class="btn btn-primary">Log in</button>
+		</fieldset>
+	</form>
+
+	<!-- error go here -->
+</div>
+
+<style>
+	.container {
+		margin: 0 auto;
+		max-width: 25rem;
+		padding-top: 4rem;
+		padding-bottom: 2rem;
+	}
+
+	a {
+		text-decoration: none;
+		color: #8b52f0;
+	}
+
+	.hero-text {
+		text-align: center;
+		padding-top: 4rem;
+		padding-bottom: 2rem;
+	}
+
+	button {
+		width: 100%;
+	}
+</style>
+{{ end }}

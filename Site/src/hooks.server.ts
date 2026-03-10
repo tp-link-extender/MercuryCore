@@ -45,6 +45,8 @@ const userLog = (user: User | null) =>
 		? blue(user.username) + " ".repeat(21 - user.username.length)
 		: yellow("Logged-out user      ")
 
+const slashesRegex = /\/+$/
+
 async function finish({ event, resolve }: Parameters<Handle>[0]) {
 	const { pathname, search } = event.url
 	const { user } = event.locals
@@ -59,6 +61,20 @@ async function finish({ event, resolve }: Parameters<Handle>[0]) {
 			" ".repeat(7 - method.length),
 			pathnameColour(decodeURI(pathname) + search)
 		)
+	}
+
+	const isStudio = event.request.headers
+		.get("user-agent")
+		?.includes("RobloxStudio/2013")
+	event.locals.isStudio = isStudio || false
+
+	if (
+		isStudio &&
+		!pathname.startsWith("/studio") &&
+		!pathname.startsWith("/api")
+	) {
+		// trim trailing slash
+		redirect(302, `/studio${pathname.replace(slashesRegex, "")}`)
 	}
 
 	const res = await resolve(event)

@@ -1,8 +1,4 @@
 mercs.dev {
-	rewrite /Asset /asset
-	rewrite /Asset/ /asset
-	rewrite /Asset/Default.ashx /asset
-
 	rewrite /Game/Studio.ashx /game/studio
 	rewrite /Game/Visit.ashx /game/visit
 	rewrite /Game/Join.ashx /game/join
@@ -25,4 +21,7 @@ mercs.dev {
 # Insecure HTTP version, not to be accessed via the browser
 http://www.mercs.dev {
 	reverse_proxy localhost:4443
+}
+http://localhost {
+	reverse_proxy localhost:4444
 }
