@@ -12,21 +12,9 @@ export type Config = {
 	 */
 	Domain: string
 	/**
-	 * The domain name of your database server. Make sure to include the port if necessary.
-	 */
-	DatabaseDomain: string
-	/**
 	 * The URL of your RCC proxy server. Requires a URL scheme.
 	 */
 	RCCServiceProxyURL: string
-	/**
-	 * The URL of your Orbiter gameserver hoster, exposing the private API for use by the Site. Requires a URL scheme.
-	 */
-	OrbiterPrivateURL: string
-	/**
-	 * The URL of your Orbiter gameserver hoster, exposing the public API for use by a user's browser. Requires a URL scheme.
-	 */
-	OrbiterPublicURL: string
 	/**
 	 * The URI scheme to pass to the launcher when joining a game.
 	 */
@@ -39,6 +27,38 @@ export type Config = {
 	 * Controls which optional pages on the site are enabled. This allows you to turn off unnecessary features for your revival.
 	 */
 	Pages: ("Statistics" | "Groups" | "Forum")[]
+
+	/**
+	 * Configuration for the databse server, run with SurrealDB.
+	 */
+	Database: {
+		/**
+		 * Whether to automatically start the database server when starting Mercury Core. This requires the SurrealDB binary to be in your system's PATH as `surreal`.
+		 */
+		AutoStart: boolean
+		/**
+		 * The domain name of your database server. Make sure to include the port if necessary.
+		 */
+		Domain: string
+	}
+
+	/**
+	 * Configuration for the Orbiter gameserver hoster.
+	 */
+	Orbiter: {
+		/**
+		 * Whether to automatically start the Orbiter gameserver hoster when starting Mercury Core. It will attempt to build the Orbiter from source with Go if the executable cannot be found.
+		 */
+		AutoStart: boolean
+		/**
+		 * The URL of your Orbiter gameserver hoster, exposing the private API for use by the Site. Requires a URL scheme.
+		 */
+		PrivateURL: string
+		/**
+		 * The URL of your Orbiter gameserver hoster, exposing the public API for use by a user's browser. Requires a URL scheme.
+		 */
+		PublicURL: string
+	}
 
 	/**
 	 * The default body colours for avatar creation, given to each new user on registration.
