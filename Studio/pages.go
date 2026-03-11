@@ -79,6 +79,8 @@ func MakeInputResponse() InputResponse {
 	}
 }
 
+var loginQueryUser = MustReadQuery("src/routes/(plain)/login/user")
+
 func loadlogin(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
 	if r.Method != "POST" {
 		return d, nil
@@ -99,6 +101,18 @@ func loadlogin(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
 		rUsername.Errors = append(rUsername.Errors, "")
 		rPassword.Errors = append(rPassword.Errors, "Incorrect username or password")
 	}
+
+	qres, err := Query[[]struct {
+		id             string
+		hashedPassword string
+	}](loginQueryUser, map[string]any{
+		"username": username,
+	})
+	if err != nil {
+		return d, fmt.Errorf("query user: %w", err)
+	}
+	res := qres[0].Result
+	fmt.Println(res)
 
 	rUsername.Value = username
 	rPassword.Value = password
