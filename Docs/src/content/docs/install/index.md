@@ -46,4 +46,4 @@ To set up a production environment, install all tools from the [Baseline tools](
 
 These are the tools needed to set up other parts of the Mercury Suite. They are not required for running Mercury Core.
 
-- .NET SDK, used to build the [Launcher](/services/launcher)
+- The [.NET SDK](/install/dotnet), used to build the [Launcher](/services/launcher)
