@@ -15,7 +15,7 @@ const schema = type({
 })
 
 export const load = async () => ({
-	form: await superValidate(arktype(schema)),
+	form: await superValidate(null, arktype(schema)),
 	users: await accountRegistered(),
 	descriptions: Object.entries(config.Branding.Descriptions),
 })

@@ -34,7 +34,7 @@ export async function load({ locals }) {
 	await authorise(locals, 5)
 
 	const [banners] = await db.query<BannerType[][]>(bannersQuery)
-	return { banners, form: await superValidate(arktype(schema)) }
+	return { banners, form: await superValidate(null, arktype(schema)) }
 }
 
 async function bannerActiveCount() {

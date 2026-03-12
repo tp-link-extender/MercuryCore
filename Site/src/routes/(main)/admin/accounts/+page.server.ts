@@ -25,7 +25,7 @@ export async function load({ locals }) {
 	const [users] = await db.query<BasicUser[][]>(usersQuery)
 
 	return {
-		form: await superValidate(arktype(schema)),
+		form: await superValidate(null, arktype(schema)),
 		users,
 	}
 }
@@ -47,8 +47,7 @@ actions.changePassword = async ({ locals, request, getClientAddress }) => {
 			npassword: Bun.password.hashSync(password),
 			username: username,
 		})
-		if (!ok)
-			return errMessage(form, "No user found with given username")
+		if (!ok) return errMessage(form, "No user found with given username")
 	} catch (e) {
 		console.error(e)
 		return errMessage(form, "An error occurred")

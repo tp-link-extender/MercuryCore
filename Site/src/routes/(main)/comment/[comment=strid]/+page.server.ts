@@ -17,7 +17,7 @@ const schema = type({
 
 export const load = async ({ params }) => ({
 	commentId: params.comment,
-	form: await superValidate(arktype(schema)),
+	form: await superValidate(null, arktype(schema)),
 })
 
 export const actions: import("./$types").Actions = {}

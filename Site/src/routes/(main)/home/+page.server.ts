@@ -47,7 +47,7 @@ export async function load({ locals }) {
 
 	return {
 		greet: greets[Math.floor(Math.random() * greets.length)](user.username),
-		form: await superValidate(arktype(schema)),
+		form: await superValidate(null, arktype(schema)),
 		places,
 		friends,
 		feed,

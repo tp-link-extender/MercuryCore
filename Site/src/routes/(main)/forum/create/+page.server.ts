@@ -29,7 +29,7 @@ export async function load({ url }) {
 
 	return {
 		categoryName: category.name,
-		form: await superValidate(arktype(schema)),
+		form: await superValidate(null, arktype(schema)),
 	}
 }
 

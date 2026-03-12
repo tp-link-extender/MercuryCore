@@ -34,7 +34,7 @@ const prefix = config.Registration.Keys.Prefix
 const prefixRegex = new RegExp(`^${prefix}(.+)$`)
 
 export const load = async () => ({
-	form: await superValidate(arktype(schema)),
+	form: await superValidate(null, arktype(schema)),
 	users: await accountRegistered(),
 	regKeysEnabled: config.Registration.Keys.Enabled,
 	emailsEnabled: config.Registration.Emails,

@@ -78,11 +78,11 @@ export async function load({ locals, params }) {
 			{ name: getPlace.name },
 			arktype(viewSchema)
 		),
-		networkForm: await superValidate(arktype(networkSchema)),
-		ticketForm: await superValidate(arktype(ticketSchema)), // lmaooo it works
-		privacyForm: await superValidate(arktype(privacySchema)),
-		privatelinkForm: await superValidate(arktype(privatelinkSchema)),
-		dataForm: await superValidate(arktype(dataSchema)),
+		networkForm: await superValidate(null, arktype(networkSchema)),
+		ticketForm: await superValidate(null, arktype(ticketSchema)), // lmaooo it works
+		privacyForm: await superValidate(null, arktype(privacySchema)),
+		privatelinkForm: await superValidate(null, arktype(privatelinkSchema)),
+		dataForm: await superValidate(null, arktype(dataSchema)),
 	}
 }
 

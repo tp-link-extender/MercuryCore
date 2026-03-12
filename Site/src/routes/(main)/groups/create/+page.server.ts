@@ -16,7 +16,7 @@ export async function load() {
 	exclude("Groups")
 	const price = await getGroupPrice()
 	return {
-		form: await superValidate(arktype(schema)),
+		form: await superValidate(null, arktype(schema)),
 		price,
 	}
 }

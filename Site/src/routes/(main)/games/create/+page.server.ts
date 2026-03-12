@@ -36,7 +36,7 @@ async function placeCount(id: string) {
 export async function load() {
 	// const price = getPlacePrice()
 	return {
-		form: await superValidate(arktype(schema)),
+		form: await superValidate(null, arktype(schema)),
 		// count: await placeCount((await authorise(locals)).user.id),
 		// price,
 	}

@@ -39,7 +39,7 @@ export async function load({ locals }) {
 
 	const [regKeys] = await db.query<RegKey[][]>(regkeysQuery)
 	return {
-		form: await superValidate(arktype(schema)),
+		form: await superValidate(null, arktype(schema)),
 		regKeys,
 		prefix: config.Registration.Keys.Prefix,
 	}

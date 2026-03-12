@@ -16,7 +16,7 @@ const schema = type({
 export async function load({ locals }) {
 	exclude("Forum")
 	await authorise(locals, 5)
-	return { form: await superValidate(arktype(schema)) }
+	return { form: await superValidate(null, arktype(schema)) }
 }
 
 export const actions: import("./$types").Actions = {}

@@ -70,7 +70,7 @@ export async function load({ fetch: f, locals, params }) {
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
 		failText: failTexts[Math.floor(Math.random() * failTexts.length)],
-		form: await superValidate(arktype(schema)),
+		form: await superValidate(null, arktype(schema)),
 		slug,
 		asset,
 		balance: balance.value,

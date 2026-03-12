@@ -1,7 +1,7 @@
 // Returns a custom error for a superForm
 
 import { fail } from "@sveltejs/kit"
-import type { SuperValidated } from "$lib/server/validate"
+import type { Form } from "$lib/validate"
 
 /**
  * Returns a custom error for a superForm.
@@ -12,13 +12,9 @@ import type { SuperValidated } from "$lib/server/validate"
  * @example
  * return formError(form, ["password"], ["Username or password is incorrect"])
  */
-export default (
-	form: SuperValidated<
-		{ [_: string]: unknown },
-		unknown,
-		{ [_: string]: unknown }
-	>,
-	fields?: string[],
+export default <T>(
+	form: Form<T>,
+	fields?: (keyof T)[],
 	messages?: string[]
 ) => {
 	form.valid = false

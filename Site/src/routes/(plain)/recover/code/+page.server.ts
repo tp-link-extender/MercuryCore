@@ -12,7 +12,9 @@ const schema = type({
 	cnpassword: "16 <= string <= 6969",
 })
 
-export const load = async () => ({ form: await superValidate(arktype(schema)) })
+export const load = async () => ({
+	form: await superValidate(null, arktype(schema)),
+})
 
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ cookies, request }) => {
