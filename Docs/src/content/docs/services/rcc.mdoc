@@ -25,6 +25,8 @@ Up until 2017, RCC used a SOAP-based protocol, with Lua scripts inside XML paylo
 
 If using a Lua script over SOAP, the script will instruct the service what to do, such as to create a game server in the same way that a host script does, or to render an image of a 3D model using the ThumbnailGenerator service. Once the operation is complete, the script will also handle notifying the requester of the results in an asynchronous manner.
 
+It's also possible to use these Lua scripts to log to the console, which can then be parsed by the requester to obtain the results of the operation, such as a rendered image (usually in Base64 format) or a status update. However, as this requires parsing the standard output of the RCC process and can be inconsistent or difficult to manage with a parent process, it's recommended to use a system to send HTTP requests to the requester from a Lua script instead.
+
 ## Proxying
 
 Mercury Core communicates with RCC via a proxy server. This helps to ensure security, while also improving ease of communication with the service. In some cases, an RCC instance will produce invalid responses or gzip compress outputs based on their size, which a proxy server helps to prevent, as well as being able to downsize & de-alias images and compress responses into a more efficient binary format (as opposed to the standard Base64 encoding) to reduce network traffic and improve response speeds.
@@ -33,7 +35,7 @@ Mercury Core communicates with RCC via a proxy server. This helps to ensure secu
 	An implementation of the proxy server is available at [tp-link-extender/RCCService/Proxy](https://github.com/tp-link-extender/RCCService/tree/main/Proxy). An older version, using the outdated Base64 communication format, can be found at [gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff](https://gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff).
 {% /aside %}
 
-The proxy server should run on port 64990. A **.env** file should be created in the same directory as the proxy server executable, with the following contents:
+The proxy server should run on port 64990. A **.env** file should be created in the same directory as the proxy server executable, with contents similar to the following:
 
 ```
 IP=::1
