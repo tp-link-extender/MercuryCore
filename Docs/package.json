@@ -3,20 +3,20 @@
 	"type": "module",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "astro dev",
-		"start": "astro dev",
-		"build": "astro build",
-		"preview": "astro preview",
-		"astro": "astro"
+		"dev": "bun x -b astro dev",
+		"start": "bun x -b astro dev",
+		"build": "bun x -b astro build",
+		"preview": "bun x -b astro preview",
+		"astro": "bun x -b astro"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.4.4"
+		"@biomejs/biome": "^2.4.6"
 	},
 	"dependencies": {
-		"@astrojs/markdoc": "^0.15.10",
-		"@astrojs/starlight": "^0.37.6",
-		"@astrojs/starlight-markdoc": "^0.5.1",
-		"astro": "^5.18.0",
+		"@astrojs/markdoc": "^1.0.0",
+		"@astrojs/starlight": "^0.38.1",
+		"@astrojs/starlight-markdoc": "^0.6.0",
+		"astro": "^6.0.3",
 		"sharp": "^0.34.5"
 	}
 }

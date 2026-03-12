@@ -9,6 +9,7 @@ if (!building)
 		transport = createTransport({
 			host: config.Email.Host,
 			port: config.Email.Port,
+			secure: config.Email.Secure,
 			auth: {
 				user: config.Email.Username,
 				pass: process.env.EMAIL_PASSWORD,

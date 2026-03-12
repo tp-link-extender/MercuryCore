@@ -86,7 +86,8 @@ export default {
 
 	Email: {
 		Host: "smtp.example.com",
-		Port: 587,
+		Port: 465,
+		Secure: true,
 		Username: "username",
 	},
 
