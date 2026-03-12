@@ -5,7 +5,6 @@ description: Tools needed to use and develop Mercury Core, and how to install th
 
 This page describes how to install and manage the tools for development and production environments for Mercury Core.
 
-
 In the near future, we may provide a program for setting up and installing the necessary tools automatically. Please let us know if you would find that helpful.
 
 ## Baseline tools
@@ -35,10 +34,16 @@ For running without containers, install the following tools directly.
 To set up a development environment, install all tools from the [Baseline tools](#baseline-tools) section, as well as the following.
 
 - [Go](/install/go)
-	- It's possible to use the container instead if developing the Economy service, though this will be slower to start than compiling and running it directly with Go.
+ 	- It's possible to use the container instead if developing the Economy service, though this will be slower to start than compiling and running it directly with Go.
 
 ## Production tools
 
 To set up a production environment, install all tools from the [Baseline tools](#baseline-tools) section, as well as the following.
 
 - [Caddy](/install/caddy)
+
+## Other tools
+
+These are the tools needed to set up other parts of the Mercury Suite. They are not required for running Mercury Core.
+
+- .NET SDK, used to build the [Launcher](/services/launcher)
