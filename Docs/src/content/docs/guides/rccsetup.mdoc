@@ -15,3 +15,27 @@ You will need:
 - Latest version of [Go](https://go.dev) installed (expected as `go`, [installation guide](/install/go))
 - A terminal
 
+## Instructions
+
+{% steps %}
+
+1. Clone the [tp-link-extender/RCCService](https://github.com/tp-link-extender/RCCService) repository to a directory of your choice on your local machine, and navigate to the root directory of the repository.
+
+	```bash
+	git clone https://github.com/tp-link-extender/RCCService
+	cd RCCService
+	```
+
+   - If not using Git, you can also [download the repository as a compressed archive file](https://github.com/tp-link-extender/RCCService/archive/refs/heads/main.zip) (.zip) from the GitHub page and extract it to a directory of your choice.
+
+2. Navigate to the **Proxy** directory. Copy the **Proxy/.env.example** file to **Proxy/.env** and modify it to set up the environment variables.
+
+3. Run `go build` to compile the proxy server. This will produce an executable file in the same directory, either **Proxy.exe** on Windows or **Proxy** on Linux.
+
+4. Copy both the compiled proxy executable and the **Proxy/.env** file to their parent directory, the root of the repository. The proxy executable needs to be in the same directory as the **RCCService** folder to be able to start the RCC process correctly, and the **.env** file needs to be in the same directory as the proxy executable for the proxy to read its configuration.
+
+5. Run the proxy executable to start the proxy server and the RCC process. The proxy will automatically restart the RCC process if it crashes or is killed, and will print logs from both itself and the RCC process to the console.
+
+{% /steps %}
+
+If you're using RCC with Mercury Core, make sure to check its configuration to ensure that the [RCCServiceProxyURL](/guides/config#rccserviceproxyurl) property is set to the correct URL of your proxy server, including the appropriate scheme and port. The default value should work correctly if the proxy server is running on the same machine as the Site.
