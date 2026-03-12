@@ -51,7 +51,7 @@ actions.default = async ({ cookies, request, getClientAddress }) => {
 	cookies.set("recoverEmail", email, cookieOptions)
 
 	const [, id, code] = await db.query<string[]>(recoveryQuery, { email })
-	if (id && code) sendRecoveryEmail(email, code)
+	if (id && code) await sendRecoveryEmail(email, code)
 
 	redirect(302, "/recover/code")
 }
