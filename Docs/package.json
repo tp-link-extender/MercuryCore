@@ -3,11 +3,11 @@
 	"type": "module",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "astro dev",
-		"start": "astro dev",
-		"build": "astro build",
-		"preview": "astro preview",
-		"astro": "astro"
+		"dev": "bun x -b astro dev",
+		"start": "bun x -b astro dev",
+		"build": "bun x -b astro build",
+		"preview": "bun x -b astro preview",
+		"astro": "bun x -b astro"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.6"
