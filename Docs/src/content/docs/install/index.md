@@ -3,9 +3,9 @@ title: Installation
 description: Tools needed to use and develop Mercury Core, and how to install them.
 ---
 
-This page describes how to install and manage the tools for development and production environments for Mercury Core.
+This page describes how to install and manage the tools for development and production environments for Mercury Core and other tools in the Mercury Suite.
 
-In the near future, we may provide a program for setting up and installing the necessary tools automatically. Please let us know if you would find that helpful.
+In the near future, we may provide a program for setting up and installing the necessary tools automatically. Please let us know if you would find that helpful. Similar discussion is available on issue [#352](https://github.com/tp-link-extender/MercuryCore/issues/352) on the Mercury Core GitHub repository.
 
 ## Baseline tools
 
