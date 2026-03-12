@@ -230,6 +230,10 @@ export type Config = {
 		 */
 		Port: number
 		/**
+		 * Whether to use a secure connection (TLS) when connecting to the SMTP server. This should usually be true for port 465 and false for ports 587 and 25.
+		 */
+		Secure: boolean
+		/**
 		 * The username to use for authentication with the SMTP server. The corresponding password should be configured in your environment variables.
 		 */
 		Username: string

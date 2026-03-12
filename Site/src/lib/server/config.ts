@@ -96,6 +96,7 @@ const schema = type({
 	Email: type({
 		Host: "string >= 1",
 		Port: "1 <= number <= 65535",
+		Secure: "boolean",
 		Username: "string >= 1",
 	}),
 
