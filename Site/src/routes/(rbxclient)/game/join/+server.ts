@@ -76,8 +76,8 @@ export async function GET({ url }) {
 	const { serverHostname, serverPort } = serverInfo(place)
 
 	// const creatorUsername = place.ownerUser?.username;
-	const charApp = `http://${config.Domain}/asset/characterfetch/${user.username}`
-	const pingUrl = `http://${config.Domain}/game/clientpresence?ticket=${clientTicket}`
+	const charApp = `http://${config.DomainInsecure}/asset/characterfetch/${user.username}`
+	const pingUrl = `http://${config.DomainInsecure}/game/clientpresence?ticket=${clientTicket}`
 	const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
 	const script = (await scriptFile.text())
 		.replaceAll("_PLACE_ID", place.id.toString())
