@@ -18,7 +18,7 @@ export async function GET({ url }) {
 
 	const port = place.serverPort
 	// const serverId = placeData.id.toString()
-	const serverPresenceUrl = `https://${config.Domain}/game/serverpresence?ticket=${ticket}`
+	const serverPresenceUrl = `http://${config.DomainInsecure}/game/serverpresence?ticket=${ticket}`
 
 	let mapLocation = url.searchParams.get("autopilot")
 	if (mapLocation) {
