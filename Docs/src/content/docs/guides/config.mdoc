@@ -19,11 +19,13 @@ This is the name of the project, used across the codebase wherever the project n
 
 #### Domain
 
-The domain that the site will be primarily hosted from, without the URL scheme. For example, if the site is hosted at `https://example.com`, then this should be set to `example.com`. This is used in various places across the codebase where the domain needs to be referenced, including in constructing Client scripts & emails and substituting parts of existing URLs in XML-based assets.
+The domain that the Site will be primarily hosted from, without the URL scheme. For example, if the Site is hosted at `https://example.com`, then this should be set to `example.com`. This is used in various places across the codebase where the domain needs to be referenced, including in constructing Client scripts & emails and substituting parts of existing URLs in XML-based assets.
 
-#### DatabaseDomain
+#### DomainInsecure
 
-The domain name of the database server, without the URL scheme. This is used when setting up the Site's database connection. This domain is not accessed securely by default, so it's recommended to keep it on a local network or on the same machine as the Site. Make sure to include the port if necessary.
+The domain that the Site will be hosted on when accessed insecurely, without the URL scheme. This is used for requests that do not or cannot support HTTPS. By default, this is the Domain property with a `www.` subdomain added.
+
+This domain should not be used to access the Site. More information is given in the [Client TLS](/design/client-tls) section of the documentation.
 
 #### RCCServiceProxyURL
 
@@ -50,5 +52,23 @@ The symbol to use when displaying currency values across the site. This is used 
 #### Pages
 
 An array that contains the optional pages for the site, with a string value for each name: Statistics, Groups, and Forum. If a page is removed from this array, it will not be accessible on the site, returning a 404 Not Found error, and any links to it will be removed from the UI.
+
+### Database
+
+#### Database &ndash; AutoStart
+
+Whether to automatically start the database server when starting the Site. Requires that [SurrealDB](/install/surrealdb) is installed and available on the command line or in your system's PATH as `surreal`.
+
+This is recommended to be enabled in all cases except when debugging database issues, or when managing the database server separately from the Site, surch as when using a container manager.
+
+#### Database &ndash; Domain
+
+The domain name of the database server, without the URL scheme. This is used when setting up the Site's database connection. This domain is not accessed securely by default, so it's recommended to keep it on a local network or on the same machine as the Site. Make sure to include the port if necessary.
+
+### Economy
+
+#### Economy &ndash; AutoStart
+
+Whether to automatically start the Economy service when starting the Site. This is recommended to be enabled in all cases except when debugging Economy service issues, or when managing the Economy service separately from the Site, such as when using a container manager.
 
 ### todo
