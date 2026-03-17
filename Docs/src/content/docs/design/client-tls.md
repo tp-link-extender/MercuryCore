@@ -22,6 +22,6 @@ Later versions of TLS provide improved security and performance. The [Caddy](/in
 
 ## Unencrypted subdomain
 
-By default, Mercury Core is configured to host the Site on the root domain (eg. *example.com*), which is always encrypted with HTTPS, and an unencrypted subdomain (eg. *<www.example.com>*) is used only for communication with the Client and Studio. This allows the Site to always be accessed securely by users through their web browsers, while still allowing systems that don't support TLS to communicate with the unencrypted subdomain.
+By default, Mercury Core is configured to host the Site on the root domain (eg. `example.com`), which is always encrypted with HTTPS, and an unencrypted subdomain (eg. `www.example.com`) is used only for communication with the Client and Studio. This allows the Site to always be accessed securely by users through their web browsers, while still allowing systems that don't support TLS to communicate with the unencrypted subdomain.
 
 The unencrypted subdomain should never be used for Site access from a web browser. This is why a separate subdomain is the recommended approach. Under proper configuration of Mercury Core, any user attempting to access the Site through an unencrypted connection will not be able to submit any information in forms to minimise the risk of sensitive data being intercepted.
