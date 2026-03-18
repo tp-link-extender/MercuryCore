@@ -18,7 +18,7 @@ export async function GET({ url }) {
 
 	const port = place.serverPort
 	// const serverId = placeData.id.toString()
-	const serverPresenceUrl = `https://${config.Domain}/game/serverpresence?ticket=${ticket}`
+	const serverPresenceUrl = `http://${config.DomainInsecure}/game/serverpresence?ticket=${ticket}`
 
 	let mapLocation = url.searchParams.get("autopilot")
 	if (mapLocation) {
@@ -29,7 +29,7 @@ export async function GET({ url }) {
 
 	const scriptFile = Bun.file("../data/server/loadscripts/host.lua")
 	const script = (await scriptFile.text())
-		.replaceAll("_BASE_URL", `"${config.Domain}"`)
+		.replaceAll("_BASE_URL", `"${config.DomainInsecure}"`)
 		.replaceAll("_MAP_LOCATION", `"${mapLocation || ""}"`)
 		.replaceAll("_SERVER_PORT", port.toString())
 		.replaceAll("_SERVER_PRESENCE_URL", `"${serverPresenceUrl}"`)

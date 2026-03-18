@@ -23,11 +23,11 @@ export async function GET({ params }) {
 	if (!place) error(404, "Place not found")
 
 	// TODO: move to url without param
-	const serverPresenceUrl = `https://${config.Domain}/game/serverpresence?ticket=${place.serverTicket}`
+	const serverPresenceUrl = `http://${config.DomainInsecure}/game/serverpresence?ticket=${place.serverTicket}`
 
 	const scriptFile = Bun.file("../data/server/loadscripts/host.lua")
 	const script = (await scriptFile.text())
-		.replaceAll("_BASE_URL", `"${config.Domain}"`)
+		.replaceAll("_BASE_URL", `"${config.DomainInsecure}"`)
 		.replaceAll("_MAP_LOCATION", `"http://${config.DomainInsecure}/game/${id}"`)
 		.replaceAll("_SERVER_PORT", idToPort(id).toString())
 		.replaceAll("_SERVER_PRESENCE_URL", `"${serverPresenceUrl}"`)
