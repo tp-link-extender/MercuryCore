@@ -23,6 +23,7 @@ export const load = async () => ({
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ cookies, request }) => {
 	const form = await superValidate(request, arktype(schema))
+	console.log(form)
 	if (!form.valid) return formError(form)
 
 	const { username, password } = form.data

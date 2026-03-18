@@ -4,8 +4,10 @@ export type { SuperForm } from "sveltekit-superforms/client"
 
 type FormErrors<T> = { [K in keyof T]?: string[] }
 
+type FormConstraints<T> = { [K in keyof T]?: { [_: string]: string } }
+
 type BaseForm<T> = {
-	constraints: { [K in keyof T]?: { [_: string]: string } }
+	constraints: FormConstraints<T>
 	errors: FormErrors<T>
 	message: string
 	valid: boolean

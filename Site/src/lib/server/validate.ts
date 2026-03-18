@@ -25,8 +25,22 @@ export function errMessage<
 }
 
 // lmao it gone
-export function arktype<T>(schema: T) {
+export function arktype<T extends Type<T>>(schema: T) {
 	return schema
+}
+
+function typeToConstraints<T extends object>(schema: Type<T>) {
+	const constraints: FormConstraints<T> = {}
+	for (const key in schema) {
+		const field = schema[key]
+		// const fieldConstraints: { [_: string]: string } = {}
+		if (field == null) continue
+
+		// form.type
+		console.log(field.minLength)
+	}
+
+	return {}
 }
 
 export async function superValidate<T extends object>(
@@ -35,15 +49,19 @@ export async function superValidate<T extends object>(
 ): Promise<Form<T>> {
 	if (!request) {
 		return {
-			valid: true,
+			constraints: typeToConstraints(schema),
 			errors: {},
-			data: schema as T,
+			message: "",
+			valid: true,
+			data: {} as T,
 		}
 	}
 
 	return {
-		valid: false,
+		constraints: typeToConstraints(schema),
 		errors: {},
+		message: "",
+		valid: false,
 		data: {} as T,
 	}
 }
