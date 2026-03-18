@@ -29,7 +29,7 @@ export function arktype<T>(schema: T) {
 	return schema
 }
 
-export async function superValidate<T>(
+export async function superValidate<T extends object>(
 	request: Request | null,
 	schema: Type<T>
 ): Promise<Form<T>> {

@@ -1,9 +1,10 @@
-<script lang="ts">
+<script lang="ts" generics="T extends object">
 	import type {
 		HTMLInputAttributes,
 		HTMLInputTypeAttribute
 	} from "svelte/elements"
 	import SubInput from "$components/forms/SubInput.svelte"
+	import type { ClientForm } from "$lib/validate"
 
 	const {
 		name,
@@ -17,7 +18,7 @@
 		formData,
 		...rest
 	}: {
-		name: string
+		name: keyof T
 		label?: string
 		help?: string
 		after?: string
@@ -25,7 +26,7 @@
 		inline?: boolean
 		column?: boolean
 		disabled?: boolean
-		formData: import("$lib/validate").SuperForm<any>
+		formData: ClientForm<T>
 	} & HTMLInputAttributes = $props()
 
 	let { errors } = $derived(formData)
@@ -54,9 +55,9 @@
 			</small>
 		{/if}
 
-		{#if $errors[name]}
+		{#if errors[name]}
 			<small class="block text-red-500">
-				{$errors[name]}
+				{errors[name]}
 			</small>
 		{/if}
 	</div>
