@@ -1,5 +1,3 @@
-// I know barrel files suck but I'd like to wrap these functions in the near future
-
 import type { ActionFailure } from "@sveltejs/kit"
 import type { Type } from "arktype"
 import { message as ogMessage, type SuperValidated } from "sveltekit-superforms"
@@ -26,6 +24,7 @@ export function errMessage<
 	return ogMessage(form, message)
 }
 
+// lmao it gone
 export function arktype<T>(schema: T) {
 	return schema
 }
