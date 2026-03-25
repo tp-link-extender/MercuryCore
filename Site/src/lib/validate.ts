@@ -23,17 +23,13 @@ export interface Form<T extends object> extends BaseForm<T> {
 	data: T
 }
 
-// export interface ClientForm<T extends object> extends BaseForm<T> {
-// 	form: T
-// 	enhance: (e: HTMLFormElement) => unknown
-// 	delayed: boolean
-// 	capture: () => Form<T>
-// 	restore: (v: Form<T>) => void
-// }
+type Issue = ValidationError["issues"][number]
+
+export type Issues = (message: string) => Issue
 
 export type ClientForm<T extends RemoteFormInput> = RemoteForm<
 	T,
-	ValidationError["issues"][number] | { success: string }
+	Issue | { success: string }
 >
 
 export type ExtractId<Input> = Input extends { id: infer Id }
@@ -41,30 +37,3 @@ export type ExtractId<Input> = Input extends { id: infer Id }
 		? Id
 		: string | number
 	: string | number
-
-// const capture = <T extends RemoteFormInput>(form: ClientForm<T>): Form<T> => ({
-// 	valid: form.valid,
-// 	errors: form.errors,
-// 	data: form.data,
-// })
-
-// export function superForm<T extends RemoteFormInput>(
-// 	form: Form<T>
-// ): ClientForm<T> {
-// 	return {
-// 		constraints: form.constraints,
-// 		errors: form.errors,
-// 		message: form.message,
-// 		valid: form.valid,
-// 		form: form.data,
-// 		capture() {
-// 			return capture(this)
-// 		},
-// 		restore(v: Form<T>) {
-// 			this.data = v.data
-// 			this.errors = v.errors
-// 			this.message = v.message
-// 			this.valid = v.valid
-// 		},
-// 	}
-// }

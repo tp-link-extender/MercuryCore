@@ -2,6 +2,8 @@
 
 /// <reference types="@types/bun" />
 
+import type { RemoteFormInput as RFI } from "@sveltejs/kit"
+
 declare namespace svelteHTML {
 	import type { AttributifyAttributes } from "@unocss/preset-attributify"
 
@@ -40,7 +42,8 @@ declare global {
 	}
 
 	// just useful in form component generics
-	export type { RemoteFormInput } from "@sveltejs/kit"
+	// can't export straight from the package right here, it'll cause the other types (such as Locals) to not be global
+	type RemoteFormInput = RFI
 
 	declare module "*.surql" {
 		const value: string

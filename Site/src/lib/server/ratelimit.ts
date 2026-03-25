@@ -1,23 +1,14 @@
 // TODO: Possibly move this to the database instead of server state
 
 import { fail } from "@sveltejs/kit"
-import type { SuperValidated } from "$lib/server/validate"
-import { message } from "$lib/server/validate"
+import type { Issues } from "$lib/validate"
 
 const ratelimitTimewindow = new Map<string, number>()
 const ratelimitRequests = new Map<string, number>()
 const existingTimeouts = new Map<string, Timer>()
 
-type Form = SuperValidated<
-	{ [_: string]: unknown },
-	unknown,
-	{ [_: string]: unknown }
-> | null
-
-const limit = (form: Form) =>
-	form
-		? message(form, "Too many requests", { status: 429 })
-		: fail(429, { msg: "Too many requests" })
+const msg = "Too many requests"
+const limit = (issues?: Issues) => (issues ? issues(msg) : fail(429, { msg }))
 
 const winlel =
 	"Failed to ratelimit! Are you running Windows? Whoops, that sounds like a you problem!"
@@ -34,7 +25,7 @@ const winlel =
  *	if (limit) return limit
  */
 export default (
-	form: Form,
+	issues: Issues | undefined,
 	category: string,
 	getClientAddress: () => string,
 	timeWindow: number,
@@ -51,14 +42,14 @@ export default (
 
 	if (currentTimewindow > Date.now() + timeWindow * 1000) {
 		console.log("Ratelimited based on time window!")
-		return limit(form)
+		return limit(issues)
 	}
 
 	const currentRequests = (ratelimitRequests.get(id) || 0) + 1
 	if (currentRequests > maxRequests) {
 		ratelimitTimewindow.set(id, currentTimewindow)
 		console.log("Ratelimited based on requests!")
-		return limit(form)
+		return limit(issues)
 	}
 
 	clearTimeout(existingTimeouts.get(id))

@@ -2,6 +2,7 @@ import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { form, getRequestEvent } from "$app/server"
 import { cookieName, cookieOptions, createSession } from "$lib/server/auth"
+import ratelimit from "$lib/server/ratelimit"
 import { db, type RecordId } from "$lib/server/surreal"
 import { usernameTest } from "$lib/typeTests"
 import userQuery from "./user.surql"
@@ -12,7 +13,7 @@ const schema = type({
 })
 
 export const formData = form(schema, async ({ username, password }, issues) => {
-	const { cookies, locals } = getRequestEvent()
+	const { cookies, locals, getClientAddress } = getRequestEvent()
 	if (locals.session) redirect(302, "/home")
 
 	const [[user]] = await db.query<
@@ -21,6 +22,9 @@ export const formData = form(schema, async ({ username, password }, issues) => {
 			hashedPassword: string
 		}[][]
 	>(userQuery, { username })
+
+	const limit = ratelimit(issues, "login", getClientAddress, 1000)
+	if (limit) return limit
 
 	if (!user || !Bun.password.verifySync(password, user.hashedPassword))
 		// remove this statement and we'll end up like Mercury 1 💀

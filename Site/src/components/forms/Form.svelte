@@ -39,7 +39,6 @@
 				{@html /* ecks ess ess moment */ pending ? working : submit}
 			</button>
 		{/if}
-		{formData.fields.allIssues()?.length || 0}
 	</fieldset>
 </form>
 
