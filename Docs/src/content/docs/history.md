@@ -21,7 +21,7 @@ Krypton was a revival platform developed in late 2020 and early 2021, built upon
 
 The first version of Mercury started development as a rebranding and improvement of the Krypton codebase in May 2021, and was hosted at [banland.xyz (archive link)](https://web.archive.org/web/20210803231644/https://banland.xyz/). Mercury 1 used the late 2013 Client and Studio.
 
-Mercury 1 peaked at around 300 users before it shut down in September 2021 and merged with Project Polygon. A [functional archive](https://files.heliodex.cf/mercury-website.zip)[^2] of the original Mercury 1 website is available.
+Mercury 1 peaked at around 300 users before it shut down on 21 September 2021 and merged with Project Polygon. A [functional archive](https://files.heliodex.cf/mercury-website.zip)[^2] of the original Mercury 1 website is available.
 
 ## Krypton X
 
@@ -81,6 +81,6 @@ On 6 September 2024, Mercury Core was officially made public with an announcemen
 
 [^1]: The Project Polygon FOSS source code listed at this link differs slightly from the version used to develop Mercury 1 and is missing the commit history.
 
-[^2]: This archive includes Git history for changes made to Mercury 1. Changes made to the Project Polygon codebase before it was used to develop Mercury 1 are not included.
+[^2]: This archive includes Git history for changes made to Mercury 1 as far back as 27 July 2021. Changes made to the Project Polygon codebase before it was used to develop Mercury 1 are not included.
 
 [^3]: This led to the misconception that Mercury Core had been open source from the beginning of Mercury 2 development, which is not the case.

@@ -11,4 +11,4 @@ After installation, Docker should be available from the command line with `docke
 
 ## Virtualisation
 
-Docker requires a virtualisation system to be enabled on your machine to run. This usually means enabling virtualization in your motherboard's UEFI/BIOS settings. Depending on your CPU, this may be called VT-x (Intel) or SVM (AMD), or something else, sometimes found under advanced CPU or security settings.
+Docker requires a virtualisation system to be enabled on your machine to run. This usually means enabling virtualization in your motherboard's UEFI/BIOS settings. Depending on your CPU model/manufacturer, this may be called VT-x (Intel), SVM (AMD), or something else, sometimes found under advanced CPU or security settings.
