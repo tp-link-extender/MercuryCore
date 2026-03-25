@@ -5,7 +5,7 @@ description: Information about the Lanucher, the application responsible for sta
 
 This page provides information about the Mercury Launcher, responsible for downloading, installing, and unpacking Setup deployment packages. It also registers itself with the operating system to handle file associations, and should open when any place is joined from the Site, then launching the Client. An implementation of the Launcher is available at the [tp-link-extender/MercuryLauncher](https://github.com/tp-link-extender/MercuryLauncher) repository.
 
-With the modularity of the Mercury Suite, it is not required to use this implementation of the Launcher alongside Mercury Core, and a custom implementation or other launcher can be used instead. However, the custom Setup deployment format is designed to be used with the Launcher, and isn't compatible with the 'standard' deployment format. 
+With the modularity of the Mercury Suite, it is not required to use this implementation of the Launcher alongside Mercury Core, and a custom implementation or other launcher can be used instead. However, the custom Setup deployment format is designed to be used with the Launcher, and isn't compatible with the 'standard' deployment format.
 
 ## Configuration
 
