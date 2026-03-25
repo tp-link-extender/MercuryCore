@@ -10,13 +10,13 @@
 		"astro": "bun x -b astro"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.4.6"
+		"@biomejs/biome": "^2.4.9"
 	},
 	"dependencies": {
-		"@astrojs/markdoc": "^1.0.0",
-		"@astrojs/starlight": "^0.38.1",
+		"@astrojs/markdoc": "^1.0.2",
+		"@astrojs/starlight": "^0.38.2",
 		"@astrojs/starlight-markdoc": "^0.6.0",
-		"astro": "^6.0.3",
+		"astro": "^6.0.8",
 		"sharp": "^0.34.5"
 	}
 }
