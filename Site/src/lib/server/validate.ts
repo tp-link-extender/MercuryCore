@@ -25,19 +25,22 @@ export function errMessage<
 }
 
 // lmao it gone
-export function arktype<T extends Type<T>>(schema: T) {
+export function arktype<T>(schema: T) {
 	return schema
 }
 
 function typeToConstraints<T extends object>(schema: Type<T>) {
 	const constraints: FormConstraints<T> = {}
+	// console.log(schema["~standard"].types?.output)
 	for (const key in schema) {
 		const field = schema[key]
 		// const fieldConstraints: { [_: string]: string } = {}
 		if (field == null) continue
 
 		// form.type
-		console.log(field.minLength)
+		// console.log("BEGIN", key)
+		// console.log(field)
+		// console.log("END", typeof field)
 	}
 
 	return {}

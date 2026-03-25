@@ -39,6 +39,9 @@ declare global {
 		theme: number
 	}
 
+	// just useful in form component generics
+	export type { RemoteFormInput } from "@sveltejs/kit"
+
 	declare module "*.surql" {
 		const value: string
 		export default value

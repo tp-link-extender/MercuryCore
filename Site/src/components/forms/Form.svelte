@@ -1,7 +1,6 @@
-<script lang="ts" generics="T extends object">
+<script lang="ts" generics="T extends RemoteFormInput">
 	import type { Snippet } from "svelte"
 	import type { HTMLFormAttributes } from "svelte/elements"
-	import { page } from "$app/state"
 	import type { ClientForm } from "$lib/validate"
 
 	const {
@@ -23,41 +22,35 @@
 		children: Snippet
 	} & HTMLFormAttributes = $props()
 
-	let { errors, message, enhance, delayed, valid } = $derived(formData)
-
 	// use:enhance may not be used on forms that aren't method === "post"
 	// const use = method?.toLowerCase() === "post" ? enhance : () => {}
-
-	let other = $derived(errors.other || "")
+	let valid: string = $derived(formData.result?.success)
+	let invalid: string = $derived(formData.result?.message)
+	let pending = $derived(formData.pending > 0)
 </script>
 
-<form use:enhance method="post" {...rest}>
+<form {...formData} {...rest}>
 	<fieldset class={inline ? "input-group" : "pb-2"}>
 		{@render children()}
 		{#if submit}
-			<button class={["btn btn-primary h-full", { nopad }]}>
-				{@html /* ecks ess ess moment */ delayed ? working : submit}
+			<button
+				class={["btn btn-primary h-full", { nopad }]}
+				disabled={pending}>
+				{@html /* ecks ess ess moment */ pending ? working : submit}
 			</button>
 		{/if}
+		{formData.fields.allIssues()?.length || 0}
 	</fieldset>
-	{#if other}
-		<p class="text-red-500">
-			{other}
-		</p>
-	{/if}
 </form>
 
-{#if message}
-	<p
-		class={[
-			valid ? "text-emerald-600" : "text-red-500",
-			{
-				"mb-0": inline,
-				"text-emerald-600": valid,
-				"text-red-500": page.status >= 400
-			}
-		]}>
-		{message}
+{#if valid}
+	<p class={["text-emerald-600", { "mb-0": inline }]}>
+		{valid}
+	</p>
+{/if}
+{#if invalid}
+	<p class={["text-red-500", { "mb-0": inline }]}>
+		{invalid}
 	</p>
 {/if}
 

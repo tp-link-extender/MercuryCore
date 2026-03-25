@@ -1,12 +1,16 @@
 import { type } from "arktype"
 
-const usernameRegex = /^[A-Za-z0-9_]+$/
+const usernameRegex = /^[A-Za-z0-9_]*$/ // no + to prevent 2 error messages for an empty string when 1 suffices
 
-export const usernameTest = type("3 <= string <= 21").and(
-	type(usernameRegex).configure({
-		problem: "must contain only alphanumeric characters or underscores",
-	})
-)
+export const usernameTest = type("3 <= string <= 21")
+	.and(
+		type(usernameRegex).describe(
+			"containing only alphanumeric characters or underscores"
+		)
+		.configure({
+			problem: "must contain only alphanumeric characters or underscores",
+		})
+	)
 
 // TODO: come back to this when there's actually a good way to validate
 export const serverAddressTest = type("string <= 100").configure({
