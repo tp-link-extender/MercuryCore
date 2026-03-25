@@ -14,7 +14,7 @@ To upgrade Go to the latest version without going through the reinstallation pro
 ```
 module whatever
 
-go 1.26.0
+go 1.26.1
 ```
 
 Upon the next build or run command, Go will automatically download and use the specified version. However, changing the Go version in a **go.mod** file may prevent older versions of Go from building the project, even if newer features aren't used, which could be required if an older Go version is required to work with an older system or CPU architecture. If you run into any issues with Go versions, please file an issue on the [GitHub repository](https://github.com/tp-link-extender/MercuryCore/issues) so we can help out.
