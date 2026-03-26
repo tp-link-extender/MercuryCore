@@ -30,7 +30,8 @@ export type Issues = (message: string) => Issue
 
 export type ClientForm<T extends RemoteFormInput> = RemoteForm<
 	T,
-	Issue | { success: string }
+	Issue
+	// Issue | { success: string }
 	// Issue | ActionFailure<{ msg: string }>
 >
 

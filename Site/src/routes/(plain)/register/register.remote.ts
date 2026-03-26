@@ -6,6 +6,7 @@ import config from "$lib/server/config"
 import requestRender from "$lib/server/requestRender"
 import { db, findWhere, Record, type RecordId } from "$lib/server/surreal"
 import { usernameTest } from "$lib/typeTests"
+import type { ClientForm } from "$lib/validate"
 import accountRegistered from "../accountRegistered"
 import createUserQuery from "./createUser.surql"
 import regkeyCheckQuery from "./regkeyCheck.surql"
@@ -32,7 +33,7 @@ const schema = type({
 const prefix = config.Registration.Keys.Prefix
 const prefixRegex = new RegExp(`^${prefix}(.+)$`)
 
-export const register = form(
+export const register: ClientForm<typeof schema.infer> = form(
 	schema,
 	async ({ username, email, password, cpassword, regkey }, issues) => {
 		const { fetch: f, cookies, locals } = getRequestEvent()
@@ -91,7 +92,7 @@ export const register = form(
 	}
 )
 // This is the initial account creation, which is only allowed if there are no existing users.
-export const initialAccount = form(
+export const initialAccount: ClientForm<typeof schemaInitial.infer> = form(
 	schemaInitial,
 	async ({ username, password, cpassword }, issues) => {
 		const { fetch: f, cookies, locals } = getRequestEvent()

@@ -3,14 +3,11 @@
 	import Input from "$components/forms/Input.svelte"
 	import Textarea from "$components/forms/Textarea.svelte"
 	import Head from "$components/Head.svelte"
-	import { superForm } from "$lib/validate"
+	import { formData } from "./create.remote"
 
 	// import beautifyCurrency from "$lib/beautifyCurrency"
 
 	const { data } = $props()
-
-	let formData = $derived(superForm(data.form))
-	export const snapshot = formData
 
 	// const [, c1, c2] = beautifyCurrency(data.price)
 </script>
