@@ -2,14 +2,11 @@
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
 	import Head from "$components/Head.svelte"
-	import { superForm } from "$lib/validate"
 	import LoginShell from "../LoginShell.svelte"
 	import Waves from "../Waves.svelte"
+	import { initialAccount, register } from "./register.remote"
 
 	const { data } = $props()
-
-	let formData = $derived(superForm(data.form))
-	export const snapshot = formData
 
 	const descriptions: [string, string][] = [
 		[
@@ -31,7 +28,8 @@
 <Head
 	name={data.siteName}
 	title="Register"
-	description="Create a {data.siteName} account." />
+	description="Create a {data.siteName} account."
+/>
 
 <Waves />
 
@@ -43,47 +41,52 @@
 			<a href="/login" class="no-underline">Log in</a>
 		</p>
 
-		<Form {formData} action="?/register" class="pt-6" submit="Register">
+		<Form formData={register} class="pt-6" submit="Register">
 			<Input
-				{formData}
+				formData={register}
 				column
 				autocomplete="username"
 				name="username"
 				label="Username"
-				placeholder="3-21 characters" />
+				placeholder="3-21 characters"
+			/>
 			{#if data.emailsEnabled}
 				<Input
-					{formData}
+					formData={register}
 					column
 					autocomplete="email"
 					name="email"
 					label="Email address"
 					type="email"
-					placeholder="{data.siteName}@{data.domain}" />
+					placeholder="{data.siteName}@{data.domain}"
+				/>
 			{/if}
 			<Input
-				{formData}
+				formData={register}
 				column
 				autocomplete="new-password"
 				name="password"
 				label="Password"
 				type="password"
-				placeholder={"•".repeat(18)} />
+				placeholder={"•".repeat(18)}
+			/>
 			<Input
-				{formData}
+				formData={register}
 				column
 				autocomplete="new-password"
 				name="cpassword"
 				label="Confirm password"
 				type="password"
-				placeholder={"•".repeat(18)} />
+				placeholder={"•".repeat(18)}
+			/>
 			{#if data.regKeysEnabled}
 				<Input
-					{formData}
+					formData={register}
 					column
 					name="regkey"
 					label="Registration key"
-					placeholder="{data.prefix}r3g157r4ti0nk3yh3re1" />
+					placeholder="{data.prefix}r3g157r4ti0nk3yh3re1"
+				/>
 			{/if}
 		</Form>
 	{:else}
@@ -102,31 +105,30 @@
 			journey with Mercury Core!
 		</p>
 
-		<Form
-			{formData}
-			action="?/initialAccount"
-			class="pt-6"
-			submit="Let's begin!">
+		<Form formData={initialAccount} class="pt-6" submit="Let's begin!">
 			<Input
-				{formData}
+				formData={initialAccount}
 				column
 				name="username"
 				label="Username"
-				placeholder="3-21 characters" />
+				placeholder="3-21 characters"
+			/>
 			<Input
-				{formData}
+				formData={initialAccount}
 				column
 				name="password"
 				label="Password"
 				type="password"
-				placeholder={"•".repeat(18)} />
+				placeholder={"•".repeat(18)}
+			/>
 			<Input
-				{formData}
+				formData={initialAccount}
 				column
 				name="cpassword"
 				label="Confirm Password"
 				type="password"
-				placeholder={"•".repeat(18)} />
+				placeholder={"•".repeat(18)}
+			/>
 		</Form>
 		<p>
 			If you want to create more users, head to the Admin panel after
