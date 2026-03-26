@@ -1,6 +1,7 @@
 // client version of $lib/server/validate
 
 import type {
+	ActionFailure,
 	RemoteForm,
 	RemoteFormInput,
 	ValidationError,
@@ -30,6 +31,7 @@ export type Issues = (message: string) => Issue
 export type ClientForm<T extends RemoteFormInput> = RemoteForm<
 	T,
 	Issue | { success: string }
+	// Issue | ActionFailure<{ msg: string }>
 >
 
 export type ExtractId<Input> = Input extends { id: infer Id }

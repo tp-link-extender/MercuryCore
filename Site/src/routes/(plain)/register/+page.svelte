@@ -28,8 +28,7 @@
 <Head
 	name={data.siteName}
 	title="Register"
-	description="Create a {data.siteName} account."
-/>
+	description="Create a {data.siteName} account." />
 
 <Waves />
 
@@ -48,8 +47,7 @@
 				autocomplete="username"
 				name="username"
 				label="Username"
-				placeholder="3-21 characters"
-			/>
+				placeholder="3-21 characters" />
 			{#if data.emailsEnabled}
 				<Input
 					formData={register}
@@ -58,8 +56,7 @@
 					name="email"
 					label="Email address"
 					type="email"
-					placeholder="{data.siteName}@{data.domain}"
-				/>
+					placeholder="{data.siteName}@{data.domain}" />
 			{/if}
 			<Input
 				formData={register}
@@ -68,8 +65,7 @@
 				name="password"
 				label="Password"
 				type="password"
-				placeholder={"•".repeat(18)}
-			/>
+				placeholder={"•".repeat(18)} />
 			<Input
 				formData={register}
 				column
@@ -77,16 +73,14 @@
 				name="cpassword"
 				label="Confirm password"
 				type="password"
-				placeholder={"•".repeat(18)}
-			/>
+				placeholder={"•".repeat(18)} />
 			{#if data.regKeysEnabled}
 				<Input
 					formData={register}
 					column
 					name="regkey"
 					label="Registration key"
-					placeholder="{data.prefix}r3g157r4ti0nk3yh3re1"
-				/>
+					placeholder="{data.prefix}r3g157r4ti0nk3yh3re1" />
 			{/if}
 		</Form>
 	{:else}
@@ -111,24 +105,21 @@
 				column
 				name="username"
 				label="Username"
-				placeholder="3-21 characters"
-			/>
+				placeholder="3-21 characters" />
 			<Input
 				formData={initialAccount}
 				column
 				name="password"
 				label="Password"
 				type="password"
-				placeholder={"•".repeat(18)}
-			/>
+				placeholder={"•".repeat(18)} />
 			<Input
 				formData={initialAccount}
 				column
 				name="cpassword"
 				label="Confirm Password"
 				type="password"
-				placeholder={"•".repeat(18)}
-			/>
+				placeholder={"•".repeat(18)} />
 		</Form>
 		<p>
 			If you want to create more users, head to the Admin panel after

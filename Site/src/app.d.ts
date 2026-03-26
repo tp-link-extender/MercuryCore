@@ -57,5 +57,3 @@ declare global {
 		}
 	}
 }
-
-export type {}
