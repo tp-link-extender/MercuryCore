@@ -8,7 +8,8 @@ const ratelimitRequests = new Map<string, number>()
 const existingTimeouts = new Map<string, Timer>()
 
 const msg = "Too many requests"
-const limit = (issues?: Issues) => (issues ? issues(msg) : fail(429, { msg }))
+const limit = (issues: Issues | null) =>
+	issues ? issues(msg) : fail(429, { msg })
 
 const winlel =
 	"Failed to ratelimit! Are you running Windows? Whoops, that sounds like a you problem!"
@@ -25,7 +26,7 @@ const winlel =
  *	if (limit) return limit
  */
 export default (
-	issues: Issues | undefined,
+	issues: Issues | null,
 	category: string,
 	getClientAddress: () => string,
 	timeWindow: number,
@@ -38,8 +39,8 @@ export default (
 		console.log(winlel)
 		return
 	}
-	const currentTimewindow = ratelimitTimewindow.get(id) || Date.now()
 
+	const currentTimewindow = ratelimitTimewindow.get(id) || Date.now()
 	if (currentTimewindow > Date.now() + timeWindow * 1000) {
 		console.log("Ratelimited based on time window!")
 		return limit(issues)

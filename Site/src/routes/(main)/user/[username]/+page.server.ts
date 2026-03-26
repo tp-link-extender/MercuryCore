@@ -113,6 +113,7 @@ async function rerender(e: RequestEvent) {
 			avatar: `/api/avatar/${e.params.username}?r=${Math.random()}`,
 		}
 	} catch (e) {
+		// TODO: i love yo shadow
 		console.error(e)
 		return fail(500, { msg: "Failed to request render" })
 	}
