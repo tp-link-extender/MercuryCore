@@ -22,10 +22,8 @@
 		children: Snippet
 	} & HTMLFormAttributes = $props()
 
-	// use:enhance may not be used on forms that aren't method === "post"
-	// const use = method?.toLowerCase() === "post" ? enhance : () => {}
-	let valid: string = $derived(formData.result?.success)
-	let invalid: string = $derived(formData.result?.message)
+	let valid: string | undefined = $derived(formData.result?.success)
+	let invalid: string | undefined = $derived(formData.result?.message)
 	let pending = $derived(formData.pending > 0)
 </script>
 
@@ -43,12 +41,12 @@
 </form>
 
 {#if valid}
-	<p class={["text-emerald-600", { "mb-0": inline }]}>
+	<p class={["text-emerald-600", { "pb-0": inline }]}>
 		{valid}
 	</p>
 {/if}
 {#if invalid}
-	<p class={["text-red-500", { "mb-0": inline }]}>
+	<p class={["text-red-500", { "pb-0": inline }]}>
 		{invalid}
 	</p>
 {/if}

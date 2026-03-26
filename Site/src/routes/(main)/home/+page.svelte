@@ -5,6 +5,7 @@
 	import Place from "$components/Place.svelte"
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
+	import { formData } from "./home.remote"
 	import Status from "./Status.svelte"
 
 	const { data } = $props()
