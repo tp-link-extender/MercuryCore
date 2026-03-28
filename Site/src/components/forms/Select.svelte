@@ -1,9 +1,10 @@
-<script lang="ts">
+<script lang="ts" generics="T extends RemoteFormInput">
 	// could make forms based on a js object or something instead of components but concerns with forms that require more interactivity/customisation
 
 	import { Select } from "melt/builders"
 	import NoScript from "$components/NoScript.svelte"
 	import YesScript from "$components/YesScript.svelte"
+	import type { ClientForm, ExtractId } from "$lib/validate"
 
 	const {
 		name,
@@ -17,27 +18,24 @@
 		formData,
 		...rest
 	}: {
-		name: string
+		name: ExtractId<T>
 		label?: string
 		help?: string
 		disabled?: boolean
 		// multiple?: boolean
 		options: readonly string[]
 		selected?: string
-		formData: import("$lib/validate").SuperForm<any>
+		formData: ClientForm<T>
 	} = $props()
 
-	let { form, errors, constraints } = $derived(formData)
+	let issues = $derived(formData.fields[name]?.issues() || [])
 
 	let trigger = $state<HTMLElement>()
 	// let dropdown = $state<HTMLElement>()
 
 	let select = $derived(
 		new Select<string>({
-			value: selected,
-			onValueChange: val => {
-				$form[name] = val
-			}
+			value: selected
 
 			// floatingConfig: {
 			// 	onCompute: a => {
@@ -57,12 +55,11 @@
 		<NoScript>
 			<!-- fallback to standard select (i don't *think* we need to bind here, and sometimes bugs) -->
 			<select
+				{...formData.fields[name].as("text")}
 				{disabled}
 				{...rest}
-				{...$constraints[name]}
-				{name}
-				id={name}
-				class={{ "is-invalid": $errors[name] }}>
+				name={name.toString()}
+				id={name.toString()}>
 				{#each options as opt}
 					<option
 						value={opt}
@@ -73,7 +70,12 @@
 			</select>
 		</NoScript>
 		<YesScript>
-			<input type="hidden" {name} value={select.value || options[0]} />
+			<input
+				type="hidden"
+				{...formData.fields[name].as("text")}
+				name={name.toString()}
+				id={name.toString()}
+				value={select.value || options[0]} />
 
 			<button
 				{...select.trigger}
@@ -101,8 +103,10 @@
 			</small>
 		{/if}
 
-		<small class="pb-4 text-red-500">
-			{$errors[name] || ""}
-		</small>
+		{#each issues as issue}
+			<small class="block text-red-500">
+				{issue.message}
+			</small>
+		{/each}
 	</div>
 </div>

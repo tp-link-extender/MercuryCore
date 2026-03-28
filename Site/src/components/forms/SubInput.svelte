@@ -15,7 +15,8 @@
 		// Imported into Input.svelte to prevent code duplication
 		name: ExtractId<T>
 		disabled: boolean
-		type: HTMLInputTypeAttribute
+		// type: HTMLInputTypeAttribute
+		type: "text" | "number" | "color" | "date" | "checkbox" | "file" | "password"
 		formData: ClientForm<T>
 	} & HTMLInputAttributes = $props()
 </script>
@@ -30,7 +31,7 @@
 		{disabled} />
 {:else}
 	<input
-		{...formData.fields[name].as("text")}
+		{...formData.fields[name].as(type)}
 		{...rest}
 		{name}
 		id={name}

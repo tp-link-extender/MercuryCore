@@ -22,7 +22,8 @@
 		label?: string
 		help?: string
 		after?: string
-		type?: HTMLInputTypeAttribute
+		// type?: HTMLInputTypeAttribute
+		type?: "text" | "number" | "color" | "date" | "checkbox" | "file" | "password"
 		inline?: boolean
 		column?: boolean
 		disabled?: boolean
