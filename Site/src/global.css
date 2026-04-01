@@ -30,8 +30,42 @@
 }
 
 * {
-	font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
-	font-feature-settings: "cv03", "cv04", "cv08", "cv09";
+	font-family: "Comic Sans MS", cursive, sans-serif;
+	/* font-feature-settings: "cv03", "cv04", "cv08", "cv09"; */
+
+	direction: rtl;
+
+	--darker: radial-gradient(
+		darkred 0%,
+		brown 14%,
+		orange 28%,
+		darkgreen 42%,
+		darkblue 56%,
+		indigo 70%,
+		purple 84%,
+		darkred 100%
+	) !important;
+	--background: linear-gradient(
+		80deg,
+		rgb(78, 1, 1) 0%,
+		rgb(104, 25, 25) 14%,
+		rgb(124, 81, 2) 28%,
+		rgb(0, 66, 0) 42%,
+		rgb(0, 0, 77) 56%,
+		rgb(51, 0, 87) 70%,
+		rgb(78, 0, 78) 84%,
+		rgb(85, 0, 0) 100%
+	) !important;
+	--accent: conic-gradient(
+		rgb(124, 0, 0) 0%,
+		rgb(192, 125, 0) 14%,
+		rgb(161, 161, 0) 28%,
+		green 42%,
+		blue 56%,
+		indigo 70%,
+		rgb(141, 0, 141) 84%,
+		red 100%
+	) !important;
 }
 
 code {
@@ -42,9 +76,22 @@ code {
 	color: #d63384;
 }
 
-p {
+p,
+button,
+input,
+a {
 	margin: 0;
 	padding-bottom: 1rem;
+	font-family: "Times New Roman", Times, serif !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: monospace !important;
 }
 
 body {
@@ -664,4 +711,254 @@ img[src^="/icons"] {
 	/* hax */
 	height: calc(1rem + 2px);
 	padding-bottom: 2px;
+}
+
+/* IT@S THAT TIME OF THE YEAR AGAI!N!!!!!!!!!!!!! */
+
+span {
+	overflow: scroll;
+}
+
+img {
+	animation:
+		spin 2.5s ease-in-out infinite,
+		funny-animation 5s ease-in-out infinite;
+}
+p {
+	animation: rainbow 20s linear infinite;
+}
+button {
+	animation:
+		shadow 3s ease-in-out infinite,
+		funny-animation 4.2s ease-in-out infinite;
+}
+input {
+	animation:
+		marquee 4s ease-in-out infinite,
+		shadow 3.5s ease-in-out infinite;
+}
+h1 {
+	animation: pop2 2s ease-in-out infinite;
+}
+h2 {
+	animation: bounce 1s ease-in-out infinite;
+}
+a {
+	animation: pop 0.8s ease-in-out infinite;
+}
+nav {
+	animation: marquee2 10s ease-in-out infinite;
+}
+.card {
+	animation: marquee 10s ease-in-out infinite;
+}
+textarea,
+select {
+	animation:
+		spin 2.5s ease-in-out infinite,
+		pop2 2s ease-in-out infinite;
+}
+small,
+label {
+	animation:
+		spin2 8s ease-in-out infinite,
+		pop 1.6s ease-in-out infinite;
+}
+fa {
+	animation: insane 0.8s linear infinite;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(10deg);
+		filter: hue-rotate(0deg);
+	}
+	50% {
+		transform: rotate(-10deg);
+		filter: hue-rotate(180deg);
+	}
+	100% {
+		transform: rotate(10deg);
+		filter: hue-rotate(360deg);
+	}
+}
+@keyframes spin2 {
+	0% {
+		transform: rotate(50deg);
+		filter: hue-rotate(0deg);
+	}
+	50% {
+		transform: rotate(-50deg);
+		filter: hue-rotate(180deg);
+	}
+	100% {
+		transform: rotate(50deg);
+		filter: hue-rotate(360deg);
+	}
+}
+@keyframes rainbow {
+	0% {
+		color: #ee82ee;
+	}
+	14% {
+		color: #4b0082;
+	}
+	28% {
+		color: #00f;
+	}
+	42% {
+		color: #008000;
+	}
+	57% {
+		color: #ff0;
+	}
+	71% {
+		color: #ffa500;
+	}
+	85% {
+		color: #f00;
+	}
+	100% {
+		color: #ee82ee;
+	}
+}
+@keyframes shadow {
+	0% {
+		box-shadow: 0 0rem 0.5rem 0.75rem #008000;
+		transform: translate(0, 0);
+	}
+	33% {
+		box-shadow: 0 0.5rem 0.5rem 0.5rem #ff0;
+		transform: translate(0.25rem, 0.25rem);
+	}
+	66% {
+		box-shadow: 0 -0.5rem 0.5rem 1.25rem #f00;
+		transform: translate(0.25rem, -0.25rem);
+	}
+	100% {
+		box-shadow: 0 0rem 0.25rem 0.75rem #008000;
+		transform: translate(0, 0);
+	}
+}
+@keyframes bounce {
+	0% {
+		transform: translateY(0);
+	}
+	15% {
+		transform: translateY(-0.25rem);
+	}
+	30% {
+		transform: translateY(-0.25rem) rotate(5deg);
+	}
+	50% {
+		transform: translateY(0);
+	}
+	70% {
+		transform: translateY(0.25rem);
+	}
+	85% {
+		transform: translateY(0.25rem) rotate(-5deg);
+	}
+	100% {
+		transform: translateY(0);
+	}
+}
+@keyframes pop {
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.1);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+@keyframes pop2 {
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.05);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+@keyframes marquee {
+	0% {
+		transform: translateX(0);
+	}
+	33% {
+		transform: translateX(-5%);
+	}
+	66% {
+		transform: translateX(5%);
+	}
+	100% {
+		transform: translateX(0%);
+	}
+}
+@keyframes marquee2 {
+	0% {
+		transform: translateY(0);
+	}
+	33% {
+		transform: translateY(-5%);
+	}
+	66% {
+		transform: translateY(5%);
+	}
+	100% {
+		transform: translateY(0%);
+	}
+}
+@keyframes funny-animation {
+	0% {
+		transform: translate3d(0, 0, 0);
+	}
+	25% {
+		transform: translate3d(0, 20px, 5px) rotate3d(1, 1, 1, 50deg);
+	}
+	50% {
+		transform: translate3d(0, 0, 0);
+	}
+	75% {
+		transform: translate3d(-10px, -20px, -10px) rotate3d(1, 1, 1, -50deg);
+	}
+}
+@keyframes insane {
+	0% {
+		transform: translate3d(0, 0, 0) rotate(0) scale(1);
+	}
+	10% {
+		transform: translate3d(5px, -5px, 2px) rotate(20deg);
+	}
+	20% {
+		transform: translate3d(-5px, 5px, -2px) rotate(-20deg);
+	}
+	30% {
+		transform: scale(1.2) rotate(10deg);
+	}
+	40% {
+		transform: translate3d(10px, -10px, 5px) rotate(30deg);
+	}
+	50% {
+		transform: translate3d(-10px, 10px, -5px) rotate(-30deg);
+	}
+	60% {
+		transform: scale(0.8) rotate(-10deg);
+	}
+	70% {
+		transform: translate3d(5px, -5px, 2px) rotate(20deg);
+	}
+	80% {
+		transform: translate3d(-5px, 5px, -2px) rotate(-20deg);
+	}
+	90% {
+		transform: scale(1.2) rotate(10deg);
+	}
+	100% {
+		transform: translate3d(0, 0, 0) rotate(0) scale(1);
+	}
 }
