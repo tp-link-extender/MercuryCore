@@ -1,6 +1,5 @@
 :root {
-	/* --hue: 260; */
-	animation: hue 10s linear infinite;
+	--hue: 260;
 	--mainaccent: hsl(var(--hue) 100 60);
 	--rounding: 0.375rem;
 
@@ -12,13 +11,4 @@
 	--accent3: hsl(var(--hue) 5 27);
 	--light-text: hsl(var(--hue) 25 96);
 	--grey-text: hsl(0 0 55);
-}
-
-@keyframes hue {
-	0% {
-		--hue: 0;
-	}
-	100% {
-		--hue: 360;
-	}
 }
