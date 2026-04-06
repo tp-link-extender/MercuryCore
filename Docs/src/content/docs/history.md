@@ -61,7 +61,7 @@ Mercury 2 moved to the domain [mercury2.com (archive link)](https://web.archive.
 
 Mercury then went on a short development hiatus and returned in mid-May with more fixes for database functions, and more attempts at making client integration work through a DLL hook, with plans to soon integrate a basic anti-cheat system. Users continued to be accepted onto the site at a slower rate. Through the start of June, some experiments were made with an updated economy system and various other updates on the site, while further progress on the DLL hook remained slow and difficult to advance.
 
-Eventually, it was decided that DLL hooking was not feasible, and with no good way to connect the Client and Studio to the rest of the platform, it was decided to [shut down Mercury 2](https://web.archive.org/web/20250622030340/http://mercury2.com/) on 22 June 2024. At the time of shutdown, Mercury 2 had just over 150 registered users.
+Eventually, it was decided that DLL hooking was not feasible, and with no good way to connect the Client and Studio to the rest of the platform, it was decided to [shut down Mercury 2](https://web.archive.org/web/20250331074009/https://mercury2.com/) on 22 June 2024. At the time of shutdown, Mercury 2 had just over 150 registered users.
 
 Some of Mercury 2's related projects were already available as open source, such as [melt](https://github.com/Heliodex/melt). Many other components, including the Setup deployer, 2013 scripts and tools, RCCService proxy, application settings JSON, and Discord bot were all made available as well.
 
