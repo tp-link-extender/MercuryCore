@@ -7,7 +7,7 @@ Mercury Core is a foundation for building web-based revival platforms. These are
 
 ## Launchers
 
-Launchers are still necessary for both types of platforms, as they are used to launch the Client application, and in the case of a web-based platform, to interact with the site and download a Client. Conversely, a web-based platform is not necessarily required for a launcher-based platform, as the launcher could come pre-bundled with a Client and Studio, as well as possibly its own API server for interacting with the Client. Howevere, sometimes these launchers have web API servers that are used for downloading Client updates and other features.
+Launchers are still necessary for both types of platforms, as they are used to launch the Client application, and in the case of a web-based platform, to interact with the site and download a Client. Conversely, a web-based platform is not necessarily required for a launcher-based platform, as the launcher could come pre-bundled with a Client and Studio, as well as possibly its own API server for interacting with the Client. However, sometimes these launchers have web API servers that are used for downloading Client updates and other features.
 
 The difference is mainly where the functionality is accessed from, the centralisation or decentralisation of service hosting & access, and the development & usage focus on either the website or the launcher. Both types of platforms have their own advantages and disadvantages, users may have strong preferences of one over another, and the choice between them depends on the specific use case, goals, and user base of the platform being developed.
 
