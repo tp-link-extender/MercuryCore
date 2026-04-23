@@ -30,7 +30,7 @@ export async function load({ locals }) {
 	await authorise(locals, 3)
 
 	return {
-		form: await superValidate(arktype(schema)),
+		form: await superValidate(null, arktype(schema)),
 	}
 }
 

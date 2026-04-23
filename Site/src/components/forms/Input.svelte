@@ -1,9 +1,10 @@
-<script lang="ts">
+<script lang="ts" generics="T extends RemoteFormInput">
 	import type {
 		HTMLInputAttributes,
 		HTMLInputTypeAttribute
 	} from "svelte/elements"
 	import SubInput from "$components/forms/SubInput.svelte"
+	import type { ClientForm, ExtractId } from "$lib/validate"
 
 	const {
 		name,
@@ -17,19 +18,24 @@
 		formData,
 		...rest
 	}: {
-		name: string
+		name: ExtractId<T>
 		label?: string
 		help?: string
 		after?: string
-		type?: HTMLInputTypeAttribute
+		// type?: HTMLInputTypeAttribute
+		type?: "text" | "number" | "color" | "date" | "checkbox" | "file" | "password"
 		inline?: boolean
 		column?: boolean
 		disabled?: boolean
-		formData: import("$lib/validate").SuperForm<any>
+		formData: ClientForm<T>
 	} & HTMLInputAttributes = $props()
 
-	let { errors } = $derived(formData)
+	let issues = $derived(formData.fields[name]?.issues() || [])
 </script>
+
+{#snippet subinput()}
+	<SubInput {name} {type} {disabled} {formData} {...rest} />
+{/snippet}
 
 <div class="flex flex-wrap {inline ? 'flex-1' : 'pb-8'}">
 	{#if label}
@@ -41,11 +47,11 @@
 		<!-- welp, boilerplate begets boilerplate -->
 		{#if after}
 			<div class="flex items-center">
-				<SubInput {...rest} {name} {type} {disabled} {formData} />
+				{@render subinput()}
 				{@html after}
 			</div>
 		{:else}
-			<SubInput {...rest} {name} {type} {disabled} {formData} />
+			{@render subinput()}
 		{/if}
 
 		{#if help}
@@ -54,10 +60,10 @@
 			</small>
 		{/if}
 
-		{#if $errors[name]}
+		{#each issues as issue}
 			<small class="block text-red-500">
-				{$errors[name]}
+				{issue.message}
 			</small>
-		{/if}
+		{/each}
 	</div>
 </div>

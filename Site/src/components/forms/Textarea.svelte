@@ -1,5 +1,6 @@
-<script lang="ts">
+<script lang="ts" generics="T extends RemoteFormInput">
 	import type { HTMLTextareaAttributes } from "svelte/elements"
+	import type { ClientForm, ExtractId } from "$lib/validate"
 
 	const {
 		name,
@@ -12,22 +13,17 @@
 		formData,
 		...rest
 	}: {
-		name: string
+		name: ExtractId<T>
 		label?: string
 		help?: string
 		placeholder?: string
 		rows?: number
 		lowpad?: boolean
 		defaultValue?: string
-		formData: import("$lib/validate").SuperForm<any>
+		formData: ClientForm<T>
 	} & HTMLTextareaAttributes = $props()
 
-	let { form, errors, constraints } = $derived(formData)
-
-	// TODO: prevent tabs in textarea caused by... the formatter....
-	$effect(() => {
-		$form[name] = defaultValue
-	})
+	let issues = $derived(formData.fields[name]?.issues() || [])
 </script>
 
 <div class="flex flex-wrap {lowpad ? 'pb-4' : 'pb-8'}">
@@ -37,15 +33,14 @@
 		</label>
 	{/if}
 	<div class={["w-full", { "md:w-3/4": label }]}>
+		<!-- TODO: prevent tabs in textarea caused by... the formatter.... -->
 		<textarea
+			{...formData.fields[name].as("text")}
 			{...rest}
-			bind:value={$form[name]}
-			{...$constraints[name]}
 			{name}
 			id={name}
 			{rows}
-			placeholder={placeholder || null}
-			class={{ "is-invalid": $errors[name] }}>
+			placeholder={placeholder || null}>
 		</textarea>
 
 		{#if help}
@@ -54,8 +49,10 @@
 			</small>
 		{/if}
 
-		<small class="pb-4 text-red-500">
-			{$errors[name] || ""}
-		</small>
+		{#each issues as issue}
+			<small class="block text-red-500">
+				{issue.message}
+			</small>
+		{/each}
 	</div>
 </div>

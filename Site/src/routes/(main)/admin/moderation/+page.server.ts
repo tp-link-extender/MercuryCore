@@ -30,7 +30,8 @@ export async function load({ locals, url }) {
 	await authorise(locals, 4)
 
 	const associatedReport = url.searchParams.get("report")
-	if (!associatedReport) return { form: await superValidate(arktype(schema)) }
+	if (!associatedReport)
+		return { form: await superValidate(null, arktype(schema)) }
 
 	const [report] = await db.query<
 		({ note: string; reportee: string } | undefined)[]

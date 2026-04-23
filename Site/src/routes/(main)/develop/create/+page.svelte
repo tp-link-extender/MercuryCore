@@ -5,15 +5,23 @@
 	import Textarea from "$components/forms/Textarea.svelte"
 	import Head from "$components/Head.svelte"
 	import beautifyCurrency from "$lib/beautifyCurrency"
-	import { superForm } from "$lib/validate"
+	import type { ClientForm } from "$lib/validate"
 	import assetTypes from "./assetTypes"
+	import { formData } from "./create.remote.js"
+
+	type CreateFormInput = {
+		type: "T-Shirt" | "Shirt" | "Pants" | "Decal" | "Face"
+		name: string
+		description: string
+		price: number
+		asset: File
+	}
+
+	const remoteForm = formData as unknown as ClientForm<CreateFormInput>
 
 	const { data } = $props()
 
 	let { user } = $derived(data)
-
-	let formData = $derived(superForm(data.form))
-	export const snapshot = formData
 
 	let [, c1, c2] = $derived(beautifyCurrency(data.price))
 
@@ -33,31 +41,35 @@
 </div>
 
 <Form
-	{formData}
+	formData={remoteForm}
 	nopad
 	enctype="multipart/form-data"
 	submit="Create{user.permissionLevel < 3 ? currency : ''}"
 	class="ctnr pt-8 max-w-200 light-text">
 	<Select
-		{formData}
+		formData={remoteForm}
 		options={assetTypes}
-		selected={data.assetType}
+		selected={data.assetType ?? undefined}
 		name="type"
 		label="Asset type" />
 	<Input
-		{formData}
+		formData={remoteForm}
 		name="name"
 		label="Asset name"
 		placeholder="Make sure to make it accurate" />
 	<Textarea
-		{formData}
+		formData={remoteForm}
 		name="description"
 		label="Asset description"
 		placeholder="Up to 1000 characters" />
-	<Input {formData} name="price" label="Asset price" type="number" />
+	<Input
+		formData={remoteForm}
+		name="price"
+		label="Asset price"
+		type="number" />
 	{#if data.assetType !== "Hat"}
 		<Input
-			{formData}
+			formData={remoteForm}
 			type="file"
 			name="asset"
 			label="Asset"

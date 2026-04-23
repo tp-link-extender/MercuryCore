@@ -31,10 +31,10 @@ const stylingSchema = type({
 })
 
 export const load = async () => ({
-	profileForm: await superValidate(arktype(profileSchema)),
-	passwordForm: await superValidate(arktype(passwordSchema)),
-	sessionForm: await superValidate(arktype(sessionSchema)),
-	stylingForm: await superValidate(arktype(stylingSchema)),
+	profileForm: await superValidate(null, arktype(profileSchema)),
+	passwordForm: await superValidate(null, arktype(passwordSchema)),
+	sessionForm: await superValidate(null, arktype(sessionSchema)),
+	stylingForm: await superValidate(null, arktype(stylingSchema)),
 	themes: themeNames,
 })
 

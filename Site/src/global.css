@@ -418,8 +418,9 @@ details[open] summary {
 	@apply rounded-b-0;
 }
 
-.is-invalid {
+[aria-invalid="true"] {
 	border-color: hsl(354 70 55) !important;
+	--un-ring-color: hsl(354 70 45);
 	padding-right: 2.2rem;
 	background-image: url(/invalid.svg);
 	background-repeat: no-repeat;

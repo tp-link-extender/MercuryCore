@@ -1,7 +1,7 @@
-<script lang="ts">
+<script lang="ts" generics="T extends RemoteFormInput">
 	import type { Snippet } from "svelte"
 	import type { HTMLFormAttributes } from "svelte/elements"
-	import { page } from "$app/state"
+	import type { ClientForm } from "$lib/validate"
 
 	const {
 		working = "Working...",
@@ -18,42 +18,36 @@
 		inline?: boolean
 		nopad?: boolean // Don't pad the icon on the submit button
 		// method?: HTMLFormAttributes["method"]
-		formData: import("$lib/validate").SuperForm<any>
+		formData: ClientForm<T>
 		children: Snippet
 	} & HTMLFormAttributes = $props()
 
-	let { errors, message, enhance, delayed } = $derived(formData)
-
-	// use:enhance may not be used on forms that aren't method === "post"
-	// const use = method?.toLowerCase() === "post" ? enhance : () => {}
-
-	let other = $derived($errors.other || "")
+	let valid: string | undefined = $derived(formData.result?.success)
+	let invalid: string | undefined = $derived(formData.result?.message)
+	let pending = $derived(formData.pending > 0)
 </script>
 
-<form use:enhance method="post" {...rest}>
+<form {...formData} {...rest}>
 	<fieldset class={inline ? "input-group" : "pb-2"}>
 		{@render children()}
 		{#if submit}
-			<button class={["btn btn-primary h-full", { nopad }]}>
-				{@html /* ecks ess ess moment */ $delayed ? working : submit}
+			<button
+				class={["btn btn-primary h-full", { nopad }]}
+				disabled={pending}>
+				{@html /* ecks ess ess moment */ pending ? working : submit}
 			</button>
 		{/if}
 	</fieldset>
-	{#if other}
-		<p class="text-red-500">
-			{other}
-		</p>
-	{/if}
 </form>
 
-{#if $message}
-	<p
-		class={{
-			"mb-0": inline,
-			"text-emerald-600": page.status === 200,
-			"text-red-500": page.status >= 400
-		}}>
-		{$message}
+{#if valid}
+	<p class={["text-emerald-600", { "pb-0": inline }]}>
+		{valid}
+	</p>
+{/if}
+{#if invalid}
+	<p class={["text-red-500", { "pb-0": inline }]}>
+		{invalid}
 	</p>
 {/if}
 

@@ -37,7 +37,9 @@ ${config.Name}
 https://${config.Domain}`
 	)
 
-export const load = async () => ({ form: await superValidate(arktype(schema)) })
+export const load = async () => ({
+	form: await superValidate(null, arktype(schema)),
+})
 
 export const actions: import("./$types").Actions = {}
 actions.default = async ({ cookies, request, getClientAddress }) => {

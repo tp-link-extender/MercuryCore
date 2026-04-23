@@ -40,7 +40,7 @@ export async function load({ locals, url }) {
 	return {
 		reportee,
 		url: reportedUrl,
-		form: await superValidate(arktype(schema)),
+		form: await superValidate(null, arktype(schema)),
 	}
 }
 
