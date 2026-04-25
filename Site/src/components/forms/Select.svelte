@@ -30,7 +30,6 @@
 
 	let issues = $derived(formData.fields[name]?.issues() || [])
 
-	let trigger = $state<HTMLElement>()
 	// let dropdown = $state<HTMLElement>()
 
 	let select = $derived(
@@ -80,8 +79,7 @@
 			<button
 				{...select.trigger}
 				{disabled}
-				class="fakeselect"
-				bind:this={trigger}>
+				class="fakeselect">
 				{select.value || options[0] || "Select an option"}
 			</button>
 			<div {...select.content}>

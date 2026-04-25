@@ -1,23 +1,7 @@
 import { error } from "@sveltejs/kit"
-import { type } from "arktype"
 import { authorise } from "$lib/server/auth"
-import formError from "$lib/server/formError"
-import ratelimit from "$lib/server/ratelimit"
-import { db, Record, type RecordId } from "$lib/server/surreal"
-import {
-	arktype,
-	errMessage,
-	message,
-	superValidate,
-} from "$lib/server/validate"
+import { db, type RecordId } from "$lib/server/surreal"
 import getReporteeQuery from "./getReportee.surql"
-import reportQuery from "./report.surql"
-import reports from "./reports"
-
-const schema = type({
-	category: type.enumerated(...reports).describe("a valid report category"),
-	note: "string | undefined",
-})
 
 async function getReportee(username: string) {
 	const [[reportee]] = await db.query<{ id: RecordId<"user"> }[][]>(
@@ -40,34 +24,5 @@ export async function load({ locals, url }) {
 	return {
 		reportee,
 		url: reportedUrl,
-		form: await superValidate(null, arktype(schema)),
 	}
-}
-
-export const actions: import("./$types").Actions = {}
-actions.default = async ({ locals, request, url, getClientAddress }) => {
-	const { user } = await authorise(locals)
-	const form = await superValidate(request, arktype(schema))
-	if (!form.valid) return formError(form)
-
-	const { category, note } = form.data
-	const username = url.searchParams.get("user")
-	const reportUrl = url.searchParams.get("url")
-	if (!username || !reportUrl) error(400, "Missing fields")
-
-	const reportee = await getReportee(username)
-	if (!reportee) return errMessage(form, "Invalid user")
-
-	const limit = ratelimit(form, "report", getClientAddress, 120)
-	if (limit) return limit
-
-	await db.query(reportQuery, {
-		user: Record("user", user.id),
-		reportee,
-		note,
-		reportUrl,
-		category,
-	})
-
-	return message(form, "Report sent successfully.")
 }
