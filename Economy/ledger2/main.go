@@ -1,10 +1,19 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+	"os"
+	"time"
+
+	c "github.com/TwiN/go-color"
+)
+
+type EconomyServer struct {
+	*Economy
+}
 
 func main() {
-	user := User{"user1"}
-
 	l, err := NewLedger("mydb.db")
 	if err != nil {
 		panic(err)
@@ -14,33 +23,13 @@ func main() {
 	fmt.Println("Database opened successfully")
 	fmt.Println()
 
-	e := NewEconomy(l, 10, 10, 100, 10)
+	e := NewEconomy(l, 10, 10, 100, 10, 10, time.Hour*12)
 
-	if _, err := e.MintCurrency(user, 15); err != nil {
-		panic(err)
-	}
+	es := EconomyServer{e}
 
-	place, _, err := e.CreatePlace(user)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Printf("Created place: %s\n", place)
-
-	if !e.OwnsOne(user, place) {
-		panic("user should own the place")
-	}
-
-	inv := l.Inventory(user)
-	fmt.Printf("Inventory for user %s: %+v\n", user, inv)
-
-	history, err := l.TransferHistory(3)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Printf("Transfer history:\n")
-	for _, t := range history {
-		fmt.Printf("- %s\n", t)
+	fmt.Println(c.InGreen("~ Economy service is up on port 2009 ~")) // 03/Jan/2009 Chancellor on brink of second bailout for banks
+	if err := http.ListenAndServe(":2009", nil); err != nil {
+		fmt.Println(c.InRed("Failed to start server: " + err.Error()))
+		os.Exit(1)
 	}
 }
