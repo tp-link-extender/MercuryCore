@@ -76,10 +76,7 @@
 				id={name.toString()}
 				value={select.value || options[0]} />
 
-			<button
-				{...select.trigger}
-				{disabled}
-				class="fakeselect">
+			<button {...select.trigger} {disabled} class="fakeselect">
 				{select.value || options[0] || "Select an option"}
 			</button>
 			<div {...select.content}>

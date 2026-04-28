@@ -5,19 +5,8 @@
 	import Textarea from "$components/forms/Textarea.svelte"
 	import Head from "$components/Head.svelte"
 	import beautifyCurrency from "$lib/beautifyCurrency"
-	import type { ClientForm } from "$lib/validate"
 	import assetTypes from "./assetTypes"
 	import { formData } from "./create.remote.js"
-
-	type CreateFormInput = {
-		type: "T-Shirt" | "Shirt" | "Pants" | "Decal" | "Face"
-		name: string
-		description: string
-		price: number
-		asset: File
-	}
-
-	const remoteForm = formData as unknown as ClientForm<CreateFormInput>
 
 	const { data } = $props()
 
@@ -41,35 +30,35 @@
 </div>
 
 <Form
-	formData={remoteForm}
+	formData={formData}
 	nopad
 	enctype="multipart/form-data"
 	submit="Create{user.permissionLevel < 3 ? currency : ''}"
 	class="ctnr pt-8 max-w-200 light-text">
 	<Select
-		formData={remoteForm}
+		formData={formData}
 		options={assetTypes}
 		selected={data.assetType ?? undefined}
 		name="type"
 		label="Asset type" />
 	<Input
-		formData={remoteForm}
+		formData={formData}
 		name="name"
 		label="Asset name"
 		placeholder="Make sure to make it accurate" />
 	<Textarea
-		formData={remoteForm}
+		formData={formData}
 		name="description"
 		label="Asset description"
 		placeholder="Up to 1000 characters" />
 	<Input
-		formData={remoteForm}
+		formData={formData}
 		name="price"
 		label="Asset price"
 		type="number" />
 	{#if data.assetType !== "Hat"}
 		<Input
-			formData={remoteForm}
+			formData={formData}
 			type="file"
 			name="asset"
 			label="Asset"
