@@ -1,9 +1,15 @@
 import { type } from "arktype"
+import { ThrownError } from "surrealdb"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, Record } from "$lib/server/surreal"
-import { arktype, message, superValidate } from "$lib/server/validate"
+import {
+	arktype,
+	errMessage,
+	message,
+	superValidate,
+} from "$lib/server/validate"
 import { usernameTest } from "$lib/typeTests"
 import updatePasswordQuery from "./updatePassword.surql"
 import usersQuery from "./users.surql"
@@ -37,14 +43,15 @@ actions.changePassword = async ({ locals, request, getClientAddress }) => {
 	form.data.password = ""
 
 	try {
-		await db.query(updatePasswordQuery, {
+		const [, ok] = await db.query<boolean[]>(updatePasswordQuery, {
 			npassword: Bun.password.hashSync(password),
 			username: username,
 		})
-	} catch {
-		return message(form, "Invalid credentials", {
-			status: 400,
-		})
+		if (!ok)
+			return errMessage(form, "No user found with given username")
+	} catch (e) {
+		console.error(e)
+		return errMessage(form, "An error occurred")
 	}
 
 	await db.run("fn::auditLog", [

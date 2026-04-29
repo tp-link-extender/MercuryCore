@@ -1,1 +1,1 @@
-UPDATE $place SET serverTicket = rand::guid();
+UPDATE $place SET serverTicket = rand::id();

@@ -1,5 +1,6 @@
 import { error, redirect } from "@sveltejs/kit"
 import { db, Record } from "$lib/server/surreal"
+import { encode } from "$lib/urlName"
 import assetQuery from "./asset.surql"
 
 export async function load({ params }) {
@@ -9,5 +10,6 @@ export async function load({ params }) {
 	})
 	if (!asset) error(404, "Not Found")
 
-	redirect(302, `/catalog/${id}/${asset.name}`)
+	const slug = encode(asset.name)
+	redirect(302, `/catalog/${id}/${slug}`)
 }

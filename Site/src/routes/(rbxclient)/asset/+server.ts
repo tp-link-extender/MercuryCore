@@ -4,6 +4,7 @@ import { OPEN_CLOUD_KEY } from "$env/static/private"
 import { intRegex } from "$lib/paramTests"
 import config from "$lib/server/config"
 import { db, Record } from "$lib/server/surreal"
+import { isXML } from "$lib/server/xml"
 import assetQuery from "./asset.surql"
 
 const headers = (file: string | Uint8Array) => ({
@@ -22,22 +23,16 @@ type FoundAsset = {
 	visibility: string
 }
 
-const xmlStart = "<roblox"
-
 // Only substitute if it's an XML file (re-encoding image files tends to corrupt them)
 async function substituteURLs(file: Bun.BunFile | Response) {
 	const buf = await file.arrayBuffer()
-	if (
-		buf.byteLength >= 7 &&
-		new Uint8Array(buf.slice(0, 7)).every(
-			(b, i) => b === xmlStart.charCodeAt(i)
-		)
-	)
-		return new TextDecoder()
-			.decode(buf)
-			.replaceAll("roblox.com/asset", `${config.Domain}/asset`)
+	if (!isXML(buf)) return new Uint8Array(buf)
 
-	return new Uint8Array(buf)
+	const rep = `${config.Domain}/asset`
+	return new TextDecoder()
+		.decode(buf)
+		.replaceAll("www.roblox.com/asset", rep)
+		.replaceAll("roblox.com/asset", rep)
 }
 
 async function loadPrivilegedAsset(id: number) {

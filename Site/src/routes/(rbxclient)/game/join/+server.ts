@@ -1,10 +1,15 @@
 import { error } from "@sveltejs/kit"
 import { membershipType } from "$lib/permissionLevels"
 import config from "$lib/server/config"
-import idToPort from "$lib/server/idToPort"
+import idToPort, { proxyOffset } from "$lib/server/idToPort"
 import { SignData } from "$lib/server/sign"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import joinQuery from "./join.surql"
+
+type ServerAddress = {
+	serverHostname: string
+	serverPort: number
+}
 
 type Session = {
 	place: {
@@ -13,9 +18,7 @@ type Session = {
 			username: string
 		}
 		dedicated: boolean
-		serverAddress: string
-		serverPort: number
-	}
+	} & ServerAddress
 	user: {
 		permissionLevel: number
 		username: string
@@ -27,13 +30,15 @@ const serverDedicated = (dedicated: boolean) =>
 		? dedicated
 		: config.Gameservers.Hosting === "Dedicated"
 
-const serverInfo = (place: Session["place"]) =>
-	serverDedicated(place.dedicated)
-		? {
-				serverAddress: config.OrbiterPublicDomain, // no scheme
-				serverPort: idToPort(place.id),
-			}
-		: place
+function serverInfo(place: Session["place"]): ServerAddress {
+	if (!serverDedicated(place.dedicated)) return place
+
+	const url = new URL(config.Orbiter.PublicURL)
+	return {
+		serverHostname: url.hostname, // no scheme, the address doesn't usually have a path anyway
+		serverPort: idToPort(place.id) + proxyOffset, // select the proxy port rather than the port of the server itself
+	}
+}
 
 export async function GET({ url }) {
 	const clientTicket = url.searchParams.get("ticket")
@@ -68,15 +73,15 @@ export async function GET({ url }) {
 	if (!gameSession) error(400, "Invalid Game Session")
 
 	const { place, user } = gameSession
-	const { serverAddress, serverPort } = serverInfo(place)
+	const { serverHostname, serverPort } = serverInfo(place)
 
 	// const creatorUsername = place.ownerUser?.username;
-	const charApp = `http://${config.Domain}/asset/characterfetch/${user.username}`
-	const pingUrl = `http://${config.Domain}/game/clientpresence?ticket=${clientTicket}`
+	const charApp = `http://${config.DomainInsecure}/asset/characterfetch/${user.username}`
+	const pingUrl = `http://${config.DomainInsecure}/game/clientpresence?ticket=${clientTicket}`
 	const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
 	const script = (await scriptFile.text())
 		.replaceAll("_PLACE_ID", place.id.toString())
-		.replaceAll("_SERVER_ADDRESS", `"${serverAddress}"`)
+		.replaceAll("_SERVER_ADDRESS", `"${serverHostname}"`)
 		.replaceAll("_SERVER_PORT", serverPort.toString())
 		// .replaceAll("_CREATOR_ID", creatorUsername)
 		.replaceAll("_USER_ID", Math.floor(Math.random() * 1e9).toString()) // todo: tho not rly used 4 much atm

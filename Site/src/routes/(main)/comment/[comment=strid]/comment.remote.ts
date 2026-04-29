@@ -4,6 +4,7 @@ import { getRequestEvent, query } from "$app/server"
 import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
 import { db, Record } from "$lib/server/surreal"
+import { encode } from "$lib/urlName"
 
 const schema = type("string")
 
@@ -19,6 +20,9 @@ export const getComment = query(schema, async id => {
 		}
 	)
 	if (!comment) error(404, "Comment not found")
+
+	if (comment.info && comment.info.type === "asset")
+		comment.info.slug = encode(comment.info.asset)
 
 	return comment
 })

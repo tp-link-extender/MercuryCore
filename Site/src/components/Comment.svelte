@@ -53,7 +53,6 @@
 			</button>
 		</span>
 
-		{commentsCollapsed?.[comment.id]}
 		{#if commentsCollapsed?.[comment.id]}
 			<!-- delay transition in -->
 			<button

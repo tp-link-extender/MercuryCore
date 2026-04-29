@@ -4,10 +4,10 @@ SELECT
 		dedicated,
 		serverAddress,
 		serverPort,
-		(SELECT username FROM <-ownsPlace<-user)[0] AS ownerUser
-	FROM ->place)[0] AS place,
+		(SELECT username FROM $parent<-ownsPlace<-user)[0] AS ownerUser
+	FROM $parent->place)[0] AS place,
 	(SELECT permissionLevel, username
-	FROM <-user)[0] AS user
+	FROM $parent<-user)[0] AS user
 FROM ONLY $playing;
 
 UPDATE $playing SET valid = false;

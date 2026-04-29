@@ -1,7 +1,8 @@
 import fs from "node:fs"
 import { error } from "@sveltejs/kit"
-import type { RecordId } from "surrealdb"
-import { db } from "$lib/server/surreal"
+import { db, type RecordId } from "$lib/server/surreal"
+
+const timeout = 10 // seconds
 
 export async function GET({ params, url }) {
 	let { username } = params
@@ -27,16 +28,21 @@ export async function GET({ params, url }) {
 		if (wait)
 			// If the file doesn't exist, wait for it to be created
 			// if it does exist, wait for it to be modified
-			await new Promise<void>(resolve => {
-				try {
-					const watcher = fs.watch(path, () => {
-						watcher.close()
+
+			await Promise.race([
+				new Promise<void>(resolve => {
+					try {
+						const watcher = fs.watch(path, () => {
+							watcher.close()
+							resolve()
+						})
+					} catch {
 						resolve()
-					})
-				} catch {
-					resolve()
-				}
-			})
+					}
+				}),
+				// ...but don't wait forever
+				new Promise(resolve => setTimeout(resolve, timeout * 1000)),
+			])
 		else if (!(await Bun.file(path).exists()))
 			throw new Error("File does not exist")
 

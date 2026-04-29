@@ -19,10 +19,7 @@ type FoundPlace = {
 
 interface Place extends FoundPlace {
 	created: string
-	description: {
-		text: string
-		updated: Date
-	}
+	description: string
 	dislikeCount: number
 	dislikes: boolean
 	id: number
@@ -72,7 +69,7 @@ export async function load({ locals, params, url }) {
 	return {
 		scheme: config.LauncherURI,
 		hosting: config.Gameservers.Hosting,
-		orbiterURL: `https://${config.OrbiterPublicDomain}`,
+		orbiterURL: config.Orbiter.PublicURL,
 		slug,
 		place,
 		thumbnails: [id % thumbnails.length],

@@ -10,10 +10,16 @@
 
 	const { data } = $props()
 
+	let { user } = $derived(data)
+
 	let formData = $derived(superForm(data.form))
 	export const snapshot = formData
 
 	let [, c1, c2] = $derived(beautifyCurrency(data.price))
+
+	let currency = $derived(
+		` (${data.currencySymbol}${c1}${c2 ? "." : ""}${c2})`
+	)
 </script>
 
 <Head name={data.siteName} title="Develop - Create" />
@@ -30,7 +36,7 @@
 	{formData}
 	nopad
 	enctype="multipart/form-data"
-	submit="Create ({data.currencySymbol}{c1}{c2 ? '.' : ''}{c2})"
+	submit="Create{user.permissionLevel < 3 ? currency : ''}"
 	class="ctnr pt-8 max-w-200 light-text">
 	<Select
 		{formData}

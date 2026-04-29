@@ -6,7 +6,7 @@ const port = 53640
 export async function GET() {
 	const scriptFile = Bun.file("../data/server/loadscripts/host.lua")
 	const script = (await scriptFile.text())
-		.replaceAll("_BASE_URL", `"${config.Domain}"`)
+		.replaceAll("_BASE_URL", `"${config.DomainInsecure}"`)
 		.replaceAll("_MAP_LOCATION", `""`)
 		.replaceAll("_SERVER_PORT", port.toString())
 		.replaceAll("_SERVER_PRESENCE_URL", `""`)

@@ -5,7 +5,6 @@ IF $comment.visibility = "Visible" {
 		visibility = $visibility,
 		content += {
 			text: $text,
-			updated: time::now(),
 		}
 	WHERE IF $moderate {
 		true 

@@ -6,7 +6,7 @@ import { version } from "$lib/server/surreal"
 export async function load({ fetch: f }) {
 	if (!dev) redirect(302, "/login")
 	return {
-		database: await version(),
+		database: (await version()).version,
 		stipend: await getStipend(f),
 	}
 }

@@ -12,7 +12,7 @@
 
 	$effect(() => {
 		if (data.description && !get(formData.form).description)
-			$form.description = data.description.text
+			$form.description = data.description
 	})
 </script>
 

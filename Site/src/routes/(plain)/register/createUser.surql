@@ -1,5 +1,4 @@
 LET $u = CREATE ONLY user CONTENT {
-	admin: $admin,
 	bodyColours: $bodyColours,
 	email: $email,
 	hashedPassword: $hashedPassword,

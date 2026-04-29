@@ -15,7 +15,7 @@
 	let commentsCollapsed = $state({})
 
 	const { data } = $props()
-	const comment = getComment(data.commentId)
+	let comment = $derived(getComment(data.commentId))
 
 	let { user } = $derived(data)
 
@@ -27,33 +27,28 @@
 	const elide = (c: string) => (c.length > 50 ? `${c.slice(0, 50)}...` : c)
 
 	function getBreadcrumb(c: Awaited<typeof comment>): [string, string][] {
-		const { info, type, visibility } = c
+		const { info, type } = c
 
 		if (type[0] === "status") return [["Status", "/"]]
+		if (!info) return []
 
-		if (type[0] === "asset")
+		if (info.type === "asset")
 			return [
 				["Catalog", "/catalog"],
-				["Asset", "/catalog"]
+				["Asset", `/catalog/${type[1]}/${info.slug}`]
 			]
 
-		if (type.length === 2)
-			return [
-				["Forum", "/forum"],
-				[
-					info.category || "Category",
-					`/forum/${info.category?.toLowerCase()}`
-				]
-			]
-
-		return [
+		const start: [string, string][] = [
 			["Forum", "/forum"],
 			[
 				info.category || "Category",
 				`/forum/${info.category?.toLowerCase()}`
-			],
-			[elide(info.post || "Post"), `/comment/${type[2]}`]
+			]
 		]
+
+		if (type.length === 2) return start
+
+		return [...start, [elide(info.post || "Post"), `/comment/${type[2]}`]]
 	}
 </script>
 

@@ -52,7 +52,7 @@ export async function clothingAsset(file: File, sharpOptions?: ResizeOptions) {
 
 /**
  * Creates an image thumbnail based off a file object
- * @param file A File object for the image to save
+ * @param b An ArrayBuffer for the image to save
  * @param sharpOptions Extra options to pass to sharp
  * @returns A function that saves the image to data/assets
  * @example
@@ -60,8 +60,8 @@ export async function clothingAsset(file: File, sharpOptions?: ResizeOptions) {
  * const id = // Load from database
  * save(id)
  */
-export async function thumbnail(file: File, sharpOptions?: ResizeOptions) {
-	const { buffer } = await sharp(await file.arrayBuffer())
+export async function thumbnail(b: ArrayBuffer, sharpOptions?: ResizeOptions) {
+	const { buffer } = await sharp(b)
 		.resize(420, 420, {
 			fit: "fill",
 			...sharpOptions,
@@ -104,7 +104,7 @@ export async function tShirt(file: File) {
 
 /**
  * Creates a T-Shirt thumbnail based off a file object
- * @param file A File object for the image to save
+ * @param b An ArrayBuffer for the image to save
  * @returns A function that saves the image to data/assets
  * @example
  * const save = await tShirtThumbnail(image)

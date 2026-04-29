@@ -3,7 +3,9 @@ title: Technology stack
 description: Overview of the technology stack used in Mercury Core.
 ---
 
-Mercury's frontend is built with [Svelte](https://svelte.dev/), a UI framework that compiles to vanilla JS, and SvelteKit, a powerful full-stack framework for building transitional apps.
+The Mercury Core codebase is designed to be as modular, extensible, and as consistent as possible, and the stack is built with modern technologies and standards that are easy to work with.
+
+The main Site frontend is built with [Svelte](https://svelte.dev/), a UI framework that compiles to vanilla JS, and SvelteKit, a powerful full-stack framework for building transitional apps.
 
 The Site uses [Typescript](https://typescripts.org/) throughout, a language that adds type extensions ontop of Javascript. Intellisense and type checking are used as well, as they help to prevent bugs and improve understanding of the codebase.
 

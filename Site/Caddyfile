@@ -1,4 +1,6 @@
-mercs.dev {
+# www. is the insecure HTTP version, not to be accessed via the browser
+
+mercs.dev, http://www.mercs.dev  {
 	rewrite /Asset /asset
 	rewrite /Asset/ /asset
 	rewrite /Asset/Default.ashx /asset
@@ -19,10 +21,5 @@ mercs.dev {
 	rewrite /Setting/QuietGet/ClientSharedSettings/* /api/clientsharedsettings
 	rewrite /Setting/QuietGet/ClientAppSettings/* /api/clientappsettings
 
-	reverse_proxy localhost:4443
-}
-
-# Often required for some URLs
-www.mercs.dev {
 	reverse_proxy localhost:4443
 }

@@ -18,11 +18,7 @@ import unfriendQuery from "./unfriend.surql"
 import userQuery from "./user.surql"
 
 interface User extends BasicUser {
-	description: {
-		id: string
-		text: string
-		updated: Date
-	}
+	description: string
 	follower: boolean
 	followerCount: number
 	following: boolean
@@ -41,14 +37,10 @@ interface User extends BasicUser {
 		name: string
 		playerCount: number
 	}[]
-	posts: {
+	comments: {
 		id: string
 		created: Date
-		content: {
-			id: string
-			text: string
-			updated: Date
-		}[]
+		content: string
 		visibility: string
 	}[]
 }

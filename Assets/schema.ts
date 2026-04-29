@@ -12,21 +12,13 @@ export type Config = {
 	 */
 	Domain: string
 	/**
-	 * The URL of your database server.
+	 * The version of your revival's domain to use for insecure HTTP requests. This is necessary for a lot of requests that don't support HTTPS. It shouldn't be the same as Domain, as the insecure domain shouldn't be used by a user to access normal site pages.
 	 */
-	DatabaseURL: string
+	DomainInsecure: string
 	/**
 	 * The URL of your RCC proxy server. Requires a URL scheme.
 	 */
 	RCCServiceProxyURL: string
-	/**
-	 * The URL of your Orbiter gameserver hoster, exposing the private API for use by the Site. Requires a URL scheme.
-	 */
-	OrbiterPrivateURL: string
-	/**
-	 * The domain name of your Orbiter gameserver hoster, exposing the public API for use by a user's browser.
-	 */
-	OrbiterPublicDomain: string
 	/**
 	 * The URI scheme to pass to the launcher when joining a game.
 	 */
@@ -39,6 +31,44 @@ export type Config = {
 	 * Controls which optional pages on the site are enabled. This allows you to turn off unnecessary features for your revival.
 	 */
 	Pages: ("Statistics" | "Groups" | "Forum")[]
+
+	/**
+	 * Configuration for the database server, run with SurrealDB.
+	 */
+	Database: {
+		/**
+		 * Whether to automatically start the database server when starting Mercury Core. This requires the SurrealDB binary to be in your system's PATH as `surreal`.
+		 */
+		AutoStart: boolean
+		/**
+		 * The domain name of your database server. Make sure to include the port if necessary.
+		 */
+		Domain: string
+	}
+
+	/**
+	 * Configuration for the Economy service.
+	 */
+	Economy: {
+		/**
+		 * Whether to automatically start the Economy service when starting Mercury Core. It will attempt to build the Economy service from source with Go if the executable cannot be found.
+		 */
+		AutoStart: boolean
+	}
+
+	/**
+	 * Configuration for the Orbiter gameserver hoster.
+	 */
+	Orbiter: {
+		/**
+		 * The URL of your Orbiter gameserver hoster, exposing the private API for use by the Site. Requires a URL scheme.
+		 */
+		PrivateURL: string
+		/**
+		 * The URL of your Orbiter gameserver hoster, exposing the public API for use by a user's browser. Requires a URL scheme.
+		 */
+		PublicURL: string
+	}
 
 	/**
 	 * The default body colours for avatar creation, given to each new user on registration.
@@ -199,6 +229,10 @@ export type Config = {
 		 * The SMTP server port to use for sending emails.
 		 */
 		Port: number
+		/**
+		 * Whether to use a secure connection (TLS) when connecting to the SMTP server. This should usually be true for port 465 and false for ports 587 and 25.
+		 */
+		Secure: boolean
 		/**
 		 * The username to use for authentication with the SMTP server. The corresponding password should be configured in your environment variables.
 		 */

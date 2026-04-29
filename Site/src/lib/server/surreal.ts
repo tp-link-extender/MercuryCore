@@ -1,77 +1,86 @@
 import {
-	type Prettify,
-	type QueryParameters,
+	type Query,
 	Surreal,
 	RecordId as SurrealRecordId,
+	Table,
 } from "surrealdb"
 import { building } from "$app/environment"
+import config from "$lib/server/config"
 import initQuery from "$lib/server/init.surql"
 import logo from "$lib/server/logo" // because this is usually one of the first files loaded
 import startEconomy from "$lib/server/process/economy"
 import startSurreal from "$lib/server/process/surreal"
 
 if (!building) {
-	try {
-		startSurreal()
-	} catch (e) {
-		console.log(e)
-		console.error(
-			"Failed to start SurrealDB. Make sure it is installed and accessible as `surreal`."
-		)
-		process.exit(1)
-	}
-	try {
-		startEconomy()
-	} catch (e) {
-		console.log(e)
-		console.error(
-			"Failed to start the Economy service. Make sure it is built and accessible at Economy/Economy."
-		)
-		process.exit(1)
-	}
+	if (config.Database.AutoStart)
+		try {
+			startSurreal()
+		} catch (e) {
+			console.log(e)
+			console.error(
+				"Failed to start SurrealDB. Make sure it is installed and accessible as `surreal`."
+			)
+			process.exit(1)
+		}
+	if (config.Economy.AutoStart)
+		try {
+			startEconomy()
+		} catch (e) {
+			console.log(e)
+			console.error(
+				"Failed to start the Economy service. Make sure it is built and accessible at Economy/Economy."
+			)
+			process.exit(1)
+		}
 }
 
 await new Promise(resolve => setTimeout(resolve, 500))
 
-export const db = new Surreal()
+export const db = new Surreal({
+	codecOptions: {
+		// SurrealDB dates would require custom serialisation/transformers, and we don't need the precision they provide
+		useNativeDates: true,
+	},
+})
 
 // Retry queries
 const ogq = db.query.bind(db)
 const retriable = "This transaction can be retried"
 
 // oof
-db.query = async <T extends unknown[]>(
-	...args: QueryParameters
-): Promise<Prettify<T>> => {
+// also bad types but who cares
+db.query = async <R extends unknown[]>(
+	query: string,
+	bindings?: Record<string, unknown>
+): Query<R> => {
 	try {
-		return (await ogq(...args)) as Prettify<T>
+		return await ogq(query, bindings)
 	} catch (err) {
 		const e = err as Error
 		if (!e.message.endsWith(retriable)) throw e
 		console.log("Retrying query:", e.message)
 	}
-	return await db.query(...args)
+	return await db.query(query, bindings)
 }
 
 export const version = db.version.bind(db)
 
-const url = "localhost:8000"
-const realUrl = new URL(`ws://${url}`) // must be ws:// to prevent token expiration, http:// will expire after 1 hour by default
+const url = new URL(`ws://${config.Database.Domain}`) // must be ws:// to prevent token expiration, http:// will expire after 1 hour by default
 
 async function reconnect() {
 	for (let attempt = 0; ; attempt++)
 		try {
 			await db.close() // doesn't do anything if not connected
 			console.log("connecting to database")
-			await db.connect(realUrl, {
+			await db.connect(url, {
 				namespace: "main",
 				database: "main",
-				auth: {
+				authentication: {
 					username: "root", // security B)
 					password: "root",
 				},
 			})
-			console.log("reloaded", await version())
+			console.log("reloaded", (await version()).version)
 			break
 		} catch (err) {
 			const e = err as Error
@@ -128,6 +137,41 @@ type RecordIdTypes = {
 	wearing: string
 }
 
+export const Asset = new Table("asset")
+export const AuditLog = new Table("auditLog")
+export const Banner = new Table("banner")
+export const Comment = new Table("comment")
+export const Created = new Table("created")
+export const CreatedAsset = new Table("createdAsset")
+export const Dislikes = new Table("dislikes")
+export const Follows = new Table("follows")
+export const ForumCategory = new Table("forumCategory")
+export const Friends = new Table("friends")
+export const Group = new Table("group")
+export const HasSession = new Table("hasSession")
+export const ImageAsset = new Table("imageAsset")
+export const In = new Table("in")
+export const Likes = new Table("likes")
+export const Moderation = new Table("moderation")
+export const Notification = new Table("notification")
+export const OwnsAsset = new Table("ownsAsset")
+export const OwnsGroup = new Table("ownsGroup")
+export const OwnsPlace = new Table("ownsPlace")
+export const Place = new Table("place")
+export const Playing = new Table("playing")
+export const Posted = new Table("posted")
+export const RecentlyWorn = new Table("recentlyWorn")
+export const RegKey = new Table("regKey")
+export const Render = new Table("render")
+export const Report = new Table("report")
+export const Request = new Table("request")
+export const Session = new Table("session")
+export const Stuff = new Table("stuff")
+export const ThumbnailCache = new Table("thumbnailCache")
+export const Used = new Table("used")
+export const User = new Table("user")
+export const Wearing = new Table("wearing")
+
 // Ensure type safety when creating record ids
 export type RecordId<T extends keyof RecordIdTypes> = SurrealRecordId<T>
 
@@ -179,22 +223,3 @@ export async function findWhere(
 	)
 	return res
 }
-
-/**
- * Runs a set of SurrealQL statements against the database.
- * Identical to db.query(), but provides an improved set of error messages for large queries.
- * @param query - Specifies the SurrealQL statements.
- * @param bindings - Assigns variables which can be used in the query.
- */
-// export async function bigQuery<T extends unknown[]>(...args: QueryParameters) {
-// 	const raw = await db.queryRaw<T>(...args)
-// 	const errors = raw.filter(({ status }) => status === "ERR")
-// 	if (errors.length > 0) {
-// 		const errorMessages = errors
-// 			.map(({ result }, i) => `[${i}]: ${result}`)
-// 			.join("\n")
-// 		throw new Error(`SurrealDB query error:\n${errorMessages}`)
-// 	}
-
-// 	return raw.map(({ result }) => result) as T
-// }

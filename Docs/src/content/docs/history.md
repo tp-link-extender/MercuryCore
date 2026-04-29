@@ -21,7 +21,7 @@ Krypton was a revival platform developed in late 2020 and early 2021, built upon
 
 The first version of Mercury started development as a rebranding and improvement of the Krypton codebase in May 2021, and was hosted at [banland.xyz (archive link)](https://web.archive.org/web/20210803231644/https://banland.xyz/). Mercury 1 used the late 2013 Client and Studio.
 
-Mercury 1 peaked at around 300 users before it shut down in September 2021 and merged with Project Polygon. A [functional archive](https://files.heliodex.cf/mercury-website.zip)[^2] of the original Mercury 1 website is available.
+Mercury 1 peaked at around 300 users before it shut down on 21 September 2021 and merged with Project Polygon. A [functional archive](https://files.heliodex.cf/mercury-website.zip)[^2] of the original Mercury 1 website is available.
 
 ## Krypton X
 
@@ -61,7 +61,7 @@ Mercury 2 moved to the domain [mercury2.com (archive link)](https://web.archive.
 
 Mercury then went on a short development hiatus and returned in mid-May with more fixes for database functions, and more attempts at making client integration work through a DLL hook, with plans to soon integrate a basic anti-cheat system. Users continued to be accepted onto the site at a slower rate. Through the start of June, some experiments were made with an updated economy system and various other updates on the site, while further progress on the DLL hook remained slow and difficult to advance.
 
-Eventually, it was decided that DLL hooking was not feasible, and with no good way to connect the Client and Studio to the rest of the platform, it was decided to [shut down Mercury 2](https://web.archive.org/web/20250622030340/http://mercury2.com/) on 22 June 2024. At the time of shutdown, Mercury 2 had just over 150 registered users.
+Eventually, it was decided that DLL hooking was not feasible, and with no good way to connect the Client and Studio to the rest of the platform, it was decided to [shut down Mercury 2](https://web.archive.org/web/20250331074009/https://mercury2.com/) on 22 June 2024. At the time of shutdown, Mercury 2 had just over 150 registered users.
 
 Some of Mercury 2's related projects were already available as open source, such as [melt](https://github.com/Heliodex/melt). Many other components, including the Setup deployer, 2013 scripts and tools, RCCService proxy, application settings JSON, and Discord bot were all made available as well.
 
@@ -81,6 +81,6 @@ On 6 September 2024, Mercury Core was officially made public with an announcemen
 
 [^1]: The Project Polygon FOSS source code listed at this link differs slightly from the version used to develop Mercury 1 and is missing the commit history.
 
-[^2]: This archive includes Git history for changes made to Mercury 1. Changes made to the Project Polygon codebase before it was used to develop Mercury 1 are not included.
+[^2]: This archive includes Git history for changes made to Mercury 1 as far back as 27 July 2021. Changes made to the Project Polygon codebase before it was used to develop Mercury 1 are not included.
 
 [^3]: This led to the misconception that Mercury Core had been open source from the beginning of Mercury 2 development, which is not the case.
