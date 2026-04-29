@@ -7,6 +7,7 @@ type Type uint8
 const (
 	// number ID types
 
+	// zillion pound mistake
 	TypeNil Type = iota
 	TypeCurrency
 	TypeLimitedAsset

@@ -117,7 +117,7 @@ func (s Send) UnlimitedSourceAssetMint() bool {
 
 func (s Send) Serialise(b *bytes.Buffer) {
 	// encode Owner
-	ok := SerialiseItem2(s.Owner, b)
+	ok := SerialiseItem(s.Owner, b)
 	if !ok {
 		panic(fmt.Sprintf("unknown Owner type: %T", s.Owner))
 	}
@@ -132,7 +132,7 @@ func DeserialiseSend(r io.Reader) (Send, error) {
 	var s Send
 
 	// decode Owner
-	ownerItem, err := DeserialiseItem2(r)
+	ownerItem, err := DeserialiseItem(r)
 	if err != nil {
 		return s, fmt.Errorf("decode owner: %w", err)
 	}

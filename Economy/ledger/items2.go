@@ -24,7 +24,7 @@ func SerialiseString(i StringItem) []byte {
 	return id
 }
 
-func SerialiseItem2(i Item, b *bytes.Buffer) bool {
+func SerialiseItem(i Item, b *bytes.Buffer) bool {
 	if i == nil {
 		b.WriteByte(byte(TypeNil))
 	} else if ni, ok := i.(NumericItem); ok {
@@ -37,7 +37,7 @@ func SerialiseItem2(i Item, b *bytes.Buffer) bool {
 	return true
 }
 
-func DeserialiseItem2(r io.Reader) (Item, error) {
+func DeserialiseItem(r io.Reader) (Item, error) {
 	var typeByte [1]byte
 	if _, err := r.Read(typeByte[:]); err != nil {
 		return nil, fmt.Errorf("read type: %w", err)
@@ -131,7 +131,7 @@ func (is ItemsOne) Serialise(b *bytes.Buffer) error {
 	b.Write(lbuf[:])
 
 	for i := range is {
-		if !SerialiseItem2(i, b) {
+		if !SerialiseItem(i, b) {
 			return fmt.Errorf("unknown CanOwnOne type: %T", i)
 		}
 	}
@@ -147,7 +147,7 @@ func DeserialiseItemsOne(r io.Reader) (ItemsOne, error) {
 
 	is := make(ItemsOne, l)
 	for range l {
-		i, err := DeserialiseItem2(r)
+		i, err := DeserialiseItem(r)
 		if err != nil {
 			return nil, fmt.Errorf("deserialise item: %w", err)
 		}
@@ -199,7 +199,7 @@ func (is ItemsMany) Serialise(b *bytes.Buffer) error {
 	b.Write(lbuf[:])
 
 	for i, qty := range is {
-		if !SerialiseItem2(i, b) {
+		if !SerialiseItem(i, b) {
 			return fmt.Errorf("unknown CanOwnMany type: %T", i)
 		}
 		var qtybuf [8]byte
@@ -218,7 +218,7 @@ func DeserialiseItemsMany(r io.Reader) (ItemsMany, error) {
 
 	is := make(ItemsMany, l)
 	for range l {
-		i, err := DeserialiseItem2(r)
+		i, err := DeserialiseItem(r)
 		if err != nil {
 			return nil, fmt.Errorf("deserialise item: %w", err)
 		}
