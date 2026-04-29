@@ -1,4 +1,4 @@
-package main
+package ledger
 
 import "fmt"
 
@@ -63,11 +63,11 @@ func IsMintable(i Item) bool {
 }
 
 type Currency struct {
-	id uint32
+	Id uint32
 }
 
 func (i Currency) String() string {
-	return fmt.Sprintf("currency(%d)", i.id)
+	return fmt.Sprintf("currency(%d)", i.Id)
 }
 
 func (Currency) Type() Type {
@@ -75,18 +75,18 @@ func (Currency) Type() Type {
 }
 
 func (i Currency) ID() uint32 {
-	return i.id
+	return i.Id
 }
 
 func (Currency) Mintable()   {}
 func (Currency) CanOwnMany() {}
 
 type LimitedAsset struct {
-	id uint32
+	Id uint32
 }
 
 func (i LimitedAsset) String() string {
-	return fmt.Sprintf("limited-asset(%d)", i.id)
+	return fmt.Sprintf("limited-asset(%d)", i.Id)
 }
 
 func (LimitedAsset) Type() Type {
@@ -94,17 +94,17 @@ func (LimitedAsset) Type() Type {
 }
 
 func (i LimitedAsset) ID() uint32 {
-	return i.id
+	return i.Id
 }
 
 func (LimitedAsset) CanOwnMany() {}
 
 type UnlimitedAsset struct {
-	id uint32
+	Id uint32
 }
 
 func (i UnlimitedAsset) String() string {
-	return fmt.Sprintf("unlimited-asset(%d)", i.id)
+	return fmt.Sprintf("unlimited-asset(%d)", i.Id)
 }
 
 func (UnlimitedAsset) Type() Type {
@@ -112,17 +112,17 @@ func (UnlimitedAsset) Type() Type {
 }
 
 func (i UnlimitedAsset) ID() uint32 {
-	return i.id
+	return i.Id
 }
 
 func (UnlimitedAsset) CanOwnOne() {}
 
 type LimitedSource struct {
-	id uint32
+	Id uint32
 }
 
 func (i LimitedSource) String() string {
-	return fmt.Sprintf("limited-source(%d)", i.id)
+	return fmt.Sprintf("limited-source(%d)", i.Id)
 }
 
 func (LimitedSource) Type() Type {
@@ -130,7 +130,7 @@ func (LimitedSource) Type() Type {
 }
 
 func (i LimitedSource) ID() uint32 {
-	return i.id
+	return i.Id
 }
 
 func (LimitedSource) CanOwnOne() {}
@@ -147,11 +147,11 @@ func RandLimitedSource() LimitedSource {
 }
 
 type UnlimitedSource struct {
-	id uint32
+	Id uint32
 }
 
 func (i UnlimitedSource) String() string {
-	return fmt.Sprintf("unlimited-source(%d)", i.id)
+	return fmt.Sprintf("unlimited-source(%d)", i.Id)
 }
 
 func (UnlimitedSource) Type() Type {
@@ -159,7 +159,7 @@ func (UnlimitedSource) Type() Type {
 }
 
 func (i UnlimitedSource) ID() uint32 {
-	return i.id
+	return i.Id
 }
 
 func (UnlimitedSource) CanOwnOne() {}
@@ -200,11 +200,11 @@ func RandPlace() Place {
 }
 
 type User struct {
-	id string
+	Id string
 }
 
 func (i User) String() string {
-	return fmt.Sprintf("user(%s)", i.id)
+	return fmt.Sprintf("user(%s)", i.Id)
 }
 
 func (User) Type() Type {
@@ -212,7 +212,7 @@ func (User) Type() Type {
 }
 
 func (i User) ID() string {
-	return i.id
+	return i.Id
 }
 
 func (User) Owner() {}
