@@ -1,4 +1,4 @@
-package ledger
+package main
 
 import (
 	"fmt"
@@ -22,11 +22,6 @@ func (e *EconomyServer) ownsOneRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if ownerItem == nil {
-		http.Error(w, "expected owner, got nil", http.StatusBadRequest)
-		return
-	}
-
 	owner, ok := ownerItem.(Owner)
 	if !ok {
 		http.Error(w, fmt.Sprintf("item is not Owner: %T", ownerItem), http.StatusBadRequest)
@@ -38,8 +33,44 @@ func (e *EconomyServer) ownsOneRoute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if canOwnOneItem == nil {
-		http.Error(w, "expected item, got nil", http.StatusBadRequest)
+	item, ok := canOwnOneItem.(CanOwnOne)
+	if !ok {
+		http.Error(w, fmt.Sprintf("item is not CanOwnOne: %T", canOwnOneItem), http.StatusBadRequest)
+	}
+
+	fmt.Fprintf(w, "%t", e.OwnsOne(owner, item))
+}
+
+func (e *EconomyServer) ownsManyRoute(w http.ResponseWriter, r *http.Request) {
+	ownerItem, err := DeserialiseItem(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode owner: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	owner, ok := ownerItem.(Owner)
+	if !ok {
+		http.Error(w, fmt.Sprintf("item is not Owner: %T", ownerItem), http.StatusBadRequest)
+	}
+
+	canOwnManyItem, err := DeserialiseItem(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode item: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	item, ok := canOwnManyItem.(CanOwnMany)
+	if !ok {
+		http.Error(w, fmt.Sprintf("item is not CanOwnMany: %T", canOwnManyItem), http.StatusBadRequest)
+	}
+
+	fmt.Fprintf(w, "%d", e.OwnsMany(owner, item))
+}
+
+func (e *EconomyServer) ownersOneRoute(w http.ResponseWriter, r *http.Request) {
+	canOwnOneItem, err := DeserialiseItem(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode item: %v", err.Error()), http.StatusBadRequest)
 		return
 	}
 
@@ -48,7 +79,26 @@ func (e *EconomyServer) ownsOneRoute(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("item is not CanOwnOne: %T", canOwnOneItem), http.StatusBadRequest)
 	}
 
-	fmt.Fprintf(w, "%t", e.OwnsOne(owner, item))
+	if err := e.OwnersOne(item).Serialise(w); err != nil {
+		http.Error(w, fmt.Sprintf("serialise OwnersOne: %v", err.Error()), http.StatusInternalServerError)
+	}
+}
+
+func (e *EconomyServer) ownersManyRoute(w http.ResponseWriter, r *http.Request) {
+	canOwnManyItem, err := DeserialiseItem(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode item: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	item, ok := canOwnManyItem.(CanOwnMany)
+	if !ok {
+		http.Error(w, fmt.Sprintf("item is not CanOwnMany: %T", canOwnManyItem), http.StatusBadRequest)
+	}
+
+	if err := e.OwnersMany(item).Serialise(w); err != nil {
+		http.Error(w, fmt.Sprintf("serialise OwnersMany: %v", err.Error()), http.StatusInternalServerError)
+	}
 }
 
 func main() {
