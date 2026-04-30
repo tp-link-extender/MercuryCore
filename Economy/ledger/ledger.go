@@ -897,7 +897,7 @@ func (e *Economy) CreateUnlimitedSource(user User) (UnlimitedSource, TransferID,
 }
 
 func (e *Economy) CreatePlace(user User) (Place, TransferID, error) {
-	place := RandPlace()
+	p := RandPlace()
 
 	// tf (the fuck)
 	tf := Transfer{
@@ -911,7 +911,7 @@ func (e *Economy) CreatePlace(user User) (Place, TransferID, error) {
 		},
 		{Items: Items{
 			One: ItemsOne{
-				place: {},
+				p: {},
 			},
 		}},
 	}
@@ -921,11 +921,11 @@ func (e *Economy) CreatePlace(user User) (Place, TransferID, error) {
 		return Place{}, TransferID{}, fmt.Errorf("create place transfer %v: %w", tid, err)
 	}
 
-	return place, tid, nil
+	return p, tid, nil
 }
 
 func (e *Economy) CreateGroup(user User) (Group, TransferID, error) {
-	group := RandGroup()
+	g := RandGroup()
 
 	tf := Transfer{
 		{
@@ -938,7 +938,7 @@ func (e *Economy) CreateGroup(user User) (Group, TransferID, error) {
 		},
 		{Items: Items{
 			One: ItemsOne{
-				group: {},
+				g: {},
 			},
 		}},
 	}
@@ -948,11 +948,11 @@ func (e *Economy) CreateGroup(user User) (Group, TransferID, error) {
 		return Group{}, TransferID{}, fmt.Errorf("create group transfer %v: %w", tid, err)
 	}
 
-	return group, tid, nil
+	return g, tid, nil
 }
 
 func (e *Economy) BuyUnlimitedAsset(user User, src UnlimitedSource, price Quantity) (UnlimitedAsset, TransferID, error) {
-	asset := src.Create()
+	a := src.Create()
 
 	tf := Transfer{
 		{
@@ -967,7 +967,7 @@ func (e *Economy) BuyUnlimitedAsset(user User, src UnlimitedSource, price Quanti
 			Owner: src,
 			Items: Items{
 				One: ItemsOne{
-					asset: {},
+					a: {},
 				},
 			},
 		},
@@ -978,11 +978,11 @@ func (e *Economy) BuyUnlimitedAsset(user User, src UnlimitedSource, price Quanti
 		return UnlimitedAsset{}, TransferID{}, fmt.Errorf("buy unlimited asset transfer %v: %w", tid, err)
 	}
 
-	return asset, tid, nil
+	return a, tid, nil
 }
 
 func (e *Economy) BuyLimitedAsset(user User, src LimitedSource, priceEach, qty Quantity) (LimitedAsset, TransferID, error) {
-	asset := src.Create()
+	a := src.Create()
 
 	tf := Transfer{
 		{
@@ -997,7 +997,7 @@ func (e *Economy) BuyLimitedAsset(user User, src LimitedSource, priceEach, qty Q
 			Owner: src,
 			Items: Items{
 				Many: ItemsMany{
-					asset: qty,
+					a: qty,
 				},
 			},
 		},
@@ -1008,7 +1008,7 @@ func (e *Economy) BuyLimitedAsset(user User, src LimitedSource, priceEach, qty Q
 		return LimitedAsset{}, TransferID{}, fmt.Errorf("buy limited asset transfer %v: %w", tid, err)
 	}
 
-	return asset, tid, nil
+	return a, tid, nil
 }
 
 func (e *Economy) TransferHistory(n int) ([]TransferWithID, error) {

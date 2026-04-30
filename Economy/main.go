@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"time"
@@ -147,8 +148,8 @@ func (e *EconomyServer) stipendRoute(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("item is not User: %T", ui), http.StatusBadRequest)
 	}
 
-	tid, err := e.Stipend(u)
-	if err != nil {
+	// wdc about the tid (what would we even do with it in where this API is called from??)
+	if _, err := e.Stipend(u); err != nil {
 		if err == ErrStipendNotReady {
 			http.Error(w, ErrStipendNotReady.Error(), http.StatusTooManyRequests) // we're not using 425
 		}
@@ -156,8 +157,49 @@ func (e *EconomyServer) stipendRoute(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("stipend error: %v", err.Error()), http.StatusBadRequest)
 		return
 	}
+}
 
-	fmt.Fprintf(w, "%s", tid.String())
+func (e *EconomyServer) createLimitedSourceRoute(w http.ResponseWriter, r *http.Request) {
+	ui, err := DeserialiseItem(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode user: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	u, ok := ui.(User)
+	if !ok {
+		http.Error(w, fmt.Sprintf("item is not User: %T", ui), http.StatusBadRequest)
+	}
+
+	// again wdc about the tid because we'll probably be redirecting and the src is what we actually want
+	src, _, err := e.CreateLimitedSource(u)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("create limited source error: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	io.WriteString(w, src.String()) // TODO: better format possible?
+}
+
+func (e *EconomyServer) createUnlimitedSourceRoute(w http.ResponseWriter, r *http.Request) {
+	ui, err := DeserialiseItem(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode user: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	u, ok := ui.(User)
+	if !ok {
+		http.Error(w, fmt.Sprintf("item is not User: %T", ui), http.StatusBadRequest)
+	}
+
+	src, _, err := e.CreateUnlimitedSource(u)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("create unlimited source error: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	io.WriteString(w, src.String()) // TODO: better format possible?
 }
 
 func main() {
