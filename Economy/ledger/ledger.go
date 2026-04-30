@@ -115,15 +115,14 @@ func (s Send) UnlimitedSourceAssetMint() bool {
 	})
 }
 
-func (s Send) Serialise(b *bytes.Buffer) {
+func (s Send) Serialise(w io.Writer) {
 	// encode Owner
-	ok := SerialiseItem(s.Owner, b)
-	if !ok {
+	if !SerialiseItem(s.Owner, w) {
 		panic(fmt.Sprintf("unknown Owner type: %T", s.Owner))
 	}
 
 	// encode Items
-	if err := s.Items.Serialise(b); err != nil {
+	if err := s.Items.Serialise(w); err != nil {
 		panic(fmt.Sprintf("serialise Items: %v", err))
 	}
 }
@@ -248,9 +247,9 @@ func (t Transfer) Equal(other Transfer) bool {
 	return t[0].Equal(other[0]) && t[1].Equal(other[1])
 }
 
-func (t Transfer) Serialise(b *bytes.Buffer) {
-	t[0].Serialise(b)
-	t[1].Serialise(b)
+func (t Transfer) Serialise(w io.Writer) {
+	t[0].Serialise(w)
+	t[1].Serialise(w)
 }
 
 func DeserialiseTransfer(r io.Reader) (t Transfer, err error) {
@@ -275,6 +274,41 @@ func (os *OwnersOne) Add(o Owner) {
 	(*os)[o] = struct{}{}
 }
 
+func (os OwnersOne) Serialise(w io.Writer) error {
+	var lbuf [4]byte
+	binary.BigEndian.PutUint32(lbuf[:], uint32(len(os)))
+	w.Write(lbuf[:])
+
+	for o := range os {
+		if !SerialiseItem(o, w) {
+			return fmt.Errorf("unknown Owner type: %T", o)
+		}
+	}
+	return nil
+}
+
+func DeserialiseOwnersOne(r io.Reader) (OwnersOne, error) {
+	var lbuf [4]byte
+	if _, err := r.Read(lbuf[:]); err != nil {
+		return nil, fmt.Errorf("read OwnersOne length: %w", err)
+	}
+	l := binary.BigEndian.Uint32(lbuf[:])
+
+	os := make(OwnersOne, l)
+	for range l {
+		i, err := DeserialiseItem(r)
+		if err != nil {
+			return nil, fmt.Errorf("decode owner: %w", err)
+		}
+		o, ok := i.(Owner)
+		if !ok {
+			return nil, fmt.Errorf("item is not Owner: %T", i)
+		}
+		os[o] = struct{}{}
+	}
+	return os, nil
+}
+
 type OwnersMany map[Owner]Quantity
 
 func (os *OwnersMany) Add(o Owner, qty Quantity) {
@@ -283,6 +317,51 @@ func (os *OwnersMany) Add(o Owner, qty Quantity) {
 		return
 	}
 	(*os)[o] += qty
+}
+
+func (os OwnersMany) Serialise(w io.Writer) error {
+	var lbuf [4]byte
+	binary.BigEndian.PutUint32(lbuf[:], uint32(len(os)))
+	w.Write(lbuf[:])
+
+	for o, qty := range os {
+		if !SerialiseItem(o, w) {
+			return fmt.Errorf("unknown Owner type: %T", o)
+		}
+
+		var qtybuf [8]byte
+		binary.BigEndian.PutUint64(qtybuf[:], uint64(qty))
+		w.Write(qtybuf[:])
+	}
+	return nil
+}
+
+func DeserialiseOwnersMany(r io.Reader) (OwnersMany, error) {
+	var lbuf [4]byte
+	if _, err := r.Read(lbuf[:]); err != nil {
+		return nil, fmt.Errorf("read OwnersMany length: %w", err)
+	}
+	l := binary.BigEndian.Uint32(lbuf[:])
+
+	os := make(OwnersMany, l)
+	for range l {
+		i, err := DeserialiseItem(r)
+		if err != nil {
+			return nil, fmt.Errorf("decode owner: %w", err)
+		}
+		o, ok := i.(Owner)
+		if !ok {
+			return nil, fmt.Errorf("item is not Owner: %T", i)
+		}
+
+		var qtybuf [8]byte
+		if _, err := r.Read(qtybuf[:]); err != nil {
+			return nil, fmt.Errorf("read quantity: %w", err)
+		}
+		qty := binary.BigEndian.Uint64(qtybuf[:])
+		os[o] = Quantity(qty)
+	}
+	return os, nil
 }
 
 type State struct {

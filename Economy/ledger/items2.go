@@ -1,7 +1,6 @@
 package ledger
 
 import (
-	"bytes"
 	"encoding/binary"
 	"fmt"
 	"io"
@@ -24,13 +23,13 @@ func SerialiseString(i StringItem) []byte {
 	return id
 }
 
-func SerialiseItem(i Item, b *bytes.Buffer) bool {
+func SerialiseItem(i Item, w io.Writer) bool {
 	if i == nil {
-		b.WriteByte(byte(TypeNil))
+		w.Write([]byte{byte(TypeNil)})
 	} else if ni, ok := i.(NumericItem); ok {
-		b.Write(SerialiseNumeric(ni))
+		w.Write(SerialiseNumeric(ni))
 	} else if si, ok := i.(StringItem); ok {
-		b.Write(SerialiseString(si))
+		w.Write(SerialiseString(si))
 	} else {
 		return false
 	}
@@ -124,14 +123,14 @@ func (is *ItemsOne) Add(i CanOwnOne) {
 	(*is)[i] = struct{}{}
 }
 
-func (is ItemsOne) Serialise(b *bytes.Buffer) error {
+func (is ItemsOne) Serialise(w io.Writer) error {
 	var lbuf [4]byte
 	// watch out don't have more than 4 billion inventory items lolll
 	binary.BigEndian.PutUint32(lbuf[:], uint32(len(is)))
-	b.Write(lbuf[:])
+	w.Write(lbuf[:])
 
 	for i := range is {
-		if !SerialiseItem(i, b) {
+		if !SerialiseItem(i, w) {
 			return fmt.Errorf("unknown CanOwnOne type: %T", i)
 		}
 	}
@@ -149,7 +148,7 @@ func DeserialiseItemsOne(r io.Reader) (ItemsOne, error) {
 	for range l {
 		i, err := DeserialiseItem(r)
 		if err != nil {
-			return nil, fmt.Errorf("deserialise item: %w", err)
+			return nil, fmt.Errorf("decode item: %w", err)
 		}
 		coo, ok := i.(CanOwnOne)
 		if !ok {
@@ -193,18 +192,19 @@ func (i *ItemsMany) Add(item CanOwnMany, qty Quantity) {
 	(*i)[item] += qty
 }
 
-func (is ItemsMany) Serialise(b *bytes.Buffer) error {
+func (is ItemsMany) Serialise(w io.Writer) error {
 	var lbuf [4]byte
 	binary.BigEndian.PutUint32(lbuf[:], uint32(len(is)))
-	b.Write(lbuf[:])
+	w.Write(lbuf[:])
 
 	for i, qty := range is {
-		if !SerialiseItem(i, b) {
+		if !SerialiseItem(i, w) {
 			return fmt.Errorf("unknown CanOwnMany type: %T", i)
 		}
+
 		var qtybuf [8]byte
 		binary.BigEndian.PutUint64(qtybuf[:], uint64(qty))
-		b.Write(qtybuf[:])
+		w.Write(qtybuf[:])
 	}
 	return nil
 }
@@ -220,7 +220,7 @@ func DeserialiseItemsMany(r io.Reader) (ItemsMany, error) {
 	for range l {
 		i, err := DeserialiseItem(r)
 		if err != nil {
-			return nil, fmt.Errorf("deserialise item: %w", err)
+			return nil, fmt.Errorf("decode item: %w", err)
 		}
 		com, ok := i.(CanOwnMany)
 		if !ok {
@@ -232,7 +232,6 @@ func DeserialiseItemsMany(r io.Reader) (ItemsMany, error) {
 			return nil, fmt.Errorf("read quantity: %w", err)
 		}
 		qty := binary.BigEndian.Uint64(qtybuf[:])
-
 		is[com] = Quantity(qty)
 	}
 	return is, nil
@@ -270,12 +269,12 @@ func (i Items) IsEmpty() bool {
 	return len(i.One) == 0 && len(i.Many) == 0
 }
 
-func (is Items) Serialise(b *bytes.Buffer) error {
-	if err := is.One.Serialise(b); err != nil {
+func (is Items) Serialise(w io.Writer) error {
+	if err := is.One.Serialise(w); err != nil {
 		return fmt.Errorf("serialise ItemsOne: %w", err)
 	}
 
-	if err := is.Many.Serialise(b); err != nil {
+	if err := is.Many.Serialise(w); err != nil {
 		return fmt.Errorf("serialise ItemsMany: %w", err)
 	}
 
@@ -285,12 +284,12 @@ func (is Items) Serialise(b *bytes.Buffer) error {
 func DeserialiseItems(r io.Reader) (Items, error) {
 	one, err := DeserialiseItemsOne(r)
 	if err != nil {
-		return Items{}, fmt.Errorf("deserialise ItemsOne: %w", err)
+		return Items{}, fmt.Errorf("decode ItemsOne: %w", err)
 	}
 
 	many, err := DeserialiseItemsMany(r)
 	if err != nil {
-		return Items{}, fmt.Errorf("deserialise ItemsMany: %w", err)
+		return Items{}, fmt.Errorf("decode ItemsMany: %w", err)
 	}
 
 	return Items{one, many}, nil
