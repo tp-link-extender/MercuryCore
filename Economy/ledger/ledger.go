@@ -750,8 +750,8 @@ func (e *Economy) OwnersMany(item CanOwnMany) OwnersMany {
 }
 
 func (e *Economy) Inventory(user Owner) Items {
-	inv := *e.ledger.Inventory(user)
-	return inv
+	inv := e.ledger.Inventory(user)
+	return *inv
 }
 
 func (e *Economy) Balance(user Owner) Quantity {
