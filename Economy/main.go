@@ -149,6 +149,10 @@ func (e *EconomyServer) stipendRoute(w http.ResponseWriter, r *http.Request) {
 
 	tid, err := e.Stipend(u)
 	if err != nil {
+		if err == ErrStipendNotReady {
+			http.Error(w, ErrStipendNotReady.Error(), http.StatusTooManyRequests) // we're not using 425
+		}
+
 		http.Error(w, fmt.Sprintf("stipend error: %v", err.Error()), http.StatusBadRequest)
 		return
 	}
