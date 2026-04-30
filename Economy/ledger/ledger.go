@@ -132,17 +132,17 @@ func DeserialiseSend(r io.Reader) (Send, error) {
 	var s Send
 
 	// decode Owner
-	ownerItem, err := DeserialiseItem(r)
+	oi, err := DeserialiseItem(r)
 	if err != nil {
 		return s, fmt.Errorf("decode owner: %w", err)
 	}
 
-	if ownerItem != nil {
-		owner, ok := ownerItem.(Owner)
+	if oi != nil {
+		o, ok := oi.(Owner)
 		if !ok {
-			return s, fmt.Errorf("item is not Owner: %T", ownerItem)
+			return s, fmt.Errorf("item is not Owner: %T", oi)
 		}
-		s.Owner = owner
+		s.Owner = o
 	}
 
 	// decode Items
@@ -267,20 +267,20 @@ func DeserialiseTransfer(r io.Reader) (t Transfer, err error) {
 
 type OwnersOne map[Owner]struct{}
 
-func (os *OwnersOne) Add(o Owner) {
-	if *os == nil {
-		*os = OwnersOne{o: struct{}{}}
+func (oo *OwnersOne) Add(o Owner) {
+	if *oo == nil {
+		*oo = OwnersOne{o: struct{}{}}
 		return
 	}
-	(*os)[o] = struct{}{}
+	(*oo)[o] = struct{}{}
 }
 
-func (os OwnersOne) Serialise(w io.Writer) error {
+func (oo OwnersOne) Serialise(w io.Writer) error {
 	var lbuf [4]byte
-	binary.BigEndian.PutUint32(lbuf[:], uint32(len(os)))
+	binary.BigEndian.PutUint32(lbuf[:], uint32(len(oo)))
 	w.Write(lbuf[:])
 
-	for o := range os {
+	for o := range oo {
 		if !SerialiseItem(o, w) {
 			return fmt.Errorf("unknown Owner type: %T", o)
 		}
@@ -295,7 +295,7 @@ func DeserialiseOwnersOne(r io.Reader) (OwnersOne, error) {
 	}
 	l := binary.BigEndian.Uint32(lbuf[:])
 
-	os := make(OwnersOne, l)
+	oo := make(OwnersOne, l)
 	for range l {
 		i, err := DeserialiseItem(r)
 		if err != nil {
@@ -305,27 +305,27 @@ func DeserialiseOwnersOne(r io.Reader) (OwnersOne, error) {
 		if !ok {
 			return nil, fmt.Errorf("item is not Owner: %T", i)
 		}
-		os[o] = struct{}{}
+		oo[o] = struct{}{}
 	}
-	return os, nil
+	return oo, nil
 }
 
 type OwnersMany map[Owner]Quantity
 
-func (os *OwnersMany) Add(o Owner, qty Quantity) {
-	if *os == nil {
-		*os = OwnersMany{o: qty}
+func (om *OwnersMany) Add(o Owner, qty Quantity) {
+	if *om == nil {
+		*om = OwnersMany{o: qty}
 		return
 	}
-	(*os)[o] += qty
+	(*om)[o] += qty
 }
 
-func (os OwnersMany) Serialise(w io.Writer) error {
+func (om OwnersMany) Serialise(w io.Writer) error {
 	var lbuf [4]byte
-	binary.BigEndian.PutUint32(lbuf[:], uint32(len(os)))
+	binary.BigEndian.PutUint32(lbuf[:], uint32(len(om)))
 	w.Write(lbuf[:])
 
-	for o, qty := range os {
+	for o, qty := range om {
 		if !SerialiseItem(o, w) {
 			return fmt.Errorf("unknown Owner type: %T", o)
 		}
@@ -344,7 +344,7 @@ func DeserialiseOwnersMany(r io.Reader) (OwnersMany, error) {
 	}
 	l := binary.BigEndian.Uint32(lbuf[:])
 
-	os := make(OwnersMany, l)
+	om := make(OwnersMany, l)
 	for range l {
 		i, err := DeserialiseItem(r)
 		if err != nil {
@@ -360,9 +360,9 @@ func DeserialiseOwnersMany(r io.Reader) (OwnersMany, error) {
 			return nil, fmt.Errorf("read quantity: %w", err)
 		}
 		qty := binary.BigEndian.Uint64(qtybuf[:])
-		os[o] = Quantity(qty)
+		om[o] = Quantity(qty)
 	}
-	return os, nil
+	return om, nil
 }
 
 type State struct {
@@ -398,22 +398,22 @@ func (s *State) GetInventory(id Owner) *Items {
 	return inv
 }
 
-func (s *State) GetOwnersOne(item CanOwnOne) *OwnersOne {
-	owners, ok := s.itemOwnersOne[item]
+func (s *State) GetOwnersOne(i CanOwnOne) *OwnersOne {
+	oo, ok := s.itemOwnersOne[i]
 	if !ok {
-		owners = &OwnersOne{}
-		s.itemOwnersOne[item] = owners
+		oo = &OwnersOne{}
+		s.itemOwnersOne[i] = oo
 	}
-	return owners
+	return oo
 }
 
-func (s *State) GetOwnersMany(item CanOwnMany) *OwnersMany {
-	owners, ok := s.itemOwnersMany[item]
+func (s *State) GetOwnersMany(i CanOwnMany) *OwnersMany {
+	om, ok := s.itemOwnersMany[i]
 	if !ok {
-		owners = &OwnersMany{}
-		s.itemOwnersMany[item] = owners
+		om = &OwnersMany{}
+		s.itemOwnersMany[i] = om
 	}
-	return owners
+	return om
 }
 
 func (s State) CanApply(t Transfer) error {
@@ -429,20 +429,20 @@ func (s State) CanApply(t Transfer) error {
 		}
 		inv := s.GetInventory(send.Owner)
 		otherinv := s.GetInventory(t[1-i].Owner)
-		for item := range send.Items.One {
+		for coo := range send.Items.One {
 			// check if it's an asset mint from an unlimited source, if it is then skip this check
-			if send.Owner != nil && !send.UnlimitedSourceAssetMint() && !inv.One.Has(item) {
-				errs = append(errs, fmt.Errorf("item %v not owned by user %s", item, send.Owner))
+			if send.Owner != nil && !send.UnlimitedSourceAssetMint() && !inv.One.Has(coo) {
+				errs = append(errs, fmt.Errorf("item %v not owned by user %s", coo, send.Owner))
 			}
 
 			// check for non-fungible item duplication
-			if otherinv.One.Has(item) {
-				errs = append(errs, fmt.Errorf("item %v already owned by user %s", item, t[1-i].Owner))
+			if otherinv.One.Has(coo) {
+				errs = append(errs, fmt.Errorf("item %v already owned by user %s", coo, t[1-i].Owner))
 			}
 		}
-		for item, qty := range send.Items.Many {
-			if send.Owner != nil && inv.Many[item] < qty {
-				errs = append(errs, fmt.Errorf("insufficient quantity of item %v for user %s", item, send.Owner))
+		for com, qty := range send.Items.Many {
+			if send.Owner != nil && inv.Many[com] < qty {
+				errs = append(errs, fmt.Errorf("insufficient quantity of item %v for user %s", com, send.Owner))
 			}
 		}
 	}
@@ -453,18 +453,18 @@ func (s State) CanApply(t Transfer) error {
 	return nil
 }
 
-func (s *State) addToSourceOwner(src CanOwnOne, item CanOwnMany, qty Quantity) {
+func (s *State) addToSourceOwner(src CanOwnOne, i CanOwnMany, qty Quantity) {
 	// add currency to to source owner
-	var oo Owner
-	for owner := range *s.GetOwnersOne(src) {
-		oo = owner
+	var o Owner
+	for oo := range *s.GetOwnersOne(src) {
+		o = oo
 		break
 	}
-	rdst := s.GetInventory(oo)
+	rdst := s.GetInventory(o)
 
-	rdst.Many.Add(item, qty)
-	oMany := s.GetOwnersMany(item)
-	oMany.Add(oo, qty)
+	rdst.Many.Add(i, qty)
+	oMany := s.GetOwnersMany(i)
+	oMany.Add(o, qty)
 }
 
 // ⚠️ DANGEROUS!! ⚠️ Make sure you've called CanApply first!
@@ -683,7 +683,7 @@ func (l *Ledger) TransferHistory(n int) (twids []TransferWithID, err error) {
 	})
 }
 
-func (l *Ledger) TransferHistoryOwner(n int, owner Owner) (twids []TransferWithID, err error) {
+func (l *Ledger) TransferHistoryOwner(n int, o Owner) (twids []TransferWithID, err error) {
 	return twids, l.db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(bucketNameBytes)
 		if bucket == nil {
@@ -698,7 +698,7 @@ func (l *Ledger) TransferHistoryOwner(n int, owner Owner) (twids []TransferWithI
 			}
 
 			// TODO: find a better way because this could iterate over ALL the transactions
-			if t[0].Owner != owner && t[1].Owner != owner {
+			if t[0].Owner != o && t[1].Owner != o {
 				continue
 			}
 
@@ -739,8 +739,8 @@ func (l *Ledger) GetTransfer(tid TransferID) (t Transfer, err error) {
 	})
 }
 
-func (l *Ledger) GetUserLastStipend(user User) (TransferID, bool) {
-	tid, ok := l.state.userLastStipend[user]
+func (l *Ledger) GetUserLastStipend(u User) (TransferID, bool) {
+	tid, ok := l.state.userLastStipend[u]
 	return tid, ok
 }
 
@@ -765,41 +765,41 @@ func NewEconomy(ledger *Ledger, placePrice, groupPrice, limitedSourcePrice, unli
 	}
 }
 
-func (e *Economy) OwnsOne(user Owner, item CanOwnOne) bool {
+func (e *Economy) OwnsOne(o Owner, i CanOwnOne) bool {
 	// ea ledger
 	// it's in the name
-	inv := e.ledger.Inventory(user)
-	return inv.One.Has(item)
+	inv := e.ledger.Inventory(o)
+	return inv.One.Has(i)
 }
 
-func (e *Economy) OwnsMany(user Owner, item CanOwnMany) Quantity {
-	inv := e.ledger.Inventory(user)
-	return inv.Many[item]
+func (e *Economy) OwnsMany(o Owner, i CanOwnMany) Quantity {
+	inv := e.ledger.Inventory(o)
+	return inv.Many[i]
 }
 
-func (e *Economy) OwnersOne(item CanOwnOne) OwnersOne {
-	return *e.ledger.state.GetOwnersOne(item)
+func (e *Economy) OwnersOne(i CanOwnOne) OwnersOne {
+	return *e.ledger.state.GetOwnersOne(i)
 }
 
-func (e *Economy) OwnersMany(item CanOwnMany) OwnersMany {
-	return *e.ledger.state.GetOwnersMany(item)
+func (e *Economy) OwnersMany(i CanOwnMany) OwnersMany {
+	return *e.ledger.state.GetOwnersMany(i)
 }
 
-func (e *Economy) Inventory(user Owner) Items {
-	inv := e.ledger.Inventory(user)
+func (e *Economy) Inventory(o Owner) Items {
+	inv := e.ledger.Inventory(o)
 	return *inv
 }
 
-func (e *Economy) Balance(user Owner) Quantity {
-	return e.OwnsMany(user, e.defaultCurrency)
+func (e *Economy) Balance(o Owner) Quantity {
+	return e.OwnsMany(o, e.defaultCurrency)
 }
 
-func (e *Economy) MintCurrency(user User, amount Quantity) (TransferID, error) {
+func (e *Economy) MintCurrency(u User, qty Quantity) (TransferID, error) {
 	tf := Transfer{
-		{Owner: user},
+		{Owner: u},
 		{Items: Items{
 			Many: ItemsMany{
-				e.defaultCurrency: amount,
+				e.defaultCurrency: qty,
 			},
 		}},
 	}
@@ -842,12 +842,12 @@ func (e *Economy) Stipend(user User) (TransferID, error) {
 	return tid, nil
 }
 
-func (e *Economy) CreateLimitedSource(user User) (LimitedSource, TransferID, error) {
+func (e *Economy) CreateLimitedSource(u User) (LimitedSource, TransferID, error) {
 	src := RandLimitedSource()
 
 	tf := Transfer{
 		{
-			Owner: user,
+			Owner: u,
 			Items: Items{
 				Many: ItemsMany{
 					e.defaultCurrency: e.LimitedSourcePrice,
@@ -869,12 +869,12 @@ func (e *Economy) CreateLimitedSource(user User) (LimitedSource, TransferID, err
 	return src, tid, nil
 }
 
-func (e *Economy) CreateUnlimitedSource(user User) (UnlimitedSource, TransferID, error) {
+func (e *Economy) CreateUnlimitedSource(u User) (UnlimitedSource, TransferID, error) {
 	src := RandUnlimitedSource()
 
 	tf := Transfer{
 		{
-			Owner: user,
+			Owner: u,
 			Items: Items{
 				Many: ItemsMany{
 					e.defaultCurrency: e.UnlimitedSourcePrice,
@@ -896,13 +896,13 @@ func (e *Economy) CreateUnlimitedSource(user User) (UnlimitedSource, TransferID,
 	return src, tid, nil
 }
 
-func (e *Economy) CreatePlace(user User) (Place, TransferID, error) {
+func (e *Economy) CreatePlace(u User) (Place, TransferID, error) {
 	p := RandPlace()
 
 	// tf (the fuck)
 	tf := Transfer{
 		{
-			Owner: user,
+			Owner: u,
 			Items: Items{
 				Many: ItemsMany{
 					e.defaultCurrency: e.PlacePrice,
@@ -924,12 +924,12 @@ func (e *Economy) CreatePlace(user User) (Place, TransferID, error) {
 	return p, tid, nil
 }
 
-func (e *Economy) CreateGroup(user User) (Group, TransferID, error) {
+func (e *Economy) CreateGroup(u User) (Group, TransferID, error) {
 	g := RandGroup()
 
 	tf := Transfer{
 		{
-			Owner: user,
+			Owner: u,
 			Items: Items{
 				Many: ItemsMany{
 					e.defaultCurrency: e.GroupPrice,
@@ -951,12 +951,12 @@ func (e *Economy) CreateGroup(user User) (Group, TransferID, error) {
 	return g, tid, nil
 }
 
-func (e *Economy) BuyUnlimitedAsset(user User, src UnlimitedSource, price Quantity) (UnlimitedAsset, TransferID, error) {
+func (e *Economy) BuyUnlimitedAsset(u User, src UnlimitedSource, price Quantity) (UnlimitedAsset, TransferID, error) {
 	a := src.Create()
 
 	tf := Transfer{
 		{
-			Owner: user,
+			Owner: u,
 			Items: Items{
 				Many: ItemsMany{
 					e.defaultCurrency: price,
@@ -981,12 +981,12 @@ func (e *Economy) BuyUnlimitedAsset(user User, src UnlimitedSource, price Quanti
 	return a, tid, nil
 }
 
-func (e *Economy) BuyLimitedAsset(user User, src LimitedSource, priceEach, qty Quantity) (LimitedAsset, TransferID, error) {
+func (e *Economy) BuyLimitedAsset(u User, src LimitedSource, priceEach, qty Quantity) (LimitedAsset, TransferID, error) {
 	a := src.Create()
 
 	tf := Transfer{
 		{
-			Owner: user,
+			Owner: u,
 			Items: Items{
 				Many: ItemsMany{
 					e.defaultCurrency: priceEach * qty,
@@ -1015,6 +1015,6 @@ func (e *Economy) TransferHistory(n int) ([]TransferWithID, error) {
 	return e.ledger.TransferHistory(n)
 }
 
-func (e *Economy) TransferHistoryOwner(n int, owner Owner) ([]TransferWithID, error) {
-	return e.ledger.TransferHistoryOwner(n, owner)
+func (e *Economy) TransferHistoryOwner(n int, o Owner) ([]TransferWithID, error) {
+	return e.ledger.TransferHistoryOwner(n, o)
 }
