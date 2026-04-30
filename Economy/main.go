@@ -265,6 +265,10 @@ func main() {
 	http.HandleFunc("POST /inventory", es.inventoryRoute)
 	http.HandleFunc("POST /balance", es.balanceRoute)
 	http.HandleFunc("POST /stipend", es.stipendRoute)
+	http.HandleFunc("POST /createLimitedSource", es.createLimitedSourceRoute)
+	http.HandleFunc("POST /createUnlimitedSource", es.createUnlimitedSourceRoute)
+	http.HandleFunc("POST /createPlace", es.createPlaceRoute)
+	http.HandleFunc("POST /createGroup", es.createGroupRoute)
 
 	fmt.Println(c.InGreen("~ Economy service is up on port 2009 ~")) // 03/Jan/2009 Chancellor on brink of second bailout for banks
 	if err := http.ListenAndServe(":2009", nil); err != nil {
