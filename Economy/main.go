@@ -202,6 +202,48 @@ func (e *EconomyServer) createUnlimitedSourceRoute(w http.ResponseWriter, r *htt
 	io.WriteString(w, src.String()) // TODO: better format possible?
 }
 
+func (e *EconomyServer) createPlaceRoute(w http.ResponseWriter, r *http.Request) {
+	ui, err := DeserialiseItem(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode user: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	u, ok := ui.(User)
+	if !ok {
+		http.Error(w, fmt.Sprintf("item is not User: %T", ui), http.StatusBadRequest)
+	}
+
+	p, _, err := e.CreatePlace(u)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("create place error: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	io.WriteString(w, p.String()) // TODO: better format possible?
+}
+
+func (e *EconomyServer) createGroupRoute(w http.ResponseWriter, r *http.Request) {
+	ui, err := DeserialiseItem(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode user: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	u, ok := ui.(User)
+	if !ok {
+		http.Error(w, fmt.Sprintf("item is not User: %T", ui), http.StatusBadRequest)
+	}
+
+	g, _, err := e.CreateGroup(u)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("create group error: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	io.WriteString(w, g.String()) // TODO: better format possible?
+}
+
 func main() {
 	l, err := NewLedger("mydb.db")
 	if err != nil {
