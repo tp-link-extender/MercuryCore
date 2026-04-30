@@ -2,6 +2,7 @@ package ledger_test
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"testing"
 	"time"
@@ -501,6 +502,54 @@ func TestTransferHistory(t *testing.T) {
 	}
 }
 
+func TestTransferHistoryUser(t *testing.T) {
+	// create temp file
+	name := os.TempDir() + "/ledger_test.db"
+	os.Remove(name)
+	defer os.Remove(name)
+
+	l, err := NewLedger(name)
+	if err != nil {
+		t.Fatalf("create ledger: %v", err)
+	}
+	defer l.Close()
+
+	currency4 := Currency{4}
+	user5 := User{"user5"}
+
+	tf := Transfer{
+		{Owner: user5},
+		{Items: Items{
+			Many: ItemsMany{
+				currency4: 100,
+			},
+		}},
+	}
+
+	if err := l.Transfer(MakeTransferID(), tf); err != nil {
+		t.Fatalf("transfer: %v", err)
+	}
+
+	history1, err := l.TransferHistoryOwner(1, user5)
+	if err != nil {
+		t.Fatalf("TransferHistoryOwner: %v", err)
+	}
+
+	if len(history1) != 1 {
+		t.Fatalf("expected transfer history length 1, got %d", len(history1))
+	}
+
+	user6 := User{"user6"}
+	history2, err := l.TransferHistoryOwner(1, user6)
+	if err != nil {
+		t.Fatalf("TransferHistoryOwner: %v", err)
+	}
+
+	if len(history2) != 0 {
+		t.Fatalf("expected transfer history length 0, got %d", len(history2))
+	}
+}
+
 func TestGetTransfer(t *testing.T) {
 	// create temp file
 	name := os.TempDir() + "/ledger_test.db"
@@ -623,11 +672,11 @@ func TestAbstractions2(t *testing.T) {
 	}
 
 	if !e.OwnsOne(users[0], source) {
-		t.Fatalf("expected user to own source %v", source)
+		t.Fatalf("expected user 0 to own source %v", source)
 	}
 
 	if e.Balance(users[0]) != 90 {
-		t.Fatalf("expected balance 90, got %d", e.Balance(users[0]))
+		t.Fatalf("expected user 0 balance 90, got %d", e.Balance(users[0]))
 	}
 
 	asset, _, err := e.BuyUnlimitedAsset(users[1], source, price1)
@@ -636,19 +685,59 @@ func TestAbstractions2(t *testing.T) {
 	}
 
 	if !e.OwnsOne(users[1], asset) {
-		t.Fatalf("expected user to own asset %v", asset)
+		t.Fatalf("expected user 1 to own asset %v", asset)
 	}
 
 	if e.Balance(users[1]) != 85 {
-		t.Fatalf("expected balance 85, got %d", e.Balance(users[1]))
+		t.Fatalf("expected user 1 balance 85, got %d", e.Balance(users[1]))
 	}
 
 	if e.Balance(users[0]) != 105 {
-		t.Fatalf("expected balance 105, got %d", e.Balance(users[0]))
+		t.Fatalf("expected user 0 balance 105, got %d", e.Balance(users[0]))
 	}
 
 	if e.Balance(source) != 0 {
 		t.Fatalf("expected source balance 0, got %d", e.Balance(source))
+	}
+
+	history, err := e.TransferHistory(10)
+	if err != nil {
+		t.Fatalf("TransferHistoryOwner: %v", err)
+	}
+
+	if len(history) != 5 {
+		fmt.Printf("history: %v\n", history)
+		t.Fatalf("expected transfer history length 5, got %d", len(history))
+	}
+
+	history0, err := e.TransferHistoryOwner(10, users[0])
+	if err != nil {
+		t.Fatalf("TransferHistoryOwner: %v", err)
+	}
+
+	if len(history0) != 2 {
+		fmt.Printf("history0: %v\n", history0)
+		t.Fatalf("expected transfer history length 2, got %d", len(history0))
+	}
+
+	history1, err := e.TransferHistoryOwner(10, users[1])
+	if err != nil {
+		t.Fatalf("TransferHistoryOwner: %v", err)
+	}
+
+	if len(history1) != 2 {
+		fmt.Printf("history1: %v\n", history1)
+		t.Fatalf("expected transfer history length 2, got %d", len(history1))
+	}
+
+	history2, err := e.TransferHistoryOwner(10, users[2])
+	if err != nil {
+		t.Fatalf("TransferHistoryOwner: %v", err)
+	}
+
+	if len(history2) != 1 {
+		fmt.Printf("history2: %v\n", history2)
+		t.Fatalf("expected transfer history length 1, got %d", len(history2))
 	}
 }
 
@@ -667,7 +756,8 @@ func TestAbstractions3(t *testing.T) {
 
 	user := User{"testuser3"}
 
-	if _, err := e.Stipend(user); err != nil {
+	sid, err := e.Stipend(user)
+	if err != nil {
 		t.Fatalf("Stipend: %v", err)
 	}
 
@@ -677,5 +767,28 @@ func TestAbstractions3(t *testing.T) {
 
 	if e.Balance(user) != 10 {
 		t.Fatalf("expected balance 10, got %d", e.Balance(user))
+	}
+
+	history1, err := e.TransferHistoryOwner(2, user)
+	if err != nil {
+		t.Fatalf("TransferHistoryOwner: %v", err)
+	}
+
+	if len(history1) != 1 {
+		t.Fatalf("expected transfer history length 1, got %d", len(history1))
+	}
+
+	if history1[0].ID != sid {
+		t.Fatalf("expected transfer ID %v, got %v", sid, history1[0].ID)
+	}
+
+	user2 := User{"testuser4"}
+	history2, err := e.TransferHistoryOwner(2, user2)
+	if err != nil {
+		t.Fatalf("TransferHistoryOwner: %v", err)
+	}
+
+	if len(history2) != 0 {
+		t.Fatalf("expected transfer history length 0, got %d", len(history2))
 	}
 }

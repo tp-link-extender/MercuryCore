@@ -47,6 +47,7 @@ func MakeTransferID() TransferID {
 	}
 }
 
+// The timestamp comes first so they are ordered chronologically when sorted lexicographically
 func (t TransferID) Serialise() []byte {
 	bs := make([]byte, 8+len(t.id))
 	binary.BigEndian.PutUint64(bs[:8], t.timestamp)
@@ -682,6 +683,40 @@ func (l *Ledger) TransferHistory(n int) (twids []TransferWithID, err error) {
 	})
 }
 
+func (l *Ledger) TransferHistoryOwner(n int, owner Owner) (twids []TransferWithID, err error) {
+	return twids, l.db.View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(bucketNameBytes)
+		if bucket == nil {
+			return nil // no transfers
+		}
+
+		c := bucket.Cursor()
+		for k, v := c.Last(); v != nil && len(twids) < n; k, v = c.Prev() {
+			t, err := DeserialiseTransfer(bytes.NewReader(v))
+			if err != nil {
+				return fmt.Errorf("decode transfer: %w", err)
+			}
+
+			// TODO: find a better way because this could iterate over ALL the transactions
+			if t[0].Owner != owner && t[1].Owner != owner {
+				continue
+			}
+
+			id, err := DeserialiseTransferID(k)
+			if err != nil {
+				return fmt.Errorf("decode transfer ID: %w", err)
+			}
+
+			twids = append(twids, TransferWithID{
+				ID:       id,
+				Transfer: t,
+			})
+		}
+
+		return nil
+	})
+}
+
 func (l *Ledger) GetTransfer(tid TransferID) (t Transfer, err error) {
 	return t, l.db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(bucketNameBytes)
@@ -974,4 +1009,12 @@ func (e *Economy) BuyLimitedAsset(user User, src LimitedSource, priceEach, qty Q
 	}
 
 	return asset, tid, nil
+}
+
+func (e *Economy) TransferHistory(n int) ([]TransferWithID, error) {
+	return e.ledger.TransferHistory(n)
+}
+
+func (e *Economy) TransferHistoryOwner(n int, owner Owner) ([]TransferWithID, error) {
+	return e.ledger.TransferHistoryOwner(n, owner)
 }
