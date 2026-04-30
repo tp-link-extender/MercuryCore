@@ -137,7 +137,7 @@ func (i LimitedSource) ID() uint32 {
 func (LimitedSource) CanOwnOne() {}
 func (LimitedSource) Mintable()  {}
 func (LimitedSource) Owner()     {}
-func (LimitedSource) Single()    {}
+// func (LimitedSource) Single()    {}
 
 func (i LimitedSource) Create() LimitedAsset {
 	return LimitedAsset(i)
@@ -166,7 +166,7 @@ func (i UnlimitedSource) ID() uint32 {
 func (UnlimitedSource) CanOwnOne() {}
 func (UnlimitedSource) Mintable()  {}
 func (UnlimitedSource) Owner()     {}
-func (UnlimitedSource) Single()    {}
+// func (UnlimitedSource) Single()    {}
 
 func (i UnlimitedSource) Create() UnlimitedAsset {
 	return UnlimitedAsset(i)
@@ -194,7 +194,7 @@ func (i Place) ID() uint32 {
 
 func (Place) CanOwnOne() {}
 func (Place) Mintable()  {}
-func (Place) Single()    {}
+// func (Place) Single()    {}
 
 func RandPlace() Place {
 	return Place{RandNumericId()}
@@ -237,7 +237,7 @@ func (i Group) ID() string {
 func (Group) CanOwnOne() {}
 func (Group) Mintable()  {}
 func (Group) Owner()     {}
-func (Group) Single()    {}
+// func (Group) Single()    {}
 
 func RandGroup() Group {
 	return Group{RandStringId()}

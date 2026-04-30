@@ -256,6 +256,16 @@ func main() {
 
 	e := NewEconomy(l, 10, 10, 100, 10, 10, time.Hour*12)
 
+	if history, err := e.TransferHistory(10); err == nil {
+		fmt.Println("Recent transfer history:")
+		for _, t := range history {
+			fmt.Printf("- %s\n", t.Transfer)
+		}
+		fmt.Println()
+	} else {
+		fmt.Printf("Error fetching transfer history: %v\n", err)
+	}
+
 	es := EconomyServer{e}
 
 	http.HandleFunc("POST /ownsOne", es.ownsOneRoute)
