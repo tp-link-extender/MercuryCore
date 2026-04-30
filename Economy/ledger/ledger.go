@@ -653,6 +653,7 @@ func (l *Ledger) Transfer(tid TransferID, t Transfer) error {
 }
 
 func (l *Ledger) TransferHistory(n int) (twids []TransferWithID, err error) {
+	// funky return ordering
 	return twids, l.db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(bucketNameBytes)
 		if bucket == nil {
@@ -778,7 +779,7 @@ func (e *Economy) MintCurrency(user User, amount Quantity) (TransferID, error) {
 
 var ErrStipendNotReady = errors.New("stipend not available yet")
 
-func (e *Economy) Stipend(user User, amount Quantity) (TransferID, error) {
+func (e *Economy) Stipend(user User) (TransferID, error) {
 	lastStipend, ok := e.ledger.GetUserLastStipend(user)
 	if ok || time.Since(time.Unix(0, int64(lastStipend.timestamp))) < e.StipendTime {
 		return TransferID{}, ErrStipendNotReady
@@ -788,7 +789,7 @@ func (e *Economy) Stipend(user User, amount Quantity) (TransferID, error) {
 		{Owner: user},
 		{Items: Items{
 			Many: ItemsMany{
-				e.defaultCurrency: amount,
+				e.defaultCurrency: e.StipendAmount,
 			},
 		}},
 	}

@@ -133,6 +133,29 @@ func (e *EconomyServer) balanceRoute(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%d", e.Balance(o))
 }
 
+// we'll expose MintCurrency some other time
+
+func (e *EconomyServer) stipendRoute(w http.ResponseWriter, r *http.Request) {
+	ui, err := DeserialiseItem(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode user: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	u, ok := ui.(User)
+	if !ok {
+		http.Error(w, fmt.Sprintf("item is not User: %T", ui), http.StatusBadRequest)
+	}
+
+	tid, err := e.Stipend(u)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("stipend error: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	fmt.Fprintf(w, "%s", tid.String())
+}
+
 func main() {
 	l, err := NewLedger("mydb.db")
 	if err != nil {
@@ -153,6 +176,7 @@ func main() {
 	http.HandleFunc("POST /ownersMany", es.ownersManyRoute)
 	http.HandleFunc("POST /inventory", es.inventoryRoute)
 	http.HandleFunc("POST /balance", es.balanceRoute)
+	http.HandleFunc("POST /stipend", es.stipendRoute)
 
 	fmt.Println(c.InGreen("~ Economy service is up on port 2009 ~")) // 03/Jan/2009 Chancellor on brink of second bailout for banks
 	if err := http.ListenAndServe(":2009", nil); err != nil {

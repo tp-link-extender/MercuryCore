@@ -667,11 +667,11 @@ func TestAbstractions3(t *testing.T) {
 
 	user := User{"testuser3"}
 
-	if _, err := e.Stipend(user, 10); err != nil {
+	if _, err := e.Stipend(user); err != nil {
 		t.Fatalf("Stipend: %v", err)
 	}
 
-	if _, err := e.Stipend(user, 10); err != ErrStipendNotReady {
+	if _, err := e.Stipend(user); err != ErrStipendNotReady {
 		t.Fatalf("expected ErrStipendNotReady, got %v", err)
 	}
 
