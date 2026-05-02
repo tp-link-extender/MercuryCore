@@ -1,7 +1,5 @@
 console.log("Hello via Bun!")
 
-
-
 const url = "http://localhost:2009"
 
 const res = await fetch(`${url}/ownsOne`, {
