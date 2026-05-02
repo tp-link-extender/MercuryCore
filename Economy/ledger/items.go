@@ -16,9 +16,10 @@ func SerialiseNumeric(i NumericItem) []byte {
 
 func SerialiseString(i StringItem) []byte {
 	idstr := i.ID()
-	id := make([]byte, 2+len(idstr))
+	idl := len(idstr)
+	id := make([]byte, 2+idl)
 	id[0] = byte(i.Type())
-	id[1] = byte(len(idstr))
+	id[1] = byte(idl)
 	copy(id[2:], idstr)
 	return id
 }

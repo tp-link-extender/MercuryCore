@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"net/http"
@@ -137,7 +138,13 @@ func (e *EconomyServer) balanceRoute(w http.ResponseWriter, r *http.Request) {
 // we'll expose MintCurrency some other time
 
 func (e *EconomyServer) stipendRoute(w http.ResponseWriter, r *http.Request) {
-	ui, err := DeserialiseItem(r.Body)
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("read body: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	ui, err := DeserialiseItem(bytes.NewReader(body))
 	if err != nil {
 		http.Error(w, fmt.Sprintf("decode user: %v", err.Error()), http.StatusBadRequest)
 		return
@@ -152,6 +159,7 @@ func (e *EconomyServer) stipendRoute(w http.ResponseWriter, r *http.Request) {
 	if _, err := e.Stipend(u); err != nil {
 		if err == ErrStipendNotReady {
 			http.Error(w, ErrStipendNotReady.Error(), http.StatusTooManyRequests) // we're not using 425
+			return
 		}
 
 		http.Error(w, fmt.Sprintf("stipend error: %v", err.Error()), http.StatusBadRequest)
@@ -244,6 +252,40 @@ func (e *EconomyServer) createGroupRoute(w http.ResponseWriter, r *http.Request)
 	io.WriteString(w, g.String()) // TODO: better format possible?
 }
 
+type CustomResponseWriter struct {
+	http.ResponseWriter
+	statusCode int
+}
+
+func (w *CustomResponseWriter) WriteHeader(code int) {
+	w.statusCode = code
+	w.ResponseWriter.WriteHeader(code)
+}
+
+func loggingHandler(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		time := time.Now().Format("2006-01-02 15:04:05")
+		// newr := r.Clone(r.Context())
+		// next.ServeHTTP(w, newr)
+		// // print response code
+		// code := http.StatusOK
+
+		crw := &CustomResponseWriter{w, http.StatusOK}
+		next.ServeHTTP(crw, r)
+		// code := crw.statusCode
+		var code string
+		if cs := crw.statusCode; crw.statusCode >= 500 {
+			code = c.InRed(fmt.Sprintf("%d", cs))
+		} else if cs >= 400 {
+			code = c.InYellow(fmt.Sprintf("%d", cs))
+		} else {
+			code = c.InGreen(fmt.Sprintf("%d", cs))
+		}
+
+		fmt.Printf("%s %s %s\n", c.InGray(time), code, c.InBlue(r.URL.Path))
+	})
+}
+
 func main() {
 	l, err := NewLedger("mydb.db")
 	if err != nil {
@@ -281,7 +323,7 @@ func main() {
 	http.HandleFunc("POST /createGroup", es.createGroupRoute)
 
 	fmt.Println(c.InGreen("~ Economy service is up on port 2009 ~")) // 03/Jan/2009 Chancellor on brink of second bailout for banks
-	if err := http.ListenAndServe(":2009", nil); err != nil {
+	if err := http.ListenAndServe(":2009", loggingHandler(http.DefaultServeMux)); err != nil {
 		fmt.Println(c.InRed("Failed to start server: " + err.Error()))
 		os.Exit(1)
 	}
