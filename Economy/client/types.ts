@@ -39,7 +39,7 @@ export abstract class CanOwnMany extends Item {}
 export abstract class Mintable extends Item {}
 export abstract class Owner extends Item {}
 
-export function IsMintable(i: Item): i is Mintable {
+export function IsMintable(i: Item): boolean {
 	return i instanceof Mintable
 }
 
