@@ -31,15 +31,16 @@ function SerialiseNumeric(i: NumericItem): Buffer {
 
 function SerialiseString(i: StringItem): Buffer {
 	const idstr = i.ID
-	const id = Buffer.alloc(2 + Buffer.byteLength(idstr))
+	const idl = Buffer.byteLength(idstr)
+	const id = Buffer.alloc(2 + idl)
 	id.writeUInt8(i.Type, 0)
-	id.writeUInt8(Buffer.byteLength(idstr), 1)
+	id.writeUInt8(idl, 1)
 	id.write(idstr, 2)
 	return id
 }
 
 export function SerialiseItem(i: Item | null): Buffer {
-	if (i === null) return Buffer.from([0])
+	if (i === null) return Buffer.from([TypeNil])
 	if (i instanceof NumericItem) return SerialiseNumeric(i)
 	if (i instanceof StringItem) return SerialiseString(i)
 	throw new Error(`unknown Item type: ${i.constructor.name}`)
@@ -82,7 +83,8 @@ export class BufBuilder {
 	}
 }
 
-export function DeserialiseItem(reader: BufReader): Item | null {
+export function DeserialiseItem(buf: Buffer): Item | null {
+	const reader = new BufReader(buf)
 	const typeByte = reader.readUint8()
 	if (typeByte === TypeNil) return null
 
