@@ -73,16 +73,6 @@ export class BufReader {
 	}
 }
 
-export class BufBuilder {
-	parts: Buffer[] = []
-	push(b: Buffer) {
-		this.parts.push(b)
-	}
-	result(): Buffer {
-		return Buffer.concat(this.parts)
-	}
-}
-
 export function DeserialiseItem(reader: BufReader): Item | null {
 	const typeByte = reader.readUint8()
 	if (typeByte === TypeNil) return null
@@ -146,14 +136,14 @@ export class ItemsOne {
 	}
 
 	Serialise(): Buffer {
-		const b = new BufBuilder()
+		const b = []
 		const lbuf = Buffer.alloc(4)
 		lbuf.writeUInt32BE(this.set.size, 0)
 		b.push(lbuf)
 		for (const i of this.set) {
 			b.push(SerialiseItem(i))
 		}
-		return b.result()
+		return Buffer.concat(b)
 	}
 
 	static Deserialise(reader: BufReader): ItemsOne {
@@ -196,7 +186,7 @@ export class ItemsMany {
 	}
 
 	Serialise(): Buffer {
-		const b = new BufBuilder()
+		const b = []
 		const lbuf = Buffer.alloc(4)
 		lbuf.writeUInt32BE(this.map.size, 0)
 		b.push(lbuf)
@@ -206,7 +196,7 @@ export class ItemsMany {
 			qtybuf.writeBigUInt64BE(qty, 0)
 			b.push(qtybuf)
 		}
-		return b.result()
+		return Buffer.concat(b)
 	}
 
 	static Deserialise(reader: BufReader): ItemsMany {
@@ -249,10 +239,7 @@ export class Items {
 	}
 
 	Serialise(): Buffer {
-		const b = new BufBuilder()
-		b.push(this.One.Serialise())
-		b.push(this.Many.Serialise())
-		return b.result()
+		return Buffer.concat([this.One.Serialise(), this.Many.Serialise()])
 	}
 
 	static Deserialise(reader: BufReader): Items {
