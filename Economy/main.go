@@ -13,6 +13,14 @@ import (
 	. "Economy/ledger"
 )
 
+// ahh b2i, my favourite (though this one's with uint8)
+func b2i(b bool) uint8 {
+	if b {
+		return 1
+	}
+	return 0
+}
+
 type EconomyServer struct {
 	*Economy
 }
@@ -40,7 +48,7 @@ func (e *EconomyServer) ownsOneRoute(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("item is not CanOwnOne: %T", cooi), http.StatusBadRequest)
 	}
 
-	fmt.Fprintf(w, "%t", e.OwnsOne(o, coo))
+	w.Write([]byte{b2i(e.OwnsOne(o, coo))})
 }
 
 func (e *EconomyServer) ownsManyRoute(w http.ResponseWriter, r *http.Request) {

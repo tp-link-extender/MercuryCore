@@ -83,8 +83,7 @@ export class BufBuilder {
 	}
 }
 
-export function DeserialiseItem(buf: Buffer): Item | null {
-	const reader = new BufReader(buf)
+export function DeserialiseItem(reader: BufReader): Item | null {
 	const typeByte = reader.readUint8()
 	if (typeByte === TypeNil) return null
 
