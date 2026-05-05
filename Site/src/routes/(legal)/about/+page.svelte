@@ -17,10 +17,11 @@
 	const range = (n: number) =>
 		Array.from({ length: n }, (_, index) => -Math.floor(n / 2) + index)
 
-	const downScroll = () => first.scrollIntoView({ behavior: "smooth" })
-	const upScroll = () => top.scrollIntoView({ behavior: "smooth" })
 	const columns = range(37)
 	const rows = range(19)
+
+	const downScroll = () => first.scrollIntoView({ behavior: "smooth" })
+	const upScroll = () => top.scrollIntoView({ behavior: "smooth" })
 
 	let cubesMoved = 0
 	let cubesClicked = 0
@@ -44,7 +45,7 @@
 <Head
 	name={data.siteName}
 	title="About"
-	description="About Mercury: Endless possibilities. New features. Same nostalgia." />
+	description="About {data.siteName}: Endless possibilities. New features. Same nostalgia." />
 
 <svelte:window bind:scrollY />
 
@@ -66,7 +67,7 @@
 		<div
 			out:fade
 			class="pointer-events-none flex flex-col justify-center items-center relative h-70vh">
-			<h1 class="text-16 font-bold">Mercury 2</h1>
+			<h1 class="text-16 font-bold">{data.siteName}</h1>
 			<p>Endless possibilities. New features. Same nostalgia.</p>
 			<h3
 				class="p-3 py-1 rounded-2 font-bold text-lg! bg-neutral-5 opacity-75">
@@ -80,30 +81,30 @@
 			{#if completed}
 				<h1
 					in:fade
-					class="sf font-bold pointer-events-none text-white opacity-75">
+					class="font-bold pointer-events-none text-white opacity-75">
 					lmao%
 				</h1>
 			{:else}
 				<h1
 					in:fade
-					class="sf font-bold pointer-events-none text-white opacity-75">
+					class="font-bold pointer-events-none text-white opacity-75">
 					{cubePercentage}%
 				</h1>
 				{#if cubePercentage2 > 0}
 					<h1
 						in:fade
-						class="sf font-bold pointer-events-none text-red-5 opacity-75">
+						class="font-bold pointer-events-none text-red-5 opacity-75">
 						{cubePercentage2}%
 					</h1>
 				{/if}
 				{#if cubePercentage >= 60 && cubePercentage < 80}
 					<h3
-						class="sf font-bold pointer-events-none text-white opacity-75">
+						class="font-bold pointer-events-none text-white opacity-75">
 						zoom out
 					</h3>
 				{:else if cubePercentage === 100 && cubePercentage2 < 2}
 					<h3
-						class="sf font-bold pointer-events-none text-red-5 opacity-75">
+						class="font-bold pointer-events-none text-red-5 opacity-75">
 						click the cubes
 					</h3>
 				{/if}
@@ -139,15 +140,15 @@
 			<h2>A refurbished experience</h2>
 			<h3>New features.</h3>
 			<p>
-				Mercury aims to be the foremost platform of its kind, and the
-				Mercury website plays a prominent part in this. After years of
-				testing, tinkering, and tweaking, we've landed on a stack that
-				combines rock-solid stability with a flexible foundation for the
-				future.
+				{data.siteName} aims to be the foremost platform of its kind, and
+				the {data.siteName} website plays a prominent part in this. After
+				years of testing, tinkering, and tweaking, we've landed on a stack
+				that combines rock-solid stability with a flexible foundation for
+				the future.
 			</p>
 			<h3>Limitless possibilities.</h3>
 			<p>
-				Mercury provides everything you would expect from a modern
+				{data.siteName} provides everything you would expect from a modern
 				revival platform and then some:
 			</p>
 			<ul>
@@ -156,15 +157,15 @@
 				<li>A vast variety of places and games to explore</li>
 				<li>
 					And communication features that help foster a sense of
-					connection and community within Mercury.
+					connection and community within {data.siteName}.
 				</li>
 			</ul>
 			<h3>Same nostalgia.</h3>
 			<p>
-				Mercury still uses the exact same client as the previous
+				{data.siteName} still uses the exact same client as the previous
 				iteration. Our philosophy when it comes to our client is to make
-				sure that it is accurately represented. The end-goal with our
-				client is to implement every feature that it originally had.
+				sure that it is accurately represented. The end-goal with our client
+				is to implement every feature that it originally had.
 			</p>
 		</div>
 		<div class="w-full h-80 min-w-[min(40vw,40rem)] <lg:pt-50 relative">
@@ -189,11 +190,11 @@
 			</p>
 			<h3>Vulnerability management</h3>
 			<p>
-				Careful technology choices ensure that Mercury isn't vulnerable
-				to the same attacks that plague similar platforms. We're
-				constantly monitoring and updating our systems to ensure that
-				users are safe &ndash; and a streamlined reporting system allows
-				us to respond to any security concerns quickly and effectively.
+				Careful technology choices ensure that {data.siteName} isn't vulnerable
+				to the same attacks that plague similar platforms. We're constantly
+				monitoring and updating our systems to ensure that users are safe
+				&ndash; and a streamlined reporting system allows us to respond to
+				any security concerns quickly and effectively.
 			</p>
 		</div>
 	</div>
@@ -207,7 +208,7 @@
 				<div>
 					<h3>Professional developers</h3>
 					<p>
-						A group of experienced developers are behind Mercury,
+						A group of experienced developers are behind {data.siteName},
 						and we're committed to improving user experience and
 						security. We aim to remain transparent and open about
 						our development process and decisions.
@@ -236,17 +237,17 @@
 			<h3>Library usage</h3>
 			<p>
 				We put a strong emphasis on library usage to improve development
-				speed and maintainability. Mercury is the first revival platform
-				to utilise modern libraries and frameworks backported from
-				contemporary Lua, Luau, and JavaScript ecosystems.
+				speed and maintainability. {data.siteName} is the first revival platform
+				to utilise modern libraries and frameworks backported from contemporary
+				Lua, Luau, and JavaScript ecosystems.
 			</p>
 			<h3>Optimisation and stability</h3>
 			<p>
-				Mercury makes use of techniques borrowed from modern game
-				development to boost performance and reduce latency. Our
-				optimisations have already been proven to improve user
-				experience &ndash; for example, place joining on Mercury is
-				30-40% faster than competing platforms.
+				{data.siteName} makes use of techniques borrowed from modern game
+				development to boost performance and reduce latency. Our optimisations
+				have already been proven to improve user experience &ndash; for example,
+				place joining on {data.siteName} is 30-40% faster than competing
+				platforms.
 			</p>
 		</div>
 	</div>
@@ -254,7 +255,7 @@
 
 <Pagepart class="pb-60">
 	<div class="flex flex-col justify-center items-center relative">
-		<h1 class="text-16 sf font-bold">Mercury 2</h1>
+		<h1 class="text-16 font-bold">{data.siteName}</h1>
 		<p>Endless possibilities. New features. Same nostalgia.</p>
 		<a
 			type="button"
