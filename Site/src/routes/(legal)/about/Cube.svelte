@@ -11,7 +11,10 @@
 	}: { i: number; j: number; onmoved: () => void; onclicked: () => void } =
 		$props()
 
-	const opacity = new Spring(Math.random() + (-j - i / 2 - 5) / 12)
+	const opacity = new Spring(0)
+	$effect(() => {
+		opacity.set(Math.random() + (-j - i / 2 - 5) / 12)
+	})
 	const clicked = new Map<string, "hovered" | "clicked">()
 	const scale = new Spring(0, {
 		stiffness: 0.1,
@@ -33,7 +36,7 @@
 </script>
 
 <T.Mesh
-	position={[i, j + $scale, -i - j]}
+	position={[i, j + scale.current, -i - j]}
 	on:pointerenter={() => {
 		if (!clickable || clicked.get(`${i},${j}`)) return
 		clicked.set(`${i},${j}`, "hovered")
@@ -56,11 +59,11 @@
 	}}>
 	<T.BoxGeometry />
 	<T.MeshStandardMaterial
-		color={$colour}
+		color={colour.current}
 		args={[
 			{
 				transparent: true,
-				opacity: $opacity
+				opacity: opacity.current
 			}
 		]} />
 </T.Mesh>
