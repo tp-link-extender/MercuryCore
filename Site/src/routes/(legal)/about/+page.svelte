@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Canvas } from "@threlte/core"
+	// import { Canvas } from "@threlte/core"
 	import Head from "$components/Head.svelte"
 	import fade from "$lib/fade"
-	import Cubes from "./Cubes.svelte"
+	// import Cubes from "./Cubes.svelte"
 	import Libraries from "./Libraries.svelte"
 	import Padlock from "./Padlock.svelte"
 	import Pagepart from "./Pagepart.svelte"
@@ -40,16 +40,19 @@
 			window.open("https://youtube.com/watch?v=cvh0nX08nRw", "_blank")
 		}
 	})
+
+	const tagline = "Endless possibilities. New features. Same nostalgia."
 </script>
 
 <Head
 	name={data.siteName}
 	title="About"
-	description="About {data.siteName}: Endless possibilities. New features. Same nostalgia." />
+	description="About {data.siteName}: {tagline}" />
 
 <svelte:window bind:scrollY />
 
-<div id="cubes" class="absolute h-full w-full -mt-5vh">
+<!-- todo test -->
+<!-- <div id="cubes" class="absolute h-full w-full -mt-5vh">
 	<Canvas>
 		<Cubes
 			{columns}
@@ -57,7 +60,7 @@
 			onmoved={() => cubesMoved++}
 			onclicked={() => cubesClicked++} />
 	</Canvas>
-</div>
+</div> -->
 
 <div bind:this={top} id="top" class="absolute top-0"></div>
 
@@ -68,10 +71,10 @@
 			out:fade
 			class="pointer-events-none flex flex-col justify-center items-center relative h-70vh">
 			<h1 class="text-16 font-bold">{data.siteName}</h1>
-			<p>Endless possibilities. New features. Same nostalgia.</p>
+			<p>{tagline}</p>
 			<h3
 				class="p-3 py-1 rounded-2 font-bold text-lg! bg-neutral-5 opacity-75">
-				Release Candidate
+				Beta
 			</h3>
 		</div>
 	{:else}
@@ -119,7 +122,7 @@
 			onclick={downScroll}
 			onkeypress={downScroll}
 			style="opacity: {(500 - scrollY) / 300}">
-			<fa fa-chevron-down></fa>
+			↓
 		</button>
 	</div>
 	<button
@@ -256,14 +259,16 @@
 <Pagepart class="pb-60">
 	<div class="flex flex-col justify-center items-center relative">
 		<h1 class="text-16 font-bold">{data.siteName}</h1>
-		<p>Endless possibilities. New features. Same nostalgia.</p>
-		<a
-			type="button"
-			href="/register"
-			class="btn btn-sm btn-primary inline no-underline">
-			<b>Register</b>
-			<fa fa-chevron-right></fa>
-		</a>
+		<p>{tagline}</p>
+		{#if !data.user}
+			<a
+				type="button"
+				href="/register"
+				class="btn btn-sm btn-primary inline no-underline">
+				<b>Register</b>
+				→
+			</a>
+		{/if}
 	</div>
 </Pagepart>
 
