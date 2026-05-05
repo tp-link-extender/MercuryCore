@@ -166,7 +166,7 @@
 			<h3>Same nostalgia.</h3>
 			<p>
 				{data.siteName} still uses the exact same client as the previous
-				iteration. Our philosophy when it comes to our client is to make
+				2 iterations. Our philosophy when it comes to our client is to make
 				sure that it is accurately represented. The end-goal with our client
 				is to implement every feature that it originally had.
 			</p>
@@ -188,8 +188,7 @@
 			<p>
 				We take the security and privacy of our users very seriously. No
 				identifying information is stored on our servers, and no data is
-				shared with third parties. Further detail can be found in our
-				<a href="/privacy">privacy policy.</a>
+				shared with third parties.
 			</p>
 			<h3>Vulnerability management</h3>
 			<p>
