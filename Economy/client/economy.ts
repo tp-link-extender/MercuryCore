@@ -96,12 +96,12 @@ export class Send {
 	}
 
 	Serialise(): Buffer {
-		const b = new BufBuilder()
+		const b = []
 		// encode Owner
 		b.push(SerialiseItem(this.Owner))
 		// encode Items
 		b.push(this.Items.Serialise())
-		return b.result()
+		return Buffer.concat(b)
 	}
 
 	static Deserialise(reader: BufReader): Send {
@@ -188,10 +188,10 @@ export function TransferEqual(a: Transfer, b: Transfer): boolean {
 }
 
 export function TransferSerialise(t: Transfer): Buffer {
-	const b = new BufBuilder()
+	const b = []
 	b.push(t[0].Serialise())
 	b.push(t[1].Serialise())
-	return b.result()
+	return Buffer.concat(b)
 }
 
 export function DeserialiseTransfer(buf: Buffer): Transfer {
@@ -209,14 +209,14 @@ export class OwnersOne {
 	}
 
 	Serialise(): Buffer {
-		const b = new BufBuilder()
+		const b = []
 		const lbuf = Buffer.alloc(4)
 		lbuf.writeUInt32BE(this.set.size, 0)
 		b.push(lbuf)
 		for (const o of this.set) {
 			b.push(SerialiseItem(o))
 		}
-		return b.result()
+		return Buffer.concat(b)
 	}
 
 	static Deserialise(reader: BufReader): OwnersOne {
@@ -245,7 +245,7 @@ export class OwnersMany {
 	}
 
 	Serialise(): Buffer {
-		const b = new BufBuilder()
+		const b = []
 		const lbuf = Buffer.alloc(4)
 		lbuf.writeUInt32BE(this.map.size, 0)
 		b.push(lbuf)
@@ -255,7 +255,7 @@ export class OwnersMany {
 			qtybuf.writeBigUInt64BE(qty, 0)
 			b.push(qtybuf)
 		}
-		return b.result()
+		return Buffer.concat(b)
 	}
 
 	static Deserialise(reader: BufReader): OwnersMany {
