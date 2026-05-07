@@ -7,30 +7,30 @@ import (
 	"strings"
 )
 
-func SerialiseNumeric(i NumericItem) []byte {
+func SerialiseNumeric(i NumericItem, w io.Writer) {
 	idbuf := make([]byte, 5)
 	idbuf[0] = byte(i.Type())
 	binary.BigEndian.PutUint32(idbuf[1:], i.ID())
-	return idbuf
+	w.Write(idbuf)
 }
 
-func SerialiseString(i StringItem) []byte {
+func SerialiseString(i StringItem, w io.Writer) {
 	idstr := i.ID()
 	idl := len(idstr)
 	id := make([]byte, 2+idl)
 	id[0] = byte(i.Type())
 	id[1] = byte(idl)
 	copy(id[2:], idstr)
-	return id
+	w.Write(id)
 }
 
 func SerialiseItem(i Item, w io.Writer) bool {
 	if i == nil {
 		w.Write([]byte{byte(TypeNil)})
 	} else if ni, ok := i.(NumericItem); ok {
-		w.Write(SerialiseNumeric(ni))
+		SerialiseNumeric(ni, w)
 	} else if si, ok := i.(StringItem); ok {
-		w.Write(SerialiseString(si))
+		SerialiseString(si, w)
 	} else {
 		return false
 	}

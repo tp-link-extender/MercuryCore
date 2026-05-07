@@ -194,7 +194,7 @@ func (e *EconomyServer) createLimitedSourceRoute(w http.ResponseWriter, r *http.
 		return
 	}
 
-	io.WriteString(w, src.String()) // TODO: better format possible?
+	SerialiseNumeric(src, w)
 }
 
 func (e *EconomyServer) createUnlimitedSourceRoute(w http.ResponseWriter, r *http.Request) {
@@ -215,7 +215,7 @@ func (e *EconomyServer) createUnlimitedSourceRoute(w http.ResponseWriter, r *htt
 		return
 	}
 
-	io.WriteString(w, src.String()) // TODO: better format possible?
+	SerialiseNumeric(src, w)
 }
 
 func (e *EconomyServer) createPlaceRoute(w http.ResponseWriter, r *http.Request) {
@@ -236,7 +236,7 @@ func (e *EconomyServer) createPlaceRoute(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	io.WriteString(w, p.String()) // TODO: better format possible?
+	SerialiseNumeric(p, w)
 }
 
 func (e *EconomyServer) createGroupRoute(w http.ResponseWriter, r *http.Request) {
@@ -257,7 +257,7 @@ func (e *EconomyServer) createGroupRoute(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	io.WriteString(w, g.String()) // TODO: better format possible?
+	SerialiseString(g, w)
 }
 
 type CustomResponseWriter struct {
