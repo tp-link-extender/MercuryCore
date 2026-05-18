@@ -110,11 +110,11 @@
 					{/if}
 				</div>
 				{#if data.username !== user.username}
-					<span class="dropdown float-end">
+					<span class="<lg:hidden dropdown float-end">
 						<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
 						<div class="dropdown-content pt-2">
 							<ul class="p-2 rounded-3">
-								<ReportButton
+								b1<ReportButton
 									user={data.username}
 									url="/user/{data.username}" />
 							</ul>
@@ -130,7 +130,7 @@
 					<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
 					<div class="dropdown-content pt-2">
 						<ul class="p-2 rounded-3">
-							<ReportButton
+							b2<ReportButton
 								user={data.username}
 								url="/user/{data.username}" />
 						</ul>
