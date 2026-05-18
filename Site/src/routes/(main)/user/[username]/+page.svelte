@@ -141,7 +141,7 @@
 	</div>
 	<div class="sm:grid grid-cols-2 gap-4">
 		<div>
-			{#if data.description && data.description.text}
+			{#if data.description}
 				<div class="pt-6">
 					<div class="flex justify-between">
 						<h2>Description</h2>
@@ -155,7 +155,7 @@
 						{/if}
 					</div>
 					<p class="pl-2 pt-4 whitespace-pre-line">
-						{data.description.text}
+						{data.description}
 					</p>
 				</div>
 			{:else if data.username === user.username}
