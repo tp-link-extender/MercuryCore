@@ -45,58 +45,6 @@ func SerialiseItem(i Item, w io.Writer) bool {
 	return true
 }
 
-func DeserialiseItem(r io.Reader) (Item, error) {
-	var typeByte [1]byte
-	if _, err := r.Read(typeByte[:]); err != nil {
-		return nil, fmt.Errorf("read type: %w", err)
-	}
-
-	t := Type(typeByte[0])
-	if t == TypeNil {
-		return nil, nil
-	}
-
-	if t == TypeUser || t == TypeGroup {
-		var lenByte [1]byte
-		if _, err := r.Read(lenByte[:]); err != nil {
-			return nil, fmt.Errorf("read string id length: %w", err)
-		}
-
-		idbuf := make([]byte, lenByte[0])
-		if _, err := r.Read(idbuf); err != nil {
-			return nil, fmt.Errorf("read string id: %w", err)
-		}
-		id := string(idbuf)
-
-		if t == TypeUser {
-			return User{id}, nil
-		}
-		return Group{id}, nil
-	}
-
-	var idbuf [4]byte
-	if _, err := r.Read(idbuf[:]); err != nil {
-		return nil, fmt.Errorf("read numeric id: %w", err)
-	}
-
-	switch id := binary.BigEndian.Uint32(idbuf[:]); t {
-	case TypeCurrency:
-		return Currency{id}, nil
-	case TypeLimitedAsset:
-		return LimitedAsset{id}, nil
-	case TypeUnlimitedAsset:
-		return UnlimitedAsset{id}, nil
-	case TypeLimitedSource:
-		return LimitedSource{id}, nil
-	case TypeUnlimitedSource:
-		return UnlimitedSource{id}, nil
-	case TypePlace:
-		return Place{id}, nil
-	}
-
-	return nil, fmt.Errorf("unknown Type: %d", t)
-}
-
 type ItemsOne map[CanOwnOne]struct{}
 
 func (io ItemsOne) String() string {

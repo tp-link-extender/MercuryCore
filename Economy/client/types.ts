@@ -1,3 +1,5 @@
+import type { BufReader } from "./items"
+
 export type Type = number
 
 // number ID types
@@ -20,6 +22,39 @@ export abstract class Item {
 	abstract String(): string
 	// only used for serialisation atm
 	abstract readonly Type: Type
+
+	static Deserialise(r: BufReader): Item | null {
+		const typeByte = r.readUint8()
+		if (typeByte === TypeNil) return null
+
+		if (typeByte === TypeUser || typeByte === TypeGroup) {
+			// string IDs
+			const len = r.readUint8()
+			const idbuf = r.read(len)
+			const id = idbuf.toString()
+			if (typeByte === TypeUser) return new User(id)
+			return new Group(id)
+		}
+
+		// numeric IDs
+		const id = r.readUint32()
+		switch (typeByte) {
+			case TypeCurrency:
+				return new Currency(id)
+			case TypeLimitedAsset:
+				return new LimitedAsset(id)
+			case TypeUnlimitedAsset:
+				return new UnlimitedAsset(id)
+			case TypeLimitedSource:
+				return new LimitedSource(id)
+			case TypeUnlimitedSource:
+				return new UnlimitedSource(id)
+			case TypePlace:
+				return new Place(id)
+		}
+
+		throw new Error(`unknown Type: ${typeByte}`)
+	}
 }
 
 export abstract class NumericItem extends Item {
@@ -131,9 +166,9 @@ export class Place extends NumericItem implements CanOwnOne, Mintable {
 }
 
 export class User extends StringItem implements Owner {
-    override Type = TypeUser
+	override Type = TypeUser
 
-    constructor(public ID: string) {
+	constructor(public ID: string) {
 		super()
 	}
 
@@ -144,7 +179,7 @@ export class User extends StringItem implements Owner {
 
 export class Group extends StringItem implements CanOwnOne, Mintable, Owner {
 	override Type = TypeGroup
-	
+
 	constructor(public ID: string) {
 		super()
 	}

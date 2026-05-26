@@ -1,25 +1,10 @@
-import {
-	Currency,
-	Group,
-	type Item,
-	LimitedAsset,
-	LimitedSource,
-	NumericItem,
-	Place,
-	StringItem,
-	TypeCurrency,
-	TypeGroup,
-	TypeLimitedAsset,
-	TypeLimitedSource,
-	TypeNil,
-	TypePlace,
-	TypeUnlimitedAsset,
-	TypeUnlimitedSource,
-	TypeUser,
-	UnlimitedAsset,
-	UnlimitedSource,
-	User,
-} from "./types"
+import { Item, NumericItem, StringItem, TypeNil } from "./types"
+
+export function SerialiseNumber(n: number): Buffer {
+	const buf = Buffer.alloc(4)
+	buf.writeUInt32BE(n, 0)
+	return buf
+}
 
 // Serialisation helpers for Item (mirrors ledger/items.go)
 function SerialiseNumeric(i: NumericItem): Buffer {
@@ -73,39 +58,6 @@ export class BufReader {
 	}
 }
 
-export function DeserialiseItem(reader: BufReader): Item | null {
-	const typeByte = reader.readUint8()
-	if (typeByte === TypeNil) return null
-
-	// string IDs
-	if (typeByte === TypeUser || typeByte === TypeGroup) {
-		const len = reader.readUint8()
-		const idbuf = reader.read(len)
-		const id = idbuf.toString()
-		if (typeByte === TypeUser) return new User(id)
-		return new Group(id)
-	}
-
-	// numeric IDs
-	const id = reader.readUint32()
-	switch (typeByte) {
-		case TypeCurrency:
-			return new Currency(id)
-		case TypeLimitedAsset:
-			return new LimitedAsset(id)
-		case TypeUnlimitedAsset:
-			return new UnlimitedAsset(id)
-		case TypeLimitedSource:
-			return new LimitedSource(id)
-		case TypeUnlimitedSource:
-			return new UnlimitedSource(id)
-		case TypePlace:
-			return new Place(id)
-	}
-
-	throw new Error(`unknown Type: ${typeByte}`)
-}
-
 // Items-related types (ported from ledger/items.go)
 export type Quantity = bigint
 
@@ -150,7 +102,7 @@ export class ItemsOne {
 		const l = reader.readUint32()
 		const io = new ItemsOne()
 		for (let idx = 0; idx < l; idx++) {
-			const i = DeserialiseItem(reader)
+			const i = Item.Deserialise(reader)
 			if (i === null) throw new Error("item is not CanOwnOne: nil")
 			// runtime check that it satisfies CanOwnOne is not doable at runtime in TS; assume correct
 			io.Add(i)
@@ -203,7 +155,7 @@ export class ItemsMany {
 		const l = reader.readUint32()
 		const im = new ItemsMany()
 		for (let idx = 0; idx < l; idx++) {
-			const i = DeserialiseItem(reader)
+			const i = Item.Deserialise(reader)
 			if (i === null) throw new Error("item is not CanOwnMany: nil")
 			const qty = reader.readUint64()
 			im.map.set(i, qty)

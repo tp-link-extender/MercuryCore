@@ -1,6 +1,10 @@
 package ledger
 
-import "fmt"
+import (
+	"encoding/binary"
+	"fmt"
+	"io"
+)
 
 type Type uint8
 
@@ -22,12 +26,73 @@ const (
 	TypeGroup
 )
 
-type (
-	Item interface {
-		String() string
-		// only used for serialisation atm
-		Type() Type
+type Item interface {
+	String() string
+	// only used for serialisation atm
+	Type() Type
+}
+
+func readByte(r io.Reader) (byte, error) {
+	var b [1]byte
+	if _, err := r.Read(b[:]); err != nil {
+		return 0, err
 	}
+	return b[0], nil
+}
+
+func DeserialiseItem(r io.Reader) (Item, error) {
+	tb, err := readByte(r)
+	if err != nil {
+		return nil, fmt.Errorf("read type: %w", err)
+	}
+
+	t := Type(tb)
+	if t == TypeNil {
+		return nil, nil
+	}
+
+	if t == TypeUser || t == TypeGroup {
+		lb, err := readByte(r)
+		if err != nil {
+			return nil, fmt.Errorf("read string id length: %w", err)
+		}
+
+		idbuf := make([]byte, lb)
+		if _, err := r.Read(idbuf); err != nil {
+			return nil, fmt.Errorf("read string id: %w", err)
+		}
+		id := string(idbuf)
+
+		if t == TypeUser {
+			return User{id}, nil
+		}
+		return Group{id}, nil
+	}
+
+	var idbuf [4]byte
+	if _, err := r.Read(idbuf[:]); err != nil {
+		return nil, fmt.Errorf("read numeric id: %w", err)
+	}
+
+	switch id := binary.BigEndian.Uint32(idbuf[:]); t {
+	case TypeCurrency:
+		return Currency{id}, nil
+	case TypeLimitedAsset:
+		return LimitedAsset{id}, nil
+	case TypeUnlimitedAsset:
+		return UnlimitedAsset{id}, nil
+	case TypeLimitedSource:
+		return LimitedSource{id}, nil
+	case TypeUnlimitedSource:
+		return UnlimitedSource{id}, nil
+	case TypePlace:
+		return Place{id}, nil
+	}
+
+	return nil, fmt.Errorf("unknown Type: %d", t)
+}
+
+type (
 	NumericItem interface {
 		Item
 		// only used for serialisation atm
@@ -137,6 +202,7 @@ func (i LimitedSource) ID() uint32 {
 func (LimitedSource) CanOwnOne() {}
 func (LimitedSource) Mintable()  {}
 func (LimitedSource) Owner()     {}
+
 // func (LimitedSource) Single()    {}
 
 func (i LimitedSource) Create() LimitedAsset {
@@ -166,6 +232,7 @@ func (i UnlimitedSource) ID() uint32 {
 func (UnlimitedSource) CanOwnOne() {}
 func (UnlimitedSource) Mintable()  {}
 func (UnlimitedSource) Owner()     {}
+
 // func (UnlimitedSource) Single()    {}
 
 func (i UnlimitedSource) Create() UnlimitedAsset {
@@ -194,6 +261,7 @@ func (i Place) ID() uint32 {
 
 func (Place) CanOwnOne() {}
 func (Place) Mintable()  {}
+
 // func (Place) Single()    {}
 
 func RandPlace() Place {
@@ -237,6 +305,7 @@ func (i Group) ID() string {
 func (Group) CanOwnOne() {}
 func (Group) Mintable()  {}
 func (Group) Owner()     {}
+
 // func (Group) Single()    {}
 
 func RandGroup() Group {
