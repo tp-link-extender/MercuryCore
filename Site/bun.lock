@@ -16,6 +16,7 @@
         "@unocss/transformer-variant-group": "^66.6.8",
         "arktype": "^2.2.0",
         "d3-interpolate": "^3.0.1",
+        "economy": "file:../Economy/client",
         "melt": "^0.44.0",
         "nodemailer": "^8.0.7",
         "nprogress": "^0.2.0",
@@ -487,6 +488,8 @@
     "duplexer": ["duplexer@0.1.2", "", {}, "sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg=="],
 
     "earcut": ["earcut@2.2.4", "", {}, "sha512-/pjZsA1b4RPHbeWZQn66SWS8nZZWLQQ23oE3Eam7aroEFGEvwKAsJfZ9ytiEMycfzXWpca4FA9QIOehf7PocBQ=="],
+
+    "economy": ["client@file:../Economy/client", { "devDependencies": { "@types/bun": "latest" } }],
 
     "effect": ["effect@3.21.0", "", { "dependencies": { "@standard-schema/spec": "^1.0.0", "fast-check": "^3.23.1" } }, "sha512-PPN80qRokCd1f015IANNhrwOnLO7GrrMQfk4/lnZRE/8j7UPWrNNjPV0uBrZutI/nHzernbW+J0hdqQysHiSnQ=="],
 
