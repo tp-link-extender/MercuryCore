@@ -49,7 +49,7 @@ export class TransferID {
 	static Deserialise(data: Buffer): TransferID {
 		if (data.length < 8) throw ErrInvalidTransferID
 		const ts = data.readBigUInt64BE(0)
-		const id = data.slice(8).toString()
+		const id = data.subarray(8).toString()
 		return new TransferID(ts, id)
 	}
 }
@@ -95,12 +95,12 @@ export class Send {
 	}
 
 	Serialise(): Buffer {
-		const b = []
-		// encode Owner
-		b.push(SerialiseItem(this.Owner))
-		// encode Items
-		b.push(this.Items.Serialise())
-		return Buffer.concat(b)
+		return Buffer.concat([
+			// encode Owner
+			SerialiseItem(this.Owner),
+			// encode Items
+			this.Items.Serialise(),
+		])
 	}
 
 	static Deserialise(reader: BufReader): Send {
@@ -115,7 +115,22 @@ export class Send {
 	}
 }
 
-export type Transfer = [Send, Send]
+export class Transfer {
+	constructor(
+		public Send0: Send,
+		public Send1: Send
+	) {}
+
+	Serialise(): Buffer {
+		return Buffer.concat([this.Send0.Serialise(), this.Send1.Serialise()])
+	}
+
+	static Deserialise(r: BufReader): Transfer {
+		return new Transfer(Send.Deserialise(r), Send.Deserialise(r))
+	}
+}
+
+export const ErrInvalidTransferWithID = new Error("invalid TransferWithID")
 
 export class TransferWithID {
 	constructor(
@@ -124,7 +139,18 @@ export class TransferWithID {
 	) {}
 
 	String(): string {
-		return `${this.ID.String()}: ${this.Transfer[0].String()}, ${this.Transfer[1].String()}`
+		return `${this.ID.String()}: ${this.Transfer.Send0.String()}, ${this.Transfer.Send1.String()}`
+	}
+
+	static Deserialise(buf: Buffer): TransferWithID {
+		if (buf.length < 9) throw ErrInvalidTransferWithID
+		const l = buf.readUint8(0)
+		if (buf.length < 1 + l) throw ErrInvalidTransferWithID
+		const idbuf = buf.subarray(1, 1 + l)
+		const tid = TransferID.Deserialise(idbuf)
+
+		const r = new BufReader(buf.subarray(1 + l))
+		return new TransferWithID(tid, Transfer.Deserialise(r))
 	}
 }
 
@@ -134,45 +160,47 @@ export const ErrNoSourceOrDestination = new Error(
 export const ErrNoItems = new Error("transfer has no items")
 
 export function TransferValid(t: Transfer): Error | null {
-	if (t[0].Owner === null && t[1].Owner === null)
+	if (t.Send0.Owner === null && t.Send1.Owner === null)
 		return ErrNoSourceOrDestination
-	if (t[0].Items.IsEmpty() && t[1].Items.IsEmpty()) return ErrNoItems
-	for (let i = 0; i < 2; i++) {
-		const err = t[i]?.Valid()
-		if (err) return new Error(`invalid Send[${i}]: ${err.message}`)
-	}
+	if (t.Send0.Items.IsEmpty() && t.Send1.Items.IsEmpty()) return ErrNoItems
+
+	const err0 = t.Send0.Valid()
+	if (err0) return new Error(`invalid Send0: ${err0.message}`)
+	const err1 = t.Send1.Valid()
+	if (err1) return new Error(`invalid Send1: ${err1.message}`)
+
 	return null
 }
 
 export function TransferSwap(t: Transfer): Transfer {
-	return [t[1], t[0]]
+	return new Transfer(t.Send1, t.Send0)
 }
 
 function isSale(t: Transfer): boolean {
-	const from = t[0].Owner
+	const from = t.Send0.Owner
 	if (!(from instanceof LimitedSource) && !(from instanceof UnlimitedSource))
 		return false
-	return t[1].Owner instanceof User
+	return t.Send1.Owner instanceof User
 }
 
 export function TransferSale(t: Transfer): boolean {
-	if (t[0].Items.IsEmpty() && t[1].Items.IsEmpty()) return false
+	if (t.Send0.Items.IsEmpty() && t.Send1.Items.IsEmpty()) return false
 	return isSale(t) || isSale(TransferSwap(t))
 }
 
 function isStipend(t: Transfer): boolean {
 	// A stipend has a nil owner and only currency in one direction, and a user on the other
 	if (
-		t[0].Owner !== null ||
-		t[1].Owner === null ||
-		t[0].Items.IsEmpty() ||
-		!t[1].Items.IsEmpty()
+		t.Send0.Owner !== null ||
+		t.Send1.Owner === null ||
+		t.Send0.Items.IsEmpty() ||
+		!t.Send1.Items.IsEmpty()
 	)
 		return false
-	if (t[0].Items.One.set.size > 0) return false
-	if (t[0].Items.Many.map.size !== 1) return false
-	if (!(t[1].Owner instanceof User)) return false
-	for (const i of t[0].Items.Many.map.keys()) {
+	if (t.Send0.Items.One.set.size > 0) return false
+	if (t.Send0.Items.Many.map.size !== 1) return false
+	if (!(t.Send1.Owner instanceof User)) return false
+	for (const i of t.Send0.Items.Many.map.keys()) {
 		return i instanceof Currency
 	}
 	return false
@@ -183,13 +211,13 @@ export function TransferStipend(t: Transfer): boolean {
 }
 
 export function TransferEqual(a: Transfer, b: Transfer): boolean {
-	return a[0].Equal(b[0]) && a[1].Equal(b[1])
+	return a.Send0.Equal(b.Send0) && a.Send1.Equal(b.Send1)
 }
 
 export function TransferSerialise(t: Transfer): Buffer {
 	const b = []
-	b.push(t[0].Serialise())
-	b.push(t[1].Serialise())
+	b.push(t.Send0.Serialise())
+	b.push(t.Send1.Serialise())
 	return Buffer.concat(b)
 }
 
@@ -197,7 +225,7 @@ export function DeserialiseTransfer(buf: Buffer): Transfer {
 	const r = new BufReader(buf)
 	const s0 = Send.Deserialise(r)
 	const s1 = Send.Deserialise(r)
-	return [s0, s1]
+	return new Transfer(s0, s1)
 }
 
 export class OwnersOne {
@@ -218,11 +246,11 @@ export class OwnersOne {
 		return Buffer.concat(b)
 	}
 
-	static Deserialise(reader: BufReader): OwnersOne {
-		const l = reader.readUint32()
+	static Deserialise(r: BufReader): OwnersOne {
+		const l = r.readUint32()
 		const oo = new OwnersOne()
 		for (let idx = 0; idx < l; idx++) {
-			const i = DeserialiseItem(reader)
+			const i = DeserialiseItem(r)
 			if (!(i instanceof Owner))
 				throw new Error(`item is not Owner: ${i}`)
 			oo.set.add(i)
