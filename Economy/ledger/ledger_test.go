@@ -109,7 +109,9 @@ func encTransfer(t *testing.T, user User, items Items) {
 	}
 
 	tbuf := &bytes.Buffer{}
-	transfer.Serialise(tbuf)
+	if err := transfer.Serialise(tbuf); err != nil {
+		t.Fatalf("serialise Transfer: %v", err)
+	}
 
 	const expLen = 40
 	if tbuf.Len() != expLen {

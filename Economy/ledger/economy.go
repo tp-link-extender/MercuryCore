@@ -114,16 +114,18 @@ func (s Send) UnlimitedSourceAssetMint() bool {
 	})
 }
 
-func (s Send) Serialise(w io.Writer) {
+func (s Send) Serialise(w io.Writer) error {
 	// encode Owner
 	if !SerialiseItem(s.Owner, w) {
-		panic(fmt.Sprintf("unknown Owner type: %T", s.Owner))
+		return fmt.Errorf("unknown Owner type: %T", s.Owner)
 	}
 
 	// encode Items
 	if err := s.Items.Serialise(w); err != nil {
-		panic(fmt.Sprintf("serialise Items: %v", err))
+		return fmt.Errorf("serialise Items: %w", err)
 	}
+
+	return nil
 }
 
 func DeserialiseSend(r io.Reader) (Send, error) {
@@ -172,11 +174,11 @@ func (t TransferWithID) String() string {
 	return fmt.Sprintf("%s: %s", t.ID, t.Transfer)
 }
 
-func (t TransferWithID) Serialise(w io.Writer) {
+func (t TransferWithID) Serialise(w io.Writer) error {
 	idBytes := t.ID.Serialise()
 	w.Write([]byte{byte(len(idBytes))})
 	w.Write(idBytes)
-	t.Transfer.Serialise(w)
+	return t.Transfer.Serialise(w)
 }
 
 var (
@@ -253,9 +255,14 @@ func (t Transfer) Equal(other Transfer) bool {
 	return t[0].Equal(other[0]) && t[1].Equal(other[1])
 }
 
-func (t Transfer) Serialise(w io.Writer) {
-	t[0].Serialise(w)
-	t[1].Serialise(w)
+func (t Transfer) Serialise(w io.Writer) error {
+	if err := t[0].Serialise(w); err != nil {
+		return fmt.Errorf("serialise Send[0]: %w", err)
+	}
+	if err := t[1].Serialise(w); err != nil {
+		return fmt.Errorf("serialise Send[1]: %w", err)
+	}
+	return nil
 }
 
 func DeserialiseTransfer(r io.Reader) (t Transfer, err error) {

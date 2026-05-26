@@ -277,7 +277,9 @@ func (l *Ledger) Transfer(tid TransferID, t Transfer) error {
 		}
 
 		buf := &bytes.Buffer{}
-		t.Serialise(buf)
+		if err := t.Serialise(buf); err != nil {
+			return fmt.Errorf("serialise transfer: %w", err)
+		}
 		if err := bucket.Put(tid.Serialise(), buf.Bytes()); err != nil {
 			return fmt.Errorf("put transfer: %w", err)
 		}
