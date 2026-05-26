@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	c "github.com/TwiN/go-color"
@@ -324,9 +325,21 @@ func (w *CustomResponseWriter) WriteHeader(code int) {
 	w.ResponseWriter.WriteHeader(code)
 }
 
+func colourCode(cs int) string {
+	scs := strconv.Itoa(cs)
+
+	if cs >= 500 {
+		return c.InRed(scs)
+	}
+	if cs >= 400 {
+		return c.InYellow(scs)
+	}
+	return c.InGreen(scs)
+}
+
 func loggingHandler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		time := time.Now().Format("2006-01-02 15:04:05")
+		t := time.Now().Format("2006-01-02 15:04:05")
 		// newr := r.Clone(r.Context())
 		// next.ServeHTTP(w, newr)
 		// // print response code
@@ -334,17 +347,11 @@ func loggingHandler(next http.Handler) http.Handler {
 
 		crw := &CustomResponseWriter{w, http.StatusOK}
 		next.ServeHTTP(crw, r)
-		// code := crw.statusCode
-		var code string
-		if cs := crw.statusCode; crw.statusCode >= 500 {
-			code = c.InRed(fmt.Sprintf("%d", cs))
-		} else if cs >= 400 {
-			code = c.InYellow(fmt.Sprintf("%d", cs))
-		} else {
-			code = c.InGreen(fmt.Sprintf("%d", cs))
-		}
+		cs := crw.statusCode
 
-		fmt.Printf("%s %s %s\n", c.InGray(time), code, c.InBlue(r.URL.Path))
+		code := colourCode(cs)
+
+		fmt.Printf("%s %s %s\n", c.InGray(t), code, c.InBlue(r.URL.Path))
 	})
 }
 
