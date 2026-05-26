@@ -10,14 +10,14 @@ import {
 export async function load({ fetch: f, locals }) {
 	const { user } = await authorise(locals)
 
-	const balance = await getBalance(f, user.id)
-	if (!balance.ok) error(500, economyConnFailed)
+	const b = await getBalance(f, user.id)
+	if (!b.ok) error(500, economyConnFailed)
 
 	const transactions = await getTransactions(f, user.id)
 	if (!transactions.ok) error(500, "Failed to fetch transactions")
 
 	return {
-		balance: balance.value,
+		balance: b.value,
 		...(await transformTransactions(transactions.value)),
 	}
 }

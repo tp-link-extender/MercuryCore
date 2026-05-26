@@ -1,6 +1,12 @@
 import { db, Record } from "$lib/server/surreal"
 import usersQuery from "$lib/server/users.surql"
 
+export const PlacePrice = 10
+export const GroupPrice = 10
+export const LimitedSourcePrice = 100
+export const UnlimitedSourcePrice = 10
+export const StipendAmount = 10
+
 const economyUrl = "localhost:2009"
 
 export const economyConnFailed = "Cannot connect to Economy service"
@@ -26,8 +32,6 @@ const tryFetch =
 const tryFetchValue = tryFetch(async res => +(await res.text()))
 const tryFetchJson = <T>() => tryFetch(async res => (await res.json()) as T) // type assertion much?¿
 
-export const getStipend = (f: typeof globalThis.fetch) =>
-	tryFetchValue(f, `${economyUrl}/currentStipend`)
 export const getBalance = (f: typeof globalThis.fetch, user: string) =>
 	tryFetchValue(f, `${economyUrl}/balance/${user}`)
 
