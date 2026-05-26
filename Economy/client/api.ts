@@ -1,9 +1,10 @@
 import { OwnersMany, OwnersOne } from "./economy"
-import { BufReader, DeserialiseItem, Items, SerialiseItem } from "./items"
+import { BufReader, Items, SerialiseItem, SerialiseNumber } from "./items"
 import {
 	type CanOwnMany,
 	type CanOwnOne,
 	Group,
+	Item,
 	LimitedSource,
 	type Owner,
 	Place,
@@ -23,6 +24,8 @@ type Route =
 	| "createUnlimitedSource"
 	| "createPlace"
 	| "createGroup"
+	| "history"
+	| "historyOwner"
 
 const url = "http://localhost:2009"
 
@@ -111,7 +114,7 @@ export async function createLimitedSource(u: User): ReturnValue<LimitedSource> {
 	const buf = Buffer.from(await res.arrayBuffer())
 	const r = new BufReader(buf)
 
-	const i = DeserialiseItem(r)
+	const i = Item.Deserialise(r)
 	if (!(i instanceof LimitedSource))
 		throw new Error(`item is not LimitedSource: ${i}`)
 
@@ -128,7 +131,7 @@ export async function createUnlimitedSource(
 	const buf = Buffer.from(await res.arrayBuffer())
 	const r = new BufReader(buf)
 
-	const i = DeserialiseItem(r)
+	const i = Item.Deserialise(r)
 	if (!(i instanceof UnlimitedSource))
 		throw new Error(`item is not UnlimitedSource: ${i}`)
 
@@ -143,7 +146,7 @@ export async function createPlace(u: User): ReturnValue<Place> {
 	const buf = Buffer.from(await res.arrayBuffer())
 	const r = new BufReader(buf)
 
-	const i = DeserialiseItem(r)
+	const i = Item.Deserialise(r)
 	if (!(i instanceof Place)) throw new Error(`item is not Place: ${i}`)
 
 	return { ok: true, value: i }
@@ -157,8 +160,19 @@ export async function createGroup(u: User): ReturnValue<Group> {
 	const buf = Buffer.from(await res.arrayBuffer())
 	const r = new BufReader(buf)
 
-	const i = DeserialiseItem(r)
+	const i = Item.Deserialise(r)
 	if (!(i instanceof Group)) throw new Error(`item is not Group: ${i}`)
 
 	return { ok: true, value: i }
 }
+
+export async function history(n: number) {
+	const body = SerialiseNumber(n)
+	const res = await request("history", body)
+	if (res.status !== 200) return { ok: false }
+
+	const buf = Buffer.from(await res.arrayBuffer())
+	const r = new BufReader(buf)
+}
+
+export async function historyOwner(n: number, o: Owner) {}
