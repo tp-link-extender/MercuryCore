@@ -655,10 +655,10 @@ func (e *Economy) BuyLimitedAsset(u User, src LimitedSource, priceEach, qty Quan
 	return a, tid, nil
 }
 
-func (e *Economy) TransferHistory(n int) ([]TransferWithID, error) {
-	return e.ledger.TransferHistory(n)
+func (e *Economy) TransferHistory(n uint32) ([]TransferWithID, error) {
+	return e.ledger.TransferHistory(int(n))
 }
 
-func (e *Economy) TransferHistoryOwner(n int, o Owner) ([]TransferWithID, error) {
-	return e.ledger.TransferHistoryOwner(n, o)
+func (e *Economy) TransferHistoryOwner(n uint32, o Owner) ([]TransferWithID, error) {
+	return e.ledger.TransferHistoryOwner(int(n), o)
 }

@@ -260,6 +260,20 @@ func (e *EconomyServer) createGroupRoute(w http.ResponseWriter, r *http.Request)
 	SerialiseString(g, w)
 }
 
+func (e *EconomyServer) historyRoute(w http.ResponseWriter, r *http.Request) {
+	n, err := DeserialiseNumber(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode number: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	history, err := e.TransferHistory(n)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("fetch transfer history: %v", err.Error()), http.StatusInternalServerError)
+		return
+	}
+}
+
 type CustomResponseWriter struct {
 	http.ResponseWriter
 	statusCode int

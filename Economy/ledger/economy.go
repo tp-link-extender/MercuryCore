@@ -172,6 +172,13 @@ func (t TransferWithID) String() string {
 	return fmt.Sprintf("%s: %s", t.ID, t.Transfer)
 }
 
+func (t TransferWithID) Serialise(w io.Writer) {
+	idBytes := t.ID.Serialise()
+	w.Write([]byte{byte(len(idBytes))})
+	w.Write(idBytes)
+	t.Transfer.Serialise(w)
+}
+
 var (
 	ErrNoSourceOrDestination = errors.New("transfer has no source or destination")
 	ErrNoItems               = errors.New("transfer has no items")

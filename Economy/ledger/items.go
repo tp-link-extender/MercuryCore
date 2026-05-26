@@ -7,6 +7,14 @@ import (
 	"strings"
 )
 
+func DeserialiseNumber(r io.Reader) (uint32, error) {
+	var buf [4]byte
+	if _, err := r.Read(buf[:]); err != nil {
+		return 0, fmt.Errorf("read number: %w", err)
+	}
+	return binary.BigEndian.Uint32(buf[:]), nil
+}
+
 func SerialiseNumeric(i NumericItem, w io.Writer) {
 	idbuf := make([]byte, 5)
 	idbuf[0] = byte(i.Type())
