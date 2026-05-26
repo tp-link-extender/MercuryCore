@@ -272,6 +272,46 @@ func (e *EconomyServer) historyRoute(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("fetch transfer history: %v", err.Error()), http.StatusInternalServerError)
 		return
 	}
+
+	for _, t := range history {
+		if err := t.Serialise(w); err != nil {
+			http.Error(w, fmt.Sprintf("serialise transfer: %v", err.Error()), http.StatusInternalServerError)
+			return
+		}
+	}
+}
+
+func (e *EconomyServer) historyOwnerRoute(w http.ResponseWriter, r *http.Request) {
+	n, err := DeserialiseNumber(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode number: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	oi, err := DeserialiseItem(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode owner: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	o, ok := oi.(Owner)
+	if !ok {
+		http.Error(w, fmt.Sprintf("item is not Owner: %T", oi), http.StatusBadRequest)
+		return
+	}
+
+	history, err := e.TransferHistoryOwner(n, o)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("fetch transfer history: %v", err.Error()), http.StatusInternalServerError)
+		return
+	}
+
+	for _, t := range history {
+		if err := t.Serialise(w); err != nil {
+			http.Error(w, fmt.Sprintf("serialise transfer: %v", err.Error()), http.StatusInternalServerError)
+			return
+		}
+	}
 }
 
 type CustomResponseWriter struct {
@@ -343,6 +383,8 @@ func main() {
 	http.HandleFunc("POST /createUnlimitedSource", es.createUnlimitedSourceRoute)
 	http.HandleFunc("POST /createPlace", es.createPlaceRoute)
 	http.HandleFunc("POST /createGroup", es.createGroupRoute)
+	http.HandleFunc("POST /history", es.historyRoute)
+	http.HandleFunc("POST /historyOwner", es.historyOwnerRoute)
 
 	fmt.Println(c.InGreen("~ Economy service is up on port 2009 ~")) // 03/Jan/2009 Chancellor on brink of second bailout for banks
 	if err := http.ListenAndServe(":2009", loggingHandler(http.DefaultServeMux)); err != nil {
