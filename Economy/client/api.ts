@@ -29,7 +29,7 @@ const url = "http://localhost:2009"
 export type ReturnValue<T> = Promise<{ ok: true; value: T } | { ok: false }>
 export type ReturnErr = { ok: true } | { ok: false; msg: string }
 
-export const request = (route: Route, body: Buffer): Promise<Response> =>
+const request = (route: Route, body: Buffer): Promise<Response> =>
 	fetch(`${url}/${route}`, {
 		method: "POST",
 		body: Uint8Array.from(body),
