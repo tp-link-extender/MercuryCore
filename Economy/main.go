@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"strconv"
@@ -147,13 +145,7 @@ func (e *EconomyServer) balanceRoute(w http.ResponseWriter, r *http.Request) {
 // we'll expose MintCurrency some other time
 
 func (e *EconomyServer) stipendRoute(w http.ResponseWriter, r *http.Request) {
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("read body: %v", err.Error()), http.StatusBadRequest)
-		return
-	}
-
-	ui, err := DeserialiseItem(bytes.NewReader(body))
+	ui, err := DeserialiseItem(r.Body)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("decode user: %v", err.Error()), http.StatusBadRequest)
 		return
@@ -261,8 +253,91 @@ func (e *EconomyServer) createGroupRoute(w http.ResponseWriter, r *http.Request)
 	SerialiseString(g, w)
 }
 
+func (e *EconomyServer) buyUnlimitedAssetRoute(w http.ResponseWriter, r *http.Request) {
+	ui, err := DeserialiseItem(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode user: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	u, ok := ui.(User)
+	if !ok {
+		http.Error(w, fmt.Sprintf("item is not User: %T", ui), http.StatusBadRequest)
+	}
+
+	srci, err := DeserialiseItem(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode source: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	src, ok := srci.(UnlimitedSource)
+	if !ok {
+		http.Error(w, fmt.Sprintf("item is not UnlimitedSource: %T", srci), http.StatusBadRequest)
+		return
+	}
+
+	price, err := DeserialiseUint64(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode price: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	if _, _, err := e.BuyUnlimitedAsset(u, src, Quantity(price)); err != nil {
+		http.Error(w, fmt.Sprintf("buy unlimited asset error: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	// really I don't think there's a need to return any actual data here
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (e *EconomyServer) buyLimitedAssetRoute(w http.ResponseWriter, r *http.Request) {
+	ui, err := DeserialiseItem(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode user: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	u, ok := ui.(User)
+	if !ok {
+		http.Error(w, fmt.Sprintf("item is not User: %T", ui), http.StatusBadRequest)
+	}
+
+	srci, err := DeserialiseItem(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode source: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	src, ok := srci.(LimitedSource)
+	if !ok {
+		http.Error(w, fmt.Sprintf("item is not LimitedSource: %T", srci), http.StatusBadRequest)
+		return
+	}
+
+	priceEach, err := DeserialiseUint64(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode price: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	qty, err := DeserialiseUint64(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode price: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	if _, _, err := e.BuyLimitedAsset(u, src, Quantity(priceEach), Quantity(qty)); err != nil {
+		http.Error(w, fmt.Sprintf("buy limited asset error: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
 func (e *EconomyServer) historyRoute(w http.ResponseWriter, r *http.Request) {
-	n, err := DeserialiseNumber(r.Body)
+	n, err := DeserialiseUint32(r.Body)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("decode number: %v", err.Error()), http.StatusBadRequest)
 		return
@@ -283,7 +358,7 @@ func (e *EconomyServer) historyRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 func (e *EconomyServer) historyOwnerRoute(w http.ResponseWriter, r *http.Request) {
-	n, err := DeserialiseNumber(r.Body)
+	n, err := DeserialiseUint32(r.Body)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("decode number: %v", err.Error()), http.StatusBadRequest)
 		return

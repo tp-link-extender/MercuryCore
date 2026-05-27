@@ -7,12 +7,20 @@ import (
 	"strings"
 )
 
-func DeserialiseNumber(r io.Reader) (uint32, error) {
+func DeserialiseUint32(r io.Reader) (uint32, error) {
 	var buf [4]byte
 	if _, err := r.Read(buf[:]); err != nil {
 		return 0, fmt.Errorf("read number: %w", err)
 	}
 	return binary.BigEndian.Uint32(buf[:]), nil
+}
+
+func DeserialiseUint64(r io.Reader) (uint64, error) {
+	var buf [8]byte 
+	if _, err := r.Read(buf[:]); err != nil {
+		return 0, fmt.Errorf("read number: %w", err)
+	}
+	return binary.BigEndian.Uint64(buf[:]), nil
 }
 
 func SerialiseNumeric(i NumericItem, w io.Writer) {
