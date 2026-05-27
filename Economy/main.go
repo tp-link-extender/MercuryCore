@@ -24,7 +24,7 @@ type EconomyServer struct {
 	*Economy
 }
 
-func getType[T Item](w http.ResponseWriter, r *http.Request) (T, bool) {
+func getItem[T Item](w http.ResponseWriter, r *http.Request) (T, bool) {
 	oi, err := DeserialiseItem(r.Body)
 	if err != nil {
 		var t T
@@ -43,12 +43,12 @@ func getType[T Item](w http.ResponseWriter, r *http.Request) (T, bool) {
 }
 
 func (e *EconomyServer) ownsOneRoute(w http.ResponseWriter, r *http.Request) {
-	o, ok := getType[Owner](w, r)
+	o, ok := getItem[Owner](w, r)
 	if !ok {
 		return
 	}
 
-	coo, ok := getType[CanOwnOne](w, r)
+	coo, ok := getItem[CanOwnOne](w, r)
 	if !ok {
 		return
 	}
@@ -57,12 +57,12 @@ func (e *EconomyServer) ownsOneRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 func (e *EconomyServer) ownsManyRoute(w http.ResponseWriter, r *http.Request) {
-	o, ok := getType[Owner](w, r)
+	o, ok := getItem[Owner](w, r)
 	if !ok {
 		return
 	}
 
-	com, ok := getType[CanOwnMany](w, r)
+	com, ok := getItem[CanOwnMany](w, r)
 	if !ok {
 		return
 	}
@@ -71,7 +71,7 @@ func (e *EconomyServer) ownsManyRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 func (e *EconomyServer) ownersOneRoute(w http.ResponseWriter, r *http.Request) {
-	coo, ok := getType[CanOwnOne](w, r)
+	coo, ok := getItem[CanOwnOne](w, r)
 	if !ok {
 		return
 	}
@@ -83,7 +83,7 @@ func (e *EconomyServer) ownersOneRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 func (e *EconomyServer) ownersManyRoute(w http.ResponseWriter, r *http.Request) {
-	com, ok := getType[CanOwnMany](w, r)
+	com, ok := getItem[CanOwnMany](w, r)
 	if !ok {
 		return
 	}
@@ -95,7 +95,7 @@ func (e *EconomyServer) ownersManyRoute(w http.ResponseWriter, r *http.Request) 
 }
 
 func (e *EconomyServer) inventoryRoute(w http.ResponseWriter, r *http.Request) {
-	o, ok := getType[Owner](w, r) // oh ok
+	o, ok := getItem[Owner](w, r) // oh ok
 	if !ok {
 		return
 	}
@@ -107,7 +107,7 @@ func (e *EconomyServer) inventoryRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 func (e *EconomyServer) balanceRoute(w http.ResponseWriter, r *http.Request) {
-	o, ok := getType[Owner](w, r)
+	o, ok := getItem[Owner](w, r)
 	if !ok {
 		return
 	}
@@ -118,7 +118,7 @@ func (e *EconomyServer) balanceRoute(w http.ResponseWriter, r *http.Request) {
 // we'll expose MintCurrency some other time
 
 func (e *EconomyServer) stipendRoute(w http.ResponseWriter, r *http.Request) {
-	u, ok := getType[User](w, r)
+	u, ok := getItem[User](w, r)
 	if !ok {
 		return
 	}
@@ -138,7 +138,7 @@ func (e *EconomyServer) stipendRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 func (e *EconomyServer) createLimitedSourceRoute(w http.ResponseWriter, r *http.Request) {
-	u, ok := getType[User](w, r)
+	u, ok := getItem[User](w, r)
 	if !ok {
 		return
 	}
@@ -154,7 +154,7 @@ func (e *EconomyServer) createLimitedSourceRoute(w http.ResponseWriter, r *http.
 }
 
 func (e *EconomyServer) createUnlimitedSourceRoute(w http.ResponseWriter, r *http.Request) {
-	u, ok := getType[User](w, r)
+	u, ok := getItem[User](w, r)
 	if !ok {
 		return
 	}
@@ -169,7 +169,7 @@ func (e *EconomyServer) createUnlimitedSourceRoute(w http.ResponseWriter, r *htt
 }
 
 func (e *EconomyServer) createPlaceRoute(w http.ResponseWriter, r *http.Request) {
-	u, ok := getType[User](w, r)
+	u, ok := getItem[User](w, r)
 	if !ok {
 		return
 	}
@@ -184,7 +184,7 @@ func (e *EconomyServer) createPlaceRoute(w http.ResponseWriter, r *http.Request)
 }
 
 func (e *EconomyServer) createGroupRoute(w http.ResponseWriter, r *http.Request) {
-	u, ok := getType[User](w, r)
+	u, ok := getItem[User](w, r)
 	if !ok {
 		return
 	}
@@ -199,20 +199,13 @@ func (e *EconomyServer) createGroupRoute(w http.ResponseWriter, r *http.Request)
 }
 
 func (e *EconomyServer) buyUnlimitedAssetRoute(w http.ResponseWriter, r *http.Request) {
-	u, ok := getType[User](w, r)
+	u, ok := getItem[User](w, r)
 	if !ok {
 		return
 	}
 
-	srci, err := DeserialiseItem(r.Body)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("decode source: %v", err.Error()), http.StatusBadRequest)
-		return
-	}
-
-	src, ok := srci.(UnlimitedSource)
+	src, ok := getItem[UnlimitedSource](w, r)
 	if !ok {
-		http.Error(w, fmt.Sprintf("item is not UnlimitedSource: %T", srci), http.StatusBadRequest)
 		return
 	}
 
@@ -232,32 +225,25 @@ func (e *EconomyServer) buyUnlimitedAssetRoute(w http.ResponseWriter, r *http.Re
 }
 
 func (e *EconomyServer) buyLimitedAssetRoute(w http.ResponseWriter, r *http.Request) {
-	u, ok := getType[User](w, r)
+	u, ok := getItem[User](w, r)
 	if !ok {
 		return
 	}
 
-	srci, err := DeserialiseItem(r.Body)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("decode source: %v", err.Error()), http.StatusBadRequest)
-		return
-	}
-
-	src, ok := srci.(LimitedSource)
+	src, ok := getItem[LimitedSource](w, r)
 	if !ok {
-		http.Error(w, fmt.Sprintf("item is not LimitedSource: %T", srci), http.StatusBadRequest)
 		return
 	}
 
 	priceEach, err := DeserialiseUint64(r.Body)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("decode price: %v", err.Error()), http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("decode priceEach: %v", err.Error()), http.StatusBadRequest)
 		return
 	}
 
 	qty, err := DeserialiseUint64(r.Body)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("decode price: %v", err.Error()), http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("decode quantity: %v", err.Error()), http.StatusBadRequest)
 		return
 	}
 
@@ -297,7 +283,7 @@ func (e *EconomyServer) historyOwnerRoute(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	o, ok := getType[Owner](w, r)
+	o, ok := getItem[Owner](w, r)
 	if !ok {
 		return
 	}
