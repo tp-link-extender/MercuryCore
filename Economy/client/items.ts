@@ -56,6 +56,9 @@ export class BufReader {
 		this.off += 8
 		return v
 	}
+	end(): boolean {
+		return this.off >= this.buf.length
+	}
 }
 
 // Items-related types (ported from ledger/items.go)

@@ -1,6 +1,5 @@
 import {
 	BufReader,
-	DeserialiseItem,
 	Items,
 	ItemsMany,
 	ItemsOne,
@@ -10,6 +9,7 @@ import {
 import {
 	Currency,
 	IsMintable,
+	Item,
 	LimitedSource,
 	Owner,
 	UnlimitedSource,
@@ -104,7 +104,7 @@ export class Send {
 	}
 
 	static Deserialise(reader: BufReader): Send {
-		const oi = DeserialiseItem(reader)
+		const oi = Item.Deserialise(reader)
 		let owner: Owner | null = null
 		if (oi !== null)
 			// runtime check
@@ -142,14 +142,11 @@ export class TransferWithID {
 		return `${this.ID.String()}: ${this.Transfer.Send0.String()}, ${this.Transfer.Send1.String()}`
 	}
 
-	static Deserialise(buf: Buffer): TransferWithID {
-		if (buf.length < 9) throw ErrInvalidTransferWithID
-		const l = buf.readUint8(0)
-		if (buf.length < 1 + l) throw ErrInvalidTransferWithID
-		const idbuf = buf.subarray(1, 1 + l)
+	static Deserialise(r: BufReader): TransferWithID {
+		const l = r.readUint8()
+		const idbuf = r.read(l)
 		const tid = TransferID.Deserialise(idbuf)
 
-		const r = new BufReader(buf.subarray(1 + l))
 		return new TransferWithID(tid, Transfer.Deserialise(r))
 	}
 }
@@ -250,7 +247,7 @@ export class OwnersOne {
 		const l = r.readUint32()
 		const oo = new OwnersOne()
 		for (let idx = 0; idx < l; idx++) {
-			const i = DeserialiseItem(r)
+			const i = Item.Deserialise(r)
 			if (!(i instanceof Owner))
 				throw new Error(`item is not Owner: ${i}`)
 			oo.set.add(i)
@@ -289,7 +286,7 @@ export class OwnersMany {
 		const l = reader.readUint32()
 		const om = new OwnersMany()
 		for (let idx = 0; idx < l; idx++) {
-			const i = DeserialiseItem(reader)
+			const i = Item.Deserialise(reader)
 			if (!(i instanceof Owner))
 				throw new Error(`item is not Owner: ${i}`)
 			const qty = reader.readUint64()

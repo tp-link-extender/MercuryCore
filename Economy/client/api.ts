@@ -1,4 +1,4 @@
-import { OwnersMany, OwnersOne } from "./economy"
+import { OwnersMany, OwnersOne, TransferWithID } from "./economy"
 import { BufReader, Items, SerialiseItem, SerialiseNumber } from "./items"
 import {
 	type CanOwnMany,
@@ -166,13 +166,26 @@ export async function createGroup(u: User): ReturnValue<Group> {
 	return { ok: true, value: i }
 }
 
-export async function history(n: number) {
-	const body = SerialiseNumber(n)
+async function getHistory(body: Buffer): ReturnValue<TransferWithID[]> {
 	const res = await request("history", body)
 	if (res.status !== 200) return { ok: false }
 
 	const buf = Buffer.from(await res.arrayBuffer())
 	const r = new BufReader(buf)
+
+	const transfers: TransferWithID[] = []
+
+	while (!r.end()) {
+		const t = TransferWithID.Deserialise(r)
+		if (t === null) break
+		transfers.push(t)
+	}
+
+	return { ok: true, value: transfers }
 }
 
-export async function historyOwner(n: number, o: Owner) {}
+export const history = (n: number): ReturnValue<TransferWithID[]> =>
+	getHistory(SerialiseNumber(n))
+
+export const historyOwner = (n: number, o: Owner) =>
+	getHistory(Buffer.concat([SerialiseNumber(n), SerialiseItem(o)]))
