@@ -24,119 +24,92 @@ type EconomyServer struct {
 	*Economy
 }
 
-func (e *EconomyServer) ownsOneRoute(w http.ResponseWriter, r *http.Request) {
+func getType[T Item](w http.ResponseWriter, r *http.Request) (T, bool) {
 	oi, err := DeserialiseItem(r.Body)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("decode owner: %v", err.Error()), http.StatusBadRequest)
+		var t T
+		http.Error(w, fmt.Sprintf("decode %T: %v", t, err), http.StatusBadRequest)
+		return t, false
+	}
+
+	o, ok := oi.(T)
+	if !ok {
+		var t T
+		http.Error(w, fmt.Sprintf("item is not %T: %T", t, oi), http.StatusBadRequest)
+		return t, false
+	}
+
+	return o, true
+}
+
+func (e *EconomyServer) ownsOneRoute(w http.ResponseWriter, r *http.Request) {
+	o, ok := getType[Owner](w, r)
+	if !ok {
 		return
 	}
 
-	o, ok := oi.(Owner)
+	coo, ok := getType[CanOwnOne](w, r)
 	if !ok {
-		http.Error(w, fmt.Sprintf("item is not Owner: %T", oi), http.StatusBadRequest)
-	}
-
-	cooi, err := DeserialiseItem(r.Body)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("decode item: %v", err.Error()), http.StatusBadRequest)
 		return
-	}
-
-	coo, ok := cooi.(CanOwnOne)
-	if !ok {
-		http.Error(w, fmt.Sprintf("item is not CanOwnOne: %T", cooi), http.StatusBadRequest)
 	}
 
 	w.Write([]byte{b2i(e.OwnsOne(o, coo))})
 }
 
 func (e *EconomyServer) ownsManyRoute(w http.ResponseWriter, r *http.Request) {
-	oi, err := DeserialiseItem(r.Body)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("decode owner: %v", err.Error()), http.StatusBadRequest)
+	o, ok := getType[Owner](w, r)
+	if !ok {
 		return
 	}
 
-	o, ok := oi.(Owner)
+	com, ok := getType[CanOwnMany](w, r)
 	if !ok {
-		http.Error(w, fmt.Sprintf("item is not Owner: %T", oi), http.StatusBadRequest)
-	}
-
-	comi, err := DeserialiseItem(r.Body)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("decode item: %v", err.Error()), http.StatusBadRequest)
 		return
 	}
 
-	item, ok := comi.(CanOwnMany)
-	if !ok {
-		http.Error(w, fmt.Sprintf("item is not CanOwnMany: %T", comi), http.StatusBadRequest)
-	}
-
-	fmt.Fprintf(w, "%d", e.OwnsMany(o, item))
+	fmt.Fprintf(w, "%d", e.OwnsMany(o, com))
 }
 
 func (e *EconomyServer) ownersOneRoute(w http.ResponseWriter, r *http.Request) {
-	cooi, err := DeserialiseItem(r.Body)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("decode item: %v", err.Error()), http.StatusBadRequest)
-		return
-	}
-
-	coo, ok := cooi.(CanOwnOne)
+	coo, ok := getType[CanOwnOne](w, r)
 	if !ok {
-		http.Error(w, fmt.Sprintf("item is not CanOwnOne: %T", cooi), http.StatusBadRequest)
+		return
 	}
 
 	if err := e.OwnersOne(coo).Serialise(w); err != nil {
 		http.Error(w, fmt.Sprintf("serialise OwnersOne: %v", err.Error()), http.StatusInternalServerError)
+		return
 	}
 }
 
 func (e *EconomyServer) ownersManyRoute(w http.ResponseWriter, r *http.Request) {
-	comi, err := DeserialiseItem(r.Body)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("decode item: %v", err.Error()), http.StatusBadRequest)
-		return
-	}
-
-	com, ok := comi.(CanOwnMany)
+	com, ok := getType[CanOwnMany](w, r)
 	if !ok {
-		http.Error(w, fmt.Sprintf("item is not CanOwnMany: %T", comi), http.StatusBadRequest)
+		return
 	}
 
 	if err := e.OwnersMany(com).Serialise(w); err != nil {
 		http.Error(w, fmt.Sprintf("serialise OwnersMany: %v", err.Error()), http.StatusInternalServerError)
+		return
 	}
 }
 
 func (e *EconomyServer) inventoryRoute(w http.ResponseWriter, r *http.Request) {
-	oi, err := DeserialiseItem(r.Body)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("decode owner: %v", err.Error()), http.StatusBadRequest)
-		return
-	}
-
-	o, ok := oi.(Owner)
+	o, ok := getType[Owner](w, r) // oh ok
 	if !ok {
-		http.Error(w, fmt.Sprintf("item is not Owner: %T", oi), http.StatusBadRequest)
+		return
 	}
 
 	if err := e.Inventory(o).Serialise(w); err != nil {
 		http.Error(w, fmt.Sprintf("serialise inventory: %v", err.Error()), http.StatusInternalServerError)
+		return
 	}
 }
 
 func (e *EconomyServer) balanceRoute(w http.ResponseWriter, r *http.Request) {
-	oi, err := DeserialiseItem(r.Body)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("decode owner: %v", err.Error()), http.StatusBadRequest)
-		return
-	}
-
-	o, ok := oi.(Owner)
+	o, ok := getType[Owner](w, r)
 	if !ok {
-		http.Error(w, fmt.Sprintf("item is not Owner: %T", oi), http.StatusBadRequest)
+		return
 	}
 
 	fmt.Fprintf(w, "%d", e.Balance(o))
@@ -145,15 +118,9 @@ func (e *EconomyServer) balanceRoute(w http.ResponseWriter, r *http.Request) {
 // we'll expose MintCurrency some other time
 
 func (e *EconomyServer) stipendRoute(w http.ResponseWriter, r *http.Request) {
-	ui, err := DeserialiseItem(r.Body)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("decode user: %v", err.Error()), http.StatusBadRequest)
-		return
-	}
-
-	u, ok := ui.(User)
+	u, ok := getType[User](w, r)
 	if !ok {
-		http.Error(w, fmt.Sprintf("item is not User: %T", ui), http.StatusBadRequest)
+		return
 	}
 
 	// wdc about the tid (what would we even do with it in where this API is called from??)
@@ -171,15 +138,9 @@ func (e *EconomyServer) stipendRoute(w http.ResponseWriter, r *http.Request) {
 }
 
 func (e *EconomyServer) createLimitedSourceRoute(w http.ResponseWriter, r *http.Request) {
-	ui, err := DeserialiseItem(r.Body)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("decode user: %v", err.Error()), http.StatusBadRequest)
-		return
-	}
-
-	u, ok := ui.(User)
+	u, ok := getType[User](w, r)
 	if !ok {
-		http.Error(w, fmt.Sprintf("item is not User: %T", ui), http.StatusBadRequest)
+		return
 	}
 
 	// again wdc about the tid because we'll probably be redirecting and the src is what we actually want
@@ -193,15 +154,9 @@ func (e *EconomyServer) createLimitedSourceRoute(w http.ResponseWriter, r *http.
 }
 
 func (e *EconomyServer) createUnlimitedSourceRoute(w http.ResponseWriter, r *http.Request) {
-	ui, err := DeserialiseItem(r.Body)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("decode user: %v", err.Error()), http.StatusBadRequest)
-		return
-	}
-
-	u, ok := ui.(User)
+	u, ok := getType[User](w, r)
 	if !ok {
-		http.Error(w, fmt.Sprintf("item is not User: %T", ui), http.StatusBadRequest)
+		return
 	}
 
 	src, _, err := e.CreateUnlimitedSource(u)
@@ -214,15 +169,9 @@ func (e *EconomyServer) createUnlimitedSourceRoute(w http.ResponseWriter, r *htt
 }
 
 func (e *EconomyServer) createPlaceRoute(w http.ResponseWriter, r *http.Request) {
-	ui, err := DeserialiseItem(r.Body)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("decode user: %v", err.Error()), http.StatusBadRequest)
-		return
-	}
-
-	u, ok := ui.(User)
+	u, ok := getType[User](w, r)
 	if !ok {
-		http.Error(w, fmt.Sprintf("item is not User: %T", ui), http.StatusBadRequest)
+		return
 	}
 
 	p, _, err := e.CreatePlace(u)
@@ -235,15 +184,9 @@ func (e *EconomyServer) createPlaceRoute(w http.ResponseWriter, r *http.Request)
 }
 
 func (e *EconomyServer) createGroupRoute(w http.ResponseWriter, r *http.Request) {
-	ui, err := DeserialiseItem(r.Body)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("decode user: %v", err.Error()), http.StatusBadRequest)
-		return
-	}
-
-	u, ok := ui.(User)
+	u, ok := getType[User](w, r)
 	if !ok {
-		http.Error(w, fmt.Sprintf("item is not User: %T", ui), http.StatusBadRequest)
+		return
 	}
 
 	g, _, err := e.CreateGroup(u)
@@ -256,15 +199,9 @@ func (e *EconomyServer) createGroupRoute(w http.ResponseWriter, r *http.Request)
 }
 
 func (e *EconomyServer) buyUnlimitedAssetRoute(w http.ResponseWriter, r *http.Request) {
-	ui, err := DeserialiseItem(r.Body)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("decode user: %v", err.Error()), http.StatusBadRequest)
-		return
-	}
-
-	u, ok := ui.(User)
+	u, ok := getType[User](w, r)
 	if !ok {
-		http.Error(w, fmt.Sprintf("item is not User: %T", ui), http.StatusBadRequest)
+		return
 	}
 
 	srci, err := DeserialiseItem(r.Body)
@@ -295,15 +232,9 @@ func (e *EconomyServer) buyUnlimitedAssetRoute(w http.ResponseWriter, r *http.Re
 }
 
 func (e *EconomyServer) buyLimitedAssetRoute(w http.ResponseWriter, r *http.Request) {
-	ui, err := DeserialiseItem(r.Body)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("decode user: %v", err.Error()), http.StatusBadRequest)
-		return
-	}
-
-	u, ok := ui.(User)
+	u, ok := getType[User](w, r)
 	if !ok {
-		http.Error(w, fmt.Sprintf("item is not User: %T", ui), http.StatusBadRequest)
+		return
 	}
 
 	srci, err := DeserialiseItem(r.Body)
@@ -366,15 +297,8 @@ func (e *EconomyServer) historyOwnerRoute(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	oi, err := DeserialiseItem(r.Body)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("decode owner: %v", err.Error()), http.StatusBadRequest)
-		return
-	}
-
-	o, ok := oi.(Owner)
+	o, ok := getType[Owner](w, r)
 	if !ok {
-		http.Error(w, fmt.Sprintf("item is not Owner: %T", oi), http.StatusBadRequest)
 		return
 	}
 
