@@ -1,5 +1,12 @@
 import { OwnersMany, OwnersOne, TransferWithID } from "./economy"
-import { BufReader, Items, SerialiseItem, SerialiseUint32 } from "./items"
+import {
+	BufReader,
+	Items,
+	type Quantity,
+	SerialiseItem,
+	SerialiseUint32,
+	SerialiseUint64,
+} from "./items"
 import {
 	type CanOwnMany,
 	type CanOwnOne,
@@ -24,6 +31,8 @@ type Route =
 	| "createUnlimitedSource"
 	| "createPlace"
 	| "createGroup"
+	| "buyUnlimitedAsset"
+	| "buyLimitedAsset"
 	| "history"
 	| "historyOwner"
 
@@ -103,7 +112,7 @@ export async function stipend(o: Owner): Promise<boolean> {
 	const body = SerialiseItem(o)
 	const res = await request("stipend", body)
 
-	return res.status === 200 || res.status === 429
+	return res.status === 204 || res.status === 429
 }
 
 export async function createLimitedSource(u: User): ReturnValue<LimitedSource> {
@@ -164,6 +173,38 @@ export async function createGroup(u: User): ReturnValue<Group> {
 	if (!(i instanceof Group)) throw new Error(`item is not Group: ${i}`)
 
 	return { ok: true, value: i }
+}
+
+export async function buyUnlimitedAsset(
+	u: User,
+	src: UnlimitedSource,
+	price: Quantity
+): Promise<boolean> {
+	const body = Buffer.concat([
+		SerialiseItem(u),
+		SerialiseItem(src),
+		SerialiseUint64(price),
+	])
+	const res = await request("buyUnlimitedAsset", body)
+
+	return res.status === 204
+}
+
+export async function buyLimitedAsset(
+	u: User,
+	src: UnlimitedSource,
+	priceEach: Quantity,
+	qty: Quantity
+): Promise<boolean> {
+	const body = Buffer.concat([
+		SerialiseItem(u),
+		SerialiseItem(src),
+		SerialiseUint64(priceEach),
+		SerialiseUint64(qty),
+	])
+	const res = await request("buyLimitedAsset", body)
+
+	return res.status === 204
 }
 
 async function getHistory(body: Buffer): ReturnValue<TransferWithID[]> {

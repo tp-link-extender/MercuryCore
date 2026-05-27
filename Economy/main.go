@@ -166,6 +166,8 @@ func (e *EconomyServer) stipendRoute(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("stipend error: %v", err.Error()), http.StatusBadRequest)
 		return
 	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func (e *EconomyServer) createLimitedSourceRoute(w http.ResponseWriter, r *http.Request) {
