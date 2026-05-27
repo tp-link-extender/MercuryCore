@@ -66,15 +66,15 @@ export async function ownsMany(o: Owner, i: CanOwnMany): ReturnValue<number> {
 	return { ok: true, value: +text }
 }
 
+const resReader = async (res: Response): Promise<BufReader> =>
+	new BufReader(Buffer.from(await res.arrayBuffer()))
+
 export async function ownersOne(i: CanOwnOne): ReturnValue<OwnersOne> {
 	const body = SerialiseItem(i)
 	const res = await request("ownersOne", body)
 	if (res.status !== 200) return { ok: false }
 
-	const buf = Buffer.from(await res.arrayBuffer())
-	const r = new BufReader(buf)
-
-	return { ok: true, value: OwnersOne.Deserialise(r) }
+	return { ok: true, value: OwnersOne.Deserialise(await resReader(res)) }
 }
 
 export async function ownersMany(i: CanOwnMany): ReturnValue<OwnersMany> {
@@ -82,10 +82,7 @@ export async function ownersMany(i: CanOwnMany): ReturnValue<OwnersMany> {
 	const res = await request("ownersMany", body)
 	if (res.status !== 200) return { ok: false }
 
-	const buf = Buffer.from(await res.arrayBuffer())
-	const r = new BufReader(buf)
-
-	return { ok: true, value: OwnersMany.Deserialise(r) }
+	return { ok: true, value: OwnersMany.Deserialise(await resReader(res)) }
 }
 
 export async function inventory(o: Owner): ReturnValue<Items> {
@@ -93,10 +90,7 @@ export async function inventory(o: Owner): ReturnValue<Items> {
 	const res = await request("inventory", body)
 	if (res.status !== 200) return { ok: false }
 
-	const buf = Buffer.from(await res.arrayBuffer())
-	const r = new BufReader(buf)
-
-	return { ok: true, value: Items.Deserialise(r) }
+	return { ok: true, value: Items.Deserialise(await resReader(res)) }
 }
 
 export async function balance(o: Owner): ReturnValue<number> {
@@ -115,15 +109,15 @@ export async function stipend(o: Owner): Promise<boolean> {
 	return res.status === 204 || res.status === 429
 }
 
+const resToItem = async (res: Response): Promise<Item | null> =>
+	Item.Deserialise(await resReader(res))
+
 export async function createLimitedSource(u: User): ReturnValue<LimitedSource> {
 	const body = SerialiseItem(u)
 	const res = await request("createLimitedSource", body)
 	if (res.status !== 200) return { ok: false }
 
-	const buf = Buffer.from(await res.arrayBuffer())
-	const r = new BufReader(buf)
-
-	const i = Item.Deserialise(r)
+	const i = await resToItem(res)
 	if (!(i instanceof LimitedSource))
 		throw new Error(`item is not LimitedSource: ${i}`)
 
@@ -137,10 +131,7 @@ export async function createUnlimitedSource(
 	const res = await request("createUnlimitedSource", body)
 	if (res.status !== 200) return { ok: false }
 
-	const buf = Buffer.from(await res.arrayBuffer())
-	const r = new BufReader(buf)
-
-	const i = Item.Deserialise(r)
+	const i = await resToItem(res)
 	if (!(i instanceof UnlimitedSource))
 		throw new Error(`item is not UnlimitedSource: ${i}`)
 
@@ -152,10 +143,7 @@ export async function createPlace(u: User): ReturnValue<Place> {
 	const res = await request("createPlace", body)
 	if (res.status !== 200) return { ok: false }
 
-	const buf = Buffer.from(await res.arrayBuffer())
-	const r = new BufReader(buf)
-
-	const i = Item.Deserialise(r)
+	const i = await resToItem(res)
 	if (!(i instanceof Place)) throw new Error(`item is not Place: ${i}`)
 
 	return { ok: true, value: i }
@@ -166,10 +154,7 @@ export async function createGroup(u: User): ReturnValue<Group> {
 	const res = await request("createGroup", body)
 	if (res.status !== 200) return { ok: false }
 
-	const buf = Buffer.from(await res.arrayBuffer())
-	const r = new BufReader(buf)
-
-	const i = Item.Deserialise(r)
+	const i = await resToItem(res)
 	if (!(i instanceof Group)) throw new Error(`item is not Group: ${i}`)
 
 	return { ok: true, value: i }
