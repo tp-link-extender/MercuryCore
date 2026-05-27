@@ -121,6 +121,11 @@ type (
 		Item
 		Owner()
 	}
+	Source interface {
+		Owner
+		NumericItem
+		Source()
+	}
 )
 
 func IsMintable(i Item) bool {
@@ -147,6 +152,12 @@ func (i Currency) ID() uint32 {
 func (Currency) Mintable()   {}
 func (Currency) CanOwnMany() {}
 
+var (
+	_ NumericItem = Currency{}
+	_ CanOwnMany  = Currency{}
+	_ Mintable    = Currency{}
+)
+
 type LimitedAsset struct {
 	Id uint32
 }
@@ -165,6 +176,11 @@ func (i LimitedAsset) ID() uint32 {
 
 func (LimitedAsset) CanOwnMany() {}
 
+var (
+	_ NumericItem = LimitedAsset{}
+	_ CanOwnMany  = LimitedAsset{}
+)
+
 type UnlimitedAsset struct {
 	Id uint32
 }
@@ -182,6 +198,11 @@ func (i UnlimitedAsset) ID() uint32 {
 }
 
 func (UnlimitedAsset) CanOwnOne() {}
+
+var (
+	_ NumericItem = UnlimitedAsset{}
+	_ CanOwnOne   = UnlimitedAsset{}
+)
 
 type LimitedSource struct {
 	Id uint32
@@ -202,8 +223,17 @@ func (i LimitedSource) ID() uint32 {
 func (LimitedSource) CanOwnOne() {}
 func (LimitedSource) Mintable()  {}
 func (LimitedSource) Owner()     {}
+func (LimitedSource) Source()    {}
 
 // func (LimitedSource) Single()    {}
+
+var (
+	_ NumericItem = LimitedSource{}
+	_ CanOwnOne   = LimitedSource{}
+	_ Mintable    = LimitedSource{}
+	_ Owner       = LimitedSource{}
+	_ Source      = LimitedSource{}
+)
 
 func (i LimitedSource) Create() LimitedAsset {
 	return LimitedAsset(i)
@@ -232,8 +262,17 @@ func (i UnlimitedSource) ID() uint32 {
 func (UnlimitedSource) CanOwnOne() {}
 func (UnlimitedSource) Mintable()  {}
 func (UnlimitedSource) Owner()     {}
+func (UnlimitedSource) Source()    {}
 
 // func (UnlimitedSource) Single()    {}
+
+var (
+	_ NumericItem = UnlimitedSource{}
+	_ CanOwnOne   = UnlimitedSource{}
+	_ Mintable    = UnlimitedSource{}
+	_ Owner       = UnlimitedSource{}
+	_ Source      = UnlimitedSource{}
+)
 
 func (i UnlimitedSource) Create() UnlimitedAsset {
 	return UnlimitedAsset(i)
@@ -264,6 +303,12 @@ func (Place) Mintable()  {}
 
 // func (Place) Single()    {}
 
+var (
+	_ NumericItem = Place{}
+	_ CanOwnOne   = Place{}
+	_ Mintable    = Place{}
+)
+
 func RandPlace() Place {
 	return Place{RandNumericId()}
 }
@@ -286,6 +331,11 @@ func (i User) ID() string {
 
 func (User) Owner() {}
 
+var (
+	_ StringItem = User{}
+	_ Owner      = User{}
+)
+
 type Group struct {
 	id string
 }
@@ -307,6 +357,13 @@ func (Group) Mintable()  {}
 func (Group) Owner()     {}
 
 // func (Group) Single()    {}
+
+var (
+	_ StringItem = Group{}
+	_ CanOwnOne  = Group{}
+	_ Mintable   = Group{}
+	_ Owner      = Group{}
+)
 
 func RandGroup() Group {
 	return Group{RandStringId()}

@@ -8,10 +8,10 @@ import {
 } from "./items"
 import {
 	Currency,
-	IsMintable,
 	Item,
-	LimitedSource,
+	Mintable,
 	Owner,
+	Source,
 	UnlimitedSource,
 	User,
 } from "./types"
@@ -67,13 +67,13 @@ export class Send {
 
 	Valid(): Error | null {
 		for (const i of this.Items.One.set)
-			if (this.Owner === null && !IsMintable(i))
+			if (this.Owner === null && !(i instanceof Mintable))
 				return new Error(`CanOwnOne ${i.String()} cannot be minted`)
 
 		for (const [i, qty] of this.Items.Many.map) {
 			if (qty === BigInt(0))
 				return new Error(`CanOwnMany ${i.String()} has zero quantity`)
-			if (this.Owner === null && !IsMintable(i))
+			if (this.Owner === null && !(i instanceof Mintable))
 				return new Error(`CanOwnMany ${i.String()} cannot be minted`)
 		}
 		return null
@@ -156,7 +156,7 @@ private stipend1(): boolean {
 
  private sale1(): boolean {
 	const from = this.Send0.Owner
-	if (!(from instanceof LimitedSource) && !(from instanceof UnlimitedSource))
+	if (!(from instanceof Source))
 		return false
 	return this.Send1.Owner instanceof User
 }
