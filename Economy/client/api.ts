@@ -1,5 +1,5 @@
 import { OwnersMany, OwnersOne, TransferWithID } from "./economy"
-import { BufReader, Items, SerialiseItem, SerialiseNumber } from "./items"
+import { BufReader, Items, SerialiseItem, SerialiseUint32 } from "./items"
 import {
 	type CanOwnMany,
 	type CanOwnOne,
@@ -185,7 +185,7 @@ async function getHistory(body: Buffer): ReturnValue<TransferWithID[]> {
 }
 
 export const history = (n: number): ReturnValue<TransferWithID[]> =>
-	getHistory(SerialiseNumber(n))
+	getHistory(SerialiseUint32(n))
 
 export const historyOwner = (n: number, o: Owner) =>
-	getHistory(Buffer.concat([SerialiseNumber(n), SerialiseItem(o)]))
+	getHistory(Buffer.concat([SerialiseUint32(n), SerialiseItem(o)]))

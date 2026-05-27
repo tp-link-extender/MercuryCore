@@ -1,8 +1,14 @@
 import { Item, NumericItem, StringItem, TypeNil } from "./types"
 
-export function SerialiseNumber(n: number): Buffer {
+export function SerialiseUint32(n: number): Buffer {
 	const buf = Buffer.alloc(4)
 	buf.writeUInt32BE(n, 0)
+	return buf
+}
+
+export function SerialiseUint64(n: bigint): Buffer {
+	const buf = Buffer.alloc(8)
+	buf.writeBigInt64BE(n, 0)
 	return buf
 }
 
