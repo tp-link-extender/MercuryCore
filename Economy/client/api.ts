@@ -48,18 +48,21 @@ const request = (route: Route, body: Buffer): Promise<Response> =>
 	})
 
 export async function ownsOne(o: Owner, i: CanOwnOne): ReturnValue<boolean> {
-	const body = Buffer.concat([SerialiseItem(o), SerialiseItem(i)])
-	const res = await request("ownsOne", body)
+	const res = await request(
+		"ownsOne",
+		Buffer.concat([SerialiseItem(o), SerialiseItem(i)])
+	)
 	if (res.status !== 200) return { ok: false } // it won't be another 2xx status code
 
 	const buf = await res.arrayBuffer()
-	const view = new DataView(buf)
-	return { ok: true, value: view.getUint8(0) === 1 }
+	return { ok: true, value: new DataView(buf).getUint8(0) === 1 }
 }
 
 export async function ownsMany(o: Owner, i: CanOwnMany): ReturnValue<number> {
-	const body = Buffer.concat([SerialiseItem(o), SerialiseItem(i)])
-	const res = await request("ownsMany", body)
+	const res = await request(
+		"ownsMany",
+		Buffer.concat([SerialiseItem(o), SerialiseItem(i)])
+	)
 	if (res.status !== 200) return { ok: false }
 
 	const text = await res.text()
@@ -70,32 +73,28 @@ const resReader = async (res: Response): Promise<BufReader> =>
 	new BufReader(Buffer.from(await res.arrayBuffer()))
 
 export async function ownersOne(i: CanOwnOne): ReturnValue<OwnersOne> {
-	const body = SerialiseItem(i)
-	const res = await request("ownersOne", body)
+	const res = await request("ownersOne", SerialiseItem(i))
 	if (res.status !== 200) return { ok: false }
 
 	return { ok: true, value: OwnersOne.Deserialise(await resReader(res)) }
 }
 
 export async function ownersMany(i: CanOwnMany): ReturnValue<OwnersMany> {
-	const body = SerialiseItem(i)
-	const res = await request("ownersMany", body)
+	const res = await request("ownersMany", SerialiseItem(i))
 	if (res.status !== 200) return { ok: false }
 
 	return { ok: true, value: OwnersMany.Deserialise(await resReader(res)) }
 }
 
 export async function inventory(o: Owner): ReturnValue<Items> {
-	const body = SerialiseItem(o)
-	const res = await request("inventory", body)
+	const res = await request("inventory", SerialiseItem(o))
 	if (res.status !== 200) return { ok: false }
 
 	return { ok: true, value: Items.Deserialise(await resReader(res)) }
 }
 
 export async function balance(o: Owner): ReturnValue<number> {
-	const body = SerialiseItem(o)
-	const res = await request("balance", body)
+	const res = await request("balance", SerialiseItem(o))
 	if (res.status !== 200) return { ok: false }
 
 	const text = await res.text()
@@ -103,8 +102,7 @@ export async function balance(o: Owner): ReturnValue<number> {
 }
 
 export async function stipend(o: Owner): Promise<boolean> {
-	const body = SerialiseItem(o)
-	const res = await request("stipend", body)
+	const res = await request("stipend", SerialiseItem(o))
 
 	return res.status === 204 || res.status === 429
 }
@@ -113,8 +111,7 @@ const resToItem = async (res: Response): Promise<Item | null> =>
 	Item.Deserialise(await resReader(res))
 
 export async function createLimitedSource(u: User): ReturnValue<LimitedSource> {
-	const body = SerialiseItem(u)
-	const res = await request("createLimitedSource", body)
+	const res = await request("createLimitedSource", SerialiseItem(u))
 	if (res.status !== 200) return { ok: false }
 
 	const i = await resToItem(res)
@@ -127,8 +124,7 @@ export async function createLimitedSource(u: User): ReturnValue<LimitedSource> {
 export async function createUnlimitedSource(
 	u: User
 ): ReturnValue<UnlimitedSource> {
-	const body = SerialiseItem(u)
-	const res = await request("createUnlimitedSource", body)
+	const res = await request("createUnlimitedSource", SerialiseItem(u))
 	if (res.status !== 200) return { ok: false }
 
 	const i = await resToItem(res)
@@ -139,8 +135,7 @@ export async function createUnlimitedSource(
 }
 
 export async function createPlace(u: User): ReturnValue<Place> {
-	const body = SerialiseItem(u)
-	const res = await request("createPlace", body)
+	const res = await request("createPlace", SerialiseItem(u))
 	if (res.status !== 200) return { ok: false }
 
 	const i = await resToItem(res)
@@ -150,8 +145,7 @@ export async function createPlace(u: User): ReturnValue<Place> {
 }
 
 export async function createGroup(u: User): ReturnValue<Group> {
-	const body = SerialiseItem(u)
-	const res = await request("createGroup", body)
+	const res = await request("createGroup", SerialiseItem(u))
 	if (res.status !== 200) return { ok: false }
 
 	const i = await resToItem(res)
@@ -160,37 +154,35 @@ export async function createGroup(u: User): ReturnValue<Group> {
 	return { ok: true, value: i }
 }
 
-export async function buyUnlimitedAsset(
+export const buyUnlimitedAsset = (
 	u: User,
 	src: UnlimitedSource,
 	price: Quantity
-): Promise<boolean> {
-	const body = Buffer.concat([
-		SerialiseItem(u),
-		SerialiseItem(src),
-		SerialiseUint64(price),
-	])
-	const res = await request("buyUnlimitedAsset", body)
+): Promise<boolean> =>
+	request(
+		"buyUnlimitedAsset",
+		Buffer.concat([
+			SerialiseItem(u),
+			SerialiseItem(src),
+			SerialiseUint64(price),
+		])
+	).then(res => res.status === 204)
 
-	return res.status === 204
-}
-
-export async function buyLimitedAsset(
+export const buyLimitedAsset = (
 	u: User,
 	src: UnlimitedSource,
 	priceEach: Quantity,
 	qty: Quantity
-): Promise<boolean> {
-	const body = Buffer.concat([
-		SerialiseItem(u),
-		SerialiseItem(src),
-		SerialiseUint64(priceEach),
-		SerialiseUint64(qty),
-	])
-	const res = await request("buyLimitedAsset", body)
-
-	return res.status === 204
-}
+): Promise<boolean> =>
+	request(
+		"buyLimitedAsset",
+		Buffer.concat([
+			SerialiseItem(u),
+			SerialiseItem(src),
+			SerialiseUint64(priceEach),
+			SerialiseUint64(qty),
+		])
+	).then(res => res.status === 204)
 
 async function getHistory(body: Buffer): ReturnValue<TransferWithID[]> {
 	const res = await request("history", body)
