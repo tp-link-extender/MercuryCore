@@ -72,7 +72,15 @@ export abstract class StringItem extends Item {
 export abstract class CanOwnOne extends Item {}
 export abstract class CanOwnMany extends Item {}
 export abstract class Mintable extends Item {}
-export abstract class Owner extends Item {}
+export abstract class Owner extends Item {
+	static override Deserialise(r: BufReader): Owner {
+		const item = Item.Deserialise(r)
+		if (!(item instanceof Owner))
+			throw new Error(`item is not Owner: ${item}`)
+
+		return item as Owner
+	}
+}
 
 export function IsMintable(i: Item): boolean {
 	return i instanceof Mintable

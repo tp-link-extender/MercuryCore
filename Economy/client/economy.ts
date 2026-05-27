@@ -104,14 +104,7 @@ export class Send {
 	}
 
 	static Deserialise(reader: BufReader): Send {
-		const oi = Item.Deserialise(reader)
-		let owner: Owner | null = null
-		if (oi !== null)
-			// runtime check
-			owner = oi
-
-		const items = Items.Deserialise(reader)
-		return new Send(owner, items)
+		return new Send(Owner.Deserialise(reader), Items.Deserialise(reader))
 	}
 }
 
@@ -120,6 +113,62 @@ export class Transfer {
 		public Send0: Send,
 		public Send1: Send
 	) {}
+
+	 Valid(): Error | null {
+	if (this.Send0.Owner === null && this.Send1.Owner === null)
+		return ErrNoSourceOrDestination
+	if (this.Send0.Items.IsEmpty() && this.Send1.Items.IsEmpty()) return ErrNoItems
+
+	const err0 = this.Send0.Valid()
+	if (err0) return new Error(`invalid Send0: ${err0.message}`)
+	const err1 = this.Send1.Valid()
+	if (err1) return new Error(`invalid Send1: ${err1.message}`)
+
+	return null
+}
+
+Swap(): Transfer {
+	return new Transfer(this.Send1, this.Send0)
+}
+
+// A stipend has a nil owner and only currency in one direction, and a user on the other
+private stipend1(): boolean {
+	if (
+		this.Send0.Owner !== null ||
+		this.Send1.Owner === null ||
+		this.Send0.Items.IsEmpty() ||
+		!this.Send1.Items.IsEmpty()
+	)
+		return false
+	if (this.Send0.Items.One.set.size > 0) return false
+	if (this.Send0.Items.Many.map.size !== 1) return false
+	if (!(this.Send1.Owner instanceof User)) return false
+	for (const i of this.Send0.Items.Many.map.keys()) 
+		return i instanceof Currency
+	
+	return false
+}
+
+ Stipend(): boolean {
+	return this.stipend1() || this.Swap().stipend1()
+}
+
+
+ private sale1(): boolean {
+	const from = this.Send0.Owner
+	if (!(from instanceof LimitedSource) && !(from instanceof UnlimitedSource))
+		return false
+	return this.Send1.Owner instanceof User
+}
+
+ Sale(): boolean {
+	if (this.Send0.Items.IsEmpty() && this.Send1.Items.IsEmpty()) return false
+	return this.sale1() || this.Swap().sale1()
+}
+
+ Equal(other: Transfer): boolean {
+	return this.Send0.Equal(other.Send0) && this.Send1.Equal(other.Send1)
+}
 
 	Serialise(): Buffer {
 		return Buffer.concat([this.Send0.Serialise(), this.Send1.Serialise()])
@@ -169,60 +218,9 @@ export function TransferValid(t: Transfer): Error | null {
 	return null
 }
 
-export function TransferSwap(t: Transfer): Transfer {
-	return new Transfer(t.Send1, t.Send0)
-}
-
-function isSale(t: Transfer): boolean {
-	const from = t.Send0.Owner
-	if (!(from instanceof LimitedSource) && !(from instanceof UnlimitedSource))
-		return false
-	return t.Send1.Owner instanceof User
-}
-
-export function TransferSale(t: Transfer): boolean {
-	if (t.Send0.Items.IsEmpty() && t.Send1.Items.IsEmpty()) return false
-	return isSale(t) || isSale(TransferSwap(t))
-}
-
-function isStipend(t: Transfer): boolean {
-	// A stipend has a nil owner and only currency in one direction, and a user on the other
-	if (
-		t.Send0.Owner !== null ||
-		t.Send1.Owner === null ||
-		t.Send0.Items.IsEmpty() ||
-		!t.Send1.Items.IsEmpty()
-	)
-		return false
-	if (t.Send0.Items.One.set.size > 0) return false
-	if (t.Send0.Items.Many.map.size !== 1) return false
-	if (!(t.Send1.Owner instanceof User)) return false
-	for (const i of t.Send0.Items.Many.map.keys()) {
-		return i instanceof Currency
-	}
-	return false
-}
-
-export function TransferStipend(t: Transfer): boolean {
-	return isStipend(t) || isStipend(TransferSwap(t))
-}
-
-export function TransferEqual(a: Transfer, b: Transfer): boolean {
-	return a.Send0.Equal(b.Send0) && a.Send1.Equal(b.Send1)
-}
-
-export function TransferSerialise(t: Transfer): Buffer {
-	const b = []
-	b.push(t.Send0.Serialise())
-	b.push(t.Send1.Serialise())
-	return Buffer.concat(b)
-}
-
 export function DeserialiseTransfer(buf: Buffer): Transfer {
 	const r = new BufReader(buf)
-	const s0 = Send.Deserialise(r)
-	const s1 = Send.Deserialise(r)
-	return new Transfer(s0, s1)
+	return new Transfer( Send.Deserialise(r), Send.Deserialise(r))
 }
 
 export class OwnersOne {
