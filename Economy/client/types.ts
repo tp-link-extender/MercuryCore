@@ -72,13 +72,18 @@ export abstract class StringItem extends Item {
 export abstract class CanOwnOne extends Item {}
 export abstract class CanOwnMany extends Item {}
 export abstract class Mintable extends Item {}
-export abstract class Owner extends Item {}
+export abstract class Owner extends Item {
+	static override Deserialise(r: BufReader): Owner {
+		const item = Item.Deserialise(r)
+		if (!(item instanceof Owner))
+			throw new Error(`item is not Owner: ${item}`)
 
-export function IsMintable(i: Item): boolean {
-	return i instanceof Mintable
+		return item as Owner
+	}
 }
+export abstract class Source extends   NumericItem implements Owner {}
 
-// Concrete classes extend the abstract bases so you can use `instanceof`.
+// Concrete classes extend the abstract bases so we can use `instanceof`
 export class Currency extends NumericItem implements Mintable, CanOwnMany {
 	override Type = TypeCurrency
 
@@ -117,7 +122,7 @@ export class UnlimitedAsset extends NumericItem implements CanOwnOne {
 
 export class LimitedSource
 	extends NumericItem
-	implements CanOwnOne, Mintable, Owner
+	implements CanOwnOne, Mintable, Owner, Source
 {
 	override Type = TypeLimitedSource
 
@@ -136,7 +141,7 @@ export class LimitedSource
 
 export class UnlimitedSource
 	extends NumericItem
-	implements CanOwnOne, Mintable, Owner
+	implements  CanOwnOne, Mintable, Owner, Source
 {
 	override Type = TypeUnlimitedSource
 

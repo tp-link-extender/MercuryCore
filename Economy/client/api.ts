@@ -38,8 +38,8 @@ type Route =
 
 const url = "http://localhost:2009"
 
+// Just use Promise<boolean> if no value is returned
 export type ReturnValue<T> = Promise<{ ok: true; value: T } | { ok: false }>
-export type ReturnErr = { ok: true } | { ok: false; msg: string }
 
 const request = (route: Route, body: Buffer): Promise<Response> =>
 	fetch(`${url}/${route}`, {

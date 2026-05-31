@@ -206,9 +206,9 @@ func (t Transfer) Swap() Transfer {
 	return Transfer{t[1], t[0]}
 }
 
-func isSale(t Transfer) bool {
+func (t Transfer) isSale() bool {
 	switch t[0].Owner.(type) {
-	case LimitedSource, UnlimitedSource:
+	case Source:
 	default:
 		return false
 	}
@@ -226,10 +226,10 @@ func (t Transfer) Sale() bool {
 		return false
 	}
 
-	return isSale(t) || isSale(t.Swap())
+	return t.isSale() || t.Swap().isSale()
 }
 
-func isStipend(t Transfer) bool {
+func (t Transfer) isStipend() bool {
 	// A stipend has a nil owner and only currency in one direction, and a user on the other
 	if t[0].Owner != nil || t[1].Owner == nil || t[0].Items.IsEmpty() || !t[1].Items.IsEmpty() || len(t[0].Items.One) > 0 || len(t[0].Items.Many) != 1 {
 		return false
@@ -248,7 +248,7 @@ func isStipend(t Transfer) bool {
 }
 
 func (t Transfer) Stipend() bool {
-	return isStipend(t) || isStipend(t.Swap())
+	return t.isStipend() || t.Swap().isStipend()
 }
 
 func (t Transfer) Equal(other Transfer) bool {
