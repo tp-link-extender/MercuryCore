@@ -71,13 +71,6 @@ export const getTransactions = (f: typeof globalThis.fetch, user: string) =>
 export const getAdminTransactions = (f: typeof globalThis.fetch) =>
 	tryFetchJson<ReceivedTx[]>()(f, `${economyUrl}/transactions`)
 
-// doin nothing with returns rn
-export async function stipend(f: typeof globalThis.fetch, To: string) {
-	try {
-		await f(`${economyUrl}/stipend/${To}`, { method: "post" })
-	} catch {}
-}
-
 export async function transact(
 	f: typeof globalThis.fetch,
 	From: string,
