@@ -3,7 +3,7 @@
 
 import { type Handle, redirect } from "@sveltejs/kit"
 import { stipend } from "economy/api"
-import { User as EconUser } from "economy/types"
+import * as Econ from "economy/types"
 import pc from "picocolors"
 import {
 	cookieName,
@@ -120,7 +120,7 @@ export async function handle(e) {
 	)
 		redirect(302, "/moderation")
 
-	await stipend(e.event.fetch, new EconUser(user.id))
+	await stipend(e.event.fetch, new Econ.User(user.id))
 
 	return await finish(e)
 }

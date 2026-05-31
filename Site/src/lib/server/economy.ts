@@ -1,5 +1,7 @@
+import type { TransferWithID } from "economy/economy"
+import * as Econ from "economy/types"
+import ownersQuery from "$lib/server/owners.surql"
 import { db, Record } from "$lib/server/surreal"
-import usersQuery from "$lib/server/users.surql"
 
 export const PlacePrice = 10
 export const GroupPrice = 10
@@ -179,39 +181,46 @@ export async function createGroup(
 	)
 }
 
-export async function transformTransactions(list: ReceivedTx[]) {
-	// Awful no-good terrible code for transforming this stuff. Feels like we're back in the double-database days of Mercury 2
+interface UserData extends BasicUser {
+	id: string
+}
+type GroupData = {
+	id: string
+	name: string
+}
+type SourceData = {
+	id: string
+	name: string
+}
 
-	const users = new Set<string>()
-	for (const tx of list) {
-		if (tx.Type !== "Mint") users.add(tx.From)
-		if (tx.Type !== "Burn") users.add(tx.To)
-	}
-	const [queryUsers] = await db.query<(BasicUser & { id: string })[][]>(
-		usersQuery,
-		{ usersList: Array.from(users).map(u => Record("user", u)) }
-	)
+// better code than previously... i guess. whatever
+export async function ownerData(list: TransferWithID[]): Promise<{
+	usersMap: { [id: string]: UserData }
+	groupsMap: { [id: string]: GroupData }
+	sourcesMap: { [id: string]: SourceData }
+}> {
+	const owners = [
+		...list.map(tf => tf.Transfer.Send0.Owner),
+		...list.map(tf => tf.Transfer.Send1.Owner),
+	].filter(o => o !== null)
 
-	const idsMap = new Map<string, BasicUser>()
-	const usersMap = new Map<string, BasicUser>()
-	for (const user of queryUsers) {
-		idsMap.set(user.id, {
-			username: user.username,
-			status: user.status,
-		})
-		usersMap.set(user.username, {
-			username: user.username,
-			status: user.status,
-		})
-	}
-
-	for (const tx of list) {
-		if (tx.Type !== "Mint") tx.From = idsMap.get(tx.From)?.username || ""
-		if (tx.Type !== "Burn") tx.To = idsMap.get(tx.To)?.username || ""
-	}
+	const [usersQ, groupsQ, sourcesQ] = await db.query<
+		[UserData[], GroupData[], SourceData[]]
+	>(ownersQuery, {
+		usersList: owners
+			.filter(o => o instanceof Econ.User)
+			.map(u => Record("user", u.ID)),
+		groupsList: owners
+			.filter(o => o instanceof Econ.Group)
+			.map(g => Record("group", g.ID)),
+		assetsList: owners
+			.filter(o => o instanceof Econ.Source)
+			.map(s => Record("asset", s.ID)),
+	})
 
 	return {
-		transactions: list,
-		users: Object.fromEntries(usersMap),
+		usersMap: Object.fromEntries(usersQ.map(u => [u.id, u])),
+		groupsMap: Object.fromEntries(groupsQ.map(g => [g.id, g])),
+		sourcesMap: Object.fromEntries(sourcesQ.map(s => [s.id, s])),
 	}
 }
