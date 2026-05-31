@@ -137,7 +137,7 @@ export async function createLimitedSource(
 
 	const i = await resToItem(res)
 	if (!(i instanceof LimitedSource))
-		throw new Error(`item is not LimitedSource: ${i}`)
+		throw new Error(`item is not LimitedSource: ${JSON.stringify(i)}`)
 
 	return { ok: true, value: i }
 }
@@ -151,7 +151,7 @@ export async function createUnlimitedSource(
 
 	const i = await resToItem(res)
 	if (!(i instanceof UnlimitedSource))
-		throw new Error(`item is not UnlimitedSource: ${i}`)
+		throw new Error(`item is not UnlimitedSource: ${JSON.stringify(i)}`)
 
 	return { ok: true, value: i }
 }
@@ -161,7 +161,7 @@ export async function createPlace(f: Fetch, u: User): ReturnValue<Place> {
 	if (res.status !== 200) return { ok: false }
 
 	const i = await resToItem(res)
-	if (!(i instanceof Place)) throw new Error(`item is not Place: ${i}`)
+	if (!(i instanceof Place)) throw new Error(`item is not Place: ${JSON.stringify(i)}`)
 
 	return { ok: true, value: i }
 }
@@ -171,7 +171,7 @@ export async function createGroup(f: Fetch, u: User): ReturnValue<Group> {
 	if (res.status !== 200) return { ok: false }
 
 	const i = await resToItem(res)
-	if (!(i instanceof Group)) throw new Error(`item is not Group: ${i}`)
+	if (!(i instanceof Group)) throw new Error(`item is not Group: ${JSON.stringify(i)}`)
 
 	return { ok: true, value: i }
 }

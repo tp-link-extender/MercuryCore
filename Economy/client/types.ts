@@ -74,11 +74,11 @@ export abstract class CanOwnMany extends Item {}
 export abstract class Mintable extends Item {}
 export abstract class Owner extends Item {
 	static override Deserialise(r: BufReader): Owner {
-		const item = Item.Deserialise(r)
-		if (!(item instanceof Owner))
-			throw new Error(`item is not Owner: ${item}`)
+		const i = Item.Deserialise(r)
+		if (!(i instanceof Owner))
+			throw new Error(`item is not Owner: ${JSON.stringify(i)}`)
 
-		return item as Owner
+		return i as Owner
 	}
 }
 export abstract class Source extends   NumericItem implements Owner {}

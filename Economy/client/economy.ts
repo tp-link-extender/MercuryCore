@@ -68,13 +68,13 @@ export class Send {
 	Valid(): Error | null {
 		for (const i of this.Items.One.set)
 			if (this.Owner === null && !(i instanceof Mintable))
-				return new Error(`CanOwnOne ${i.String()} cannot be minted`)
+				return new Error(`CanOwnOne ${JSON.stringify				(i)} cannot be minted`)
 
 		for (const [i, qty] of this.Items.Many.map) {
 			if (qty === BigInt(0))
 				return new Error(`CanOwnMany ${i.String()} has zero quantity`)
 			if (this.Owner === null && !(i instanceof Mintable))
-				return new Error(`CanOwnMany ${i.String()} cannot be minted`)
+				return new Error(`CanOwnMany ${JSON.stringify(i)} cannot be minted`)
 		}
 		return null
 	}
@@ -247,7 +247,7 @@ export class OwnersOne {
 		for (let idx = 0; idx < l; idx++) {
 			const i = Item.Deserialise(r)
 			if (!(i instanceof Owner))
-				throw new Error(`item is not Owner: ${i}`)
+				throw new Error(`item is not Owner: ${JSON.stringify(i)}`)
 			oo.set.add(i)
 		}
 		return oo
@@ -286,7 +286,7 @@ export class OwnersMany {
 		for (let idx = 0; idx < l; idx++) {
 			const i = Item.Deserialise(reader)
 			if (!(i instanceof Owner))
-				throw new Error(`item is not Owner: ${i}`)
+				throw new Error(`item is not Owner: ${JSON.stringify(i)}`)
 			const qty = reader.readUint64()
 			om.map.set(i, qty)
 		}
