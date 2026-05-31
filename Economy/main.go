@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"strconv"
@@ -304,12 +306,18 @@ func (e *EconomyServer) historyOwnerRoute(w http.ResponseWriter, r *http.Request
 
 type CustomResponseWriter struct {
 	http.ResponseWriter
+	log        []byte
 	statusCode int
 }
 
 func (w *CustomResponseWriter) WriteHeader(code int) {
 	w.statusCode = code
 	w.ResponseWriter.WriteHeader(code)
+}
+
+func (w *CustomResponseWriter) Write(b []byte) (int, error) {
+	w.log = append(w.log, b...)
+	return w.ResponseWriter.Write(b)
 }
 
 func colourCode(cs int) string {
@@ -324,6 +332,13 @@ func colourCode(cs int) string {
 	return c.InGreen(scs)
 }
 
+func CloneReader(r io.ReadCloser) (og io.ReadCloser, fixed io.ReadCloser) {
+	var buf bytes.Buffer
+	tee := io.TeeReader(r, &buf)
+
+	return io.NopCloser(tee), io.NopCloser(&buf) // DO NOT FORGET THE PARAMATER ORDER
+}
+
 func loggingHandler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		t := time.Now().Format("2006-01-02 15:04:05")
@@ -332,13 +347,29 @@ func loggingHandler(next http.Handler) http.Handler {
 		// // print response code
 		// code := http.StatusOK
 
-		crw := &CustomResponseWriter{w, http.StatusOK}
+		var body io.ReadCloser
+		body, r.Body = CloneReader(r.Body) // *alonso pc fan noise* fixed
+		// but real talk idk why this happens
+
+		// read body to log it
+		bodyBytes, err := io.ReadAll(body)
+		if err == nil {
+			fmt.Println(c.InWhite(bodyBytes))
+		} else {
+			fmt.Println(c.InRed("Failed to read request body: " + err.Error()))
+		}
+
+		crw := &CustomResponseWriter{
+			ResponseWriter: w,
+			statusCode:     http.StatusOK,
+		}
 		next.ServeHTTP(crw, r)
 		cs := crw.statusCode
 
 		code := colourCode(cs)
 
 		fmt.Printf("%s %s %s\n", c.InGray(t), code, c.InBlue(r.URL.Path))
+		fmt.Println(c.InPurple(string(crw.log)))
 	})
 }
 
