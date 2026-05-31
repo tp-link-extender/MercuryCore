@@ -56,8 +56,8 @@
 							max: 12
 						}}>
 						<Transaction
-							{transaction}
-							users={data.users}
+							transfer={transaction}
+							ownerData={data.ownerData}
 							currencySymbol={data.currencySymbol} />
 					</tr>
 				{/each}

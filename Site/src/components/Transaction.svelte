@@ -1,14 +1,16 @@
 <script lang="ts">
 	import User from "$components/User.svelte"
 	import beautifyCurrency from "$lib/beautifyCurrency"
+    import type { OwnerData } from "$lib/economy"
+    import type { TransferWithID } from "economy/economy"
 
 	const {
-		transaction,
-		users,
+		transfer: transaction,
+		ownerData,
 		currencySymbol
 	}: {
-		transaction: import("../routes/(main)/admin/transactions/$types").PageData["transactions"][0]
-		users: import("../routes/(main)/admin/transactions/$types").PageData["users"]
+		transfer: TransferWithID
+		ownerData: OwnerData
 		currencySymbol: string
 	} = $props()
 

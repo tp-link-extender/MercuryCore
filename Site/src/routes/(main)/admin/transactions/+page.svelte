@@ -44,7 +44,7 @@
 						max: 12
 					}}>
 					<Transaction
-						{transaction}
+						transfer={transaction}
 						users={data.users}
 						currencySymbol={data.currencySymbol} />
 				</tr>

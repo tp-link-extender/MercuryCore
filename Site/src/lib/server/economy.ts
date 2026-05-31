@@ -1,5 +1,6 @@
 import type { TransferWithID } from "economy/economy"
 import * as Econ from "economy/types"
+import type { GroupData, OwnerData, SourceData, UserData } from "$lib/economy"
 import ownersQuery from "$lib/server/owners.surql"
 import { db, Record } from "$lib/server/surreal"
 
@@ -181,30 +182,14 @@ export async function createGroup(
 	)
 }
 
-interface UserData extends BasicUser {
-	id: string
-}
-type GroupData = {
-	id: string
-	name: string
-}
-type SourceData = {
-	id: string
-	name: string
-}
-
 // better code than previously... i guess. whatever
-export async function ownerData(list: TransferWithID[]): Promise<{
-	usersMap: { [id: string]: UserData }
-	groupsMap: { [id: string]: GroupData }
-	sourcesMap: { [id: string]: SourceData }
-}> {
+export async function ownerData(list: TransferWithID[]): Promise<OwnerData> {
 	const owners = [
 		...list.map(tf => tf.Transfer.Send0.Owner),
 		...list.map(tf => tf.Transfer.Send1.Owner),
 	].filter(o => o !== null)
 
-	const [usersQ, groupsQ, sourcesQ] = await db.query<
+	const [users, groups, sources] = await db.query<
 		[UserData[], GroupData[], SourceData[]]
 	>(ownersQuery, {
 		usersList: owners
@@ -219,8 +204,8 @@ export async function ownerData(list: TransferWithID[]): Promise<{
 	})
 
 	return {
-		usersMap: Object.fromEntries(usersQ.map(u => [u.id, u])),
-		groupsMap: Object.fromEntries(groupsQ.map(g => [g.id, g])),
-		sourcesMap: Object.fromEntries(sourcesQ.map(s => [s.id, s])),
+		users: Object.fromEntries(users.map(u => [u.id, u])),
+		groups: Object.fromEntries(groups.map(g => [g.id, g])),
+		sources: Object.fromEntries(sources.map(s => [s.id, s])),
 	}
 }
