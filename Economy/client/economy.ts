@@ -8,10 +8,12 @@ import {
 } from "./items"
 import {
 	Currency,
-	Item,
-	Mintable,
-	Owner,
-	Source,
+	DeserialiseItem,
+	DeserialiseOwner,
+	IsMintable,
+	IsOwner,
+	IsSource,
+	type Owner,
 	UnlimitedSource,
 	User,
 } from "./types"
@@ -67,14 +69,18 @@ export class Send {
 
 	Valid(): Error | null {
 		for (const i of this.Items.One.set)
-			if (this.Owner === null && !(i instanceof Mintable))
-				return new Error(`CanOwnOne ${JSON.stringify				(i)} cannot be minted`)
+			if (this.Owner === null && !IsMintable(i))
+				return new Error(
+					`CanOwnOne ${JSON.stringify(i)} cannot be minted`
+				)
 
 		for (const [i, qty] of this.Items.Many.map) {
 			if (qty === BigInt(0))
 				return new Error(`CanOwnMany ${i.String()} has zero quantity`)
-			if (this.Owner === null && !(i instanceof Mintable))
-				return new Error(`CanOwnMany ${JSON.stringify(i)} cannot be minted`)
+			if (this.Owner === null && !IsMintable(i))
+				return new Error(
+					`CanOwnMany ${JSON.stringify(i)} cannot be minted`
+				)
 		}
 		return null
 	}
@@ -104,7 +110,7 @@ export class Send {
 	}
 
 	static Deserialise(reader: BufReader): Send {
-		return new Send(Owner.Deserialise(reader), Items.Deserialise(reader))
+		return new Send(DeserialiseOwner(reader), Items.Deserialise(reader))
 	}
 }
 
@@ -114,61 +120,62 @@ export class Transfer {
 		public Send1: Send
 	) {}
 
-	 Valid(): Error | null {
-	if (this.Send0.Owner === null && this.Send1.Owner === null)
-		return ErrNoSourceOrDestination
-	if (this.Send0.Items.IsEmpty() && this.Send1.Items.IsEmpty()) return ErrNoItems
+	Valid(): Error | null {
+		if (this.Send0.Owner === null && this.Send1.Owner === null)
+			return ErrNoSourceOrDestination
+		if (this.Send0.Items.IsEmpty() && this.Send1.Items.IsEmpty())
+			return ErrNoItems
 
-	const err0 = this.Send0.Valid()
-	if (err0) return new Error(`invalid Send0: ${err0.message}`)
-	const err1 = this.Send1.Valid()
-	if (err1) return new Error(`invalid Send1: ${err1.message}`)
+		const err0 = this.Send0.Valid()
+		if (err0) return new Error(`invalid Send0: ${err0.message}`)
+		const err1 = this.Send1.Valid()
+		if (err1) return new Error(`invalid Send1: ${err1.message}`)
 
-	return null
-}
+		return null
+	}
 
-Swap(): Transfer {
-	return new Transfer(this.Send1, this.Send0)
-}
+	Swap(): Transfer {
+		return new Transfer(this.Send1, this.Send0)
+	}
 
-// A stipend has a nil owner and only currency in one direction, and a user on the other
-private stipend1(): boolean {
-	if (
-		this.Send0.Owner !== null ||
-		this.Send1.Owner === null ||
-		this.Send0.Items.IsEmpty() ||
-		!this.Send1.Items.IsEmpty()
-	)
+	// A stipend has a nil owner and only currency in one direction, and a user on the other
+	private stipend1(): boolean {
+		if (
+			this.Send0.Owner !== null ||
+			this.Send1.Owner === null ||
+			this.Send0.Items.IsEmpty() ||
+			!this.Send1.Items.IsEmpty()
+		)
+			return false
+		if (this.Send0.Items.One.set.size > 0) return false
+		if (this.Send0.Items.Many.map.size !== 1) return false
+		if (!(this.Send1.Owner instanceof User)) return false
+		for (const i of this.Send0.Items.Many.map.keys())
+			return i instanceof Currency
+
 		return false
-	if (this.Send0.Items.One.set.size > 0) return false
-	if (this.Send0.Items.Many.map.size !== 1) return false
-	if (!(this.Send1.Owner instanceof User)) return false
-	for (const i of this.Send0.Items.Many.map.keys()) 
-		return i instanceof Currency
-	
-	return false
-}
+	}
 
- Stipend(): boolean {
-	return this.stipend1() || this.Swap().stipend1()
-}
+	Stipend(): boolean {
+		return this.stipend1() || this.Swap().stipend1()
+	}
 
+	private sale1(): boolean {
+		const from = this.Send0.Owner
+		if (!from) return false
+		if (!IsSource(from)) return false
+		return this.Send1.Owner instanceof User
+	}
 
- private sale1(): boolean {
-	const from = this.Send0.Owner
-	if (!(from instanceof Source))
-		return false
-	return this.Send1.Owner instanceof User
-}
+	Sale(): boolean {
+		if (this.Send0.Items.IsEmpty() && this.Send1.Items.IsEmpty())
+			return false
+		return this.sale1() || this.Swap().sale1()
+	}
 
- Sale(): boolean {
-	if (this.Send0.Items.IsEmpty() && this.Send1.Items.IsEmpty()) return false
-	return this.sale1() || this.Swap().sale1()
-}
-
- Equal(other: Transfer): boolean {
-	return this.Send0.Equal(other.Send0) && this.Send1.Equal(other.Send1)
-}
+	Equal(other: Transfer): boolean {
+		return this.Send0.Equal(other.Send0) && this.Send1.Equal(other.Send1)
+	}
 
 	Serialise(): Buffer {
 		return Buffer.concat([this.Send0.Serialise(), this.Send1.Serialise()])
@@ -220,7 +227,7 @@ export function TransferValid(t: Transfer): Error | null {
 
 export function DeserialiseTransfer(buf: Buffer): Transfer {
 	const r = new BufReader(buf)
-	return new Transfer( Send.Deserialise(r), Send.Deserialise(r))
+	return new Transfer(Send.Deserialise(r), Send.Deserialise(r))
 }
 
 export class OwnersOne {
@@ -245,8 +252,9 @@ export class OwnersOne {
 		const l = r.readUint32()
 		const oo = new OwnersOne()
 		for (let idx = 0; idx < l; idx++) {
-			const i = Item.Deserialise(r)
-			if (!(i instanceof Owner))
+			const i = DeserialiseItem(r)
+			if (!i) throw new Error("item is not Owner: null")
+			if (!IsOwner(i))
 				throw new Error(`item is not Owner: ${JSON.stringify(i)}`)
 			oo.set.add(i)
 		}
@@ -284,8 +292,9 @@ export class OwnersMany {
 		const l = reader.readUint32()
 		const om = new OwnersMany()
 		for (let idx = 0; idx < l; idx++) {
-			const i = Item.Deserialise(reader)
-			if (!(i instanceof Owner))
+			const i = DeserialiseItem(reader)
+			if (!i) throw new Error("item is not Owner: null")
+			if (!IsOwner(i))
 				throw new Error(`item is not Owner: ${JSON.stringify(i)}`)
 			const qty = reader.readUint64()
 			om.map.set(i, qty)

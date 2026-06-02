@@ -18,102 +18,130 @@ export const TypeUser: Type = 7
 export const TypeGroup: Type = 8
 
 // Abstract base classes to allow `instanceof` checks
-export abstract class Item {
-	abstract String(): string
+export interface Item {
+	String(): string
 	// only used for serialisation atm
-	abstract readonly Type: Type
-
-	static Deserialise(r: BufReader): Item | null {
-		const typeByte = r.readUint8()
-		if (typeByte === TypeNil) return null
-
-		if (typeByte === TypeUser || typeByte === TypeGroup) {
-			// string IDs
-			const len = r.readUint8()
-			const idbuf = r.read(len)
-			const id = idbuf.toString()
-			if (typeByte === TypeUser) return new User(id)
-			return new Group(id)
-		}
-
-		// numeric IDs
-		const id = r.readUint32()
-		switch (typeByte) {
-			case TypeCurrency:
-				return new Currency(id)
-			case TypeLimitedAsset:
-				return new LimitedAsset(id)
-			case TypeUnlimitedAsset:
-				return new UnlimitedAsset(id)
-			case TypeLimitedSource:
-				return new LimitedSource(id)
-			case TypeUnlimitedSource:
-				return new UnlimitedSource(id)
-			case TypePlace:
-				return new Place(id)
-		}
-
-		throw new Error(`unknown Type: ${typeByte}`)
-	}
+	Type: Type
 }
 
-export abstract class NumericItem extends Item {
-	abstract readonly ID: number
+export function DeserialiseItem(r: BufReader): Item | null {
+	const typeByte = r.readUint8()
+	if (typeByte === TypeNil) return null
+
+	if (typeByte === TypeUser || typeByte === TypeGroup) {
+		// string IDs
+		const len = r.readUint8()
+		const idbuf = r.read(len)
+		const id = idbuf.toString()
+		if (typeByte === TypeUser) return new User(id)
+		return new Group(id)
+	}
+
+	// numeric IDs
+	const id = r.readUint32()
+	switch (typeByte) {
+		case TypeCurrency:
+			return new Currency(id)
+		case TypeLimitedAsset:
+			return new LimitedAsset(id)
+		case TypeUnlimitedAsset:
+			return new UnlimitedAsset(id)
+		case TypeLimitedSource:
+			return new LimitedSource(id)
+		case TypeUnlimitedSource:
+			return new UnlimitedSource(id)
+		case TypePlace:
+			return new Place(id)
+	}
+
+	throw new Error(`unknown Type: ${typeByte}`)
+}
+
+export interface NumericItem extends Item {
+	ID: number
 	// only used for serialisation atm
 	// uses number (uint32 in Go)
 }
+export const IsNumericItem = (i: Item): i is NumericItem =>
+	typeof (i as NumericItem).ID === "number"
 
-export abstract class StringItem extends Item {
+export interface StringItem extends Item {
 	// only used for serialisation atm
-	abstract readonly ID: string
+	ID: string
 }
+export const IsStringItem = (i: Item): i is StringItem =>
+	typeof (i as StringItem).ID === "string"
 
 // Marker interfaces remain for compile-time typing of behaviours
-export abstract class CanOwnOne extends Item {}
-export abstract class CanOwnMany extends Item {}
-export abstract class Mintable extends Item {}
-export abstract class Owner extends Item {
-	static override Deserialise(r: BufReader): Owner {
-		const i = Item.Deserialise(r)
-		if (!(i instanceof Owner))
-			throw new Error(`item is not Owner: ${JSON.stringify(i)}`)
-
-		return i as Owner
-	}
+export interface CanOwnOne extends Item {
+	CanOwnOne(): void
 }
-export abstract class Source extends   NumericItem implements Owner {}
+export const IsCanOwnOne = (i: Item): i is CanOwnOne =>
+	(i as CanOwnOne).CanOwnOne !== undefined
+
+export interface CanOwnMany extends Item {
+	CanOwnMany(): void
+}
+export const IsCanOwnMany = (i: Item): i is CanOwnMany =>
+	(i as CanOwnMany).CanOwnMany !== undefined
+
+export interface Mintable extends Item {
+	Mintable(): void
+}
+export const IsMintable = (i: Item): i is Mintable =>
+	(i as Mintable).Mintable !== undefined
+
+export interface Owner extends Item {
+	Owner(): void
+}
+export const IsOwner = (i: Item): i is Owner => (i as Owner).Owner !== undefined
+
+export function DeserialiseOwner(r: BufReader): Owner {
+	const i = DeserialiseItem(r)
+	if (!i) throw new Error("item is not Owner: null")
+	if (!IsOwner(i)) throw new Error(`item is not Owner: ${JSON.stringify(i)}`)
+
+	return i as Owner
+}
+
+export interface Source extends NumericItem, Owner {
+	Source(): void
+}
+export const IsSource = (i: Item): i is Source =>
+	IsOwner(i) && (i as Source).Source !== undefined
 
 // Concrete classes extend the abstract bases so we can use `instanceof`
-export class Currency extends NumericItem implements Mintable, CanOwnMany {
-	override Type = TypeCurrency
+export class Currency implements NumericItem, CanOwnMany, Mintable {
+	Type = TypeCurrency
 
-	constructor(public ID: number) {
-		super()
-	}
+	CanOwnMany() {}
+	Mintable() {}
+
+	constructor(public ID: number) {}
 
 	String(): string {
 		return `currency(${this.ID})`
 	}
 }
 
-export class LimitedAsset extends NumericItem implements CanOwnMany {
-	override Type = TypeLimitedAsset
+export class LimitedAsset implements NumericItem, CanOwnMany {
+	Type = TypeLimitedAsset
 
-	constructor(public ID: number) {
-		super()
-	}
+	CanOwnMany() {}
+
+	constructor(public ID: number) {}
 
 	String(): string {
 		return `limited-asset(${this.ID})`
 	}
 }
 
-export class UnlimitedAsset extends NumericItem implements CanOwnOne {
-	override Type = TypeLimitedAsset
+export class UnlimitedAsset implements NumericItem, CanOwnOne {
+	Type = TypeLimitedAsset
 
-	constructor(public ID: number) {
-		super()
-	}
+	CanOwnOne() {}
+
+	constructor(public ID: number) {}
 
 	String(): string {
 		return `unlimited-asset(${this.ID})`
@@ -121,14 +149,16 @@ export class UnlimitedAsset extends NumericItem implements CanOwnOne {
 }
 
 export class LimitedSource
-	extends NumericItem
-	implements CanOwnOne, Mintable, Owner, Source
+	implements NumericItem, CanOwnOne, Mintable, Owner, Source
 {
-	override Type = TypeLimitedSource
+	Type = TypeLimitedSource
 
-	constructor(public ID: number) {
-		super()
-	}
+	CanOwnOne() {}
+	Mintable() {}
+	Owner() {}
+	Source() {}
+
+	constructor(public ID: number) {}
 
 	String(): string {
 		return `limited-source(${this.ID})`
@@ -140,14 +170,16 @@ export class LimitedSource
 }
 
 export class UnlimitedSource
-	extends NumericItem
-	implements  CanOwnOne, Mintable, Owner, Source
+	implements NumericItem, CanOwnOne, Mintable, Owner, Source
 {
-	override Type = TypeUnlimitedSource
+	Type = TypeUnlimitedSource
 
-	constructor(public ID: number) {
-		super()
-	}
+	CanOwnOne() {}
+	Mintable() {}
+	Owner() {}
+	Source() {}
+
+	constructor(public ID: number) {}
 
 	String(): string {
 		return `unlimited-source(${this.ID})`
@@ -158,36 +190,39 @@ export class UnlimitedSource
 	}
 }
 
-export class Place extends NumericItem implements CanOwnOne, Mintable {
-	override Type = TypePlace
+export class Place implements NumericItem, CanOwnOne, Mintable {
+	Type = TypePlace
 
-	constructor(public ID: number) {
-		super()
-	}
+	CanOwnOne() {}
+	Mintable() {}
+
+	constructor(public ID: number) {}
 
 	String(): string {
 		return `place(${this.ID})`
 	}
 }
 
-export class User extends StringItem implements Owner {
-	override Type = TypeUser
+export class User implements StringItem, Owner {
+	Type = TypeUser
 
-	constructor(public ID: string) {
-		super()
-	}
+	Owner() {}
+
+	constructor(public ID: string) {}
 
 	String(): string {
 		return `user(${this.ID})`
 	}
 }
 
-export class Group extends StringItem implements CanOwnOne, Mintable, Owner {
-	override Type = TypeGroup
+export class Group implements StringItem, CanOwnOne, Mintable, Owner {
+	Type = TypeGroup
 
-	constructor(public ID: string) {
-		super()
-	}
+	CanOwnOne() {}
+	Mintable() {}
+	Owner() {}
+
+	constructor(public ID: string) {}
 
 	String(): string {
 		return `group(${this.ID})`

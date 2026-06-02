@@ -1,4 +1,12 @@
-import { Item, NumericItem, StringItem, TypeNil } from "./types"
+import {
+	DeserialiseItem,
+	IsNumericItem,
+	IsStringItem,
+	type Item,
+	type NumericItem,
+	type StringItem,
+	TypeNil,
+} from "./types"
 
 export function SerialiseUint32(n: number): Buffer {
 	const buf = Buffer.alloc(4)
@@ -32,8 +40,8 @@ function SerialiseString(i: StringItem): Buffer {
 
 export function SerialiseItem(i: Item | null): Buffer {
 	if (i === null) return Buffer.from([TypeNil])
-	if (i instanceof NumericItem) return SerialiseNumeric(i)
-	if (i instanceof StringItem) return SerialiseString(i)
+	if (IsNumericItem(i)) return SerialiseNumeric(i)
+	if (IsStringItem(i)) return SerialiseString(i)
 	throw new Error(`unknown Item type: ${i.constructor.name}`)
 }
 
@@ -111,7 +119,7 @@ export class ItemsOne {
 		const l = reader.readUint32()
 		const io = new ItemsOne()
 		for (let idx = 0; idx < l; idx++) {
-			const i = Item.Deserialise(reader)
+			const i = DeserialiseItem(reader)
 			if (i === null) throw new Error("item is not CanOwnOne: nil")
 			// runtime check that it satisfies CanOwnOne is not doable at runtime in TS; assume correct
 			io.Add(i)
@@ -164,7 +172,7 @@ export class ItemsMany {
 		const l = reader.readUint32()
 		const im = new ItemsMany()
 		for (let idx = 0; idx < l; idx++) {
-			const i = Item.Deserialise(reader)
+			const i = DeserialiseItem(reader)
 			if (i === null) throw new Error("item is not CanOwnMany: nil")
 			const qty = reader.readUint64()
 			im.map.set(i, qty)

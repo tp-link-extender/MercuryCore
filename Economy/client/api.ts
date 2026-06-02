@@ -10,8 +10,9 @@ import {
 import {
 	type CanOwnMany,
 	type CanOwnOne,
+	DeserialiseItem,
 	Group,
-	Item,
+	type Item,
 	LimitedSource,
 	type Owner,
 	Place,
@@ -126,7 +127,7 @@ export async function stipend(f: Fetch, o: Owner): Promise<boolean> {
 }
 
 const resToItem = async (res: Response): Promise<Item | null> =>
-	Item.Deserialise(await resReader(res))
+	DeserialiseItem(await resReader(res))
 
 export async function createLimitedSource(
 	f: Fetch,
@@ -161,7 +162,8 @@ export async function createPlace(f: Fetch, u: User): ReturnValue<Place> {
 	if (res.status !== 200) return { ok: false }
 
 	const i = await resToItem(res)
-	if (!(i instanceof Place)) throw new Error(`item is not Place: ${JSON.stringify(i)}`)
+	if (!(i instanceof Place))
+		throw new Error(`item is not Place: ${JSON.stringify(i)}`)
 
 	return { ok: true, value: i }
 }
@@ -171,7 +173,8 @@ export async function createGroup(f: Fetch, u: User): ReturnValue<Group> {
 	if (res.status !== 200) return { ok: false }
 
 	const i = await resToItem(res)
-	if (!(i instanceof Group)) throw new Error(`item is not Group: ${JSON.stringify(i)}`)
+	if (!(i instanceof Group))
+		throw new Error(`item is not Group: ${JSON.stringify(i)}`)
 
 	return { ok: true, value: i }
 }
@@ -231,8 +234,10 @@ async function getHistory(
 	return { ok: true, value: transfers }
 }
 
-export const history = (f: Fetch, n: number /* the only good thing about rust */): ReturnValue<TransferWithID[]> =>
-	getHistory(f, SerialiseUint32(n))
+export const history = (
+	f: Fetch,
+	n: number /* the only good thing about rust */
+): ReturnValue<TransferWithID[]> => getHistory(f, SerialiseUint32(n))
 
 export const historyOwner = (f: Fetch, n: number, o: Owner) =>
 	getHistory(f, Buffer.concat([SerialiseUint32(n), SerialiseItem(o)]))
