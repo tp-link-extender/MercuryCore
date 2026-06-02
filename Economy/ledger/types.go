@@ -122,8 +122,8 @@ type (
 		Owner()
 	}
 	Source interface {
-		Owner
 		NumericItem
+		Owner
 		Source()
 	}
 )
