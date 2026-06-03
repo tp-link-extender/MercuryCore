@@ -198,6 +198,13 @@ export class TransferWithID {
 		return `${this.ID.String()}: ${this.Transfer.Send0.String()}, ${this.Transfer.Send1.String()}`
 	}
 
+	Serialise(): Buffer {
+		const idBytes = this.ID.Serialise()
+		const idLength = Buffer.alloc(1)
+		idLength.writeUInt8(idBytes.length, 0)
+		return Buffer.concat([idLength, idBytes, this.Transfer.Serialise()])
+	}
+
 	static Deserialise(r: BufReader): TransferWithID {
 		const l = r.readUint8()
 		const idbuf = r.read(l)
