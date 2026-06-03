@@ -1,5 +1,9 @@
 import {
+	type CanOwnMany,
+	type CanOwnOne,
 	DeserialiseItem,
+	IsCanOwnMany,
+	IsCanOwnOne,
 	IsNumericItem,
 	IsStringItem,
 	type Item,
@@ -79,9 +83,17 @@ export class BufReader {
 export type Quantity = bigint
 
 export class ItemsOne {
-	set: Set<Item>
-	constructor(initial?: Iterable<Item>) {
+	set: Set<CanOwnOne>
+	constructor(initial?: Iterable<CanOwnOne>) {
 		this.set = new Set(initial)
+	}
+
+	Empty(): boolean {
+		return this.set.size === 0
+	}
+
+	[Symbol.iterator]() {
+		return this.set[Symbol.iterator]()
 	}
 
 	String(): string {
@@ -96,11 +108,11 @@ export class ItemsOne {
 		return true
 	}
 
-	Has(i: Item): boolean {
+	Has(i: CanOwnOne): boolean {
 		return this.set.has(i)
 	}
 
-	Add(i: Item) {
+	Add(i: CanOwnOne) {
 		this.set.add(i)
 	}
 
@@ -120,8 +132,8 @@ export class ItemsOne {
 		const io = new ItemsOne()
 		for (let idx = 0; idx < l; idx++) {
 			const i = DeserialiseItem(reader)
-			if (i === null) throw new Error("item is not CanOwnOne: nil")
-			// runtime check that it satisfies CanOwnOne is not doable at runtime in TS; assume correct
+			if (i === null) throw new Error("item is not CanOwnOne: null")
+			if (!IsCanOwnOne(i)) throw new Error(`item is not CanOwnOne: ${JSON.stringify(i)}`)
 			io.Add(i)
 		}
 		return io
@@ -129,9 +141,17 @@ export class ItemsOne {
 }
 
 export class ItemsMany {
-	map: Map<Item, Quantity>
-	constructor(initial?: Iterable<[Item, Quantity]>) {
+	map: Map<CanOwnMany, Quantity>
+	constructor(initial?: Iterable<[CanOwnMany, Quantity]>) {
 		this.map = new Map(initial)
+	}
+
+	Empty(): boolean {
+		return this.map.size === 0
+	}
+
+	[Symbol.iterator]() {
+		return this.map[Symbol.iterator]()
 	}
 
 	String(): string {
@@ -149,8 +169,9 @@ export class ItemsMany {
 		return true
 	}
 
-	Add(i: Item, qty: Quantity) {
-		const prev = this.map.get(i) ?? BigInt(0)
+	Add(i: CanOwnMany, qty: Quantity) {
+		// ok maybe I should consider using ?? more. I usually just use || regardless since I don't care about the type conversion, however if one's doing something like `x || ""` it evaluates the rhs even if the lhs is already ""
+		const prev = this.map.get(i) ?? 0n
 		this.map.set(i, prev + qty)
 	}
 
@@ -173,7 +194,8 @@ export class ItemsMany {
 		const im = new ItemsMany()
 		for (let idx = 0; idx < l; idx++) {
 			const i = DeserialiseItem(reader)
-			if (i === null) throw new Error("item is not CanOwnMany: nil")
+			if (i === null) throw new Error("item is not CanOwnMany: null")
+			if (!IsCanOwnMany(i)) throw new Error(`item is not CanOwnMany: ${JSON.stringify(i)}`)
 			const qty = reader.readUint64()
 			im.map.set(i, qty)
 		}
