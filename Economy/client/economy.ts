@@ -37,6 +37,10 @@ export class TransferID {
 		private id: string
 	) {}
 
+	Time(): Date {
+		return new Date(Number(this.timestamp / 1_000_000n))
+	}
+	
 	String(): string {
 		return `${this.timestamp}-${this.id}`
 	}
