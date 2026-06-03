@@ -96,9 +96,9 @@ export interface Owner extends Item {
 }
 export const IsOwner = (i: Item): i is Owner => (i as Owner).Owner !== undefined
 
-export function DeserialiseOwner(r: BufReader): Owner {
+export function DeserialiseOwner(r: BufReader): Owner | null {
 	const i = DeserialiseItem(r)
-	if (!i) throw new Error("item is not Owner: null")
+	if (!i) return null
 	if (!IsOwner(i)) throw new Error(`item is not Owner: ${JSON.stringify(i)}`)
 
 	return i as Owner
