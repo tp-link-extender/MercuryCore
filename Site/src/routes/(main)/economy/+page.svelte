@@ -1,4 +1,6 @@
 <script lang="ts">
+	import * as Econ from "economy/economy"
+	import { BufReader } from "economy/items"
 	import Head from "$components/Head.svelte"
 	import Transaction from "$components/Transaction.svelte"
 	import beautifyCurrency from "$lib/beautifyCurrency"
@@ -14,12 +16,16 @@
 <h1 class="text-center">Economy</h1>
 
 <div class="ctnr pt-12 flex flex-col gap-4">
+	<!-- Top section -->
 	<div class="grid lg:grid-cols-[1fr_1fr] gap-4">
+		<!-- Current balance card -->
 		<div class="card bg-darker p-4">
 			<h2>Current balance</h2>
 			<div class="flex flex-row items-center text-2rem">
 				<span class="pr-2 text-emerald-600">{data.currencySymbol}</span>
-				<span class="balancenum flex flex-row text-emerald-600">
+				<data
+					class="balancenum flex flex-row text-emerald-600"
+					value={data.balance.toString()}>
 					<span class="text-emerald-900">{c1}</span>
 					{c2}
 					<span class={c3 ? "text-emerald-600" : "text-emerald-900"}>
@@ -27,7 +33,7 @@
 					</span>
 					{c3}
 					<span class="text-emerald-900">{c4}</span>
-				</span>
+				</data>
 			</div>
 		</div>
 	</div>
@@ -38,17 +44,18 @@
 		<table class="w-full">
 			<thead>
 				<tr>
-					<th>Type</th>
 					<th>From</th>
+					<th>Sent</th>
 					<th>Time</th>
-					<th>Amount</th>
-					<th>Fee</th>
+					<th>Received</th>
 					<th>To</th>
-					<th>Note & link</th>
 				</tr>
 			</thead>
 			<tbody>
 				{#each data.transactions as transaction, num}
+					{@const transfer = Econ.TransferWithID.Deserialise(
+						new BufReader(transaction)
+					)}
 					<tr
 						in:fade={{
 							num,
@@ -56,7 +63,7 @@
 							max: 12
 						}}>
 						<Transaction
-							transfer={transaction}
+							{transfer}
 							ownerData={data.ownerData}
 							currencySymbol={data.currencySymbol} />
 					</tr>

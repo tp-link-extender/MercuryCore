@@ -16,7 +16,7 @@ export async function load({ fetch: f, locals }) {
 
 	return {
 		balance: b.value,
-		transactions: transactions.value,
+		transactions: transactions.value.map(t => t.Serialise()),
 		ownerData: await ownerData(transactions.value),
 	}
 }
