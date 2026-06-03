@@ -199,7 +199,7 @@ export async function ownerData(list: TransferWithID[]): Promise<OwnerData> {
 			.filter(o => o instanceof Econ.Group)
 			.map(g => Record("group", g.ID)),
 		assetsList: owners
-			.filter(o => o instanceof Econ.Source)
+			.filter(Econ.IsSource)
 			.map(s => Record("asset", s.ID)),
 	})
 
