@@ -20,13 +20,13 @@
 		"@types/d3-interpolate": "^3.0.4",
 		"@types/nodemailer": "^8.0.0",
 		"@types/nprogress": "^0.2.3",
-		"svelte-check": "^4.4.8",
+		"svelte-check": "^4.5.0",
 		"vite-plugin-devtools-json": "^1.0.0"
 	},
 	"type": "module",
 	"dependencies": {
 		"@sveltejs/adapter-node": "^5.5.4",
-		"@sveltejs/kit": "^2.61.1",
+		"@sveltejs/kit": "^2.62.0",
 		"@sveltejs/vite-plugin-svelte": "^7.1.2",
 		"@threlte/core": "^8.5.16",
 		"@threlte/extras": "^9.20.1",
@@ -43,12 +43,12 @@
 		"picocolors": "^1.1.1",
 		"sharp": "^0.34.5",
 		"surrealdb": "^2.0.3",
-		"svelte": "^5.56.0",
+		"svelte": "^5.56.1",
 		"svelte-inview": "^4.0.4",
 		"sveltekit-superforms": "^2.30.1",
 		"typescript": "^6.0.3",
 		"unocss": "^66.7.0",
-		"vite": "^8.0.14"
+		"vite": "^8.0.16"
 	},
 	"trustedDependencies": [
 		"@biomejs/biome",
