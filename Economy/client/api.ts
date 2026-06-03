@@ -112,12 +112,12 @@ export async function inventory(f: Fetch, o: Owner): ReturnValue<Items> {
 	return { ok: true, value: Items.Deserialise(await resReader(res)) }
 }
 
-export async function balance(f: Fetch, o: Owner): ReturnValue<number> {
+export async function balance(f: Fetch, o: Owner): ReturnValue<bigint> {
 	const res = await request(f, "balance", SerialiseItem(o))
 	if (res.status !== 200) return { ok: false }
 
 	const text = await res.text()
-	return { ok: true, value: +text }
+	return { ok: true, value: BigInt(text) }
 }
 
 export async function stipend(f: Fetch, o: Owner): Promise<boolean> {
