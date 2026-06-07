@@ -26,12 +26,14 @@
 
 {#snippet owner(o: Econ.Owner)}
 	{#if o instanceof Econ.User}
-		<User
-			user={ownerData.users[o.ID]}
-			full
-			thin
-			size="2.5rem"
-			bg="accent" />
+		{@const u = ownerData.users[o.ID]}
+		{#if u}
+			<User user={u} full thin size="2.5rem" bg="accent" />
+		{:else}
+			<i>Unknown user</i>
+		{/if}
+	{:else}
+		<i>Unknown owner</i>
 	{/if}
 {/snippet}
 
