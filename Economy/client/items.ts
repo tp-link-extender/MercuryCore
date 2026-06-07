@@ -12,38 +12,130 @@ import {
 	TypeNil,
 } from "./types"
 
-export function SerialiseUint32(n: number): Buffer {
-	const buf = Buffer.alloc(4)
+const errReadOutOfRange = new Error("read out of range")
+
+// fuck Buffer all my homies hate Buffer
+export class Buf {
+	constructor(public buf: Uint8Array<ArrayBuffer>) { }
+
+	get length() {
+		return this.buf.length
+	}
+
+	writeUInt8(value: number, offset: number) {
+		this.buf[offset] = value
+	}
+
+	writeUInt32BE(value: number, offset: number) {
+		for (let i = 0; i < 4; i++)
+			this.buf[offset + i] = (value >>> (24 - i * 8)) & 0xff
+	}
+
+	writeBigUInt64BE(value: bigint, offset: number) {
+		const bigValue = BigInt.asUintN(64, value)
+		for (let i = 0; i < 8; i++)
+			this.buf[offset + i] = Number((bigValue >> BigInt(56 - i * 8)) & 0xffn)
+		
+	}
+
+	write(str: string, offset: number) {
+		const encoder = new TextEncoder()
+		const encoded = encoder.encode(str)
+		this.buf.set(encoded, offset)
+	}
+
+	readUInt8(offset: number): number {
+		const v = this.buf[offset]
+		if (v === undefined) throw errReadOutOfRange
+		return v
+	}
+
+	readUInt32BE(offset: number): number {
+		let value = 0
+		for (let i = 0; i < 4; i++){
+			const v = this.buf[offset + i]
+			if (v === undefined) throw errReadOutOfRange
+			value = (value << 8) | v
+		}
+		return value
+	}
+
+	readBigUInt64BE(offset: number): bigint {
+		let value = 0n
+		for (let i = 0; i < 8; i++){
+			const v = this.buf[offset + i]
+			if (v === undefined) throw errReadOutOfRange
+			value = (value << 8n) | BigInt(v)
+		}
+		return value
+	}
+
+	subarray(start: number, end?: number): Buf {
+		return new Buf(this.buf.subarray(start, end))
+	}
+
+	// Hey [object Object] I heard you liked [object Object] so I made you a [object Object] so you can [object Object] while you [object Function] your [object Object]
+	toString(): string {
+		const decoder = new TextDecoder()
+		return decoder.decode(this.buf)
+	}
+
+	static concat(buffers: Buf[]): Buf {
+		const totalLength = buffers.reduce((sum, b) => sum + b.length, 0)
+		const result = new Uint8Array(totalLength)
+		let offset = 0
+		for (const b of buffers) {
+			result.set(b.buf, offset)
+			offset += b.length
+		}
+		return new Buf(result)
+	}
+
+	static from(arr: number[] | ArrayBuffer): Buf {
+		return new Buf(new Uint8Array(arr))
+	}
+
+	static alloc(size: number): Buf {
+		return new Buf(new Uint8Array(size))
+	}
+
+	static byteLength(str: string): number {
+		return new TextEncoder().encode(str).length
+	}
+}
+
+export function SerialiseUint32(n: number): Buf {
+	const buf = Buf.alloc(4)
 	buf.writeUInt32BE(n, 0)
 	return buf
 }
 
-export function SerialiseUint64(n: bigint): Buffer {
-	const buf = Buffer.alloc(8)
-	buf.writeBigInt64BE(n, 0)
+export function SerialiseUint64(n: bigint): Buf {
+	const buf = Buf.alloc(8)
+	buf.writeBigUInt64BE(n, 0)
 	return buf
 }
 
 // Serialisation helpers for Item (mirrors ledger/items.go)
-function SerialiseNumeric(i: NumericItem): Buffer {
-	const idbuf = Buffer.alloc(5)
+function SerialiseNumeric(i: NumericItem): Buf {
+	const idbuf = Buf.alloc(5)
 	idbuf.writeUInt8(i.Type, 0)
 	idbuf.writeUInt32BE(i.ID, 1)
 	return idbuf
 }
 
-function SerialiseString(i: StringItem): Buffer {
+function SerialiseString(i: StringItem): Buf {
 	const idstr = i.ID
-	const idl = Buffer.byteLength(idstr)
-	const id = Buffer.alloc(2 + idl)
+	const idl = Buf.byteLength(idstr)
+	const id = Buf.alloc(2 + idl)
 	id.writeUInt8(i.Type, 0)
 	id.writeUInt8(idl, 1)
 	id.write(idstr, 2)
 	return id
 }
 
-export function SerialiseItem(i: Item | null): Buffer {
-	if (i === null) return Buffer.from([TypeNil])
+export function SerialiseItem(i: Item | null): Buf {
+	if (i === null) return Buf.from([TypeNil])
 	if (IsNumericItem(i)) return SerialiseNumeric(i)
 	if (IsStringItem(i)) return SerialiseString(i)
 	throw new Error(`unknown Item type: ${i.constructor.name}`)
@@ -52,8 +144,8 @@ export function SerialiseItem(i: Item | null): Buffer {
 // Simple buffer reader/writer helpers used for serialisation/deserialisation
 export class BufReader {
 	off = 0
-	constructor(private buf: Buffer) {}
-	read(n: number): Buffer {
+	constructor(private buf: Buf) {}
+	read(n: number): Buf {
 		if (this.off + n > this.buf.length) throw new Error("read out of range")
 		const slice = this.buf.subarray(this.off, this.off + n)
 		this.off += n
@@ -116,15 +208,15 @@ export class ItemsOne {
 		this.set.add(i)
 	}
 
-	Serialise(): Buffer {
+	Serialise(): Buf {
 		const b = []
-		const lbuf = Buffer.alloc(4)
+		const lbuf = Buf.alloc(4)
 		lbuf.writeUInt32BE(this.set.size, 0)
 		b.push(lbuf)
 		for (const i of this.set) {
 			b.push(SerialiseItem(i))
 		}
-		return Buffer.concat(b)
+		return Buf.concat(b)
 	}
 
 	static Deserialise(reader: BufReader): ItemsOne {
@@ -175,18 +267,18 @@ export class ItemsMany {
 		this.map.set(i, prev + qty)
 	}
 
-	Serialise(): Buffer {
+	Serialise(): Buf {
 		const b = []
-		const lbuf = Buffer.alloc(4)
+		const lbuf = Buf.alloc(4)
 		lbuf.writeUInt32BE(this.map.size, 0)
 		b.push(lbuf)
 		for (const [i, qty] of this.map) {
 			b.push(SerialiseItem(i))
-			const qtybuf = Buffer.alloc(8)
+			const qtybuf = Buf.alloc(8)
 			qtybuf.writeBigUInt64BE(qty, 0)
 			b.push(qtybuf)
 		}
-		return Buffer.concat(b)
+		return Buf.concat(b)
 	}
 
 	static Deserialise(reader: BufReader): ItemsMany {
@@ -229,8 +321,8 @@ export class Items {
 		return this.One.set.size === 0 && this.Many.map.size === 0
 	}
 
-	Serialise(): Buffer {
-		return Buffer.concat([this.One.Serialise(), this.Many.Serialise()])
+	Serialise(): Buf {
+		return Buf.concat([this.One.Serialise(), this.Many.Serialise()])
 	}
 
 	static Deserialise(reader: BufReader): Items {

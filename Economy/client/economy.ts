@@ -1,4 +1,5 @@
 import {
+	Buf,
 	BufReader,
 	Items,
 	ItemsMany,
@@ -45,14 +46,14 @@ export class TransferID {
 		return `${this.timestamp}-${this.id}`
 	}
 
-	Serialise(): Buffer {
-		const bs = Buffer.alloc(8 + Buffer.byteLength(this.id))
+	Serialise(): Buf {
+		const bs = Buf.alloc(8 + Buf.byteLength(this.id))
 		bs.writeBigUInt64BE(this.timestamp, 0)
 		bs.write(this.id, 8)
 		return bs
 	}
 
-	static Deserialise(data: Buffer): TransferID {
+	static Deserialise(data: Buf): TransferID {
 		if (data.length < 8) throw ErrInvalidTransferID
 		const ts = data.readBigUInt64BE(0)
 		const id = data.subarray(8).toString()
@@ -104,8 +105,8 @@ export class Send {
 		return this.Items.Equal(expected)
 	}
 
-	Serialise(): Buffer {
-		return Buffer.concat([
+	Serialise(): Buf {
+		return Buf.concat([
 			// encode Owner
 			SerialiseItem(this.Owner),
 			// encode Items
@@ -181,8 +182,8 @@ export class Transfer {
 		return this.Send0.Equal(other.Send0) && this.Send1.Equal(other.Send1)
 	}
 
-	Serialise(): Buffer {
-		return Buffer.concat([this.Send0.Serialise(), this.Send1.Serialise()])
+	Serialise(): Buf {
+		return Buf.concat([this.Send0.Serialise(), this.Send1.Serialise()])
 	}
 
 	static Deserialise(r: BufReader): Transfer {
@@ -202,11 +203,11 @@ export class TransferWithID {
 		return `${this.ID.String()}: ${this.Transfer.Send0.String()}, ${this.Transfer.Send1.String()}`
 	}
 
-	Serialise(): Buffer {
+	Serialise(): Uint8Array<ArrayBuffer> {
 		const idBytes = this.ID.Serialise()
-		const idLength = Buffer.alloc(1)
+		const idLength = Buf.alloc(1)
 		idLength.writeUInt8(idBytes.length, 0)
-		return Buffer.concat([idLength, idBytes, this.Transfer.Serialise()])
+		return Buf.concat([idLength, idBytes, this.Transfer.Serialise()]).buf
 	}
 
 	static Deserialise(r: BufReader): TransferWithID {
@@ -236,7 +237,7 @@ export function TransferValid(t: Transfer): Error | null {
 	return null
 }
 
-export function DeserialiseTransfer(buf: Buffer): Transfer {
+export function DeserialiseTransfer(buf: Buf): Transfer {
 	const r = new BufReader(buf)
 	return new Transfer(Send.Deserialise(r), Send.Deserialise(r))
 }
@@ -248,15 +249,15 @@ export class OwnersOne {
 		this.set.add(o)
 	}
 
-	Serialise(): Buffer {
+	Serialise(): Buf {
 		const b = []
-		const lbuf = Buffer.alloc(4)
+		const lbuf = Buf.alloc(4)
 		lbuf.writeUInt32BE(this.set.size, 0)
 		b.push(lbuf)
 		for (const o of this.set) {
 			b.push(SerialiseItem(o))
 		}
-		return Buffer.concat(b)
+		return Buf.concat(b)
 	}
 
 	static Deserialise(r: BufReader): OwnersOne {
@@ -285,18 +286,18 @@ export class OwnersMany {
 		this.map.set(o, prev + qty)
 	}
 
-	Serialise(): Buffer {
+	Serialise(): Buf {
 		const b = []
-		const lbuf = Buffer.alloc(4)
+		const lbuf = Buf.alloc(4)
 		lbuf.writeUInt32BE(this.map.size, 0)
 		b.push(lbuf)
 		for (const [o, qty] of this.map) {
 			b.push(SerialiseItem(o))
-			const qtybuf = Buffer.alloc(8)
+			const qtybuf = Buf.alloc(8)
 			qtybuf.writeBigUInt64BE(qty, 0)
 			b.push(qtybuf)
 		}
-		return Buffer.concat(b)
+		return Buf.concat(b)
 	}
 
 	static Deserialise(reader: BufReader): OwnersMany {

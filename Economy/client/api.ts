@@ -1,5 +1,6 @@
 import { OwnersMany, OwnersOne, TransferWithID } from "./economy"
 import {
+	Buf,
 	BufReader,
 	Items,
 	type Quantity,
@@ -44,10 +45,10 @@ export type ReturnValue<T> = Promise<{ ok: true; value: T } | { ok: false }>
 
 type Fetch = typeof fetch
 
-const request = (f: Fetch, route: Route, body: Buffer): Promise<Response> =>
+const request = (f: Fetch, route: Route, body: Buf): Promise<Response> =>
 	f(`${url}/${route}`, {
 		method: "POST",
-		body: Uint8Array.from(body),
+		body: body.buf,
 	})
 
 export async function ownsOne(
@@ -58,7 +59,7 @@ export async function ownsOne(
 	const res = await request(
 		f,
 		"ownsOne",
-		Buffer.concat([SerialiseItem(o), SerialiseItem(i)])
+		Buf.concat([SerialiseItem(o), SerialiseItem(i)])
 	)
 	if (res.status !== 200) return { ok: false } // it won't be another 2xx status code
 
@@ -74,7 +75,7 @@ export async function ownsMany(
 	const res = await request(
 		f,
 		"ownsMany",
-		Buffer.concat([SerialiseItem(o), SerialiseItem(i)])
+		Buf.concat([SerialiseItem(o), SerialiseItem(i)])
 	)
 	if (res.status !== 200) return { ok: false }
 
@@ -83,7 +84,7 @@ export async function ownsMany(
 }
 
 const resReader = async (res: Response): Promise<BufReader> =>
-	new BufReader(Buffer.from(await res.arrayBuffer()))
+	new BufReader(Buf.from(await res.arrayBuffer()))
 
 export async function ownersOne(
 	f: Fetch,
@@ -188,7 +189,7 @@ export const buyUnlimitedAsset = (
 	request(
 		f,
 		"buyUnlimitedAsset",
-		Buffer.concat([
+		Buf.concat([
 			SerialiseItem(u),
 			SerialiseItem(src),
 			SerialiseUint64(price),
@@ -205,7 +206,7 @@ export const buyLimitedAsset = (
 	request(
 		f,
 		"buyLimitedAsset",
-		Buffer.concat([
+		Buf.concat([
 			SerialiseItem(u),
 			SerialiseItem(src),
 			SerialiseUint64(priceEach),
@@ -215,12 +216,12 @@ export const buyLimitedAsset = (
 
 async function getHistory(
 	f: Fetch,
-	body: Buffer
+	body: Buf
 ): ReturnValue<TransferWithID[]> {
 	const res = await request(f, "history", body)
 	if (res.status !== 200) return { ok: false }
 
-	const buf = Buffer.from(await res.arrayBuffer())
+	const buf = Buf.from(await res.arrayBuffer())
 	const r = new BufReader(buf)
 
 	const transfers: TransferWithID[] = []
@@ -240,4 +241,4 @@ export const history = (
 ): ReturnValue<TransferWithID[]> => getHistory(f, SerialiseUint32(n))
 
 export const historyOwner = (f: Fetch, n: number, o: Owner) =>
-	getHistory(f, Buffer.concat([SerialiseUint32(n), SerialiseItem(o)]))
+	getHistory(f, Buf.concat([SerialiseUint32(n), SerialiseItem(o)]))
