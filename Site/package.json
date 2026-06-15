@@ -40,7 +40,7 @@
 		"nodemailer": "^8.0.7",
 		"nprogress": "^0.2.0",
 		"picocolors": "^1.1.1",
-		"sharp": "^0.34.5",
+		"sharp": "^0.35.1",
 		"surrealdb": "^2.0.3",
 		"svelte": "^5.55.8",
 		"svelte-inview": "^4.0.4",
