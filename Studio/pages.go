@@ -73,8 +73,9 @@ type InputResponse struct {
 	Errors []string
 }
 
-func MakeInputResponse() InputResponse {
+func MakeInputResponse(value string) InputResponse {
 	return InputResponse{
+		Value:  value,
 		Errors: make([]string, 0),
 	}
 }
@@ -94,13 +95,19 @@ func loadlogin(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
 	password := r.Form.Get("password")
 	fmt.Println(username, password)
 
-	rUsername := MakeInputResponse()
-	rPassword := MakeInputResponse()
+	rUsername := MakeInputResponse(username)
+	rPassword := MakeInputResponse(password)
 
-	if len(password) < 16 {
-		rUsername.Errors = append(rUsername.Errors, "")
-		rPassword.Errors = append(rPassword.Errors, "Incorrect username or password")
-	}
+	// if len(password) < 16 {
+	// 	rUsername.Errors = append(rUsername.Errors, "")
+	// 	rPassword.Errors = append(rPassword.Errors, "Incorrect username or password")
+
+	// 	d.Data["username"] = rUsername
+	// 	d.Data["password"] = rPassword
+	// 	return d, nil
+	// }
+
+	fmt.Println(loginQueryUser)
 
 	qres, err := Query[[]struct {
 		id             string
@@ -113,9 +120,6 @@ func loadlogin(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
 	}
 	res := qres[0].Result
 	fmt.Println(res)
-
-	rUsername.Value = username
-	rPassword.Value = password
 
 	d.Data["username"] = rUsername
 	d.Data["password"] = rPassword
