@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/surrealdb/surrealdb.go/pkg/models"
 )
 
 func loadroot(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
@@ -80,7 +82,24 @@ func MakeInputResponse(value string) InputResponse {
 	}
 }
 
-var loginQueryUser = MustReadQuery("src/routes/(plain)/login/user")
+var setSessionQuery = MustReadQuery("src/lib/server/setSession")
+
+func createSession(user models.RecordID) (string, error) {
+	qres, err := Query[[]string](setSessionQuery, map[string]any{
+		"user": user,
+	})
+	if err != nil {
+		return "", err
+	}
+	session := qres[0].Result[0]
+	return session, nil
+}
+
+func verifyPassword(password, hashedPassword string) bool {
+	return false // TODO
+}
+
+var login_userQuery = MustReadQuery("src/routes/(plain)/login/user")
 
 func loadlogin(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
 	if r.Method != "POST" {
@@ -93,7 +112,6 @@ func loadlogin(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
 
 	username := r.Form.Get("username")
 	password := r.Form.Get("password")
-	fmt.Println(username, password)
 
 	rUsername := MakeInputResponse(username)
 	rPassword := MakeInputResponse(password)
@@ -107,22 +125,40 @@ func loadlogin(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
 	// 	return d, nil
 	// }
 
-	fmt.Println(loginQueryUser)
+	type AuthUser = struct {
+		ID             models.RecordID `json:"id"`
+		HashedPassword string          `json:"hashedPassword"`
+	}
 
-	qres, err := Query[[]struct {
-		id             string
-		hashedPassword string
-	}](loginQueryUser, map[string]any{
+	qres, err := Query[[]AuthUser](login_userQuery, map[string]any{
 		"username": username,
 	})
 	if err != nil {
 		return d, fmt.Errorf("query user: %w", err)
 	}
-	res := qres[0].Result
-	fmt.Println(res)
 
-	d.Data["username"] = rUsername
-	d.Data["password"] = rPassword
+	res := qres[0].Result
+	if len(res) == 0 {
+		rUsername.Errors = append(rUsername.Errors, "")
+		rPassword.Errors = append(rPassword.Errors, "Incorrect username or password")
+
+		d.Data["username"] = rUsername
+		d.Data["password"] = rPassword
+		return d, nil
+	}
+
+	user := res[0]
+	if !verifyPassword(password, user.HashedPassword) {
+		rUsername.Errors = append(rUsername.Errors, "")
+		rPassword.Errors = append(rPassword.Errors, "Incorrect username or password")
+
+		d.Data["username"] = rUsername
+		d.Data["password"] = rPassword
+		return d, nil
+	}
+
+	// todo: cookie time
+
 	return d, nil
 }
 
