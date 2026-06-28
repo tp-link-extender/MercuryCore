@@ -19,8 +19,9 @@ type User struct {
 
 // type Data map[string]any
 type Data struct {
-	User *User
-	Data map[string]any
+	Session *string
+	User    *User
+	Data    map[string]any
 }
 
 func MakeData() Data {

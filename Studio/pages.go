@@ -8,6 +8,22 @@ import (
 )
 
 func loadroot(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
+	token, err := r.Cookie(cookieName)
+	if err != nil {
+		if err == http.ErrNoCookie {
+			return d, nil
+		}
+		return d, fmt.Errorf("get cookie: %w", err)
+	}
+
+	res, err := validateSessionToken(token.Value)
+	if err != nil {
+		return d, fmt.Errorf("validate session token: %w", err)
+	}
+
+	d.Session = res.Session
+	d.User = res.User
+
 	return d, nil
 }
 
@@ -17,14 +33,14 @@ var root = Component{
 }
 
 func loadloggedIn(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
-	if d.User != nil {
-		return d, nil
+	if d.User == nil {
+		return d, &ErrorRedirect{
+			Path: "/login",
+			Code: 302,
+		}
 	}
 
-	return d, &ErrorRedirect{
-		Path: "/login",
-		Code: 302,
-	}
+	return d, nil
 }
 
 var loggedIn = Component{
@@ -33,14 +49,14 @@ var loggedIn = Component{
 }
 
 func loadloggedOut(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
-	if d.User == nil {
-		return d, nil
+	if d.User != nil {
+		return d, &ErrorRedirect{
+			Path: "/home",
+			Code: 302,
+		}
 	}
 
-	return d, &ErrorRedirect{
-		Path: "/home",
-		Code: 302,
-	}
+	return d, nil
 }
 
 var loggedOut = Component{
@@ -82,19 +98,6 @@ func MakeInputResponse(value string) InputResponse {
 	}
 }
 
-var setSessionQuery = MustReadQuery("src/lib/server/setSession")
-
-func createSession(user models.RecordID) (string, error) {
-	qres, err := Query[[]string](setSessionQuery, map[string]any{
-		"user": user,
-	})
-	if err != nil {
-		return "", err
-	}
-	session := qres[0].Result[0]
-	return session, nil
-}
-
 var login_userQuery = MustReadQuery("src/routes/(plain)/login/user")
 
 func loadlogin(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
@@ -121,7 +124,7 @@ func loadlogin(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
 	// 	return d, nil
 	// }
 
-	type AuthUser = struct {
+	type AuthUser struct {
 		ID             models.RecordID `json:"id"`
 		HashedPassword string          `json:"hashedPassword"`
 	}
@@ -167,7 +170,7 @@ func loadlogin(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:   "session",
+		Name:   cookieName,
 		Value:  session,
 		MaxAge: 30 * 24 * 60 * 60, // 30 days
 		Path:   "/",
