@@ -160,7 +160,19 @@ func loadlogin(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
 	}
 
 	// todo: cookie time
-	fmt.Println("success!")
+	// fmt.Println("success!")
+	session, err := createSession(user.ID)
+	if err != nil {
+		return d, fmt.Errorf("create session: %w", err)
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:   "session",
+		Value:  session,
+		MaxAge: 30 * 24 * 60 * 60, // 30 days
+		Path:   "/",
+	})
+
 	return d, nil
 }
 
