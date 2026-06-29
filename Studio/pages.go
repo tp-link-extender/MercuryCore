@@ -176,7 +176,10 @@ func loadlogin(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
 		Path:   "/",
 	})
 
-	return d, nil
+	return d, &ErrorRedirect{
+		Path: "/home",
+		Code: 302,
+	}
 }
 
 var pageLogin = Component{
@@ -198,7 +201,7 @@ func loadlogout(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
 }
 
 var pageLogout = Component{
-	Name: "pages/logout",
+	Name:   "pages/logout",
 	Loader: loadlogout,
 }
 
