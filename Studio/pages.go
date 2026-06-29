@@ -184,6 +184,24 @@ var pageLogin = Component{
 	Loader: loadlogin,
 }
 
+func loadlogout(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
+	http.SetCookie(w, &http.Cookie{
+		Name:   cookieName,
+		Value:  "",
+		MaxAge: -1,
+	})
+
+	return d, &ErrorRedirect{
+		Path: "/login",
+		Code: 302,
+	}
+}
+
+var pageLogout = Component{
+	Name: "pages/logout",
+	Loader: loadlogout,
+}
+
 var pageHome = Component{
 	Name: "pages/home",
 }

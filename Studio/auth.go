@@ -1,6 +1,10 @@
 package main
 
-import "github.com/surrealdb/surrealdb.go/pkg/models"
+import (
+	"errors"
+
+	"github.com/surrealdb/surrealdb.go/pkg/models"
+)
 
 const cookieName = "session"
 
@@ -8,13 +12,17 @@ var getSessionAndUserQuery = MustReadQuery("src/lib/server/getSessionAndUser")
 var setSessionQuery = MustReadQuery("src/lib/server/setSession")
 
 func createSession(user models.RecordID) (string, error) {
-	qres, err := Query[[]string](setSessionQuery, map[string]any{
+	qres, err := Query[any](setSessionQuery, map[string]any{
 		"user": user,
 	})
 	if err != nil {
 		return "", err
 	}
-	session := qres[0].Result[0]
+
+	session, ok := qres[1].Result.(string)
+	if !ok {
+		return "", errors.New("invalid session token type")
+	}
 	return session, nil
 }
 

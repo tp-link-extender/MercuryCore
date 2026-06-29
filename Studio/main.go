@@ -119,6 +119,10 @@ func main() {
 		handle([]Component{root, loggedIn, pageHome})(w, r)
 	})
 
+	http.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
+		handle([]Component{pageLogout})(w, r)
+	})
+
 	// static assets and 404s
 	staticFS := http.FileServer(http.Dir("static"))
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
