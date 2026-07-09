@@ -205,6 +205,45 @@ var pageLogout = Component{
 	Loader: loadlogout,
 }
 
+type Description struct {
+	Text    string                `json:"text"`
+	Updated models.CustomDateTime `json:"updated"`
+}
+
+type Place struct {
+	Created       models.CustomDateTime `json:"created"`
+	Dedicated     bool                  `json:"dedicated"`
+	Deleted       bool                  `json:"deleted"`
+	Description   []Description         `json:"description"`
+	ID            models.RecordID       `json:"id"`
+	MaxPlayers    int                   `json:"maxPlayers"`
+	Name          string                `json:"name"`
+	PrivateServer bool                  `json:"privateServer"`
+	PrivateTicket string                `json:"privateTicket"`
+	ServerAddress string                `json:"serverAddress"`
+	ServerPing    int                   `json:"serverPing"`
+	ServerPort    int                   `json:"serverPort"`
+	ServerTicket  string                `json:"serverTicket"`
+	Updated       models.CustomDateTime `json:"updated"`
+}
+
+func loadhome(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
+	user := *d.User
+
+	qres, err := Query[[]Place](`SELECT * FROM $user->ownsPlace->place`, map[string]any{
+		"user": user.RecordID(),
+	})
+	if err != nil {
+		return d, fmt.Errorf("query places: %w", err)
+	}
+
+	res := qres[0].Result
+	fmt.Println(res)
+
+	return d, nil
+}
+
 var pageHome = Component{
-	Name: "pages/home",
+	Name:   "pages/home",
+	Loader: loadhome,
 }

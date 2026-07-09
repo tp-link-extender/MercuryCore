@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/surrealdb/surrealdb.go/pkg/models"
 )
 
 const (
@@ -14,7 +16,12 @@ const (
 )
 
 type User struct {
-	id, username string
+	ID       string `json:"id"`
+	Username string `json:"username"`
+}
+
+func (u User) RecordID() models.RecordID {
+	return models.NewRecordID("user", u.ID)
 }
 
 // type Data map[string]any
