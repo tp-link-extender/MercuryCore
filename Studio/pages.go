@@ -238,7 +238,7 @@ func loadhome(w http.ResponseWriter, r *http.Request, d Data) (Data, error) {
 	}
 
 	res := qres[0].Result
-	fmt.Println(res)
+	d.Data["places"] = res
 
 	return d, nil
 }

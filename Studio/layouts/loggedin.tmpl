@@ -3,6 +3,8 @@
 	<a href="/">Mercury Studio</a>
 	<!-- logged-in nav items -->
 
+	Logged in as {{ .User.Username }}
+
 	<form action="/logout" method="POST">
 		<button type="submit">Logout</button>
 	</form>

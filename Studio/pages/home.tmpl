@@ -1,3 +1,9 @@
 {{ define "content" }}
 <h1>Welcome to Mercury Studio</h1>
+
+{{ range .Data.places }}
+	<div>
+		{{ .Name }}
+	</div>
+{{ end }}
 {{ end }}
