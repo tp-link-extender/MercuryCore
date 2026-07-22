@@ -20,12 +20,14 @@
 	})
 
 	const { data } = $props()
+
+	const description = `${data.siteName}${data.longTagline ? `: ${data.longTagline}` : ""}`
 </script>
 
 <Head
 	name={data.siteName}
-	title="{data.siteName}: Endless possibilities. New features. Same nostalgia."
-	description="{data.siteName}: Endless possibilities. New features. Same nostalgia."
+	title={description}
+	{description}
 	ogImage="/mercury.gif" />
 
 <div id="gradientbg" class="w-full h-full fixed"></div>
@@ -55,9 +57,9 @@
 		class="flex flex-col justify-center items-center relative"
 		style="padding-top: {infoTextMargin}vh">
 		<h1 class="font-bold opacity-75 text-16">{data.siteName}</h1>
-		<p class="lead text-center">
-			Endless possibilities. New features. Same nostalgia.
-		</p>
+		{#if data.longTagline}
+			<p class="lead text-center">{data.longTagline}</p>
+		{/if}
 		<div class="inline pb-2">
 			<a
 				type="button"

@@ -44,6 +44,7 @@ export default {
 		Favicon: "Branding/Favicon.svg",
 		Icon: "Branding/Icon.svg",
 		Tagline: "Revival tagline",
+		LongTagline: "Endless possibilities. New features. Same nostalgia.",
 		Descriptions: {
 			"Endless possibilites":
 				"Create or play your favourite games and customise your character with items on our catalog.",

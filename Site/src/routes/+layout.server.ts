@@ -25,6 +25,7 @@ export async function load({ locals, request }) {
 		currencySymbol: config.CurrencySymbol,
 		siteName: config.Name,
 		tagline: config.Branding.Tagline,
+		longTagline: config.Branding.LongTagline,
 		pages: config.Pages,
 	}
 }

@@ -70,6 +70,7 @@ const schema = type({
 		Favicon: "string >= 1",
 		Icon: "string >= 1",
 		Tagline: "string",
+		LongTagline: "string",
 	}),
 
 	Themes: type({
