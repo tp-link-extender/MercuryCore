@@ -9,25 +9,25 @@
 		camPos: [number, number, number]
 	}[] = [
 		{
-			name: "moon",
-			camPos: [100, 60, 100]
-		},
-		{
 			name: "mercury",
 			camPos: [100, 20, 100]
 		},
 		{
-			name: "rock",
-			camPos: [100, 100, 100]
-		},
-		{
 			name: "mercury2",
 			camPos: [100, 20, 100]
-		}
+		},
+		{
+			name: "moon",
+			camPos: [100, 60, 100]
+		},
 		// {
 		// 	name: "planetMercury",
 		// 	camPos: [100, 40, 100],
 		// },
+		{
+			name: "rock",
+			camPos: [100, 100, 100]
+		}
 	]
 
 	let item = items[Math.floor(Math.random() * items.length)]
