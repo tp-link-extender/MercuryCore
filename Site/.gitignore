@@ -1,5 +1,5 @@
 node_modules
 build
 .svelte-kit
-./icons/positions.txt
+./icons/script.txt
 ./icons/Icons.woff2

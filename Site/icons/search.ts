@@ -13,6 +13,6 @@ const classes = out
 const deduped = [...new Set(classes)].filter(Boolean) as string[]
 
 const fal: { [_: string]: string } = fa
-const positions = deduped.map(c => `SelectMore("u${fal[c].padStart(4, "0")}")`)
+const script = deduped.map(c => `SelectMore("u${fal[c].padStart(4, "0")}")`)
 
-await Bun.write("./icons/positions.txt", positions.join("\n"))
+await Bun.write("./icons/script.txt", script.join("\n"))
