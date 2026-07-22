@@ -1,12 +1,11 @@
 <script lang="ts">
-	import g from "stripe-gradient"
-	const { Gradient } = g
-	import Head from "$components/Head.svelte"
 	import { Canvas } from "@threlte/core"
+	import { Gradient } from "stripe-gradient"
 	import { onMount } from "svelte"
+	import Head from "$components/Head.svelte"
 	import Moon from "./Moon.svelte"
 	import Waves from "./Waves.svelte"
-
+	
 	// Gradient must run upon page being loaded, and cannot be rendered on serverside.
 	let canvasOpacity = $state(0)
 	let infoPadding = $state(50)
@@ -29,12 +28,13 @@
 	description="{data.siteName}: Endless possibilities. New features. Same nostalgia."
 	ogImage="/mercury.gif" />
 
-<div id="gradientbg" class="w-full h-full fixed" ></div>
+<div id="gradientbg" class="w-full h-full fixed"></div>
 
 <canvas
 	id="gradientcanvas"
 	class="w-full h-full fixed"
-	style="opacity: {canvasOpacity}" ></canvas>
+	style="opacity: {canvasOpacity}">
+</canvas>
 
 <Waves reverse />
 
