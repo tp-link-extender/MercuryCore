@@ -3,7 +3,7 @@
 	import { Gradient } from "stripe-gradient"
 	import { onMount } from "svelte"
 	import Head from "$components/Head.svelte"
-	import Moon from "./Moon.svelte"
+	import Thing3D from "./Thing3D.svelte"
 	import Waves from "./Waves.svelte"
 	
 	// Gradient must run upon page being loaded, and cannot be rendered on serverside.
@@ -47,7 +47,7 @@
 		class="absolute w-full h-20vh"
 		style="opacity: {canvasOpacity}">
 		<Canvas>
-			<Moon />
+			<Thing3D />
 		</Canvas>
 	</div>
 	<div
