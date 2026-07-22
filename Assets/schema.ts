@@ -133,11 +133,17 @@ export type Config = {
 		 */
 		Icon: string
 		/**
-		 * A very short tagline for your revival. This is displayed in the footer as  well as on the login and register pages.
+		 * A very short tagline for your revival. This is displayed in the footer as well as on the login, register, and about pages.
 		 *
 		 * If set to an empty string, this does not display.
 		 */
 		Tagline: string
+		/**
+		 * A longer tagline for your revival. This is displayed on the landing and about pages.
+		 *
+		 * If set to an empty string, this does not display.
+		 */
+		LongTagline: string
 		/**
 		 * Descriptions for your revival's features. These are displayed on the register page.
 		 *

@@ -40,14 +40,14 @@
 			window.open("https://youtube.com/watch?v=cvh0nX08nRw", "_blank")
 		}
 	})
-
-	const tagline = "Endless possibilities. New features. Same nostalgia."
 </script>
 
 <Head
 	name={data.siteName}
 	title="About"
-	description="About {data.siteName}: {tagline}" />
+	description="About {data.siteName}{data.longTagline
+		? `: ${data.longTagline}`
+		: ''}" />
 
 <svelte:window bind:scrollY />
 
@@ -71,11 +71,15 @@
 			out:fade
 			class="pointer-events-none flex flex-col justify-center items-center relative h-70vh">
 			<h1 class="text-16 font-bold">{data.siteName}</h1>
-			<p>{tagline}</p>
-			<h3
-				class="p-3 py-1 rounded-2 font-bold text-lg! bg-neutral-5 opacity-75">
-				Beta
-			</h3>
+			{#if data.longTagline}
+				<p>{data.longTagline}</p>
+			{/if}
+			{#if data.tagline}
+				<h3
+					class="p-3 py-1 rounded-2 font-bold text-lg! bg-neutral-5 opacity-75">
+					{data.tagline}
+				</h3>
+			{/if}
 		</div>
 	{:else}
 		<div
@@ -258,7 +262,9 @@
 <Pagepart class="pb-60">
 	<div class="flex flex-col justify-center items-center relative">
 		<h1 class="text-16 font-bold">{data.siteName}</h1>
-		<p>{tagline}</p>
+		{#if data.longTagline}
+			<p>{data.longTagline}</p>
+		{/if}
 		{#if !data.user}
 			<a
 				type="button"
