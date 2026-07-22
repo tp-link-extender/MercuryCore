@@ -2,7 +2,7 @@
 	import { VERSION } from "@sveltejs/kit"
 	import Head from "$components/Head.svelte"
 	import beautifyCurrency from "$lib/beautifyCurrency"
-	import Waves from "./Waves.svelte"
+	import Waves from "../Waves.svelte"
 
 	const { data } = $props()
 
