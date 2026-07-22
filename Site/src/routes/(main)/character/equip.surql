@@ -2,5 +2,5 @@
 IF $type {
 	DELETE $user->wearing WHERE out.type = $type;
 };
-RELATE $user->wearing->$asset SET time = time::now();
-RELATE $user->recentlyWorn->$asset SET time = time::now();
+RELATE $user->wearing->$asset;
+RELATE $user->recentlyWorn->$asset;

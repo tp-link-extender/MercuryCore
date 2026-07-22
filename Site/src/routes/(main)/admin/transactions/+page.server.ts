@@ -5,10 +5,10 @@ import {
 	transformTransactions,
 } from "$lib/server/economy"
 
-export async function load({ locals }) {
+export async function load({ fetch: f, locals }) {
 	await authorise(locals, 5)
 
-	const transactions = await getAdminTransactions()
+	const transactions = await getAdminTransactions(f)
 	if (!transactions.ok) error(500, "Failed to fetch transactions")
 
 	return transformTransactions(transactions.value)
