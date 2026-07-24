@@ -1,5 +1,7 @@
 import { error, fail, redirect } from "@sveltejs/kit"
 import { type } from "arktype"
+import { balance } from "economy/api"
+import * as Econ from "economy/types"
 import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
 import createCommentQuery from "$lib/server/createComment.surql"
@@ -64,7 +66,8 @@ export async function load({ fetch: f, locals, params }) {
 	if (!couldMatch(asset.name, params.name))
 		redirect(302, `/catalog/${id}/${slug}`)
 
-	const b = await getBalance(f, user.id)
+	const u = new Econ.User(user.id)
+	const b = await balance(f, u)
 	if (!b.ok) error(500, economyConnFailed)
 
 	return {
