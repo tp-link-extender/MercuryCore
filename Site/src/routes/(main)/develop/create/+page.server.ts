@@ -17,7 +17,7 @@ import {
 } from "$lib/server/imageAsset"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
-import { db, Record } from "$lib/server/surreal"
+import { db } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { graphicAsset } from "$lib/server/xmlAsset"
 import { encode } from "$lib/urlName"
@@ -150,13 +150,12 @@ actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 		return formError(form, ["other"], ["Failed to create asset source"])
 
 	await db.query(createAssetQuery, {
-		name,
-		assetType: typeToNumber[type],
-		price,
-		description,
-		user: Record("user", user.id),
 		imageAssetId,
 		id,
+		description,
+		name,
+		price,
+		assetType: typeToNumber[type],
 		visibility: user.permissionLevel < 3 ? "Pending" : "Visible",
 	})
 
