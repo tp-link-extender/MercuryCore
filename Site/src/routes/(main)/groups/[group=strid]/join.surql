@@ -1,1 +1,1 @@
-RELATE $user->member->$group SET time = time::now();
+RELATE $user->member->$group;
