@@ -2,6 +2,8 @@
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
 import { type Handle, redirect } from "@sveltejs/kit"
+import { stipend } from "economy/api"
+import * as Econ from "economy/types"
 import pc from "picocolors"
 import {
 	cookieName,
@@ -9,7 +11,6 @@ import {
 	validateSessionToken,
 } from "$lib/server/auth"
 import config from "$lib/server/config"
-import { stipend } from "$lib/server/economy"
 import { db, Record } from "$lib/server/surreal"
 import moderatedQuery from "./moderated.surql"
 
@@ -119,7 +120,7 @@ export async function handle(e) {
 	)
 		redirect(302, "/moderation")
 
-	await stipend(e.event.fetch, user.id)
+	await stipend(e.event.fetch, new Econ.User(user.id))
 
 	return await finish(e)
 }

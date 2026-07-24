@@ -58,14 +58,14 @@ export async function load({ fetch: f, locals, params }) {
 		asset: Record("asset", id),
 		user: Record("user", user.id),
 	})
-	if (!asset || !asset.creator) error(404, "Not Found")
+	if (!asset?.creator) error(404, "Not Found")
 
 	const slug = encode(asset.name)
 	if (!couldMatch(asset.name, params.name))
 		redirect(302, `/catalog/${id}/${slug}`)
 
-	const balance = await getBalance(f, user.id)
-	if (!balance.ok) error(500, economyConnFailed)
+	const b = await getBalance(f, user.id)
+	if (!b.ok) error(500, economyConnFailed)
 
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
@@ -73,7 +73,7 @@ export async function load({ fetch: f, locals, params }) {
 		form: await superValidate(arktype(schema)),
 		slug,
 		asset,
-		balance: balance.value,
+		balance: b.value,
 		currentFee: fee,
 	}
 }

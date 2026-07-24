@@ -2,482 +2,665 @@ package ledger
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"math/rand"
-	"os"
-	"slices"
-	"strings"
 	"time"
 
-	gonanoid "github.com/matoous/go-nanoid/v2"
+	bolt "go.etcd.io/bbolt"
 )
 
-const idchars = "0123456789abcdefghijklmnopqrstuvwxyz"
-
-func RandId() (id string) {
-	id, _ = gonanoid.Generate(idchars, 15) // doesn't error at runtime, really
-	return
+type State struct {
+	ownerItems      map[Owner]*Items
+	itemOwnersOne   map[CanOwnOne]*OwnersOne
+	itemOwnersMany  map[CanOwnMany]*OwnersMany
+	userLastStipend map[User]TransferID
 }
 
-func RandAssetId() (id int) {
-	return rand.Intn(900_000_000) + 100_000_000 // 9 digit
+func makeState() State {
+	return State{
+		ownerItems:      make(map[Owner]*Items),
+		itemOwnersOne:   make(map[CanOwnOne]*OwnersOne),
+		itemOwnersMany:  make(map[CanOwnMany]*OwnersMany),
+		userLastStipend: make(map[User]TransferID),
+	}
 }
 
-type (
-	User      string
-	Currency  uint64
-	AssetType string
-	AssetId   int
-	Asset     string // {type}-{id}
-)
+func (s *State) GetInventory(id Owner) *Items {
+	inv, ok := s.ownerItems[id]
+	if !ok {
+		inv = &Items{}
+		s.ownerItems[id] = inv
+		return inv
+	}
 
-const (
-	TypeAsset AssetType = "asset"
-	// TypeUser  AssetType = "user" // slavery lmao
-	TypeGroup AssetType = "group"
-	TypePlace AssetType = "place"
-)
-
-func NewAsset(at AssetType, id AssetId) Asset {
-	return Asset(fmt.Sprintf("%s-%d", at, id))
+	for i, qty := range inv.Many {
+		if qty == 0 {
+			delete(inv.Many, i)
+		}
+	}
+	s.ownerItems[id] = inv
+	return inv
 }
 
-// func (a Asset) Split() (at AssetType, id AssetId) {
-// 	parts := strings.SplitN(string(a), "-", 2)
-// 	if len(parts) != 2 {
-// 		return // invalid asset
-// 	}
-
-// 	aid, _ := strconv.Atoi(parts[1])
-// 	return AssetType(parts[0]), AssetId(aid)
-// }
-
-type Assets map[Asset]uint64 // quantity (could be Infinity)
-
-func (c Currency) Readable() string {
-	return fmt.Sprintf("%d.%06d unit", c/Unit, c%Unit)
+func (s *State) GetOwnersOne(i CanOwnOne) *OwnersOne {
+	oo, ok := s.itemOwnersOne[i]
+	if !ok {
+		oo = &OwnersOne{}
+		s.itemOwnersOne[i] = oo
+	}
+	return oo
 }
 
-const (
-	Micro Currency = 1
-	Milli          = 1e3 * Micro
-	Unit           = 1e6 * Micro // standard unit
-	Kilo           = 1e3 * Unit
-	Mega           = 1e6 * Unit
-	Giga           = 1e9 * Unit
-	Tera           = 1e12 * Unit // uint64 means ~18 tera is the economy limit (we could use math/big but that would unleash horror)
-
-	// Target Currency per User, the economy size will try to be this * user count (len(e.balances))
-	// By "user", I mean every user who has ever transacted with the economy
-	// The stipend and fee should change if the CCU is more than 10% off from this
-	// TCU         = float64(100 * Unit)
-	Stipend = 10 * Unit
-	// baseFee     = 0.1
-	Infinity          = ^uint64(0)   // lol
-	BasicallyInfinity = Infinity / 2 // lmao, even
-)
-
-// For now, transaction outputs are overkill
-// Since fees are stored as a separate value and are burned, I can't see a reason for them to exist for now
-// UTXOs lmao
-type SentTx struct {
-	To, From User
-	Amount   Currency
-	Note     string
-	Returns  Assets
-}
-type Tx struct {
-	SentTx
-	// Fee  Currency
-	Time uint64
-	Id   string
+func (s *State) GetOwnersMany(i CanOwnMany) *OwnersMany {
+	om, ok := s.itemOwnersMany[i]
+	if !ok {
+		om = &OwnersMany{}
+		s.itemOwnersMany[i] = om
+	}
+	return om
 }
 
-type SentMint struct {
-	To     User
-	Amount Currency
-	Note   string
-	// no returns for a mint
-}
-type Mint struct {
-	SentMint
-	Time uint64
-	Id   string
+func (s State) CanApply(t Transfer) error {
+	if err := t.Valid(); err != nil {
+		return fmt.Errorf("invalid transfer: %w", err)
+	}
+
+	var errs []error
+
+	for i, send := range t {
+		if send.Items.IsEmpty() {
+			continue
+		}
+		inv := s.GetInventory(send.Owner)
+		otherinv := s.GetInventory(t[1-i].Owner)
+		for coo := range send.Items.One {
+			// check if it's an asset mint from an unlimited source, if it is then skip this check
+			if send.Owner != nil && !send.UnlimitedSourceAssetMint() && !inv.One.Has(coo) {
+				errs = append(errs, fmt.Errorf("item %v not owned by user %s", coo, send.Owner))
+			}
+
+			// check for non-fungible item duplication
+			if otherinv.One.Has(coo) {
+				errs = append(errs, fmt.Errorf("item %v already owned by user %s", coo, t[1-i].Owner))
+			}
+		}
+		for com, qty := range send.Items.Many {
+			if send.Owner != nil && inv.Many[com] < qty {
+				errs = append(errs, fmt.Errorf("insufficient quantity of item %v for user %s", com, send.Owner))
+			}
+		}
+	}
+
+	if len(errs) > 0 {
+		return errors.Join(errs...)
+	}
+	return nil
 }
 
-type SentBurn struct {
-	From       User
-	Amount     Currency
-	Note, Link string
-	Returns    Assets
-}
-type Burn struct {
-	SentBurn
-	Time uint64
-	Id   string
+func (s *State) addToSourceOwner(src CanOwnOne, i CanOwnMany, qty Quantity) {
+	// add currency to to source owner
+	var o Owner
+	for oo := range *s.GetOwnersOne(src) {
+		o = oo
+		break
+	}
+	rdst := s.GetInventory(o)
+
+	rdst.Many.Add(i, qty)
+	oMany := s.GetOwnersMany(i)
+	oMany.Add(o, qty)
 }
 
+// ⚠️ DANGEROUS!! ⚠️ Make sure you've called CanApply first!
+func (s *State) ForceApply(t Transfer) {
+	sale := t.Sale()
+
+	for i, send := range t {
+		if send.Owner != nil {
+			src := s.GetInventory(send.Owner)
+			for item := range send.Items.One {
+				delete(src.One, item)
+				oOne := s.GetOwnersOne(item)
+				delete(*oOne, send.Owner)
+			}
+			for item, qty := range send.Items.Many {
+				src.Many[item] -= qty
+				oMany := s.GetOwnersMany(item)
+				(*oMany)[send.Owner] -= qty
+			}
+		}
+
+		other := t[1-i]
+		if other.Owner == nil {
+			// nil user, we need not send anything to them
+			continue
+		}
+
+		dst := s.GetInventory(other.Owner)
+		// fmt.Printf("Starting inventory for %v: %v\n", other.Owner, dst)
+		for item := range send.Items.One {
+			dst.One.Add(item)
+			oOne := s.GetOwnersOne(item)
+			oOne.Add(other.Owner)
+		}
+
+		if !sale {
+			for item, qty := range send.Items.Many {
+				dst.Many.Add(item, qty)
+				oMany := s.GetOwnersMany(item)
+				oMany.Add(other.Owner, qty)
+			}
+			continue
+		}
+
+		// TODO:
+		// If the source owner is a user, this is handled correctly, items are added to their inventory
+		// If the source owner is a group, this should work fine (funds should have to be withdrawn from groups manually)
+		// we could make it the same for sources though I don't really see why
+		for item, qty := range send.Items.Many {
+			if src, ok := other.Owner.(CanOwnOne); ok {
+				s.addToSourceOwner(src, item, qty)
+			}
+		}
+		// fmt.Printf("Ending inventory for %v: %v\n", other.Owner, dst)
+		// fmt.Printf("Ending inventory for %v: %v\n", other.Owner, s.GetInventory(other.Owner))
+	}
+}
+
+func (s *State) TryApply(t Transfer) error {
+	if err := s.CanApply(t); err != nil {
+		return err
+	}
+
+	s.ForceApply(t)
+	return nil
+}
+
+const bucketName = "ledger"
+
+var bucketNameBytes = []byte(bucketName)
+
+func (s *State) updateStipend(tid TransferID, t Transfer) {
+	for _, send := range t {
+		user, ok := send.Owner.(User)
+		if !ok {
+			continue
+		}
+		s.userLastStipend[user] = tid
+		return
+	}
+}
+
+func (s *State) applyKVPair() func(k, v []byte) error {
+	return func(k, v []byte) error {
+		tid, err := DeserialiseTransferID(k)
+		if err != nil {
+			return fmt.Errorf("decode transfer ID: %w", err)
+		}
+
+		// decode v into Transfer
+		t, err := DeserialiseTransfer(bytes.NewReader(v))
+		if err != nil {
+			return fmt.Errorf("decode transfer %v: %w", tid, err)
+		}
+
+		if err := t.Valid(); err != nil {
+			return fmt.Errorf("invalid transfer with ID %v: %w", tid, err)
+		}
+
+		// apply transfer to state
+		if err := s.TryApply(t); err != nil {
+			return fmt.Errorf("apply transfer %v: %w", tid, err)
+		}
+
+		if t.Stipend() {
+			s.updateStipend(tid, t)
+		}
+
+		return nil
+	}
+}
+
+func ReadState(db *bolt.DB) (State, error) {
+	s := makeState()
+
+	err := db.View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(bucketNameBytes)
+		if bucket == nil {
+			return nil // empty state
+		}
+
+		return bucket.ForEach(s.applyKVPair())
+	})
+	return s, err
+}
+
+type Ledger struct {
+	db    *bolt.DB
+	state State
+}
+
+func NewLedger(dbPath string) (*Ledger, error) {
+	db, err := bolt.Open(dbPath, 0o600, nil)
+	if err != nil {
+		return nil, fmt.Errorf("open db: %w", err)
+	}
+
+	s, err := ReadState(db)
+	if err != nil {
+		return nil, fmt.Errorf("read state: %w", err)
+	}
+
+	return &Ledger{db, s}, nil
+}
+
+func (l *Ledger) Close() error {
+	l.state = State{}
+	return l.db.Close()
+}
+
+func (l *Ledger) Inventory(id Owner) *Items {
+	return l.state.GetInventory(id)
+}
+
+func (l *Ledger) Transfer(tid TransferID, t Transfer) error {
+	// Process the transfer
+	if err := l.state.CanApply(t); err != nil {
+		return fmt.Errorf("validate transfer: %w", err)
+	}
+
+	// Append the transfer to the database
+	err := l.db.Update(func(tx *bolt.Tx) error {
+		bucket, err := tx.CreateBucketIfNotExists(bucketNameBytes)
+		if err != nil {
+			return fmt.Errorf("create bucket: %w", err)
+		}
+
+		buf := &bytes.Buffer{}
+		if err := t.Serialise(buf); err != nil {
+			return fmt.Errorf("serialise transfer: %w", err)
+		}
+		if err := bucket.Put(tid.Serialise(), buf.Bytes()); err != nil {
+			return fmt.Errorf("put transfer: %w", err)
+		}
+
+		return nil
+	})
+	if err != nil {
+		return fmt.Errorf("append transfer to db: %w", err)
+	}
+
+	if t.Stipend() {
+		l.state.updateStipend(tid, t)
+	}
+
+	// Apply the transfer to the in-memory state
+	l.state.ForceApply(t)
+	return nil
+}
+
+func (l *Ledger) TransferHistory(n int) (twids []TransferWithID, err error) {
+	// funky return ordering
+	return twids, l.db.View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(bucketNameBytes)
+		if bucket == nil {
+			return nil // no transfers
+		}
+
+		c := bucket.Cursor()
+		for k, v := c.Last(); v != nil && len(twids) < n; k, v = c.Prev() {
+			t, err := DeserialiseTransfer(bytes.NewReader(v))
+			if err != nil {
+				return fmt.Errorf("decode transfer: %w", err)
+			}
+
+			id, err := DeserialiseTransferID(k)
+			if err != nil {
+				return fmt.Errorf("decode transfer ID: %w", err)
+			}
+
+			twids = append(twids, TransferWithID{
+				ID:       id,
+				Transfer: t,
+			})
+		}
+
+		return nil
+	})
+}
+
+func (l *Ledger) TransferHistoryOwner(n int, o Owner) (twids []TransferWithID, err error) {
+	return twids, l.db.View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(bucketNameBytes)
+		if bucket == nil {
+			return nil // no transfers
+		}
+
+		c := bucket.Cursor()
+		for k, v := c.Last(); v != nil && len(twids) < n; k, v = c.Prev() {
+			t, err := DeserialiseTransfer(bytes.NewReader(v))
+			if err != nil {
+				return fmt.Errorf("decode transfer: %w", err)
+			}
+
+			// TODO: find a better way because this could iterate over ALL the transactions
+			if t[0].Owner != o && t[1].Owner != o {
+				continue
+			}
+
+			id, err := DeserialiseTransferID(k)
+			if err != nil {
+				return fmt.Errorf("decode transfer ID: %w", err)
+			}
+
+			twids = append(twids, TransferWithID{
+				ID:       id,
+				Transfer: t,
+			})
+		}
+
+		return nil
+	})
+}
+
+func (l *Ledger) GetTransfer(tid TransferID) (t Transfer, err error) {
+	return t, l.db.View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(bucketNameBytes)
+		if bucket == nil {
+			return nil
+		}
+
+		v := bucket.Get(tid.Serialise())
+		if v == nil {
+			return nil
+		}
+
+		var err2 error
+		t, err2 = DeserialiseTransfer(bytes.NewReader(v))
+		if err2 != nil {
+			return fmt.Errorf("decode transfer: %w", err2)
+		}
+
+		return nil
+	})
+}
+
+func (l *Ledger) GetUserLastStipend(u User) (TransferID, bool) {
+	tid, ok := l.state.userLastStipend[u]
+	return tid, ok
+}
+
+// Abstractions
 type Economy struct {
-	data         io.ReadWriteSeeker
-	balances     map[User]Currency
-	inventories  map[User]Assets
-	prevStipends map[User]uint64
+	ledger                                                                          *Ledger
+	defaultCurrency                                                                 Currency
+	PlacePrice, GroupPrice, LimitedSourcePrice, UnlimitedSourcePrice, StipendAmount Quantity
+	StipendTime                                                                     time.Duration
 }
 
-func (e *Economy) GetBalance(u User) Currency {
-	return e.balances[u]
-}
-
-func (e *Economy) GetInventory(u User) Assets {
-	return e.inventories[u]
-}
-
-func (e *Economy) GetPrevStipend(u User) uint64 {
-	return e.prevStipends[u]
-}
-
-func (e *Economy) GetUserCount() int {
-	return len(e.balances)
-}
-
-func (e *Economy) GetEconomySize() (size Currency) {
-	for _, v := range e.balances {
-		size += v
-	}
-	return
-}
-
-// Current Currency per User
-func (e *Economy) CCU() Currency {
-	users := len(e.balances)
-	if users == 0 {
-		return 0 // Division by zero causes overflowz
-	}
-	return e.GetEconomySize() / Currency(users)
-}
-
-func (e *Economy) validateTx(sent SentTx) error {
-	if sent.Amount == 0 && sent.Returns == nil {
-		return errors.New("transaction must have an amount or returns")
-	}
-	if sent.From == "" {
-		return errors.New("transaction must have a sender")
-	}
-	if sent.To == "" {
-		return errors.New("transaction must have a recipient")
-	}
-	if sent.From == sent.To {
-		return fmt.Errorf("circular transaction: %s -> %s", sent.From, sent.To)
-	}
-	if sent.Note == "" {
-		return errors.New("transaction must have a note")
-	}
-	if total := sent.Amount; total > e.balances[sent.From] {
-		return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", e.balances[sent.From].Readable(), total.Readable())
-	}
-
-	if sent.Returns == nil {
-		return nil
-	}
-
-	if e.inventories[sent.To] == nil {
-		e.inventories[sent.To] = Assets{}
-	}
-	if e.inventories[sent.From] == nil {
-		e.inventories[sent.From] = Assets{}
-	}
-
-	for asset, qty := range sent.Returns {
-		if qty > e.inventories[sent.To][asset] {
-			return errors.New("insufficient asset quantity: other user does not have enough of the requested asset")
-		}
-		if e.inventories[sent.From][asset] >= BasicallyInfinity {
-			return errors.New("you already have infinity of the requested asset")
-		}
-	}
-	return nil
-}
-
-func (*Economy) validateMint(sent SentMint) error {
-	if sent.Amount == 0 {
-		return errors.New("mint must have an amount")
-	}
-	if sent.To == "" {
-		return errors.New("mint must have a recipient")
-	}
-	if sent.Note == "" {
-		return errors.New("mint must have a note")
-	}
-	return nil
-}
-
-func (e *Economy) validateBurn(sent SentBurn) error {
-	if sent.Amount == 0 {
-		return errors.New("burn must have an amount")
-	}
-	if sent.From == "" {
-		return errors.New("burn must have a sender")
-	}
-	if sent.Amount > e.balances[sent.From] {
-		return fmt.Errorf("insufficient balance: balance was %s, at least %s is required", e.balances[sent.From].Readable(), sent.Amount.Readable())
-	}
-	if sent.Note == "" {
-		return errors.New("burn must have a note")
-	}
-	if sent.Link == "" {
-		return errors.New("burn must have a link")
-	}
-
-	if sent.Returns == nil {
-		return nil
-	}
-
-	if e.inventories[sent.From] == nil {
-		e.inventories[sent.From] = Assets{}
-	}
-
-	for asset := range sent.Returns {
-		if e.inventories[sent.From][asset] > BasicallyInfinity {
-			return errors.New("you already have infinity of the requested asset")
-		}
-	}
-	return nil
-}
-
-// // If the economy is too small, stipends will increase
-// // If the economy is near or above desired size, stipends will be baseStipend
-// func (e *Economy) GetCurrentStipend() Currency {
-// 	return Currency(max((TCU-e.CCU()+baseStipend)/2, baseStipend))
-// }
-
-func (e *Economy) handleTxTypes(lines []string) (err error) {
-	for _, line := range lines {
-		// split line at first space, with the transaction type being the first part
-		parts := strings.SplitN(line, " ", 2)
-		switch data := []byte(parts[1]); parts[0] {
-		case "Transaction":
-			var tx Tx
-			if err = json.Unmarshal(data, &tx); err != nil {
-				return fmt.Errorf("failed to decode transaction from ledger: %w", err)
-			}
-
-			if tx.Amount > e.balances[tx.From] {
-				fmt.Println("Invalid transaction in ledger")
-				os.Exit(1)
-			}
-
-			e.loadTx(tx)
-		case "Mint":
-			var mint Mint
-			if err = json.Unmarshal(data, &mint); err != nil {
-				return fmt.Errorf("failed to decode mint from ledger: %w", err)
-			}
-
-			e.loadMint(mint)
-		case "Burn":
-			var burn Burn
-			if err = json.Unmarshal(data, &burn); err != nil {
-				return fmt.Errorf("failed to decode burn from ledger: %w", err)
-			}
-
-			if burn.Amount > e.balances[burn.From] {
-				fmt.Println("Invalid burn in ledger")
-				os.Exit(1)
-			}
-
-			e.loadBurn(burn)
-		default:
-			return fmt.Errorf("unknown transaction type in ledger: %s", parts[0])
-		}
-	}
-	return
-}
-
-func (e *Economy) loadTx(tx Tx) {
-	e.balances[tx.From] -= tx.Amount
-	e.balances[tx.To] += tx.Amount
-	for asset, qty := range tx.Returns {
-		if e.inventories[tx.To] == nil {
-			e.inventories[tx.To] = Assets{}
-		}
-		if e.inventories[tx.From] == nil {
-			e.inventories[tx.From] = Assets{}
-		}
-		e.inventories[tx.To][asset] -= qty
-		e.inventories[tx.From][asset] += qty
+func NewEconomy(ledger *Ledger, placePrice, groupPrice, limitedSourcePrice, unlimitedSourcePrice, stipendAmount Quantity, stipendTime time.Duration) *Economy {
+	return &Economy{
+		ledger: ledger,
+		// default 0 currency
+		PlacePrice:           placePrice,
+		GroupPrice:           groupPrice,
+		LimitedSourcePrice:   limitedSourcePrice,
+		UnlimitedSourcePrice: unlimitedSourcePrice,
+		StipendAmount:        stipendAmount,
+		StipendTime:          stipendTime,
 	}
 }
 
-func (e *Economy) loadMint(mint Mint) {
-	e.balances[mint.To] += mint.Amount
-	if mint.Note == "Stipend" {
-		e.prevStipends[mint.To] = mint.Time
-	}
+func (e *Economy) OwnsOne(o Owner, i CanOwnOne) bool {
+	// ea ledger
+	// it's in the name
+	inv := e.ledger.Inventory(o)
+	return inv.One.Has(i)
 }
 
-func (e *Economy) loadBurn(burn Burn) {
-	e.balances[burn.From] -= burn.Amount
-	for asset, qty := range burn.Returns {
-		if e.inventories[burn.From] == nil {
-			e.inventories[burn.From] = Assets{}
-		}
-		e.inventories[burn.From][asset] += qty
-	}
+func (e *Economy) OwnsMany(o Owner, i CanOwnMany) Quantity {
+	inv := e.ledger.Inventory(o)
+	return inv.Many[i]
 }
 
-func (e *Economy) loadData() (err error) {
-	bytes, err := io.ReadAll(e.data)
-	if err != nil {
-		return fmt.Errorf("failed to load economy data: %w", err)
-	}
-
-	lines := strings.Split(string(bytes), "\n")
-	return e.handleTxTypes(lines[:len(lines)-1] /* remove last empty line */)
+func (e *Economy) OwnersOne(i CanOwnOne) OwnersOne {
+	return *e.ledger.state.GetOwnersOne(i)
 }
 
-func NewEconomy(data io.ReadWriteSeeker) (e *Economy, err error) {
-	e = &Economy{
-		data:         data,
-		balances:     make(map[User]Currency),
-		inventories:  make(map[User]Assets),
-		prevStipends: make(map[User]uint64),
-	}
-
-	if err = e.loadData(); err != nil {
-		return nil, fmt.Errorf("failed to load economy data: %w", err)
-	}
-
-	return
+func (e *Economy) OwnersMany(i CanOwnMany) OwnersMany {
+	return *e.ledger.state.GetOwnersMany(i)
 }
 
-func (e *Economy) appendEvent(event any, eventType string) error {
-	var w bytes.Buffer
-	w.WriteString(eventType)
-	w.WriteByte(' ')
-	if err := json.NewEncoder(&w).Encode(event); err != nil {
-		return fmt.Errorf("failed to encode event: %w", err)
-	}
-
-	if _, err := e.data.Write(w.Bytes()); err != nil {
-		return fmt.Errorf("failed to write event to data: %w", err)
-	}
-	return nil
+func (e *Economy) Inventory(o Owner) Items {
+	inv := e.ledger.Inventory(o)
+	return *inv
 }
 
-func (e *Economy) Transact(sent SentTx) (err error) {
-	if err = e.validateTx(sent); err != nil {
-		return fmt.Errorf("invalid transaction: %w", err)
-	}
-
-	t := uint64(time.Now().UnixMilli())
-	tx := Tx{sent, t, RandId()}
-	if err = e.appendEvent(tx, "Transaction"); err != nil {
-		return fmt.Errorf("failed to append transaction event: %w", err)
-	}
-
-	// successfully written
-	e.loadTx(tx)
-	return
+func (e *Economy) Balance(o Owner) Quantity {
+	return e.OwnsMany(o, e.defaultCurrency)
 }
 
-func (e *Economy) Mint(sent SentMint) (err error) {
-	if err = e.validateMint(sent); err != nil {
-		return fmt.Errorf("invalid mint: %w", err)
+func (e *Economy) MintCurrency(u User, qty Quantity) (TransferID, error) {
+	tf := Transfer{
+		{Owner: u},
+		{Items: Items{
+			Many: ItemsMany{
+				e.defaultCurrency: qty,
+			},
+		}},
 	}
 
-	mint := Mint{sent, uint64(time.Now().UnixMilli()), RandId()}
-	if err = e.appendEvent(mint, "Mint"); err != nil {
-		return fmt.Errorf("failed to append mint event: %w", err)
+	tid := MakeTransferID()
+	if err := e.ledger.Transfer(tid, tf); err != nil {
+		return TransferID{}, fmt.Errorf("mint currency transfer %v: %w", tid, err)
 	}
 
-	// successfully written
-	e.loadMint(mint)
-	return
+	return tid, nil
 }
 
-func (e *Economy) Burn(sent SentBurn) (err error) {
-	if err = e.validateBurn(sent); err != nil {
-		return fmt.Errorf("invalid burn: %w", err)
+var ErrStipendNotReady = errors.New("stipend not available yet")
+
+func (e *Economy) Stipend(user User) (TransferID, error) {
+	lastStipend, ok := e.ledger.GetUserLastStipend(user)
+	if ok || time.Since(time.Unix(0, int64(lastStipend.timestamp))) < e.StipendTime {
+		return TransferID{}, ErrStipendNotReady
 	}
 
-	t := uint64(time.Now().UnixMilli())
-	burn := Burn{sent, t, RandId()} // ₿urn ₿aby ₿urn
-	if err = e.appendEvent(burn, "Burn"); err != nil {
-		return fmt.Errorf("failed to append burn event: %w", err)
+	tf := Transfer{
+		{Owner: user},
+		{Items: Items{
+			Many: ItemsMany{
+				e.defaultCurrency: e.StipendAmount,
+			},
+		}},
 	}
 
-	// successfully written
-	e.loadBurn(burn)
-	return
+	// we built the check, now test it
+	if !tf.Stipend() {
+		return TransferID{}, fmt.Errorf("invalid stipend transfer: %v", tf)
+	}
+
+	tid := MakeTransferID()
+	if err := e.ledger.Transfer(tid, tf); err != nil {
+		return TransferID{}, fmt.Errorf("stipend transfer %v: %w", tid, err)
+	}
+
+	return tid, nil
 }
 
-func (e *Economy) Stipend(to User) (err error) {
-	return e.Mint(SentMint{to, Currency(Stipend), "Stipend"})
+func (e *Economy) CreateLimitedSource(u User) (LimitedSource, TransferID, error) {
+	src := RandLimitedSource()
+
+	tf := Transfer{
+		{
+			Owner: u,
+			Items: Items{
+				Many: ItemsMany{
+					e.defaultCurrency: e.LimitedSourcePrice,
+				},
+			},
+		},
+		{Items: Items{
+			One: ItemsOne{
+				src: {},
+			},
+		}},
+	}
+
+	tid := MakeTransferID()
+	if err := e.ledger.Transfer(tid, tf); err != nil {
+		return LimitedSource{}, TransferID{}, fmt.Errorf("create limited source transfer %v: %w", tid, err)
+	}
+
+	return src, tid, nil
 }
 
-func (e *Economy) readTransactions() (ls []string, err error) {
-	e.data.Seek(0, io.SeekStart) // Reset the reader to the start of the data (shouldn't leave it like this ever though)
-	bytes, err := io.ReadAll(e.data)
-	if err != nil {
-		return
+func (e *Economy) CreateUnlimitedSource(u User) (UnlimitedSource, TransferID, error) {
+	src := RandUnlimitedSource()
+
+	tf := Transfer{
+		{
+			Owner: u,
+			Items: Items{
+				Many: ItemsMany{
+					e.defaultCurrency: e.UnlimitedSourcePrice,
+				},
+			},
+		},
+		{Items: Items{
+			One: ItemsOne{
+				src: {},
+			},
+		}},
 	}
 
-	lines := strings.Split(string(bytes), "\n")
-	return lines[:len(lines)-1], nil
+	tid := MakeTransferID()
+	if err := e.ledger.Transfer(tid, tf); err != nil {
+		return UnlimitedSource{}, TransferID{}, fmt.Errorf("create unlimited source transfer %v: %w", tid, err)
+	}
+
+	return src, tid, nil
 }
 
-func (e *Economy) readReversed() (lines []string, err error) {
-	if lines, err = e.readTransactions(); err != nil {
-		return
+func (e *Economy) CreatePlace(u User) (Place, TransferID, error) {
+	p := RandPlace()
+
+	// tf (the fuck)
+	tf := Transfer{
+		{
+			Owner: u,
+			Items: Items{
+				Many: ItemsMany{
+					e.defaultCurrency: e.PlacePrice,
+				},
+			},
+		},
+		{Items: Items{
+			One: ItemsOne{
+				p: {},
+			},
+		}},
 	}
 
-	slices.Reverse(lines)
-	return
+	tid := MakeTransferID()
+	if err := e.ledger.Transfer(tid, tf); err != nil {
+		return Place{}, TransferID{}, fmt.Errorf("create place transfer %v: %w", tid, err)
+	}
+
+	return p, tid, nil
 }
 
-func (e *Economy) LastNTransactions(validate func(tx map[string]any) bool, n int) (transactions []map[string]any, err error) {
-	lines, err := e.readReversed()
-	if err != nil {
-		return
-	}
-	ll := len(lines)
+func (e *Economy) CreateGroup(u User) (Group, TransferID, error) {
+	g := RandGroup()
 
-	for _, line := range lines[:min(n, ll)] { // Get the last 100 transactions
-		parts := strings.SplitN(line, " ", 2)
-
-		var tx any
-		if err = json.Unmarshal([]byte(parts[1]), &tx); err != nil {
-			return
-		}
-
-		casted := tx.(map[string]any)
-		casted["Type"] = parts[0]
-		if validate(casted) {
-			transactions = append(transactions, casted)
-		}
+	tf := Transfer{
+		{
+			Owner: u,
+			Items: Items{
+				Many: ItemsMany{
+					e.defaultCurrency: e.GroupPrice,
+				},
+			},
+		},
+		{Items: Items{
+			One: ItemsOne{
+				g: {},
+			},
+		}},
 	}
 
-	return
+	tid := MakeTransferID()
+	if err := e.ledger.Transfer(tid, tf); err != nil {
+		return Group{}, TransferID{}, fmt.Errorf("create group transfer %v: %w", tid, err)
+	}
+
+	return g, tid, nil
 }
 
-func (e *Economy) GetTransactionCount() (c int, err error) {
-	lines, err := e.readTransactions()
-	if err != nil {
-		return
+func (e *Economy) BuyUnlimitedAsset(u User, src UnlimitedSource, price Quantity) (UnlimitedAsset, TransferID, error) {
+	a := src.Create()
+
+	tf := Transfer{
+		{
+			Owner: u,
+			Items: Items{
+				Many: ItemsMany{
+					e.defaultCurrency: price,
+				},
+			},
+		},
+		{
+			Owner: src,
+			Items: Items{
+				One: ItemsOne{
+					a: {},
+				},
+			},
+		},
 	}
-	return len(lines) - 1, nil // Exclude the last empty line
+
+	tid := MakeTransferID()
+	if err := e.ledger.Transfer(tid, tf); err != nil {
+		return UnlimitedAsset{}, TransferID{}, fmt.Errorf("buy unlimited asset transfer %v: %w", tid, err)
+	}
+
+	return a, tid, nil
 }
 
-func (e *Economy) Stats() {
-	fmt.Println("User count    ", e.GetUserCount())
-	if txCount, err := e.GetTransactionCount(); err != nil {
-		fmt.Println("Error getting transaction count:", err)
-	} else {
-		fmt.Println("Transactions  ", txCount)
+func (e *Economy) BuyLimitedAsset(u User, src LimitedSource, priceEach, qty Quantity) (LimitedAsset, TransferID, error) {
+	a := src.Create()
+
+	tf := Transfer{
+		{
+			Owner: u,
+			Items: Items{
+				Many: ItemsMany{
+					e.defaultCurrency: priceEach * qty,
+				},
+			},
+		},
+		{
+			Owner: src,
+			Items: Items{
+				Many: ItemsMany{
+					a: qty,
+				},
+			},
+		},
 	}
-	fmt.Println("Economy size  ", e.GetEconomySize().Readable())
-	fmt.Println("CCU           ", e.CCU().Readable())
+
+	tid := MakeTransferID()
+	if err := e.ledger.Transfer(tid, tf); err != nil {
+		return LimitedAsset{}, TransferID{}, fmt.Errorf("buy limited asset transfer %v: %w", tid, err)
+	}
+
+	return a, tid, nil
+}
+
+func (e *Economy) TransferHistory(n uint32) ([]TransferWithID, error) {
+	return e.ledger.TransferHistory(int(n))
+}
+
+func (e *Economy) TransferHistoryOwner(n uint32, o Owner) ([]TransferWithID, error) {
+	return e.ledger.TransferHistoryOwner(int(n), o)
 }

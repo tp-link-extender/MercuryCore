@@ -1,5 +1,14 @@
+import type { TransferWithID } from "economy/economy"
+import * as Econ from "economy/types"
+import type { GroupData, OwnerData, SourceData, UserData } from "$lib/economy"
+import ownersQuery from "$lib/server/owners.surql"
 import { db, Record } from "$lib/server/surreal"
-import usersQuery from "$lib/server/users.surql"
+
+export const PlacePrice = 10
+export const GroupPrice = 10
+export const LimitedSourcePrice = 100
+export const UnlimitedSourcePrice = 10
+export const StipendAmount = 10
 
 const economyUrl = "localhost:2009"
 
@@ -26,8 +35,6 @@ const tryFetch =
 const tryFetchValue = tryFetch(async res => +(await res.text()))
 const tryFetchJson = <T>() => tryFetch(async res => (await res.json()) as T) // type assertion much?¿
 
-export const getStipend = (f: typeof globalThis.fetch) =>
-	tryFetchValue(f, `${economyUrl}/currentStipend`)
 export const getBalance = (f: typeof globalThis.fetch, user: string) =>
 	tryFetchValue(f, `${economyUrl}/balance/${user}`)
 
@@ -66,13 +73,6 @@ export const getTransactions = (f: typeof globalThis.fetch, user: string) =>
 	tryFetchJson<ReceivedTx[]>()(f, `${economyUrl}/transactions/${user}`)
 export const getAdminTransactions = (f: typeof globalThis.fetch) =>
 	tryFetchJson<ReceivedTx[]>()(f, `${economyUrl}/transactions`)
-
-// doin nothing with returns rn
-export async function stipend(f: typeof globalThis.fetch, To: string) {
-	try {
-		await f(`${economyUrl}/stipend/${To}`, { method: "post" })
-	} catch {}
-}
 
 export async function transact(
 	f: typeof globalThis.fetch,
@@ -182,39 +182,30 @@ export async function createGroup(
 	)
 }
 
-export async function transformTransactions(list: ReceivedTx[]) {
-	// Awful no-good terrible code for transforming this stuff. Feels like we're back in the double-database days of Mercury 2
+// better code than previously... i guess. whatever
+export async function ownerData(list: TransferWithID[]): Promise<OwnerData> {
+	const owners = [
+		...list.map(tf => tf.Transfer.Send0.Owner),
+		...list.map(tf => tf.Transfer.Send1.Owner),
+	].filter(o => o !== null)
 
-	const users = new Set<string>()
-	for (const tx of list) {
-		if (tx.Type !== "Mint") users.add(tx.From)
-		if (tx.Type !== "Burn") users.add(tx.To)
-	}
-	const [queryUsers] = await db.query<(BasicUser & { id: string })[][]>(
-		usersQuery,
-		{ usersList: Array.from(users).map(u => Record("user", u)) }
-	)
-
-	const idsMap = new Map<string, BasicUser>()
-	const usersMap = new Map<string, BasicUser>()
-	for (const user of queryUsers) {
-		idsMap.set(user.id, {
-			username: user.username,
-			status: user.status,
-		})
-		usersMap.set(user.username, {
-			username: user.username,
-			status: user.status,
-		})
-	}
-
-	for (const tx of list) {
-		if (tx.Type !== "Mint") tx.From = idsMap.get(tx.From)?.username || ""
-		if (tx.Type !== "Burn") tx.To = idsMap.get(tx.To)?.username || ""
-	}
+	const [users, groups, sources] = await db.query<
+		[UserData[], GroupData[], SourceData[]]
+	>(ownersQuery, {
+		usersList: owners
+			.filter(o => o instanceof Econ.User)
+			.map(u => Record("user", u.ID)),
+		groupsList: owners
+			.filter(o => o instanceof Econ.Group)
+			.map(g => Record("group", g.ID)),
+		assetsList: owners
+			.filter(Econ.IsSource)
+			.map(s => Record("asset", s.ID)),
+	})
 
 	return {
-		transactions: list,
-		users: Object.fromEntries(usersMap),
+		users: Object.fromEntries(users.map(u => [u.id, u])),
+		groups: Object.fromEntries(groups.map(g => [g.id, g])),
+		sources: Object.fromEntries(sources.map(s => [s.id, s])),
 	}
 }

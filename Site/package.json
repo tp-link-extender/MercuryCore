@@ -36,6 +36,7 @@
 		"@unocss/transformer-variant-group": "^66.7.5",
 		"arktype": "^2.2.3",
 		"d3-interpolate": "^3.0.1",
+		"economy": "file:../Economy/client",
 		"melt": "^0.44.0",
 		"nodemailer": "^9.0.3",
 		"nprogress": "^0.2.0",
