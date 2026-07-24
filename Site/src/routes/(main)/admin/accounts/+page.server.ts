@@ -47,8 +47,7 @@ actions.changePassword = async ({ locals, request, getClientAddress }) => {
 			npassword: Bun.password.hashSync(password),
 			username: username,
 		})
-		if (!ok)
-			return errMessage(form, "No user found with given username")
+		if (!ok) return errMessage(form, "No user found with given username")
 	} catch (e) {
 		console.error(e)
 		return errMessage(form, "An error occurred")

@@ -1,9 +1,11 @@
 import fs from "node:fs"
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
+import { createUnlimitedSource } from "economy/api"
+import * as Econ from "economy/types"
 import { typeToNumber } from "$lib/assetTypes"
 import { authorise } from "$lib/server/auth"
-import { createAsset, getAssetPrice } from "$lib/server/economy"
+import { getAssetPrice } from "$lib/server/economy"
 import formError from "$lib/server/formError"
 import { randomAssetId } from "$lib/server/id"
 import {
@@ -15,7 +17,7 @@ import {
 } from "$lib/server/imageAsset"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
-import { db, Record } from "$lib/server/surreal"
+import { db } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { graphicAsset } from "$lib/server/xmlAsset"
 import { encode } from "$lib/urlName"
@@ -24,9 +26,12 @@ import createAssetQuery from "./createAsset.surql"
 
 const schema = type({
 	// Object.keys(assets) doesn't work
-	type: type.enumerated(...assetTypes).configure({
-		problem: "must be a valid asset type",
-	}),
+	type: type
+		.enumerated(...assetTypes)
+		// TODO: compare with the other method in admin creation flow
+		.configure({
+			problem: "must be a valid asset type",
+		}),
 	name: "3 <= string <= 50",
 	description: "(0 <= string <= 1000) | undefined",
 	price: "0 <= number.integer <= 999",
@@ -136,23 +141,21 @@ actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 		return formError(form, ["asset"], ["Asset failed to upload"])
 	}
 
-	const slug = encode(name)
 	const imageAssetId = randomAssetId()
 	const id = randomAssetId()
 
-	if (user.permissionLevel < 3) {
-		const created = await createAsset(f, user.id, id, name, slug)
-		if (!created.ok) return formError(form, ["other"], [created.msg])
-	}
+	const u = new Econ.User(user.id)
+	const created = await createUnlimitedSource(f, u)
+	if (!created.ok)
+		return formError(form, ["other"], ["Failed to create asset source"])
 
 	await db.query(createAssetQuery, {
-		name,
-		assetType: typeToNumber[type],
-		price,
-		description,
-		user: Record("user", user.id),
 		imageAssetId,
 		id,
+		description,
+		name,
+		price,
+		assetType: typeToNumber[type],
 		visibility: user.permissionLevel < 3 ? "Pending" : "Visible",
 	})
 
@@ -165,5 +168,5 @@ actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 		console.error(e)
 	}
 
-	redirect(302, `/catalog/${id}/${name}`)
+	redirect(302, `/catalog/${id}/${encode(name)}`)
 }

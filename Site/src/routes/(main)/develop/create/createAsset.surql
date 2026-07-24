@@ -4,8 +4,6 @@ LET $imageAsset = CREATE ONLY asset CONTENT {
 	type: 1,
 	visibility: $visibility,
 };
-RELATE $user->ownsAsset->$imageAsset;
-RELATE $user->created->$imageAsset;
 
 LET $asset = CREATE ONLY asset CONTENT {
 	id: $id,
@@ -17,6 +15,4 @@ LET $asset = CREATE ONLY asset CONTENT {
 	type: $assetType,
 	visibility: $visibility,
 };
-RELATE $user->ownsAsset->$asset;
-RELATE $user->created->$asset;
 RELATE $asset->imageAsset->$imageAsset;
