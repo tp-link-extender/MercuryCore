@@ -7,8 +7,6 @@ import { authorise } from "$lib/server/auth"
 import createCommentQuery from "$lib/server/createComment.surql"
 import {
 	economyConnFailed,
-	fee,
-	getBalance,
 	transact,
 } from "$lib/server/economy"
 import filter from "$lib/server/filter"
@@ -75,9 +73,11 @@ export async function load({ fetch: f, locals, params }) {
 		failText: failTexts[Math.floor(Math.random() * failTexts.length)],
 		form: await superValidate(arktype(schema)),
 		slug,
-		asset,
+		asset: {
+			...asset,
+			price: BigInt(asset.price),
+		},
 		balance: b.value,
-		currentFee: fee,
 	}
 }
 

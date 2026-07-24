@@ -18,9 +18,8 @@
 	const { data, form } = $props()
 
 	let { user } = $derived(data)
-	let fee = $derived((data.currentFee * data.asset.price).toFixed(2))
-	let totalPrice = $derived((1 + data.currentFee) * data.asset.price)
-	let itsFree = $derived(data.asset.price === 0) // IT'S FREEEEEEEEEEEEEE
+	let totalPrice = $derived(data.asset.price)
+	let itsFree = $derived(totalPrice === 0n) // IT'S FREEEEEEEEEEEEEE
 
 	let regenerating = $state(false)
 
@@ -134,24 +133,10 @@
 							{#if itsFree}
 								<b class="pb-2">Free</b>
 							{:else}
-								<table>
-									<tbody>
-										<tr>
-											<td>Price</td>
-											<td class="text-emerald-600">
-												{data.currencySymbol}
-												{data.asset.price}
-											</td>
-										</tr>
-										<tr>
-											<td>Fee</td>
-											<td class="text-yellow-500">
-												{data.currencySymbol}
-												{fee}
-											</td>
-										</tr>
-									</tbody>
-								</table>
+								<span class="text-emerald-600">
+									{data.currencySymbol}
+									{data.asset.price}
+								</span>
 							{/if}
 							{#if !data.asset.owned}
 								<button
