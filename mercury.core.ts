@@ -16,7 +16,7 @@ export default {
 	},
 
 	Economy: {
-		AutoStart: true,
+		AutoStart: false,
 	},
 
 	Orbiter: {
