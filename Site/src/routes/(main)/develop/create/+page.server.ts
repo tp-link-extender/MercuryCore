@@ -26,9 +26,12 @@ import createAssetQuery from "./createAsset.surql"
 
 const schema = type({
 	// Object.keys(assets) doesn't work
-	type: type.enumerated(...assetTypes).configure({
-		problem: "must be a valid asset type",
-	}),
+	type: type
+		.enumerated(...assetTypes)
+		// TODO: compare with the other method in admin creation flow
+		.configure({
+			problem: "must be a valid asset type",
+		}),
 	name: "3 <= string <= 50",
 	description: "(0 <= string <= 1000) | undefined",
 	price: "0 <= number.integer <= 999",
@@ -138,13 +141,13 @@ actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 		return formError(form, ["asset"], ["Asset failed to upload"])
 	}
 
-	const slug = encode(name)
 	const imageAssetId = randomAssetId()
 	const id = randomAssetId()
 
 	const u = new Econ.User(user.id)
 	const created = await createUnlimitedSource(f, u)
-	if (!created.ok) return formError(form, ["other"], ["Failed to create asset source"])
+	if (!created.ok)
+		return formError(form, ["other"], ["Failed to create asset source"])
 
 	await db.query(createAssetQuery, {
 		name,
@@ -166,5 +169,5 @@ actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 		console.error(e)
 	}
 
-	redirect(302, `/catalog/${id}/${slug}`)
+	redirect(302, `/catalog/${id}/${encode(name)}`)
 }

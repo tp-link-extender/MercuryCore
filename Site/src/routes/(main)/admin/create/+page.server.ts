@@ -6,12 +6,14 @@ import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import { db, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
-import { isXML } from "$lib/server/xml.js"
+import { isXML } from "$lib/server/xml"
+import { encode } from "$lib/urlName"
 import createQuery from "./create.surql"
 
 const schema = type({
 	type: type
 		.enumerated(...Object.values(types))
+		// TODO: compare with the other method in normal creation flow
 		.pipe.try(t => {
 			const num = typeToNumber[t]
 			if (!num) throw new Error("Invalid asset type")
@@ -49,8 +51,8 @@ actions.default = async ({ locals, request }) => {
 	if (assetType === 18 && !isXML(buf))
 		return formError(form, ["asset"], ["Face assets must be in XML format"])
 
-	if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
-	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
+	// if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
+	// if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
 
 	const [, id] = await db.query<string[]>(createQuery, {
 		description,
@@ -65,5 +67,5 @@ actions.default = async ({ locals, request }) => {
 	// we'll just assume it's a model 4 now
 	// await requestRender(f, "Model", id)
 
-	redirect(302, `/catalog/${id}`)
+	redirect(302, `/catalog/${id}/${encode(name)}`)
 }
