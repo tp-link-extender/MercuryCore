@@ -1,14 +1,11 @@
 import { error, fail, redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { balance } from "economy/api"
+import { balance, buyUnlimitedAsset } from "economy/api"
 import * as Econ from "economy/types"
 import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
 import createCommentQuery from "$lib/server/createComment.surql"
-import {
-	economyConnFailed,
-	transact,
-} from "$lib/server/economy"
+import { economyConnFailed } from "$lib/server/economy"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
@@ -81,9 +78,9 @@ export async function load({ fetch: f, locals, params }) {
 	}
 }
 
-async function getBuyData(e: RequestEvent) {
-	const { user } = await authorise(e.locals)
-	const id = +e.params.id
+async function getBuyData({ locals, params }: RequestEvent) {
+	const { user } = await authorise(locals)
+	const id = +params.id
 	const assetExists = await find("asset", id)
 	if (!assetExists) error(404)
 
@@ -186,32 +183,25 @@ actions.buy = async e => {
 
 	if (asset.price > 0) {
 		// todo work out how free assets are supposed to work
-		const tx = await transact(
+		const buyer = new Econ.User(user.id)
+		const source = new Econ.UnlimitedSource(id)
+		const ok = await buyUnlimitedAsset(
 			e.fetch,
-			user.id,
-			asset.creator.id,
-			asset.price,
-			`Purchased asset ${asset.name}`,
-			`/catalog/${id}/${asset.name}`,
-			{}
+			buyer,
+			source,
+			BigInt(asset.price)
 		)
-		if (!tx.ok) error(400, tx.msg)
+		if (!ok) error(400, "Purchase failed")
 	}
 
-	await Promise.all([
-		db.query("RELATE $user->ownsAsset->$asset", {
-			asset: Record("asset", id),
-			user: Record("user", user.id),
-		}),
-		user.id === asset.creator.id ||
-			db.query(
-				'fn::notify($user, $creator, "ItemPurchase", $note, $relativeId)',
-				{
-					user: Record("user", user.id),
-					creator: Record("user", asset.creator.id),
-					note: `${user.username} just purchased your item ${asset.name}`,
-					relativeId: e.params.id,
-				}
-			),
-	])
+	if (user.id !== asset.creator.id)
+		await db.query(
+			'fn::notify($user, $creator, "ItemPurchase", $note, $relativeId)',
+			{
+				user: Record("user", user.id),
+				creator: Record("user", asset.creator.id),
+				note: `${user.username} just purchased your item ${asset.name}`,
+				relativeId: e.params.id,
+			}
+		)
 }
