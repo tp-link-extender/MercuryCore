@@ -130,23 +130,23 @@ export const getAssetPrice = () => getFeeBasedPrice(75)
 export const getGroupPrice = () => getFeeBasedPrice(50)
 // export const getPlacePrice = () => getFeeBasedPrice(50)
 
-export async function createAsset(
-	f: typeof globalThis.fetch,
-	To: string,
-	id: number,
-	name: string,
-	slug: string
-): Promise<ReturnErr> {
-	const price = getAssetPrice()
-	return await burn(
-		f,
-		To,
-		price,
-		`Created asset ${name}`,
-		`/catalog/${id}/${slug}`,
-		{}
-	)
-}
+// export async function createAsset(
+// 	f: typeof globalThis.fetch,
+// 	To: string,
+// 	id: number,
+// 	name: string,
+// 	slug: string
+// ): Promise<ReturnErr> {
+// 	const price = getAssetPrice()
+// 	return await burn(
+// 		f,
+// 		To,
+// 		price,
+// 		`Created asset ${name}`,
+// 		`/catalog/${id}/${slug}`,
+// 		{}
+// 	)
+// }
 
 // export async function createPlace(
 // 	f: typeof globalThis.fetch,

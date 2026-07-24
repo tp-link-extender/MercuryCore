@@ -1,9 +1,11 @@
 import fs from "node:fs"
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
+import { createUnlimitedSource } from "economy/api"
+import * as Econ from "economy/types"
 import { typeToNumber } from "$lib/assetTypes"
 import { authorise } from "$lib/server/auth"
-import { createAsset, getAssetPrice } from "$lib/server/economy"
+import { getAssetPrice } from "$lib/server/economy"
 import formError from "$lib/server/formError"
 import { randomAssetId } from "$lib/server/id"
 import {
@@ -140,10 +142,9 @@ actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 	const imageAssetId = randomAssetId()
 	const id = randomAssetId()
 
-	if (user.permissionLevel < 3) {
-		const created = await createAsset(f, user.id, id, name, slug)
-		if (!created.ok) return formError(form, ["other"], [created.msg])
-	}
+	const u = new Econ.User(user.id)
+	const created = await createUnlimitedSource(f, u)
+	if (!created.ok) return formError(form, ["other"], ["Failed to create asset source"])
 
 	await db.query(createAssetQuery, {
 		name,
@@ -165,5 +166,5 @@ actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 		console.error(e)
 	}
 
-	redirect(302, `/catalog/${id}/${name}`)
+	redirect(302, `/catalog/${id}/${slug}`)
 }
