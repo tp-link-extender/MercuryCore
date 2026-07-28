@@ -1,6 +1,6 @@
 import { error, fail, redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { balance, buyUnlimitedAsset } from "economy/api"
+import { balance, buyUnlimitedAsset, ownersOne, ownsOne } from "economy/api"
 import * as Econ from "economy/types"
 import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
@@ -65,6 +65,14 @@ export async function load({ fetch: f, locals, params }) {
 	const b = await balance(f, u)
 	if (!b.ok) error(500, economyConnFailed)
 
+	const i = new Econ.UnlimitedAsset(id)
+	const owned = await ownsOne(f, u, i)
+	if (!owned.ok) error(500, economyConnFailed)
+
+	// TODO: API route for counting owners of an asset, because there's data for each owner here we don't need
+	const owners = await ownersOne(f, i)
+	if (!owners.ok) error(500, economyConnFailed)
+
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
 		failText: failTexts[Math.floor(Math.random() * failTexts.length)],
@@ -74,6 +82,8 @@ export async function load({ fetch: f, locals, params }) {
 			...asset,
 			price: BigInt(asset.price),
 		},
+		sold: owners.value.set.size,
+		owned: owned.value,
 		balance: b.value,
 	}
 }

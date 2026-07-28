@@ -119,7 +119,7 @@
 			<div class="flex flex-wrap pb-2">
 				<div class="w-full md:w-1/3">
 					<p class="pb-2">
-						<strong>{data.asset.sold}</strong>
+						<strong>{data.sold}</strong>
 						sold
 					</p>
 					<p>
@@ -138,7 +138,7 @@
 									{data.asset.price}
 								</span>
 							{/if}
-							{#if !data.asset.owned}
+							{#if !data.owned}
 								<button
 									popovertarget="buy"
 									class="btn btn-success">
