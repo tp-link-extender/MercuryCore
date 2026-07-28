@@ -190,6 +190,20 @@ export class UnlimitedSource
 	}
 }
 
+export class Group implements StringItem, CanOwnOne, Mintable, Owner {
+	Type = TypeGroup
+
+	CanOwnOne() {}
+	Mintable() {}
+	Owner() {}
+
+	constructor(public ID: string) {}
+
+	String(): string {
+		return `group(${this.ID})`
+	}
+}
+
 export class Place implements NumericItem, CanOwnOne, Mintable {
 	Type = TypePlace
 
@@ -212,19 +226,5 @@ export class User implements StringItem, Owner {
 
 	String(): string {
 		return `user(${this.ID})`
-	}
-}
-
-export class Group implements StringItem, CanOwnOne, Mintable, Owner {
-	Type = TypeGroup
-
-	CanOwnOne() {}
-	Mintable() {}
-	Owner() {}
-
-	constructor(public ID: string) {}
-
-	String(): string {
-		return `group(${this.ID})`
 	}
 }
