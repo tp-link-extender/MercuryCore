@@ -1,6 +1,11 @@
 import { error, fail, redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { balance, buyUnlimitedAsset, countOwnersOne, ownsOne } from "economy/api"
+import {
+	balance,
+	buyUnlimitedAsset,
+	countOwnersOne,
+	ownsOne,
+} from "economy/api"
 import * as Econ from "economy/types"
 import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
@@ -170,13 +175,9 @@ actions.buy = async e => {
 	const { user, id } = await getBuyData(e)
 
 	type FoundAsset = {
-		creator: {
-			id: string
-			username: string
-		}
+		creatorId: string
 		forSale: boolean
 		name: string
-		owned: boolean
 		price: number
 		visibility: string
 	}
@@ -185,30 +186,21 @@ actions.buy = async e => {
 		asset: Record("asset", id),
 	})
 	if (!asset) error(404, "Not Found")
-	if (asset.owned) error(400, "You already own this item")
 	if (asset.visibility !== "Visible")
 		error(400, "This item hasn't been approved yet")
 	if (!asset.forSale) error(400, "This item is not for sale")
 
-	if (asset.price > 0) {
-		// todo work out how free assets are supposed to work
-		const buyer = new Econ.User(user.id)
-		const source = new Econ.UnlimitedSource(id)
-		const ok = await buyUnlimitedAsset(
-			e.fetch,
-			buyer,
-			source,
-			BigInt(asset.price)
-		)
-		if (!ok) error(400, "Purchase failed")
-	}
+	const u = new Econ.User(user.id)
+	const i = new Econ.UnlimitedSource(id)
+	const ok = await buyUnlimitedAsset(e.fetch, u, i, BigInt(asset.price))
+	if (!ok) error(400, "Purchase failed")
 
-	if (user.id !== asset.creator.id)
+	if (user.id !== asset.creatorId)
 		await db.query(
 			'fn::notify($user, $creator, "ItemPurchase", $note, $relativeId)',
 			{
 				user: Record("user", user.id),
-				creator: Record("user", asset.creator.id),
+				creator: Record("user", asset.creatorId),
 				note: `${user.username} just purchased your item ${asset.name}`,
 				relativeId: e.params.id,
 			}
