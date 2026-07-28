@@ -70,7 +70,7 @@ func (e *Economy) Balance(o Owner) Quantity {
 	return e.OwnsMany(o, e.defaultCurrency)
 }
 
-func (e *Economy) MintCurrency(u User, qty Quantity) (TransferID, error) {
+func (e *Economy) MintCurrency(u User, qty Quantity) (tid TransferID, err error) {
 	tf := Transfer{
 		{Owner: u},
 		{Items: Items{
@@ -80,9 +80,9 @@ func (e *Economy) MintCurrency(u User, qty Quantity) (TransferID, error) {
 		}},
 	}
 
-	tid := MakeTransferID()
+	tid = MakeTransferID()
 	if err := e.ledger.Transfer(tid, tf); err != nil {
-		return TransferID{}, fmt.Errorf("mint currency transfer %v: %w", tid, err)
+		return tid, fmt.Errorf("mint currency transfer %v: %w", tid, err)
 	}
 
 	return tid, nil
@@ -90,10 +90,10 @@ func (e *Economy) MintCurrency(u User, qty Quantity) (TransferID, error) {
 
 var ErrStipendNotReady = errors.New("stipend not available yet")
 
-func (e *Economy) Stipend(user User) (TransferID, error) {
+func (e *Economy) Stipend(user User) (tid TransferID, err error) {
 	lastStipend, ok := e.ledger.GetUserLastStipend(user)
 	if ok || time.Since(time.Unix(0, int64(lastStipend.timestamp))) < e.StipendTime {
-		return TransferID{}, ErrStipendNotReady
+		return tid, ErrStipendNotReady
 	}
 
 	tf := Transfer{
@@ -107,19 +107,19 @@ func (e *Economy) Stipend(user User) (TransferID, error) {
 
 	// we built the check, now test it
 	if !tf.Stipend() {
-		return TransferID{}, fmt.Errorf("invalid stipend transfer: %v", tf)
+		return tid, fmt.Errorf("invalid stipend transfer: %v", tf)
 	}
 
-	tid := MakeTransferID()
+	tid = MakeTransferID()
 	if err := e.ledger.Transfer(tid, tf); err != nil {
-		return TransferID{}, fmt.Errorf("stipend transfer %v: %w", tid, err)
+		return tid, fmt.Errorf("stipend transfer %v: %w", tid, err)
 	}
 
 	return tid, nil
 }
 
-func (e *Economy) CreateLimitedSource(u User) (LimitedSource, TransferID, error) {
-	src := RandLimitedSource()
+func (e *Economy) CreateLimitedSource(u User) (src LimitedSource, tid TransferID, err error) {
+	src = RandLimitedSource()
 
 	tf := Transfer{
 		{
@@ -137,16 +137,16 @@ func (e *Economy) CreateLimitedSource(u User) (LimitedSource, TransferID, error)
 		}},
 	}
 
-	tid := MakeTransferID()
+	tid = MakeTransferID()
 	if err := e.ledger.Transfer(tid, tf); err != nil {
-		return LimitedSource{}, TransferID{}, fmt.Errorf("create limited source transfer %v: %w", tid, err)
+		return src, tid, fmt.Errorf("create limited source transfer %v: %w", tid, err)
 	}
 
 	return src, tid, nil
 }
 
-func (e *Economy) CreateUnlimitedSource(u User) (UnlimitedSource, TransferID, error) {
-	src := RandUnlimitedSource()
+func (e *Economy) CreateUnlimitedSource(u User) (src UnlimitedSource, tid TransferID, err error) {
+	src = RandUnlimitedSource()
 
 	tf := Transfer{
 		{
@@ -164,16 +164,16 @@ func (e *Economy) CreateUnlimitedSource(u User) (UnlimitedSource, TransferID, er
 		}},
 	}
 
-	tid := MakeTransferID()
+	tid = MakeTransferID()
 	if err := e.ledger.Transfer(tid, tf); err != nil {
-		return UnlimitedSource{}, TransferID{}, fmt.Errorf("create unlimited source transfer %v: %w", tid, err)
+		return src, tid, fmt.Errorf("create unlimited source transfer %v: %w", tid, err)
 	}
 
 	return src, tid, nil
 }
 
-func (e *Economy) CreatePlace(u User) (Place, TransferID, error) {
-	p := RandPlace()
+func (e *Economy) CreatePlace(u User) (p Place, tid TransferID, err error) {
+	p = RandPlace()
 
 	// tf (the fuck)
 	tf := Transfer{
@@ -192,16 +192,16 @@ func (e *Economy) CreatePlace(u User) (Place, TransferID, error) {
 		}},
 	}
 
-	tid := MakeTransferID()
+	tid = MakeTransferID()
 	if err := e.ledger.Transfer(tid, tf); err != nil {
-		return Place{}, TransferID{}, fmt.Errorf("create place transfer %v: %w", tid, err)
+		return p, tid, fmt.Errorf("create place transfer %v: %w", tid, err)
 	}
 
 	return p, tid, nil
 }
 
-func (e *Economy) CreateGroup(u User) (Group, TransferID, error) {
-	g := RandGroup()
+func (e *Economy) CreateGroup(u User) (g Group, tid TransferID, err error) {
+	g = RandGroup()
 
 	tf := Transfer{
 		{
@@ -219,16 +219,20 @@ func (e *Economy) CreateGroup(u User) (Group, TransferID, error) {
 		}},
 	}
 
-	tid := MakeTransferID()
+	tid = MakeTransferID()
 	if err := e.ledger.Transfer(tid, tf); err != nil {
-		return Group{}, TransferID{}, fmt.Errorf("create group transfer %v: %w", tid, err)
+		return g, tid, fmt.Errorf("create group transfer %v: %w", tid, err)
 	}
 
 	return g, tid, nil
 }
 
-func (e *Economy) BuyUnlimitedAsset(u User, src UnlimitedSource, price Quantity) (UnlimitedAsset, TransferID, error) {
-	a := src.Create()
+func (e *Economy) BuyUnlimitedAsset(u User, src UnlimitedSource, price Quantity) (a UnlimitedAsset, tid TransferID, err error) {
+	if e.OwnsOne(u, src) {
+		return a, tid, fmt.Errorf("user %v already owns unlimited source %v", u, src)
+	}
+
+	a = src.Create()
 
 	tf := Transfer{
 		{
@@ -249,16 +253,16 @@ func (e *Economy) BuyUnlimitedAsset(u User, src UnlimitedSource, price Quantity)
 		},
 	}
 
-	tid := MakeTransferID()
+	tid = MakeTransferID()
 	if err := e.ledger.Transfer(tid, tf); err != nil {
-		return UnlimitedAsset{}, TransferID{}, fmt.Errorf("buy unlimited asset transfer %v: %w", tid, err)
+		return a, tid, fmt.Errorf("buy unlimited asset transfer %v: %w", tid, err)
 	}
 
 	return a, tid, nil
 }
 
-func (e *Economy) BuyLimitedAsset(u User, src LimitedSource, priceEach, qty Quantity) (LimitedAsset, TransferID, error) {
-	a := src.Create()
+func (e *Economy) BuyLimitedAsset(u User, src LimitedSource, priceEach, qty Quantity) (a LimitedAsset, tid TransferID, err error) {
+	a = src.Create()
 
 	tf := Transfer{
 		{
@@ -279,9 +283,9 @@ func (e *Economy) BuyLimitedAsset(u User, src LimitedSource, priceEach, qty Quan
 		},
 	}
 
-	tid := MakeTransferID()
+	tid = MakeTransferID()
 	if err := e.ledger.Transfer(tid, tf); err != nil {
-		return LimitedAsset{}, TransferID{}, fmt.Errorf("buy limited asset transfer %v: %w", tid, err)
+		return a, tid, fmt.Errorf("buy limited asset transfer %v: %w", tid, err)
 	}
 
 	return a, tid, nil
