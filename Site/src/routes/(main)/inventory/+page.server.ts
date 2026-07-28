@@ -1,5 +1,8 @@
+import { error } from "@sveltejs/kit"
+import { inventory } from "economy/api"
+import * as Econ from "economy/types"
 import { authorise } from "$lib/server/auth"
-import pageQuery from "$lib/server/pageQuery"
+import { toRecordIds } from "$lib/server/economy"
 import { db, Record } from "$lib/server/surreal"
 import inventoryQuery from "./inventory.surql"
 
@@ -10,15 +13,21 @@ type Asset = {
 	type: number
 }
 
-export async function load({ locals, url }) {
+type Inventory = {}
+
+export async function load({ fetch: f, locals, url }) {
 	const { user } = await authorise(locals)
-	const { page, checkPages } = pageQuery(url)
 
-	const [assets, pages] = await db.query<[Asset[], number]>(inventoryQuery, {
+	const u = new Econ.User(user.id)
+	const inv = await inventory(f, u)
+	if (!inv.ok) error(500, "Failed to fetch inventory")
+
+	const invKVs = toRecordIds([...inv.value.One])
+
+	const [assets] = await db.query<[Inventory]>(inventoryQuery, {
 		user: Record("user", user.id),
-		page,
+		inv: invKVs,
 	})
-	checkPages(pages)
 
-	return { assets, pages }
+	return { assets }
 }

@@ -1,5 +1,6 @@
 import type { TransferWithID } from "economy/economy"
 import * as Econ from "economy/types"
+import type { RecordId } from "surrealdb"
 import type { GroupData, OwnerData, SourceData, UserData } from "$lib/economy"
 import ownersQuery from "$lib/server/owners.surql"
 import { db, Record } from "$lib/server/surreal"
@@ -208,4 +209,45 @@ export async function ownerData(list: TransferWithID[]): Promise<OwnerData> {
 		groups: Object.fromEntries(groups.map(g => [g.id, g])),
 		sources: Object.fromEntries(sources.map(s => [s.id, s])),
 	}
+}
+
+type RecordIds = {
+	UnlimitedAsset: RecordId<"asset">[]
+	LimitedSource: RecordId<"asset">[]
+	UnlimitedSource: RecordId<"asset">[]
+	Group: RecordId<"group">[]
+	Place: RecordId<"place">[]
+}
+
+export function toRecordIds(is: Econ.CanOwnOne[]): RecordIds {
+	const ids: RecordIds = {
+		UnlimitedAsset: [],
+		LimitedSource: [],
+		UnlimitedSource: [],
+		Group: [],
+		Place: [],
+	}
+
+	for (const i of is)
+		switch (true) {
+			case i instanceof Econ.UnlimitedAsset:
+				ids.UnlimitedAsset.push(Record("asset", i.ID))
+				break
+			case i instanceof Econ.LimitedSource:
+				ids.LimitedSource.push(Record("asset", i.ID))
+				break
+			case i instanceof Econ.UnlimitedSource:
+				ids.UnlimitedSource.push(Record("asset", i.ID))
+				break
+			case i instanceof Econ.Group:
+				ids.Group.push(Record("group", i.ID))
+				break
+			case i instanceof Econ.Place:
+				ids.Place.push(Record("place", i.ID))
+				break
+			default:
+				throw new Error(`Unknown item type: ${i}`)
+		}
+
+	return ids
 }
