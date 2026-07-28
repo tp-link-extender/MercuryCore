@@ -8,7 +8,6 @@ import { authorise } from "$lib/server/auth"
 import { db } from "$lib/server/surreal"
 import queryGroups from "./groups.surql"
 import queryPlaces from "./places.surql"
-import querySources from "./sources.surql"
 import queryUnlimitedAssets from "./unlimitedAssets.surql"
 
 const getAssetSchema = type("number")
@@ -32,7 +31,12 @@ type Asset = {
 	type: number
 }
 
-type Source = Asset
+type AssetBigInt = {
+	id: number
+	name: string
+	price: bigint
+	type: number
+}
 
 type Group = {
 	id: string
@@ -48,15 +52,25 @@ type Place = {
 	playerCount: number
 }
 
-const getUnlimitedAssets = async () =>
-	(await getInventory()).filter(i => i instanceof Econ.UnlimitedAsset)
-
-export const getAsset = query(getAssetSchema, async t => {
-	const is = await getUnlimitedAssets()
-
-	await db.query<[Asset[]]>(queryUnlimitedAssets, { is })
+const assetToBigInt = (a: Asset): AssetBigInt => ({
+	...a,
+	price: BigInt(a.price),
 })
-export const getSources = query(async (): Promise<Source[]> => {
+
+async function getUnlimitedAssets(): Promise<AssetBigInt[]> {
+	const is = (await getInventory())
+		.filter(i => i instanceof Econ.UnlimitedAsset)
+		.map(i => i.ID)
+
+	const [assets] = await db.query<[Asset[]]>(queryUnlimitedAssets, { is })
+	return assets.map(assetToBigInt)
+}
+
+export const getAsset = query(getAssetSchema, async t =>
+	(await getUnlimitedAssets()).filter(a => a.type === t)
+)
+
+export const getSources = query(async (): Promise<AssetBigInt[]> => {
 	const is = (await getInventory())
 		.filter(
 			i =>
@@ -65,7 +79,8 @@ export const getSources = query(async (): Promise<Source[]> => {
 		)
 		.map(i => i.ID)
 
-	await db.query<[Source[]]>(querySources, { is })
+	const [sources] = await db.query<[Asset[]]>(queryUnlimitedAssets, { is })
+	return sources.map(assetToBigInt)
 })
 
 export const getGroups = query(async (): Promise<Group[]> => {
@@ -73,12 +88,14 @@ export const getGroups = query(async (): Promise<Group[]> => {
 		.filter(i => i instanceof Econ.Group)
 		.map(i => i.ID)
 
-	await db.query(queryGroups, { is })
+	const [groups] = await db.query<[Group[]]>(queryGroups, { is })
+	return groups
 })
 export const getPlaces = query(async (): Promise<Place[]> => {
 	const is = (await getInventory())
 		.filter(i => i instanceof Econ.Place)
 		.map(i => i.ID)
 
-	await db.query(queryPlaces, { is })
+	const [places] = await db.query<[Place[]]>(queryPlaces, { is })
+	return places
 })
