@@ -47,6 +47,20 @@ func (e *Economy) OwnersMany(i CanOwnMany) OwnersMany {
 	return *e.ledger.state.GetOwnersMany(i)
 }
 
+func (e *Economy) CountOwnersOne(i CanOwnOne) int {
+	return len(e.OwnersOne(i))
+}
+
+func (e *Economy) CountOwnersMany(i CanOwnMany) (count int) {
+	owners := e.OwnersMany(i)
+	for _, qty := range owners {
+		if qty > 0 {
+			count++
+		}
+	}
+	return count
+}
+
 func (e *Economy) Inventory(o Owner) Items {
 	inv := e.ledger.Inventory(o)
 	return *inv

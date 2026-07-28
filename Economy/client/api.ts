@@ -26,6 +26,8 @@ type Route =
 	| "ownsMany"
 	| "ownersOne"
 	| "ownersMany"
+	| "countOwnersOne"
+	| "countOwnersMany"
 	| "inventory"
 	| "balance"
 	| "stipend"
@@ -104,6 +106,28 @@ export async function ownersMany(
 	if (res.status !== 200) return { ok: false }
 
 	return { ok: true, value: OwnersMany.Deserialise(await resReader(res)) }
+}
+
+export async function countOwnersOne(
+	f: Fetch,
+	i: CanOwnOne
+): ReturnValue<number> {
+	const res = await request(f, "countOwnersOne", SerialiseItem(i))
+	if (res.status !== 200) return { ok: false }
+
+	const text = await res.text()
+	return { ok: true, value: +text }
+}
+
+export async function countOwnersMany(
+	f: Fetch,
+	i: CanOwnMany
+): ReturnValue<number> {
+	const res = await request(f, "countOwnersMany", SerialiseItem(i))
+	if (res.status !== 200) return { ok: false }
+
+	const text = await res.text()
+	return { ok: true, value: +text }
 }
 
 export async function inventory(f: Fetch, o: Owner): ReturnValue<Items> {

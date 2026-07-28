@@ -96,6 +96,24 @@ func (e *EconomyServer) ownersManyRoute(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
+func (e *EconomyServer) countOwnersOneRoute(w http.ResponseWriter, r *http.Request) {
+	coo, ok := getItem[CanOwnOne](w, r)
+	if !ok {
+		return
+	}
+
+	fmt.Fprintf(w, "%d", e.CountOwnersOne(coo))
+}
+
+func (e *EconomyServer) countOwnersManyRoute(w http.ResponseWriter, r *http.Request) {
+	com, ok := getItem[CanOwnMany](w, r)
+	if !ok {
+		return
+	}
+
+	fmt.Fprintf(w, "%d", e.CountOwnersMany(com))
+}
+
 func (e *EconomyServer) inventoryRoute(w http.ResponseWriter, r *http.Request) {
 	o, ok := getItem[Owner](w, r) // oh ok
 	if !ok {
@@ -401,6 +419,8 @@ func main() {
 	http.HandleFunc("POST /ownsMany", es.ownsManyRoute)
 	http.HandleFunc("POST /ownersOne", es.ownersOneRoute)
 	http.HandleFunc("POST /ownersMany", es.ownersManyRoute)
+	http.HandleFunc("POST /countOwnersOne", es.countOwnersOneRoute)
+	http.HandleFunc("POST /countOwnersMany", es.countOwnersManyRoute)
 	http.HandleFunc("POST /inventory", es.inventoryRoute)
 	http.HandleFunc("POST /balance", es.balanceRoute)
 	http.HandleFunc("POST /stipend", es.stipendRoute)
