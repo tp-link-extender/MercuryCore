@@ -1,7 +1,11 @@
 import { error, fail } from "@sveltejs/kit"
+import { inventory, ownsOne } from "economy/api"
+import type { ItemsOne } from "economy/items"
+import * as Econ from "economy/types"
 import { brickColours } from "$lib/brickColours"
 import { assetRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/auth"
+import { economyConnFailed } from "$lib/server/economy"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { db, Record } from "$lib/server/surreal"
@@ -25,9 +29,17 @@ const bodyParts = Object.freeze([
 ])
 
 export type Asset = {
+	id: number
 	name: string
 	price: number
+	type: number
+	wearing: boolean
+}
+
+type AssetBigInt = {
 	id: number
+	name: string
+	price: bigint
 	type: number
 	wearing: boolean
 }
@@ -38,14 +50,33 @@ type AssetData = {
 	visibility: string
 }
 
-export async function load({ locals }) {
+const assetToBigInt = (a: Asset): AssetBigInt => ({
+	...a,
+	price: BigInt(a.price),
+})
+
+const ownedUnlimitedAssetIds = (items: ItemsOne) =>
+	[...items.set].filter(i => i instanceof Econ.UnlimitedAsset).map(i => i.ID)
+
+async function getOwnedAssetIds(f: typeof globalThis.fetch, userId: string) {
+	const inv = await inventory(f, new Econ.User(userId))
+	if (!inv.ok) error(500, economyConnFailed)
+
+	return ownedUnlimitedAssetIds(inv.value.One)
+}
+
+export async function load({ fetch: f, locals }) {
 	const { user } = await authorise(locals)
+	const ids = await getOwnedAssetIds(f, user.id)
+
+	if (ids.length === 0) return { assets: [] }
 
 	const [assets] = await db.query<Asset[][]>(assetsQuery, {
+		assets: ids.map(id => Record("asset", id)),
 		user: Record("user", user.id),
 		allowedTypes,
 	})
-	return { assets }
+	return { assets: assets.map(assetToBigInt) }
 }
 
 async function getEquipData(e: RequestEvent) {
@@ -59,11 +90,15 @@ async function getEquipData(e: RequestEvent) {
 	const limit = ratelimit(null, "equip", e.getClientAddress, 2)
 	if (limit) return { error: limit }
 
+	const o = new Econ.User(user.id)
+	const i = new Econ.UnlimitedAsset(id)
+	const owns = ownsOne(e.fetch, o, i)
+	if (!owns) error(400, "You don't own this item")
+
 	const [[asset]] = await db.query<AssetData[][]>(equipDataQuery, {
 		asset: Record("asset", id),
-		user: Record("user", user.id),
 	})
-	if (!asset) error(404, "Item not found or not owned")
+	if (!asset) error(404, "Item not found")
 	if (!allowedTypes.includes(asset.type))
 		error(400, "Can't equip this type of item")
 	if (asset.visibility !== "Visible")
