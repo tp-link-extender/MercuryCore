@@ -137,7 +137,7 @@ export class LimitedAsset implements NumericItem, CanOwnMany {
 }
 
 export class UnlimitedAsset implements NumericItem, CanOwnOne {
-	Type = TypeLimitedAsset
+	Type = TypeUnlimitedAsset
 
 	CanOwnOne() {}
 
