@@ -68,14 +68,23 @@ export async function load({ fetch: f, locals, params }) {
 
 	const u = new Econ.User(user.id)
 	const b = await balance(f, u)
-	if (!b.ok) error(500, economyConnFailed)
+	if (!b.ok) {
+		console.error("balance failed")
+		error(500, economyConnFailed)
+	}
 
 	const i = new Econ.UnlimitedAsset(id)
 	const owned = await ownsOne(f, u, i)
-	if (!owned.ok) error(500, economyConnFailed)
+	if (!owned.ok) {
+		console.error("ownsOne failed")
+		error(500, economyConnFailed)
+	}
 
 	const owners = await countOwnersOne(f, i)
-	if (!owners.ok) error(500, economyConnFailed)
+	if (!owners.ok) {
+		console.error("countOwnersOne failed")
+		error(500, economyConnFailed)
+	}
 
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],

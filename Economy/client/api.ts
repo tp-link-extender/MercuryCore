@@ -58,11 +58,16 @@ export async function ownsOne(
 	o: Owner,
 	i: CanOwnOne // foi lol
 ): ReturnValue<boolean> {
-	const res = await request(
-		f,
-		"ownsOne",
-		Buf.concat([SerialiseItem(o), SerialiseItem(i)])
-	)
+	let res: Response
+	try {
+		res = await request(
+			f,
+			"ownsOne",
+			Buf.concat([SerialiseItem(o), SerialiseItem(i)])
+		)
+	} catch {
+		return { ok: false }
+	}
 	if (res.status !== 200) return { ok: false } // it won't be another 2xx status code
 
 	const buf = await res.arrayBuffer()
@@ -74,11 +79,16 @@ export async function ownsMany(
 	o: Owner,
 	i: CanOwnMany
 ): ReturnValue<number> {
-	const res = await request(
-		f,
-		"ownsMany",
-		Buf.concat([SerialiseItem(o), SerialiseItem(i)])
-	)
+	let res: Response
+	try {
+		res = await request(
+			f,
+			"ownsMany",
+			Buf.concat([SerialiseItem(o), SerialiseItem(i)])
+		)
+	} catch {
+		return { ok: false }
+	}
 	if (res.status !== 200) return { ok: false }
 
 	const text = await res.text()
@@ -92,7 +102,12 @@ export async function ownersOne(
 	f: Fetch,
 	i: CanOwnOne // endif
 ): ReturnValue<OwnersOne> {
-	const res = await request(f, "ownersOne", SerialiseItem(i))
+	let res: Response
+	try {
+		res = await request(f, "ownersOne", SerialiseItem(i))
+	} catch {
+		return { ok: false }
+	}
 	if (res.status !== 200) return { ok: false }
 
 	return { ok: true, value: OwnersOne.Deserialise(await resReader(res)) }
@@ -102,7 +117,12 @@ export async function ownersMany(
 	f: Fetch,
 	i: CanOwnMany
 ): ReturnValue<OwnersMany> {
-	const res = await request(f, "ownersMany", SerialiseItem(i))
+	let res: Response
+	try {
+		res = await request(f, "ownersMany", SerialiseItem(i))
+	} catch {
+		return { ok: false }
+	}
 	if (res.status !== 200) return { ok: false }
 
 	return { ok: true, value: OwnersMany.Deserialise(await resReader(res)) }
@@ -112,7 +132,12 @@ export async function countOwnersOne(
 	f: Fetch,
 	i: CanOwnOne
 ): ReturnValue<number> {
-	const res = await request(f, "countOwnersOne", SerialiseItem(i))
+	let res: Response
+	try {
+		res = await request(f, "countOwnersOne", SerialiseItem(i))
+	} catch {
+		return { ok: false }
+	}
 	if (res.status !== 200) return { ok: false }
 
 	const text = await res.text()
@@ -123,7 +148,12 @@ export async function countOwnersMany(
 	f: Fetch,
 	i: CanOwnMany
 ): ReturnValue<number> {
-	const res = await request(f, "countOwnersMany", SerialiseItem(i))
+	let res: Response
+	try {
+		res = await request(f, "countOwnersMany", SerialiseItem(i))
+	} catch {
+		return { ok: false }
+	}
 	if (res.status !== 200) return { ok: false }
 
 	const text = await res.text()
@@ -131,14 +161,24 @@ export async function countOwnersMany(
 }
 
 export async function inventory(f: Fetch, o: Owner): ReturnValue<Items> {
-	const res = await request(f, "inventory", SerialiseItem(o))
+	let res: Response
+	try {
+		res = await request(f, "inventory", SerialiseItem(o))
+	} catch {
+		return { ok: false }
+	}
 	if (res.status !== 200) return { ok: false }
 
 	return { ok: true, value: Items.Deserialise(await resReader(res)) }
 }
 
 export async function balance(f: Fetch, o: Owner): ReturnValue<bigint> {
-	const res = await request(f, "balance", SerialiseItem(o))
+	let res: Response
+	try {
+		res = await request(f, "balance", SerialiseItem(o))
+	} catch {
+		return { ok: false }
+	}
 	if (res.status !== 200) return { ok: false }
 
 	const text = await res.text()
@@ -146,7 +186,12 @@ export async function balance(f: Fetch, o: Owner): ReturnValue<bigint> {
 }
 
 export async function stipend(f: Fetch, o: Owner): Promise<boolean> {
-	const res = await request(f, "stipend", SerialiseItem(o))
+	let res: Response
+	try {
+		res = await request(f, "stipend", SerialiseItem(o))
+	} catch {
+		return false
+	}
 
 	return res.status === 204 || res.status === 429
 }
@@ -158,7 +203,12 @@ export async function createLimitedSource(
 	f: Fetch,
 	u: User
 ): ReturnValue<LimitedSource> {
-	const res = await request(f, "createLimitedSource", SerialiseItem(u))
+	let res: Response
+	try {
+		res = await request(f, "createLimitedSource", SerialiseItem(u))
+	} catch {
+		return { ok: false }
+	}
 	if (res.status !== 200) return { ok: false }
 
 	const i = await resToItem(res)
@@ -172,7 +222,12 @@ export async function createUnlimitedSource(
 	f: Fetch,
 	u: User
 ): ReturnValue<UnlimitedSource> {
-	const res = await request(f, "createUnlimitedSource", SerialiseItem(u))
+	let res: Response
+	try {
+		res = await request(f, "createUnlimitedSource", SerialiseItem(u))
+	} catch {
+		return { ok: false }
+	}
 	if (res.status !== 200) return { ok: false }
 
 	const i = await resToItem(res)
@@ -183,7 +238,12 @@ export async function createUnlimitedSource(
 }
 
 export async function createPlace(f: Fetch, u: User): ReturnValue<Place> {
-	const res = await request(f, "createPlace", SerialiseItem(u))
+	let res: Response
+	try {
+		res = await request(f, "createPlace", SerialiseItem(u))
+	} catch {
+		return { ok: false }
+	}
 	if (res.status !== 200) return { ok: false }
 
 	const i = await resToItem(res)
@@ -194,7 +254,12 @@ export async function createPlace(f: Fetch, u: User): ReturnValue<Place> {
 }
 
 export async function createGroup(f: Fetch, u: User): ReturnValue<Group> {
-	const res = await request(f, "createGroup", SerialiseItem(u))
+	let res: Response
+	try {
+		res = await request(f, "createGroup", SerialiseItem(u))
+	} catch {
+		return { ok: false }
+	}
 	if (res.status !== 200) return { ok: false }
 
 	const i = await resToItem(res)
@@ -238,11 +303,13 @@ export const buyLimitedAsset = (
 		])
 	).then(res => res.status === 204)
 
-async function getHistory(
-	f: Fetch,
-	body: Buf
-): ReturnValue<TransferWithID[]> {
-	const res = await request(f, "history", body)
+async function getHistory(f: Fetch, body: Buf): ReturnValue<TransferWithID[]> {
+	let res: Response
+	try {
+		res = await request(f, "history", body)
+	} catch {
+		return { ok: false }
+	}
 	if (res.status !== 200) return { ok: false }
 
 	const buf = Buf.from(await res.arrayBuffer())

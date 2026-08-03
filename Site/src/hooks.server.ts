@@ -120,7 +120,11 @@ export async function handle(e) {
 	)
 		redirect(302, "/moderation")
 
-	await stipend(e.event.fetch, new Econ.User(user.id))
+	try {
+		await stipend(e.event.fetch, new Econ.User(user.id))
+	} catch {
+		console.error("Stipend failed to process")
+	}
 
 	return await finish(e)
 }
