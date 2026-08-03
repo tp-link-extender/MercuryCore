@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"reflect"
 	"strconv"
 	"time"
 
@@ -26,23 +27,28 @@ type EconomyServer struct {
 	*Economy
 }
 
-func getItem[T Item](w http.ResponseWriter, r *http.Request) (T, bool) {
+
+// itemTypeName is %T for type parameters: %T on a zero value prints <nil> when T is instantiated with an interface (nil interface = no dynamic type).
+func itemTypeName[T any]() string {
+	return reflect.TypeOf((*T)(nil)).Elem().String()
+}
+
+func getItem[T Item](w http.ResponseWriter, r *http.Request) (t T, ok bool) {
 	oi, err := DeserialiseItem(r.Body)
 	if err != nil {
-		var t T
-		http.Error(w, fmt.Sprintf("decode %T: %v", t, err), http.StatusBadRequest)
-		return t, false
+		http.Error(w, fmt.Sprintf("decode %s: %v", itemTypeName[T](), err), http.StatusBadRequest)
+		return
 	}
 
 	o, ok := oi.(T)
 	if !ok {
-		var t T
-		http.Error(w, fmt.Sprintf("item is not %T: %T", t, oi), http.StatusBadRequest)
-		return t, false
+		http.Error(w, fmt.Sprintf("item is not %s: %T", itemTypeName[T](), oi), http.StatusBadRequest)
+		return
 	}
 
 	return o, true
 }
+
 
 func (e *EconomyServer) ownsOneRoute(w http.ResponseWriter, r *http.Request) {
 	o, ok := getItem[Owner](w, r)
