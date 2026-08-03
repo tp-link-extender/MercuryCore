@@ -92,7 +92,7 @@ var ErrStipendNotReady = errors.New("stipend not available yet")
 
 func (e *Economy) Stipend(user User) (tid TransferID, err error) {
 	lastStipend, ok := e.ledger.GetUserLastStipend(user)
-	if ok || time.Since(time.Unix(0, int64(lastStipend.timestamp))) < e.StipendTime {
+	if ok && time.Since(time.Unix(0, int64(lastStipend.timestamp))) < e.StipendTime {
 		return tid, ErrStipendNotReady
 	}
 
