@@ -628,6 +628,15 @@ func TestAbstractions1(t *testing.T) {
 		t.Fatalf("expected user to own place %v", place)
 	}
 
+	placeOwners := e.OwnersOne(place)
+	if len(placeOwners) != 1 {
+		t.Fatalf("expected 1 owner of place %v, got %d", place, len(placeOwners))
+	}
+
+	if _, ok := placeOwners[user]; !ok {
+		t.Fatalf("expected user to be owner of place %v", place)
+	}
+
 	group, _, err := e.CreateGroup(user)
 	if err != nil {
 		t.Fatalf("CreateGroup: %v", err)
@@ -639,6 +648,15 @@ func TestAbstractions1(t *testing.T) {
 
 	if !e.OwnsOne(user, group) {
 		t.Fatalf("expected user to own group %v", group)
+	}
+
+	groupOwners := e.OwnersOne(group)
+	if len(groupOwners) != 1 {
+		t.Fatalf("expected 1 owner of group %v, got %d", group, len(groupOwners))
+	}
+
+	if _, ok := groupOwners[user]; !ok {
+		t.Fatalf("expected user to be owner of group %v", group)
 	}
 }
 
@@ -677,6 +695,15 @@ func TestAbstractions2(t *testing.T) {
 		t.Fatalf("expected user 0 to own source %v", source)
 	}
 
+	sourceOwners := e.OwnersOne(source)
+	if len(sourceOwners) != 1 {
+		t.Fatalf("expected 1 owner of source %v, got %d", source, len(sourceOwners))
+	}
+
+	if _, ok := sourceOwners[users[0]]; !ok {
+		t.Fatalf("expected user 0 to be owner of source %v", source)
+	}
+
 	if e.Balance(users[0]) != 90 {
 		t.Fatalf("expected user 0 balance 90, got %d", e.Balance(users[0]))
 	}
@@ -688,6 +715,15 @@ func TestAbstractions2(t *testing.T) {
 
 	if !e.OwnsOne(users[1], asset) {
 		t.Fatalf("expected user 1 to own asset %v", asset)
+	}
+
+	assetOwners := e.OwnersOne(asset)
+	if len(assetOwners) != 1 {
+		t.Fatalf("expected 1 owner of asset %v, got %d", asset, len(assetOwners))
+	}
+
+	if _, ok := assetOwners[users[1]]; !ok {
+		t.Fatalf("expected user 1 to be owner of asset %v", asset)
 	}
 
 	if e.Balance(users[1]) != 85 {
