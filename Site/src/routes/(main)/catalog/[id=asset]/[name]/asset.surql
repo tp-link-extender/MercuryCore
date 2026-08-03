@@ -1,8 +1,6 @@
 SELECT
 	*,
 	record::id(id) AS id,
-	(SELECT status, username FROM $parent<-created<-user)[0] AS creator,
-	(SELECT VALUE id FROM $parent<-created<-user)[0] = $user AS isCreator,
 
 	fn::currentContent($this.description) AS description,
 

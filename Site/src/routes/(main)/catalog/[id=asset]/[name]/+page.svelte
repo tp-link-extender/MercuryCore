@@ -98,9 +98,9 @@
 			<div class="flex">
 				<strong class="pr-2">by:</strong>
 
-				{#if data.asset.creator}
+				{#if data.creator}
 					<User
-						user={data.asset.creator}
+						user={data.creator}
 						size="1.5rem"
 						full
 						thin

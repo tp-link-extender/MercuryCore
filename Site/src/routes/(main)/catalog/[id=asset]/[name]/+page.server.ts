@@ -4,6 +4,7 @@ import {
 	balance,
 	buyUnlimitedAsset,
 	countOwnersOne,
+	ownersOne,
 	ownsOne,
 } from "economy/api"
 import * as Econ from "economy/types"
@@ -32,10 +33,8 @@ type Asset = {
 	id: string
 	comments: Comment[]
 	created: Date
-	creator: BasicUser
 	description: string
 	forSale: boolean
-	isCreator: boolean
 	name: string
 	owned: boolean
 	price: number
@@ -60,7 +59,7 @@ export async function load({ fetch: f, locals, params }) {
 		asset: Record("asset", id),
 		user: Record("user", user.id),
 	})
-	if (!asset?.creator) error(404, "Not Found")
+	if (!asset) error(404, "Not Found")
 
 	const slug = encode(asset.name)
 	if (!couldMatch(asset.name, params.name))
@@ -82,9 +81,20 @@ export async function load({ fetch: f, locals, params }) {
 
 	const owners = await countOwnersOne(f, i)
 	if (!owners.ok) {
-		console.error("countOwnersOne failed")
+		console.error("countOwnersOne for owners failed")
 		error(500, economyConnFailed)
 	}
+
+	const src = new Econ.UnlimitedSource(id)
+	const creators = await ownersOne(f, src)
+	if (!creators.ok) {
+		console.error("countOwnersOne for creators failed")
+		error(500, economyConnFailed)
+	}
+
+	// there should only ever be 1 creator
+	const creator = creators.value.set
+	console.log(creator)
 
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
@@ -97,6 +107,7 @@ export async function load({ fetch: f, locals, params }) {
 		},
 		sold: owners.value,
 		owned: owned.value,
+		creator,
 		balance: b.value,
 	}
 }

@@ -141,13 +141,23 @@ actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 		return formError(form, ["asset"], ["Asset failed to upload"])
 	}
 
-	const imageAssetId = randomAssetId()
-	const id = randomAssetId()
-
 	const u = new Econ.User(user.id)
-	const created = await createUnlimitedSource(f, u)
-	if (!created.ok)
+
+	// TODO: make creating image assets (only image assets) free
+	const createdImageAsset = await createUnlimitedSource(f, u)
+	if (!createdImageAsset.ok)
+		return formError(
+			form,
+			["other"],
+			["Failed to create image asset source"]
+		)
+
+	const createdAsset = await createUnlimitedSource(f, u)
+	if (!createdAsset.ok)
 		return formError(form, ["other"], ["Failed to create asset source"])
+
+	const imageAssetId = createdImageAsset.value.ID
+	const id = createdAsset.value.ID
 
 	await db.query(createAssetQuery, {
 		imageAssetId,
