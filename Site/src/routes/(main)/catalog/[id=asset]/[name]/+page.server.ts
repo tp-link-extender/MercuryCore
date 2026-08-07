@@ -1,14 +1,17 @@
 import { error, fail, redirect } from "@sveltejs/kit"
 import { type } from "arktype"
+import {
+	balance,
+	buyUnlimitedAsset,
+	countOwnersOne,
+	ownersOne,
+	ownsOne,
+} from "economy/api"
+import * as Econ from "economy/types"
 import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
 import createCommentQuery from "$lib/server/createComment.surql"
-import {
-	economyConnFailed,
-	fee,
-	getBalance,
-	transact,
-} from "$lib/server/economy"
+import { economyConnFailed } from "$lib/server/economy"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
@@ -30,10 +33,8 @@ type Asset = {
 	id: string
 	comments: Comment[]
 	created: Date
-	creator: BasicUser
 	description: string
 	forSale: boolean
-	isCreator: boolean
 	name: string
 	owned: boolean
 	price: number
@@ -58,29 +59,62 @@ export async function load({ fetch: f, locals, params }) {
 		asset: Record("asset", id),
 		user: Record("user", user.id),
 	})
-	if (!asset || !asset.creator) error(404, "Not Found")
+	if (!asset) error(404, "Not Found")
 
 	const slug = encode(asset.name)
 	if (!couldMatch(asset.name, params.name))
 		redirect(302, `/catalog/${id}/${slug}`)
 
-	const balance = await getBalance(f, user.id)
-	if (!balance.ok) error(500, economyConnFailed)
+	const u = new Econ.User(user.id)
+	const b = await balance(f, u)
+	if (!b.ok) {
+		console.error("balance failed")
+		error(500, economyConnFailed)
+	}
+
+	const i = new Econ.UnlimitedAsset(id)
+	const owned = await ownsOne(f, u, i)
+	if (!owned.ok) {
+		console.error("ownsOne failed")
+		error(500, economyConnFailed)
+	}
+
+	const owners = await countOwnersOne(f, i)
+	if (!owners.ok) {
+		console.error("countOwnersOne for owners failed")
+		error(500, economyConnFailed)
+	}
+
+	const src = new Econ.UnlimitedSource(id)
+	const creators = await ownersOne(f, src)
+	if (!creators.ok) {
+		console.error("countOwnersOne for creators failed")
+		error(500, economyConnFailed)
+	}
+
+	// there should only ever be 1 creator
+	const creator = creators.value.set
+	console.log(creator)
 
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
 		failText: failTexts[Math.floor(Math.random() * failTexts.length)],
 		form: await superValidate(arktype(schema)),
 		slug,
-		asset,
-		balance: balance.value,
-		currentFee: fee,
+		asset: {
+			...asset,
+			price: BigInt(asset.price),
+		},
+		sold: owners.value,
+		owned: owned.value,
+		creator,
+		balance: b.value,
 	}
 }
 
-async function getBuyData(e: RequestEvent) {
-	const { user } = await authorise(e.locals)
-	const id = +e.params.id
+async function getBuyData({ locals, params }: RequestEvent) {
+	const { user } = await authorise(locals)
+	const id = +params.id
 	const assetExists = await find("asset", id)
 	if (!assetExists) error(404)
 
@@ -161,13 +195,9 @@ actions.buy = async e => {
 	const { user, id } = await getBuyData(e)
 
 	type FoundAsset = {
-		creator: {
-			id: string
-			username: string
-		}
+		creatorId: string
 		forSale: boolean
 		name: string
-		owned: boolean
 		price: number
 		visibility: string
 	}
@@ -176,39 +206,23 @@ actions.buy = async e => {
 		asset: Record("asset", id),
 	})
 	if (!asset) error(404, "Not Found")
-	if (asset.owned) error(400, "You already own this item")
 	if (asset.visibility !== "Visible")
 		error(400, "This item hasn't been approved yet")
 	if (!asset.forSale) error(400, "This item is not for sale")
 
-	if (asset.price > 0) {
-		// todo work out how free assets are supposed to work
-		const tx = await transact(
-			e.fetch,
-			user.id,
-			asset.creator.id,
-			asset.price,
-			`Purchased asset ${asset.name}`,
-			`/catalog/${id}/${asset.name}`,
-			{}
-		)
-		if (!tx.ok) error(400, tx.msg)
-	}
+	const u = new Econ.User(user.id)
+	const i = new Econ.UnlimitedSource(id)
+	const ok = await buyUnlimitedAsset(e.fetch, u, i, BigInt(asset.price))
+	if (!ok) error(400, "Purchase failed")
 
-	await Promise.all([
-		db.query("RELATE $user->ownsAsset->$asset", {
-			asset: Record("asset", id),
-			user: Record("user", user.id),
-		}),
-		user.id === asset.creator.id ||
-			db.query(
-				'fn::notify($user, $creator, "ItemPurchase", $note, $relativeId)',
-				{
-					user: Record("user", user.id),
-					creator: Record("user", asset.creator.id),
-					note: `${user.username} just purchased your item ${asset.name}`,
-					relativeId: e.params.id,
-				}
-			),
-	])
+	if (user.id !== asset.creatorId)
+		await db.query(
+			'fn::notify($user, $creator, "ItemPurchase", $note, $relativeId)',
+			{
+				user: Record("user", user.id),
+				creator: Record("user", asset.creatorId),
+				note: `${user.username} just purchased your item ${asset.name}`,
+				relativeId: e.params.id,
+			}
+		)
 }

@@ -1,0 +1,7 @@
+{
+	"name": "client",
+	"type": "module",
+	"devDependencies": {
+		"@types/bun": "latest"
+	}
+}
