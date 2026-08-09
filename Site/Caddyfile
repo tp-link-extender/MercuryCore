@@ -23,3 +23,9 @@ mercs.dev, http://www.mercs.dev  {
 
 	reverse_proxy localhost:4443
 }
+
+clientsettings.api.mercs.dev {
+	rewrite / /api/clientsharedsettings/2016
+
+	reverse_proxy localhost:4443
+}
