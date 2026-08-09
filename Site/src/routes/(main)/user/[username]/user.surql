@@ -33,14 +33,14 @@ SELECT
 	$user IN ->request->user AS incomingRequest,
 	$user IN <-request<-user AS outgoingRequest,
 
-	(SELECT 
+	(SELECT
 		record::id(id) AS id,
 		name,
 		count(<-member) AS memberCount
 	FROM $parent->member->group) AS groups,
-	(SELECT 
-		record::id(id) AS id,
-		name,
-		count(<-member) AS memberCount
-	FROM $parent->ownsGroup->group) AS groupsOwned
+	-- (SELECT 
+	-- 	record::id(id) AS id,
+	-- 	name,
+	-- 	count(<-member) AS memberCount
+	-- FROM $parent->ownsGroup->group) AS groupsOwned
 FROM user WHERE username = $username;
