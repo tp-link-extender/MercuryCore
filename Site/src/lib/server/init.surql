@@ -121,16 +121,6 @@ DEFINE TABLE OVERWRITE notification SCHEMAFULL TYPE RELATION FROM user TO user E
 	DEFINE FIELD OVERWRITE relativeId ON notification TYPE string;
 	DEFINE FIELD OVERWRITE type ON notification TYPE string;
 
-DEFINE TABLE OVERWRITE ownsAsset SCHEMAFULL TYPE RELATION FROM user TO asset ENFORCED;
-	DEFINE FIELD OVERWRITE id ON ownsAsset TYPE string;
-	DEFINE FIELD OVERWRITE created ON ownsAsset TYPE datetime DEFAULT ALWAYS time::now();
-
-DEFINE TABLE OVERWRITE ownsGroup SCHEMAFULL TYPE RELATION FROM user TO group ENFORCED;
-	DEFINE FIELD OVERWRITE id ON ownsGroup TYPE string;
-
-DEFINE TABLE OVERWRITE ownsPlace SCHEMAFULL TYPE RELATION FROM user TO place ENFORCED;
-	DEFINE FIELD OVERWRITE id ON ownsPlace TYPE string;
-
 DEFINE TABLE OVERWRITE place SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE id ON place TYPE int;
 	DEFINE FIELD OVERWRITE created ON place TYPE datetime DEFAULT ALWAYS time::now();
@@ -332,11 +322,6 @@ WHEN $event = "CREATE" THEN
 	fn::auditLog("Administration", string::concat("Create registration key ", record::id($after.id)), $after.creator);
 
 # separation of concerns, maaaan
-
-DEFINE FUNCTION OVERWRITE fn::filterInventory($thing: object, $user: record<user>) {
-	RETURN $user IN $thing<-ownsAsset<-user
-		AND $thing.type IN [2, 8, 11, 12, 13, 18]
-};
 
 DEFINE FUNCTION OVERWRITE fn::filterGames($thing: object) {
 	RETURN !$thing.privateServer AND !$thing.deleted

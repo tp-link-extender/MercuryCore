@@ -53,7 +53,10 @@ export async function load({ locals, params }) {
 	})
 	if (!userExists) error(404, "Not Found")
 
-	return userExists
+	return {
+		...userExists,
+		groupsOwned: null,
+	}
 }
 
 async function getData({ params }: RequestEvent) {

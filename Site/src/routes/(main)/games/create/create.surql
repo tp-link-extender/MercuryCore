@@ -9,4 +9,3 @@ LET $place = CREATE ONLY place CONTENT {
 	serverAddress: $serverAddress,
 	serverPort: $serverPort,
 };
-RELATE $user->ownsPlace->$place;

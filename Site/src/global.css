@@ -400,9 +400,23 @@ thead th {
 	padding-right: 1rem;
 }
 
-ul {
+ul,
+ol,
+dl,
+dd,
+dt {
 	margin: 0;
 	padding: 0;
+}
+
+dd,
+dt {
+	display: inline;
+}
+
+dt::after {
+	content: ":";
+	padding-right: 0.5rem;
 }
 
 summary {
