@@ -8,6 +8,9 @@ module.exports = {
 			script: "bun",
 			intperpreter: "none",
 			args: "./build",
+			env: {
+				HOST: "0.0.0.0",
+			},
 		},
 	],
 }
