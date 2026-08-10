@@ -19,7 +19,7 @@
 		beginJoining(
 			() =>
 				// TODO: fix hosting and map opening with correct URI scheme
-				`${scheme}1+launchmode:ide+script:http://${domain}/game/host?ticket=${serverTicket}&autopilot=${btoa(
+				`${scheme}20131+launchmode:ide+script:http://${domain}/game/host?ticket=${serverTicket}&autopilot=${btoa(
 					filepath
 				)}`
 		)
@@ -45,7 +45,7 @@
 		aria-label="Map location" />
 	<button
 		class="btn btn-secondary"
-		onclick={beginJoining(() => `${scheme}1+launchmode:maps`)}
+		onclick={beginJoining(() => `${scheme}20131+launchmode:maps`)}
 		type="button">
 		<fa fa-arrow-up-right-from-square></fa>
 		Map Folder

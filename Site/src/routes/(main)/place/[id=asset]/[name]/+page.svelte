@@ -114,7 +114,7 @@
 		if (joinScriptData.status !== 200) return
 
 		// JoinScript is my favourite programming language (-i mean scripting language)
-		const joinUri = data.scheme + joinScriptData.data.ticket
+		const joinUri = `${data.scheme}2013${joinScriptData.data.ticket}`
 		beginJoining(() => joinUri, true)()
 	}
 
@@ -353,7 +353,7 @@
 							<button
 								class="btn btn-sm btn-tertiary"
 								onclick={beginJoining(
-									() => `${data.scheme}1+launchmode:ide`
+									() => `${data.scheme}20131+launchmode:ide`
 								)}>
 								<fa fa-arrow-up-right-from-square></fa>
 								Studio
