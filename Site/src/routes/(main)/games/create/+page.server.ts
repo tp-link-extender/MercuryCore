@@ -85,7 +85,7 @@ actions.default = async ({ locals, request }) => {
 		serverPort,
 		privateServer,
 		maxPlayers,
-		clientVersion,
+		clientVersion: +clientVersion,
 	})
 
 	redirect(302, `/place/${id}/${slug}`)
