@@ -138,5 +138,8 @@ export async function GET({ url }) {
 		UserName: user.username,
 	})
 
+	console.log("made config", joinconfig)
+	console.log("machine address:", serverHostname)
+
 	return new Response(await SignData(JSON.stringify(joinconfig)))
 }
