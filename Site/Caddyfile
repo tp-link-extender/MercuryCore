@@ -21,6 +21,8 @@ mercs.dev, http://www.mercs.dev  {
 	rewrite /Setting/QuietGet/ClientSharedSettings/* /api/clientsharedsettings
 	rewrite /Setting/QuietGet/ClientAppSettings/* /api/clientappsettings
 
+	rewrite /Error/Dmp.ashx /dmp
+
 	reverse_proxy localhost:4443
 }
 
