@@ -4,7 +4,7 @@ import config from "$lib/server/config"
 import idToPort, { proxyOffset } from "$lib/server/idToPort"
 import { SignData } from "$lib/server/sign"
 import { db, findWhere, Record } from "$lib/server/surreal"
-import joinQuery from "./join.surql"
+import joinQuery from "../join.surql"
 
 type Config = {
 	CharacterAppearance: string
