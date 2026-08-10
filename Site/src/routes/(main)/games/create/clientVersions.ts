@@ -1,1 +1,1 @@
-export default Object.freeze([2013, 2016] as const)
+export default Object.freeze(["2013", "2016"] as const)
