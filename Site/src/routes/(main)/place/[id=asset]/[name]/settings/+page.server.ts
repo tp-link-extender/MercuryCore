@@ -30,9 +30,10 @@ const networkSchema = type({
 	serverAddress: serverAddressTest.optional(),
 	serverPort: serverPortTest.optional(),
 	maxPlayers: maxPlayersTest,
-	clientVersion: type.enumerated(...clientVersions).configure({
-		problem: "must be a valid client version",
-	}),
+	clientVersion: type
+		.enumerated(...clientVersions)
+		.pipe.try(v => +v)
+		.configure({ problem: "must be a valid client version" }),
 })
 const ticketSchema = type({} as never) // I'm a genius
 const privacySchema = type({
