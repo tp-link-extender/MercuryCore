@@ -14,6 +14,7 @@ import {
 } from "$lib/typeTests"
 import { encode } from "$lib/urlName"
 import type { RequestEvent } from "./$types.d"
+import clientVersions from "../../../../games/create/clientVersions"
 import privateTicketQuery from "./privateTicket.surql"
 import serverTicketQuery from "./serverTicket.surql"
 import settingsQuery from "./settings.surql"
@@ -29,6 +30,10 @@ const networkSchema = type({
 	serverAddress: serverAddressTest.optional(),
 	serverPort: serverPortTest.optional(),
 	maxPlayers: maxPlayersTest,
+	clientVersion: type
+		.enumerated(...clientVersions)
+		.pipe.try(v => +v)
+		.configure({ problem: "must be a valid client version" }),
 })
 const ticketSchema = type({} as never) // I'm a genius
 const privacySchema = type({
@@ -49,6 +54,7 @@ type Place = {
 	owner: BasicUser
 	privateServer: boolean
 	privateTicket: string
+	clientVersion: number
 	serverAddress: string
 	serverPing: number
 	serverPort: number
@@ -73,6 +79,7 @@ export async function load({ locals, params }) {
 
 	return {
 		...getPlace,
+		clientVersions,
 		slug: encode(getPlace.name),
 		viewForm: await superValidate(
 			{ name: getPlace.name },

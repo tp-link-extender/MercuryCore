@@ -44,7 +44,8 @@
 				["Accounts", "accounts", "fa-user"],
 				["Audit logs", "audit", "fa-book"],
 				["Registration keys", "regkeys", "fa-key"],
-				["Gameservers", "gameservers", "fa-server"]
+				["Gameservers", "gameservers", "fa-server"],
+				["FFlags", "fflags", "fa-flag"],
 			]
 			tabNames.unshift("Administration")
 		})
