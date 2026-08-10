@@ -6,6 +6,7 @@ SELECT
 	serverTicket,
 	privateServer,
 	privateTicket,
+	clientVersion,
 	created,
 	updated,
 	maxPlayers,

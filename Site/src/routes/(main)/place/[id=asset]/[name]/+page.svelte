@@ -179,6 +179,10 @@
 						: 'bg-red-500'} p-2 py-1">
 					{online ? "Online" : "Offline"}
 				</small>
+				<small
+					class="text-white rounded-2 bg-purple-600 p-2 py-1">
+					{place.clientVersion}
+				</small>
 				<span class="float-end">
 					<span class="dropdown">
 						<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
@@ -302,7 +306,7 @@
 					class="btn btn-sm btn-primary">
 					Join server
 				</button>
-				{#if isOwner && tabs.includes("Selfhosted")}
+				{#if isOwner && tabs.includes("Selfhosted") || user.permissionLevel === 5}
 					<form
 						use:enhance
 						method="post"

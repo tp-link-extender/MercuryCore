@@ -2,8 +2,10 @@
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
 	import Textarea from "$components/forms/Textarea.svelte"
+	import Select from "$components/forms/Select.svelte"
 	import Head from "$components/Head.svelte"
 	import { superForm } from "$lib/validate"
+	import clientVersions from "./clientVersions"
 
 	// import beautifyCurrency from "$lib/beautifyCurrency"
 
@@ -51,6 +53,12 @@
 		name="maxPlayers"
 		label="Player limit"
 		placeholder="1-99 players" />
+	<Select
+		{formData}
+		options={clientVersions}
+		name="clientVersion"
+		selected={data.clientVersion}
+		label="Client version " />
 	<Input
 		{formData}
 		type="checkbox"

@@ -27,6 +27,7 @@ interface Place extends FoundPlace {
 	likes: boolean
 	maxPlayers: number
 	name: string
+	clientVersion: number
 	ownerUser: BasicUser
 	players: {
 		status: "Playing"
