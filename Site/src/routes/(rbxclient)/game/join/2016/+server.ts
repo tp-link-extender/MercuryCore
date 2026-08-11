@@ -53,7 +53,7 @@ const makeConfig = (c: Config) => ({
 })
 
 type ServerAddress = {
-	serverHostname: string
+	serverAddress: string
 	serverPort: number
 }
 
@@ -81,7 +81,7 @@ function serverInfo(place: Session["place"]): ServerAddress {
 
 	const url = new URL(config.Orbiter.PublicURL)
 	return {
-		serverHostname: url.hostname, // no scheme, the address doesn't usually have a path anyway
+		serverAddress: url.hostname, // no scheme, the address doesn't usually have a path anyway
 		serverPort: idToPort(place.id) + proxyOffset, // select the proxy port rather than the port of the server itself
 	}
 }
@@ -120,7 +120,7 @@ export async function GET({ url }) {
 	if (!gameSession) error(400, "Invalid Game Session")
 
 	const { place, user } = gameSession
-	const { serverHostname, serverPort } = serverInfo(place)
+	const { serverAddress, serverPort } = serverInfo(place)
 
 	// const creatorUsername = place.ownerUser?.username;
 	const charApp = `http://${config.DomainInsecure}/asset/characterfetch/${user.username}`
@@ -128,7 +128,7 @@ export async function GET({ url }) {
 
 	const joinconfig = makeConfig({
 		CharacterAppearance: charApp,
-		MachineAddress: serverHostname,
+		MachineAddress: serverAddress,
 		MembershipType: membershipType(user.permissionLevel),
 		PingUrl: pingUrl,
 		PlaceId: place.id,
