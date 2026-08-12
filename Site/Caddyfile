@@ -25,18 +25,24 @@ mercs.dev, http://www.mercs.dev  {
 
 	rewrite /Error/Dmp.ashx /dmp
 
-	rewrite universes/validate-place-join /api/validateplacejoin
+	rewrite /universes/validate-place-join /api/validateplacejoin
 
 	reverse_proxy localhost:4443
 }
+
+# todo: see if we can remove the trailing slashes someday
 
 clientsettings.api.mercs.dev {
 	rewrite /Setting/QuietGet/ClientSharedSettings/* /api/clientsharedsettings/2016
 	rewrite /Setting/QuietGet/ClientSharedSettings /api/clientsharedsettings/2016
 	rewrite /Setting/QuietGet/ClientAppSettings/* /api/clientappsettings/2016
 	rewrite /Setting/QuietGet/ClientAppSettings /api/clientappsettings/2016
+
+	# temporary api subdomain duplicates
 	rewrite /GetAllowedSecurityVersions/* /api/getallowedsecurityversions
 	rewrite /GetAllowedSecurityVersions /api/getallowedsecurityversions
+	rewrite /GetAllowedMD5Hashes/* /api/getallowedmd5hashes
+	rewrite /GetAllowedMD5Hashes /api/getallowedmd5hashes
 
 	reverse_proxy localhost:4443
 }
@@ -44,4 +50,6 @@ clientsettings.api.mercs.dev {
 api.mercs.dev {
 	rewrite /GetAllowedSecurityVersions/* /api/getallowedsecurityversions
 	rewrite /GetAllowedSecurityVersions /api/getallowedsecurityversions
+	rewrite /GetAllowedMD5Hashes/* /api/getallowedmd5hashes
+	rewrite /GetAllowedMD5Hashes /api/getallowedmd5hashes
 }
