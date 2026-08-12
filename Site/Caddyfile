@@ -29,6 +29,7 @@ mercs.dev, http://www.mercs.dev  {
 clientsettings.api.mercs.dev {
 	rewrite /Setting/QuietGet/ClientSharedSettings/* /api/clientsharedsettings/2016
 	rewrite /Setting/QuietGet/ClientAppSettings/* /api/clientappsettings/2016
+	rewrite /GetAllowedSecurityVersions/* /api/getallowedsecurityversions
 
 	reverse_proxy localhost:4443
 }
