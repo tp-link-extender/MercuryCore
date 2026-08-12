@@ -1,5 +1,5 @@
 import config from "$lib/server/config"
-import { SignData } from "$lib/server/sign"
+import { SignScript } from "$lib/server/sign"
 
 const port = 53640
 
@@ -11,5 +11,5 @@ export async function GET() {
 		.replaceAll("_SERVER_PORT", port.toString())
 		.replaceAll("_SERVER_PRESENCE_URL", `""`)
 
-	return new Response(await SignData(script))
+	return new Response(await SignScript(script))
 }

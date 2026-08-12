@@ -2,7 +2,7 @@ import { error } from "@sveltejs/kit"
 import { membershipType } from "$lib/permissionLevels"
 import config from "$lib/server/config"
 import idToPort, { proxyOffset } from "$lib/server/idToPort"
-import { SignData } from "$lib/server/sign"
+import { SignScript } from "$lib/server/sign"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import joinQuery from "./join.surql"
 
@@ -56,7 +56,7 @@ export async function GET({ url }) {
 			.replaceAll("_CHAR_APPEARANCE", `""`)
 			.replaceAll("_PING_URL", `""`)
 
-		return new Response(await SignData(script))
+		return new Response(await SignScript(script))
 	}
 
 	const foundPrivatePlace = await findWhere(
@@ -90,5 +90,5 @@ export async function GET({ url }) {
 		.replaceAll("_CHAR_APPEARANCE", `"${charApp}"`)
 		.replaceAll("_PING_URL", `"${pingUrl}"`)
 
-	return new Response(await SignData(script))
+	return new Response(await SignScript(script))
 }
