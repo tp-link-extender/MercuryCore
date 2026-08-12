@@ -28,7 +28,7 @@ export async function GET({ params, url }) {
 
 	const scriptFile = Bun.file("../data/server/loadscripts/host2016.lua")
 	const script = (await scriptFile.text())
-		.replaceAll("_PLACE_ID", params.id)
+		// .replaceAll("_PLACE_ID", "0")
 		.replaceAll("_BASE_URL", `"${config.Domain}"`)
 		// .replaceAll("_MAP_LOCATION", `"${mapLocation || ""}"`)
 		.replaceAll("_MAP_LOCATION", `"rbxasset://mbdtf.rbxl"`) // TODO: remove again
