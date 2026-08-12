@@ -19,7 +19,9 @@ mercs.dev, http://www.mercs.dev  {
 	rewrite /UploadMedia/PostImage.aspx /studio/uploadmedia/screenshot
 
 	rewrite /Setting/QuietGet/ClientSharedSettings/* /api/clientsharedsettings
+	rewrite /Setting/QuietGet/ClientSharedSettings /api/clientsharedsettings
 	rewrite /Setting/QuietGet/ClientAppSettings/* /api/clientappsettings
+	rewrite /Setting/QuietGet/ClientAppSettings /api/clientappsettings
 
 	rewrite /Error/Dmp.ashx /dmp
 
@@ -28,12 +30,16 @@ mercs.dev, http://www.mercs.dev  {
 
 clientsettings.api.mercs.dev {
 	rewrite /Setting/QuietGet/ClientSharedSettings/* /api/clientsharedsettings/2016
+	rewrite /Setting/QuietGet/ClientSharedSettings /api/clientsharedsettings/2016
 	rewrite /Setting/QuietGet/ClientAppSettings/* /api/clientappsettings/2016
+	rewrite /Setting/QuietGet/ClientAppSettings /api/clientappsettings/2016
 	rewrite /GetAllowedSecurityVersions/* /api/getallowedsecurityversions
+	rewrite /GetAllowedSecurityVersions /api/getallowedsecurityversions
 
 	reverse_proxy localhost:4443
 }
 
 api.mercs.dev {
 	rewrite /GetAllowedSecurityVersions/* /api/getallowedsecurityversions
+	rewrite /GetAllowedSecurityVersions /api/getallowedsecurityversions
 }
