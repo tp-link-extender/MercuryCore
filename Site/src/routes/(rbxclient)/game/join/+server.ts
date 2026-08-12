@@ -52,7 +52,7 @@ export async function GET({ url }) {
 			.replaceAll("_SERVER_PORT", "53640")
 			.replaceAll("_USER_ID", "0")
 			.replaceAll("_USERNAME", `"Player1"`)
-			.replaceAll("_MEMBERSHIP_TYPE", membershipType(0))
+			.replaceAll("_MEMBERSHIP_TYPE", `"None"`)
 			.replaceAll("_CHAR_APPEARANCE", `""`)
 			.replaceAll("_PING_URL", `""`)
 
@@ -86,7 +86,7 @@ export async function GET({ url }) {
 		// .replaceAll("_CREATOR_ID", creatorUsername)
 		.replaceAll("_USER_ID", Math.floor(Math.random() * 1e9).toString()) // todo: tho not rly used 4 much atm
 		.replaceAll("_USERNAME", `"${user.username}"`)
-		.replaceAll("_MEMBERSHIP_TYPE", membershipType(user.permissionLevel))
+		.replaceAll("_MEMBERSHIP_TYPE", `"None"`)
 		.replaceAll("_CHAR_APPEARANCE", `"${charApp}"`)
 		.replaceAll("_PING_URL", `"${pingUrl}"`)
 
