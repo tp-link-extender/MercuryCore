@@ -123,8 +123,8 @@ export async function GET({ url }) {
 	const { serverAddress, serverPort } = serverInfo(place)
 
 	// const creatorUsername = place.ownerUser?.username;
-	const charApp = `http://${config.DomainInsecure}/asset/characterfetch/${user.username}`
-	const pingUrl = `http://${config.DomainInsecure}/game/clientpresence?ticket=${clientTicket}`
+	const charApp = `https://${config.Domain}/asset/characterfetch/${user.username}`
+	const pingUrl = `https://${config.Domain}/game/clientpresence?ticket=${clientTicket}`
 
 	const joinconfig = makeConfig({
 		CharacterAppearance: charApp,
@@ -139,7 +139,7 @@ export async function GET({ url }) {
 	})
 
 	console.log("made config", joinconfig)
-	console.log("machine address:", serverHostname)
+	console.log("machine address:", serverAddress)
 
 	return new Response(await SignData(JSON.stringify(joinconfig)))
 }
