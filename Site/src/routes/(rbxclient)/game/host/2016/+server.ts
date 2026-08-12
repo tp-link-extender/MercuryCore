@@ -2,7 +2,7 @@ import { error } from "@sveltejs/kit"
 import config from "$lib/server/config"
 import { SignScript } from "$lib/server/sign"
 import { db } from "$lib/server/surreal"
-import placeQuery from "./place.surql"
+import placeQuery from "../place.surql"
 
 export async function GET({ params, url }) {
 	if (config.Gameservers.Hosting === "Dedicated")
