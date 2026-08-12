@@ -94,7 +94,7 @@ export async function GET({ url }) {
 		const joinconfig = makeConfig({
 			CharacterAppearance: "",
 			MachineAddress: "localhost",
-			MembershipType: membershipType(0),
+			MembershipType: "None",
 			PingUrl: "",
 			PlaceId: 0,
 			ServerPort: 53640,
@@ -129,7 +129,7 @@ export async function GET({ url }) {
 	const joinconfig = makeConfig({
 		CharacterAppearance: charApp,
 		MachineAddress: serverAddress,
-		MembershipType: membershipType(user.permissionLevel),
+		MembershipType: "None",
 		PingUrl: pingUrl,
 		PlaceId: place.id,
 		ServerPort: serverPort,
