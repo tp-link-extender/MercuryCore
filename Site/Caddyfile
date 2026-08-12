@@ -25,6 +25,8 @@ mercs.dev, http://www.mercs.dev  {
 
 	rewrite /Error/Dmp.ashx /dmp
 
+	rewrite universes/validate-place-join /api/validateplacejoin
+
 	reverse_proxy localhost:4443
 }
 
