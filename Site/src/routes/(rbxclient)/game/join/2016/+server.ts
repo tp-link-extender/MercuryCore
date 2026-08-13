@@ -23,7 +23,7 @@ const makeConfig = (c: Config) => ({
 	ClientPort: 0,
 	PingInterval: 120,
 	SeleniumTestMode: false,
-	SuperSafeChat: true,
+	SuperSafeChat: false,
 	ClientTicket:
 		"5/20/2016 1:42:15 PM;NrIIE25IsF2FrEN4ndNMVfz5zeYW5jp1uql+gmz5lShAWUKHE+n3CGaK6V9goXbzw2R/SOy/hQ9OT/y72b7Yoty8z4RVXlDEewn0rOado2wGs2kqzQqjtwMWiwBJi0HZ2HAS8xlX2Tpp1GhEdONem7SVFcqzHsUufPqKySxBBTI=;WUraepy1LfhrnjYgRbn9rQKckP+1AXpMEHAIuFvee6Al8HB+ss7w57REuUhqkIKRgNlKfobF6drSyeHPg/XZfH34/BqkPgQ9vykootvdJKHlPeran+qvGQ2icUqG3EE+/ZUZ3hAHZ5Kc3vsMpx6axbXSJV+mDElM8ej3X9mP/Fo=",
 	GameId: "00000000-0000-0000-0000-000000000000",
@@ -43,7 +43,7 @@ const makeConfig = (c: Config) => ({
 	CookieStoreEnabled: true,
 	IsRobloxPlace: false,
 	GenerateTeleportJoin: false,
-	IsUnknownOrUnder13: true,
+	IsUnknownOrUnder13: false,
 	SessionId:
 		"084fe2bc-2a6e-423c-bc2a-0ed876f7c274|00000000-0000-0000-0000-000000000000|0|204.236.226.210|8|2016-05-20T18:42:15.3704607Z|0|null|null",
 	DataCenterId: 0,
