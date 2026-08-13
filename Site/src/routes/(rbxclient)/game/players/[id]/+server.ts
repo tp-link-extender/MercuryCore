@@ -8,7 +8,7 @@ export async function GET({ params }) {
 
   const id = +params.id;
 
-  json({
-    "ChatFilter":"whitelist"
+  return json({
+    ChatFilter: "whitelist"
   });
 }
