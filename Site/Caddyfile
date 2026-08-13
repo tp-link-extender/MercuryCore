@@ -43,6 +43,8 @@ clientsettings.api.mercs.dev {
 	rewrite /GetAllowedSecurityVersions /api/getallowedsecurityversions
 	rewrite /GetAllowedMD5Hashes/* /api/getallowedmd5hashes
 	rewrite /GetAllowedMD5Hashes /api/getallowedmd5hashes
+	rewrite /game/players/* /api/game/players
+	rewrite /game/players/ /api/game/players
 
 	reverse_proxy localhost:4443
 }
