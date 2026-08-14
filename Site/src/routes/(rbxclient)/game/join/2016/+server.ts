@@ -30,7 +30,7 @@ const makeConfig = (c: Config) => ({
 	MeasurementUrl: "",
 	WaitingForCharacterGuid: "16be1dd8-5462-4ca5-a997-0725d997708b",
 	BaseUrl: config.Domain,
-	ChatStyle: "Classic",
+	ChatStyle: "ClassicAndBubble",
 	VendorId: 0,
 	ScreenShotInfo: "",
 	VideoInfo:
