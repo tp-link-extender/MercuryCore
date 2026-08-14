@@ -19,6 +19,8 @@ export async function GET({ params, url }) {
 	const port = place.serverPort
 	const serverId = place.id.toString()
 
+	console.log(`Hosting 2016 server ${serverId} on port ${port}`)
+
 	let mapLocation = url.searchParams.get("autopilot")
 	if (mapLocation) {
 		mapLocation = Buffer.from(mapLocation, "base64").toString()
