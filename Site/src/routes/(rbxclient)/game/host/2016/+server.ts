@@ -1,5 +1,6 @@
 import { error } from "@sveltejs/kit"
 import config from "$lib/server/config"
+import { toRawId } from "$lib/server/recordId"
 import { SignScript } from "$lib/server/sign"
 import { db } from "$lib/server/surreal"
 import placeQuery from "../place.surql"
@@ -17,7 +18,7 @@ export async function GET({ params, url }) {
 	if (!place) error(400, "Invalid Server ticket")
 
 	const port = place.serverPort
-	const serverId = place.id.toString()
+	const serverId = place.id
 
 	console.log(`Hosting 2016 server ${serverId} on port ${port}`)
 
@@ -30,7 +31,7 @@ export async function GET({ params, url }) {
 
 	const scriptFile = Bun.file("../data/server/loadscripts/host2016.lua")
 	const script = (await scriptFile.text())
-		.replaceAll("_PLACE_ID", serverId)
+		.replaceAll("_PLACE_ID", serverId.toString())
 		.replaceAll("_BASE_URL", `"${config.Domain}"`)
 		// .replaceAll("_MAP_LOCATION", `"${mapLocation || ""}"`)
 		.replaceAll("_MAP_LOCATION", `"rbxasset://mbdtf.rbxl"`) // TODO: remove again

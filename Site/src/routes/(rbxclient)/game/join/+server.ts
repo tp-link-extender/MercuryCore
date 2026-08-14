@@ -2,6 +2,7 @@ import { error } from "@sveltejs/kit"
 import { membershipType } from "$lib/permissionLevels"
 import config from "$lib/server/config"
 import idToPort, { proxyOffset } from "$lib/server/idToPort"
+import { toRawId } from "$lib/server/recordId"
 import { SignScript } from "$lib/server/sign"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import joinQuery from "./join.surql"
@@ -80,7 +81,7 @@ export async function GET({ url }) {
 	const pingUrl = `http://${config.DomainInsecure}/game/clientpresence?ticket=${clientTicket}`
 	const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
 	const script = (await scriptFile.text())
-		.replaceAll("_PLACE_ID", place.id.toString())
+		.replaceAll("_PLACE_ID", toRawId(place.id))
 		.replaceAll("_SERVER_ADDRESS", `"${serverHostname}"`)
 		.replaceAll("_SERVER_PORT", serverPort.toString())
 		// .replaceAll("_CREATOR_ID", creatorUsername)
