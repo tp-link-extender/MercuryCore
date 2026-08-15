@@ -30,7 +30,7 @@ export async function GET({ params }) {
 		headers: {
 			Pragma: "no-cache",
 			"Cache-Control": "no-cache",
-			"Content-Type": "text/plain",
+			"Content-Type": "text/xml",
 		},
 	})
 }
