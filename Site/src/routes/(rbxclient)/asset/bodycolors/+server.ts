@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit"
 import { db } from "$lib/server/surreal"
-import bodyColoursQuery from "./bodyColours.surql"
+import bodyColoursQuery from "/bodyColours.surql"
 
 type User = {
 	bodyColours: {
@@ -13,8 +13,11 @@ type User = {
 	}
 }
 
-export async function GET({ params }) {
-	const [[user]] = await db.query<User[][]>(bodyColoursQuery, params)
+export async function GET({ url }) {
+	const username = url.searchParams.get("username")?.trim()
+	if (!username) error(400, "Missing required query param: username")
+
+	const [[user]] = await db.query<User[][]>(bodyColoursQuery, { username })
 	if (!user) error(404, "User not found")
 
 	const colours = user.bodyColours
