@@ -4,7 +4,7 @@ import { SignScript } from "$lib/server/sign"
 import { db } from "$lib/server/surreal"
 import placeQuery from "../place.surql"
 
-export async function GET({ params, url }) {
+export async function GET({ url }) {
 	if (config.Gameservers.Hosting === "Dedicated")
 		error(400, "Dedicated servers are not supported")
 
