@@ -13,8 +13,11 @@ type User = {
 	}
 }
 
-export async function GET({ params }) {
-	const [[user]] = await db.query<User[][]>(bodyColoursQuery, params)
+export async function GET({ url }) {
+	const username = url.searchParams.get("username")?.trim()
+	if (!username) error(400, "Missing required query param: username")
+
+	const [[user]] = await db.query<User[][]>(bodyColoursQuery, { username })
 	if (!user) error(404, "User not found")
 
 	const colours = user.bodyColours
@@ -30,7 +33,7 @@ export async function GET({ params }) {
 		headers: {
 			Pragma: "no-cache",
 			"Cache-Control": "no-cache",
-			"Content-Type": "text/plain",
+			"Content-Type": "text/xml",
 		},
 	})
 }

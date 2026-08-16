@@ -17,6 +17,7 @@ mercs.dev, http://www.mercs.dev  {
 	rewrite /Game/Tools/InsertAsset.ashx /game/tools/insertasset
 	rewrite /Game/Tools/ThumbnailAsset.ashx /game/tools/thumbnailasset
 	rewrite /UploadMedia/PostImage.aspx /studio/uploadmedia/screenshot
+	rewrite /asset/bodycolors.ashx /asset/bodycolors
 
 	rewrite /Setting/QuietGet/ClientSharedSettings/* /api/clientsharedsettings
 	rewrite /Setting/QuietGet/ClientSharedSettings /api/clientsharedsettings
@@ -43,6 +44,8 @@ clientsettings.api.mercs.dev {
 	rewrite /GetAllowedSecurityVersions /api/getallowedsecurityversions
 	rewrite /GetAllowedMD5Hashes/* /api/getallowedmd5hashes
 	rewrite /GetAllowedMD5Hashes /api/getallowedmd5hashes
+	rewrite /game/players/* /api/game/players
+	rewrite /game/players/ /api/game/players
 
 	reverse_proxy localhost:4443
 }

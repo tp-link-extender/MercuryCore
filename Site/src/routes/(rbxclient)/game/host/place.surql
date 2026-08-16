@@ -1,1 +1,1 @@
-SELECT serverPort FROM place WHERE serverTicket = $ticket;
+SELECT serverPort, id FROM place WHERE serverTicket = $ticket;
