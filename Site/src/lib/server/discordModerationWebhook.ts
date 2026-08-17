@@ -4,6 +4,7 @@ export type ModerationDiscordWebhookPayload = {
 	username: string
 	action: string
 	reason: string
+	moderatorUsername?: string
 	webhookUrl?: string
 }
 
@@ -11,6 +12,7 @@ export async function sendModerationDiscordWebhook({
 	username,
 	action,
 	reason,
+	moderatorUsername = "System",
 	webhookUrl = config.Logging.DiscordModerationWebhook,
 }: ModerationDiscordWebhookPayload) {
 	if (!webhookUrl || webhookUrl.includes("123456789012345678/abcdefghijklmnopqrstuvwxyz"))
@@ -23,7 +25,20 @@ export async function sendModerationDiscordWebhook({
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				content: `${username} - ${action} - ${reason}`,
+				embeds: [
+					{
+						color: 0xf59e0b,
+						title: "Moderation action",
+						description: `**${username}** was moderated by **${moderatorUsername}**.`,
+						fields: [
+							{ name: "User Moderated", value: username, inline: true },
+							{ name: "Action", value: action, inline: true },
+							{ name: "Reason", value: reason, inline: false },
+							{ name: "Moderator", value: moderatorUsername, inline: true },
+						],
+						timestamp: new Date().toISOString(),
+					},
+				],
 			}),
 		})
 

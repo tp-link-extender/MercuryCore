@@ -147,6 +147,7 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 		username,
 		action,
 		reason,
+		moderatorUsername: user.username,
 	})
 
 	return message(form, `${username} has been ${actioned}`)
