@@ -118,6 +118,10 @@ export type Config = {
 		 * Whether to log the time of each request.
 		 */
 		Time: boolean
+		/**
+		 * The Discord webhook URL to send moderation logs to a specific channel. This is used for logging moderation actions.
+		 */
+		DiscordModerationWebhook: string
 	}
 
 	/**

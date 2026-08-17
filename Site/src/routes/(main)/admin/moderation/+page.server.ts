@@ -1,6 +1,7 @@
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
 import { authorise } from "$lib/server/auth"
+import { sendModerationDiscordWebhook } from "$lib/server/discordModerationWebhook"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, findWhere, Record } from "$lib/server/surreal"
@@ -140,6 +141,12 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 		moderationAction: action,
 		timeEnds: banDate || new Date(),
 		note: `${note}: ${reason}`,
+	})
+
+	await sendModerationDiscordWebhook({
+		username,
+		action,
+		reason,
 	})
 
 	return message(form, `${username} has been ${actioned}`)

@@ -38,6 +38,7 @@ export default {
 		Requests: true,
 		FormattedErrors: false,
 		Time: true,
+		DiscordModerationWebhook: "https://discord.com/api/webhooks/123456789012345678/abcdefghijklmnopqrstuvwxyz",
 	},
 
 	Branding: {
