@@ -1,1 +1,2 @@
-SELECT username, status FROM user;
+SELECT username, status FROM user
+WHERE id NOT IN (SELECT out FROM moderation WHERE active = true);
