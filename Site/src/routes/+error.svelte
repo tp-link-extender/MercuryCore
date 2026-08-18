@@ -36,7 +36,7 @@
 			<a
 				href="https://http.cat/images/{status}.jpg"
 				target="_blank"
-				rel="noopener noreferrer"
+				rel="noreferrer"
 				class="light-text no-underline">
 				Error {status}
 			</a>
