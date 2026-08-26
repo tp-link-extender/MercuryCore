@@ -222,7 +222,7 @@ DEFINE TABLE OVERWRITE user SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE hashedPassword ON user TYPE string;
 	DEFINE FIELD OVERWRITE lastOnline ON user TYPE datetime DEFAULT ALWAYS time::now();
 	DEFINE FIELD OVERWRITE permissionLevel ON user TYPE int;
-	DEFINE FIELD OVERWRITE status ON user COMPUTED TYPE string
+	DEFINE FIELD OVERWRITE status ON user TYPE string COMPUTED
 		IF ->playing[WHERE valid AND ping > time::now() - 35s] {
 			"Playing"
 		} ELSE IF lastOnline > time::now() - 35s {
