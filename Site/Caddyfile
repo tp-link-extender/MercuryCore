@@ -18,6 +18,7 @@ mercs.dev, http://www.mercs.dev  {
 	rewrite /Game/Tools/ThumbnailAsset.ashx /game/tools/thumbnailasset
 	rewrite /UploadMedia/PostImage.aspx /studio/uploadmedia/screenshot
 	rewrite /asset/bodycolors.ashx /asset/bodycolors
+	rewrite /Game/PlaceLauncher.ashx /game/placelauncher
 
 	rewrite /Setting/QuietGet/ClientSharedSettings/* /api/clientsharedsettings
 	rewrite /Setting/QuietGet/ClientSharedSettings /api/clientsharedsettings
