@@ -24,6 +24,8 @@ mercs.dev, http://www.mercs.dev  {
 	rewrite /Setting/QuietGet/ClientSharedSettings /api/clientsharedsettings
 	rewrite /Setting/QuietGet/ClientAppSettings/* /api/clientappsettings
 	rewrite /Setting/QuietGet/ClientAppSettings /api/clientappsettings
+	rewrite /Setting/QuietGet/AndroidAppSettings/* /api/clientappsettings/2016
+	rewrite /Setting/QuietGet/AndroidAppSettings /api/clientappsettings/2016
 
 	rewrite /Error/Dmp.ashx /dmp
 
