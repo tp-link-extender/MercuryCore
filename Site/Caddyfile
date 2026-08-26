@@ -39,6 +39,8 @@ clientsettings.api.mercs.dev {
 	rewrite /Setting/QuietGet/ClientSharedSettings /api/clientsharedsettings/2016
 	rewrite /Setting/QuietGet/ClientAppSettings/* /api/clientappsettings/2016
 	rewrite /Setting/QuietGet/ClientAppSettings /api/clientappsettings/2016
+	rewrite /Setting/QuietGet/AndroidAppSettings/* /api/clientappsettings/2016
+	rewrite /Setting/QuietGet/AndroidAppSettings /api/clientappsettings/2016
 
 	# temporary api subdomain duplicates
 	rewrite /GetAllowedSecurityVersions/* /api/getallowedsecurityversions
