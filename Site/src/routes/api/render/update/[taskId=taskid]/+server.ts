@@ -13,7 +13,7 @@ export async function POST({ params, request }) {
 	// get bearer token from header instead of insecure url
 	const auth = request.headers.get("Authorization")
 	if (!auth || !auth.startsWith("Bearer ") || auth.slice(7) !== RCC_KEY)
-		throw error(403, "Stfu")
+		error(403, "Stfu")
 
 	const render = Record("render", params.taskId)
 	const [[task]] = await db.query<Render[][]>(renderQuery, { render })

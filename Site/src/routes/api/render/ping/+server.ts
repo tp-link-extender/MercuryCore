@@ -7,7 +7,7 @@ import pingQuery from "./ping.surql"
 export async function POST({ request }) {
 	const auth = request.headers.get("Authorization")
 	if (!auth || !auth.startsWith("Bearer ") || auth.slice(7) !== RCC_KEY)
-		throw error(403, "Nerd")
+		error(403, "Nerd")
 
 	await db.query(pingQuery)
 	return new Response()
