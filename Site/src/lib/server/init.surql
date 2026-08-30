@@ -42,12 +42,12 @@ DEFINE TABLE OVERWRITE comment SCHEMAFULL TYPE NORMAL;
 		DEFINE FIELD OVERWRITE content.*.text ON comment TYPE string;
 		DEFINE FIELD OVERWRITE content.*.updated ON comment TYPE datetime DEFAULT ALWAYS time::now();
 	DEFINE FIELD OVERWRITE created ON comment TYPE datetime DEFAULT ALWAYS time::now();
-	DEFINE FIELD OVERWRITE dislikes ON comment TYPE int COMPUTED
+	DEFINE FIELD OVERWRITE dislikes ON comment COMPUTED
 		($user IN $this<-dislikes<-user.id);
-	DEFINE FIELD OVERWRITE likes ON comment TYPE int COMPUTED
+	DEFINE FIELD OVERWRITE likes ON comment COMPUTED
 		($user IN $this<-likes<-user.id);
 	DEFINE FIELD OVERWRITE pinned ON comment TYPE bool DEFAULT ALWAYS false;
-	DEFINE FIELD OVERWRITE score ON comment TYPE int COMPUTED
+	DEFINE FIELD OVERWRITE score ON comment COMPUTED
 		count(<-likes) - count(<-dislikes);
 	DEFINE FIELD OVERWRITE type ON comment TYPE array;
 		# ["status"] -> status post
