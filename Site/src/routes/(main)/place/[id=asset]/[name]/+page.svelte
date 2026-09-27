@@ -114,7 +114,7 @@
 		if (joinScriptData.status !== 200) return
 
 		// JoinScript is my favourite programming language (-i mean scripting language)
-		const joinUri = `${data.scheme}2013${joinScriptData.data.ticket}`
+		const joinUri = data.scheme + data.clientVersion + joinScriptData.data.ticket
 		beginJoining(() => joinUri, true)()
 	}
 
