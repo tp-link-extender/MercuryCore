@@ -5,6 +5,7 @@ import sharp from "sharp"
 import { authorise } from "$lib/server/auth"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
+import { closeGameserver } from "$lib/server/orbiter"
 import { db, Record } from "$lib/server/surreal"
 import { arktype, message, superValidate } from "$lib/server/validate"
 import {
@@ -151,6 +152,12 @@ actions.network = async e => {
 	if (!form.valid) return formError(form)
 
 	await db.update(Record("place", id)).merge(form.data)
+
+	// engine / port settings changed, so any running server for this place is now
+	// invalid (wrong 2013/2016 flow, wrong bind port etc.) - shut it down
+	const res = await closeGameserver(e.fetch, id)
+	if (!res.ok) console.error("Failed to close active server for place", id, res.msg)
+
 	return message(form, "Network settings updated successfully!")
 }
 actions.privacy = async e => {
