@@ -116,15 +116,15 @@ export async function GET({ fetch: f, url }) {
 	const id = +assetId
 	console.log("Requested asset", id)
 
+	const result2b = await loadPlaceAsset(id)
+	if (result2b) return result2b
+
 	const result1 = await loadPrivilegedAsset(id)
 	if (result1) return result1
 
 	// Try loading as a user asset
 	const result2 = await loadUserAsset(id)
 	if (result2) return result2
-
-	const result2b = await loadPlaceAsset(id)
-	if (result2b) return result2b
 
 	const result3 = await loadOpenCloudAsset(f, id)
 	if (result3) return result3
