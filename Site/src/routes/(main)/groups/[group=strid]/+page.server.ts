@@ -12,6 +12,7 @@ type Group = {
 	in: boolean
 	memberCount: number
 	name: string
+	owner: BasicUser
 }
 
 export async function load({ locals, params }) {
@@ -24,10 +25,7 @@ export async function load({ locals, params }) {
 	})
 	if (!group) error(404, "Not Found")
 
-	return {
-		...group,
-		owner: null,
-	}
+	return group
 }
 
 async function getData({ locals, params }: RequestEvent) {

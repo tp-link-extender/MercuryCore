@@ -1,7 +1,9 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
+import { createGroup } from "economy/api"
+import * as Econ from "economy/types"
 import { authorise } from "$lib/server/auth"
-import { createGroup, getGroupPrice } from "$lib/server/economy"
+import { getGroupPrice } from "$lib/server/economy"
 import exclude from "$lib/server/exclude"
 import formError from "$lib/server/formError"
 import { db, findWhere, Record } from "$lib/server/surreal"
@@ -14,7 +16,7 @@ const schema = type({
 
 export async function load() {
 	exclude("Groups")
-	const price = await getGroupPrice()
+	const price = getGroupPrice()
 	return {
 		form: await superValidate(arktype(schema)),
 		price,
@@ -54,13 +56,19 @@ actions.default = async ({ fetch: f, locals, request }) => {
 			["A group with this name already exists"]
 		)
 
-	const created = await createGroup(f, user.id, name)
-	if (!created.ok) return formError(form, ["other"], [created.msg])
+	const created = await createGroup(f, new Econ.User(user.id))
+	if (!created.ok)
+		return formError(form, ["other"], ["Failed to create group"])
+
+	// The Economy service issues the group's ID, and the database record
+	// uses it as its own ID so ownership can be resolved from the ledger.
+	const groupId = created.value.ID
 
 	await db.query(createQuery, {
 		name,
 		user: Record("user", user.id),
+		economyId: groupId,
 	})
 
-	redirect(302, `/groups/${name}`)
+	redirect(302, `/groups/${groupId}`)
 }

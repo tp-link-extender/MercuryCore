@@ -1,14 +1,9 @@
 <script lang="ts">
 	import { VERSION } from "@sveltejs/kit"
 	import Head from "$components/Head.svelte"
-	import beautifyCurrency from "$lib/beautifyCurrency"
 	import Waves from "../Waves.svelte"
 
 	const { data } = $props()
-
-	let [, c1, c2] = $derived(
-		data.stipend.ok ? beautifyCurrency(data.stipend.value) : ["", "", ""]
-	)
 
 	let systems = $derived([
 		{
@@ -31,11 +26,8 @@
 		},
 		{
 			name: "Economy Service",
-			ok: data.stipend.ok,
-			success: [
-				"Current stipend value is",
-				`${data.currencySymbol}${c1}${c2 ? "." : ""}${c2}`
-			],
+			ok: data.economyOk,
+			success: ["Connected to", "the ledger"],
 			err: "Unable to connect to the service"
 		}
 	])
