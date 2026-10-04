@@ -1,4 +1,4 @@
-import { error, redirect } from "@sveltejs/kit"
+import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { authorise } from "$lib/server/auth"
 import { createGroup, getGroupPrice } from "$lib/server/economy"
