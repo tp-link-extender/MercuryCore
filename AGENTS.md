@@ -1,7 +1,7 @@
 # Docs
 
-SurrealDB docs at https://surrealdb.com/docs/llms.txt
-SvelteKit docs at https://svelte.dev/docs/kit/llms.txt
+SurrealDB docs at https://surrealdb.com/docs/llms.txt  
+SvelteKit docs at https://svelte.dev/docs/kit/llms.txt  
 Svelte docs at https://svelte.dev/docs/svelte/llms.txt
 
 # Code style guidelines
