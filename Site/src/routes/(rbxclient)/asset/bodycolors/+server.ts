@@ -23,8 +23,6 @@ export async function GET({ url }) {
 	const username = url.searchParams.get("username")?.trim()
 	const bodyColoursXml = await Bun.file("xml/bodyColours.xml").text()
 
-	// without a username, the default body colour palette is used instead
-	// (all white, which is what renders use)
 	if (!username)
 		return new Response(
 			bodyColoursXml
