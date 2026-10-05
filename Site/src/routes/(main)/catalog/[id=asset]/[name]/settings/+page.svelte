@@ -53,15 +53,15 @@
 	<div class="pt-6 pb-4">
 		<h2 class="text-xl">Reupload asset</h2>
 		<p class="grey-text">
-			Replace the file for this asset. Keep in mind that
+			Replace the file for this asset.
 			{#if data.visibility === "Pending"}
-				this asset is currently pending approval &ndash; your upload will
+				This asset is currently pending approval &ndash; your upload will
 				stay pending until an admin approves it.
 			{:else if user.permissionLevel >= 3}
-				as an admin or moderator (level 3+), your upload will be
+				Your upload will be
 				automatically approved.
 			{:else}
-				your upload will need to be approved by an admin before going
+				Your upload will need to be approved by an admin before going
 				live.
 			{/if}
 		</p>
