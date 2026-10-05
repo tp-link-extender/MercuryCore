@@ -12,6 +12,8 @@ SELECT
 		FROM $parent<-created<-user
 	)[0] = $user AS isCreator,
 	count(<-ownsAsset<-user) AS sold,
+	(SELECT record::id(id) AS id, name, price, type
+		FROM $parent->packageItem->asset) AS items,
 	$user IN <-ownsAsset<-user.id AS owned,
 	fn::currentContent($this.description) AS description,
 	array::flatten(
