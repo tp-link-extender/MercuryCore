@@ -68,12 +68,12 @@
 	</div>
 
 	<Form
-		{reuploadData}
+		formData={reuploadData}
 		enctype="multipart/form-data"
 		action="?/reupload"
 		submit=" <fa fa-upload></fa> Upload file">
 		<Input
-			{reuploadData}
+			formData={reuploadData}
 			type="file"
 			name="asset"
 			label="New asset file"
