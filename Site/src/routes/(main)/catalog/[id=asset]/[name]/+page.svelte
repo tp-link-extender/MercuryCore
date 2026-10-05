@@ -48,6 +48,7 @@
 
 <Head name={data.siteName} title={data.asset.name} />
 
+{#key data.asset.id}
 <div class="ctnr max-w-240">
 	<div class="flex <sm:flex-col">
 		<div class="pr-4 pb-4">
@@ -272,6 +273,7 @@
 		</button>
 	{/if}
 </div>
+{/key}
 
 <style>
 	.image {
