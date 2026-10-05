@@ -1,13 +1,11 @@
 import fs from "node:fs"
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { createUnlimitedSource } from "economy/api"
+import { createUnlimitedSource, prices } from "economy/api"
 import * as Econ from "economy/types"
 import { typeToNumber } from "$lib/assetTypes"
 import { authorise } from "$lib/server/auth"
-import { getAssetPrice } from "$lib/server/economy"
 import formError from "$lib/server/formError"
-import { randomAssetId } from "$lib/server/id"
 import {
 	clothingAsset,
 	imageAsset,
@@ -40,8 +38,9 @@ const schema = type({
 
 // type assetType = (typeof assetTypes)[number]
 
-export async function load({ url }) {
-	const price = getAssetPrice()
+export async function load({ url, fetch: f }) {
+	const p = await prices(f)
+	const price = p.ok ? p.value.unlimitedSourcePrice : 0n
 	// const urlType = url.searchParams.get("type") as assetType | null
 	return {
 		form: await superValidate(

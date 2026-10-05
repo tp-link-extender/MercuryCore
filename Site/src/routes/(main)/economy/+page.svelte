@@ -3,12 +3,9 @@
 	import { Buf, BufReader } from "economy/items"
 	import Head from "$components/Head.svelte"
 	import Transaction from "$components/Transaction.svelte"
-	import beautifyCurrency from "$lib/beautifyCurrency"
 	import fade from "$lib/fade"
 
 	const { data } = $props()
-
-	let [c1, c2, c3, c4] = $derived(beautifyCurrency(data.balance))
 </script>
 
 <Head name={data.siteName} title="Economy" />
@@ -26,13 +23,7 @@
 				<data
 					class="balancenum flex flex-row text-emerald-600"
 					value={data.balance.toString()}>
-					<span class="text-emerald-900">{c1}</span>
-					{c2}
-					<span class={c3 ? "text-emerald-600" : "text-emerald-900"}>
-						.
-					</span>
-					{c3}
-					<span class="text-emerald-900">{c4}</span>
+					{data.balance.toString()}
 				</data>
 			</div>
 		</div>
@@ -82,8 +73,7 @@
 		@apply text-xl font-500;
 	}
 
-	.balancenum,
-	.balancenum span {
+	.balancenum {
 		font-feature-settings: "tnum", "calt", "zero";
 	}
 </style>

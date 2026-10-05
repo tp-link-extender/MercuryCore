@@ -1,9 +1,8 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { createGroup } from "economy/api"
+import { createGroup, prices } from "economy/api"
 import * as Econ from "economy/types"
 import { authorise } from "$lib/server/auth"
-import { getGroupPrice } from "$lib/server/economy"
 import exclude from "$lib/server/exclude"
 import formError from "$lib/server/formError"
 import { db, findWhere, Record } from "$lib/server/surreal"
@@ -14,12 +13,12 @@ const schema = type({
 	name: "3 <= string <= 40",
 })
 
-export async function load() {
+export async function load({ fetch: f }) {
 	exclude("Groups")
-	const price = getGroupPrice()
+	const p = await prices(f)
 	return {
 		form: await superValidate(arktype(schema)),
-		price,
+		price: p.ok ? p.value.groupPrice : 0n,
 	}
 }
 

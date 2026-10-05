@@ -3,7 +3,6 @@
 	import { Items } from "economy/items"
 	import * as Econ from "economy/types"
 	import User from "$components/User.svelte"
-	// import beautifyCurrency from "$lib/beautifyCurrency"
 	import type { OwnerData } from "$lib/economy"
 
 	const {
@@ -15,8 +14,6 @@
 		ownerData: OwnerData
 		currencySymbol: string
 	} = $props()
-
-	// let [, c1, c2] = $derived(beautifyCurrency(transaction.Amount))
 
 	let { Send0, Send1 } = $derived(transaction.Transfer)
 	let sender0 = $derived(Send0.Owner)

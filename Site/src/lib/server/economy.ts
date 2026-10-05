@@ -9,13 +9,6 @@ export const economyConnFailed = "Cannot connect to Economy service"
 export type ReturnValue<T> = Promise<{ ok: true; value: T } | { ok: false }>
 export type ReturnErr = { ok: true } | { ok: false; msg: string }
 
-export const fee = 0.1
-const getFeeBasedPrice = (multiplier: number): bigint =>
-	BigInt(Math.round(fee * multiplier * 1e6))
-
-export const getAssetPrice = () => getFeeBasedPrice(75)
-export const getGroupPrice = () => getFeeBasedPrice(50)
-
 // better code than previously... i guess. whatever
 export async function ownerData(list: TransferWithID[]): Promise<OwnerData> {
 	const owners = [

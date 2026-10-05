@@ -26,11 +26,8 @@ const schema = type({
 })
 
 export async function load() {
-	// const price = getPlacePrice()
 	return {
 		form: await superValidate(arktype(schema)),
-		// count: await placeCount((await authorise(locals)).user.id),
-		// price,
 	}
 }
 
