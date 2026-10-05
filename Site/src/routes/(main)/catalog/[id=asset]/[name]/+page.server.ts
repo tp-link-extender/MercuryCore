@@ -112,9 +112,17 @@ async function rerender({ fetch: f, locals, params }: RequestEvent) {
 	if (asset.visibility === "Moderated")
 		error(400, "Can't rerender a moderated asset")
 
-	if ([8, 11, 12].includes(asset.type))
+	if ([8, 11, 12, 32].includes(asset.type))
 		try {
-			await requestRender(f, asset.type === 8 ? "Model" : "Clothing", id)
+			await requestRender(
+				f,
+				asset.type === 8
+					? "Model"
+					: asset.type === 32
+						? "Package"
+						: "Clothing",
+				id
+			)
 			const icon = `/catalog/${id}/${asset.name}/icon?r=${Math.random()}`
 			return { icon }
 		} catch (e) {

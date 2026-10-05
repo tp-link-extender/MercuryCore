@@ -5,7 +5,7 @@ import { db } from "$lib/server/surreal"
 import createRenderQuery from "./createRender.surql"
 import renderQuery from "./render.surql"
 
-export type RenderType = "Clothing" | "Avatar" | "Model" | "Mesh"
+export type RenderType = "Clothing" | "Avatar" | "Model" | "Mesh" | "Package"
 export type Status = "Pending" | "Rendering" | "Completed" | "Error"
 
 type Render = {
@@ -14,7 +14,7 @@ type Render = {
 
 /**
  * Requests a render from RCCService
- * @param renderType The type of render to request, "Clothing", "Avatar", "Model", or "Mesh".
+ * @param renderType The type of render to request, "Clothing", "Avatar", "Model", "Mesh", or "Package".
  * @param relativeId If "Avatar", the id of the user to render their avatar, otherwise the id of the asset to render.
  * @param relativeName If "Avatar", the name of the user to render their avatar.
  * @param wait Whether to wait for the render to be completed before resolving.
