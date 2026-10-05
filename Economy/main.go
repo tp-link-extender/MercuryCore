@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/binary"
 	"fmt"
 	"io"
 	"net/http"
@@ -139,6 +140,24 @@ func (e *EconomyServer) balanceRoute(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprintf(w, "%d", e.Balance(o))
+}
+
+// pricesRoute returns the service's configured prices so clients can display exactly what will be charged. Prices are uint64 quantities, so this is returned as 5 consecutive big-endian uint64s in a fixed order.
+func (e *EconomyServer) pricesRoute(w http.ResponseWriter, r *http.Request) {
+	prices := []Quantity{
+		e.PlacePrice,
+		e.GroupPrice,
+		e.LimitedSourcePrice,
+		e.UnlimitedSourcePrice,
+		e.StipendAmount,
+	}
+
+	buf := make([]byte, 8*len(prices))
+	for i, p := range prices {
+		binary.BigEndian.PutUint64(buf[i*8:], uint64(p))
+	}
+
+	w.Write(buf)
 }
 
 // we'll expose MintCurrency some other time
@@ -429,6 +448,7 @@ func main() {
 	http.HandleFunc("POST /countOwnersMany", es.countOwnersManyRoute)
 	http.HandleFunc("POST /inventory", es.inventoryRoute)
 	http.HandleFunc("POST /balance", es.balanceRoute)
+	http.HandleFunc("POST /prices", es.pricesRoute)
 	http.HandleFunc("POST /stipend", es.stipendRoute)
 	http.HandleFunc("POST /createLimitedSource", es.createLimitedSourceRoute)
 	http.HandleFunc("POST /createUnlimitedSource", es.createUnlimitedSourceRoute)

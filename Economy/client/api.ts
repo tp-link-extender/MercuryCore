@@ -30,6 +30,7 @@ type Route =
 	| "countOwnersMany"
 	| "inventory"
 	| "balance"
+	| "prices"
 	| "stipend"
 	| "createLimitedSource"
 	| "createUnlimitedSource"
@@ -183,6 +184,37 @@ export async function balance(f: Fetch, o: Owner): ReturnValue<bigint> {
 
 	const text = await res.text()
 	return { ok: true, value: BigInt(text) }
+}
+
+// The service returns its configured prices as 5 consecutive big-endian uint64s, so clients can display exactly what will be charged.
+export type Prices = {
+	placePrice: bigint
+	groupPrice: bigint
+	limitedSourcePrice: bigint
+	unlimitedSourcePrice: bigint
+	stipendAmount: bigint
+}
+
+export async function prices(f: Fetch): ReturnValue<Prices> {
+	let res: Response
+	try {
+		res = await request(f, "prices", Buf.from(new ArrayBuffer(0)))
+	} catch {
+		return { ok: false }
+	}
+	if (res.status !== 200) return { ok: false }
+
+	const r = new BufReader(Buf.from(await res.arrayBuffer()))
+	return {
+		ok: true,
+		value: {
+			placePrice: r.readUint64(),
+			groupPrice: r.readUint64(),
+			limitedSourcePrice: r.readUint64(),
+			unlimitedSourcePrice: r.readUint64(),
+			stipendAmount: r.readUint64(),
+		},
+	}
 }
 
 export async function stipend(f: Fetch, o: Owner): Promise<boolean> {
