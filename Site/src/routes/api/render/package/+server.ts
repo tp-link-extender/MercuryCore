@@ -9,7 +9,8 @@ export async function GET({ url }) {
 
 	const items = await packageItems(+id, "")
 
-	let charApp = `http://${config.Domain}/api/render/character`
+	// default body colours, then every item in the package (nested included)
+	let charApp = `http://${config.DomainInsecure}/asset/bodycolors.ashx`
 	for (const item of items)
 		charApp += `;http://${config.Domain}/asset?id=${item.id}`
 

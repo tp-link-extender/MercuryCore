@@ -13,15 +13,35 @@ type User = {
 	}
 }
 
+const xmlHeaders = {
+	Pragma: "no-cache",
+	"Cache-Control": "no-cache",
+	"Content-Type": "text/xml",
+}
+
 export async function GET({ url }) {
 	const username = url.searchParams.get("username")?.trim()
-	if (!username) error(400, "Missing required query param: username")
+	const bodyColoursXml = await Bun.file("xml/bodyColours.xml").text()
+
+	// without a username, the default body colour palette is used instead
+	// (all white, which is what renders use)
+	if (!username)
+		return new Response(
+			bodyColoursXml
+				.replace("_HEAD", "1")
+				.replace("_LEFT_ARM", "1")
+				.replace("_LEFT_LEG", "1")
+				.replace("_RIGHT_ARM", "1")
+				.replace("_RIGHT_LEG", "1")
+				.replace("_TORSO", "1"),
+			{ headers: xmlHeaders }
+		)
 
 	const [[user]] = await db.query<User[][]>(bodyColoursQuery, { username })
 	if (!user) error(404, "User not found")
 
 	const colours = user.bodyColours
-	const res = (await Bun.file("xml/bodyColours.xml").text())
+	const res = bodyColoursXml
 		.replace("_HEAD", colours.Head.toString())
 		.replace("_LEFT_ARM", colours.LeftArm.toString())
 		.replace("_LEFT_LEG", colours.LeftLeg.toString())
