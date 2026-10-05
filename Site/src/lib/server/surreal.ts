@@ -121,6 +121,7 @@ type RecordIdTypes = {
 	ownsAsset: string
 	ownsGroup: string
 	ownsPlace: string
+	packageItem: string
 	place: number
 	playing: string
 	posted: string
@@ -157,6 +158,7 @@ export const Notification = new Table("notification")
 export const OwnsAsset = new Table("ownsAsset")
 export const OwnsGroup = new Table("ownsGroup")
 export const OwnsPlace = new Table("ownsPlace")
+export const PackageItem = new Table("packageItem")
 export const Place = new Table("place")
 export const Playing = new Table("playing")
 export const Posted = new Table("posted")

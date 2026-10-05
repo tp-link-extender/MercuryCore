@@ -11,6 +11,7 @@ import {
 } from "$lib/server/economy"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
+import { packageItems } from "$lib/server/packageItems"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { db, find, Record } from "$lib/server/surreal"
@@ -20,6 +21,7 @@ import type { RequestEvent } from "./$types"
 import assetQuery from "./asset.surql"
 import buyQuery from "./buy.surql"
 import findAssetQuery from "./findAsset.surql"
+import grantPackageQuery from "./grantPackage.surql"
 
 const schema = type({
 	content: "1 <= string <= 1000",
@@ -34,6 +36,12 @@ type Asset = {
 	description: string
 	forSale: boolean
 	isCreator: boolean
+	items: {
+		id: number
+		name: string
+		price: number
+		type: number
+	}[]
 	name: string
 	owned: boolean
 	price: number
@@ -169,6 +177,7 @@ actions.buy = async e => {
 		name: string
 		owned: boolean
 		price: number
+		type: number
 		visibility: string
 	}
 	const [[asset]] = await db.query<FoundAsset[][]>(buyQuery, {
@@ -193,6 +202,16 @@ actions.buy = async e => {
 			{}
 		)
 		if (!tx.ok) error(400, tx.msg)
+	}
+
+	// buying a package grants ownership of every item inside it too
+	// (the package ownership itself is granted below for all asset types)
+	if (asset.type === 32) {
+		const items = await packageItems(id, user.id)
+		await db.query(grantPackageQuery, {
+			items: items.filter(i => !i.owned).map(i => Record("asset", i.id)),
+			user: Record("user", user.id),
+		})
 	}
 
 	await Promise.all([

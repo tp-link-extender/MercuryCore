@@ -125,6 +125,9 @@ DEFINE TABLE OVERWRITE ownsAsset SCHEMAFULL TYPE RELATION FROM user TO asset ENF
 	DEFINE FIELD OVERWRITE id ON ownsAsset TYPE string;
 	DEFINE FIELD OVERWRITE created ON ownsAsset TYPE datetime DEFAULT ALWAYS time::now();
 
+DEFINE TABLE OVERWRITE packageItem SCHEMAFULL TYPE RELATION FROM asset TO asset ENFORCED;
+	DEFINE FIELD OVERWRITE id ON packageItem TYPE string;
+
 DEFINE TABLE OVERWRITE ownsGroup SCHEMAFULL TYPE RELATION FROM user TO group ENFORCED;
 	DEFINE FIELD OVERWRITE id ON ownsGroup TYPE string;
 
@@ -336,7 +339,7 @@ WHEN $event = "CREATE" THEN
 
 DEFINE FUNCTION OVERWRITE fn::filterInventory($thing: object, $user: record<user>) {
 	RETURN $user IN $thing<-ownsAsset<-user
-		AND $thing.type IN [2, 8, 11, 12, 13, 18]
+		AND $thing.type IN [2, 8, 11, 12, 13, 18, 32]
 };
 
 DEFINE FUNCTION OVERWRITE fn::filterGames($thing: object) {
