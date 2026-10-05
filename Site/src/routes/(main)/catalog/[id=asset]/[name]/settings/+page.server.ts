@@ -58,7 +58,7 @@ export async function load({ locals, params }) {
 	return {
 		...asset,
 		slug: encode(asset.name),
-		form: await superValidate(
+		settingsForm: await superValidate(
 			{
 				name: asset.name,
 				forSale: asset.forSale,
@@ -80,7 +80,7 @@ type AssetCheck = {
 	name: string
 }
 
-actions.default = async ({ locals, params, request }) => {
+actions.settings = async ({ locals, params, request }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)

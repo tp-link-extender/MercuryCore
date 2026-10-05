@@ -8,7 +8,7 @@
 
 	const { data } = $props()
 
-	let formData = $derived(superForm(data.form))
+	let formData = $derived(superForm(data.settingsForm))
 	let reuploadData = $derived(superForm(data.reuploadForm))
 	let { form } = $derived(formData)
 	let { user } = $derived(data)
@@ -33,6 +33,7 @@
 	<Form
 		{formData}
 		enctype="multipart/form-data"
+		action="?/settings"
 		submit=" <fa fa-save></fa> Save changes">
 		<Input
 			{formData}
