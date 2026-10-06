@@ -77,7 +77,7 @@
 							</a>
 						</div>
 					{/if}
-					{#if user.permissionLevel >= 5 && [8, 11, 12, 32].includes(data.asset.type)}
+					{#if user.permissionLevel >= 5 && [8, 11, 12, 32, 27, 28, 29, 30, 31].includes(data.asset.type)}
 						<span class="dropdown pt-2">
 							<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
 							<div class="dropdown-content">
