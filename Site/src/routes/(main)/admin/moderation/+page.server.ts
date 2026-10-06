@@ -92,8 +92,7 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 		// Unban
 		const foundUnban = await findWhere(
 			"moderation",
-			`in = $user
-				AND out = $moderatee
+			`out = $moderatee
 				AND active = true`,
 			qParams
 		)
