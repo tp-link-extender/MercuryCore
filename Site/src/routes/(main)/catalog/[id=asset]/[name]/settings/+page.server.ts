@@ -146,6 +146,10 @@ actions.reupload = async ({
 	if (!asset.isCreator && user.permissionLevel < 4)
 		error(403, "You do not have permission to edit this asset")
 
+	// packages are collections of assets and don't have a file of their own to replace
+	if (asset.type === 32)
+		return formError(form, ["asset"], ["Packages cannot be reuploaded"])
+
 	const buf = await file.arrayBuffer()
 	if (asset.imageAssetId) {
 		// items with textures (t-shirts, clothing, decals, faces) must be actual images

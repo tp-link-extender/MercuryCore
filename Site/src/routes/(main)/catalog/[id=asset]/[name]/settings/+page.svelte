@@ -68,18 +68,22 @@
 		</p>
 	</div>
 
-	<Form
-		formData={reuploadData}
-		enctype="multipart/form-data"
-		action="?/reupload"
-		submit=" <fa fa-upload></fa> Upload file">
-		<Input
+	{#if data.type !== 32}
+		<Form
 			formData={reuploadData}
-			type="file"
-			name="asset"
-			label="New asset file"
-			help={data.imageAssetId
-				? "Max image size: 20MB. Supports most popular image formats."
-				: "Max file size: 20MB."} />
-	</Form>
+			enctype="multipart/form-data"
+			action="?/reupload"
+			submit=" <fa fa-upload></fa> Upload file">
+			<Input
+				formData={reuploadData}
+				type="file"
+				name="asset"
+				label="New asset file"
+				help={data.imageAssetId
+					? "Max image size: 20MB. Supports most popular image formats."
+					: "Max file size: 20MB."} />
+		</Form>
+	{:else}
+		<p class="grey-text">Packages cannot be reuploaded.</p>
+	{/if}
 </div>
