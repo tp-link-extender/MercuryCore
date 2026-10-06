@@ -15,7 +15,9 @@ const bodyPartClothing = Object.freeze({
 })
 
 // Returns a character appearance that equips the body part in question plus
-// its matching item of clothing, used by RCC (renderBodyPart.luau)
+// its matching item of clothing, used by RCC (renderTorso.luau,
+// renderLeftArm.luau, renderRightArm.luau, renderLeftLeg.luau and
+// renderRightLeg.luau)
 export async function GET({ url }) {
 	const id = url.searchParams.get("id")
 	if (!id || !assetRegex.test(id)) error(400, "Missing id parameter")

@@ -13,7 +13,8 @@ import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import { packageItems } from "$lib/server/packageItems"
 import ratelimit from "$lib/server/ratelimit"
-import requestRender from "$lib/server/requestRender"
+import requestRender, { type RenderType } from "$lib/server/requestRender"
+
 import { db, find, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { couldMatch, encode } from "$lib/urlName"
@@ -113,36 +114,29 @@ async function rerender({ fetch: f, locals, params }: RequestEvent) {
 		error(400, "Can't rerender a moderated asset")
 
 	// body parts are rendered as close-ups of the part itself, with its
-	// matching clothing (from api/render/bodypart)
-	const limbFromType = Object.freeze({
+	// matching clothing (from api/render/bodypart), using one script per limb
+	const renderTypeFromType = Object.freeze({
 		27: "Torso",
-		28: "Right Arm",
-		29: "Left Arm",
-		30: "Left Leg",
-		31: "Right Leg",
+		28: "RightArm",
+		29: "LeftArm",
+		30: "LeftLeg",
+		31: "RightLeg",
 	})
 
-	const limb = limbFromType[asset.type as keyof typeof limbFromType]
-	const renderType = limb
-		? "BodyPart"
-		: asset.type === 8
+	const renderType =
+		renderTypeFromType[asset.type as keyof typeof renderTypeFromType] ??
+		(asset.type === 8
 			? "Model"
 			: asset.type === 32
 				? "Package"
 				: [11, 12].includes(asset.type)
 					? "Clothing"
-					: null
+					: null)
 
 	if (!renderType) error(400, "Can't rerender this type of asset")
 
 	try {
-		await requestRender(
-			f,
-			renderType,
-			id,
-			// body part renders frame the limb and equip its clothing
-			limb ? `${limb}:${id}` : +id
-		)
+		await requestRender(f, renderType as RenderType, id)
 		const icon = `/catalog/${id}/${asset.name}/icon?r=${Math.random()}`
 		return { icon }
 	} catch (e) {

@@ -5,7 +5,7 @@ import completeQuery from "./complete.surql"
 import renderQuery from "./render.surql"
 
 type Render = {
-	type: "Clothing" | "Avatar" | "Package" | "BodyPart"
+	type: "Clothing" | "Avatar" | "Package" | "Torso" | "LeftArm" | "RightArm" | "LeftLeg" | "RightLeg"
 	relativeId: number
 }
 

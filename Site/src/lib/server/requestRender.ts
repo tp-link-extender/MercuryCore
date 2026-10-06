@@ -10,7 +10,11 @@ export type RenderType =
 	| "Model"
 	| "Mesh"
 	| "Package"
-	| "BodyPart"
+	| "Torso"
+	| "LeftArm"
+	| "RightArm"
+	| "LeftLeg"
+	| "RightLeg"
 export type Status = "Pending" | "Rendering" | "Completed" | "Error"
 
 type Render = {
@@ -19,7 +23,7 @@ type Render = {
 
 /**
  * Requests a render from RCCService
- * @param renderType The type of render to request, "Clothing", "Avatar", "Model", "Mesh", "Package", or "BodyPart".
+ * @param renderType The type of render to request: "Clothing", "Avatar", "Model", "Mesh", "Package", "Torso", "LeftArm", "RightArm", "LeftLeg", or "RightLeg".
  * @param relativeId If "Avatar", the id of the user to render their avatar, otherwise the id of the asset to render.
  * @param relativeName If "Avatar", the name of the user to render their avatar.
  * @param wait Whether to wait for the render to be completed before resolving.
