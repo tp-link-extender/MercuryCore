@@ -122,31 +122,33 @@ async function rerender({ fetch: f, locals, params }: RequestEvent) {
 		31: "Right Leg",
 	})
 
-	if ([8, 11, 12, 32, 27, 28, 29, 30, 31].includes(asset.type))
-		try {
-			await requestRender(
-				f,
-				asset.type === 8
-					? "Model"
-					: asset.type === 32
-						? "Package"
-						: asset.type in limbFromType
-							? "BodyPart"
-							: "Clothing",
-				id,
-				// body part renders frame the limb and equip its clothing
-				asset.type in limbFromType
-					? `${limbFromType[asset.type as keyof typeof limbFromType]}:${id}`
-					: +id
-			)
-			const icon = `/catalog/${id}/${asset.name}/icon?r=${Math.random()}`
-			return { icon }
-		} catch (e) {
-			console.error(e)
-			return fail(500, { msg: "Failed to request render" })
-		}
+	const limb = limbFromType[asset.type as keyof typeof limbFromType]
+	const renderType = limb
+		? "BodyPart"
+		: asset.type === 8
+			? "Model"
+			: asset.type === 32
+				? "Package"
+				: [11, 12].includes(asset.type)
+					? "Clothing"
+					: null
 
-	error(400, "Can't rerender this type of asset")
+	if (!renderType) error(400, "Can't rerender this type of asset")
+
+	try {
+		await requestRender(
+			f,
+			renderType,
+			id,
+			// body part renders frame the limb and equip its clothing
+			limb ? `${limb}:${id}` : +id
+		)
+		const icon = `/catalog/${id}/${asset.name}/icon?r=${Math.random()}`
+		return { icon }
+	} catch (e) {
+		console.error(e)
+		return fail(500, { msg: "Failed to request render" })
+	}
 }
 export const actions: import("./$types").Actions = { rerender }
 actions.comment = async ({ locals, params, request, getClientAddress }) => {
