@@ -1,6 +1,6 @@
 import fs from "node:fs"
 import config from "$lib/server/config"
-import { db } from "$lib/server/surreal"
+import { db, Record } from "$lib/server/surreal"
 import createRenderQuery from "./createRender.surql"
 import renderQuery from "./render.surql"
 
@@ -39,7 +39,13 @@ export default async function (
 	const [, , render] = await db.query<Render[]>(renderQuery, params)
 	if (render && render.status !== "Error") return
 
-	// If the render doesn't exist or if the last one errored, create a new render
+	// Check the script exists before creating a render record, otherwise a
+	// pending render would be created that blocks all future retries
+	const scriptFile = Bun.file(`../data/server/render/render${renderType}.lua`)
+	if (!(await scriptFile.exists()))
+		throw new Error(`Script file for ${renderType} does not exist`)
+
+	const scriptText = await scriptFile.text()
 	const [, renderId] = await db.query<string[]>(createRenderQuery, params)
 
 	// console.log(`Created new render with ID ${renderId}`)
@@ -73,13 +79,9 @@ export default async function (
 		})
 
 	// Send the script to the RCCService proxy
-	const scriptFile = Bun.file(`../data/server/render/render${renderType}.lua`)
-	if (!(await scriptFile.exists()))
-		throw new Error(`Script file for ${renderType} does not exist`)
-
 	const pingUrl = `http://localhost:64990/ping/${renderId}` // the proxy will handle sending to /api/render/update
 
-	const script = (await scriptFile.text())
+	const script = scriptText
 		.replaceAll("_BASE_URL", `"${config.Domain}"`)
 		.replaceAll("_RENDER_TYPE", `"${renderType}"`)
 		.replaceAll("_ASSET_ID", `"${relativeName}"`) // TODO: make not string
@@ -88,12 +90,19 @@ export default async function (
 	// console.log(
 	// 	`Sending render request to RCCService for render ID ${renderId}`
 	// )
-	await Promise.all([
-		waiter,
-		// Uhh carrot just got the
-		f(`${config.RCCServiceProxyURL}/${renderId}`, {
-			method: "post",
-			body: script,
-		}),
-	])
+	try {
+		await Promise.all([
+			waiter,
+			// Uhh carrot just got the
+			f(`${config.RCCServiceProxyURL}/${renderId}`, {
+				method: "post",
+				body: script,
+			}),
+		])
+	} catch (e) {
+		// Mark the render as errored so that a retry can try again, rather
+		// than early-returning forever
+		await db.update(Record("render", renderId)).merge({ status: "Error" })
+		throw e
+	}
 }
