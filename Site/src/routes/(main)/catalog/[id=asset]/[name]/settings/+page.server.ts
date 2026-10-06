@@ -2,6 +2,7 @@ import fs from "node:fs"
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
 import { authorise } from "$lib/server/auth"
+import { isImage, isMesh, isRobloxModel } from "$lib/server/fileType"
 import formError from "$lib/server/formError"
 import {
 	clothingAsset,
@@ -26,6 +27,7 @@ type Asset = {
 	creator: BasicUser
 	description: string
 	forSale: boolean
+	imageAssetId: number | null
 	name: string
 	price: number
 	type: number
@@ -136,6 +138,57 @@ actions.reupload = async ({
 	if (!asset.isCreator && user.permissionLevel < 4)
 		error(403, "You do not have permission to edit this asset")
 
+	const buf = await file.arrayBuffer()
+	if (asset.imageAssetId) {
+		// items with textures (t-shirts, clothing, decals, faces) must be actual images
+		if (!(await isImage(file)))
+			return formError(form, ["asset"], ["File must be an image"])
+	} else
+		switch (asset.type) {
+			// natively rich formats: only accept files whose magic bytes match the asset type
+			case 3: {
+				if (!isAudio(buf))
+					return formError(
+						form,
+						["asset"],
+						["File must be an audio file"]
+					)
+				break
+			}
+			case 4: {
+				if (!isMesh(buf))
+					return formError(
+						form,
+						["asset"],
+						["File must be a mesh file"]
+					)
+				break
+			}
+			case 8:
+			case 10:
+			case 17:
+			case 19:
+			case 24:
+			case 25:
+			case 26:
+			case 27:
+			case 28:
+			case 29:
+			case 30:
+			case 31:
+			case 32:
+			case 42: {
+				// hats, gear, models, animations, packages, heads and limbs
+				if (!isRobloxModel(buf) && !isMesh(buf))
+					return formError(
+						form,
+						["asset"],
+						["File must be a Roblox mesh or model file"]
+					)
+				break
+			}
+		}
+
 	if (user.permissionLevel < 3) {
 		const limit = ratelimit(form, "assetReupload", getClientAddress, 30)
 		if (limit) return limit
@@ -144,7 +197,7 @@ actions.reupload = async ({
 	if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
 	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
 
-	let saveImages: ((id: number) => Promise<number> | Promise<void>)[] = []
+	const jobs: Promise<unknown>[] = []
 
 	try {
 		switch (asset.type) {
@@ -152,9 +205,9 @@ actions.reupload = async ({
 				// T-Shirt
 				const [save, saveThumb] = await Promise.all([
 					tShirt(file),
-					tShirtThumbnail(await file.arrayBuffer()),
+					tShirtThumbnail(buf),
 				])
-				saveImages = [save, saveThumb]
+				jobs.push(save(asset.imageAssetId ?? id), saveThumb(id))
 				break
 			}
 
@@ -162,10 +215,7 @@ actions.reupload = async ({
 			case 12: {
 				// Shirt / Pants
 				const save = await clothingAsset(file)
-				saveImages = [
-					save,
-					(id: number) => requestRender(f, "Clothing", id),
-				]
+				jobs.push(save(asset.imageAssetId ?? id))
 				break
 			}
 
@@ -174,21 +224,21 @@ actions.reupload = async ({
 				// Decal / Face
 				const [save, saveThumb] = await Promise.all([
 					imageAsset(file),
-					thumbnail(await file.arrayBuffer()),
+					thumbnail(buf),
 				])
-				saveImages = [save, saveThumb]
+				jobs.push(save(asset.imageAssetId ?? id), saveThumb(id))
 				break
 			}
 
 			default: {
 				// staff uploads (hats, gear, models etc.) are raw files with no linked image asset
-				const buf = await file.arrayBuffer()
-				saveImages = [
-					(id: number) => Bun.write(`../data/assets/${id}`, buf),
-				]
+				jobs.push(Bun.write(`../data/assets/${id}`, buf))
 				break
 			}
 		}
+
+		// write the new files before touching the database, so a failed upload doesn't update the asset
+		await Promise.all(jobs)
 	} catch (e) {
 		console.log(e)
 		return formError(form, ["asset"], ["Asset failed to upload"])
@@ -202,13 +252,13 @@ actions.reupload = async ({
 		user: Record("user", user.id),
 	})
 
-	try {
-		const imageId = asset.imageAssetId ?? id
-		await Promise.all([saveImages[0](imageId), saveImages[1]?.(id)])
-	} catch (e) {
-		console.log("Updating images failed!")
-		console.error(e)
-	}
+	if ([11, 12].includes(asset.type))
+		try {
+			await requestRender(f, "Clothing", id)
+		} catch (e) {
+			console.log("Render request failed!")
+			console.error(e)
+		}
 
 	return message(
 		form,

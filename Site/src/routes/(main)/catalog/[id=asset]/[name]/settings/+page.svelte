@@ -78,6 +78,8 @@
 			type="file"
 			name="asset"
 			label="New asset file"
-			help="Max image size: 20MB. Supports most popular image formats." />
+			help={data.imageAssetId
+				? "Max image size: 20MB. Supports most popular image formats."
+				: "Max file size: 20MB."} />
 	</Form>
 </div>
