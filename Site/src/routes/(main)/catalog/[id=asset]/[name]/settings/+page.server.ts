@@ -51,6 +51,14 @@ const reuploadSchema = type({
 export async function load({ locals, params }) {
 	const { user } = await authorise(locals)
 	const id = +params.id
+	const [[check]] = await db.query<AssetCheck[][]>(assetCheckQuery, {
+		asset: Record("asset", id),
+		user: Record("user", user.id),
+	})
+	if (!check) error(404, "Not Found")
+	if (!check.isCreator && user.permissionLevel < 3)
+		error(403, "You do not have permission to view this page")
+
 	const [[asset]] = await db.query<Asset[][]>(assetQuery, {
 		asset: Record("asset", id),
 		user: Record("user", user.id),

@@ -5,6 +5,7 @@ import types, { typeToNumber } from "$lib/assetTypes"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import { randomAssetId } from "$lib/server/id"
+import requestRender from "$lib/server/requestRender"
 import { db, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { isXML } from "$lib/server/xml.js"
@@ -61,12 +62,12 @@ export async function load({ locals }) {
 }
 
 export const actions: import("./$types").Actions = {}
-actions.default = async ({ locals, request }) => {
+actions.default = async ({ fetch: f, locals, request }) => {
 	const { user } = await authorise(locals, 3)
 	const formData = await request.formData()
 
 	// packages are collections of assets, so they need special handling
-	if (formData.get("type") === "Package") return createPackage(formData, user)
+	if (formData.get("type") === "Package") return createPackage(formData, user, f)
 
 	const form = await superValidate(formData, arktype(schema))
 	if (!form.valid) return formError(form)
@@ -96,8 +97,14 @@ actions.default = async ({ locals, request }) => {
 
 	await Bun.write(`../data/assets/${id}`, buf)
 
-	// we'll just assume it's a model 4 now
-	// await requestRender(f, "Model", id)
+	// hats are the only type created here that needs an RCC render, and are
+	// rendered as models (same as the manual rerender button)
+	if (assetType === 8)
+		try {
+			await requestRender(f, "Model", id)
+		} catch (e) {
+			console.error(e)
+		}
 
 	redirect(302, `/catalog/${id}`)
 }
@@ -110,7 +117,11 @@ type PackageChild = {
 	file: File
 }
 
-async function createPackage(formData: FormData, user: User) {
+async function createPackage(
+	formData: FormData,
+	user: User,
+	f: typeof globalThis.fetch
+) {
 	const form = await superValidate(formData, arktype(packageSchema))
 	const fail = (msg: string) => formError(form, ["other"], [msg])
 	if (!form.valid) return formError(form)
@@ -211,6 +222,14 @@ async function createPackage(formData: FormData, user: User) {
 	await Promise.all(
 		children.map(c => Bun.write(`../data/assets/${c.id}`, c.file))
 	)
+
+	// only the package itself gets a render; it equips all its children
+	// (via api/render/package), same as the manual rerender button
+	try {
+		await requestRender(f, "Package", id)
+	} catch (e) {
+		console.error(e)
+	}
 
 	redirect(302, `/catalog/${id}`)
 }

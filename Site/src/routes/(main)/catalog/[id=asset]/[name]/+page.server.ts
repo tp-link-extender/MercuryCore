@@ -112,7 +112,17 @@ async function rerender({ fetch: f, locals, params }: RequestEvent) {
 	if (asset.visibility === "Moderated")
 		error(400, "Can't rerender a moderated asset")
 
-	if ([8, 11, 12, 32].includes(asset.type))
+	// body parts are rendered as close-ups of the part itself, with its
+	// matching clothing (from api/render/bodypart)
+	const limbFromType = Object.freeze({
+		27: "Torso",
+		28: "Right Arm",
+		29: "Left Arm",
+		30: "Left Leg",
+		31: "Right Leg",
+	})
+
+	if ([8, 11, 12, 32, 27, 28, 29, 30, 31].includes(asset.type))
 		try {
 			await requestRender(
 				f,
@@ -120,8 +130,14 @@ async function rerender({ fetch: f, locals, params }: RequestEvent) {
 					? "Model"
 					: asset.type === 32
 						? "Package"
-						: "Clothing",
-				id
+						: asset.type in limbFromType
+							? "BodyPart"
+							: "Clothing",
+				id,
+				// body part renders frame the limb and equip its clothing
+				asset.type in limbFromType
+					? `${limbFromType[asset.type as keyof typeof limbFromType]}:${id}`
+					: +id
 			)
 			const icon = `/catalog/${id}/${asset.name}/icon?r=${Math.random()}`
 			return { icon }
