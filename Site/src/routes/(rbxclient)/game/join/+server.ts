@@ -2,7 +2,8 @@ import { error } from "@sveltejs/kit"
 import { membershipType } from "$lib/permissionLevels"
 import config from "$lib/server/config"
 import idToPort, { proxyOffset } from "$lib/server/idToPort"
-import { SignData } from "$lib/server/sign"
+import { toRawId } from "$lib/server/recordId"
+import { SignScript } from "$lib/server/sign"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import joinQuery from "./join.surql"
 
@@ -52,11 +53,11 @@ export async function GET({ url }) {
 			.replaceAll("_SERVER_PORT", "53640")
 			.replaceAll("_USER_ID", "0")
 			.replaceAll("_USERNAME", `"Player1"`)
-			.replaceAll("_MEMBERSHIP_TYPE", membershipType(0))
+			.replaceAll("_MEMBERSHIP_TYPE",  membershipType(0))
 			.replaceAll("_CHAR_APPEARANCE", `""`)
 			.replaceAll("_PING_URL", `""`)
 
-		return new Response(await SignData(script))
+		return new Response(await SignScript(script))
 	}
 
 	const foundPrivatePlace = await findWhere(
@@ -80,15 +81,15 @@ export async function GET({ url }) {
 	const pingUrl = `http://${config.DomainInsecure}/game/clientpresence?ticket=${clientTicket}`
 	const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
 	const script = (await scriptFile.text())
-		.replaceAll("_PLACE_ID", place.id.toString())
+		.replaceAll("_PLACE_ID", toRawId(place.id))
 		.replaceAll("_SERVER_ADDRESS", `"${serverHostname}"`)
 		.replaceAll("_SERVER_PORT", serverPort.toString())
 		// .replaceAll("_CREATOR_ID", creatorUsername)
 		.replaceAll("_USER_ID", Math.floor(Math.random() * 1e9).toString()) // todo: tho not rly used 4 much atm
 		.replaceAll("_USERNAME", `"${user.username}"`)
-		.replaceAll("_MEMBERSHIP_TYPE", membershipType(user.permissionLevel))
+		.replaceAll("_MEMBERSHIP_TYPE",  membershipType(user.permissionLevel))
 		.replaceAll("_CHAR_APPEARANCE", `"${charApp}"`)
 		.replaceAll("_PING_URL", `"${pingUrl}"`)
 
-	return new Response(await SignData(script))
+	return new Response(await SignScript(script))
 }

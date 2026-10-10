@@ -18,10 +18,11 @@
 </script>
 
 <form
-	{...likeForm.enhance(o => {
-		likeFns[o.data.action](comment)
+	{...likeForm.enhance(instance => {
+		const { action } = instance.fields.value()
+		likeFns[action](comment)
 		comment = comment
-		o.submit()
+		instance.submit()
 	})}
 	class={class_}>
 	<input type="hidden" name="id" value={comment.id} />

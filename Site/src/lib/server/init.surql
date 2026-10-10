@@ -61,6 +61,10 @@ DEFINE TABLE OVERWRITE comment SCHEMAFULL TYPE NORMAL;
 DEFINE TABLE OVERWRITE commentLink SCHEMAFULL TYPE RELATION FROM comment TO comment ENFORCED;
 	DEFINE FIELD OVERWRITE id ON commentLink TYPE string;
 
+DEFINE TABLE OVERWRITE created SCHEMAFULL TYPE RELATION FROM user TO asset ENFORCED;
+	DEFINE FIELD OVERWRITE id ON created TYPE string;
+	DEFINE FIELD OVERWRITE created ON created TYPE datetime DEFAULT ALWAYS time::now();
+
 DEFINE TABLE OVERWRITE createdComment SCHEMAFULL TYPE RELATION FROM user TO comment ENFORCED;
 	DEFINE FIELD OVERWRITE id ON createdComment TYPE string;
 
@@ -121,10 +125,11 @@ DEFINE TABLE OVERWRITE place SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE id ON place TYPE int;
 	DEFINE FIELD OVERWRITE created ON place TYPE datetime DEFAULT ALWAYS time::now();
 	DEFINE FIELD OVERWRITE dedicated ON place TYPE bool DEFAULT ALWAYS false;
+	DEFINE FIELD OVERWRITE clientVersion ON place TYPE int DEFAULT ALWAYS 2013;
 	DEFINE FIELD OVERWRITE deleted ON place TYPE bool DEFAULT false;
 	DEFINE FIELD OVERWRITE description ON place TYPE array<object> DEFAULT ALWAYS [];
-		DEFINE FIELD OVERWRITE description.*.text ON place TYPE string;
-		DEFINE FIELD OVERWRITE description.*.updated ON place TYPE datetime DEFAULT ALWAYS time::now();
+	DEFINE FIELD OVERWRITE description.*.text ON place TYPE string;
+	DEFINE FIELD OVERWRITE description.*.updated ON place TYPE datetime DEFAULT ALWAYS time::now();
 	DEFINE FIELD OVERWRITE maxPlayers ON place TYPE int DEFAULT 0;
 	DEFINE FIELD OVERWRITE name ON place TYPE string DEFAULT "";
 	DEFINE FIELD OVERWRITE privateServer ON place TYPE bool DEFAULT false;
@@ -207,7 +212,7 @@ DEFINE TABLE OVERWRITE user SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE hashedPassword ON user TYPE string;
 	DEFINE FIELD OVERWRITE lastOnline ON user TYPE datetime DEFAULT ALWAYS time::now();
 	DEFINE FIELD OVERWRITE permissionLevel ON user TYPE int;
-	DEFINE FIELD OVERWRITE status ON user COMPUTED
+	DEFINE FIELD OVERWRITE status ON user TYPE string COMPUTED
 		IF ->playing[WHERE valid AND ping > time::now() - 35s] {
 			"Playing"
 		} ELSE IF lastOnline > time::now() - 35s {

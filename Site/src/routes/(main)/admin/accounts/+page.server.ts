@@ -20,7 +20,7 @@ const schema = type({
 })
 
 export async function load({ locals }) {
-	await authorise(locals, 5)
+	await authorise(locals, 4)
 
 	const [users] = await db.query<BasicUser[][]>(usersQuery)
 

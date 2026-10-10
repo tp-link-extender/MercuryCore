@@ -59,6 +59,7 @@ const schema = type({
 		Requests: "boolean",
 		FormattedErrors: "boolean",
 		Time: "boolean",
+		DiscordModerationWebhook: "string >= 1",
 	}),
 
 	Images: type({

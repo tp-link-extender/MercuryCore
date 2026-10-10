@@ -77,6 +77,7 @@
 
 			<button
 				{...select.trigger}
+				type="button"
 				{disabled}
 				class="fakeselect"
 				bind:this={trigger}>
@@ -84,7 +85,7 @@
 			</button>
 			<div {...select.content}>
 				{#each options as opt}
-					<button {...select.getOption(opt)} class="btn light-text">
+					<button {...select.getOption(opt)} type="button" class="btn light-text">
 						<fa
 							fa-check
 							class={["pr-2", { hidden: opt !== select.value }]}>

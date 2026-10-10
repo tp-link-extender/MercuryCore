@@ -30,9 +30,28 @@
 		"T-Shirts": 2,
 		Shirts: 11,
 		Pants: 12,
-		Gear: 19
+		Gear: 19,
+		Torso: 27,
+		"Left Arm": 29,
+		"Right Arm": 28,
+		"Left Leg": 30,
+		"Right Leg": 31,
+		Packages: 32
 	})
-	let tabData = $state(TabData(data.url, Object.keys(tabTypes)))
+	const bodyPartTabs = Object.freeze({
+		Heads: 17,
+		Faces: 18,
+		Torso: 27,
+		"Left Arm": 29,
+		"Right Arm": 28,
+		"Left Leg": 30,
+		"Right Leg": 31
+	})
+	let tabData = $state(
+		TabData(data.url, Object.keys(tabTypes), undefined, "tab", [
+			{ name: "Body Parts", tabs: Object.keys(bodyPartTabs) }
+		])
+	)
 
 	const bodyParts: { [_: string]: number } = $state({
 		Head: user.bodyColours.Head,
@@ -56,7 +75,10 @@
 		data.assets.filter(a =>
 			tabData.currentTab === "Recent"
 				? true
-				: a.type === tabTypes[tabData.currentTab]
+				: tabData.currentTab === "Body Parts"
+					? // all body part types at once
+						Object.values(bodyPartTabs).includes(a.type)
+					: a.type === tabTypes[tabData.currentTab]
 		)
 	)
 </script>

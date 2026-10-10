@@ -37,8 +37,14 @@ async function fetchGameserver(
 
 export const startGameserver = async (
 	f: typeof globalThis.fetch,
-	placeId: number
-) => fetchGameserver(f, placeId, "put")
+	placeId: number,
+	clientVersion: number
+) =>
+	fetchGameserver(
+		f,
+		`${placeId}?engine=${clientVersion >= 2016 ? "rcc" : "studio"}`,
+		"put"
+	)
 
 export const closeGameserver = async (
 	f: typeof globalThis.fetch,

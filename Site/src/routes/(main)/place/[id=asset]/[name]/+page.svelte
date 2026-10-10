@@ -114,7 +114,7 @@
 		if (joinScriptData.status !== 200) return
 
 		// JoinScript is my favourite programming language (-i mean scripting language)
-		const joinUri = data.scheme + joinScriptData.data.ticket
+		const joinUri = data.scheme + data.clientVersion + joinScriptData.data.ticket
 		beginJoining(() => joinUri, true)()
 	}
 
@@ -178,6 +178,10 @@
 						? 'bg-emerald-600'
 						: 'bg-red-500'} p-2 py-1">
 					{online ? "Online" : "Offline"}
+				</small>
+				<small
+					class="text-white rounded-2 bg-purple-600 p-2 py-1">
+					{place.clientVersion}
 				</small>
 				<span class="float-end">
 					<span class="dropdown">
@@ -302,7 +306,7 @@
 					class="btn btn-sm btn-primary">
 					Join server
 				</button>
-				{#if isOwner && tabs.includes("Selfhosted")}
+				{#if isOwner && tabs.includes("Selfhosted") || user.permissionLevel === 5}
 					<form
 						use:enhance
 						method="post"
@@ -349,7 +353,7 @@
 							<button
 								class="btn btn-sm btn-tertiary"
 								onclick={beginJoining(
-									() => `${data.scheme}1+launchmode:ide`
+									() => `${data.scheme}20131+launchmode:ide`
 								)}>
 								<fa fa-arrow-up-right-from-square></fa>
 								Studio

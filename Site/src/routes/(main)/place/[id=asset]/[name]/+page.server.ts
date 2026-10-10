@@ -15,6 +15,7 @@ type FoundPlace = {
 	ownerUsername: string
 	privateServer: boolean
 	privateTicket: string
+	clientVersion: number
 }
 
 interface Place extends FoundPlace {
@@ -27,6 +28,7 @@ interface Place extends FoundPlace {
 	likes: boolean
 	maxPlayers: number
 	name: string
+	clientVersion: number
 	ownerUser: BasicUser
 	players: {
 		status: "Playing"
@@ -68,6 +70,7 @@ export async function load({ locals, params, url }) {
 
 	return {
 		scheme: config.LauncherURI,
+		clientVersion: place.clientVersion,
 		hosting: config.Gameservers.Hosting,
 		orbiterURL: config.Orbiter.PublicURL,
 		slug,
@@ -136,13 +139,13 @@ actions.start = async ({
 	if (limit) return limit
 
 	const id = +params.id
-	await findPlace(request, id, user)
+	const [_place, _placeR] = await findPlace(request, id, user)
 
 	// check for existence of a place file
 	const placeFile = `../data/places/${id}`
 	if (!fs.existsSync(placeFile)) error(404, "Place file not found")
 
-	const res = await startGameserver(f, id)
+	const res = await startGameserver(f, id, _place.clientVersion)
 	if (res.ok) return
 
 	console.error("Failed to start dedicated gameserver for id", id, res.msg)

@@ -5,6 +5,7 @@ import sharp from "sharp"
 import { authorise } from "$lib/server/auth"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
+import { closeGameserver } from "$lib/server/orbiter"
 import { db, Record } from "$lib/server/surreal"
 import { arktype, message, superValidate } from "$lib/server/validate"
 import {
@@ -14,6 +15,7 @@ import {
 } from "$lib/typeTests"
 import { encode } from "$lib/urlName"
 import type { RequestEvent } from "./$types.d"
+import clientVersions from "../../../../games/create/clientVersions"
 import privateTicketQuery from "./privateTicket.surql"
 import serverTicketQuery from "./serverTicket.surql"
 import settingsQuery from "./settings.surql"
@@ -29,6 +31,10 @@ const networkSchema = type({
 	serverAddress: serverAddressTest.optional(),
 	serverPort: serverPortTest.optional(),
 	maxPlayers: maxPlayersTest,
+	clientVersion: type
+		.enumerated(...clientVersions)
+		.pipe.try(v => +v)
+		.configure({ problem: "must be a valid client version" }),
 })
 const ticketSchema = type({} as never) // I'm a genius
 const privacySchema = type({
@@ -49,6 +55,7 @@ type Place = {
 	owner: BasicUser
 	privateServer: boolean
 	privateTicket: string
+	clientVersion: number
 	serverAddress: string
 	serverPing: number
 	serverPort: number
@@ -73,6 +80,7 @@ export async function load({ locals, params }) {
 
 	return {
 		...getPlace,
+		clientVersions,
 		slug: encode(getPlace.name),
 		viewForm: await superValidate(
 			{ name: getPlace.name },
@@ -144,6 +152,12 @@ actions.network = async e => {
 	if (!form.valid) return formError(form)
 
 	await db.update(Record("place", id)).merge(form.data)
+
+	// engine / port settings changed, so any running server for this place is now
+	// invalid (wrong 2013/2016 flow, wrong bind port etc.) - shut it down
+	const res = await closeGameserver(e.fetch, id)
+	if (!res.ok) console.error("Failed to close active server for place", id, res.msg)
+
 	return message(form, "Network settings updated successfully!")
 }
 actions.privacy = async e => {

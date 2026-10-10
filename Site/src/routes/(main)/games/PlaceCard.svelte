@@ -16,6 +16,7 @@
 			dislikeCount: number
 			serverPing: number
 			playerCount: number
+			clientVersion: number
 		}
 		num: number
 		total: number
@@ -40,7 +41,8 @@
 				<img
 					src="/place/{place.id}/{slug}/icon"
 					alt={place.name}
-					class="w-full" />
+					class="relative z-[1] w-full" />
+				<small class="absolute bottom-2 left-2 z-10 text-white text-xs rounded-2 bg-purple-600 p-2 py-1">{place.clientVersion}</small>
 			</div>
 		</div>
 		<div class="w-1/2 flex flex-col justify-between py-2">
@@ -81,5 +83,6 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
+		z-index: 0;
 	}
 </style>

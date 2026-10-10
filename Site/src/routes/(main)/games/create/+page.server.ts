@@ -14,6 +14,7 @@ import {
 } from "$lib/typeTests"
 import { encode } from "$lib/urlName"
 import createQuery from "./create.surql"
+import clientVersions from "./clientVersions"
 
 const schema = type({
 	name: "3 <= string <= 50",
@@ -22,6 +23,9 @@ const schema = type({
 	// eh, works well enough and the built-in z.string().url() requires a protocol
 	serverPort: serverPortTest.default(53640),
 	maxPlayers: maxPlayersTest.default(10),
+	clientVersion: type.enumerated(...clientVersions).configure({
+			problem: "must be a valid client version",
+		}),
 	privateServer: "boolean | undefined",
 })
 
@@ -37,7 +41,7 @@ actions.default = async ({ fetch: f, locals, request }) => {
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
-	const { serverAddress, serverPort, maxPlayers, privateServer } = form.data
+	const { serverAddress, serverPort, maxPlayers, clientVersion, privateServer } = form.data
 
 	const name = form.data.name.trim()
 	if (!name) return formError(form, ["name"], ["Place must have a name"])
@@ -70,6 +74,7 @@ actions.default = async ({ fetch: f, locals, request }) => {
 		serverPort,
 		privateServer,
 		maxPlayers,
+		clientVersion: +clientVersion,
 	})
 
 	redirect(302, `/place/${id}/${encode(name)}`)

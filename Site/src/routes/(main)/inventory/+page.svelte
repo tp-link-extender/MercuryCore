@@ -13,8 +13,9 @@
 		Shirts: 11,
 		Pants: 12,
 		Decals: 13,
-		Faces: 18
-	} as const)
+		Faces: 18,
+		Packages: 32
+	})
 
 	let tabData = $state(TabData(data.url, Object.keys(tabTypes)))
 

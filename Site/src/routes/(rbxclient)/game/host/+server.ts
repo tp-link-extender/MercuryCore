@@ -1,12 +1,12 @@
 import { error } from "@sveltejs/kit"
 import config from "$lib/server/config"
-import { SignData } from "$lib/server/sign"
+import { SignScript } from "$lib/server/sign"
 import { db } from "$lib/server/surreal"
 import placeQuery from "./place.surql"
 
 export async function GET({ url }) {
 	if (config.Gameservers.Hosting === "Dedicated")
-		error(400, "Selfhosted servers are not supported")
+		error(400, "Dedicated servers are not supported")
 
 	const ticket = url.searchParams.get("ticket")
 	if (!ticket) error(400, "Invalid Request")
@@ -34,5 +34,5 @@ export async function GET({ url }) {
 		.replaceAll("_SERVER_PORT", port.toString())
 		.replaceAll("_SERVER_PRESENCE_URL", `"${serverPresenceUrl}"`)
 
-	return new Response(await SignData(script))
+	return new Response(await SignScript(script))
 }

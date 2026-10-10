@@ -62,6 +62,18 @@ async function loadUserAsset(id: number) {
 	return response(script)
 }
 
+async function loadPlaceAsset(id: number) {
+	// places are stored separately (see the dedicated gameserver flow's placeFile
+	// check), and RCC hosting loads them via /asset/?id= (gameserver.txt convention)
+	const file = Bun.file(`../data/places/${id}`)
+	if (!(await file.exists())) return
+
+	const script = await substituteURLs(file)
+
+	console.log("Serving place", id)
+	return response(script)
+}
+
 async function loadOpenCloudAsset(f: typeof globalThis.fetch, id: number) {
 	const cachepath = `../data/assetcache/${id}`
 	const file = Bun.file(cachepath)
@@ -103,6 +115,9 @@ export async function GET({ fetch: f, url }) {
 	// all asset ids are now numbered
 	const id = +assetId
 	console.log("Requested asset", id)
+
+	const result2b = await loadPlaceAsset(id)
+	if (result2b) return result2b
 
 	const result1 = await loadPrivilegedAsset(id)
 	if (result1) return result1

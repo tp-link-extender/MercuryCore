@@ -8,8 +8,10 @@
 
 	const { data } = $props()
 
-	let formData = $derived(superForm(data.form))
+	let formData = $derived(superForm(data.settingsForm))
+	let reuploadData = $derived(superForm(data.reuploadForm))
 	let { form } = $derived(formData)
+	let { user } = $derived(data)
 
 	$effect(() => {
 		if (data.description && !get(formData.form).description)
@@ -31,6 +33,7 @@
 	<Form
 		{formData}
 		enctype="multipart/form-data"
+		action="?/settings"
 		submit=" <fa fa-save></fa> Save changes">
 		<Input
 			{formData}
@@ -45,4 +48,42 @@
 		<Input {formData} type="number" name="price" label="Price" />
 		<Input {formData} type="checkbox" name="forSale" label="For sale" />
 	</Form>
+
+	<hr />
+
+	<div class="pt-6 pb-4">
+		<h2 class="text-xl">Reupload asset</h2>
+		<p class="grey-text">
+			Replace the file for this asset.
+			{#if data.visibility === "Pending"}
+				This asset is currently pending approval &ndash; your upload will
+				stay pending until an admin approves it.
+			{:else if user.permissionLevel >= 3}
+				Your upload will be
+				automatically approved.
+			{:else}
+				Your upload will need to be approved by an admin before going
+				live.
+			{/if}
+		</p>
+	</div>
+
+	{#if data.type !== 32}
+		<Form
+			formData={reuploadData}
+			enctype="multipart/form-data"
+			action="?/reupload"
+			submit=" <fa fa-upload></fa> Upload file">
+			<Input
+				formData={reuploadData}
+				type="file"
+				name="asset"
+				label="New asset file"
+				help={data.imageAssetId
+					? "Max image size: 20MB. Supports most popular image formats."
+					: "Max file size: 20MB."} />
+		</Form>
+	{:else}
+		<p class="grey-text">Packages cannot be reuploaded.</p>
+	{/if}
 </div>

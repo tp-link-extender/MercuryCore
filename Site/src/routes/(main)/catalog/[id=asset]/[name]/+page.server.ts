@@ -14,8 +14,10 @@ import createCommentQuery from "$lib/server/createComment.surql"
 import { economyConnFailed } from "$lib/server/economy"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
+import { packageItems } from "$lib/server/packageItems"
 import ratelimit from "$lib/server/ratelimit"
-import requestRender from "$lib/server/requestRender"
+import requestRender, { type RenderType } from "$lib/server/requestRender"
+
 import { db, find, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { couldMatch, encode } from "$lib/urlName"
@@ -23,6 +25,7 @@ import type { RequestEvent } from "./$types"
 import assetQuery from "./asset.surql"
 import buyQuery from "./buy.surql"
 import findAssetQuery from "./findAsset.surql"
+import grantPackageQuery from "./grantPackage.surql"
 
 const schema = type({
 	content: "1 <= string <= 1000",
@@ -59,7 +62,7 @@ export async function load({ fetch: f, locals, params }) {
 		asset: Record("asset", id),
 		user: Record("user", user.id),
 	})
-	if (!asset) error(404, "Not Found")
+	if (!asset?.creator) error(404, "Not Found")
 
 	const slug = encode(asset.name)
 	if (!couldMatch(asset.name, params.name))
@@ -138,17 +141,36 @@ async function rerender({ fetch: f, locals, params }: RequestEvent) {
 	if (asset.visibility === "Moderated")
 		error(400, "Can't rerender a moderated asset")
 
-	if ([8, 11, 12].includes(asset.type))
-		try {
-			await requestRender(f, asset.type === 8 ? "Model" : "Clothing", id)
-			const icon = `/catalog/${id}/${asset.name}/icon?r=${Math.random()}`
-			return { icon }
-		} catch (e) {
-			console.error(e)
-			return fail(500, { msg: "Failed to request render" })
-		}
+	// body parts are rendered as close-ups of the part itself, with its
+	// matching clothing (from api/render/bodypart), using one script per limb
+	const renderTypeFromType = Object.freeze({
+		27: "Torso",
+		28: "RightArm",
+		29: "LeftArm",
+		30: "LeftLeg",
+		31: "RightLeg",
+	})
 
-	error(400, "Can't rerender this type of asset")
+	const renderType =
+		renderTypeFromType[asset.type as keyof typeof renderTypeFromType] ??
+		(asset.type === 8
+			? "Model"
+			: asset.type === 32
+				? "Package"
+				: [11, 12].includes(asset.type)
+					? "Clothing"
+					: null)
+
+	if (!renderType) error(400, "Can't rerender this type of asset")
+
+	try {
+		await requestRender(f, renderType as RenderType, id)
+		const icon = `/catalog/${id}/${asset.name}/icon?r=${Math.random()}`
+		return { icon }
+	} catch (e) {
+		console.error(e)
+		return fail(500, { msg: "Failed to request render" })
+	}
 }
 export const actions: import("./$types").Actions = { rerender }
 actions.comment = async ({ locals, params, request, getClientAddress }) => {
@@ -199,6 +221,7 @@ actions.buy = async e => {
 		forSale: boolean
 		name: string
 		price: number
+		type: number
 		visibility: string
 	}
 	const [[asset]] = await db.query<FoundAsset[][]>(buyQuery, {
@@ -225,4 +248,33 @@ actions.buy = async e => {
 				relativeId: e.params.id,
 			}
 		)
+		if (!tx.ok) error(400, tx.msg)
+	}
+
+	// buying a package grants ownership of every item inside it too
+	// (the package ownership itself is granted below for all asset types)
+	if (asset.type === 32) {
+		const items = await packageItems(id, user.id)
+		await db.query(grantPackageQuery, {
+			items: items.filter(i => !i.owned).map(i => Record("asset", i.id)),
+			user: Record("user", user.id),
+		})
+	}
+
+	await Promise.all([
+		db.query("RELATE $user->ownsAsset->$asset", {
+			asset: Record("asset", id),
+			user: Record("user", user.id),
+		}),
+		user.id === asset.creator.id ||
+			db.query(
+				'fn::notify($user, $creator, "ItemPurchase", $note, $relativeId)',
+				{
+					user: Record("user", user.id),
+					creator: Record("user", asset.creator.id),
+					note: `${user.username} just purchased your item ${asset.name}`,
+					relativeId: e.params.id,
+				}
+			),
+	])
 }

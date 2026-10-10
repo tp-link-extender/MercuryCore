@@ -5,7 +5,7 @@
 	import Head from "$components/Head.svelte"
 	import Thing3D from "./Thing3D.svelte"
 	import Waves from "./Waves.svelte"
-	
+
 	// Gradient must run upon page being loaded, and cannot be rendered on serverside.
 	let canvasOpacity = $state(0)
 	let infoPadding = $state(50)
@@ -21,7 +21,7 @@
 
 	const { data } = $props()
 
-	const description = `${data.siteName}${data.longTagline ? `: ${data.longTagline}` : ""}`
+	let description = $derived(`${data.siteName}${data.longTagline ? `: ${data.longTagline}` : ""}`)
 </script>
 
 <Head

@@ -36,11 +36,18 @@
 
 	let formData = $derived(superForm(data.form))
 
-	let tabData = $state(TabData(data.url, ["Recommended", "Comments"]))
+	let tabData = $state(
+		TabData(data.url, [
+			"Comments",
+			...(data.asset.items.length ? ["Package contents"] : []),
+			"Recommended"
+		])
+	)
 </script>
 
 <Head name={data.siteName} title={data.asset.name} />
 
+{#key data.asset.id}
 <div class="ctnr max-w-240">
 	<div class="flex <sm:flex-col">
 		<div class="pr-4 pb-4">
@@ -69,7 +76,7 @@
 							</a>
 						</div>
 					{/if}
-					{#if user.permissionLevel >= 5 && [8, 11, 12].includes(data.asset.type)}
+					{#if user.permissionLevel >= 5 && [8, 11, 12, 32, 27, 28, 29, 30, 31].includes(data.asset.type)}
 						<span class="dropdown pt-2">
 							<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
 							<div class="dropdown-content">
@@ -161,8 +168,6 @@
 
 	<TabNav bind:tabData justify />
 
-	<Tab bind:tabData />
-
 	<Tab bind:tabData class={{ "pb-32": comments.length > 0 }}>
 		<PostReply {formData} />
 		{#if comments.length > 0}
@@ -181,6 +186,30 @@
 			</h3>
 		{/if}
 	</Tab>
+
+	{#if data.asset.items.length > 0}
+		<Tab bind:tabData>
+			<div
+				class="grid gap-4 grid-cols-2 xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3">
+				{#each data.asset.items as item}
+					<a
+						href="/catalog/{item.id}/{item.name}"
+						class="contents-item card bg-a p-4 no-underline text-center"
+						aria-label={item.name}>
+						<div class="pb-4">
+							<img
+								src="/catalog/{item.id}/{item.name}/icon"
+								alt={item.name}
+								class="w-85%" />
+						</div>
+						<span>{item.name}</span>
+					</a>
+				{/each}
+			</div>
+		</Tab>
+	{/if}
+
+	<Tab bind:tabData />
 </div>
 
 <div id="buy" class="light-text p-4 min-w-120" popover="auto">
@@ -229,6 +258,7 @@
 		</button>
 	{/if}
 </div>
+{/key}
 
 <style>
 	.image {
@@ -257,6 +287,14 @@
 		padding: 0;
 		&:first-child {
 			padding-right: 0.5rem;
+		}
+	}
+
+	.contents-item {
+		border: 1px solid var(--accent2);
+		transition: 0.3s;
+		&:hover {
+			background: var(--darker) !important;
 		}
 	}
 </style>
