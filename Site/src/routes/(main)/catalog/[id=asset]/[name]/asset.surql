@@ -1,20 +1,7 @@
 SELECT
 	*,
 	record::id(id) AS id,
-	(
-		SELECT
-			status,
-			username
-		FROM $parent<-created<-user
-	)[0] AS creator,
-	(
-		SELECT VALUE id
-		FROM $parent<-created<-user
-	)[0] = $user AS isCreator,
-	count(<-ownsAsset<-user) AS sold,
-	(SELECT record::id(id) AS id, name, price, type
-		FROM $parent->packageItem->asset) AS items,
-	$user IN <-ownsAsset<-user.id AS owned,
+
 	fn::currentContent($this.description) AS description,
 	array::flatten(
 		SELECT VALUE fn::getComments($this.id, 1, $user) FROM comment WHERE type = ["asset", record::id($parent.id)]

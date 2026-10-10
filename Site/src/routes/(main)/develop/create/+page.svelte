@@ -4,7 +4,6 @@
 	import Select from "$components/forms/Select.svelte"
 	import Textarea from "$components/forms/Textarea.svelte"
 	import Head from "$components/Head.svelte"
-	import beautifyCurrency from "$lib/beautifyCurrency"
 	import { superForm } from "$lib/validate"
 	import assetTypes from "./assetTypes"
 
@@ -15,10 +14,8 @@
 	let formData = $derived(superForm(data.form))
 	export const snapshot = formData
 
-	let [, c1, c2] = $derived(beautifyCurrency(data.price))
-
 	let currency = $derived(
-		` (${data.currencySymbol}${c1}${c2 ? "." : ""}${c2})`
+		` (${data.currencySymbol}${data.price})`
 	)
 </script>
 

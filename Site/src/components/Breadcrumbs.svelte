@@ -5,7 +5,7 @@
 
 <nav aria-label="breadcrumb">
 	<ol
-		class="grey-text text-base px-0 flex flex-wrap list-none items-center justify-start">
+		class="grey-text text-base pb-4 flex flex-wrap list-none items-center justify-start">
 		{#each path as [name, href]}
 			<li><a {href} class="accent-text">{name}</a></li>
 		{/each}

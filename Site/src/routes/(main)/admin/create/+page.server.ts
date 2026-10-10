@@ -1,20 +1,21 @@
-import fs from "node:fs"
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
+import { createUnlimitedSource } from "economy/api"
+import * as Econ from "economy/types"
 import types, { typeToNumber } from "$lib/assetTypes"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
-import { randomAssetId } from "$lib/server/id"
-import requestRender from "$lib/server/requestRender"
-import { db, Record } from "$lib/server/surreal"
+import { db } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
-import { isXML } from "$lib/server/xml.js"
+import { isXML } from "$lib/server/xml"
+import { encode } from "$lib/urlName"
 import createQuery from "./create.surql"
 import createPackageQuery from "./createPackage.surql"
 
 const schema = type({
 	type: type
 		.enumerated(...Object.values(types))
+		// TODO: compare with the other method in normal creation flow
 		.pipe.try(t => {
 			const num = typeToNumber[t]
 			if (!num) throw new Error("Invalid asset type")
@@ -84,15 +85,23 @@ actions.default = async ({ fetch: f, locals, request }) => {
 	if (assetType === 18 && !isXML(buf))
 		return formError(form, ["asset"], ["Face assets must be in XML format"])
 
-	if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
-	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
+	// if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
+	// if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
 
-	const [, id] = await db.query<string[]>(createQuery, {
+	const u = new Econ.User(user.id)
+	// TODO: allow without requiring currency
+	const created = await createUnlimitedSource(f, u)
+	if (!created.ok)
+		return formError(form, ["other"], ["Failed to create asset source"])
+
+	const id = created.value.ID
+
+	await db.query<string[]>(createQuery, {
+		id,
 		description,
 		name,
 		price,
 		assetType,
-		user: Record("user", user.id),
 	})
 
 	await Bun.write(`../data/assets/${id}`, buf)
@@ -231,5 +240,5 @@ async function createPackage(
 		console.error(e)
 	}
 
-	redirect(302, `/catalog/${id}`)
+	redirect(302, `/catalog/${id}/${encode(name)}`)
 }

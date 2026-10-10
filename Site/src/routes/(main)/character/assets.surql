@@ -4,6 +4,6 @@ SELECT
 	price,
 	type,
 	($user IN <-wearing<-user) AS wearing
-FROM asset WHERE $user IN <-ownsAsset<-user
-	AND type IN $allowedTypes
+FROM $assets
+WHERE type IN $allowedTypes
 	AND visibility = "Visible";
