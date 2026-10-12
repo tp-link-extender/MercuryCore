@@ -38,6 +38,12 @@ type Asset = {
 	created: Date
 	description: string
 	forSale: boolean
+	items: {
+		id: number
+		name: string
+		price: number
+		type: number
+	}[]
 	name: string
 	owned: boolean
 	price: number
@@ -62,7 +68,7 @@ export async function load({ fetch: f, locals, params }) {
 		asset: Record("asset", id),
 		user: Record("user", user.id),
 	})
-	if (!asset?.creator) error(404, "Not Found")
+	if (!asset) error(404, "Not Found")
 
 	const slug = encode(asset.name)
 	if (!couldMatch(asset.name, params.name))
@@ -238,19 +244,6 @@ actions.buy = async e => {
 	const ok = await buyUnlimitedAsset(e.fetch, u, i, BigInt(asset.price))
 	if (!ok) error(400, "Purchase failed")
 
-	if (user.id !== asset.creatorId)
-		await db.query(
-			'fn::notify($user, $creator, "ItemPurchase", $note, $relativeId)',
-			{
-				user: Record("user", user.id),
-				creator: Record("user", asset.creatorId),
-				note: `${user.username} just purchased your item ${asset.name}`,
-				relativeId: e.params.id,
-			}
-		)
-		if (!tx.ok) error(400, tx.msg)
-	}
-
 	// buying a package grants ownership of every item inside it too
 	// (the package ownership itself is granted below for all asset types)
 	if (asset.type === 32) {
@@ -266,12 +259,12 @@ actions.buy = async e => {
 			asset: Record("asset", id),
 			user: Record("user", user.id),
 		}),
-		user.id === asset.creator.id ||
+		user.id === asset.creatorId ||
 			db.query(
 				'fn::notify($user, $creator, "ItemPurchase", $note, $relativeId)',
 				{
 					user: Record("user", user.id),
-					creator: Record("user", asset.creator.id),
+					creator: Record("user", asset.creatorId),
 					note: `${user.username} just purchased your item ${asset.name}`,
 					relativeId: e.params.id,
 				}

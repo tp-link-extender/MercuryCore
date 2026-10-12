@@ -44,6 +44,7 @@ None of this should conflict with the formatting or linting rules of Biome.
 - Prefer union types over enums
 - Prefer `type` over `interface` except when extending another type, in which prefer `interface x extends y { ... }` over `type x = y & { ... }`
 	- Interfaces are preferred inside namespaces in .d.ts files
+- Always use object types with indexers over Record types, for example prefer `{ [_: string]: string }` over `Record<string, string>`
 
 ## Svelte
 

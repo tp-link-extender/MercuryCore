@@ -1,3 +1,4 @@
+import fs from "node:fs"
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { createUnlimitedSource } from "economy/api"
@@ -5,7 +6,9 @@ import * as Econ from "economy/types"
 import types, { typeToNumber } from "$lib/assetTypes"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
-import { db } from "$lib/server/surreal"
+import { randomAssetId } from "$lib/server/id"
+import requestRender from "$lib/server/requestRender"
+import { db, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { isXML } from "$lib/server/xml"
 import { encode } from "$lib/urlName"
@@ -39,7 +42,7 @@ const packageSchema = type({
 // an equipped package replaces these slots, so a package can't fight itself
 // (hats are the exception, with 3 slots)
 const slotTypes = Object.freeze([2, 8, 11, 12, 18, 25, 26, 27, 28, 29, 30, 31])
-const slotLimits = Object.freeze({
+const slotLimits: Readonly<{ [_: number]: number }> = Object.freeze({
 	2: 1,
 	8: 3,
 	11: 1,
@@ -68,7 +71,8 @@ actions.default = async ({ fetch: f, locals, request }) => {
 	const formData = await request.formData()
 
 	// packages are collections of assets, so they need special handling
-	if (formData.get("type") === "Package") return createPackage(formData, user, f)
+	if (formData.get("type") === "Package")
+		return createPackage(formData, user, f)
 
 	const form = await superValidate(formData, arktype(schema))
 	if (!form.valid) return formError(form)

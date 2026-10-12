@@ -2,7 +2,7 @@ import fs from "node:fs"
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
 import { authorise } from "$lib/server/auth"
-import { isImage, isMesh, isRobloxModel } from "$lib/server/fileType"
+import { isAudio, isImage, isMesh, isRobloxModel } from "$lib/server/fileType"
 import formError from "$lib/server/formError"
 import {
 	clothingAsset,
