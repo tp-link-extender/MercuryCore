@@ -4,7 +4,7 @@
 import { error, redirect } from "@sveltejs/kit"
 import { authorise, cookieName, invalidateSession } from "$lib/server/auth"
 
-const msg = Buffer.from("RHVtYiBuaWdnYSBkZXRlY3RlZA", "base64").toString()
+const msg = Buffer.from("ZHVtYiBuKiBkZXRlY3RlZA==", "base64").toString()
 
 export function load() {
 	error(403, msg)
