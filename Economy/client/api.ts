@@ -231,13 +231,19 @@ export async function stipend(f: Fetch, o: Owner): Promise<boolean> {
 const resToItem = async (res: Response): Promise<Item | null> =>
 	DeserialiseItem(await resReader(res))
 
+/** The source is stocked with this many of the asset it creates at creation time. Must be at least 1. */
 export async function createLimitedSource(
 	f: Fetch,
-	u: User
+	u: User,
+	qty: Quantity
 ): ReturnValue<LimitedSource> {
 	let res: Response
 	try {
-		res = await request(f, "createLimitedSource", SerialiseItem(u))
+		res = await request(
+			f,
+			"createLimitedSource",
+			Buf.concat([SerialiseItem(u), SerialiseUint64(qty)])
+		)
 	} catch {
 		return { ok: false }
 	}

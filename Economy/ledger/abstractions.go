@@ -118,8 +118,28 @@ func (e *Economy) Stipend(user User) (tid TransferID, err error) {
 	return tid, nil
 }
 
-func (e *Economy) CreateLimitedSource(u User) (src LimitedSource, tid TransferID, err error) {
+var ErrNoStock = errors.New("limited source needs a stock of at least one")
+
+// CreateLimitedSource mints a limited source and stocks it with qty of the asset it creates.
+// Stock is granted before the source is handed to the user, because a transfer can only ever move items between two owners and a limited asset can only come from its source: there is no third transfer that could top the source up afterwards. The two transfers aren't atomic, but granting stock first means a failed handover leaves stock stranded rather than leaving the user charged for nothing.
+func (e *Economy) CreateLimitedSource(u User, qty Quantity) (src LimitedSource, tid TransferID, err error) {
+	if qty == 0 {
+		return src, tid, ErrNoStock
+	}
+
 	src = RandLimitedSource()
+
+	stockTid := MakeTransferID()
+	if err := e.ledger.Transfer(stockTid, Transfer{
+		{Items: Items{
+			Many: ItemsMany{
+				src.Create(): qty,
+			},
+		}},
+		{Owner: src, Items: Items{}},
+	}); err != nil {
+		return src, stockTid, fmt.Errorf("stock limited source transfer %v: %w", stockTid, err)
+	}
 
 	tf := Transfer{
 		{

@@ -909,22 +909,139 @@ func TestSourceCannotIssueUnheldSourceAsset(t *testing.T) {
 	}
 }
 
-// LimitedAsset is CanOwnMany, so it can never appear in a One: a source has no way to stock itself, which means BuyLimitedAsset can't work through the public API at all.
-// This test documents that gap; it should be deleted once limited assets are implemented.
-func TestBuyLimitedAssetIsUnreachable(t *testing.T) {
+func TestCreateLimitedSourceStocks(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{"creator"}
+	fund(t, e, creator)
+
+	const stock = 5
+	src, _, err := e.CreateLimitedSource(creator, stock)
+	if err != nil {
+		t.Fatalf("CreateLimitedSource: %v", err)
+	}
+
+	if !e.OwnsOne(creator, src) {
+		t.Fatalf("expected creator to own %v", src)
+	}
+
+	if got := e.OwnersMany(src.Create())[src]; got != stock {
+		t.Fatalf("expected source to be stocked with %d %v, got %d", stock, src.Create(), got)
+	}
+}
+
+func TestCreateLimitedSourceNeedsStock(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{"creator"}
+	fund(t, e, creator)
+
+	if _, _, err := e.CreateLimitedSource(creator, 0); err != ErrNoStock {
+		t.Fatalf("expected ErrNoStock, got %v", err)
+	}
+}
+
+func TestBuyLimitedAsset(t *testing.T) {
 	_, e := newTestEconomy(t)
 
 	creator := User{"creator"}
 	buyer := User{"buyer"}
 	fund(t, e, creator, buyer)
 
-	src, _, err := e.CreateLimitedSource(creator)
+	const stock = 5
+	const price = 10
+	const qty = 3
+
+	src, _, err := e.CreateLimitedSource(creator, stock)
 	if err != nil {
 		t.Fatalf("CreateLimitedSource: %v", err)
 	}
 
-	if _, _, err := e.BuyLimitedAsset(buyer, src, 10, 3); err == nil {
-		t.Fatalf("expected BuyLimitedAsset to fail because the source is never stocked, got nil")
+	asset, _, err := e.BuyLimitedAsset(buyer, src, price, qty)
+	if err != nil {
+		t.Fatalf("BuyLimitedAsset: %v", err)
+	}
+
+	if asset != src.Create() {
+		t.Fatalf("expected %v, got %v", src.Create(), asset)
+	}
+
+	// the buyer actually receives the asset, which is what the ForceApply sale path used to drop
+	if got := e.OwnsMany(buyer, asset); got != qty {
+		t.Fatalf("expected buyer to own %d %v, got %d", qty, asset, got)
+	}
+
+	// stock depletes, and the reverse index tracks it
+	if got := e.OwnersMany(asset)[src]; got != stock-qty {
+		t.Fatalf("expected source to have %d %v left, got %d", stock-qty, asset, got)
+	}
+	if got := e.OwnersMany(asset)[buyer]; got != qty {
+		t.Fatalf("expected buyer to own %d %v, got %d", qty, asset, got)
+	}
+
+	// the creator is paid for exactly what sold, on top of the 100 spent on the source
+	if got := e.Balance(creator); got != 200-100+price*qty {
+		t.Fatalf("expected creator balance %d, got %d", 200-100+price*qty, got)
+	}
+	if got := e.Balance(buyer); got != 200-price*qty {
+		t.Fatalf("expected buyer balance %d, got %d", 200-price*qty, got)
+	}
+}
+
+// a source can't oversell itself
+func TestBuyLimitedAssetRespectsStock(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{"creator"}
+	buyer := User{"buyer"}
+	fund(t, e, creator, buyer)
+
+	const stock = 2
+	src, _, err := e.CreateLimitedSource(creator, stock)
+	if err != nil {
+		t.Fatalf("CreateLimitedSource: %v", err)
+	}
+
+	if _, _, err := e.BuyLimitedAsset(buyer, src, 10, stock); err != nil {
+		t.Fatalf("BuyLimitedAsset: %v", err)
+	}
+
+	if _, _, err := e.BuyLimitedAsset(buyer, src, 10, 1); err == nil {
+		t.Fatalf("expected buying past stock to fail, got nil")
+	}
+}
+
+// stock has to survive a restart, since it arrives via a mint that replay has to accept
+func TestLimitedStockSurvivesReopen(t *testing.T) {
+	l, e := newTestEconomy(t)
+
+	creator := User{"creator"}
+	fund(t, e, creator)
+
+	const stock = 7
+	src, _, err := e.CreateLimitedSource(creator, stock)
+	if err != nil {
+		t.Fatalf("CreateLimitedSource: %v", err)
+	}
+
+	if err := l.Close(); err != nil {
+		t.Fatalf("close ledger: %v", err)
+	}
+
+	name := os.TempDir() + "/ledger_test.db"
+	reopened, err := NewLedger(name)
+	if err != nil {
+		t.Fatalf("reopen ledger: %v", err)
+	}
+	defer reopened.Close()
+
+	reopenedEconomy := NewEconomy(reopened, 10, 10, 100, 10, 10, time.Hour*12)
+
+	if !reopenedEconomy.OwnsOne(creator, src) {
+		t.Fatalf("expected creator to still own %v", src)
+	}
+	if got := reopenedEconomy.OwnersMany(src.Create())[src]; got != stock {
+		t.Fatalf("expected source to still be stocked with %d, got %d", stock, got)
 	}
 }
 

@@ -174,11 +174,16 @@ func (i LimitedAsset) ID() uint32 {
 	return i.Id
 }
 
+// Mintable because a limited asset can only ever come from a limited source, so the source's opening stock has to be minted alongside it – there's no later transfer that could top it up.
+// Nothing but CreateLimitedSource ever constructs such a transfer, so this doesn't hand callers a mint.
+func (LimitedAsset) Mintable() {}
+
 func (LimitedAsset) CanOwnMany() {}
 
 var (
 	_ NumericItem = LimitedAsset{}
 	_ CanOwnMany  = LimitedAsset{}
+	_ Mintable    = LimitedAsset{}
 )
 
 type UnlimitedAsset struct {

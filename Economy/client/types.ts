@@ -124,10 +124,12 @@ export class Currency implements NumericItem, CanOwnMany, Mintable {
 	}
 }
 
-export class LimitedAsset implements NumericItem, CanOwnMany {
+// Mintable mirrors the Go side: a limited asset can only come from its source, so the source's opening stock has to be minted alongside it.
+export class LimitedAsset implements NumericItem, CanOwnMany, Mintable {
 	Type = TypeLimitedAsset
 
 	CanOwnMany() {}
+	Mintable() {}
 
 	constructor(public ID: number) {}
 

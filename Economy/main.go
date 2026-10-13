@@ -28,7 +28,6 @@ type EconomyServer struct {
 	*Economy
 }
 
-
 // itemTypeName is %T for type parameters: %T on a zero value prints <nil> when T is instantiated with an interface (nil interface = no dynamic type).
 func itemTypeName[T any]() string {
 	return reflect.TypeOf((*T)(nil)).Elem().String()
@@ -49,7 +48,6 @@ func getItem[T Item](w http.ResponseWriter, r *http.Request) (t T, ok bool) {
 
 	return o, true
 }
-
 
 func (e *EconomyServer) ownsOneRoute(w http.ResponseWriter, r *http.Request) {
 	o, ok := getItem[Owner](w, r)
@@ -188,8 +186,14 @@ func (e *EconomyServer) createLimitedSourceRoute(w http.ResponseWriter, r *http.
 		return
 	}
 
+	qty, err := DeserialiseUint64(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode stock quantity: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
 	// again wdc about the tid because we'll probably be redirecting and the src is what we actually want
-	src, _, err := e.CreateLimitedSource(u)
+	src, _, err := e.CreateLimitedSource(u, Quantity(qty))
 	if err != nil {
 		http.Error(w, fmt.Sprintf("create limited source error: %v", err.Error()), http.StatusBadRequest)
 		return
