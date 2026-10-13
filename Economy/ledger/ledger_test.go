@@ -779,6 +779,155 @@ func TestAbstractions2(t *testing.T) {
 	}
 }
 
+// newTestEconomy spins up a throwaway ledger with the usual test prices.
+func newTestEconomy(t *testing.T) (*Ledger, *Economy) {
+	t.Helper()
+
+	name := os.TempDir() + "/ledger_test.db"
+	os.Remove(name)
+
+	l, err := NewLedger(name)
+	if err != nil {
+		t.Fatalf("create ledger: %v", err)
+	}
+	t.Cleanup(func() { os.Remove(name) })
+
+	return l, NewEconomy(l, 10, 10, 100, 10, 10, time.Hour*12)
+}
+
+func fund(t *testing.T, e *Economy, users ...User) {
+	t.Helper()
+	for _, user := range users {
+		if _, err := e.MintCurrency(user, 200); err != nil {
+			t.Fatalf("MintCurrency %v: %v", user, err)
+		}
+	}
+}
+
+// a source can issue its own asset as many times as it likes without ever holding it
+func TestSourceReissuesOwnAsset(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{"creator"}
+	buyer1 := User{"buyer1"}
+	buyer2 := User{"buyer2"}
+	fund(t, e, creator, buyer1, buyer2)
+
+	src, _, err := e.CreateUnlimitedSource(creator)
+	if err != nil {
+		t.Fatalf("CreateUnlimitedSource: %v", err)
+	}
+
+	for i, buyer := range []User{buyer1, buyer2} {
+		asset, _, err := e.BuyUnlimitedAsset(buyer, src, 25)
+		if err != nil {
+			t.Fatalf("BuyUnlimitedAsset %d: %v", i, err)
+		}
+		if !e.OwnsOne(buyer, asset) {
+			t.Fatalf("expected buyer %d to own %v", i, asset)
+		}
+		if e.OwnsOne(creator, asset) {
+			t.Fatalf("expected creator not to own %v", asset)
+		}
+	}
+}
+
+// this is the package case: a source that holds another source can issue that source's asset indefinitely, without ever holding the asset itself
+func TestSourceReissuesHeldSourceAsset(t *testing.T) {
+	l, e := newTestEconomy(t)
+
+	creator := User{"creator"}
+	buyer1 := User{"buyer1"}
+	buyer2 := User{"buyer2"}
+	fund(t, e, creator, buyer1, buyer2)
+
+	// pkgSrc stands in for a PackageSource, compSrc for one of its components
+	pkgSrc, _, err := e.CreateUnlimitedSource(creator)
+	if err != nil {
+		t.Fatalf("CreateUnlimitedSource pkg: %v", err)
+	}
+	compSrc, _, err := e.CreateUnlimitedSource(creator)
+	if err != nil {
+		t.Fatalf("CreateUnlimitedSource comp: %v", err)
+	}
+
+	// hand the component source over to the package source, which is what CreatePackageSource will do
+	if err := l.Transfer(MakeTransferID(), Transfer{
+		{Owner: creator, Items: Items{One: ItemsOne{compSrc: {}}}},
+		{Owner: pkgSrc, Items: Items{}},
+	}); err != nil {
+		t.Fatalf("transfer component source: %v", err)
+	}
+
+	compAsset := compSrc.Create()
+
+	for i, buyer := range []User{buyer1, buyer2} {
+		if err := l.Transfer(MakeTransferID(), Transfer{
+			{Owner: buyer, Items: Items{Many: ItemsMany{Currency{0}: 25}}},
+			{Owner: pkgSrc, Items: Items{One: ItemsOne{compAsset: {}}}},
+		}); err != nil {
+			t.Fatalf("issue component %d: %v", i, err)
+		}
+
+		if !e.OwnsOne(buyer, compAsset) {
+			t.Fatalf("expected buyer %d to own %v", i, compAsset)
+		}
+	}
+
+	// the package source never held the asset, and still holds the source for it
+	if e.OwnsOne(pkgSrc, compAsset) {
+		t.Fatalf("expected package source not to hold %v", compAsset)
+	}
+	if !e.OwnsOne(pkgSrc, compSrc) {
+		t.Fatalf("expected package source to still hold %v", compSrc)
+	}
+}
+
+// entitlement comes from holding the source, so a source can't issue an asset it has no claim to
+func TestSourceCannotIssueUnheldSourceAsset(t *testing.T) {
+	l, e := newTestEconomy(t)
+
+	creator := User{"creator"}
+	buyer := User{"buyer"}
+	fund(t, e, creator, buyer)
+
+	pkgSrc, _, err := e.CreateUnlimitedSource(creator)
+	if err != nil {
+		t.Fatalf("CreateUnlimitedSource pkg: %v", err)
+	}
+	strangerSrc, _, err := e.CreateUnlimitedSource(creator)
+	if err != nil {
+		t.Fatalf("CreateUnlimitedSource stranger: %v", err)
+	}
+
+	// the creator never handed strangerSrc over to pkgSrc
+	if err := l.Transfer(MakeTransferID(), Transfer{
+		{Owner: buyer, Items: Items{Many: ItemsMany{Currency{0}: 25}}},
+		{Owner: pkgSrc, Items: Items{One: ItemsOne{strangerSrc.Create(): {}}}},
+	}); err == nil {
+		t.Fatalf("expected issue of unheld %v to be rejected", strangerSrc.Create())
+	}
+}
+
+// LimitedAsset is CanOwnMany, so it can never appear in a One: a source has no way to stock itself, which means BuyLimitedAsset can't work through the public API at all.
+// This test documents that gap; it should be deleted once limited assets are implemented.
+func TestBuyLimitedAssetIsUnreachable(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{"creator"}
+	buyer := User{"buyer"}
+	fund(t, e, creator, buyer)
+
+	src, _, err := e.CreateLimitedSource(creator)
+	if err != nil {
+		t.Fatalf("CreateLimitedSource: %v", err)
+	}
+
+	if _, _, err := e.BuyLimitedAsset(buyer, src, 10, 3); err == nil {
+		t.Fatalf("expected BuyLimitedAsset to fail because the source is never stocked, got nil")
+	}
+}
+
 func TestAbstractions3(t *testing.T) {
 	name := os.TempDir() + "/ledger_test.db"
 	os.Remove(name)
