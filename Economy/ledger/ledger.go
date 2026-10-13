@@ -59,6 +59,23 @@ func (s *State) GetOwnersMany(i CanOwnMany) *OwnersMany {
 	return om
 }
 
+// canIssue reports whether o may issue item i without holding it.
+// An unlimited source can always issue the asset it creates, and holding a source entitles its holder to issue the asset that source creates.
+// Sources are only obtainable by paying for them, so this can't be used to conjure assets out of nothing.
+// This is what lets a source that contains other sources (a package) keep issuing its contents indefinitely.
+// Only unlimited assets are covered, because they're the only assets that can be owned one-per-person; places and groups must always be held.
+func (s *State) canIssue(o Owner, i CanOwnOne) bool {
+	if ous, ok := o.(UnlimitedSource); ok && i == ous.Create() {
+		return true
+	}
+
+	asset, ok := i.(UnlimitedAsset)
+	if !ok {
+		return false
+	}
+	return s.GetInventory(o).One.Has(UnlimitedSource{asset.Id})
+}
+
 func (s State) CanApply(t Transfer) error {
 	if err := t.Valid(); err != nil {
 		return fmt.Errorf("invalid transfer: %w", err)
@@ -73,8 +90,8 @@ func (s State) CanApply(t Transfer) error {
 		inv := s.GetInventory(send.Owner)
 		otherinv := s.GetInventory(t[1-i].Owner)
 		for coo := range send.Items.One {
-			// check if it's an asset mint from an unlimited source, if it is then skip this check
-			if send.Owner != nil && !send.UnlimitedSourceAssetMint() && !inv.One.Has(coo) {
+			// a source can issue what it's entitled to issue without holding it
+			if send.Owner != nil && !s.canIssue(send.Owner, coo) && !inv.One.Has(coo) {
 				errs = append(errs, fmt.Errorf("item %v not owned by user %s", coo, send.Owner))
 			}
 
@@ -143,23 +160,18 @@ func (s *State) ForceApply(t Transfer) {
 			oOne.Add(other.Owner)
 		}
 
-		if !sale {
-			for item, qty := range send.Items.Many {
-				dst.Many.Add(item, qty)
-				oMany := s.GetOwnersMany(item)
-				oMany.Add(other.Owner, qty)
-			}
-			continue
-		}
-
-		// TODO:
-		// If the source owner is a user, this is handled correctly, items are added to their inventory
-		// If the source owner is a group, this should work fine (funds should have to be withdrawn from groups manually)
-		// we could make it the same for sources though I don't really see why
 		for item, qty := range send.Items.Many {
-			if src, ok := other.Owner.(CanOwnOne); ok {
-				s.addToSourceOwner(src, item, qty)
+			// on a sale, currency is the payment rather than the goods, so it belongs to whoever owns the source
+			if _, isCurrency := item.(Currency); sale && isCurrency {
+				if src, ok := other.Owner.(CanOwnOne); ok {
+					s.addToSourceOwner(src, item, qty)
+					continue
+				}
 			}
+
+			dst.Many.Add(item, qty)
+			oMany := s.GetOwnersMany(item)
+			oMany.Add(other.Owner, qty)
 		}
 		// fmt.Printf("Ending inventory for %v: %v\n", other.Owner, dst)
 		// fmt.Printf("Ending inventory for %v: %v\n", other.Owner, s.GetInventory(other.Owner))
