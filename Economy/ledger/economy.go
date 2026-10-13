@@ -101,19 +101,6 @@ func (s Send) Equal(other Send) bool {
 	return s.Items.Equal(other.Items)
 }
 
-func (s Send) UnlimitedSourceAssetMint() bool {
-	ous, ok := s.Owner.(UnlimitedSource)
-	if !ok {
-		return false
-	}
-
-	return s.Items.Equal(Items{
-		One: ItemsOne{
-			ous.Create(): {},
-		},
-	})
-}
-
 func (s Send) Serialise(w io.Writer) error {
 	// encode Owner
 	if !SerialiseItem(s.Owner, w) {

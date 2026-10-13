@@ -2,8 +2,6 @@ import {
 	Buf,
 	BufReader,
 	Items,
-	ItemsMany,
-	ItemsOne,
 	type Quantity,
 	SerialiseItem,
 } from "./items"
@@ -15,7 +13,6 @@ import {
 	IsOwner,
 	IsSource,
 	type Owner,
-	UnlimitedSource,
 	User,
 } from "./types"
 
@@ -93,16 +90,6 @@ export class Send {
 	Equal(other: Send): boolean {
 		if (this.Owner !== other.Owner) return false
 		return this.Items.Equal(other.Items)
-	}
-
-	UnlimitedSourceAssetMint(): boolean {
-		if (!(this.Owner instanceof UnlimitedSource)) return false
-		const ous = this.Owner
-		const expected = new Items(
-			new ItemsOne([ous.Create()]),
-			new ItemsMany()
-		)
-		return this.Items.Equal(expected)
 	}
 
 	Serialise(): Buf {
