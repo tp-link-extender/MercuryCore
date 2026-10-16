@@ -603,7 +603,7 @@ func TestAbstractions1(t *testing.T) {
 	}
 	defer l.Close()
 
-	e := NewEconomy(l, 10, 10, 100, 10, 10, time.Hour*12)
+	e := NewEconomy(l, 10, 10, 100, 10, 10, 10, time.Hour*12)
 
 	user := User{"testuser"}
 
@@ -671,7 +671,7 @@ func TestAbstractions2(t *testing.T) {
 	}
 	defer l.Close()
 
-	e := NewEconomy(l, 10, 10, 100, 10, 10, time.Hour*12)
+	e := NewEconomy(l, 10, 10, 100, 10, 10, 10, time.Hour*12)
 
 	users := [3]User{
 		{"user0"},
@@ -792,7 +792,7 @@ func newTestEconomy(t *testing.T) (*Ledger, *Economy) {
 	}
 	t.Cleanup(func() { os.Remove(name) })
 
-	return l, NewEconomy(l, 10, 10, 100, 10, 10, time.Hour*12)
+	return l, NewEconomy(l, 10, 10, 100, 10, 10, 10, time.Hour*12)
 }
 
 func fund(t *testing.T, e *Economy, users ...User) {
@@ -1084,7 +1084,7 @@ func TestLimitedStockSurvivesReopen(t *testing.T) {
 	}
 	defer reopened.Close()
 
-	reopenedEconomy := NewEconomy(reopened, 10, 10, 100, 10, 10, time.Hour*12)
+	reopenedEconomy := NewEconomy(reopened, 10, 10, 100, 10, 10, 10, time.Hour*12)
 
 	if !reopenedEconomy.OwnsOne(creator, src) {
 		t.Fatalf("expected creator to still own %v", src)
@@ -1105,7 +1105,7 @@ func TestAbstractions3(t *testing.T) {
 	}
 	defer l.Close()
 
-	e := NewEconomy(l, 10, 10, 100, 10, 10, time.Hour*12)
+	e := NewEconomy(l, 10, 10, 100, 10, 10, 10, time.Hour*12)
 
 	user := User{"testuser3"}
 

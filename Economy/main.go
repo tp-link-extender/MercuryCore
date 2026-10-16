@@ -140,13 +140,14 @@ func (e *EconomyServer) balanceRoute(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%d", e.Balance(o))
 }
 
-// pricesRoute returns the service's configured prices so clients can display exactly what will be charged. Prices are uint64 quantities, so this is returned as 5 consecutive big-endian uint64s in a fixed order.
+// pricesRoute returns the service's configured prices so clients can display exactly what will be charged. Prices are uint64 quantities, so this is returned as 6 consecutive big-endian uint64s in a fixed order.
 func (e *EconomyServer) pricesRoute(w http.ResponseWriter, r *http.Request) {
 	prices := []Quantity{
 		e.PlacePrice,
 		e.GroupPrice,
 		e.LimitedSourcePrice,
 		e.UnlimitedSourcePrice,
+		e.PackageSourcePrice,
 		e.StipendAmount,
 	}
 
@@ -245,6 +246,68 @@ func (e *EconomyServer) createGroupRoute(w http.ResponseWriter, r *http.Request)
 	}
 
 	SerialiseString(g, w)
+}
+
+func (e *EconomyServer) createPackageSourceRoute(w http.ResponseWriter, r *http.Request) {
+	u, ok := getItem[User](w, r)
+	if !ok {
+		return
+	}
+
+	count, err := DeserialiseUint32(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode component count: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	comps := make([]PackageComponent, 0, count)
+	for i := uint32(0); i < count; i++ {
+		i, err := DeserialiseItem(r.Body)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("decode component %d: %v", i, err.Error()), http.StatusBadRequest)
+			return
+		}
+
+		c, ok := i.(PackageComponent)
+		if !ok {
+			http.Error(w, fmt.Sprintf("component %d is not a package component: %T", i, i), http.StatusBadRequest)
+			return
+		}
+		comps = append(comps, c)
+	}
+
+	src, _, err := e.CreatePackageSource(u, comps)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("create package source error: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	SerialiseNumeric(src, w)
+}
+
+func (e *EconomyServer) buyPackageRoute(w http.ResponseWriter, r *http.Request) {
+	u, ok := getItem[User](w, r)
+	if !ok {
+		return
+	}
+
+	src, ok := getItem[PackageSource](w, r)
+	if !ok {
+		return
+	}
+
+	price, err := DeserialiseUint64(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode price: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	if _, _, err := e.BuyPackage(u, src, Quantity(price)); err != nil {
+		http.Error(w, fmt.Sprintf("buy package error: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func (e *EconomyServer) buyUnlimitedAssetRoute(w http.ResponseWriter, r *http.Request) {
@@ -421,7 +484,7 @@ func loggingHandler(next http.Handler) http.Handler {
 }
 
 // routes are kept in step with the Route union in client/api.ts
-var routes = [18]struct {
+var routes = []struct {
 	path string
 	h    func(*EconomyServer, http.ResponseWriter, *http.Request)
 }{
@@ -441,6 +504,8 @@ var routes = [18]struct {
 	{"createGroup", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.createGroupRoute(w, r) }},
 	{"buyUnlimitedAsset", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.buyUnlimitedAssetRoute(w, r) }},
 	{"buyLimitedAsset", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.buyLimitedAssetRoute(w, r) }},
+	{"createPackageSource", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.createPackageSourceRoute(w, r) }},
+	{"buyPackage", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.buyPackageRoute(w, r) }},
 	{"history", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.historyRoute(w, r) }},
 	{"historyOwner", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.historyOwnerRoute(w, r) }},
 }
@@ -463,7 +528,7 @@ func main() {
 	fmt.Println("Database opened successfully")
 	fmt.Println()
 
-	e := NewEconomy(l, 10, 10, 100, 10, 10, time.Hour*12)
+	e := NewEconomy(l, 10, 10, 100, 10, 10, 10, time.Hour*12)
 
 	if history, err := e.TransferHistory(10); err == nil {
 		fmt.Println("Recent transfer history:")

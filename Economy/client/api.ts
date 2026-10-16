@@ -16,6 +16,7 @@ import {
 	type Item,
 	LimitedSource,
 	type Owner,
+	PackageSource,
 	Place,
 	UnlimitedSource,
 	type User,
@@ -38,6 +39,8 @@ type Route =
 	| "createGroup"
 	| "buyUnlimitedAsset"
 	| "buyLimitedAsset"
+	| "createPackageSource"
+	| "buyPackage"
 	| "history"
 	| "historyOwner"
 
@@ -186,12 +189,13 @@ export async function balance(f: Fetch, o: Owner): ReturnValue<bigint> {
 	return { ok: true, value: BigInt(text) }
 }
 
-// The service returns its configured prices as 5 consecutive big-endian uint64s, so clients can display exactly what will be charged.
+// The service returns its configured prices as 6 consecutive big-endian uint64s, so clients can display exactly what will be charged.
 export type Prices = {
 	placePrice: bigint
 	groupPrice: bigint
 	limitedSourcePrice: bigint
 	unlimitedSourcePrice: bigint
+	packageSourcePrice: bigint
 	stipendAmount: bigint
 }
 
@@ -212,6 +216,7 @@ export async function prices(f: Fetch): ReturnValue<Prices> {
 			groupPrice: r.readUint64(),
 			limitedSourcePrice: r.readUint64(),
 			unlimitedSourcePrice: r.readUint64(),
+			packageSourcePrice: r.readUint64(),
 			stipendAmount: r.readUint64(),
 		},
 	}
@@ -306,6 +311,54 @@ export async function createGroup(f: Fetch, u: User): ReturnValue<Group> {
 
 	return { ok: true, value: i }
 }
+
+/**
+ * Creates a package source holding the given component sources. Components are sent as a count followed by each serialised item, which may be an asset source or a nested package source.
+ */
+export async function createPackageSource(
+	f: Fetch,
+	u: User,
+	comps: (UnlimitedSource | PackageSource)[]
+): ReturnValue<PackageSource> {
+	const count = Buf.alloc(4)
+	count.writeUInt32BE(comps.length, 0)
+
+	const parts: Buf[] = [SerialiseItem(u), count]
+	for (const c of comps) parts.push(SerialiseItem(c))
+
+	let res: Response
+	try {
+		res = await request(f, "createPackageSource", Buf.concat(parts))
+	} catch {
+		return { ok: false }
+	}
+	if (res.status !== 200) return { ok: false }
+
+	const i = await resToItem(res)
+	if (!(i instanceof PackageSource))
+		throw new Error(`item is not PackageSource: ${JSON.stringify(i)}`)
+
+	return { ok: true, value: i }
+}
+
+/**
+ * Buys the package: the buyer is charged once and receives the package plus every component inside it. Components the buyer already owns are skipped rather than failing the purchase.
+ */
+export const buyPackage = (
+	f: Fetch,
+	u: User,
+	src: PackageSource,
+	price: Quantity
+): Promise<boolean> =>
+	request(
+		f,
+		"buyPackage",
+		Buf.concat([
+			SerialiseItem(u),
+			SerialiseItem(src),
+			SerialiseUint64(price),
+		])
+	).then(res => res.status === 204)
 
 export const buyUnlimitedAsset = (
 	f: Fetch,

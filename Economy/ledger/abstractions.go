@@ -8,13 +8,14 @@ import (
 
 // Abstractions
 type Economy struct {
-	ledger                                                                          *Ledger
-	defaultCurrency                                                                 Currency
-	PlacePrice, GroupPrice, LimitedSourcePrice, UnlimitedSourcePrice, StipendAmount Quantity
-	StipendTime                                                                     time.Duration
+	ledger                                                                               *Ledger
+	defaultCurrency                                                                      Currency
+	PlacePrice, GroupPrice, LimitedSourcePrice, UnlimitedSourcePrice, PackageSourcePrice Quantity
+	StipendAmount                                                                        Quantity
+	StipendTime                                                                          time.Duration
 }
 
-func NewEconomy(ledger *Ledger, placePrice, groupPrice, limitedSourcePrice, unlimitedSourcePrice, stipendAmount Quantity, stipendTime time.Duration) *Economy {
+func NewEconomy(ledger *Ledger, placePrice, groupPrice, limitedSourcePrice, unlimitedSourcePrice, packageSourcePrice, stipendAmount Quantity, stipendTime time.Duration) *Economy {
 	return &Economy{
 		ledger: ledger,
 		// default 0 currency
@@ -22,6 +23,7 @@ func NewEconomy(ledger *Ledger, placePrice, groupPrice, limitedSourcePrice, unli
 		GroupPrice:           groupPrice,
 		LimitedSourcePrice:   limitedSourcePrice,
 		UnlimitedSourcePrice: unlimitedSourcePrice,
+		PackageSourcePrice:   packageSourcePrice,
 		StipendAmount:        stipendAmount,
 		StipendTime:          stipendTime,
 	}
@@ -310,6 +312,120 @@ func (e *Economy) BuyLimitedAsset(u User, src LimitedSource, priceEach, qty Quan
 	}
 
 	return a, tid, nil
+}
+
+var ErrEmptyPackage = errors.New("package needs at least one component")
+
+var ErrSelfNestedPackage = errors.New("package cannot contain itself")
+
+// PackageComponent is something a package source can hold: either an asset source, or the source of a nested package. Both are CanOwnOne and both grant their holder the right to issue what they create, which is all the ledger needs to know to reissue a bundle.
+type PackageComponent = CanOwnOne
+
+// CreatePackageSource mints a package source and hands it ownership of the given component sources. The package source holding the sources (rather than the assets) is what lets it reissue the whole bundle indefinitely, because holding a source entitles its holder to issue what that source creates.
+// The components are transferred in after the handover, so a user who can't afford the package fails with nothing written rather than with their component sources stranded.
+func (e *Economy) CreatePackageSource(u User, comps []PackageComponent) (src PackageSource, tid TransferID, err error) {
+	if len(comps) == 0 {
+		return src, tid, ErrEmptyPackage
+	}
+
+	src = RandPackageSource()
+
+	tf := Transfer{
+		{
+			Owner: u,
+			Items: Items{
+				Many: ItemsMany{
+					e.defaultCurrency: e.PackageSourcePrice,
+				},
+			},
+		},
+		{Items: Items{
+			One: ItemsOne{
+				src: {},
+			},
+		}},
+	}
+
+	tid = MakeTransferID()
+	if err := e.ledger.Transfer(tid, tf); err != nil {
+		return src, tid, fmt.Errorf("create package source transfer %v: %w", tid, err)
+	}
+
+	if _, err := e.AddPackageComponents(u, src, comps); err != nil {
+		return src, tid, err
+	}
+
+	return src, tid, nil
+}
+
+// AddPackageComponents moves component sources from u into an existing package source, so packages can be built up and nested. The caller has to own every source they pass in.
+func (e *Economy) AddPackageComponents(u User, src PackageSource, comps []PackageComponent) ([]TransferID, error) {
+	if len(comps) == 0 {
+		return nil, nil
+	}
+
+	items := make(ItemsOne, len(comps))
+	for _, c := range comps {
+		if c == src {
+			return nil, ErrSelfNestedPackage
+		}
+		items.Add(c)
+	}
+
+	tid := MakeTransferID()
+	if err := e.ledger.Transfer(tid, Transfer{
+		{Owner: u, Items: Items{One: items}},
+		{Owner: src, Items: Items{}},
+	}); err != nil {
+		return nil, fmt.Errorf("add package components transfer %v: %w", tid, err)
+	}
+
+	return []TransferID{tid}, nil
+}
+
+// AddPackageComponent nests one package inside another, by moving its source into the outer one.
+func (e *Economy) AddPackageComponent(u User, src PackageSource, inner PackageSource) ([]TransferID, error) {
+	return e.AddPackageComponents(u, src, []PackageComponent{inner})
+}
+
+// BuyPackage sells a package: the buyer pays once and receives the package plus everything inside it, in a single transfer.
+//
+// A component the buyer already owns is skipped rather than failing the whole bundle, so overlapping packages can both be bought.
+func (e *Economy) BuyPackage(u User, src PackageSource, price Quantity) (p Package, tid TransferID, err error) {
+	p = src.Create()
+
+	contents := e.ledger.state.packageContents(src)
+	if len(contents) == 0 {
+		return p, tid, ErrEmptyPackage
+	}
+
+	// the package itself, plus every component the buyer doesn't already have
+	issued := ItemsOne{p: {}}
+	for item := range contents {
+		if e.OwnsOne(u, item) {
+			continue
+		}
+		issued.Add(item)
+	}
+
+	tf := Transfer{
+		{
+			Owner: u,
+			Items: Items{
+				Many: ItemsMany{
+					e.defaultCurrency: price,
+				},
+			},
+		},
+		{Owner: src, Items: Items{One: issued}},
+	}
+
+	tid = MakeTransferID()
+	if err := e.ledger.Transfer(tid, tf); err != nil {
+		return p, tid, fmt.Errorf("buy package transfer %v: %w", tid, err)
+	}
+
+	return p, tid, nil
 }
 
 func (e *Economy) TransferHistory(n uint32) ([]TransferWithID, error) {

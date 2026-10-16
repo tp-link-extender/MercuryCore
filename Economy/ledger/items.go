@@ -16,7 +16,7 @@ func DeserialiseUint32(r io.Reader) (uint32, error) {
 }
 
 func DeserialiseUint64(r io.Reader) (uint64, error) {
-	var buf [8]byte 
+	var buf [8]byte
 	if _, err := r.Read(buf[:]); err != nil {
 		return 0, fmt.Errorf("read number: %w", err)
 	}

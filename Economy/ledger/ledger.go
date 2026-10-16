@@ -60,20 +60,47 @@ func (s *State) GetOwnersMany(i CanOwnMany) *OwnersMany {
 }
 
 // canIssue reports whether o may issue item i without holding it.
-// An unlimited source can always issue the asset it creates, and holding a source entitles its holder to issue the asset that source creates.
-// Sources are only obtainable by paying for them, so this can't be used to conjure assets out of nothing.
-// This is what lets a source that contains other sources (a package) keep issuing its contents indefinitely.
-// Only unlimited assets are covered, because they're the only assets that can be owned one-per-person; places and groups must always be held.
+// Any source can always issue the item it creates, and holding a source entitles its holder to issue what that source creates - including, for a nested package, everything inside it.
+// Sources are only obtainable by paying for them, so this can't conjure items out of nothing.
+// Only assets are covered, because they're the only items that can be owned one-per-person;
+// places and groups must always be held.
 func (s *State) canIssue(o Owner, i CanOwnOne) bool {
-	if ous, ok := o.(UnlimitedSource); ok && i == ous.Create() {
-		return true
+	switch o := o.(type) {
+	case Source:
+		return s.packageContents(o).Has(i)
+	}
+	return false
+}
+
+// packageContents returns everything a source will hand over to a buyer: the item it creates, the assets of every source it holds, and the contents of any package sources it holds, recursively. Cycles are guarded against so a package can't contain itself by way of a longer loop.
+func (s *State) packageContents(src Source) ItemsOne {
+	contents := ItemsOne{}
+	s.collectPackageContents(src, contents, make(map[Source]struct{}))
+	return contents
+}
+
+func (s *State) collectPackageContents(src Source, into ItemsOne, seen map[Source]struct{}) {
+	if _, ok := seen[src]; ok {
+		return
+	}
+	seen[src] = struct{}{}
+
+	// a source always hands over the item it creates
+	switch src := src.(type) {
+	case LimitedSource:
+		return // limited assets are CanOwnMany, so they can't go in a One
+	case UnlimitedSource:
+		into.Add(src.Create())
+	case PackageSource:
+		into.Add(src.Create())
 	}
 
-	asset, ok := i.(UnlimitedAsset)
-	if !ok {
-		return false
+	for item := range s.GetInventory(src).One {
+		switch item := item.(type) {
+		case Source:
+			s.collectPackageContents(item, into, seen)
+		}
 	}
-	return s.GetInventory(o).One.Has(UnlimitedSource{asset.Id})
 }
 
 func (s State) CanApply(t Transfer) error {

@@ -21,6 +21,8 @@ func serialiseItem(i Item, w *bytes.Buffer) {
 		putNumeric(i, w)
 	case LimitedSource:
 		putNumeric(i, w)
+	case PackageSource:
+		putNumeric(i, w)
 	case User:
 		id := i.ID()
 		b := make([]byte, 2+len(id))
@@ -61,7 +63,7 @@ func testServer(t *testing.T) (*httptest.Server, *Economy) {
 		os.Remove(name)
 	})
 
-	e := NewEconomy(l, 10, 10, 100, 10, 10, time.Hour*12)
+	e := NewEconomy(l, 10, 10, 100, 10, 10, 10, time.Hour*12)
 	return httptest.NewServer(loggingHandler(registerRoutesMux(l, e))), e
 }
 
@@ -92,6 +94,7 @@ func TestAllRoutesRegistered(t *testing.T) {
 		"countOwnersOne", "countOwnersMany", "inventory", "balance",
 		"prices", "stipend", "createLimitedSource", "createUnlimitedSource",
 		"createPlace", "createGroup", "buyUnlimitedAsset", "buyLimitedAsset",
+		"createPackageSource", "buyPackage",
 		"history", "historyOwner",
 	}
 
