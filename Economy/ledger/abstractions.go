@@ -121,25 +121,14 @@ func (e *Economy) Stipend(user User) (tid TransferID, err error) {
 var ErrNoStock = errors.New("limited source needs a stock of at least one")
 
 // CreateLimitedSource mints a limited source and stocks it with qty of the asset it creates.
-// Stock is granted before the source is handed to the user, because a transfer can only ever move items between two owners and a limited asset can only come from its source: there is no third transfer that could top the source up afterwards. The two transfers aren't atomic, but granting stock first means a failed handover leaves stock stranded rather than leaving the user charged for nothing.
+// This takes two transfers, because a transfer can only ever move items between two owners and the stock has to go to the source while the source itself has to go to the user. They aren't atomic, so the order matters: the handover is charged first and the stock is granted second. That way a user who can't afford the source fails with nothing written at all, rather than leaving a stock of assets stranded in the ledger that nobody owns and nobody can sell.
+// The reverse residual is much narrower: a source that's been paid for but not yet stocked, if the stock grant fails. That grant mints from nil so it can't fail validation, leaving a disk error as the only way to hit it - and it leaves a visible unusable source rather than invisible lost stock.
 func (e *Economy) CreateLimitedSource(u User, qty Quantity) (src LimitedSource, tid TransferID, err error) {
 	if qty == 0 {
 		return src, tid, ErrNoStock
 	}
 
 	src = RandLimitedSource()
-
-	stockTid := MakeTransferID()
-	if err := e.ledger.Transfer(stockTid, Transfer{
-		{Items: Items{
-			Many: ItemsMany{
-				src.Create(): qty,
-			},
-		}},
-		{Owner: src, Items: Items{}},
-	}); err != nil {
-		return src, stockTid, fmt.Errorf("stock limited source transfer %v: %w", stockTid, err)
-	}
 
 	tf := Transfer{
 		{
@@ -160,6 +149,18 @@ func (e *Economy) CreateLimitedSource(u User, qty Quantity) (src LimitedSource, 
 	tid = MakeTransferID()
 	if err := e.ledger.Transfer(tid, tf); err != nil {
 		return src, tid, fmt.Errorf("create limited source transfer %v: %w", tid, err)
+	}
+
+	stockTid := MakeTransferID()
+	if err := e.ledger.Transfer(stockTid, Transfer{
+		{Items: Items{
+			Many: ItemsMany{
+				src.Create(): qty,
+			},
+		}},
+		{Owner: src, Items: Items{}},
+	}); err != nil {
+		return src, stockTid, fmt.Errorf("stock limited source transfer %v: %w", stockTid, err)
 	}
 
 	return src, tid, nil
