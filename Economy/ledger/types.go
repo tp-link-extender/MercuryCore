@@ -24,6 +24,11 @@ const (
 
 	TypeUser
 	TypeGroup
+
+	// appended after the original types, because these byte values are persisted in every transfer in the ledger and shifting them would corrupt existing data
+
+	TypePackage
+	TypePackageSource
 )
 
 type Item interface {
@@ -87,6 +92,10 @@ func DeserialiseItem(r io.Reader) (Item, error) {
 		return UnlimitedSource{id}, nil
 	case TypePlace:
 		return Place{id}, nil
+	case TypePackage:
+		return Package{id}, nil
+	case TypePackageSource:
+		return PackageSource{id}, nil
 	}
 
 	return nil, fmt.Errorf("unknown Type: %d", t)
@@ -285,6 +294,73 @@ func (i UnlimitedSource) Create() UnlimitedAsset {
 
 func RandUnlimitedSource() UnlimitedSource {
 	return UnlimitedSource{RandNumericId()}
+}
+
+// A Package is the bundle asset itself. It's issued by a PackageSource in the same transfer that issues the package's contents, so a buyer never has a package without its components.
+type Package struct {
+	Id uint32
+}
+
+func (i Package) String() string {
+	return fmt.Sprintf("package(%d)", i.Id)
+}
+
+func (Package) Type() Type {
+	return TypePackage
+}
+
+func (i Package) ID() uint32 {
+	return i.Id
+}
+
+func (Package) CanOwnOne() {}
+
+var (
+	_ NumericItem = Package{}
+	_ CanOwnOne   = Package{}
+)
+
+// A PackageSource creates a Package and holds the sources for everything inside it, so it can reissue the whole bundle indefinitely. It is an ordinary source as far as the ledger is concerned: the only thing that makes it special is that its inventory contains other sources.
+type PackageSource struct {
+	Id uint32
+}
+
+func (i PackageSource) String() string {
+	return fmt.Sprintf("package-source(%d)", i.Id)
+}
+
+func (PackageSource) Type() Type {
+	return TypePackageSource
+}
+
+func (i PackageSource) ID() uint32 {
+	return i.Id
+}
+
+func (PackageSource) CanOwnOne() {}
+func (PackageSource) Mintable()  {}
+func (PackageSource) Owner()     {}
+func (PackageSource) Source()    {}
+
+var (
+	_ NumericItem = PackageSource{}
+	_ CanOwnOne   = PackageSource{}
+	_ Mintable    = PackageSource{}
+	_ Owner       = PackageSource{}
+	_ Source      = PackageSource{}
+)
+
+func (i PackageSource) Create() Package {
+	return Package(i)
+}
+
+// CreateSource returns the source that issues this package. A package source holding this is what grants the right to reissue the package, so nesting a package means passing this source along.
+func (i PackageSource) CreateSource() PackageSource {
+	return i
+}
+
+func RandPackageSource() PackageSource {
+	return PackageSource{RandNumericId()}
 }
 
 type Place struct {

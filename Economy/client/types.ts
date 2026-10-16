@@ -17,6 +17,10 @@ export const TypePlace: Type = 6
 export const TypeUser: Type = 7
 export const TypeGroup: Type = 8
 
+// appended after the originals, because these byte values are persisted in every transfer in the ledger and shifting them would corrupt existing data
+export const TypePackage: Type = 9
+export const TypePackageSource: Type = 10
+
 // Abstract base classes to allow `instanceof` checks
 export interface Item {
 	String(): string
@@ -52,6 +56,10 @@ export function DeserialiseItem(r: BufReader): Item | null {
 			return new UnlimitedSource(id)
 		case TypePlace:
 			return new Place(id)
+		case TypePackage:
+			return new Package(id)
+		case TypePackageSource:
+			return new PackageSource(id)
 	}
 
 	throw new Error(`unknown Type: ${typeByte}`)
@@ -216,6 +224,43 @@ export class Place implements NumericItem, CanOwnOne, Mintable {
 
 	String(): string {
 		return `place(${this.ID})`
+	}
+}
+
+/** The bundle asset itself, issued by a PackageSource alongside everything inside it. */
+export class Package implements NumericItem, CanOwnOne {
+	Type = TypePackage
+
+	CanOwnOne() {}
+
+	constructor(public ID: number) {}
+
+	String(): string {
+		return `package(${this.ID})`
+	}
+}
+
+/**
+ * Creates a Package and holds the sources for everything inside it, so it can reissue the whole bundle indefinitely. An ordinary source to the ledger: what makes it a package source is that its inventory contains other sources.
+ */
+export class PackageSource
+	implements NumericItem, CanOwnOne, Mintable, Owner, Source
+{
+	Type = TypePackageSource
+
+	CanOwnOne() {}
+	Mintable() {}
+	Owner() {}
+	Source() {}
+
+	constructor(public ID: number) {}
+
+	String(): string {
+		return `package-source(${this.ID})`
+	}
+
+	Create(): Package {
+		return new Package(this.ID)
 	}
 }
 
