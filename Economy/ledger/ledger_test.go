@@ -930,6 +930,55 @@ func TestCreateLimitedSourceStocks(t *testing.T) {
 	}
 }
 
+// Stock is granted in its own transfer before the user is charged for the source, so a// creation that fails partway through must not leave that stock behind. Otherwise anyone who// can't afford a source can strand unlimited copies in the ledger forever, since the stock// quantity is unbounded and there's nothing to claw it back with.
+func TestCreateLimitedSourceFailureStrandsNoStock(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	// no currency at all, so the handover can't possibly be paid for
+	broke := User{"broke"}
+
+	const stock = 1000
+	src, _, err := e.CreateLimitedSource(broke, stock)
+	if err == nil {
+		t.Fatalf("expected CreateLimitedSource to fail for a user with no currency")
+	}
+
+	// the whole point: nothing at all should have been written
+	history, err := e.TransferHistory(10)
+	if err != nil {
+		t.Fatalf("TransferHistory: %v", err)
+	}
+
+	if len(history) != 0 {
+		t.Fatalf("expected a failed creation to write no transfers, got %d: %v", len(history), history[0])
+	}
+
+	// and specifically none of the stock we were about to grant
+	if got := e.OwnersMany(src.Create())[src]; got != 0 {
+		t.Fatalf("expected no stock to be stranded for %v, got %d", src.Create(), got)
+	}
+}
+
+// a failed creation must not cost the user anything, and must not hand out a source
+func TestCreateLimitedSourceFailureIsClean(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	broke := User{"broke"}
+
+	src, _, err := e.CreateLimitedSource(broke, 1000)
+	if err == nil {
+		t.Fatalf("expected CreateLimitedSource to fail for a user with no currency")
+	}
+
+	if e.OwnsOne(broke, src) {
+		t.Fatalf("expected a failed creation not to hand %v to the user", src)
+	}
+
+	if got := e.Balance(broke); got != 0 {
+		t.Fatalf("expected a failed creation to cost nothing, got balance %d", got)
+	}
+}
+
 func TestCreateLimitedSourceNeedsStock(t *testing.T) {
 	_, e := newTestEconomy(t)
 

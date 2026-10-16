@@ -1,4 +1,4 @@
-// These tests poke at State directly, because the situations they cover (a source holding fungible goods, a source paying out) can't currently be reached through the public Ledger API - see TestBuyLimitedAssetIsUnreachable in ledger_test.go.
+// These tests poke at State directly because the situations they cover - a source sitting on fungible goods, and a source paying out to a user - need state that the public Ledger API can't currently build up on its own, so there's no way to set them up through Economy.
 package ledger
 
 import "testing"
