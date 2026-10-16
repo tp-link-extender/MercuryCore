@@ -420,6 +420,39 @@ func loggingHandler(next http.Handler) http.Handler {
 	})
 }
 
+// routes are kept in step with the Route union in client/api.ts
+var routes = []struct {
+	path string
+	h    func(*EconomyServer, http.ResponseWriter, *http.Request)
+}{
+	{"ownsOne", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.ownsOneRoute(w, r) }},
+	{"ownsMany", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.ownsManyRoute(w, r) }},
+	{"ownersOne", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.ownersOneRoute(w, r) }},
+	{"ownersMany", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.ownersManyRoute(w, r) }},
+	{"countOwnersOne", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.countOwnersOneRoute(w, r) }},
+	{"countOwnersMany", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.countOwnersManyRoute(w, r) }},
+	{"inventory", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.inventoryRoute(w, r) }},
+	{"balance", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.balanceRoute(w, r) }},
+	{"prices", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.pricesRoute(w, r) }},
+	{"stipend", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.stipendRoute(w, r) }},
+	{"createLimitedSource", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.createLimitedSourceRoute(w, r) }},
+	{"createUnlimitedSource", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.createUnlimitedSourceRoute(w, r) }},
+	{"createPlace", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.createPlaceRoute(w, r) }},
+	{"createGroup", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.createGroupRoute(w, r) }},
+	{"buyUnlimitedAsset", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.buyUnlimitedAssetRoute(w, r) }},
+	{"buyLimitedAsset", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.buyLimitedAssetRoute(w, r) }},
+	{"history", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.historyRoute(w, r) }},
+	{"historyOwner", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.historyOwnerRoute(w, r) }},
+}
+
+func registerRoutes(mux *http.ServeMux, es *EconomyServer) {
+	for _, r := range routes {
+		mux.HandleFunc("POST /"+r.path, func(w http.ResponseWriter, req *http.Request) {
+			r.h(es, w, req)
+		})
+	}
+}
+
 func main() {
 	l, err := NewLedger("mydb.db")
 	if err != nil {
@@ -442,24 +475,7 @@ func main() {
 		fmt.Printf("Error fetching transfer history: %v\n", err)
 	}
 
-	es := EconomyServer{e}
-
-	http.HandleFunc("POST /ownsOne", es.ownsOneRoute)
-	http.HandleFunc("POST /ownsMany", es.ownsManyRoute)
-	http.HandleFunc("POST /ownersOne", es.ownersOneRoute)
-	http.HandleFunc("POST /ownersMany", es.ownersManyRoute)
-	http.HandleFunc("POST /countOwnersOne", es.countOwnersOneRoute)
-	http.HandleFunc("POST /countOwnersMany", es.countOwnersManyRoute)
-	http.HandleFunc("POST /inventory", es.inventoryRoute)
-	http.HandleFunc("POST /balance", es.balanceRoute)
-	http.HandleFunc("POST /prices", es.pricesRoute)
-	http.HandleFunc("POST /stipend", es.stipendRoute)
-	http.HandleFunc("POST /createLimitedSource", es.createLimitedSourceRoute)
-	http.HandleFunc("POST /createUnlimitedSource", es.createUnlimitedSourceRoute)
-	http.HandleFunc("POST /createPlace", es.createPlaceRoute)
-	http.HandleFunc("POST /createGroup", es.createGroupRoute)
-	http.HandleFunc("POST /history", es.historyRoute)
-	http.HandleFunc("POST /historyOwner", es.historyOwnerRoute)
+	registerRoutes(http.DefaultServeMux, &EconomyServer{e})
 
 	fmt.Println(c.InGreen("~ Economy service is up on port 2009 ~")) // 03/Jan/2009 Chancellor on brink of second bailout for banks
 	if err := http.ListenAndServe(":2009", loggingHandler(http.DefaultServeMux)); err != nil {
