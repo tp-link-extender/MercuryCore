@@ -326,7 +326,7 @@ export const buyUnlimitedAsset = (
 export const buyLimitedAsset = (
 	f: Fetch,
 	u: User,
-	src: UnlimitedSource,
+	src: LimitedSource,
 	priceEach: Quantity,
 	qty: Quantity
 ): Promise<boolean> =>
