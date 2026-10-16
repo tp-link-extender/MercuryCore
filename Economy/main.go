@@ -421,7 +421,7 @@ func loggingHandler(next http.Handler) http.Handler {
 }
 
 // routes are kept in step with the Route union in client/api.ts
-var routes = []struct {
+var routes = [18]struct {
 	path string
 	h    func(*EconomyServer, http.ResponseWriter, *http.Request)
 }{
