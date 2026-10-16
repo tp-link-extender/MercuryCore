@@ -141,8 +141,12 @@ async function getEquipData(e: RequestEvent) {
 
 	const o = new Econ.User(user.id)
 	const i = new Econ.UnlimitedAsset(id)
-	const owns = ownsOne(e.fetch, o, i)
-	if (!owns) error(400, "You don't own this item")
+	const owns = await ownsOne(e.fetch, o, i)
+	if (!owns.ok) {
+		console.error("ownsOne failed")
+		error(500, economyConnFailed)
+	}
+	if (!owns.value) error(400, "You don't own this item")
 
 	const [[asset]] = await db.query<AssetData[][]>(equipDataQuery, {
 		asset: Record("asset", id),
