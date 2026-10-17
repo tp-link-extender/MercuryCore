@@ -318,6 +318,22 @@ var ErrEmptyPackage = errors.New("package needs at least one component")
 
 var ErrSelfNestedPackage = errors.New("package cannot contain itself")
 
+// ErrUnsupportedPackageComponent is returned for a component a package can't reissue, which is anything that isn't an unlimited asset source or a nested package source.
+// Limited sources are the awkward case: their asset is CanOwnMany, so it can't travel in a One and the contents walk would drop it without a word, leaving the buyer short of what they paid for.
+var ErrUnsupportedPackageComponent = errors.New("package components must be unlimited asset sources or package sources")
+
+// validatePackageComponents rejects components the contents walk can't hand over. It runs before anything is written, so a rejected component never costs the caller anything.
+func validatePackageComponents(comps []PackageComponent) error {
+	for _, c := range comps {
+		switch c.(type) {
+		case UnlimitedSource, PackageSource:
+		default:
+			return fmt.Errorf("%w: %v", ErrUnsupportedPackageComponent, c)
+		}
+	}
+	return nil
+}
+
 // PackageComponent is something a package source can hold: either an asset source, or the source of a nested package. Both are CanOwnOne and both grant their holder the right to issue what they create, which is all the ledger needs to know to reissue a bundle.
 type PackageComponent = CanOwnOne
 
@@ -326,6 +342,11 @@ type PackageComponent = CanOwnOne
 func (e *Economy) CreatePackageSource(u User, comps []PackageComponent) (src PackageSource, tid TransferID, err error) {
 	if len(comps) == 0 {
 		return src, tid, ErrEmptyPackage
+	}
+
+	// checked before the handover, so an unusable component is rejected without charging for it
+	if err := validatePackageComponents(comps); err != nil {
+		return src, tid, err
 	}
 
 	src = RandPackageSource()
@@ -362,6 +383,10 @@ func (e *Economy) CreatePackageSource(u User, comps []PackageComponent) (src Pac
 func (e *Economy) AddPackageComponents(u User, src PackageSource, comps []PackageComponent) ([]TransferID, error) {
 	if len(comps) == 0 {
 		return nil, nil
+	}
+
+	if err := validatePackageComponents(comps); err != nil {
+		return nil, err
 	}
 
 	items := make(ItemsOne, len(comps))
