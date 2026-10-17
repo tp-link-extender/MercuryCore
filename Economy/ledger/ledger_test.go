@@ -2,6 +2,7 @@ package ledger_test
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"os"
 	"testing"
@@ -1629,5 +1630,83 @@ func TestPackageItemsStableAcrossSales(t *testing.T) {
 		if !after.Has(c.Create()) {
 			t.Fatalf("expected %v to still be a package item after being sold", c.Create())
 		}
+	}
+}
+
+// A limited source can't be a package component: its asset is CanOwnMany, so it can't travel in a One and the contents walk silently drops it. That has to be rejected at creation, not accepted and forgotten.
+func TestCreatePackageSourceRejectsLimitedSource(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{Id: "creator"}
+	fund(t, e, creator)
+
+	limited, _, err := e.CreateLimitedSource(creator, 5)
+	if err != nil {
+		t.Fatalf("CreateLimitedSource: %v", err)
+	}
+
+	before := e.Balance(creator)
+
+	if _, _, err := e.CreatePackageSource(creator, []PackageComponent{limited}); !errors.Is(err, ErrUnsupportedPackageComponent) {
+		t.Fatalf("expected ErrUnsupportedPackageComponent, got %v", err)
+	}
+
+	// rejected before charging, since the component check runs ahead of the handover
+	if got := e.Balance(creator); got != before {
+		t.Fatalf("expected a rejected package to cost nothing, balance went %d -> %d", before, got)
+	}
+}
+
+// the rejection has to survive AddPackageComponents too, which is reachable on its own
+func TestAddPackageComponentsRejectsLimitedSource(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{Id: "creator"}
+	fund(t, e, creator)
+
+	limited, _, err := e.CreateLimitedSource(creator, 5)
+	if err != nil {
+		t.Fatalf("CreateLimitedSource: %v", err)
+	}
+
+	unlimited, _, err := e.CreateUnlimitedSource(creator)
+	if err != nil {
+		t.Fatalf("CreateUnlimitedSource: %v", err)
+	}
+
+	pkgSrc, _, err := e.CreatePackageSource(creator, []PackageComponent{unlimited})
+	if err != nil {
+		t.Fatalf("CreatePackageSource: %v", err)
+	}
+
+	if _, err := e.AddPackageComponents(creator, pkgSrc, []PackageComponent{limited}); !errors.Is(err, ErrUnsupportedPackageComponent) {
+		t.Fatalf("expected ErrUnsupportedPackageComponent, got %v", err)
+	}
+
+	// and the limited source is untouched, not half-added
+	if !e.OwnsOne(creator, limited) {
+		t.Fatalf("expected %v to still be held after a rejected add", limited)
+	}
+}
+
+// the same rejection applies to a mixed list, and to a nested package with a limited component
+func TestPackageSourceRejectsLimitedComponentInList(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{Id: "creator"}
+	fund(t, e, creator)
+
+	unlimited, _, err := e.CreateUnlimitedSource(creator)
+	if err != nil {
+		t.Fatalf("CreateUnlimitedSource: %v", err)
+	}
+	limited, _, err := e.CreateLimitedSource(creator, 5)
+	if err != nil {
+		t.Fatalf("CreateLimitedSource: %v", err)
+	}
+
+	_, _, err = e.CreatePackageSource(creator, []PackageComponent{unlimited, limited})
+	if !errors.Is(err, ErrUnsupportedPackageComponent) {
+		t.Fatalf("expected ErrUnsupportedPackageComponent for a mixed list, got %v", err)
 	}
 }

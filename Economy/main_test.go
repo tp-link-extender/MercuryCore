@@ -398,3 +398,37 @@ func TestPackageContentsOverHTTP(t *testing.T) {
 		t.Fatalf("expected the package itself not to be in the package item list")
 	}
 }
+
+// a limited source can't be a package component, and the HTTP response has to say so
+func TestCreatePackageSourceRejectsLimitedOverHTTP(t *testing.T) {
+	srv, e := testServer(t)
+	defer srv.Close()
+
+	creator := User{Id: "creator"}
+	if _, err := e.MintCurrency(creator, 200); err != nil {
+		t.Fatalf("MintCurrency: %v", err)
+	}
+
+	limited, _, err := e.CreateLimitedSource(creator, 5)
+	if err != nil {
+		t.Fatalf("CreateLimitedSource: %v", err)
+	}
+
+	body := &bytes.Buffer{}
+	serialiseItem(creator, body)
+	putUint32(body, 1)
+	serialiseItem(limited, body)
+
+	res := post(t, srv, "createPackageSource", body)
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusBadRequest {
+		t.Fatalf("expected 400 for a limited component, got %d", res.StatusCode)
+	}
+
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(res.Body)
+	if !bytes.Contains(buf.Bytes(), []byte("limited")) {
+		t.Fatalf("expected the response to name the problem, got %q", buf.String())
+	}
+}
