@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -94,7 +95,7 @@ func TestAllRoutesRegistered(t *testing.T) {
 		"countOwnersOne", "countOwnersMany", "inventory", "balance",
 		"prices", "stipend", "createLimitedSource", "createUnlimitedSource",
 		"createPlace", "createGroup", "buyUnlimitedAsset", "buyLimitedAsset",
-		"createPackageSource", "buyPackage",
+		"createPackageSource", "buyPackage", "packageContents", "packageItems",
 		"history", "historyOwner",
 	}
 
@@ -300,8 +301,100 @@ func TestPackageOverHTTP(t *testing.T) {
 	}
 }
 
+// createdSrc decodes the 5 byte response a create*Source route returns
+func createdSrc(t *testing.T, body io.Reader) PackageSource {
+	t.Helper()
+
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(body)
+	if buf.Len() != 5 {
+		t.Fatalf("expected a 5 byte source id, got %d bytes", buf.Len())
+	}
+	return PackageSource{Id: binary.BigEndian.Uint32(buf.Bytes()[1:5])}
+}
+
 func putUint32(w *bytes.Buffer, v uint32) {
 	b := make([]byte, 4)
 	binary.BigEndian.PutUint32(b, v)
 	w.Write(b)
+}
+
+// packageContents and packageItems over HTTP, so the Site can read bundle contents from the ledger
+func TestPackageContentsOverHTTP(t *testing.T) {
+	srv, e := testServer(t)
+	defer srv.Close()
+
+	creator := User{Id: "creator"}
+	if _, err := e.MintCurrency(creator, 200); err != nil {
+		t.Fatalf("MintCurrency: %v", err)
+	}
+
+	comps := make([]UnlimitedSource, 2)
+	sources := make([]PackageComponent, 2)
+	for i := range comps {
+		c, _, err := e.CreateUnlimitedSource(creator)
+		if err != nil {
+			t.Fatalf("CreateUnlimitedSource: %v", err)
+		}
+		comps[i] = c
+		sources[i] = c
+	}
+
+	body := &bytes.Buffer{}
+	serialiseItem(creator, body)
+	putUint32(body, uint32(len(sources)))
+	for _, c := range comps {
+		serialiseItem(c, body)
+	}
+
+	res := post(t, srv, "createPackageSource", body)
+	if res.StatusCode != http.StatusOK {
+		t.Fatalf("createPackageSource: %d", res.StatusCode)
+	}
+	pkgSrc := createdSrc(t, res.Body)
+	res.Body.Close()
+
+	body = &bytes.Buffer{}
+	serialiseItem(pkgSrc, body)
+	res = post(t, srv, "packageContents", body)
+	if res.StatusCode != http.StatusOK {
+		t.Fatalf("packageContents: %d", res.StatusCode)
+	}
+
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(res.Body)
+	contents, err := DeserialiseItems(bytes.NewReader(buf.Bytes()))
+	if err != nil {
+		t.Fatalf("deserialise contents: %v", err)
+	}
+
+	if !contents.One.Has(pkgSrc.Create()) {
+		t.Fatalf("expected contents to include the package")
+	}
+	for _, c := range comps {
+		if !contents.One.Has(c.Create()) {
+			t.Fatalf("expected contents to include %v", c.Create())
+		}
+	}
+
+	// the global package item list, which the catalog uses to hide contents
+	res = post(t, srv, "packageItems", bytes.NewBuffer(nil))
+	if res.StatusCode != http.StatusOK {
+		t.Fatalf("packageItems: %d", res.StatusCode)
+	}
+	buf = new(bytes.Buffer)
+	buf.ReadFrom(res.Body)
+	items, err := DeserialiseItems(bytes.NewReader(buf.Bytes()))
+	if err != nil {
+		t.Fatalf("deserialise package items: %v", err)
+	}
+
+	for _, c := range comps {
+		if !items.One.Has(c.Create()) {
+			t.Fatalf("expected %v in the package item list", c.Create())
+		}
+	}
+	if items.One.Has(pkgSrc.Create()) {
+		t.Fatalf("expected the package itself not to be in the package item list")
+	}
 }

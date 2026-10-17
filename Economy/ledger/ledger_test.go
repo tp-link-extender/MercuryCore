@@ -930,7 +930,7 @@ func TestCreateLimitedSourceStocks(t *testing.T) {
 	}
 }
 
-// Stock is granted in its own transfer before the user is charged for the source, so a// creation that fails partway through must not leave that stock behind. Otherwise anyone who// can't afford a source can strand unlimited copies in the ledger forever, since the stock// quantity is unbounded and there's nothing to claw it back with.
+// The user is charged before any stock is granted, so a creation that fails partway through must not leave that stock behind. Otherwise anyone who can't afford a source can strand unlimited copies in the ledger forever, since the stock quantity is unbounded and there's nothing to claw it back with.
 func TestCreateLimitedSourceFailureStrandsNoStock(t *testing.T) {
 	_, e := newTestEconomy(t)
 
@@ -1407,8 +1407,7 @@ func TestBuyNestedPackage(t *testing.T) {
 		t.Fatalf("CreatePackageSource inner: %v", err)
 	}
 
-	// the outer package contains the inner package source, so buying it should hand over
-	// the inner package itself along with everything inside the inner package
+	// the outer package contains the inner package source, so buying it should hand over the inner package itself along with everything inside the inner package
 	outerSrc, _, err := e.CreatePackageSource(creator, []PackageComponent{innerSrc.CreateSource()})
 	if err != nil {
 		t.Fatalf("CreatePackageSource outer: %v", err)
@@ -1500,5 +1499,135 @@ func TestPackageSurvivesReopen(t *testing.T) {
 	// and it can still be sold
 	if _, _, err := re.BuyPackage(buyer, pkgSrc, 30); err != nil {
 		t.Fatalf("expected to still be able to sell the package after reopen, got %v", err)
+	}
+}
+
+// PackageContents reports a package plus everything inside it, which is what a buyer receives
+func TestPackageContents(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{Id: "creator"}
+	fund(t, e, creator)
+
+	pkgSrc, comps := createPackageFixture(t, e, creator, 3)
+
+	contents := e.PackageContents(pkgSrc)
+
+	if !contents.Has(pkgSrc.Create()) {
+		t.Fatalf("expected contents to include the package itself")
+	}
+	for _, c := range comps {
+		if !contents.Has(c.Create()) {
+			t.Fatalf("expected contents to include %v", c.Create())
+		}
+	}
+	if len(contents) != len(comps)+1 {
+		t.Fatalf("expected %d items in contents, got %d", len(comps)+1, len(contents))
+	}
+}
+
+// nested packages: the outer package's contents include the inner package's assets
+func TestPackageContentsNested(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{Id: "creator"}
+	fund(t, e, creator)
+
+	innerComps := make([]UnlimitedSource, 2)
+	innerSources := make([]PackageComponent, 2)
+	for i := range innerComps {
+		c, _, err := e.CreateUnlimitedSource(creator)
+		if err != nil {
+			t.Fatalf("CreateUnlimitedSource: %v", err)
+		}
+		innerComps[i] = c
+		innerSources[i] = c
+	}
+
+	innerSrc, _, err := e.CreatePackageSource(creator, innerSources)
+	if err != nil {
+		t.Fatalf("CreatePackageSource inner: %v", err)
+	}
+
+	outerSrc, _, err := e.CreatePackageSource(creator, []PackageComponent{innerSrc})
+	if err != nil {
+		t.Fatalf("CreatePackageSource outer: %v", err)
+	}
+
+	contents := e.PackageContents(outerSrc)
+
+	// the outer package, the inner package, and both assets inside it
+	if !contents.Has(outerSrc.Create()) {
+		t.Fatalf("expected contents to include the outer package")
+	}
+	if !contents.Has(innerSrc.Create()) {
+		t.Fatalf("expected contents to include the nested package")
+	}
+	for _, c := range innerComps {
+		if !contents.Has(c.Create()) {
+			t.Fatalf("expected contents to include %v from the nested package", c.Create())
+		}
+	}
+}
+
+// PackageItems is the reverse lookup: every asset that sits inside some package
+func TestPackageItems(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{Id: "creator"}
+	fund(t, e, creator)
+
+	// a loose asset that isn't in any package
+	loose, _, err := e.CreateUnlimitedSource(creator)
+	if err != nil {
+		t.Fatalf("CreateUnlimitedSource: %v", err)
+	}
+
+	pkgSrc, comps := createPackageFixture(t, e, creator, 2)
+
+	items := e.PackageItems()
+
+	for _, c := range comps {
+		if !items.Has(c.Create()) {
+			t.Fatalf("expected %v to be reported as a package item", c.Create())
+		}
+	}
+
+	// the package itself is purchasable, so it isn't a package item
+	if items.Has(pkgSrc.Create()) {
+		t.Fatalf("expected the package itself not to be a package item")
+	}
+
+	// nor is an asset sold on its own
+	if items.Has(loose.Create()) {
+		t.Fatalf("expected %v not to be a package item", loose.Create())
+	}
+}
+
+// buying a package doesn't change which assets are package items
+func TestPackageItemsStableAcrossSales(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{Id: "creator"}
+	buyer := User{Id: "buyer"}
+	fund(t, e, creator, buyer)
+
+	pkgSrc, comps := createPackageFixture(t, e, creator, 2)
+
+	before := e.PackageItems()
+
+	if _, _, err := e.BuyPackage(buyer, pkgSrc, 30); err != nil {
+		t.Fatalf("BuyPackage: %v", err)
+	}
+
+	after := e.PackageItems()
+
+	if !before.Equal(after) {
+		t.Fatalf("expected package items to be unchanged by a sale")
+	}
+	for _, c := range comps {
+		if !after.Has(c.Create()) {
+			t.Fatalf("expected %v to still be a package item after being sold", c.Create())
+		}
 	}
 }
