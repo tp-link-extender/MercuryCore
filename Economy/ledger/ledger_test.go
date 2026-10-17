@@ -1145,3 +1145,360 @@ func TestAbstractions3(t *testing.T) {
 		t.Fatalf("expected transfer history length 0, got %d", len(history2))
 	}
 }
+
+// createPackageFixture builds a package source holding n component sources, which is the shape CreatePackageSource produces
+func createPackageFixture(t *testing.T, e *Economy, creator User, n int) (PackageSource, []UnlimitedSource) {
+	t.Helper()
+
+	comps := make([]UnlimitedSource, n)
+	sources := make([]PackageComponent, n)
+	for i := range comps {
+		c, _, err := e.CreateUnlimitedSource(creator)
+		if err != nil {
+			t.Fatalf("CreateUnlimitedSource for component %d: %v", i, err)
+		}
+		comps[i] = c
+		sources[i] = c
+	}
+
+	pkgSrc, _, err := e.CreatePackageSource(creator, sources)
+	if err != nil {
+		t.Fatalf("CreatePackageSource: %v", err)
+	}
+
+	return pkgSrc, comps
+}
+
+// a package source is created, owned by its creator, and takes ownership of its component sources
+func TestCreatePackageSource(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{"creator"}
+	fund(t, e, creator)
+
+	pkgSrc, comps := createPackageFixture(t, e, creator, 2)
+
+	if !e.OwnsOne(creator, pkgSrc) {
+		t.Fatalf("expected creator to own %v", pkgSrc)
+	}
+
+	// the package source holds the component SOURCES, so it can reissue them forever
+	for _, c := range comps {
+		if !e.OwnsOne(pkgSrc, c) {
+			t.Fatalf("expected %v to hold %v", pkgSrc, c)
+		}
+		if e.OwnsOne(creator, c) {
+			t.Fatalf("expected creator to have handed over %v", c)
+		}
+	}
+
+	// and it never holds the assets themselves
+	for _, c := range comps {
+		if e.OwnsOne(pkgSrc, c.Create()) {
+			t.Fatalf("expected %v not to hold %v, only its source", pkgSrc, c.Create())
+		}
+	}
+}
+
+// a package with nothing in it isn't a package
+func TestCreatePackageSourceNeedsContents(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{"creator"}
+	fund(t, e, creator)
+
+	if _, _, err := e.CreatePackageSource(creator, nil); err != ErrEmptyPackage {
+		t.Fatalf("expected ErrEmptyPackage, got %v", err)
+	}
+}
+
+// a user who can afford the components but not the package shouldn't lose them
+func TestCreatePackageSourceFailureKeepsComponents(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	poor := User{"poor"}
+
+	// exactly enough for two component sources (2 x 10), and nothing left for the package
+	if _, err := e.MintCurrency(poor, 20); err != nil {
+		t.Fatalf("MintCurrency: %v", err)
+	}
+
+	comps := make([]UnlimitedSource, 2)
+	sources := make([]PackageComponent, 2)
+	for i := range comps {
+		c, _, err := e.CreateUnlimitedSource(poor)
+		if err != nil {
+			t.Fatalf("CreateUnlimitedSource: %v", err)
+		}
+		comps[i] = c
+		sources[i] = c
+	}
+
+	if got := e.Balance(poor); got != 0 {
+		t.Fatalf("expected the fixture to leave the user broke, got balance %d", got)
+	}
+
+	// must fail on the package source price
+	if _, _, err := e.CreatePackageSource(poor, sources); err == nil {
+		t.Fatalf("expected CreatePackageSource to fail for a user who can't afford it")
+	}
+
+	// the components must still be theirs, and must not have been moved into a package source
+	for _, c := range comps {
+		if !e.OwnsOne(poor, c) {
+			t.Fatalf("expected %v to still be held after a failed package creation", c)
+		}
+	}
+
+	// and nothing at all should have been written by the failed attempt
+	history, err := e.TransferHistory(50)
+	if err != nil {
+		t.Fatalf("TransferHistory: %v", err)
+	}
+	// 1 mint + 2 component sources = 3 successful transfers
+	if len(history) != 3 {
+		t.Fatalf("expected only the 3 successful transfers, got %d", len(history))
+	}
+
+}
+
+// buying a package gives the buyer the package and every component, in one transfer
+func TestBuyPackage(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{"creator"}
+	buyer := User{"buyer"}
+	fund(t, e, creator, buyer)
+
+	pkgSrc, comps := createPackageFixture(t, e, creator, 3)
+
+	const price = 40
+	pkg, _, err := e.BuyPackage(buyer, pkgSrc, price)
+	if err != nil {
+		t.Fatalf("BuyPackage: %v", err)
+	}
+
+	if pkg != pkgSrc.Create() {
+		t.Fatalf("expected %v, got %v", pkgSrc.Create(), pkg)
+	}
+
+	if !e.OwnsOne(buyer, pkg) {
+		t.Fatalf("expected buyer to own the package %v", pkg)
+	}
+
+	for _, c := range comps {
+		if !e.OwnsOne(buyer, c.Create()) {
+			t.Fatalf("expected buyer to own component %v", c.Create())
+		}
+	}
+
+	// one price for the whole bundle
+	if got := e.Balance(buyer); got != 200-price {
+		t.Fatalf("expected buyer balance %d, got %d", 200-price, got)
+	}
+
+	// creator paid 10 per component source, 10 for the package source, then earned the sale price
+	if got, want := e.Balance(creator), Quantity(200-3*10-10+price); got != want {
+		t.Fatalf("expected creator balance %d, got %d", want, got)
+	}
+}
+
+// a package source can sell the same bundle over and over, since it can always reissue
+func TestBuyPackageRepeatedly(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{"creator"}
+	buyers := []User{{Id: "buyer1"}, {Id: "buyer2"}, {Id: "buyer3"}}
+	fund(t, e, creator)
+	fund(t, e, buyers...)
+
+	pkgSrc, comps := createPackageFixture(t, e, creator, 2)
+
+	for i, buyer := range buyers {
+		if _, _, err := e.BuyPackage(buyer, pkgSrc, 20); err != nil {
+			t.Fatalf("BuyPackage %d: %v", i, err)
+		}
+	}
+
+	for _, buyer := range buyers {
+		if !e.OwnsOne(buyer, pkgSrc.Create()) {
+			t.Fatalf("expected %v to own the package", buyer)
+		}
+		for _, c := range comps {
+			if !e.OwnsOne(buyer, c.Create()) {
+				t.Fatalf("expected %v to own component %v", buyer, c.Create())
+			}
+		}
+	}
+}
+
+// a repeat purchase of the same package is rejected and costs nothing
+func TestBuyPackageRejectsRepeat(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{"creator"}
+	buyer := User{"buyer"}
+	fund(t, e, creator, buyer)
+
+	pkgSrc, _ := createPackageFixture(t, e, creator, 2)
+
+	if _, _, err := e.BuyPackage(buyer, pkgSrc, 20); err != nil {
+		t.Fatalf("BuyPackage: %v", err)
+	}
+
+	before := e.Balance(buyer)
+	if _, _, err := e.BuyPackage(buyer, pkgSrc, 20); err == nil {
+		t.Fatalf("expected a second purchase of the same package to be rejected")
+	}
+	if got := e.Balance(buyer); got != before {
+		t.Fatalf("expected a rejected purchase to cost nothing, balance went %d -> %d", before, got)
+	}
+}
+
+// buying a package when you already own one of its components still hands over the rest
+func TestBuyPackageSkipsOwnedComponents(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{"creator"}
+	buyer := User{"buyer"}
+	fund(t, e, creator, buyer)
+
+	pkgSrc, comps := createPackageFixture(t, e, creator, 2)
+
+	// the buyer already owns one component directly
+	if _, _, err := e.BuyUnlimitedAsset(buyer, comps[0], 15); err != nil {
+		t.Fatalf("BuyUnlimitedAsset: %v", err)
+	}
+
+	pkg, _, err := e.BuyPackage(buyer, pkgSrc, 40)
+	if err != nil {
+		t.Fatalf("expected the package purchase to succeed, got %v", err)
+	}
+
+	if !e.OwnsOne(buyer, pkg) {
+		t.Fatalf("expected buyer to own the package")
+	}
+	if !e.OwnsOne(buyer, comps[1].Create()) {
+		t.Fatalf("expected buyer to own the component they didn't have")
+	}
+}
+
+// nested packages: buying the outer package hands over the inner package and its contents
+func TestBuyNestedPackage(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{"creator"}
+	buyer := User{"buyer"}
+	fund(t, e, creator, buyer)
+
+	innerComps := make([]UnlimitedSource, 2)
+	innerSources := make([]PackageComponent, 2)
+	for i := range innerComps {
+		c, _, err := e.CreateUnlimitedSource(creator)
+		if err != nil {
+			t.Fatalf("CreateUnlimitedSource: %v", err)
+		}
+		innerComps[i] = c
+		innerSources[i] = c
+	}
+
+	innerSrc, _, err := e.CreatePackageSource(creator, innerSources)
+	if err != nil {
+		t.Fatalf("CreatePackageSource inner: %v", err)
+	}
+
+	// the outer package contains the inner package source, so buying it should hand over
+	// the inner package itself along with everything inside the inner package
+	outerSrc, _, err := e.CreatePackageSource(creator, []PackageComponent{innerSrc.CreateSource()})
+	if err != nil {
+		t.Fatalf("CreatePackageSource outer: %v", err)
+	}
+
+	if _, _, err := e.BuyPackage(buyer, outerSrc, 50); err != nil {
+		t.Fatalf("BuyPackage: %v", err)
+	}
+
+	if !e.OwnsOne(buyer, outerSrc.Create()) {
+		t.Fatalf("expected buyer to own the outer package")
+	}
+	if !e.OwnsOne(buyer, innerSrc.Create()) {
+		t.Fatalf("expected buyer to own the nested package")
+	}
+	for _, c := range innerComps {
+		if !e.OwnsOne(buyer, c.Create()) {
+			t.Fatalf("expected buyer to own %v from inside the nested package", c.Create())
+		}
+	}
+}
+
+// ownerOf returns the single package source the user owns, for tests that don't capture the id
+func ownerOf(t *testing.T, e *Economy, u User) PackageSource {
+	t.Helper()
+
+	inv := e.Inventory(u)
+	var found []PackageSource
+	for item := range inv.One {
+		if ps, ok := item.(PackageSource); ok {
+			found = append(found, ps)
+		}
+	}
+
+	if len(found) != 1 {
+		t.Fatalf("expected %v to own exactly 1 package source, got %d", u, len(found))
+	}
+	return found[0]
+}
+
+// a package must not be able to contain itself
+func TestPackageCannotNestItself(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{"creator"}
+	fund(t, e, creator)
+
+	pkgSrc, comps := createPackageFixture(t, e, creator, 1)
+
+	if _, err := e.AddPackageComponent(creator, pkgSrc, pkgSrc); err != ErrSelfNestedPackage {
+		t.Fatalf("expected ErrSelfNestedPackage, got %v", err)
+	}
+
+	_ = comps
+}
+
+// the bundle has to survive a restart, since contents are reconstructed by replay
+func TestPackageSurvivesReopen(t *testing.T) {
+	l, e := newTestEconomy(t)
+
+	creator := User{"creator"}
+	buyer := User{"buyer"}
+	fund(t, e, creator, buyer)
+
+	pkgSrc, comps := createPackageFixture(t, e, creator, 2)
+
+	if err := l.Close(); err != nil {
+		t.Fatalf("close ledger: %v", err)
+	}
+
+	name := os.TempDir() + "/ledger_test.db"
+	reopened, err := NewLedger(name)
+	if err != nil {
+		t.Fatalf("reopen ledger: %v", err)
+	}
+	defer reopened.Close()
+
+	re := NewEconomy(reopened, 10, 10, 100, 10, 10, 10, time.Hour*12)
+
+	if !re.OwnsOne(creator, pkgSrc) {
+		t.Fatalf("expected creator to still own %v after reopen", pkgSrc)
+	}
+	for _, c := range comps {
+		if !re.OwnsOne(pkgSrc, c) {
+			t.Fatalf("expected %v to still hold %v after reopen", pkgSrc, c)
+		}
+	}
+
+	// and it can still be sold
+	if _, _, err := re.BuyPackage(buyer, pkgSrc, 30); err != nil {
+		t.Fatalf("expected to still be able to sell the package after reopen, got %v", err)
+	}
+}

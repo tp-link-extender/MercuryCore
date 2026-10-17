@@ -157,3 +157,43 @@ func TestCanIssueOnlyCoversUnlimitedAssets(t *testing.T) {
 		t.Fatalf("expected %v not to be able to issue %v it doesn't hold the source for", holder, UnlimitedAsset{43})
 	}
 }
+
+// a package source issues its own package, and anything it holds a source for
+func TestPackageSourceCanIssue(t *testing.T) {
+	s := makeState()
+
+	pkgSrc := PackageSource{5}
+
+	s.ownerItems[pkgSrc] = &Items{One: ItemsOne{
+		UnlimitedSource{42}: {},
+		UnlimitedSource{43}: {},
+	}}
+
+	if !s.canIssue(pkgSrc, pkgSrc.Create()) {
+		t.Fatalf("expected %v to be able to issue its own %v", pkgSrc, pkgSrc.Create())
+	}
+
+	for _, held := range []UnlimitedSource{{42}, {43}} {
+		if !s.canIssue(pkgSrc, held.Create()) {
+			t.Fatalf("expected %v to be able to issue %v it holds the source for", pkgSrc, held.Create())
+		}
+	}
+
+	if s.canIssue(pkgSrc, UnlimitedAsset{44}) {
+		t.Fatalf("expected %v not to be able to issue an asset it holds no source for", pkgSrc)
+	}
+}
+
+// packages nest, so a package source holding another package source can issue that package
+func TestPackageSourceCanIssueNestedPackage(t *testing.T) {
+	s := makeState()
+
+	outer := PackageSource{5}
+	inner := PackageSource{6}
+
+	s.ownerItems[outer] = &Items{One: ItemsOne{inner: {}}}
+
+	if !s.canIssue(outer, inner.Create()) {
+		t.Fatalf("expected %v to be able to issue nested %v", outer, inner.Create())
+	}
+}

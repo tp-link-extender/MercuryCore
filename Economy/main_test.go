@@ -224,3 +224,84 @@ func TestRegisterRoutesDispatchesIndependently(t *testing.T) {
 		t.Fatalf("expected balance to write a value")
 	}
 }
+
+// the whole package flow over HTTP: create a package source, then sell it
+func TestPackageOverHTTP(t *testing.T) {
+	srv, e := testServer(t)
+	defer srv.Close()
+
+	creator := User{Id: "creator"}
+	buyer := User{Id: "buyer"}
+	for _, u := range []User{creator, buyer} {
+		if _, err := e.MintCurrency(u, 200); err != nil {
+			t.Fatalf("MintCurrency %v: %v", u, err)
+		}
+	}
+
+	// two component sources
+	var comps []UnlimitedSource
+	for range 2 {
+		c, _, err := e.CreateUnlimitedSource(creator)
+		if err != nil {
+			t.Fatalf("CreateUnlimitedSource: %v", err)
+		}
+		comps = append(comps, c)
+	}
+
+	// create the package source over HTTP
+	body := &bytes.Buffer{}
+	serialiseItem(creator, body)
+	putUint32(body, uint32(len(comps)))
+	for _, c := range comps {
+		serialiseItem(c, body)
+	}
+
+	res := post(t, srv, "createPackageSource", body)
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		t.Fatalf("expected 200 from createPackageSource, got %d", res.StatusCode)
+	}
+
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(res.Body)
+	srcBytes := buf.Bytes()
+	if len(srcBytes) != 5 {
+		t.Fatalf("expected a 5 byte source id, got %d bytes", len(srcBytes))
+	}
+	if srcBytes[0] != byte(10) {
+		t.Fatalf("expected type byte %d for PackageSource, got %d", 10, srcBytes[0])
+	}
+	pkgSrc := PackageSource{Id: binary.BigEndian.Uint32(srcBytes[1:])}
+
+	// buy it over HTTP
+	body = &bytes.Buffer{}
+	serialiseItem(buyer, body)
+	serialiseItem(pkgSrc, body)
+	putUint64(body, 35)
+
+	res2 := post(t, srv, "buyPackage", body)
+	defer res2.Body.Close()
+
+	if res2.StatusCode != http.StatusNoContent {
+		t.Fatalf("expected 204 from buyPackage, got %d", res2.StatusCode)
+	}
+
+	if !e.OwnsOne(buyer, pkgSrc.Create()) {
+		t.Fatalf("expected buyer to own the package")
+	}
+	for _, c := range comps {
+		if !e.OwnsOne(buyer, c.Create()) {
+			t.Fatalf("expected buyer to own component %v", c.Create())
+		}
+	}
+	if got := e.Balance(buyer); got != 200-35 {
+		t.Fatalf("expected buyer balance %d, got %d", 200-35, got)
+	}
+}
+
+func putUint32(w *bytes.Buffer, v uint32) {
+	b := make([]byte, 4)
+	binary.BigEndian.PutUint32(b, v)
+	w.Write(b)
+}
