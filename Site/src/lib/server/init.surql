@@ -121,6 +121,11 @@ DEFINE TABLE OVERWRITE notification SCHEMAFULL TYPE RELATION FROM user TO user E
 	DEFINE FIELD OVERWRITE relativeId ON notification TYPE string;
 	DEFINE FIELD OVERWRITE type ON notification TYPE string;
 
+# which assets are bundled inside a package (membership only)
+# this is structural, NOT ownership - who owns what lives in the Economy ledger
+DEFINE TABLE OVERWRITE packageItem SCHEMAFULL TYPE RELATION FROM asset TO asset ENFORCED;
+	DEFINE FIELD OVERWRITE id ON packageItem TYPE string;
+
 DEFINE TABLE OVERWRITE place SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE id ON place TYPE int;
 	DEFINE FIELD OVERWRITE created ON place TYPE datetime DEFAULT ALWAYS time::now();

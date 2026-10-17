@@ -98,7 +98,7 @@ export async function load({ fetch: f, locals }) {
 	const contents = new Map<number, number[]>()
 	const wearables: number[] = []
 	for (const asset of assets.filter(a => a.type === 32)) {
-		const items = (await packageItems(asset.id, user.id)).filter(
+		const items = (await packageItems(f, asset.id, user.id)).filter(
 			i =>
 				i.owned &&
 				i.visibility === "Visible" &&
@@ -210,7 +210,7 @@ async function equip(e: RequestEvent) {
 
 	// Packages simply equip the user with every item inside them
 	if (asset.type === 32) {
-		const items = await packageItems(id, user.id)
+		const items = await packageItems(e.fetch, id, user.id)
 		const children = items.filter(
 			i =>
 				i.owned &&
@@ -259,7 +259,7 @@ async function unequip(e: RequestEvent) {
 
 	// Unequipping a package unequips everything inside it
 	if (asset.type === 32) {
-		const items = await packageItems(id, user.id)
+		const items = await packageItems(e.fetch, id, user.id)
 		const children = items
 			.filter(
 				i =>

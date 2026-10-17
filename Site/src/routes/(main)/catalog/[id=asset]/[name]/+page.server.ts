@@ -2,6 +2,7 @@ import { error, fail, redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import {
 	balance,
+	buyPackage,
 	buyUnlimitedAsset,
 	countOwnersOne,
 	ownersOne,
@@ -14,7 +15,6 @@ import createCommentQuery from "$lib/server/createComment.surql"
 import { economyConnFailed } from "$lib/server/economy"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
-import { packageItems } from "$lib/server/packageItems"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender, { type RenderType } from "$lib/server/requestRender"
 
@@ -25,7 +25,6 @@ import type { RequestEvent } from "./$types"
 import assetQuery from "./asset.surql"
 import buyQuery from "./buy.surql"
 import findAssetQuery from "./findAsset.surql"
-import grantPackageQuery from "./grantPackage.surql"
 
 const schema = type({
 	content: "1 <= string <= 1000",
@@ -240,34 +239,27 @@ actions.buy = async e => {
 	if (!asset.forSale) error(400, "This item is not for sale")
 
 	const u = new Econ.User(user.id)
-	const i = new Econ.UnlimitedSource(id)
-	const ok = await buyUnlimitedAsset(e.fetch, u, i, BigInt(asset.price))
+	// packages are sold through the Economy service as a bundle: the buyer pays once and receives the package plus everything inside it, so there's nothing to write here
+	const price = BigInt(asset.price)
+	const ok =
+		asset.type === 32
+			? await buyPackage(e.fetch, u, new Econ.PackageSource(id), price)
+			: await buyUnlimitedAsset(
+					e.fetch,
+					u,
+					new Econ.UnlimitedSource(id),
+					price
+				)
 	if (!ok) error(400, "Purchase failed")
 
-	// buying a package grants ownership of every item inside it too
-	// (the package ownership itself is granted below for all asset types)
-	if (asset.type === 32) {
-		const items = await packageItems(id, user.id)
-		await db.query(grantPackageQuery, {
-			items: items.filter(i => !i.owned).map(i => Record("asset", i.id)),
-			user: Record("user", user.id),
-		})
-	}
-
-	await Promise.all([
-		db.query("RELATE $user->ownsAsset->$asset", {
-			asset: Record("asset", id),
-			user: Record("user", user.id),
-		}),
-		user.id === asset.creatorId ||
-			db.query(
-				'fn::notify($user, $creator, "ItemPurchase", $note, $relativeId)',
-				{
-					user: Record("user", user.id),
-					creator: Record("user", asset.creatorId),
-					note: `${user.username} just purchased your item ${asset.name}`,
-					relativeId: e.params.id,
-				}
-			),
-	])
+	if (user.id !== asset.creatorId)
+		await db.query(
+			'fn::notify($user, $creator, "ItemPurchase", $note, $relativeId)',
+			{
+				user: Record("user", user.id),
+				creator: Record("user", asset.creatorId),
+				note: `${user.username} just purchased your item ${asset.name}`,
+				relativeId: e.params.id,
+			}
+		)
 }

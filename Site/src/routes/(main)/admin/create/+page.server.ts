@@ -1,12 +1,11 @@
 import fs from "node:fs"
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { createUnlimitedSource } from "economy/api"
+import { createPackageSource, createUnlimitedSource } from "economy/api"
 import * as Econ from "economy/types"
 import types, { typeToNumber } from "$lib/assetTypes"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
-import { randomAssetId } from "$lib/server/id"
 import requestRender from "$lib/server/requestRender"
 import { db, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
@@ -188,7 +187,7 @@ async function createPackage(
 			return fail("Face assets must be in XML format")
 
 		children.push({
-			id: randomAssetId(),
+			id: 0, // assigned below, from the Economy service
 			description: descriptions[num] ?? "",
 			name,
 			type: assetType,
@@ -209,10 +208,27 @@ async function createPackage(
 			)
 	}
 
+	// Asset ids come from the Economy service, so a package's contents are owned there and can only ever be sold as part of the bundle. Every child needs its own unlimited source, and the package needs a package source holding all of them.
+	const u = new Econ.User(user.id)
+	const comps: Econ.UnlimitedSource[] = []
+	for (const [num, child] of children.entries()) {
+		const created = await createUnlimitedSource(f, u)
+		if (!created.ok)
+			return fail(`Failed to create a source for asset #${num + 1}`)
+
+		comps.push(created.value)
+		child.id = created.value.ID
+	}
+
+	const createdPackage = await createPackageSource(f, u, comps)
+	if (!createdPackage.ok)
+		return fail("Failed to create a source for the package")
+
+	const id = createdPackage.value.ID
+
 	if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
 	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
 
-	const id = randomAssetId()
 	await db.query(createPackageQuery, {
 		childRecords: children.map(c => Record("asset", c.id)),
 		childRows: children.map(c => ({

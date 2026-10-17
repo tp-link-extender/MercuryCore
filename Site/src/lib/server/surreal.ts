@@ -118,6 +118,7 @@ type RecordIdTypes = {
 	likes: string
 	moderation: string
 	notification: string
+	packageItem: string
 	place: number
 	playing: string
 	posted: string
@@ -151,6 +152,7 @@ export const In = new Table("in")
 export const Likes = new Table("likes")
 export const Moderation = new Table("moderation")
 export const Notification = new Table("notification")
+export const PackageItem = new Table("packageItem")
 export const Place = new Table("place")
 export const Playing = new Table("playing")
 export const Posted = new Table("posted")
