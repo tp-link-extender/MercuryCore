@@ -1,6 +1,5 @@
-# Used to gather the contents of a package (nested packages are reported via the nested field)
+# Fetches the database details of a package's contents, given their ids from the Economy service.
+# Ownership is not queried here - it's in the Economy service too.
 
-SELECT record::id(id) AS id, type, visibility,
-	$user IN <-ownsAsset<-user.id AS owned,
-	count(->packageItem) AS nested
-FROM $pkg->packageItem->asset;
+SELECT record::id(id) AS id, name, type, visibility
+FROM asset WHERE id IN $ids;

@@ -1,11 +1,11 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
+import { createPlace } from "economy/api"
+import * as Econ from "economy/types"
 import { authorise } from "$lib/server/auth"
-// import { createPlace, getPlacePrice } from "$lib/server/economy"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
-import { randomAssetId } from "$lib/server/id"
-import { db, Record } from "$lib/server/surreal"
+import { db } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import {
 	maxPlayersTest,
@@ -13,7 +13,6 @@ import {
 	serverPortTest,
 } from "$lib/typeTests"
 import { encode } from "$lib/urlName"
-import countQuery from "./count.surql"
 import createQuery from "./create.surql"
 import clientVersions from "./clientVersions"
 
@@ -30,24 +29,14 @@ const schema = type({
 	privateServer: "boolean | undefined",
 })
 
-async function placeCount(id: string) {
-	const [[count]] = await db.query<number[][]>(countQuery, {
-		user: Record("user", id),
-	})
-	return count
-}
-
 export async function load() {
-	// const price = getPlacePrice()
 	return {
 		form: await superValidate(arktype(schema)),
-		// count: await placeCount((await authorise(locals)).user.id),
-		// price,
 	}
 }
 
 export const actions: import("./$types").Actions = {}
-actions.default = async ({ locals, request }) => {
+actions.default = async ({ fetch: f, locals, request }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
@@ -63,22 +52,22 @@ actions.default = async ({ locals, request }) => {
 			["description"],
 			["Place must have a description"]
 		)
-	if ((await placeCount(user.id)) >= 2)
-		return formError(
-			form,
-			["other"],
-			["You can't have more than two places"]
-		)
+	// if ((await placeCount(user.id)) >= 2)
+	// 	return formError(
+	// 		form,
+	// 		["other"],
+	// 		["You can't have more than two places"]
+	// 	)
 
-	const slug = encode(name)
-	const id = randomAssetId() // listen, this still isn't great, but whatever atp
+	const u = new Econ.User(user.id)
+	const created = await createPlace(f, u)
+	if (!created.ok)
+		return formError(form, ["other"], ["failed to create place"])
 
-	// const created = await createPlace(f, user.id, id, name, slug)
-	// if (!created.ok) return formError(form, ["other"], [created.msg])
+	const id = created.value.ID
 
 	await db.query(createQuery, {
 		id,
-		user: Record("user", user.id),
 		name: filter(name),
 		description: filter(description),
 		serverAddress,
@@ -88,5 +77,5 @@ actions.default = async ({ locals, request }) => {
 		clientVersion: +clientVersion,
 	})
 
-	redirect(302, `/place/${id}/${slug}`)
+	redirect(302, `/place/${id}/${encode(name)}`)
 }

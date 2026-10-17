@@ -1,9 +1,9 @@
 SELECT
 	record::id(id) AS id,
 	name,
-	(SELECT status, username FROM $parent<-ownsGroup<-user)[0] AS owner,
 	count(<-member) AS memberCount,
-	$user IN <-member<-user.id AS in
+	$user IN <-member<-user.id AS in,
+	(SELECT status, username FROM $this<-member<-user)[0] AS owner
 	# [] AS places,
 	# [] AS feed
 FROM $group;

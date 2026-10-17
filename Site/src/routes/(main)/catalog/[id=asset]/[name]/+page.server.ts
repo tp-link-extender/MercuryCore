@@ -1,20 +1,24 @@
 import { error, fail, redirect } from "@sveltejs/kit"
 import { type } from "arktype"
+import {
+	balance,
+	buyPackage,
+	buyUnlimitedAsset,
+	countOwnersOne,
+	ownersOne,
+	ownsOne,
+} from "economy/api"
+import * as Econ from "economy/types"
 import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
 import createCommentQuery from "$lib/server/createComment.surql"
-import {
-	economyConnFailed,
-	fee,
-	getBalance,
-	transact,
-} from "$lib/server/economy"
+import { economyConnFailed } from "$lib/server/economy"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
-import { packageItems } from "$lib/server/packageItems"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender, { type RenderType } from "$lib/server/requestRender"
 
+import { packageItems, type PackageItem } from "$lib/server/packageItems"
 import { db, find, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { couldMatch, encode } from "$lib/urlName"
@@ -22,7 +26,6 @@ import type { RequestEvent } from "./$types"
 import assetQuery from "./asset.surql"
 import buyQuery from "./buy.surql"
 import findAssetQuery from "./findAsset.surql"
-import grantPackageQuery from "./grantPackage.surql"
 
 const schema = type({
 	content: "1 <= string <= 1000",
@@ -33,16 +36,9 @@ type Asset = {
 	id: string
 	comments: Comment[]
 	created: Date
-	creator: BasicUser
 	description: string
 	forSale: boolean
-	isCreator: boolean
-	items: {
-		id: number
-		name: string
-		price: number
-		type: number
-	}[]
+	items: PackageItem[]
 	name: string
 	owned: boolean
 	price: number
@@ -67,29 +63,71 @@ export async function load({ fetch: f, locals, params }) {
 		asset: Record("asset", id),
 		user: Record("user", user.id),
 	})
-	if (!asset?.creator) error(404, "Not Found")
+	if (!asset) error(404, "Not Found")
 
 	const slug = encode(asset.name)
 	if (!couldMatch(asset.name, params.name))
 		redirect(302, `/catalog/${id}/${slug}`)
 
-	const balance = await getBalance(f, user.id)
-	if (!balance.ok) error(500, economyConnFailed)
+	const u = new Econ.User(user.id)
+	const b = await balance(f, u)
+	if (!b.ok) {
+		console.error("balance failed")
+		error(500, economyConnFailed)
+	}
+
+	// packages are a distinct type in the ledger, so they need their own item and source to ask about rather than the plain asset ones
+	const isPackage = asset.type === 32
+	const item = isPackage ? new Econ.Package(id) : new Econ.UnlimitedAsset(id)
+	const src = isPackage
+		? new Econ.PackageSource(id)
+		: new Econ.UnlimitedSource(id)
+
+	const owned = await ownsOne(f, u, item)
+	if (!owned.ok) {
+		console.error("ownsOne failed")
+		error(500, economyConnFailed)
+	}
+
+	const owners = await countOwnersOne(f, item)
+	if (!owners.ok) {
+		console.error("countOwnersOne for owners failed")
+		error(500, economyConnFailed)
+	}
+
+	const creators = await ownersOne(f, src)
+	if (!creators.ok) {
+		console.error("countOwnersOne for creators failed")
+		error(500, economyConnFailed)
+	}
+
+	// what the buyer receives along with the package itself
+	const items = isPackage ? await packageItems(f, id, user.id) : []
+
+	// there should only ever be 1 creator
+	const creator = creators.value.set
+	console.log(creator)
 
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
 		failText: failTexts[Math.floor(Math.random() * failTexts.length)],
 		form: await superValidate(arktype(schema)),
 		slug,
-		asset,
-		balance: balance.value,
-		currentFee: fee,
+		asset: {
+			...asset,
+			items,
+			price: BigInt(asset.price),
+		},
+		sold: owners.value,
+		owned: owned.value,
+		creator,
+		balance: b.value,
 	}
 }
 
-async function getBuyData(e: RequestEvent) {
-	const { user } = await authorise(e.locals)
-	const id = +e.params.id
+async function getBuyData({ locals, params }: RequestEvent) {
+	const { user } = await authorise(locals)
+	const id = +params.id
 	const assetExists = await find("asset", id)
 	if (!assetExists) error(404)
 
@@ -189,13 +227,9 @@ actions.buy = async e => {
 	const { user, id } = await getBuyData(e)
 
 	type FoundAsset = {
-		creator: {
-			id: string
-			username: string
-		}
+		creatorId: string
 		forSale: boolean
 		name: string
-		owned: boolean
 		price: number
 		type: number
 		visibility: string
@@ -205,49 +239,32 @@ actions.buy = async e => {
 		asset: Record("asset", id),
 	})
 	if (!asset) error(404, "Not Found")
-	if (asset.owned) error(400, "You already own this item")
 	if (asset.visibility !== "Visible")
 		error(400, "This item hasn't been approved yet")
 	if (!asset.forSale) error(400, "This item is not for sale")
 
-	if (asset.price > 0) {
-		// todo work out how free assets are supposed to work
-		const tx = await transact(
-			e.fetch,
-			user.id,
-			asset.creator.id,
-			asset.price,
-			`Purchased asset ${asset.name}`,
-			`/catalog/${id}/${asset.name}`,
-			{}
+	const u = new Econ.User(user.id)
+	// packages are sold through the Economy service as a bundle: the buyer pays once and receives the package plus everything inside it, so there's nothing to write here
+	const price = BigInt(asset.price)
+	const ok =
+		asset.type === 32
+			? await buyPackage(e.fetch, u, new Econ.PackageSource(id), price)
+			: await buyUnlimitedAsset(
+					e.fetch,
+					u,
+					new Econ.UnlimitedSource(id),
+					price
+				)
+	if (!ok) error(400, "Purchase failed")
+
+	if (user.id !== asset.creatorId)
+		await db.query(
+			'fn::notify($user, $creator, "ItemPurchase", $note, $relativeId)',
+			{
+				user: Record("user", user.id),
+				creator: Record("user", asset.creatorId),
+				note: `${user.username} just purchased your item ${asset.name}`,
+				relativeId: e.params.id,
+			}
 		)
-		if (!tx.ok) error(400, tx.msg)
-	}
-
-	// buying a package grants ownership of every item inside it too
-	// (the package ownership itself is granted below for all asset types)
-	if (asset.type === 32) {
-		const items = await packageItems(id, user.id)
-		await db.query(grantPackageQuery, {
-			items: items.filter(i => !i.owned).map(i => Record("asset", i.id)),
-			user: Record("user", user.id),
-		})
-	}
-
-	await Promise.all([
-		db.query("RELATE $user->ownsAsset->$asset", {
-			asset: Record("asset", id),
-			user: Record("user", user.id),
-		}),
-		user.id === asset.creator.id ||
-			db.query(
-				'fn::notify($user, $creator, "ItemPurchase", $note, $relativeId)',
-				{
-					user: Record("user", user.id),
-					creator: Record("user", asset.creator.id),
-					note: `${user.username} just purchased your item ${asset.name}`,
-					relativeId: e.params.id,
-				}
-			),
-	])
 }

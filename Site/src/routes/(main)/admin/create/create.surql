@@ -1,5 +1,5 @@
-LET $asset = CREATE ONLY asset CONTENT {
-	id: fn::assetId(),
+CREATE ONLY asset CONTENT {
+	id: $id,
 	description: [{
 		text: $description,
 	}],
@@ -8,6 +8,3 @@ LET $asset = CREATE ONLY asset CONTENT {
 	type: $assetType,
 	visibility: "Visible", # admin, immediately visible
 };
-record::id($asset.id);
-RELATE $user->ownsAsset->$asset;
-RELATE $user->created->$asset;
