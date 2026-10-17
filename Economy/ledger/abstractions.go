@@ -428,6 +428,17 @@ func (e *Economy) BuyPackage(u User, src PackageSource, price Quantity) (p Packa
 	return p, tid, nil
 }
 
+// PackageContents returns everything a package source will hand over to a buyer: the package itself plus every asset inside it, nested packages included.
+func (e *Economy) PackageContents(src PackageSource) ItemsOne {
+	return e.ledger.state.PackageContents(src)
+}
+
+// PackageItems returns every asset that sits inside some package, across the whole ledger.
+// The Site uses this to keep bundle contents out of catalog and search listings.
+func (e *Economy) PackageItems() ItemsOne {
+	return e.ledger.state.PackageItems()
+}
+
 func (e *Economy) TransferHistory(n uint32) ([]TransferWithID, error) {
 	return e.ledger.TransferHistory(int(n))
 }

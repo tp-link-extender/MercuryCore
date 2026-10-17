@@ -18,6 +18,7 @@ import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender, { type RenderType } from "$lib/server/requestRender"
 
+import { packageItems, type PackageItem } from "$lib/server/packageItems"
 import { db, find, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { couldMatch, encode } from "$lib/urlName"
@@ -37,12 +38,7 @@ type Asset = {
 	created: Date
 	description: string
 	forSale: boolean
-	items: {
-		id: number
-		name: string
-		price: number
-		type: number
-	}[]
+	items: PackageItem[]
 	name: string
 	owned: boolean
 	price: number
@@ -80,25 +76,33 @@ export async function load({ fetch: f, locals, params }) {
 		error(500, economyConnFailed)
 	}
 
-	const i = new Econ.UnlimitedAsset(id)
-	const owned = await ownsOne(f, u, i)
+	// packages are a distinct type in the ledger, so they need their own item and source to ask about rather than the plain asset ones
+	const isPackage = asset.type === 32
+	const item = isPackage ? new Econ.Package(id) : new Econ.UnlimitedAsset(id)
+	const src = isPackage
+		? new Econ.PackageSource(id)
+		: new Econ.UnlimitedSource(id)
+
+	const owned = await ownsOne(f, u, item)
 	if (!owned.ok) {
 		console.error("ownsOne failed")
 		error(500, economyConnFailed)
 	}
 
-	const owners = await countOwnersOne(f, i)
+	const owners = await countOwnersOne(f, item)
 	if (!owners.ok) {
 		console.error("countOwnersOne for owners failed")
 		error(500, economyConnFailed)
 	}
 
-	const src = new Econ.UnlimitedSource(id)
 	const creators = await ownersOne(f, src)
 	if (!creators.ok) {
 		console.error("countOwnersOne for creators failed")
 		error(500, economyConnFailed)
 	}
+
+	// what the buyer receives along with the package itself
+	const items = isPackage ? await packageItems(f, id, user.id) : []
 
 	// there should only ever be 1 creator
 	const creator = creators.value.set
@@ -111,6 +115,7 @@ export async function load({ fetch: f, locals, params }) {
 		slug,
 		asset: {
 			...asset,
+			items,
 			price: BigInt(asset.price),
 		},
 		sold: owners.value,

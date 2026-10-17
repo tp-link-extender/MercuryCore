@@ -62,8 +62,7 @@ func (s *State) GetOwnersMany(i CanOwnMany) *OwnersMany {
 // canIssue reports whether o may issue item i without holding it.
 // Any source can always issue the item it creates, and holding a source entitles its holder to issue what that source creates - including, for a nested package, everything inside it.
 // Sources are only obtainable by paying for them, so this can't conjure items out of nothing.
-// Only assets are covered, because they're the only items that can be owned one-per-person;
-// places and groups must always be held.
+// Only assets are covered, because they're the only items that can be owned one-per-person; places and groups must always be held.
 func (s *State) canIssue(o Owner, i CanOwnOne) bool {
 	switch o := o.(type) {
 	case Source:
@@ -101,6 +100,36 @@ func (s *State) collectPackageContents(src Source, into ItemsOne, seen map[Sourc
 			s.collectPackageContents(item, into, seen)
 		}
 	}
+}
+
+// PackageContents returns everything a package source will hand over to a buyer: the package itself, plus every asset inside it, nested packages included.
+func (s *State) PackageContents(src PackageSource) ItemsOne {
+	return s.packageContents(src)
+}
+
+// PackageItems returns every asset that is inside some package, across every package in the ledger.
+// The Site uses this to keep bundle contents out of catalog and search results, which used to be done by checking for a packageItem relation in the database.
+//
+// The lookup walks each package source rather than the ownership index: handing a component's source to a package source moves the source, not the asset, so nothing about the asset itself records that it belongs to a bundle.
+func (s *State) PackageItems() ItemsOne {
+	items := ItemsOne{}
+
+	for owner := range s.ownerItems {
+		ps, ok := owner.(PackageSource)
+		if !ok {
+			continue
+		}
+
+		for item := range s.packageContents(ps) {
+			// the package itself is for sale, so it's not one of its own contents
+			if item == ps.Create() {
+				continue
+			}
+			items.Add(item)
+		}
+	}
+
+	return items
 }
 
 func (s State) CanApply(t Transfer) error {

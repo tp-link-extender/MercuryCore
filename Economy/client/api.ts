@@ -3,6 +3,7 @@ import {
 	Buf,
 	BufReader,
 	Items,
+	type ItemsOne,
 	type Quantity,
 	SerialiseItem,
 	SerialiseUint32,
@@ -41,6 +42,8 @@ type Route =
 	| "buyLimitedAsset"
 	| "createPackageSource"
 	| "buyPackage"
+	| "packageContents"
+	| "packageItems"
 	| "history"
 	| "historyOwner"
 
@@ -359,6 +362,41 @@ export const buyPackage = (
 			SerialiseUint64(price),
 		])
 	).then(res => res.status === 204)
+
+/**
+ * Returns everything a package hands to a buyer: the package itself plus every asset inside
+ * it, nested packages flattened. This replaces a packageItem relation in the database.
+ */
+export async function packageContents(
+	f: Fetch,
+	src: PackageSource
+): ReturnValue<ItemsOne> {
+	let res: Response
+	try {
+		res = await request(f, "packageContents", SerialiseItem(src))
+	} catch {
+		return { ok: false }
+	}
+	if (res.status !== 200) return { ok: false }
+
+	return { ok: true, value: Items.Deserialise(await resReader(res)).One }
+}
+
+/**
+ * Returns every asset that sits inside some package. Used to keep bundle contents out of
+ * catalog and search listings.
+ */
+export async function packageItems(f: Fetch): ReturnValue<ItemsOne> {
+	let res: Response
+	try {
+		res = await request(f, "packageItems", Buf.from(new ArrayBuffer(0)))
+	} catch {
+		return { ok: false }
+	}
+	if (res.status !== 200) return { ok: false }
+
+	return { ok: true, value: Items.Deserialise(await resReader(res)).One }
+}
 
 export const buyUnlimitedAsset = (
 	f: Fetch,

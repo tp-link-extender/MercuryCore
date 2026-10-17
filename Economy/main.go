@@ -310,6 +310,30 @@ func (e *EconomyServer) buyPackageRoute(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// serialiseItemsOne writes an ItemsOne as a full Items payload. ItemsOne.Serialise on its own only emits the One section, which leaves the trailing ItemsMany length off the end and makes the response unparseable.
+func serialiseItemsOne(items ItemsOne, w io.Writer) error {
+	return Items{One: items}.Serialise(w)
+}
+
+func (e *EconomyServer) packageContentsRoute(w http.ResponseWriter, r *http.Request) {
+	src, ok := getItem[PackageSource](w, r)
+	if !ok {
+		return
+	}
+
+	if err := serialiseItemsOne(e.PackageContents(src), w); err != nil {
+		http.Error(w, fmt.Sprintf("serialise package contents: %v", err.Error()), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (e *EconomyServer) packageItemsRoute(w http.ResponseWriter, r *http.Request) {
+	if err := serialiseItemsOne(e.PackageItems(), w); err != nil {
+		http.Error(w, fmt.Sprintf("serialise package items: %v", err.Error()), http.StatusInternalServerError)
+		return
+	}
+}
+
 func (e *EconomyServer) buyUnlimitedAssetRoute(w http.ResponseWriter, r *http.Request) {
 	u, ok := getItem[User](w, r)
 	if !ok {
@@ -506,6 +530,8 @@ var routes = []struct {
 	{"buyLimitedAsset", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.buyLimitedAssetRoute(w, r) }},
 	{"createPackageSource", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.createPackageSourceRoute(w, r) }},
 	{"buyPackage", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.buyPackageRoute(w, r) }},
+	{"packageContents", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.packageContentsRoute(w, r) }},
+	{"packageItems", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.packageItemsRoute(w, r) }},
 	{"history", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.historyRoute(w, r) }},
 	{"historyOwner", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.historyOwnerRoute(w, r) }},
 }
