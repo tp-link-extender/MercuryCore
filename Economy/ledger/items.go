@@ -7,6 +7,17 @@ import (
 	"strings"
 )
 
+// MaxCollectionEntries caps how many entries a single deserialised collection may claim.
+// It is checked before allocating, so a forged length prefix cannot force a huge allocation.
+const MaxCollectionEntries = 100_000
+
+func checkCollectionLength(name string, l uint32) error {
+	if l > MaxCollectionEntries {
+		return fmt.Errorf("%s length %d exceeds limit %d", name, l, MaxCollectionEntries)
+	}
+	return nil
+}
+
 func DeserialiseUint32(r io.Reader) (uint32, error) {
 	var buf [4]byte
 	if _, err := io.ReadFull(r, buf[:]); err != nil {
@@ -108,6 +119,9 @@ func DeserialiseItemsOne(r io.Reader) (ItemsOne, error) {
 		return nil, fmt.Errorf("read ItemsOne length: %w", err)
 	}
 	l := binary.BigEndian.Uint32(lbuf[:])
+	if err := checkCollectionLength("ItemsOne", l); err != nil {
+		return nil, err
+	}
 
 	io := make(ItemsOne, l)
 	for range l {
@@ -180,6 +194,9 @@ func DeserialiseItemsMany(r io.Reader) (ItemsMany, error) {
 		return nil, fmt.Errorf("read ItemsMany length: %w", err)
 	}
 	l := binary.BigEndian.Uint32(lbuf[:])
+	if err := checkCollectionLength("ItemsMany", l); err != nil {
+		return nil, err
+	}
 
 	im := make(ItemsMany, l)
 	for range l {

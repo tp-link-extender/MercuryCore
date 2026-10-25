@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -14,6 +15,12 @@ import (
 	c "github.com/TwiN/go-color"
 
 	. "Economy/ledger"
+)
+
+const (
+	maxRequestBodyBytes = 1 << 20 // 1 MiB
+	maxHistoryEntries   = 1000
+	maxResponseLogBytes = 64 << 10 // 64 KiB
 )
 
 // ahh b2i, my favourite (though this one's with uint8)
@@ -259,6 +266,10 @@ func (e *EconomyServer) createPackageSourceRoute(w http.ResponseWriter, r *http.
 		http.Error(w, fmt.Sprintf("decode component count: %v", err.Error()), http.StatusBadRequest)
 		return
 	}
+	if count > MaxCollectionEntries {
+		http.Error(w, fmt.Sprintf("component count %d exceeds limit %d", count, MaxCollectionEntries), http.StatusBadRequest)
+		return
+	}
 
 	comps := make([]PackageComponent, 0, count)
 	for i := uint32(0); i < count; i++ {
@@ -397,6 +408,10 @@ func (e *EconomyServer) historyRoute(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("decode number: %v", err.Error()), http.StatusBadRequest)
 		return
 	}
+	if n > maxHistoryEntries {
+		http.Error(w, fmt.Sprintf("history limit is %d", maxHistoryEntries), http.StatusBadRequest)
+		return
+	}
 
 	history, err := e.TransferHistory(n)
 	if err != nil {
@@ -416,6 +431,10 @@ func (e *EconomyServer) historyOwnerRoute(w http.ResponseWriter, r *http.Request
 	n, err := DeserialiseUint32(r.Body)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("decode number: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+	if n > maxHistoryEntries {
+		http.Error(w, fmt.Sprintf("history limit is %d", maxHistoryEntries), http.StatusBadRequest)
 		return
 	}
 
@@ -450,7 +469,13 @@ func (w *CustomResponseWriter) WriteHeader(code int) {
 }
 
 func (w *CustomResponseWriter) Write(b []byte) (int, error) {
-	w.log = append(w.log, b...)
+	if remaining := maxResponseLogBytes - len(w.log); remaining > 0 {
+		if len(b) < remaining {
+			w.log = append(w.log, b...)
+		} else {
+			w.log = append(w.log, b[:remaining]...)
+		}
+	}
 	return w.ResponseWriter.Write(b)
 }
 
@@ -466,32 +491,33 @@ func colourCode(cs int) string {
 	return c.InGreen(scs)
 }
 
-func CloneReader(r io.ReadCloser) (og io.ReadCloser, fixed io.ReadCloser) {
-	var buf bytes.Buffer
-	tee := io.TeeReader(r, &buf)
-
-	return io.NopCloser(tee), io.NopCloser(&buf) // DO NOT FORGET THE PARAMATER ORDER
-}
-
 func loggingHandler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		t := time.Now().Format("2006-01-02 15:04:05")
-		// newr := r.Clone(r.Context())
-		// next.ServeHTTP(w, newr)
-		// // print response code
-		// code := http.StatusOK
 
-		var body io.ReadCloser
-		body, r.Body = CloneReader(r.Body) // *alonso pc fan noise* fixed
-		// but real talk idk why this happens
+		bodyBytes, err := io.ReadAll(http.MaxBytesReader(w, r.Body, maxRequestBodyBytes))
+		if err != nil {
+			status := http.StatusBadRequest
+			var maxErr *http.MaxBytesError
+			if errors.As(err, &maxErr) {
+				status = http.StatusRequestEntityTooLarge
+			}
 
-		// read body to log it
-		bodyBytes, err := io.ReadAll(body)
-		if err == nil {
-			fmt.Println(c.InWhite(bodyBytes))
-		} else {
-			fmt.Println(c.InRed("Failed to read request body: " + err.Error()))
+			crw := &CustomResponseWriter{
+				ResponseWriter: w,
+				statusCode:     status,
+			}
+			http.Error(crw, http.StatusText(status), status)
+
+			fmt.Printf("%s %s %s\n", c.InGray(t), colourCode(status), c.InBlue(r.URL.Path))
+			fmt.Println(c.InRed(fmt.Sprintf("Failed to read request body: %v", err)))
+			fmt.Println(c.InPurple(string(crw.log)))
+			return
 		}
+
+		// log the body, then let handlers read it from memory
+		fmt.Println(c.InWhite(bodyBytes))
+		r.Body = io.NopCloser(bytes.NewReader(bodyBytes))
 
 		crw := &CustomResponseWriter{
 			ResponseWriter: w,

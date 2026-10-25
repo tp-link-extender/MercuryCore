@@ -293,6 +293,9 @@ func DeserialiseOwnersOne(r io.Reader) (OwnersOne, error) {
 		return nil, fmt.Errorf("read OwnersOne length: %w", err)
 	}
 	l := binary.BigEndian.Uint32(lbuf[:])
+	if err := checkCollectionLength("OwnersOne", l); err != nil {
+		return nil, err
+	}
 
 	oo := make(OwnersOne, l)
 	for range l {
@@ -342,6 +345,9 @@ func DeserialiseOwnersMany(r io.Reader) (OwnersMany, error) {
 		return nil, fmt.Errorf("read OwnersMany length: %w", err)
 	}
 	l := binary.BigEndian.Uint32(lbuf[:])
+	if err := checkCollectionLength("OwnersMany", l); err != nil {
+		return nil, err
+	}
 
 	om := make(OwnersMany, l)
 	for range l {
