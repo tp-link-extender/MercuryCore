@@ -57,9 +57,11 @@ const assetToBigInt = (a: Asset): AssetBigInt => ({
 	price: BigInt(a.price),
 })
 
-async function getUnlimitedAssets(): Promise<AssetBigInt[]> {
+async function getOwnedAssets(): Promise<AssetBigInt[]> {
 	const ids = (await getInventory())
-		.filter(i => i instanceof Econ.UnlimitedAsset)
+		.filter(
+			i => i instanceof Econ.UnlimitedAsset || i instanceof Econ.Package
+		)
 		.map(i => Record("asset", i.ID))
 
 	const [assets] = await db.query<[Asset[]]>(queryUnlimitedAssets, { ids })
@@ -67,7 +69,7 @@ async function getUnlimitedAssets(): Promise<AssetBigInt[]> {
 }
 
 export const getAsset = query(getAssetSchema, async t =>
-	(await getUnlimitedAssets()).filter(a => a.type === t)
+	(await getOwnedAssets()).filter(a => a.type === t)
 )
 
 export const getSources = query(async (): Promise<AssetBigInt[]> => {

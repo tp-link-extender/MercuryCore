@@ -47,33 +47,24 @@ export type Asset = {
 	wearing: boolean
 }
 
-type AssetBigInt = {
-	id: number
-	name: string
-	price: bigint
-	type: number
-	wearing: boolean
-}
-
 type AssetData = {
 	id: number
 	type: number
 	visibility: string
 }
 
-const assetToBigInt = (a: Asset): AssetBigInt => ({
-	...a,
-	price: BigInt(a.price),
-})
-
-const ownedUnlimitedAssetIds = (items: ItemsOne) =>
-	[...items.set].filter(i => i instanceof Econ.UnlimitedAsset).map(i => i.ID)
+const ownedAssetIds = (items: ItemsOne) =>
+	[...items.set]
+		.filter(
+			i => i instanceof Econ.UnlimitedAsset || i instanceof Econ.Package
+		)
+		.map(i => i.ID)
 
 async function getOwnedAssetIds(f: typeof globalThis.fetch, userId: string) {
 	const inv = await inventory(f, new Econ.User(userId))
 	if (!inv.ok) error(500, economyConnFailed)
 
-	return ownedUnlimitedAssetIds(inv.value.One)
+	return ownedAssetIds(inv.value.One)
 }
 
 type WornAsset = {
@@ -139,8 +130,15 @@ async function getEquipData(e: RequestEvent) {
 	const limit = ratelimit(null, "equip", e.getClientAddress, 2)
 	if (limit) return { error: limit }
 
+	const [[asset]] = await db.query<AssetData[][]>(equipDataQuery, {
+		asset: Record("asset", id),
+	})
+	if (!asset) error(404, "Item not found")
+
+	// packages are their own item type in the ledger, so ownership has to be checked against Package rather than UnlimitedAsset
 	const o = new Econ.User(user.id)
-	const i = new Econ.UnlimitedAsset(id)
+	const i =
+		asset.type === 32 ? new Econ.Package(id) : new Econ.UnlimitedAsset(id)
 	const owns = await ownsOne(e.fetch, o, i)
 	if (!owns.ok) {
 		console.error("ownsOne failed")
@@ -148,10 +146,6 @@ async function getEquipData(e: RequestEvent) {
 	}
 	if (!owns.value) error(400, "You don't own this item")
 
-	const [[asset]] = await db.query<AssetData[][]>(equipDataQuery, {
-		asset: Record("asset", id),
-	})
-	if (!asset) error(404, "Item not found")
 	if (!allowedTypes.includes(asset.type))
 		error(400, "Can't equip this type of item")
 	if (asset.visibility !== "Visible")
