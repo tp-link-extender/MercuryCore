@@ -45,6 +45,11 @@ func MakeTransferID() TransferID {
 	}
 }
 
+// NewTransferID builds a TransferID with an exact timestamp and ID, for deterministic imports.
+func NewTransferID(timestamp uint64, id string) TransferID {
+	return TransferID{timestamp: timestamp, id: id}
+}
+
 // The timestamp comes first so they are ordered chronologically when sorted lexicographically
 func (t TransferID) Serialise() []byte {
 	bs := make([]byte, 8+len(t.id))

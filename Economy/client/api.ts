@@ -47,7 +47,8 @@ type Route =
 	| "history"
 	| "historyOwner"
 
-const url = "http://localhost:2009"
+const url =
+	globalThis.process?.env?.ECONOMY_URL ?? "http://localhost:2009"
 
 // Just use Promise<boolean> if no value is returned
 export type ReturnValue<T> = Promise<{ ok: true; value: T } | { ok: false }>

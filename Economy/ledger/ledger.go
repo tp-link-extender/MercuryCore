@@ -504,6 +504,16 @@ func (l *Ledger) Transfer(tid TransferID, t Transfer) error {
 // transferBatch validates every transfer against a copy of state, then persists and applies them together.
 // Either the whole batch lands or none of it does, which is what multi-transfer operations like source creation need.
 func (l *Ledger) transferBatch(tids []TransferID, transfers []Transfer) error {
+	return l.transferBatchWithOptions(tids, transfers, false)
+}
+
+// Import applies a trusted batch of prepared transfers, including stipend-shaped mints, for state migration.
+// Like transferBatch, either the whole batch lands or none of it does.
+func (l *Ledger) Import(tids []TransferID, transfers []Transfer) error {
+	return l.transferBatchWithOptions(tids, transfers, true)
+}
+
+func (l *Ledger) transferBatchWithOptions(tids []TransferID, transfers []Transfer, allowStipends bool) error {
 	if len(tids) != len(transfers) {
 		return fmt.Errorf("batch has %d transfer IDs for %d transfers", len(tids), len(transfers))
 	}
@@ -525,7 +535,7 @@ func (l *Ledger) transferBatch(tids []TransferID, transfers []Transfer) error {
 	// dry run on a copy, so a failure in the second transfer leaves no trace of the first
 	tmp := l.state.clone()
 	for i, t := range transfers {
-		if t.Stipend() {
+		if t.Stipend() && !allowStipends {
 			return fmt.Errorf("transfer %d: stipend transfers cannot be batched", i)
 		}
 		if err := tmp.TryApply(t); err != nil {
@@ -557,7 +567,10 @@ func (l *Ledger) transferBatch(tids []TransferID, transfers []Transfer) error {
 	}
 
 	// validation already passed on the copy, so applying to live state can't fail
-	for _, t := range transfers {
+	for i, t := range transfers {
+		if t.Stipend() {
+			l.state.updateStipend(tids[i], t)
+		}
 		l.state.ForceApply(t)
 	}
 

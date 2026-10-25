@@ -394,6 +394,11 @@ func RandPlace() Place {
 	return Place{RandNumericId()}
 }
 
+// NewPlace builds a Place with an exact ID, for importing existing database-backed places.
+func NewPlace(id uint32) Place {
+	return Place{id}
+}
+
 type User struct {
 	Id string
 }
@@ -448,4 +453,9 @@ var (
 
 func RandGroup() Group {
 	return Group{RandStringId()}
+}
+
+// NewGroup builds a Group with an exact ID, for importing existing database-backed groups.
+func NewGroup(id string) Group {
+	return Group{id}
 }
