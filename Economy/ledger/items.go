@@ -234,6 +234,45 @@ func (is Items) IsEmpty() bool {
 	return len(is.One) == 0 && len(is.Many) == 0
 }
 
+func (io ItemsOne) clone() ItemsOne {
+	if len(io) == 0 {
+		return nil
+	}
+
+	out := make(ItemsOne, len(io))
+	for i := range io {
+		out[i] = struct{}{}
+	}
+	return out
+}
+
+func (im ItemsMany) cloneNonZero() ItemsMany {
+	if len(im) == 0 {
+		return nil
+	}
+
+	out := make(ItemsMany, len(im))
+	for i, qty := range im {
+		if qty == 0 {
+			continue
+		}
+		out[i] = qty
+	}
+
+	if len(out) == 0 {
+		return nil
+	}
+	return out
+}
+
+// cloneNonZero copies an inventory, dropping zero quantities the same way GetInventory used to.
+func (is Items) cloneNonZero() Items {
+	return Items{
+		One:  is.One.clone(),
+		Many: is.Many.cloneNonZero(),
+	}
+}
+
 func (is Items) Serialise(w io.Writer) error {
 	if err := is.One.Serialise(w); err != nil {
 		return fmt.Errorf("serialise ItemsOne: %w", err)

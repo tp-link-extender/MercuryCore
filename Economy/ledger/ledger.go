@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"sync"
 
 	bolt "go.etcd.io/bbolt"
 )
@@ -59,6 +60,61 @@ func (s *State) GetOwnersMany(i CanOwnMany) *OwnersMany {
 	return om
 }
 
+// The snapshot methods below are read-only: they never create or clean entries, so callers can hold a read lock while using them.
+// They copy the maps so callers never see a map being mutated by a later transfer.
+
+func (s *State) snapshotInventory(id Owner) Items {
+	inv, ok := s.ownerItems[id]
+	if !ok {
+		return Items{}
+	}
+	return inv.cloneNonZero()
+}
+
+func (s *State) snapshotOwnersOne(i CanOwnOne) OwnersOne {
+	oo, ok := s.itemOwnersOne[i]
+	if !ok {
+		return OwnersOne{}
+	}
+
+	out := make(OwnersOne, len(*oo))
+	for o := range *oo {
+		out[o] = struct{}{}
+	}
+	return out
+}
+
+func (s *State) snapshotOwnersMany(i CanOwnMany) OwnersMany {
+	om, ok := s.itemOwnersMany[i]
+	if !ok {
+		return OwnersMany{}
+	}
+
+	out := make(OwnersMany, len(*om))
+	for o, qty := range *om {
+		out[o] = qty
+	}
+	return out
+}
+
+// inventoryOne is the read-only counterpart to GetInventory, used while walking package contents.
+func (s *State) inventoryOne(id Owner) ItemsOne {
+	inv, ok := s.ownerItems[id]
+	if !ok {
+		return nil
+	}
+	return inv.One
+}
+
+func (s *State) ownsOne(o Owner, i CanOwnOne) bool {
+	inv, ok := s.ownerItems[o]
+	if !ok {
+		return false
+	}
+	_, ok = inv.One[i]
+	return ok
+}
+
 // canIssue reports whether o may issue item i without holding it.
 // Any source can always issue the item it creates, and holding a source entitles its holder to issue what that source creates - including, for a nested package, everything inside it.
 // Sources are only obtainable by paying for them, so this can't conjure items out of nothing.
@@ -94,7 +150,7 @@ func (s *State) collectPackageContents(src Source, into ItemsOne, seen map[Sourc
 		into.Add(src.Create())
 	}
 
-	for item := range s.GetInventory(src).One {
+	for item := range s.inventoryOne(src) {
 		switch item := item.(type) {
 		case Source:
 			s.collectPackageContents(item, into, seen)
@@ -303,6 +359,8 @@ func ReadState(db *bolt.DB) (State, error) {
 }
 
 type Ledger struct {
+	// mu guards state. Transfers hold the write lock for the whole check, persist and apply sequence, so no two transfers can validate against the same state.
+	mu    sync.RWMutex
 	db    *bolt.DB
 	state State
 }
@@ -318,19 +376,105 @@ func NewLedger(dbPath string) (*Ledger, error) {
 		return nil, fmt.Errorf("read state: %w", err)
 	}
 
-	return &Ledger{db, s}, nil
+	return &Ledger{db: db, state: s}, nil
 }
 
 func (l *Ledger) Close() error {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
 	l.state = State{}
 	return l.db.Close()
 }
 
-func (l *Ledger) Inventory(id Owner) *Items {
-	return l.state.GetInventory(id)
+func (l *Ledger) OwnsOne(o Owner, i CanOwnOne) bool {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+
+	return l.state.ownsOne(o, i)
+}
+
+func (l *Ledger) OwnsMany(o Owner, i CanOwnMany) Quantity {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+
+	inv, ok := l.state.ownerItems[o]
+	if !ok {
+		return 0
+	}
+	return inv.Many[i]
+}
+
+func (l *Ledger) Inventory(id Owner) Items {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+
+	return l.state.snapshotInventory(id)
+}
+
+func (l *Ledger) OwnersOne(i CanOwnOne) OwnersOne {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+
+	return l.state.snapshotOwnersOne(i)
+}
+
+func (l *Ledger) OwnersMany(i CanOwnMany) OwnersMany {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+
+	return l.state.snapshotOwnersMany(i)
+}
+
+func (l *Ledger) PackageContents(src PackageSource) ItemsOne {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+
+	return l.state.PackageContents(src)
+}
+
+func (l *Ledger) PackageItems() ItemsOne {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+
+	return l.state.PackageItems()
 }
 
 func (l *Ledger) Transfer(tid TransferID, t Transfer) error {
+	return l.transferWithCheck(tid, t, nil)
+}
+
+// transferWithCheck locks the ledger, runs check against the current state, then validates, persists and applies the transfer.
+// Keeping the check inside the lock is what stops two concurrent requests from both acting on the same pre-transfer state.
+func (l *Ledger) transferWithCheck(tid TransferID, t Transfer, check func(*State) error) error {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	if check != nil {
+		if err := check(&l.state); err != nil {
+			return err
+		}
+	}
+
+	return l.applyLocked(tid, t)
+}
+
+// transferPrepared builds the transfer inside the lock, so anything read from state to build it can't change before it is applied.
+// prepare must only use the State it is given, not call back into Ledger methods that take the lock.
+func (l *Ledger) transferPrepared(tid TransferID, prepare func(*State) (Transfer, error)) error {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	t, err := prepare(&l.state)
+	if err != nil {
+		return err
+	}
+
+	return l.applyLocked(tid, t)
+}
+
+// applyLocked validates, persists and applies a transfer. The caller must hold l.mu.
+func (l *Ledger) applyLocked(tid TransferID, t Transfer) error {
 	// Process the transfer
 	if err := l.state.CanApply(t); err != nil {
 		return fmt.Errorf("validate transfer: %w", err)
@@ -453,6 +597,9 @@ func (l *Ledger) GetTransfer(tid TransferID) (t Transfer, err error) {
 }
 
 func (l *Ledger) GetUserLastStipend(u User) (TransferID, bool) {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+
 	tid, ok := l.state.userLastStipend[u]
 	return tid, ok
 }

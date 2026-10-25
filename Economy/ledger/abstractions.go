@@ -30,23 +30,19 @@ func NewEconomy(ledger *Ledger, placePrice, groupPrice, limitedSourcePrice, unli
 }
 
 func (e *Economy) OwnsOne(o Owner, i CanOwnOne) bool {
-	// ea ledger
-	// it's in the name
-	inv := e.ledger.Inventory(o)
-	return inv.One.Has(i)
+	return e.ledger.OwnsOne(o, i)
 }
 
 func (e *Economy) OwnsMany(o Owner, i CanOwnMany) Quantity {
-	inv := e.ledger.Inventory(o)
-	return inv.Many[i]
+	return e.ledger.OwnsMany(o, i)
 }
 
 func (e *Economy) OwnersOne(i CanOwnOne) OwnersOne {
-	return *e.ledger.state.GetOwnersOne(i)
+	return e.ledger.OwnersOne(i)
 }
 
 func (e *Economy) OwnersMany(i CanOwnMany) OwnersMany {
-	return *e.ledger.state.GetOwnersMany(i)
+	return e.ledger.OwnersMany(i)
 }
 
 func (e *Economy) CountOwnersOne(i CanOwnOne) int {
@@ -64,8 +60,7 @@ func (e *Economy) CountOwnersMany(i CanOwnMany) (count int) {
 }
 
 func (e *Economy) Inventory(o Owner) Items {
-	inv := e.ledger.Inventory(o)
-	return *inv
+	return e.ledger.Inventory(o)
 }
 
 func (e *Economy) Balance(o Owner) Quantity {
@@ -93,11 +88,6 @@ func (e *Economy) MintCurrency(u User, qty Quantity) (tid TransferID, err error)
 var ErrStipendNotReady = errors.New("stipend not available yet")
 
 func (e *Economy) Stipend(user User) (tid TransferID, err error) {
-	lastStipend, ok := e.ledger.GetUserLastStipend(user)
-	if ok && time.Since(time.Unix(0, int64(lastStipend.timestamp))) < e.StipendTime {
-		return tid, ErrStipendNotReady
-	}
-
 	tf := Transfer{
 		{Owner: user},
 		{Items: Items{
@@ -113,7 +103,17 @@ func (e *Economy) Stipend(user User) (tid TransferID, err error) {
 	}
 
 	tid = MakeTransferID()
-	if err := e.ledger.Transfer(tid, tf); err != nil {
+	// The eligibility check runs inside the ledger lock, so two simultaneous requests can't both pass it and mint two stipends.
+	if err := e.ledger.transferWithCheck(tid, tf, func(s *State) error {
+		lastStipend, ok := s.userLastStipend[user]
+		if ok && time.Since(time.Unix(0, int64(lastStipend.timestamp))) < e.StipendTime {
+			return ErrStipendNotReady
+		}
+		return nil
+	}); err != nil {
+		if errors.Is(err, ErrStipendNotReady) {
+			return tid, ErrStipendNotReady
+		}
 		return tid, fmt.Errorf("stipend transfer %v: %w", tid, err)
 	}
 
@@ -418,35 +418,40 @@ func (e *Economy) AddPackageComponent(u User, src PackageSource, inner PackageSo
 // A component the buyer already owns is skipped rather than failing the whole bundle, so overlapping packages can both be bought.
 func (e *Economy) BuyPackage(u User, src PackageSource, price Quantity) (p Package, tid TransferID, err error) {
 	p = src.Create()
+	tid = MakeTransferID()
 
-	contents := e.ledger.state.packageContents(src)
-	if len(contents) == 0 {
-		return p, tid, ErrEmptyPackage
-	}
-
-	// the package itself, plus every component the buyer doesn't already have
-	issued := ItemsOne{p: {}}
-	for item := range contents {
-		if e.OwnsOne(u, item) {
-			continue
+	// Contents and the buyer's inventory are read inside the same lock that applies the transfer, so a package can't change between pricing it and selling it.
+	err = e.ledger.transferPrepared(tid, func(s *State) (Transfer, error) {
+		contents := s.packageContents(src)
+		if len(contents) == 0 {
+			return Transfer{}, ErrEmptyPackage
 		}
-		issued.Add(item)
-	}
 
-	tf := Transfer{
-		{
-			Owner: u,
-			Items: Items{
-				Many: ItemsMany{
-					e.defaultCurrency: price,
+		// the package itself, plus every component the buyer doesn't already have
+		issued := ItemsOne{p: {}}
+		for item := range contents {
+			if s.ownsOne(u, item) {
+				continue
+			}
+			issued.Add(item)
+		}
+
+		return Transfer{
+			{
+				Owner: u,
+				Items: Items{
+					Many: ItemsMany{
+						e.defaultCurrency: price,
+					},
 				},
 			},
-		},
-		{Owner: src, Items: Items{One: issued}},
-	}
-
-	tid = MakeTransferID()
-	if err := e.ledger.Transfer(tid, tf); err != nil {
+			{Owner: src, Items: Items{One: issued}},
+		}, nil
+	})
+	if err != nil {
+		if errors.Is(err, ErrEmptyPackage) {
+			return p, TransferID{}, ErrEmptyPackage
+		}
 		return p, tid, fmt.Errorf("buy package transfer %v: %w", tid, err)
 	}
 
@@ -455,13 +460,13 @@ func (e *Economy) BuyPackage(u User, src PackageSource, price Quantity) (p Packa
 
 // PackageContents returns everything a package source will hand over to a buyer: the package itself plus every asset inside it, nested packages included.
 func (e *Economy) PackageContents(src PackageSource) ItemsOne {
-	return e.ledger.state.PackageContents(src)
+	return e.ledger.PackageContents(src)
 }
 
 // PackageItems returns every asset that sits inside some package, across the whole ledger.
 // The Site uses this to keep bundle contents out of catalog and search listings.
 func (e *Economy) PackageItems() ItemsOne {
-	return e.ledger.state.PackageItems()
+	return e.ledger.PackageItems()
 }
 
 func (e *Economy) TransferHistory(n uint32) ([]TransferWithID, error) {
