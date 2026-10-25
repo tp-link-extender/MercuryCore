@@ -3,10 +3,12 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"sync"
 	"testing"
 	"time"
 
@@ -199,6 +201,85 @@ func TestBuyLimitedAssetOverHTTP(t *testing.T) {
 	}
 	if got := e.Balance(buyer); got != 170 {
 		t.Fatalf("expected buyer balance 170, got %d", got)
+	}
+}
+
+// Concurrent HTTP purchases must be serialised, or they can all validate against the same stock and oversell.
+func TestConcurrentBuyLimitedAssetOverHTTP(t *testing.T) {
+	srv, e := testServer(t)
+	defer srv.Close()
+
+	creator := User{Id: "creator"}
+	if _, err := e.MintCurrency(creator, 400); err != nil {
+		t.Fatalf("MintCurrency creator: %v", err)
+	}
+
+	const stock = 5
+	src, _, err := e.CreateLimitedSource(creator, stock)
+	if err != nil {
+		t.Fatalf("CreateLimitedSource: %v", err)
+	}
+
+	const buyers = 20
+	bodies := make([]*bytes.Buffer, buyers)
+	for i := range bodies {
+		buyer := User{Id: fmt.Sprintf("buyer%d", i)}
+		if _, err := e.MintCurrency(buyer, 10); err != nil {
+			t.Fatalf("MintCurrency %v: %v", buyer, err)
+		}
+
+		body := &bytes.Buffer{}
+		serialiseItem(buyer, body)
+		serialiseItem(src, body)
+		putUint64(body, 10)
+		putUint64(body, 1)
+		bodies[i] = body
+	}
+
+	start := make(chan struct{})
+	statuses := make(chan int, buyers)
+	var wg sync.WaitGroup
+	for _, body := range bodies {
+		wg.Add(1)
+		go func(body *bytes.Buffer) {
+			defer wg.Done()
+			<-start
+			res, err := srv.Client().Post(srv.URL+"/buyLimitedAsset", "application/octet-stream", body)
+			if err != nil {
+				statuses <- 0
+				return
+			}
+			res.Body.Close()
+			statuses <- res.StatusCode
+		}(body)
+	}
+
+	close(start)
+	wg.Wait()
+	close(statuses)
+
+	ok, rejected := 0, 0
+	for status := range statuses {
+		switch status {
+		case http.StatusNoContent:
+			ok++
+		case http.StatusBadRequest:
+			rejected++
+		default:
+			t.Fatalf("unexpected status %d", status)
+		}
+	}
+
+	if ok != stock || rejected != buyers-stock {
+		t.Fatalf("expected %d purchases and %d rejections, got %d and %d", stock, buyers-stock, ok, rejected)
+	}
+
+	sold := Quantity(0)
+	for _, qty := range e.OwnersMany(src.Create()) {
+		sold += qty
+	}
+	if sold != stock {
+		t.Fatalf("expected %d limited assets sold, got %d", stock, sold)
 	}
 }
 
