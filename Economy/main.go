@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+	"flag"
 	"fmt"
 	"io"
 	"net/http"
@@ -571,7 +572,11 @@ func registerRoutes(mux *http.ServeMux, es *EconomyServer) {
 }
 
 func main() {
-	l, err := NewLedger("mydb.db")
+	dbPath := flag.String("db", "mydb.db", "path to the ledger database")
+	addr := flag.String("addr", ":2009", "address to listen on")
+	flag.Parse()
+
+	l, err := NewLedger(*dbPath)
 	if err != nil {
 		panic(err)
 	}
@@ -594,8 +599,8 @@ func main() {
 
 	registerRoutes(http.DefaultServeMux, &EconomyServer{e})
 
-	fmt.Println(c.InGreen("~ Economy service is up on port 2009 ~")) // 03/Jan/2009 Chancellor on brink of second bailout for banks
-	if err := http.ListenAndServe(":2009", loggingHandler(http.DefaultServeMux)); err != nil {
+	fmt.Printf("%s\n", c.InGreen(fmt.Sprintf("~ Economy service is up on %s (ledger %s) ~", *addr, *dbPath))) // 03/Jan/2009 Chancellor on brink of second bailout for banks
+	if err := http.ListenAndServe(*addr, loggingHandler(http.DefaultServeMux)); err != nil {
 		fmt.Println(c.InRed("Failed to start server: " + err.Error()))
 		os.Exit(1)
 	}
