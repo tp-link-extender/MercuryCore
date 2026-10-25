@@ -2,15 +2,15 @@ package main
 
 import (
 	"bufio"
-	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
 	"sort"
 	"strings"
 	"time"
+
+	surrealdb "github.com/surrealdb/surrealdb.go"
 )
 
 const snapshotVersion = 1
@@ -76,68 +76,50 @@ type legacySnapshot struct {
 }
 
 type surrealClient struct {
-	url, namespace, database, user, pass string
-	http                                 *http.Client
+	ctx context.Context
+	db  *surrealdb.DB
 }
 
-type surrealResult struct {
-	Result  json.RawMessage `json:"result"`
-	Status  string          `json:"status"`
-	Details any             `json:"details"`
+func newSurrealClient(url, namespace, database, user, pass string) (*surrealClient, error) {
+	ctx := context.Background()
+	db, err := surrealdb.FromEndpointURLString(ctx, url)
+	if err != nil {
+		return nil, fmt.Errorf("connect surreal: %w", err)
+	}
+
+	if err := db.Use(ctx, namespace, database); err != nil {
+		db.Close(ctx)
+		return nil, fmt.Errorf("use surreal namespace/database: %w", err)
+	}
+	if _, err := db.SignIn(ctx, surrealdb.Auth{Username: user, Password: pass}); err != nil {
+		db.Close(ctx)
+		return nil, fmt.Errorf("sign in to surreal: %w", err)
+	}
+
+	return &surrealClient{ctx: ctx, db: db}, nil
 }
 
-func newSurrealClient(url, namespace, database, user, pass string) *surrealClient {
-	return &surrealClient{
-		url:       strings.TrimRight(url, "/"),
-		namespace: namespace,
-		database:  database,
-		user:      user,
-		pass:      pass,
-		http:      &http.Client{Timeout: 60 * time.Second},
-	}
+func (c *surrealClient) Close() error {
+	return c.db.Close(c.ctx)
 }
 
-func (c *surrealClient) query(sql string, out any) error {
-	req, err := http.NewRequest(http.MethodPost, c.url+"/sql", bytes.NewBufferString(sql))
+func query[T any](c *surrealClient, sql string, vars map[string]any) ([]T, error) {
+	results, err := surrealdb.Query[[]T](c.ctx, c.db, sql, vars)
 	if err != nil {
-		return fmt.Errorf("build surreal request: %w", err)
+		return nil, err
 	}
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("surreal-ns", c.namespace)
-	req.Header.Set("surreal-db", c.database)
-	req.SetBasicAuth(c.user, c.pass)
-
-	res, err := c.http.Do(req)
-	if err != nil {
-		return fmt.Errorf("query surreal: %w", err)
-	}
-	defer res.Body.Close()
-
-	body, err := io.ReadAll(io.LimitReader(res.Body, 256<<20))
-	if err != nil {
-		return fmt.Errorf("read surreal response: %w", err)
-	}
-	if res.StatusCode != http.StatusOK {
-		return fmt.Errorf("surreal returned %d: %s", res.StatusCode, strings.TrimSpace(string(body)))
+	if results == nil || len(*results) == 0 {
+		return nil, fmt.Errorf("surreal returned no statement results")
 	}
 
-	var results []surrealResult
-	if err := json.Unmarshal(body, &results); err != nil {
-		return fmt.Errorf("decode surreal response: %w", err)
+	qr := (*results)[0]
+	if qr.Error != nil {
+		return nil, fmt.Errorf("surreal query failed: %w", qr.Error)
 	}
-	if len(results) == 0 {
-		return fmt.Errorf("surreal returned no statement results")
+	if qr.Status != "OK" {
+		return nil, fmt.Errorf("surreal query status %q", qr.Status)
 	}
-	if results[0].Status != "OK" {
-		return fmt.Errorf("surreal query failed: %v", results[0].Details)
-	}
-	if out == nil {
-		return nil
-	}
-	if err := json.Unmarshal(results[0].Result, out); err != nil {
-		return fmt.Errorf("decode surreal result: %w", err)
-	}
-	return nil
+	return qr.Result, nil
 }
 
 func exportSnapshot(c *surrealClient, oldLedger string) (*legacySnapshot, error) {
@@ -150,29 +132,45 @@ func exportSnapshot(c *surrealClient, oldLedger string) (*legacySnapshot, error)
 		LastStipends:  make(map[string]uint64),
 	}
 
-	if err := c.query("SELECT record::id(id) AS id, type, name FROM asset;", &s.Assets); err != nil {
+	if rows, err := query[legacyAsset](c, "SELECT record::id(id) AS id, type, name FROM asset;", nil); err != nil {
 		return nil, fmt.Errorf("query assets: %w", err)
+	} else {
+		s.Assets = rows
 	}
-	if err := c.query("SELECT record::id(in) AS userId, record::id(out) AS assetId, created FROM created;", &s.Creators); err != nil {
+	if rows, err := query[legacyCreator](c, "SELECT record::id(in) AS userId, record::id(out) AS assetId FROM created;", nil); err != nil {
 		return nil, fmt.Errorf("query created: %w", err)
+	} else {
+		s.Creators = rows
 	}
-	if err := c.query("SELECT record::id(in) AS userId, record::id(out) AS assetId FROM ownsAsset;", &s.AssetOwners); err != nil {
+	if rows, err := query[legacyAssetOwner](c, "SELECT record::id(in) AS userId, record::id(out) AS assetId FROM ownsAsset;", nil); err != nil {
 		return nil, fmt.Errorf("query ownsAsset: %w", err)
+	} else {
+		s.AssetOwners = rows
 	}
-	if err := c.query("SELECT record::id(in) AS packageId, record::id(out) AS childId FROM packageItem;", &s.PackageChildren); err != nil {
+	if rows, err := query[legacyPackageChild](c, "SELECT record::id(in) AS packageId, record::id(out) AS childId FROM packageItem;", nil); err != nil {
 		return nil, fmt.Errorf("query packageItem: %w", err)
+	} else {
+		s.PackageChildren = rows
 	}
-	if err := c.query("SELECT record::id(id) AS id, name FROM place;", &s.Places); err != nil {
+	if rows, err := query[legacyPlace](c, "SELECT record::id(id) AS id, name FROM place;", nil); err != nil {
 		return nil, fmt.Errorf("query places: %w", err)
+	} else {
+		s.Places = rows
 	}
-	if err := c.query("SELECT record::id(in) AS userId, record::id(out) AS placeId FROM ownsPlace;", &s.PlaceOwners); err != nil {
+	if rows, err := query[legacyPlaceOwner](c, "SELECT record::id(in) AS userId, record::id(out) AS placeId FROM ownsPlace;", nil); err != nil {
 		return nil, fmt.Errorf("query ownsPlace: %w", err)
+	} else {
+		s.PlaceOwners = rows
 	}
-	if err := c.query("SELECT record::id(id) AS id, name FROM group;", &s.Groups); err != nil {
+	if rows, err := query[legacyGroup](c, "SELECT record::id(id) AS id, name FROM group;", nil); err != nil {
 		return nil, fmt.Errorf("query groups: %w", err)
+	} else {
+		s.Groups = rows
 	}
-	if err := c.query("SELECT record::id(in) AS userId, record::id(out) AS groupId FROM ownsGroup;", &s.GroupOwners); err != nil {
+	if rows, err := query[legacyGroupOwner](c, "SELECT record::id(in) AS userId, record::id(out) AS groupId FROM ownsGroup;", nil); err != nil {
 		return nil, fmt.Errorf("query ownsGroup: %w", err)
+	} else {
+		s.GroupOwners = rows
 	}
 
 	if oldLedger != "" {

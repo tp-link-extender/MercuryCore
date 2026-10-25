@@ -217,7 +217,7 @@ func (d *migrationData) detectConflicts() {
 				users = append(users, c.UserID)
 			}
 			sort.Strings(users)
-			d.warnf("asset %d has multiple creators (%s); using the earliest relation", id, strings.Join(users, ", "))
+			d.warnf("asset %d has multiple creators (%s); using the first sorted user", id, strings.Join(users, ", "))
 		}
 	}
 	for id, owners := range d.placeOwners {

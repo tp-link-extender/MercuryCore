@@ -110,7 +110,13 @@ func runExport(o options, rep *report) error {
 	if o.oldLedger == "" {
 		return fmt.Errorf("--old-ledger is required for export")
 	}
-	c := newSurrealClient(o.surrealURL, o.namespace, o.database, o.surrealUser, o.surrealPass)
+	c, err := newSurrealClient(o.surrealURL, o.namespace, o.database, o.surrealUser, o.surrealPass)
+	if err != nil {
+		rep.Errors = append(rep.Errors, err.Error())
+		return err
+	}
+	defer c.Close()
+
 	s, err := exportSnapshot(c, o.oldLedger)
 	if err != nil {
 		rep.Errors = append(rep.Errors, err.Error())
@@ -148,7 +154,13 @@ func runMigrate(o options, rep *report) error {
 		if o.oldLedger == "" {
 			return fmt.Errorf("--old-ledger is required when not using --input")
 		}
-		c := newSurrealClient(o.surrealURL, o.namespace, o.database, o.surrealUser, o.surrealPass)
+		c, connectErr := newSurrealClient(o.surrealURL, o.namespace, o.database, o.surrealUser, o.surrealPass)
+		if connectErr != nil {
+			rep.Errors = append(rep.Errors, connectErr.Error())
+			return connectErr
+		}
+		defer c.Close()
+
 		s, err = exportSnapshot(c, o.oldLedger)
 		if err != nil {
 			rep.Errors = append(rep.Errors, err.Error())

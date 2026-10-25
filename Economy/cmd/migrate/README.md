@@ -1,6 +1,6 @@
 # Legacy Economy migration
 
-This command imports the old JSONL economy ledger and the old database ownership relations into a fresh new-format bbolt ledger.
+This command imports the old JSONL economy ledger and the old database ownership relations into a fresh new-format bbolt ledger. It uses the official SurrealDB Go SDK for database queries.
 
 The migration is intentionally a snapshot import:
 
