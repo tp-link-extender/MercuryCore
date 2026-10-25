@@ -147,13 +147,27 @@ func (s *State) clone() State {
 	return out
 }
 
+// isIssuedSource reports whether a source has ever been handed to an owner.
+// Sources are only created by paying for them, so an unowned source ID must never be able to issue anything.
+func (s *State) isIssuedSource(src Source) bool {
+	coo, ok := src.(CanOwnOne)
+	if !ok {
+		return false
+	}
+
+	owners, ok := s.itemOwnersOne[coo]
+	return ok && len(*owners) > 0
+}
+
 // canIssue reports whether o may issue item i without holding it.
-// Any source can always issue the item it creates, and holding a source entitles its holder to issue what that source creates - including, for a nested package, everything inside it.
-// Sources are only obtainable by paying for them, so this can't conjure items out of nothing.
+// Only sources that have actually been issued can do so, and holding a source entitles its holder to issue what that source creates - including, for a nested package, everything inside it.
 // Only assets are covered, because they're the only items that can be owned one-per-person; places and groups must always be held.
 func (s *State) canIssue(o Owner, i CanOwnOne) bool {
 	switch o := o.(type) {
 	case Source:
+		if !s.isIssuedSource(o) {
+			return false
+		}
 		return s.packageContents(o).Has(i)
 	}
 	return false
