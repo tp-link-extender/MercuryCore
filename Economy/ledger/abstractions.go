@@ -29,6 +29,14 @@ func NewEconomy(ledger *Ledger, placePrice, groupPrice, limitedSourcePrice, unli
 	}
 }
 
+// currencyItems builds a payment entry. Zero prices are free, and a zero-quantity entry would make the transfer invalid, so free means no currency entry at all.
+func currencyItems(currency Currency, qty Quantity) ItemsMany {
+	if qty == 0 {
+		return nil
+	}
+	return ItemsMany{currency: qty}
+}
+
 func (e *Economy) OwnsOne(o Owner, i CanOwnOne) bool {
 	return e.ledger.OwnsOne(o, i)
 }
@@ -71,9 +79,7 @@ func (e *Economy) MintCurrency(u User, qty Quantity) (tid TransferID, err error)
 	tf := Transfer{
 		{Owner: u},
 		{Items: Items{
-			Many: ItemsMany{
-				e.defaultCurrency: qty,
-			},
+			Many: currencyItems(e.defaultCurrency, qty),
 		}},
 	}
 
@@ -91,9 +97,7 @@ func (e *Economy) Stipend(user User) (tid TransferID, err error) {
 	tf := Transfer{
 		{Owner: user},
 		{Items: Items{
-			Many: ItemsMany{
-				e.defaultCurrency: e.StipendAmount,
-			},
+			Many: currencyItems(e.defaultCurrency, e.StipendAmount),
 		}},
 	}
 
@@ -135,9 +139,7 @@ func (e *Economy) CreateLimitedSource(u User, qty Quantity) (src LimitedSource, 
 		{
 			Owner: u,
 			Items: Items{
-				Many: ItemsMany{
-					e.defaultCurrency: e.LimitedSourcePrice,
-				},
+				Many: currencyItems(e.defaultCurrency, e.LimitedSourcePrice),
 			},
 		},
 		{Items: Items{
@@ -172,9 +174,7 @@ func (e *Economy) CreateUnlimitedSource(u User) (src UnlimitedSource, tid Transf
 		{
 			Owner: u,
 			Items: Items{
-				Many: ItemsMany{
-					e.defaultCurrency: e.UnlimitedSourcePrice,
-				},
+				Many: currencyItems(e.defaultCurrency, e.UnlimitedSourcePrice),
 			},
 		},
 		{Items: Items{
@@ -200,9 +200,7 @@ func (e *Economy) CreatePlace(u User) (p Place, tid TransferID, err error) {
 		{
 			Owner: u,
 			Items: Items{
-				Many: ItemsMany{
-					e.defaultCurrency: e.PlacePrice,
-				},
+				Many: currencyItems(e.defaultCurrency, e.PlacePrice),
 			},
 		},
 		{Items: Items{
@@ -227,9 +225,7 @@ func (e *Economy) CreateGroup(u User) (g Group, tid TransferID, err error) {
 		{
 			Owner: u,
 			Items: Items{
-				Many: ItemsMany{
-					e.defaultCurrency: e.GroupPrice,
-				},
+				Many: currencyItems(e.defaultCurrency, e.GroupPrice),
 			},
 		},
 		{Items: Items{
@@ -258,9 +254,7 @@ func (e *Economy) BuyUnlimitedAsset(u User, src UnlimitedSource, price Quantity)
 		{
 			Owner: u,
 			Items: Items{
-				Many: ItemsMany{
-					e.defaultCurrency: price,
-				},
+				Many: currencyItems(e.defaultCurrency, price),
 			},
 		},
 		{
@@ -288,9 +282,7 @@ func (e *Economy) BuyLimitedAsset(u User, src LimitedSource, priceEach, qty Quan
 		{
 			Owner: u,
 			Items: Items{
-				Many: ItemsMany{
-					e.defaultCurrency: priceEach * qty,
-				},
+				Many: currencyItems(e.defaultCurrency, priceEach*qty),
 			},
 		},
 		{
@@ -364,9 +356,7 @@ func (e *Economy) CreatePackageSource(u User, comps []PackageComponent) (src Pac
 		{
 			Owner: u,
 			Items: Items{
-				Many: ItemsMany{
-					e.defaultCurrency: e.PackageSourcePrice,
-				},
+				Many: currencyItems(e.defaultCurrency, e.PackageSourcePrice),
 			},
 		},
 		{Items: Items{
@@ -450,9 +440,7 @@ func (e *Economy) BuyPackage(u User, src PackageSource, price Quantity) (p Packa
 			{
 				Owner: u,
 				Items: Items{
-					Many: ItemsMany{
-						e.defaultCurrency: price,
-					},
+					Many: currencyItems(e.defaultCurrency, price),
 				},
 			},
 			{Owner: src, Items: Items{One: issued}},
