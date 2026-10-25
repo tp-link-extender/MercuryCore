@@ -21,7 +21,7 @@ type Asset = {
 	price: number
 	id: number
 	type: number
-	creator: OwnedUser | null
+	owner: OwnedUser | null
 	imageAsset?: {
 		id: number
 		name: string
@@ -33,15 +33,15 @@ export async function load({ fetch: f, locals }) {
 
 	const [assets] = await db.query<Asset[][]>(assetsQuery)
 
-	const withCreators = await Promise.all(
+	const withOwners = await Promise.all(
 		assets.map(async asset => {
-			const creator = await assetOwner(f, asset.id, asset.type)
-			if (!creator.ok) error(500, economyConnFailed)
-			return { ...asset, creator: creator.value }
+			const owner = await assetOwner(f, asset.id, asset.type)
+			if (!owner.ok) error(500, economyConnFailed)
+			return { ...asset, owner: owner.value }
 		})
 	)
 
-	return { assets: withCreators }
+	return { assets: withOwners }
 }
 
 async function getData({ locals, url }: RequestEvent) {

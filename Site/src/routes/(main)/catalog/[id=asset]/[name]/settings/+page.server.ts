@@ -56,10 +56,10 @@ export async function load({ fetch: f, locals, params }) {
 	})
 	if (!check) error(404, "Not Found")
 
-	const creator = await assetOwner(f, id, check.type)
-	if (!creator.ok) error(500, economyConnFailed)
-	const isCreator = creator.value?.id === user.id
-	if (!isCreator && user.permissionLevel < 3)
+	const owner = await assetOwner(f, id, check.type)
+	if (!owner.ok) error(500, economyConnFailed)
+	const isOwner = owner.value?.id === user.id
+	if (!isOwner && user.permissionLevel < 3)
 		error(403, "You do not have permission to view this page")
 
 	const [[asset]] = await db.query<Asset[][]>(assetQuery, {
@@ -102,9 +102,9 @@ actions.settings = async ({ fetch: f, locals, params, request }) => {
 	})
 	if (!asset) error(404, "Not Found")
 
-	const creator = await assetOwner(f, id, asset.type)
-	if (!creator.ok) error(500, economyConnFailed)
-	if (creator.value?.id !== user.id && user.permissionLevel < 4)
+	const owner = await assetOwner(f, id, asset.type)
+	if (!owner.ok) error(500, economyConnFailed)
+	if (owner.value?.id !== user.id && user.permissionLevel < 4)
 		error(403, "You do not have permission to edit this asset")
 
 	await db.query(updateAssetQuery, {
@@ -146,9 +146,9 @@ actions.reupload = async ({
 	})
 	if (!asset) error(404, "Not Found")
 
-	const creator = await assetOwner(f, id, asset.type)
-	if (!creator.ok) error(500, economyConnFailed)
-	if (creator.value?.id !== user.id && user.permissionLevel < 4)
+	const owner = await assetOwner(f, id, asset.type)
+	if (!owner.ok) error(500, economyConnFailed)
+	if (owner.value?.id !== user.id && user.permissionLevel < 4)
 		error(403, "You do not have permission to edit this asset")
 
 	// packages are collections of assets and don't have a file of their own to replace

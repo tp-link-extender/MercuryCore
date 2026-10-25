@@ -30,7 +30,7 @@ async function itemOwnerSeen(
 
 	const list = [...owners.value.set]
 
-	// a user owner is the creator; a package source owner means the source is nested inside a bundle
+	// a user owner resolves directly; a package source owner means the item is nested inside a bundle
 	const user = list.find(o => o instanceof Econ.User)
 	if (user) return { ok: true, value: await ownerUser(user.ID) }
 
@@ -53,7 +53,7 @@ export async function itemOwner(
 }
 
 /**
- * Resolves an asset's creator from the source that issues it.
+ * Resolves an asset's owner from the source that issues it.
  * Packages use a package source; other assets normally use an unlimited source, with a limited-source fallback.
  */
 export async function assetOwner(

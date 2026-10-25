@@ -93,14 +93,14 @@ export async function load({ fetch: f, locals, params }) {
 	// what the buyer receives along with the package itself
 	const items = isPackage ? await packageItems(f, id, user.id) : []
 
-	// the source is owned by the creator, so resolve that owner to the profile data the page uses
-	const creatorResult = await assetOwner(f, id, asset.type)
-	if (!creatorResult.ok) {
+	// resolve the source's owner to the profile data the page uses
+	const ownerResult = await assetOwner(f, id, asset.type)
+	if (!ownerResult.ok) {
 		console.error("asset owner lookup failed")
 		error(500, economyConnFailed)
 	}
-	const creator = creatorResult.value
-	const isCreator = creator?.id === user.id
+	const owner = ownerResult.value
+	const isOwner = owner?.id === user.id
 
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
@@ -111,11 +111,11 @@ export async function load({ fetch: f, locals, params }) {
 			...asset,
 			items,
 			price: BigInt(asset.price),
-			isCreator,
+			isOwner,
 		},
 		sold: owners.value,
 		owned: owned.value,
-		creator,
+		owner,
 		balance: b.value,
 	}
 }
@@ -203,10 +203,10 @@ actions.comment = async ({
 	)
 	if (!getAsset) error(404)
 
-	let creatorId: string | null = null
-	const creator = await assetOwner(f, id, getAsset.type)
-	if (!creator.ok) console.error("asset owner lookup failed")
-	else creatorId = creator.value?.id ?? null
+	let ownerId: string | null = null
+	const owner = await assetOwner(f, id, getAsset.type)
+	if (!owner.ok) console.error("asset owner lookup failed")
+	else ownerId = owner.value?.id ?? null
 
 	const content = filter(unfiltered)
 
@@ -216,10 +216,10 @@ actions.comment = async ({
 		user: Record("user", user.id),
 	})
 
-	if (creatorId && user.id !== creatorId)
+	if (ownerId && user.id !== ownerId)
 		await db.run("fn::notify", [
 			Record("user", user.id),
-			Record("user", creatorId),
+			Record("user", ownerId),
 			"AssetComment",
 			`${user.username} commented on your asset: ${content}`,
 			newCommentId,
@@ -243,9 +243,9 @@ actions.buy = async e => {
 		error(400, "This item hasn't been approved yet")
 	if (!asset.forSale) error(400, "This item is not for sale")
 
-	// resolve the creator before charging, so a notification lookup can't fail after a successful purchase
-	const creator = await assetOwner(e.fetch, id, asset.type)
-	if (!creator.ok) error(500, economyConnFailed)
+	// resolve the owner before charging, so a notification lookup can't fail after a successful purchase
+	const owner = await assetOwner(e.fetch, id, asset.type)
+	if (!owner.ok) error(500, economyConnFailed)
 
 	const u = new Econ.User(user.id)
 	// packages are sold through the Economy service as a bundle: the buyer pays once and receives the package plus everything inside it, so there's nothing to write here
@@ -261,12 +261,12 @@ actions.buy = async e => {
 				)
 	if (!ok) error(400, "Purchase failed")
 
-	if (creator.value && user.id !== creator.value.id)
+	if (owner.value && user.id !== owner.value.id)
 		await db.query(
-			'fn::notify($user, $creator, "ItemPurchase", $note, $relativeId)',
+			'fn::notify($user, $owner, "ItemPurchase", $note, $relativeId)',
 			{
 				user: Record("user", user.id),
-				creator: Record("user", creator.value.id),
+				owner: Record("user", owner.value.id),
 				note: `${user.username} just purchased your item ${asset.name}`,
 				relativeId: e.params.id,
 			}

@@ -1,5 +1,5 @@
 # Creates a package asset record and the asset records for everything inside it.
-# Ownership and creator resolution live in the Economy service, so there are no relation writes here.
+# Ownership resolution lives in the Economy service, so there are no relation writes here.
 
 CREATE ONLY asset CONTENT {
 	id: $id,

@@ -27,9 +27,9 @@
 		{asset.name}
 		<span class="flex">
 			<strong class="pr-2">by</strong>
-			{#if asset.creator}
+			{#if asset.owner}
 				<User
-					user={asset.creator}
+					user={asset.owner}
 					size="1.5rem"
 					thin
 					full

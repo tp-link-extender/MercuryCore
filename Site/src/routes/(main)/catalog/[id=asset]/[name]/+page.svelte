@@ -65,7 +65,7 @@
 				<h1>{data.asset.name}</h1>
 
 				<div class="flex flex-col items-center">
-					{#if data.asset.isCreator || user.permissionLevel >= 4}
+					{#if data.asset.isOwner || user.permissionLevel >= 4}
 						<div>
 							<a
 								aria-label="Asset settings"
@@ -105,9 +105,9 @@
 			<div class="flex">
 				<strong class="pr-2">by:</strong>
 
-				{#if data.creator}
+				{#if data.owner}
 					<User
-						user={data.creator}
+						user={data.owner}
 						size="1.5rem"
 						full
 						thin
