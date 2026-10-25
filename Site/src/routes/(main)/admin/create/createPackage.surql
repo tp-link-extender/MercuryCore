@@ -1,5 +1,5 @@
-# Creates a package asset record and the asset records for everything inside it (children are inserted as their own records, and must be offsale)
-# Note there's no ownership relation here: the package and its contents are owned in the Economy service, which the caller registers them with before running this query.
+# Creates a package asset record and the asset records for everything inside it.
+# Ownership and creator resolution live in the Economy service, so there are no relation writes here.
 
 CREATE ONLY asset CONTENT {
 	id: $id,
@@ -11,8 +11,5 @@ CREATE ONLY asset CONTENT {
 	type: 32, # package
 	visibility: "Visible",
 };
-RELATE $user->created->$pkgRecord;
 
 INSERT INTO asset $childRows;
-RELATE $user->created->$childRecords;
-# no packageItem relation: the package source in the Economy service holds the source for each child, and reports the contents from there

@@ -5,14 +5,13 @@ import {
 	buyPackage,
 	buyUnlimitedAsset,
 	countOwnersOne,
-	ownersOne,
 	ownsOne,
 } from "economy/api"
 import * as Econ from "economy/types"
 import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
 import createCommentQuery from "$lib/server/createComment.surql"
-import { economyConnFailed } from "$lib/server/economy"
+import { assetOwner, economyConnFailed } from "$lib/server/economy"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import { type PackageItem, packageItems } from "$lib/server/packageItems"
@@ -75,12 +74,9 @@ export async function load({ fetch: f, locals, params }) {
 		error(500, economyConnFailed)
 	}
 
-	// packages are a distinct type in the ledger, so they need their own item and source to ask about rather than the plain asset ones
+	// packages are a distinct type in the ledger, so they need their own item to ask about rather than the plain asset ones
 	const isPackage = asset.type === 32
 	const item = isPackage ? new Econ.Package(id) : new Econ.UnlimitedAsset(id)
-	const src = isPackage
-		? new Econ.PackageSource(id)
-		: new Econ.UnlimitedSource(id)
 
 	const owned = await ownsOne(f, u, item)
 	if (!owned.ok) {
@@ -94,25 +90,17 @@ export async function load({ fetch: f, locals, params }) {
 		error(500, economyConnFailed)
 	}
 
-	const creators = await ownersOne(f, src)
-	if (!creators.ok) {
-		console.error("countOwnersOne for creators failed")
-		error(500, economyConnFailed)
-	}
-
 	// what the buyer receives along with the package itself
 	const items = isPackage ? await packageItems(f, id, user.id) : []
 
 	// the source is owned by the creator, so resolve that owner to the profile data the page uses
-	const owner = [...creators.value.set].find(o => o instanceof Econ.User)
-	let creator: BasicUser | null = null
-	if (owner) {
-		const [[found]] = await db.query<BasicUser[][]>(
-			"SELECT record::id(id) AS id, status, username FROM $user",
-			{ user: Record("user", owner.ID) }
-		)
-		creator = found ?? null
+	const creatorResult = await assetOwner(f, id, asset.type)
+	if (!creatorResult.ok) {
+		console.error("asset owner lookup failed")
+		error(500, economyConnFailed)
 	}
+	const creator = creatorResult.value
+	const isCreator = creator?.id === user.id
 
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
@@ -123,6 +111,7 @@ export async function load({ fetch: f, locals, params }) {
 			...asset,
 			items,
 			price: BigInt(asset.price),
+			isCreator,
 		},
 		sold: owners.value,
 		owned: owned.value,
@@ -189,7 +178,13 @@ async function rerender({ fetch: f, locals, params }: RequestEvent) {
 	}
 }
 export const actions: import("./$types").Actions = { rerender }
-actions.comment = async ({ locals, params, request, getClientAddress }) => {
+actions.comment = async ({
+	fetch: f,
+	locals,
+	params,
+	request,
+	getClientAddress,
+}) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
@@ -202,16 +197,17 @@ actions.comment = async ({ locals, params, request, getClientAddress }) => {
 	if (limit) return limit
 
 	const id = +params.id
-	const [getAsset] = await db.query<{ creatorId: string }[]>(
-		`
-			SELECT
-				record::id(<-created[0]<-user[0].id) AS creatorId
-			FROM ONLY $asset`,
+	const [getAsset] = await db.query<{ type: number }[]>(
+		"SELECT type FROM ONLY $asset",
 		{ asset: Record("asset", id) }
 	)
 	if (!getAsset) error(404)
 
-	const { creatorId } = getAsset
+	let creatorId: string | null = null
+	const creator = await assetOwner(f, id, getAsset.type)
+	if (!creator.ok) console.error("asset owner lookup failed")
+	else creatorId = creator.value?.id ?? null
+
 	const content = filter(unfiltered)
 
 	const [, newCommentId] = await db.query<string[]>(createCommentQuery, {
@@ -220,7 +216,7 @@ actions.comment = async ({ locals, params, request, getClientAddress }) => {
 		user: Record("user", user.id),
 	})
 
-	if (user.id !== creatorId)
+	if (creatorId && user.id !== creatorId)
 		await db.run("fn::notify", [
 			Record("user", user.id),
 			Record("user", creatorId),
@@ -233,7 +229,6 @@ actions.buy = async e => {
 	const { user, id } = await getBuyData(e)
 
 	type FoundAsset = {
-		creatorId: string | null
 		forSale: boolean
 		name: string
 		price: number
@@ -241,13 +236,16 @@ actions.buy = async e => {
 		visibility: string
 	}
 	const [[asset]] = await db.query<FoundAsset[][]>(buyQuery, {
-		user: Record("user", user.id),
 		asset: Record("asset", id),
 	})
 	if (!asset) error(404, "Not Found")
 	if (asset.visibility !== "Visible")
 		error(400, "This item hasn't been approved yet")
 	if (!asset.forSale) error(400, "This item is not for sale")
+
+	// resolve the creator before charging, so a notification lookup can't fail after a successful purchase
+	const creator = await assetOwner(e.fetch, id, asset.type)
+	if (!creator.ok) error(500, economyConnFailed)
 
 	const u = new Econ.User(user.id)
 	// packages are sold through the Economy service as a bundle: the buyer pays once and receives the package plus everything inside it, so there's nothing to write here
@@ -263,12 +261,12 @@ actions.buy = async e => {
 				)
 	if (!ok) error(400, "Purchase failed")
 
-	if (asset.creatorId && user.id !== asset.creatorId)
+	if (creator.value && user.id !== creator.value.id)
 		await db.query(
 			'fn::notify($user, $creator, "ItemPurchase", $note, $relativeId)',
 			{
 				user: Record("user", user.id),
-				creator: Record("user", asset.creatorId),
+				creator: Record("user", creator.value.id),
 				note: `${user.username} just purchased your item ${asset.name}`,
 				relativeId: e.params.id,
 			}

@@ -2,6 +2,11 @@ import fs from "node:fs/promises"
 import { error, fail } from "@sveltejs/kit"
 import { assetRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/auth"
+import {
+	assetOwner,
+	economyConnFailed,
+	type OwnedUser,
+} from "$lib/server/economy"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { db, Record } from "$lib/server/surreal"
@@ -15,21 +20,28 @@ type Asset = {
 	name: string
 	price: number
 	id: number
-	type: string
-	creator: BasicUser
+	type: number
+	creator: OwnedUser | null
 	imageAsset?: {
 		id: number
 		name: string
 	}
 }
 
-export async function load({ locals }) {
-	const { user } = await authorise(locals, 3)
+export async function load({ fetch: f, locals }) {
+	await authorise(locals, 3)
 
-	const [assets] = await db.query<Asset[][]>(assetsQuery, {
-		user: Record("user", user.id),
-	})
-	return { assets }
+	const [assets] = await db.query<Asset[][]>(assetsQuery)
+
+	const withCreators = await Promise.all(
+		assets.map(async asset => {
+			const creator = await assetOwner(f, asset.id, asset.type)
+			if (!creator.ok) error(500, economyConnFailed)
+			return { ...asset, creator: creator.value }
+		})
+	)
+
+	return { assets: withCreators }
 }
 
 async function getData({ locals, url }: RequestEvent) {

@@ -7,7 +7,7 @@ import types, { typeToNumber } from "$lib/assetTypes"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import requestRender from "$lib/server/requestRender"
-import { db, Record } from "$lib/server/surreal"
+import { db } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { isXML } from "$lib/server/xml"
 import { encode } from "$lib/urlName"
@@ -230,7 +230,6 @@ async function createPackage(
 	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
 
 	await db.query(createPackageQuery, {
-		childRecords: children.map(c => Record("asset", c.id)),
 		childRows: children.map(c => ({
 			description: [{ text: c.description }],
 			forSale: false, // package items are offsale by default
@@ -243,9 +242,7 @@ async function createPackage(
 		description,
 		id,
 		name,
-		pkgRecord: Record("asset", id),
 		price,
-		user: Record("user", user.id),
 	})
 
 	await Promise.all(

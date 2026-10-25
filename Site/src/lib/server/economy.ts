@@ -13,21 +13,61 @@ export type ReturnErr = { ok: true } | { ok: false; msg: string }
 
 export type OwnedUser = BasicUser & { id: string }
 
+async function ownerUser(id: string): Promise<OwnedUser | null> {
+	const [[user]] = await db.query<OwnedUser[][]>(ownerUserQuery, {
+		user: Record("user", id),
+	})
+	return user ?? null
+}
+
+async function itemOwnerSeen(
+	f: typeof globalThis.fetch,
+	i: Econ.CanOwnOne,
+	seen: Set<number>
+): Promise<ReturnValue<OwnedUser | null>> {
+	const owners = await ownersOne(f, i)
+	if (!owners.ok) return { ok: false }
+
+	const list = [...owners.value.set]
+
+	// a user owner is the creator; a package source owner means the source is nested inside a bundle
+	const user = list.find(o => o instanceof Econ.User)
+	if (user) return { ok: true, value: await ownerUser(user.ID) }
+
+	const pkg = list.find(o => o instanceof Econ.PackageSource)
+	if (pkg) {
+		if (seen.has(pkg.ID)) return { ok: true, value: null }
+		seen.add(pkg.ID)
+		return itemOwnerSeen(f, pkg, seen)
+	}
+
+	return { ok: true, value: null }
+}
+
 /** Resolves the owning user of an item from the Economy service, or null if nobody owns it. */
 export async function itemOwner(
 	f: typeof globalThis.fetch,
 	i: Econ.CanOwnOne
 ): Promise<ReturnValue<OwnedUser | null>> {
-	const owners = await ownersOne(f, i)
-	if (!owners.ok) return { ok: false }
+	return itemOwnerSeen(f, i, new Set())
+}
 
-	const owner = [...owners.value.set].find(o => o instanceof Econ.User)
-	if (!owner) return { ok: true, value: null }
+/**
+ * Resolves an asset's creator from the source that issues it.
+ * Packages use a package source; other assets normally use an unlimited source, with a limited-source fallback.
+ */
+export async function assetOwner(
+	f: typeof globalThis.fetch,
+	id: number,
+	type: number
+): Promise<ReturnValue<OwnedUser | null>> {
+	if (type === 32) return itemOwner(f, new Econ.PackageSource(id))
 
-	const [[user]] = await db.query<OwnedUser[][]>(ownerUserQuery, {
-		user: Record("user", owner.ID),
-	})
-	return { ok: true, value: user ?? null }
+	const unlimited = await itemOwner(f, new Econ.UnlimitedSource(id))
+	if (!unlimited.ok) return unlimited
+	if (unlimited.value) return unlimited
+
+	return itemOwner(f, new Econ.LimitedSource(id))
 }
 
 /** Whether a user owns an item, without resolving the owner's profile data. */
