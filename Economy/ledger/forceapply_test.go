@@ -144,6 +144,7 @@ func TestCanIssueOnlyCoversUnlimitedAssets(t *testing.T) {
 	held := UnlimitedSource{42}
 
 	s.ownerItems[holder] = &Items{One: ItemsOne{held: {}}}
+	s.GetOwnersOne(holder).Add(User{"holder"})
 
 	if !s.canIssue(holder, UnlimitedAsset{42}) {
 		t.Fatalf("expected %v to be able to issue %v it holds the source for", holder, UnlimitedAsset{42})
@@ -168,6 +169,7 @@ func TestPackageSourceCanIssue(t *testing.T) {
 		UnlimitedSource{42}: {},
 		UnlimitedSource{43}: {},
 	}}
+	s.GetOwnersOne(pkgSrc).Add(User{"creator"})
 
 	if !s.canIssue(pkgSrc, pkgSrc.Create()) {
 		t.Fatalf("expected %v to be able to issue its own %v", pkgSrc, pkgSrc.Create())
@@ -192,6 +194,7 @@ func TestPackageSourceCanIssueNestedPackage(t *testing.T) {
 	inner := PackageSource{6}
 
 	s.ownerItems[outer] = &Items{One: ItemsOne{inner: {}}}
+	s.GetOwnersOne(outer).Add(User{"creator"})
 
 	if !s.canIssue(outer, inner.Create()) {
 		t.Fatalf("expected %v to be able to issue nested %v", outer, inner.Create())
