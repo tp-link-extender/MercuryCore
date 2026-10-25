@@ -37,7 +37,7 @@ type EconomyServer struct {
 
 // itemTypeName is %T for type parameters: %T on a zero value prints <nil> when T is instantiated with an interface (nil interface = no dynamic type).
 func itemTypeName[T any]() string {
-	return reflect.TypeOf((*T)(nil)).Elem().String()
+	return reflect.TypeFor[T]().String()
 }
 
 func getItem[T Item](w http.ResponseWriter, r *http.Request) (t T, ok bool) {
