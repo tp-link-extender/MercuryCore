@@ -19,6 +19,9 @@
 	let sender0 = $derived(Send0.Owner)
 	let sender1 = $derived(Send1.Owner)
 	let time = $derived(transaction.ID.Time())
+
+	// asset-like items and sources share their ids with the asset records that name them
+	const assetName = (id: number) => ownerData.sources[String(id)]?.name
 </script>
 
 {#snippet owner(o: Econ.Owner)}
@@ -29,6 +32,18 @@
 		{:else}
 			<i>Unknown user</i>
 		{/if}
+	{:else if o instanceof Econ.Group}
+		<span>{ownerData.groups[o.ID]?.name ?? "Unknown group"}</span>
+	{:else if o instanceof Econ.PackageSource}
+		<span>
+			{assetName(o.ID) ?? "Package source"}
+			<small>(package source)</small>
+		</span>
+	{:else if o instanceof Econ.UnlimitedSource || o instanceof Econ.LimitedSource}
+		<span>
+			{assetName(o.ID) ?? "Asset source"}
+			<small>(source)</small>
+		</span>
 	{:else}
 		<i>Unknown owner</i>
 	{/if}
@@ -37,10 +52,18 @@
 {#snippet canOwnOne(i: Econ.CanOwnOne)}
 	{#if i instanceof Econ.UnlimitedAsset}
 		UnlimitedAsset
+	{:else if i instanceof Econ.Package}
+		{assetName(i.ID) ?? "Package"}
+		<small>(package)</small>
+	{:else if i instanceof Econ.PackageSource}
+		{assetName(i.ID) ?? "Package source"}
+		<small>(package source)</small>
 	{:else if i instanceof Econ.LimitedSource}
-		LimitedSource
+		{assetName(i.ID) ?? "LimitedSource"}
+		<small>(limited source)</small>
 	{:else if i instanceof Econ.UnlimitedSource}
-		UnlimitedSource
+		{assetName(i.ID) ?? "UnlimitedSource"}
+		<small>(asset source)</small>
 	{:else if i instanceof Econ.Place}
 		Place
 	{:else if i instanceof Econ.Group}
@@ -54,7 +77,8 @@
 	{#if i instanceof Econ.Currency}
 		<span class="text-emerald-600">{currencySymbol}</span>
 	{:else if i instanceof Econ.LimitedAsset}
-		LimitedAsset
+		{assetName(i.ID) ?? "LimitedAsset"}
+		<small>(limited)</small>
 	{:else}
 		<i>Unknown item (many)</i>
 	{/if}
@@ -63,9 +87,9 @@
 {#snippet items(is: Items)}
 	{#if !is.One.Empty()}
 		<b>One</b>
-		<div>
+		<div class="flex flex-wrap gap-x-2">
 			{#each is.One as i}
-				{@render canOwnOne(i)}
+				<span>{@render canOwnOne(i)}</span>
 			{/each}
 		</div>
 	{/if}
