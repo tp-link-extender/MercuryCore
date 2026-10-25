@@ -30,6 +30,8 @@ services:
         ports:
             - 4443:4443
         restart: unless-stopped
+        environment:
+            ECONOMY_URL: http://economy:2009
         depends_on:
             - database # will keep retrying until database is ready
             - economy
