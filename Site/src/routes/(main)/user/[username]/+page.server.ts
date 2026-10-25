@@ -1,5 +1,8 @@
 import { error, fail } from "@sveltejs/kit"
+import { inventory } from "economy/api"
+import * as Econ from "economy/types"
 import { authorise } from "$lib/server/auth"
+import { economyConnFailed } from "$lib/server/economy"
 import formData from "$lib/server/formData"
 import requestRender from "$lib/server/requestRender"
 import { db, Record, type RecordId } from "$lib/server/surreal"
@@ -12,12 +15,28 @@ import declineQuery from "./decline.surql"
 import findUserQuery from "./findUser.surql"
 import followQuery from "./follow.surql"
 import incomingQuery from "./incoming.surql"
+import ownedGroupsQuery from "./ownedGroups.surql"
+import ownedPlacesQuery from "./ownedPlaces.surql"
 import requestQuery from "./request.surql"
 import unfollowQuery from "./unfollow.surql"
 import unfriendQuery from "./unfriend.surql"
 import userQuery from "./user.surql"
 
+type OwnedPlace = {
+	dislikeCount: number
+	id: number
+	likeCount: number
+	name: string
+	playerCount: number
+}
+
 interface User extends BasicUser {
+	comments: {
+		id: string
+		created: Date
+		content: string
+		visibility: string
+	}[]
 	description: string
 	follower: boolean
 	followerCount: number
@@ -27,25 +46,14 @@ interface User extends BasicUser {
 	friends: boolean
 	groups: Group[]
 	groupsOwned: Group[]
+	id: string
 	incomingRequest: boolean
 	outgoingRequest: boolean
 	permissionLevel: number
-	places: {
-		dislikeCount: number
-		id: string
-		likeCount: number
-		name: string
-		playerCount: number
-	}[]
-	comments: {
-		id: string
-		created: Date
-		content: string
-		visibility: string
-	}[]
+	places: OwnedPlace[]
 }
 
-export async function load({ locals, params }) {
+export async function load({ fetch: f, locals, params }) {
 	const { user } = await authorise(locals)
 	const [[userExists]] = await db.query<User[][]>(userQuery, {
 		...params,
@@ -53,10 +61,21 @@ export async function load({ locals, params }) {
 	})
 	if (!userExists) error(404, "Not Found")
 
-	return {
-		...userExists,
-		groupsOwned: null,
-	}
+	const inv = await inventory(f, new Econ.User(userExists.id))
+	if (!inv.ok) error(500, economyConnFailed)
+
+	const owned = [...inv.value.One]
+	const placeIds = owned.filter(i => i instanceof Econ.Place).map(i => i.ID)
+	const groupIds = owned.filter(i => i instanceof Econ.Group).map(i => i.ID)
+
+	const [places] = await db.query<OwnedPlace[][]>(ownedPlacesQuery, {
+		ids: placeIds.map(id => Record("place", id)),
+	})
+	const [groupsOwned] = await db.query<Group[][]>(ownedGroupsQuery, {
+		ids: groupIds.map(id => Record("group", id)),
+	})
+
+	return { ...userExists, places, groupsOwned }
 }
 
 async function getData({ params }: RequestEvent) {

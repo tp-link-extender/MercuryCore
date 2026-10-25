@@ -5,7 +5,7 @@ import type { CanOwnOne } from "economy/types"
 import * as Econ from "economy/types"
 import { getRequestEvent, query } from "$app/server"
 import { authorise } from "$lib/server/auth"
-import { db } from "$lib/server/surreal"
+import { db, Record } from "$lib/server/surreal"
 import queryGroups from "./groups.surql"
 import queryPlaces from "./places.surql"
 import queryUnlimitedAssets from "./unlimitedAssets.surql"
@@ -58,11 +58,11 @@ const assetToBigInt = (a: Asset): AssetBigInt => ({
 })
 
 async function getUnlimitedAssets(): Promise<AssetBigInt[]> {
-	const is = (await getInventory())
+	const ids = (await getInventory())
 		.filter(i => i instanceof Econ.UnlimitedAsset)
-		.map(i => i.ID)
+		.map(i => Record("asset", i.ID))
 
-	const [assets] = await db.query<[Asset[]]>(queryUnlimitedAssets, { is })
+	const [assets] = await db.query<[Asset[]]>(queryUnlimitedAssets, { ids })
 	return assets.map(assetToBigInt)
 }
 
@@ -71,31 +71,31 @@ export const getAsset = query(getAssetSchema, async t =>
 )
 
 export const getSources = query(async (): Promise<AssetBigInt[]> => {
-	const is = (await getInventory())
+	const ids = (await getInventory())
 		.filter(
 			i =>
 				i instanceof Econ.LimitedSource ||
 				i instanceof Econ.UnlimitedSource
 		)
-		.map(i => i.ID)
+		.map(i => Record("asset", i.ID))
 
-	const [sources] = await db.query<[Asset[]]>(queryUnlimitedAssets, { is })
+	const [sources] = await db.query<[Asset[]]>(queryUnlimitedAssets, { ids })
 	return sources.map(assetToBigInt)
 })
 
 export const getGroups = query(async (): Promise<Group[]> => {
-	const is = (await getInventory())
+	const ids = (await getInventory())
 		.filter(i => i instanceof Econ.Group)
-		.map(i => i.ID)
+		.map(i => Record("group", i.ID))
 
-	const [groups] = await db.query<[Group[]]>(queryGroups, { is })
+	const [groups] = await db.query<[Group[]]>(queryGroups, { ids })
 	return groups
 })
 export const getPlaces = query(async (): Promise<Place[]> => {
-	const is = (await getInventory())
+	const ids = (await getInventory())
 		.filter(i => i instanceof Econ.Place)
-		.map(i => i.ID)
+		.map(i => Record("place", i.ID))
 
-	const [places] = await db.query<[Place[]]>(queryPlaces, { is })
+	const [places] = await db.query<[Place[]]>(queryPlaces, { ids })
 	return places
 })

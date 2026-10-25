@@ -1,5 +1,4 @@
 import { error } from "@sveltejs/kit"
-import { membershipType } from "$lib/permissionLevels"
 import config from "$lib/server/config"
 import idToPort, { proxyOffset } from "$lib/server/idToPort"
 import { SignData } from "$lib/server/sign"
@@ -60,9 +59,6 @@ type ServerAddress = {
 type Session = {
 	place: {
 		id: number
-		ownerUser: {
-			username: string
-		}
 		dedicated: boolean
 	} & ServerAddress
 	user: {
@@ -122,7 +118,6 @@ export async function GET({ url }) {
 	const { place, user } = gameSession
 	const { serverAddress, serverPort } = serverInfo(place)
 
-	// const creatorUsername = place.ownerUser?.username;
 	const charApp = `https://${config.Domain}/asset/characterfetch/${user.username}`
 	const pingUrl = `https://${config.Domain}/game/clientpresence?ticket=${clientTicket}`
 

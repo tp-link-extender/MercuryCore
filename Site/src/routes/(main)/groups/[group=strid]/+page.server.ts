@@ -1,5 +1,11 @@
 import { error, fail } from "@sveltejs/kit"
+import * as Econ from "economy/types"
 import { authorise } from "$lib/server/auth"
+import {
+	economyConnFailed,
+	itemOwner,
+	type OwnedUser,
+} from "$lib/server/economy"
 import exclude from "$lib/server/exclude"
 import { db, find, Record } from "$lib/server/surreal"
 import type { RequestEvent } from "./$types.d"
@@ -12,10 +18,10 @@ type Group = {
 	in: boolean
 	memberCount: number
 	name: string
-	owner: BasicUser
+	owner: OwnedUser | null
 }
 
-export async function load({ locals, params }) {
+export async function load({ fetch: f, locals, params }) {
 	exclude("Groups")
 	const { user } = await authorise(locals)
 	const [[group]] = await db.query<Group[][]>(groupQuery, {
@@ -25,7 +31,10 @@ export async function load({ locals, params }) {
 	})
 	if (!group) error(404, "Not Found")
 
-	return group
+	const owner = await itemOwner(f, new Econ.Group(params.group))
+	if (!owner.ok) error(500, economyConnFailed)
+
+	return { ...group, owner: owner.value }
 }
 
 async function getData({ locals, params }: RequestEvent) {

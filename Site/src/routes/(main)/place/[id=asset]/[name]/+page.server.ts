@@ -1,7 +1,14 @@
 import fs from "node:fs"
 import { error, redirect } from "@sveltejs/kit"
+import * as Econ from "economy/types"
 import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
+import {
+	economyConnFailed,
+	itemOwner,
+	type OwnedUser,
+	ownsItem,
+} from "$lib/server/economy"
 import formData from "$lib/server/formData"
 import { closeGameserver, startGameserver } from "$lib/server/orbiter"
 import ratelimit from "$lib/server/ratelimit"
@@ -12,7 +19,6 @@ import invalidatePlayingQuery from "./invalidatePlaying.surql"
 import placeQuery from "./place.surql"
 
 type FoundPlace = {
-	ownerUsername: string
 	privateServer: boolean
 	privateTicket: string
 	clientVersion: number
@@ -29,7 +35,7 @@ interface Place extends FoundPlace {
 	maxPlayers: number
 	name: string
 	clientVersion: number
-	ownerUser: BasicUser
+	ownerUser: OwnedUser | null
 	players: {
 		status: "Playing"
 		username: string
@@ -41,7 +47,7 @@ interface Place extends FoundPlace {
 
 const thumbnails = config.Images.DefaultPlaceThumbnails
 
-export async function load({ locals, params, url }) {
+export async function load({ fetch: f, locals, params, url }) {
 	const { user } = await authorise(locals)
 	const privateTicket = url.searchParams.get("privateServer")
 	const id = +params.id
@@ -51,7 +57,11 @@ export async function load({ locals, params, url }) {
 	})
 	if (!place) error(404, "Place not found")
 
-	const isOwner = user.username === place.ownerUser.username
+	const owner = await itemOwner(f, new Econ.Place(id))
+	if (!owner.ok) error(500, economyConnFailed)
+	place.ownerUser = owner.value
+
+	const isOwner = place.ownerUser?.id === user.id
 	if (
 		!isOwner &&
 		place.privateServer &&
@@ -59,7 +69,7 @@ export async function load({ locals, params, url }) {
 	)
 		error(404, "Place not found")
 
-	if (!isOwner || user.permissionLevel !== 5) place.serverTicket = ""
+	if (!isOwner && user.permissionLevel !== 5) place.serverTicket = ""
 
 	// ahh, reminds me of early Mercury 2
 	const slug = encode(place.name)
@@ -79,7 +89,12 @@ export async function load({ locals, params, url }) {
 	}
 }
 
-async function findPlace(request: Request, id: number, user: User) {
+async function findPlace(
+	f: typeof globalThis.fetch,
+	request: Request,
+	id: number,
+	user: User
+) {
 	const data = await formData(request)
 	const privateTicket = data?.privateTicket
 
@@ -87,16 +102,19 @@ async function findPlace(request: Request, id: number, user: User) {
 	const [[place]] = await db.query<FoundPlace[][]>(findPlaceQuery, {
 		place: placeR,
 	})
+	if (!place) error(404, "Place not found")
+
+	const owns = await ownsItem(f, user.id, new Econ.Place(id))
+	if (!owns.ok) error(500, economyConnFailed)
 
 	if (
-		!place ||
-		(user.username !== place.ownerUsername &&
-			place.privateServer &&
-			privateTicket !== place.privateTicket)
+		!owns.value &&
+		place.privateServer &&
+		privateTicket !== place.privateTicket
 	)
 		error(404, "Place not found")
 
-	return [place, placeR] as const
+	return [place, placeR, owns.value] as const
 }
 
 async function checkUser(locals: App.Locals) {
@@ -113,9 +131,9 @@ async function checkUser(locals: App.Locals) {
 }
 
 export const actions: import("./$types").Actions = {}
-actions.join = async ({ locals, params, request }) => {
+actions.join = async ({ fetch: f, locals, params, request }) => {
 	const user = await checkUser(locals)
-	const [_, placeR] = await findPlace(request, +params.id, user)
+	const [_, placeR] = await findPlace(f, request, +params.id, user)
 
 	// Invalidate all game sessions and create valid playing
 	const [, [ticket]] = await db.query<string[][]>(invalidatePlayingQuery, {
@@ -139,7 +157,7 @@ actions.start = async ({
 	if (limit) return limit
 
 	const id = +params.id
-	const [_place, _placeR] = await findPlace(request, id, user)
+	const [_place, _placeR] = await findPlace(f, request, id, user)
 
 	// check for existence of a place file
 	const placeFile = `../data/places/${id}`
@@ -156,9 +174,9 @@ actions.close = async ({ fetch: f, locals, params, request }) => {
 	const { user } = await authorise(locals)
 	const id = +params.id
 
-	const [place] = await findPlace(request, id, user)
+	const [, , isOwner] = await findPlace(f, request, id, user)
 
-	if (user.username !== place.ownerUsername && user.permissionLevel < 4)
+	if (!isOwner && user.permissionLevel < 4)
 		error(403, "You do not have permission to close this server.")
 
 	const res = await closeGameserver(f, id)

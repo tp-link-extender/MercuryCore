@@ -1,8 +1,10 @@
 import fs from "node:fs"
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
+import * as Econ from "economy/types"
 import sharp from "sharp"
 import { authorise } from "$lib/server/auth"
+import { economyConnFailed, ownsItem } from "$lib/server/economy"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import { closeGameserver } from "$lib/server/orbiter"
@@ -14,8 +16,8 @@ import {
 	serverPortTest,
 } from "$lib/typeTests"
 import { encode } from "$lib/urlName"
-import type { RequestEvent } from "./$types.d"
 import clientVersions from "../../../../games/create/clientVersions"
+import type { RequestEvent } from "./$types.d"
 import privateTicketQuery from "./privateTicket.surql"
 import serverTicketQuery from "./serverTicket.surql"
 import settingsQuery from "./settings.surql"
@@ -52,7 +54,6 @@ type Place = {
 	id: string // graah
 	maxPlayers: number
 	name: string
-	owner: BasicUser
 	privateServer: boolean
 	privateTicket: string
 	clientVersion: number
@@ -70,12 +71,14 @@ async function placeQuery(id: number) {
 	return place
 }
 
-export async function load({ locals, params }) {
+export async function load({ fetch: f, locals, params }) {
 	const getPlace = await placeQuery(+params.id)
 	if (!getPlace) error(404, "Place not found")
 
 	const { user } = await authorise(locals)
-	if (user.username !== getPlace.owner.username && user.permissionLevel < 4)
+	const owns = await ownsItem(f, user.id, new Econ.Place(+params.id))
+	if (!owns.ok) error(500, economyConnFailed)
+	if (!owns.value && user.permissionLevel < 4)
 		error(403, "You do not have permission to view this page.")
 
 	return {
@@ -94,11 +97,15 @@ export async function load({ locals, params }) {
 	}
 }
 
-async function getData({ locals, params }: RequestEvent) {
+async function getData({ fetch: f, locals, params }: RequestEvent) {
 	const { user } = await authorise(locals)
 	const id = +params.id
 	const getPlace = await placeQuery(id)
-	if (user.username !== getPlace.owner.username && user.permissionLevel < 4)
+	if (!getPlace) error(404, "Place not found")
+
+	const owns = await ownsItem(f, user.id, new Econ.Place(id))
+	if (!owns.ok) error(500, economyConnFailed)
+	if (!owns.value && user.permissionLevel < 4)
 		error(403, "You do not have permission to update this page.")
 
 	return id
@@ -156,7 +163,8 @@ actions.network = async e => {
 	// engine / port settings changed, so any running server for this place is now
 	// invalid (wrong 2013/2016 flow, wrong bind port etc.) - shut it down
 	const res = await closeGameserver(e.fetch, id)
-	if (!res.ok) console.error("Failed to close active server for place", id, res.msg)
+	if (!res.ok)
+		console.error("Failed to close active server for place", id, res.msg)
 
 	return message(form, "Network settings updated successfully!")
 }

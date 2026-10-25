@@ -15,9 +15,6 @@ type ServerAddress = {
 type Session = {
 	place: {
 		id: number
-		ownerUser: {
-			username: string
-		}
 		dedicated: boolean
 	} & ServerAddress
 	user: {
@@ -76,7 +73,6 @@ export async function GET({ url }) {
 	const { place, user } = gameSession
 	const { serverHostname, serverPort } = serverInfo(place)
 
-	// const creatorUsername = place.ownerUser?.username;
 	const charApp = `http://${config.DomainInsecure}/asset/characterfetch/${user.username}`
 	const pingUrl = `http://${config.DomainInsecure}/game/clientpresence?ticket=${clientTicket}`
 	const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
