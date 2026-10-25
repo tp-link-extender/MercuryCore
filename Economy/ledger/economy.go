@@ -289,7 +289,7 @@ func (oo OwnersOne) Serialise(w io.Writer) error {
 
 func DeserialiseOwnersOne(r io.Reader) (OwnersOne, error) {
 	var lbuf [4]byte
-	if _, err := r.Read(lbuf[:]); err != nil {
+	if _, err := io.ReadFull(r, lbuf[:]); err != nil {
 		return nil, fmt.Errorf("read OwnersOne length: %w", err)
 	}
 	l := binary.BigEndian.Uint32(lbuf[:])
@@ -338,7 +338,7 @@ func (om OwnersMany) Serialise(w io.Writer) error {
 
 func DeserialiseOwnersMany(r io.Reader) (OwnersMany, error) {
 	var lbuf [4]byte
-	if _, err := r.Read(lbuf[:]); err != nil {
+	if _, err := io.ReadFull(r, lbuf[:]); err != nil {
 		return nil, fmt.Errorf("read OwnersMany length: %w", err)
 	}
 	l := binary.BigEndian.Uint32(lbuf[:])
@@ -355,7 +355,7 @@ func DeserialiseOwnersMany(r io.Reader) (OwnersMany, error) {
 		}
 
 		var qtybuf [8]byte
-		if _, err := r.Read(qtybuf[:]); err != nil {
+		if _, err := io.ReadFull(r, qtybuf[:]); err != nil {
 			return nil, fmt.Errorf("read quantity: %w", err)
 		}
 		qty := binary.BigEndian.Uint64(qtybuf[:])

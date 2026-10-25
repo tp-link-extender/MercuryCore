@@ -39,7 +39,7 @@ type Item interface {
 
 func readByte(r io.Reader) (byte, error) {
 	var b [1]byte
-	if _, err := r.Read(b[:]); err != nil {
+	if _, err := io.ReadFull(r, b[:]); err != nil {
 		return 0, err
 	}
 	return b[0], nil
@@ -63,7 +63,7 @@ func DeserialiseItem(r io.Reader) (Item, error) {
 		}
 
 		idbuf := make([]byte, lb)
-		if _, err := r.Read(idbuf); err != nil {
+		if _, err := io.ReadFull(r, idbuf); err != nil {
 			return nil, fmt.Errorf("read string id: %w", err)
 		}
 		id := string(idbuf)
@@ -75,7 +75,7 @@ func DeserialiseItem(r io.Reader) (Item, error) {
 	}
 
 	var idbuf [4]byte
-	if _, err := r.Read(idbuf[:]); err != nil {
+	if _, err := io.ReadFull(r, idbuf[:]); err != nil {
 		return nil, fmt.Errorf("read numeric id: %w", err)
 	}
 

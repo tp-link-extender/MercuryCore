@@ -9,7 +9,7 @@ import (
 
 func DeserialiseUint32(r io.Reader) (uint32, error) {
 	var buf [4]byte
-	if _, err := r.Read(buf[:]); err != nil {
+	if _, err := io.ReadFull(r, buf[:]); err != nil {
 		return 0, fmt.Errorf("read number: %w", err)
 	}
 	return binary.BigEndian.Uint32(buf[:]), nil
@@ -17,7 +17,7 @@ func DeserialiseUint32(r io.Reader) (uint32, error) {
 
 func DeserialiseUint64(r io.Reader) (uint64, error) {
 	var buf [8]byte
-	if _, err := r.Read(buf[:]); err != nil {
+	if _, err := io.ReadFull(r, buf[:]); err != nil {
 		return 0, fmt.Errorf("read number: %w", err)
 	}
 	return binary.BigEndian.Uint64(buf[:]), nil
@@ -104,7 +104,7 @@ func (io ItemsOne) Serialise(w io.Writer) error {
 
 func DeserialiseItemsOne(r io.Reader) (ItemsOne, error) {
 	var lbuf [4]byte
-	if _, err := r.Read(lbuf[:]); err != nil {
+	if _, err := io.ReadFull(r, lbuf[:]); err != nil {
 		return nil, fmt.Errorf("read ItemsOne length: %w", err)
 	}
 	l := binary.BigEndian.Uint32(lbuf[:])
@@ -176,7 +176,7 @@ func (im ItemsMany) Serialise(w io.Writer) error {
 
 func DeserialiseItemsMany(r io.Reader) (ItemsMany, error) {
 	var lbuf [4]byte
-	if _, err := r.Read(lbuf[:]); err != nil {
+	if _, err := io.ReadFull(r, lbuf[:]); err != nil {
 		return nil, fmt.Errorf("read ItemsMany length: %w", err)
 	}
 	l := binary.BigEndian.Uint32(lbuf[:])
@@ -193,7 +193,7 @@ func DeserialiseItemsMany(r io.Reader) (ItemsMany, error) {
 		}
 
 		var qtybuf [8]byte
-		if _, err := r.Read(qtybuf[:]); err != nil {
+		if _, err := io.ReadFull(r, qtybuf[:]); err != nil {
 			return nil, fmt.Errorf("read quantity: %w", err)
 		}
 		qty := binary.BigEndian.Uint64(qtybuf[:])
