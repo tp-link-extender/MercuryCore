@@ -163,6 +163,50 @@ func TestBuyUnlimitedAssetOverHTTP(t *testing.T) {
 	}
 }
 
+// a zero price means no currency entry, not a zero-quantity one, which the transfer validator rejects
+func TestBuyFreeAssetOverHTTP(t *testing.T) {
+	srv, e := testServer(t)
+	defer srv.Close()
+
+	creator := User{Id: "creator"}
+	buyer := User{Id: "buyer"}
+
+	if _, err := e.MintCurrency(creator, 200); err != nil {
+		t.Fatalf("MintCurrency creator: %v", err)
+	}
+
+	src, _, err := e.CreateUnlimitedSource(creator)
+	if err != nil {
+		t.Fatalf("CreateUnlimitedSource: %v", err)
+	}
+
+	before := e.Balance(creator)
+
+	body := &bytes.Buffer{}
+	serialiseItem(buyer, body)
+	serialiseItem(src, body)
+	putUint64(body, 0)
+
+	res := post(t, srv, "buyUnlimitedAsset", body)
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusNoContent {
+		buf := new(bytes.Buffer)
+		buf.ReadFrom(res.Body)
+		t.Fatalf("expected 204, got %d: %s", res.StatusCode, buf.String())
+	}
+
+	if !e.OwnsOne(buyer, src.Create()) {
+		t.Fatalf("expected buyer to own %v", src.Create())
+	}
+	if got := e.Balance(buyer); got != 0 {
+		t.Fatalf("expected the buyer to pay nothing, got balance %d", got)
+	}
+	if got := e.Balance(creator); got != before {
+		t.Fatalf("expected the creator to receive nothing, balance went %d -> %d", before, got)
+	}
+}
+
 // the same for a limited purchase, which exercises the stocking path end to end
 func TestBuyLimitedAssetOverHTTP(t *testing.T) {
 	srv, e := testServer(t)
