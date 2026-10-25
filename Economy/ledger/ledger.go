@@ -209,6 +209,17 @@ func (s *State) PackageContents(src PackageSource) ItemsOne {
 	return s.packageContents(src)
 }
 
+// packageContentsHaveAsset reports whether a package hands over anything besides package items.
+// A package that only contains itself and nested empty packages has nothing to sell.
+func packageContentsHaveAsset(contents ItemsOne) bool {
+	for item := range contents {
+		if _, isPackage := item.(Package); !isPackage {
+			return true
+		}
+	}
+	return false
+}
+
 // PackageItems returns every asset that is inside some package, across every package in the ledger.
 // The Site uses this to keep bundle contents out of catalog and search results, which used to be done by checking for a packageItem relation in the database.
 //

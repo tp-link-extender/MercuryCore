@@ -423,7 +423,7 @@ func (e *Economy) BuyPackage(u User, src PackageSource, price Quantity) (p Packa
 	// Contents and the buyer's inventory are read inside the same lock that applies the transfer, so a package can't change between pricing it and selling it.
 	err = e.ledger.transferPrepared(tid, func(s *State) (Transfer, error) {
 		contents := s.packageContents(src)
-		if len(contents) == 0 {
+		if !packageContentsHaveAsset(contents) {
 			return Transfer{}, ErrEmptyPackage
 		}
 
