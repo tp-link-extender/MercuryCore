@@ -15,10 +15,9 @@ import createCommentQuery from "$lib/server/createComment.surql"
 import { economyConnFailed } from "$lib/server/economy"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
+import { type PackageItem, packageItems } from "$lib/server/packageItems"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender, { type RenderType } from "$lib/server/requestRender"
-
-import { packageItems, type PackageItem } from "$lib/server/packageItems"
 import { db, find, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { couldMatch, encode } from "$lib/urlName"
@@ -104,9 +103,16 @@ export async function load({ fetch: f, locals, params }) {
 	// what the buyer receives along with the package itself
 	const items = isPackage ? await packageItems(f, id, user.id) : []
 
-	// there should only ever be 1 creator
-	const creator = creators.value.set
-	console.log(creator)
+	// the source is owned by the creator, so resolve that owner to the profile data the page uses
+	const owner = [...creators.value.set].find(o => o instanceof Econ.User)
+	let creator: BasicUser | null = null
+	if (owner) {
+		const [[found]] = await db.query<BasicUser[][]>(
+			"SELECT record::id(id) AS id, status, username FROM $user",
+			{ user: Record("user", owner.ID) }
+		)
+		creator = found ?? null
+	}
 
 	return {
 		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
@@ -227,7 +233,7 @@ actions.buy = async e => {
 	const { user, id } = await getBuyData(e)
 
 	type FoundAsset = {
-		creatorId: string
+		creatorId: string | null
 		forSale: boolean
 		name: string
 		price: number
@@ -257,7 +263,7 @@ actions.buy = async e => {
 				)
 	if (!ok) error(400, "Purchase failed")
 
-	if (user.id !== asset.creatorId)
+	if (asset.creatorId && user.id !== asset.creatorId)
 		await db.query(
 			'fn::notify($user, $creator, "ItemPurchase", $note, $relativeId)',
 			{
