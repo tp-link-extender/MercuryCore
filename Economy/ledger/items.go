@@ -246,6 +246,18 @@ func (io ItemsOne) clone() ItemsOne {
 	return out
 }
 
+func (im ItemsMany) clone() ItemsMany {
+	if im == nil {
+		return nil
+	}
+
+	out := make(ItemsMany, len(im))
+	for i, qty := range im {
+		out[i] = qty
+	}
+	return out
+}
+
 func (im ItemsMany) cloneNonZero() ItemsMany {
 	if len(im) == 0 {
 		return nil
@@ -263,6 +275,13 @@ func (im ItemsMany) cloneNonZero() ItemsMany {
 		return nil
 	}
 	return out
+}
+
+func (is Items) clone() Items {
+	return Items{
+		One:  is.One.clone(),
+		Many: is.Many.clone(),
+	}
 }
 
 // cloneNonZero copies an inventory, dropping zero quantities the same way GetInventory used to.

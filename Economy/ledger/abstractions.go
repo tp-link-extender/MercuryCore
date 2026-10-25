@@ -123,8 +123,7 @@ func (e *Economy) Stipend(user User) (tid TransferID, err error) {
 var ErrNoStock = errors.New("limited source needs a stock of at least one")
 
 // CreateLimitedSource mints a limited source and stocks it with qty of the asset it creates.
-// This takes two transfers, because a transfer can only ever move items between two owners and the stock has to go to the source while the source itself has to go to the user. They aren't atomic, so the order matters: the handover is charged first and the stock is granted second. That way a user who can't afford the source fails with nothing written at all, rather than leaving a stock of assets stranded in the ledger that nobody owns and nobody can sell.
-// The reverse residual is much narrower: a source that's been paid for but not yet stocked, if the stock grant fails. That grant mints from nil so it can't fail validation, leaving a disk error as the only way to hit it - and it leaves a visible unusable source rather than invisible lost stock.
+// The source has to go to the user while its stock has to go to the source, which needs two transfers. They are applied as one batch, so a failure in either leaves neither the charge nor the source behind.
 func (e *Economy) CreateLimitedSource(u User, qty Quantity) (src LimitedSource, tid TransferID, err error) {
 	if qty == 0 {
 		return src, tid, ErrNoStock
@@ -132,7 +131,7 @@ func (e *Economy) CreateLimitedSource(u User, qty Quantity) (src LimitedSource, 
 
 	src = RandLimitedSource()
 
-	tf := Transfer{
+	handover := Transfer{
 		{
 			Owner: u,
 			Items: Items{
@@ -148,21 +147,19 @@ func (e *Economy) CreateLimitedSource(u User, qty Quantity) (src LimitedSource, 
 		}},
 	}
 
-	tid = MakeTransferID()
-	if err := e.ledger.Transfer(tid, tf); err != nil {
-		return src, tid, fmt.Errorf("create limited source transfer %v: %w", tid, err)
-	}
-
-	stockTid := MakeTransferID()
-	if err := e.ledger.Transfer(stockTid, Transfer{
+	stock := Transfer{
 		{Items: Items{
 			Many: ItemsMany{
 				src.Create(): qty,
 			},
 		}},
 		{Owner: src, Items: Items{}},
-	}); err != nil {
-		return src, stockTid, fmt.Errorf("stock limited source transfer %v: %w", stockTid, err)
+	}
+
+	tid = MakeTransferID()
+	stockTid := MakeTransferID()
+	if err := e.ledger.transferBatch([]TransferID{tid, stockTid}, []Transfer{handover, stock}); err != nil {
+		return src, tid, fmt.Errorf("create limited source transfers: %w", err)
 	}
 
 	return src, tid, nil
@@ -337,21 +334,33 @@ func validatePackageComponents(comps []PackageComponent) error {
 // PackageComponent is something a package source can hold: either an asset source, or the source of a nested package. Both are CanOwnOne and both grant their holder the right to issue what they create, which is all the ledger needs to know to reissue a bundle.
 type PackageComponent = CanOwnOne
 
+func packageComponentItems(comps []PackageComponent) (ItemsOne, error) {
+	if err := validatePackageComponents(comps); err != nil {
+		return nil, err
+	}
+
+	items := make(ItemsOne, len(comps))
+	for _, c := range comps {
+		items.Add(c)
+	}
+	return items, nil
+}
+
 // CreatePackageSource mints a package source and hands it ownership of the given component sources. The package source holding the sources (rather than the assets) is what lets it reissue the whole bundle indefinitely, because holding a source entitles its holder to issue what that source creates.
-// The components are transferred in after the handover, so a user who can't afford the package fails with nothing written rather than with their component sources stranded.
+// The handover and the component transfer go in one batch, so a user who can't afford the package or doesn't own a component is charged nothing and left with nothing.
 func (e *Economy) CreatePackageSource(u User, comps []PackageComponent) (src PackageSource, tid TransferID, err error) {
 	if len(comps) == 0 {
 		return src, tid, ErrEmptyPackage
 	}
 
-	// checked before the handover, so an unusable component is rejected without charging for it
-	if err := validatePackageComponents(comps); err != nil {
+	items, err := packageComponentItems(comps)
+	if err != nil {
 		return src, tid, err
 	}
 
 	src = RandPackageSource()
 
-	tf := Transfer{
+	handover := Transfer{
 		{
 			Owner: u,
 			Items: Items{
@@ -367,13 +376,15 @@ func (e *Economy) CreatePackageSource(u User, comps []PackageComponent) (src Pac
 		}},
 	}
 
-	tid = MakeTransferID()
-	if err := e.ledger.Transfer(tid, tf); err != nil {
-		return src, tid, fmt.Errorf("create package source transfer %v: %w", tid, err)
+	components := Transfer{
+		{Owner: u, Items: Items{One: items}},
+		{Owner: src, Items: Items{}},
 	}
 
-	if _, err := e.AddPackageComponents(u, src, comps); err != nil {
-		return src, tid, err
+	tid = MakeTransferID()
+	componentsTid := MakeTransferID()
+	if err := e.ledger.transferBatch([]TransferID{tid, componentsTid}, []Transfer{handover, components}); err != nil {
+		return src, tid, fmt.Errorf("create package source transfers: %w", err)
 	}
 
 	return src, tid, nil
@@ -385,16 +396,15 @@ func (e *Economy) AddPackageComponents(u User, src PackageSource, comps []Packag
 		return nil, nil
 	}
 
-	if err := validatePackageComponents(comps); err != nil {
+	items, err := packageComponentItems(comps)
+	if err != nil {
 		return nil, err
 	}
 
-	items := make(ItemsOne, len(comps))
 	for _, c := range comps {
 		if c == src {
 			return nil, ErrSelfNestedPackage
 		}
-		items.Add(c)
 	}
 
 	tid := MakeTransferID()

@@ -115,6 +115,38 @@ func (s *State) ownsOne(o Owner, i CanOwnOne) bool {
 	return ok
 }
 
+// clone makes a deep enough copy to validate a batch of transfers without touching live state.
+func (s *State) clone() State {
+	out := makeState()
+
+	for o, inv := range s.ownerItems {
+		c := inv.clone()
+		out.ownerItems[o] = &c
+	}
+
+	for i, oo := range s.itemOwnersOne {
+		c := make(OwnersOne, len(*oo))
+		for o := range *oo {
+			c[o] = struct{}{}
+		}
+		out.itemOwnersOne[i] = &c
+	}
+
+	for i, om := range s.itemOwnersMany {
+		c := make(OwnersMany, len(*om))
+		for o, qty := range *om {
+			c[o] = qty
+		}
+		out.itemOwnersMany[i] = &c
+	}
+
+	for u, tid := range s.userLastStipend {
+		out.userLastStipend[u] = tid
+	}
+
+	return out
+}
+
 // canIssue reports whether o may issue item i without holding it.
 // Any source can always issue the item it creates, and holding a source entitles its holder to issue what that source creates - including, for a nested package, everything inside it.
 // Sources are only obtainable by paying for them, so this can't conjure items out of nothing.
@@ -442,6 +474,69 @@ func (l *Ledger) PackageItems() ItemsOne {
 
 func (l *Ledger) Transfer(tid TransferID, t Transfer) error {
 	return l.transferWithCheck(tid, t, nil)
+}
+
+// transferBatch validates every transfer against a copy of state, then persists and applies them together.
+// Either the whole batch lands or none of it does, which is what multi-transfer operations like source creation need.
+func (l *Ledger) transferBatch(tids []TransferID, transfers []Transfer) error {
+	if len(tids) != len(transfers) {
+		return fmt.Errorf("batch has %d transfer IDs for %d transfers", len(tids), len(transfers))
+	}
+	if len(transfers) == 0 {
+		return nil
+	}
+
+	seen := make(map[TransferID]struct{}, len(tids))
+	for _, tid := range tids {
+		if _, ok := seen[tid]; ok {
+			return fmt.Errorf("duplicate transfer ID %v", tid)
+		}
+		seen[tid] = struct{}{}
+	}
+
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	// dry run on a copy, so a failure in the second transfer leaves no trace of the first
+	tmp := l.state.clone()
+	for i, t := range transfers {
+		if t.Stipend() {
+			return fmt.Errorf("transfer %d: stipend transfers cannot be batched", i)
+		}
+		if err := tmp.TryApply(t); err != nil {
+			return fmt.Errorf("validate transfer %d (%v): %w", i, tids[i], err)
+		}
+	}
+
+	// persist all transfers in one bbolt transaction
+	err := l.db.Update(func(tx *bolt.Tx) error {
+		bucket, err := tx.CreateBucketIfNotExists(bucketNameBytes)
+		if err != nil {
+			return fmt.Errorf("create bucket: %w", err)
+		}
+
+		for i, t := range transfers {
+			buf := &bytes.Buffer{}
+			if err := t.Serialise(buf); err != nil {
+				return fmt.Errorf("serialise transfer %d: %w", i, err)
+			}
+			if err := bucket.Put(tids[i].Serialise(), buf.Bytes()); err != nil {
+				return fmt.Errorf("put transfer %d: %w", i, err)
+			}
+		}
+
+		return nil
+	})
+	if err != nil {
+		return fmt.Errorf("append transfers to db: %w", err)
+	}
+
+	// validation already passed on the copy, so applying to live state can't fail
+	for _, t := range transfers {
+		l.state.ForceApply(t)
+	}
+
+	return nil
 }
 
 // transferWithCheck locks the ledger, runs check against the current state, then validates, persists and applies the transfer.
