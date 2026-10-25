@@ -85,6 +85,70 @@ func post(t *testing.T, srv *httptest.Server, route string, body *bytes.Buffer) 
 	return res
 }
 
+func TestOversizedRequestBodyRejected(t *testing.T) {
+	srv, _ := testServer(t)
+	defer srv.Close()
+
+	body := bytes.NewBuffer(make([]byte, maxRequestBodyBytes+1))
+	res := post(t, srv, "prices", body)
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusRequestEntityTooLarge {
+		t.Fatalf("expected 413 for an oversized body, got %d", res.StatusCode)
+	}
+}
+
+func TestPackageComponentCountLimit(t *testing.T) {
+	srv, _ := testServer(t)
+	defer srv.Close()
+
+	body := &bytes.Buffer{}
+	serialiseItem(User{Id: "someone"}, body)
+	putUint32(body, uint32(MaxCollectionEntries)+1)
+
+	res := post(t, srv, "createPackageSource", body)
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusBadRequest {
+		t.Fatalf("expected 400 for too many components, got %d", res.StatusCode)
+	}
+}
+
+func TestResponseLogIsCapped(t *testing.T) {
+	rec := httptest.NewRecorder()
+	crw := &CustomResponseWriter{ResponseWriter: rec, statusCode: http.StatusOK}
+
+	payload := bytes.Repeat([]byte("a"), maxResponseLogBytes+100)
+	n, err := crw.Write(payload)
+	if err != nil {
+		t.Fatalf("Write: %v", err)
+	}
+	if n != len(payload) {
+		t.Fatalf("expected %d bytes written, got %d", len(payload), n)
+	}
+	if len(crw.log) > maxResponseLogBytes {
+		t.Fatalf("expected the response log to be capped at %d, got %d", maxResponseLogBytes, len(crw.log))
+	}
+	if rec.Body.Len() != len(payload) {
+		t.Fatalf("expected the full response to be sent, got %d bytes", rec.Body.Len())
+	}
+}
+
+func TestHistoryLimit(t *testing.T) {
+	srv, _ := testServer(t)
+	defer srv.Close()
+
+	body := &bytes.Buffer{}
+	putUint32(body, uint32(maxHistoryEntries)+1)
+
+	res := post(t, srv, "history", body)
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusBadRequest {
+		t.Fatalf("expected 400 for too much history, got %d", res.StatusCode)
+	}
+}
+
 // Every route the TS client can call has to actually be registered, or it 404s at runtime.
 // buyUnlimitedAsset and buyLimitedAsset shipped unregistered with fully written handlers.
 func TestAllRoutesRegistered(t *testing.T) {
