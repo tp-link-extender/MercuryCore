@@ -1,6 +1,7 @@
 package ledger_test
 
 import (
+	"errors"
 	"testing"
 
 	. "Economy/ledger"
@@ -43,8 +44,23 @@ func TestUnissuedUnlimitedSourceCannotMint(t *testing.T) {
 func TestUnissuedPackageSourceCannotMint(t *testing.T) {
 	_, e := newTestEconomy(t)
 
+	creator := User{"creator"}
 	buyer := User{"buyer"}
-	fund(t, e, buyer)
+	fund(t, e, creator, buyer)
+
+	comp, _, err := e.CreateUnlimitedSource(creator)
+	if err != nil {
+		t.Fatalf("CreateUnlimitedSource: %v", err)
+	}
+
+	// give an unissued package source real contents, so this can't be rejected by the empty-package check
+	src := RandPackageSource()
+	if e.OwnsOne(creator, src) {
+		t.Fatalf("expected %v not to be owned yet", src)
+	}
+	if _, err := e.AddPackageComponents(creator, src, []PackageComponent{comp}); err != nil {
+		t.Fatalf("AddPackageComponents: %v", err)
+	}
 
 	before := e.Balance(buyer)
 	beforeHistory, err := e.TransferHistory(10)
@@ -52,11 +68,12 @@ func TestUnissuedPackageSourceCannotMint(t *testing.T) {
 		t.Fatalf("TransferHistory: %v", err)
 	}
 
-	// this package source was never created through the Economy service, so nobody owns it
-	src := PackageSource{Id: 987654322}
 	pkg, _, err := e.BuyPackage(buyer, src, 10)
 	if err == nil {
 		t.Fatalf("expected an unissued package source to be rejected")
+	}
+	if errors.Is(err, ErrEmptyPackage) {
+		t.Fatalf("expected rejection for source ownership, not emptiness: %v", err)
 	}
 	if e.OwnsOne(buyer, pkg) {
 		t.Fatalf("expected the buyer not to receive %v", pkg)
