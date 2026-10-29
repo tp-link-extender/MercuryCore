@@ -24,7 +24,6 @@ type legacyAsset struct {
 type legacyCreator struct {
 	AssetID uint32 `json:"assetId"`
 	UserID  string `json:"userId"`
-	Created string `json:"created"`
 }
 
 type legacyAssetOwner struct {
@@ -112,6 +111,9 @@ func query[T any](c *surrealClient, sql string, vars map[string]any) ([]T, error
 	if results == nil || len(*results) == 0 {
 		return nil, fmt.Errorf("surreal returned no statement results")
 	}
+	if len(*results) != 1 {
+		return nil, fmt.Errorf("surreal returned %d statement results, expected 1", len(*results))
+	}
 
 	qr := (*results)[0]
 	if qr.Error != nil {
@@ -196,9 +198,6 @@ func sortSnapshot(s *legacySnapshot) {
 	sort.Slice(s.Creators, func(i, j int) bool {
 		if s.Creators[i].AssetID != s.Creators[j].AssetID {
 			return s.Creators[i].AssetID < s.Creators[j].AssetID
-		}
-		if s.Creators[i].Created != s.Creators[j].Created {
-			return s.Creators[i].Created < s.Creators[j].Created
 		}
 		return s.Creators[i].UserID < s.Creators[j].UserID
 	})

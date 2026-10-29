@@ -74,11 +74,11 @@ func fixtureSnapshot() *legacySnapshot {
 			{ID: 5, Type: 11, Name: "Nested Child"},
 		},
 		Creators: []legacyCreator{
-			{AssetID: 1, UserID: "userA", Created: "2026-01-01T00:00:00Z"},
-			{AssetID: 2, UserID: "userA", Created: "2026-01-01T00:00:00Z"},
-			{AssetID: 3, UserID: "userA", Created: "2026-01-01T00:00:00Z"},
-			{AssetID: 4, UserID: "userA", Created: "2026-01-01T00:00:00Z"},
-			{AssetID: 5, UserID: "userA", Created: "2026-01-01T00:00:00Z"},
+			{AssetID: 1, UserID: "userA"},
+			{AssetID: 2, UserID: "userA"},
+			{AssetID: 3, UserID: "userA"},
+			{AssetID: 4, UserID: "userA"},
+			{AssetID: 5, UserID: "userA"},
 		},
 		AssetOwners: []legacyAssetOwner{
 			{AssetID: 1, UserID: "userB"},
@@ -129,6 +129,44 @@ func TestMigrationFixture(t *testing.T) {
 	if len(problems) > 0 {
 		t.Fatalf("verification failed: %v", problems)
 	}
+}
+
+func containsError(errors []string, want string) bool {
+	for _, err := range errors {
+		if strings.Contains(err, want) {
+			return true
+		}
+	}
+	return false
+}
+
+func TestMigrationRejectsMultipleSourceOwners(t *testing.T) {
+	t.Run("creator", func(t *testing.T) {
+		s := fixtureSnapshot()
+		s.Creators = append(s.Creators, legacyCreator{AssetID: 1, UserID: "userB"})
+		data := buildMigrationData(s, "", false)
+		if !containsError(data.errors, "multiple creators") {
+			t.Fatalf("expected a multiple-creators error, got %v", data.errors)
+		}
+	})
+
+	t.Run("place", func(t *testing.T) {
+		s := fixtureSnapshot()
+		s.PlaceOwners = append(s.PlaceOwners, legacyPlaceOwner{PlaceID: 10, UserID: "userB"})
+		data := buildMigrationData(s, "", false)
+		if !containsError(data.errors, "place 10 has multiple owners") {
+			t.Fatalf("expected a multiple-place-owners error, got %v", data.errors)
+		}
+	})
+
+	t.Run("group", func(t *testing.T) {
+		s := fixtureSnapshot()
+		s.GroupOwners = append(s.GroupOwners, legacyGroupOwner{GroupID: "group1", UserID: "userB"})
+		data := buildMigrationData(s, "", false)
+		if !containsError(data.errors, `group "group1" has multiple owners`) {
+			t.Fatalf("expected a multiple-group-owners error, got %v", data.errors)
+		}
+	})
 }
 
 func TestReadSnapshotRejectsOldVersion(t *testing.T) {

@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"sort"
 	"strings"
-
-	"Economy/ledger"
 )
 
 const microPerUnit = 1_000_000
@@ -23,7 +21,6 @@ type migrationData struct {
 	groupOwners   map[string]map[string]struct{}
 	balancesMicro map[string]uint64
 	dust          map[string]uint64
-	lastStipends  map[string]uint64
 	fallbackUser  string
 	skipOrphans   bool
 	warnings      []string
@@ -44,7 +41,6 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 		groupOwners:   make(map[string]map[string]struct{}),
 		balancesMicro: make(map[string]uint64, len(s.BalancesMicro)),
 		dust:          make(map[string]uint64, len(s.DustMicro)),
-		lastStipends:  s.LastStipends,
 		skipOrphans:   skipOrphans,
 	}
 	d.warnings = append(d.warnings, s.Warnings...)
@@ -273,25 +269,22 @@ func sortedAmountUsers(amounts map[string]uint64) []string {
 
 func (d *migrationData) detectConflicts() {
 	for id, creators := range d.creators {
-		if len(creators) > 1 {
-			users := make([]string, 0, len(creators))
-			for _, c := range creators {
-				users = append(users, c.UserID)
-			}
-			sort.Strings(users)
-			d.warnf("asset %d has multiple creators (%s); using the first sorted user", id, strings.Join(users, ", "))
+		users := make(map[string]struct{}, len(creators))
+		for _, c := range creators {
+			users[c.UserID] = struct{}{}
+		}
+		if len(users) > 1 {
+			d.errorf("asset %d has multiple creators (%s); resolve this before migrating", id, strings.Join(sortedUsers(users), ", "))
 		}
 	}
 	for id, owners := range d.placeOwners {
 		if len(owners) > 1 {
-			users := sortedUsers(owners)
-			d.warnf("place %d has multiple owners (%s)", id, strings.Join(users, ", "))
+			d.errorf("place %d has multiple owners (%s); resolve this before migrating", id, strings.Join(sortedUsers(owners), ", "))
 		}
 	}
 	for id, owners := range d.groupOwners {
 		if len(owners) > 1 {
-			users := sortedUsers(owners)
-			d.warnf("group %q has multiple owners (%s)", id, strings.Join(users, ", "))
+			d.errorf("group %q has multiple owners (%s); resolve this before migrating", id, strings.Join(sortedUsers(owners), ", "))
 		}
 	}
 
@@ -361,12 +354,6 @@ func (d *migrationData) detectUnresolvedSources() {
 
 func (d *migrationData) sourceOwner(id uint32) (string, bool) {
 	if creators := d.creators[id]; len(creators) > 0 {
-		sort.Slice(creators, func(i, j int) bool {
-			if creators[i].Created != creators[j].Created {
-				return creators[i].Created < creators[j].Created
-			}
-			return creators[i].UserID < creators[j].UserID
-		})
 		return creators[0].UserID, true
 	}
 	if owners := d.owners[id]; len(owners) > 0 {
@@ -502,12 +489,4 @@ func (d *migrationData) packageParent(id uint32) (uint32, bool) {
 		return parent, true
 	}
 	return 0, false
-}
-
-func (d *migrationData) childSourceContainer(id uint32) (ledger.PackageSource, bool) {
-	parent, ok := d.packageParent(id)
-	if !ok {
-		return ledger.PackageSource{}, false
-	}
-	return ledger.PackageSource{Id: parent}, true
 }

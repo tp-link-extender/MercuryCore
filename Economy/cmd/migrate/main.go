@@ -68,6 +68,15 @@ func main() {
 	flag.IntVar(&o.batchSize, "batch-size", 500, "transfers per bbolt import batch")
 	flag.Parse()
 
+	if o.export != "" && o.input != "" {
+		fmt.Fprintln(os.Stderr, "--export and --input cannot be used together")
+		os.Exit(2)
+	}
+	if o.batchSize <= 0 {
+		fmt.Fprintln(os.Stderr, "--batch-size must be positive")
+		os.Exit(2)
+	}
+
 	rep := &report{
 		Version:   1,
 		StartedAt: time.Now().UTC(),
