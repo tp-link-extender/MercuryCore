@@ -58,7 +58,7 @@ The Site client reads `ECONOMY_URL` and defaults to `http://localhost:2009`, so 
 ECONOMY_URL=http://localhost:2010 bun run dev
 ```
 
-If using the Docker layout, the final ledger path is `/data/economy/mydb.db`; the container command already points there.
+If using the Docker layout, the final ledger path is `/data/economy/mydb.db`; the container command already points there. `docker compose build site` builds the Site from the repository root and includes `Economy/client` for its `economy/*` imports. The image does not include the migration binary, so run the migration from the host and replace the ledger mounted at `/data/economy/mydb.db` before restarting the `economy` service.
 
 ## Flags
 
@@ -80,6 +80,7 @@ If using the Docker layout, the final ledger path is `/data/economy/mydb.db`; th
 - Fractional old currency is floored; the report includes dust.
 - Every migrated user receives a fresh 12-hour stipend cooldown because balance mints are stipend-shaped.
 - A child in more than one package is a hard error for now (the 2E decision). The report lists the conflicting packages.
+- Multiple creators of a source, or multiple owners of a place/group, are hard errors. The ledger allows only one source owner and one place/group owner, so resolving these by picking one would silently drop ownership.
 - Empty packages are migrated as source ownership but are not sellable.
 - A balance, creator, owner, or fallback user that does not exist in the `user` table is an error. With `--skip-orphans`, the affected balance or relation is dropped and reported; the fallback user is always required to exist.
 - Snapshots are versioned. Re-export if the snapshot version is older than the command expects.
