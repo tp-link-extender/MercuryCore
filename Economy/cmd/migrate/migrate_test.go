@@ -63,8 +63,9 @@ func TestParseOldLedgerRejectsReturns(t *testing.T) {
 
 func fixtureSnapshot() *legacySnapshot {
 	return &legacySnapshot{
-		Version:   1,
+		Version:   2,
 		OldLedger: "testdata/old-ledger",
+		Users:     []string{"userA", "userB"},
 		Assets: []legacyAsset{
 			{ID: 1, Type: 8, Name: "Standalone"},
 			{ID: 2, Type: 32, Name: "Package"},
@@ -130,6 +131,16 @@ func TestMigrationFixture(t *testing.T) {
 	}
 }
 
+func TestReadSnapshotRejectsOldVersion(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "snapshot.json")
+	if err := os.WriteFile(path, []byte(`{"version":1}`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := readSnapshot(path); err == nil {
+		t.Fatalf("expected an old snapshot version to be rejected")
+	}
+}
+
 func TestMigrationRejectsMultiplePackageParents(t *testing.T) {
 	s := fixtureSnapshot()
 	s.PackageChildren = append(s.PackageChildren, legacyPackageChild{PackageID: 4, ChildID: 3})
@@ -145,5 +156,69 @@ func TestMigrationRejectsMultiplePackageParents(t *testing.T) {
 	}
 	if !found {
 		t.Fatalf("expected multiple-package-parent error, got %v", data.errors)
+	}
+}
+
+func TestMigrationRejectsMissingUser(t *testing.T) {
+	s := fixtureSnapshot()
+	s.Users = []string{"userA"}
+	data := buildMigrationData(s, "", false)
+	if len(data.errors) == 0 {
+		t.Fatalf("expected missing-user errors")
+	}
+
+	found := false
+	for _, err := range data.errors {
+		if strings.Contains(err, "missing user userB") {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("expected missing user error, got %v", data.errors)
+	}
+}
+
+func TestMigrationSkipsMissingUser(t *testing.T) {
+	s := fixtureSnapshot()
+	s.Users = []string{"userA"}
+	data := buildMigrationData(s, "", true)
+	if len(data.errors) > 0 {
+		t.Fatalf("unexpected validation errors: %v", data.errors)
+	}
+	if _, ok := data.balancesMicro["userB"]; ok {
+		t.Fatalf("expected the missing user's balance to be skipped")
+	}
+	if len(data.owners) != 0 {
+		t.Fatalf("expected the missing user's asset ownership to be skipped")
+	}
+}
+
+func TestMigrationRejectsUnknownFallbackUser(t *testing.T) {
+	s := fixtureSnapshot()
+	data := buildMigrationData(s, "missing", true)
+	if len(data.errors) == 0 {
+		t.Fatalf("expected an unknown fallback user error")
+	}
+}
+
+func TestMigrationSkipsPackageOrphans(t *testing.T) {
+	s := fixtureSnapshot()
+	s.PackageChildren = append(s.PackageChildren,
+		legacyPackageChild{PackageID: 999, ChildID: 3},
+		legacyPackageChild{PackageID: 2, ChildID: 999},
+	)
+	data := buildMigrationData(s, "", true)
+	if len(data.errors) > 0 {
+		t.Fatalf("unexpected validation errors: %v", data.errors)
+	}
+
+	found := 0
+	for _, warning := range data.warnings {
+		if strings.Contains(warning, "missing") {
+			found++
+		}
+	}
+	if found < 2 {
+		t.Fatalf("expected missing package and asset warnings, got %v", data.warnings)
 	}
 }

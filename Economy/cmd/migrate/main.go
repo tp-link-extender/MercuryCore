@@ -62,7 +62,7 @@ func main() {
 	flag.StringVar(&o.surrealUser, "surreal-user", "root", "SurrealDB username")
 	flag.StringVar(&o.surrealPass, "surreal-pass", "root", "SurrealDB password")
 	flag.StringVar(&o.fallbackUser, "fallback-user", "", "user ID to assign to otherwise unowned assets/places/groups")
-	flag.BoolVar(&o.skipOrphans, "skip-orphans", false, "ignore creator/owner relations that point to missing records")
+	flag.BoolVar(&o.skipOrphans, "skip-orphans", false, "ignore creator/owner/package relations that point to missing records, and balances for missing users")
 	flag.BoolVar(&o.dryRun, "dry-run", false, "validate and build a temporary ledger without writing the output")
 	flag.BoolVar(&o.force, "force", false, "overwrite the output ledger if it exists")
 	flag.IntVar(&o.batchSize, "batch-size", 500, "transfers per bbolt import batch")
@@ -129,6 +129,7 @@ func runExport(o options, rep *report) error {
 	rep.Snapshot = o.export
 	rep.OldLedger = o.oldLedger
 	rep.Warnings = append(rep.Warnings, s.Warnings...)
+	rep.Counts["users"] = len(s.Users)
 	rep.Counts["assets"] = len(s.Assets)
 	rep.Counts["creators"] = len(s.Creators)
 	rep.Counts["assetOwners"] = len(s.AssetOwners)
@@ -169,8 +170,6 @@ func runMigrate(o options, rep *report) error {
 	}
 
 	rep.OldLedger = s.OldLedger
-	rep.Warnings = append(rep.Warnings, s.Warnings...)
-	rep.Balances = summarizeBalances(s.BalancesMicro, s.DustMicro)
 	if len(s.BalancesMicro) > 0 {
 		rep.Warnings = append(rep.Warnings, "currency snapshot mints reset every migrated user's stipend cooldown to the migration timestamp")
 	}
@@ -179,6 +178,7 @@ func runMigrate(o options, rep *report) error {
 	}
 
 	data := buildMigrationData(s, o.fallbackUser, o.skipOrphans)
+	rep.Balances = summarizeBalances(data.balancesMicro, data.dust)
 	rep.Warnings = append(rep.Warnings, data.warnings...)
 	rep.Errors = append(rep.Errors, data.errors...)
 	rep.Counts["assets"] = len(data.assets)

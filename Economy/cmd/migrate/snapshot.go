@@ -13,7 +13,7 @@ import (
 	surrealdb "github.com/surrealdb/surrealdb.go"
 )
 
-const snapshotVersion = 1
+const snapshotVersion = 2
 
 type legacyAsset struct {
 	ID   uint32 `json:"id"`
@@ -61,6 +61,7 @@ type legacySnapshot struct {
 	Version         int                  `json:"version"`
 	CreatedAt       time.Time            `json:"createdAt"`
 	OldLedger       string               `json:"oldLedger"`
+	Users           []string             `json:"users"`
 	Assets          []legacyAsset        `json:"assets"`
 	Creators        []legacyCreator      `json:"creators"`
 	AssetOwners     []legacyAssetOwner   `json:"assetOwners"`
@@ -132,6 +133,11 @@ func exportSnapshot(c *surrealClient, oldLedger string) (*legacySnapshot, error)
 		LastStipends:  make(map[string]uint64),
 	}
 
+	if rows, err := query[string](c, "SELECT VALUE record::id(id) FROM user;", nil); err != nil {
+		return nil, fmt.Errorf("query users: %w", err)
+	} else {
+		s.Users = rows
+	}
 	if rows, err := query[legacyAsset](c, "SELECT record::id(id) AS id, type, name FROM asset;", nil); err != nil {
 		return nil, fmt.Errorf("query assets: %w", err)
 	} else {
@@ -185,6 +191,7 @@ func exportSnapshot(c *surrealClient, oldLedger string) (*legacySnapshot, error)
 
 // holy sorting taskmanager
 func sortSnapshot(s *legacySnapshot) {
+	sort.Strings(s.Users)
 	sort.Slice(s.Assets, func(i, j int) bool { return s.Assets[i].ID < s.Assets[j].ID })
 	sort.Slice(s.Creators, func(i, j int) bool {
 		if s.Creators[i].AssetID != s.Creators[j].AssetID {
@@ -357,6 +364,9 @@ func readSnapshot(path string) (*legacySnapshot, error) {
 	var s legacySnapshot
 	if err := json.Unmarshal(data, &s); err != nil {
 		return nil, err
+	}
+	if s.Version != snapshotVersion {
+		return nil, fmt.Errorf("snapshot version %d is not supported; re-export with --export (expected version %d)", s.Version, snapshotVersion)
 	}
 	return &s, nil
 }

@@ -11,6 +11,7 @@ import (
 const microPerUnit = 1_000_000
 
 type migrationData struct {
+	users         map[string]struct{}
 	assets        map[uint32]legacyAsset
 	creators      map[uint32][]legacyCreator
 	owners        map[uint32]map[string]struct{}
@@ -24,12 +25,14 @@ type migrationData struct {
 	dust          map[string]uint64
 	lastStipends  map[string]uint64
 	fallbackUser  string
+	skipOrphans   bool
 	warnings      []string
 	errors        []string
 }
 
 func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool) *migrationData {
 	d := &migrationData{
+		users:         make(map[string]struct{}, len(s.Users)),
 		assets:        make(map[uint32]legacyAsset),
 		creators:      make(map[uint32][]legacyCreator),
 		owners:        make(map[uint32]map[string]struct{}),
@@ -39,16 +42,27 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 		placeOwners:   make(map[uint32]map[string]struct{}),
 		groups:        make(map[string]legacyGroup),
 		groupOwners:   make(map[string]map[string]struct{}),
-		balancesMicro: s.BalancesMicro,
-		dust:          s.DustMicro,
+		balancesMicro: make(map[string]uint64, len(s.BalancesMicro)),
+		dust:          make(map[string]uint64, len(s.DustMicro)),
 		lastStipends:  s.LastStipends,
-		fallbackUser:  fallbackUser,
+		skipOrphans:   skipOrphans,
 	}
 	d.warnings = append(d.warnings, s.Warnings...)
 
+	for _, id := range s.Users {
+		d.validateUserID(id, "user")
+		if id != "" {
+			d.users[id] = struct{}{}
+		}
+	}
 	if fallbackUser != "" {
 		d.validateUserID(fallbackUser, "fallback user")
+		if _, ok := d.users[fallbackUser]; !ok {
+			d.errorf("fallback user %q is not a known user", fallbackUser)
+			fallbackUser = ""
+		}
 	}
+	d.fallbackUser = fallbackUser
 
 	for _, a := range s.Assets {
 		if _, ok := d.assets[a.ID]; ok {
@@ -82,7 +96,9 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 			d.errorf("creator relation points to missing asset %d", c.AssetID)
 			continue
 		}
-		d.validateUserID(c.UserID, fmt.Sprintf("creator of asset %d", c.AssetID))
+		if !d.checkUser(c.UserID, fmt.Sprintf("creator of asset %d", c.AssetID)) {
+			continue
+		}
 		d.creators[c.AssetID] = append(d.creators[c.AssetID], c)
 	}
 	for _, o := range s.AssetOwners {
@@ -94,7 +110,9 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 			d.errorf("asset owner relation points to missing asset %d", o.AssetID)
 			continue
 		}
-		d.validateUserID(o.UserID, fmt.Sprintf("owner of asset %d", o.AssetID))
+		if !d.checkUser(o.UserID, fmt.Sprintf("owner of asset %d", o.AssetID)) {
+			continue
+		}
 		if d.owners[o.AssetID] == nil {
 			d.owners[o.AssetID] = make(map[string]struct{})
 		}
@@ -103,6 +121,10 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 	for _, child := range s.PackageChildren {
 		pkg, ok := d.assets[child.PackageID]
 		if !ok {
+			if skipOrphans {
+				d.warnf("ignoring package relation for missing package %d", child.PackageID)
+				continue
+			}
 			d.errorf("package relation points to missing package %d", child.PackageID)
 			continue
 		}
@@ -111,6 +133,10 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 			continue
 		}
 		if _, ok := d.assets[child.ChildID]; !ok {
+			if skipOrphans {
+				d.warnf("ignoring package %d relation to missing asset %d", child.PackageID, child.ChildID)
+				continue
+			}
 			d.errorf("package %d contains missing asset %d", child.PackageID, child.ChildID)
 			continue
 		}
@@ -129,7 +155,9 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 			d.errorf("place owner relation points to missing place %d", o.PlaceID)
 			continue
 		}
-		d.validateUserID(o.UserID, fmt.Sprintf("owner of place %d", o.PlaceID))
+		if !d.checkUser(o.UserID, fmt.Sprintf("owner of place %d", o.PlaceID)) {
+			continue
+		}
 		if d.placeOwners[o.PlaceID] == nil {
 			d.placeOwners[o.PlaceID] = make(map[string]struct{})
 		}
@@ -144,17 +172,26 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 			d.errorf("group owner relation points to missing group %q", o.GroupID)
 			continue
 		}
-		d.validateUserID(o.UserID, fmt.Sprintf("owner of group %q", o.GroupID))
+		if !d.checkUser(o.UserID, fmt.Sprintf("owner of group %q", o.GroupID)) {
+			continue
+		}
 		if d.groupOwners[o.GroupID] == nil {
 			d.groupOwners[o.GroupID] = make(map[string]struct{})
 		}
 		d.groupOwners[o.GroupID][o.UserID] = struct{}{}
 	}
 
-	for user, micro := range s.BalancesMicro {
-		d.validateUserID(user, "balance user")
-		if micro > 0 {
+	for _, user := range sortedAmountUsers(s.BalancesMicro) {
+		if !d.checkUser(user, "balance") {
+			continue
+		}
+		if micro := s.BalancesMicro[user]; micro > 0 {
 			d.balancesMicro[user] = micro
+		}
+	}
+	for user, micro := range s.DustMicro {
+		if _, ok := d.users[user]; ok {
+			d.dust[user] = micro
 		}
 	}
 
@@ -181,6 +218,22 @@ func (d *migrationData) validateUserID(id, what string) {
 	}
 }
 
+func (d *migrationData) checkUser(id, what string) bool {
+	d.validateUserID(id, what)
+	if id == "" {
+		return false
+	}
+	if _, ok := d.users[id]; ok {
+		return true
+	}
+	if d.skipOrphans {
+		d.warnf("ignoring %s with missing user %s", what, id)
+		return false
+	}
+	d.errorf("%s references missing user %s", what, id)
+	return false
+}
+
 func (d *migrationData) validateStringID(id, what string) {
 	if id == "" {
 		d.errorf("%s has an empty id", what)
@@ -203,6 +256,15 @@ func appendUnique(list []uint32, v uint32) []uint32 {
 func sortedUsers(set map[string]struct{}) []string {
 	users := make([]string, 0, len(set))
 	for user := range set {
+		users = append(users, user)
+	}
+	sort.Strings(users)
+	return users
+}
+
+func sortedAmountUsers(amounts map[string]uint64) []string {
+	users := make([]string, 0, len(amounts))
+	for user := range amounts {
 		users = append(users, user)
 	}
 	sort.Strings(users)
