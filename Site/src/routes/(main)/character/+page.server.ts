@@ -1,7 +1,11 @@
 import { error, fail } from "@sveltejs/kit"
+import { inventory, ownsOne } from "economy/api"
+import type { ItemsOne } from "economy/items"
+import * as Econ from "economy/types"
 import { brickColours } from "$lib/brickColours"
 import { assetRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/auth"
+import { economyConnFailed } from "$lib/server/economy"
 import { packageItems } from "$lib/server/packageItems"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
@@ -36,9 +40,9 @@ const bodyParts = Object.freeze([
 ])
 
 export type Asset = {
+	id: number
 	name: string
 	price: number
-	id: number
 	type: number
 	wearing: boolean
 }
@@ -49,15 +53,33 @@ type AssetData = {
 	visibility: string
 }
 
+const ownedAssetIds = (items: ItemsOne) =>
+	[...items.set]
+		.filter(
+			i => i instanceof Econ.UnlimitedAsset || i instanceof Econ.Package
+		)
+		.map(i => i.ID)
+
+async function getOwnedAssetIds(f: typeof globalThis.fetch, userId: string) {
+	const inv = await inventory(f, new Econ.User(userId))
+	if (!inv.ok) error(500, economyConnFailed)
+
+	return ownedAssetIds(inv.value.One)
+}
+
 type WornAsset = {
 	id: number
 	worn: boolean
 }
 
-export async function load({ locals }) {
+export async function load({ fetch: f, locals }) {
 	const { user } = await authorise(locals)
+	const ids = await getOwnedAssetIds(f, user.id)
+
+	if (ids.length === 0) return { assets: [] }
 
 	const [assets] = await db.query<Asset[][]>(assetsQuery, {
+		assets: ids.map(id => Record("asset", id)),
 		user: Record("user", user.id),
 		allowedTypes,
 	})
@@ -67,7 +89,7 @@ export async function load({ locals }) {
 	const contents = new Map<number, number[]>()
 	const wearables: number[] = []
 	for (const asset of assets.filter(a => a.type === 32)) {
-		const items = (await packageItems(asset.id, user.id)).filter(
+		const items = (await packageItems(f, asset.id, user.id)).filter(
 			i =>
 				i.owned &&
 				i.visibility === "Visible" &&
@@ -110,9 +132,20 @@ async function getEquipData(e: RequestEvent) {
 
 	const [[asset]] = await db.query<AssetData[][]>(equipDataQuery, {
 		asset: Record("asset", id),
-		user: Record("user", user.id),
 	})
-	if (!asset) error(404, "Item not found or not owned")
+	if (!asset) error(404, "Item not found")
+
+	// packages are their own item type in the ledger, so ownership has to be checked against Package rather than UnlimitedAsset
+	const o = new Econ.User(user.id)
+	const i =
+		asset.type === 32 ? new Econ.Package(id) : new Econ.UnlimitedAsset(id)
+	const owns = await ownsOne(e.fetch, o, i)
+	if (!owns.ok) {
+		console.error("ownsOne failed")
+		error(500, economyConnFailed)
+	}
+	if (!owns.value) error(400, "You don't own this item")
+
 	if (!allowedTypes.includes(asset.type))
 		error(400, "Can't equip this type of item")
 	if (asset.visibility !== "Visible")
@@ -171,7 +204,7 @@ async function equip(e: RequestEvent) {
 
 	// Packages simply equip the user with every item inside them
 	if (asset.type === 32) {
-		const items = await packageItems(id, user.id)
+		const items = await packageItems(e.fetch, id, user.id)
 		const children = items.filter(
 			i =>
 				i.owned &&
@@ -220,7 +253,7 @@ async function unequip(e: RequestEvent) {
 
 	// Unequipping a package unequips everything inside it
 	if (asset.type === 32) {
-		const items = await packageItems(id, user.id)
+		const items = await packageItems(e.fetch, id, user.id)
 		const children = items
 			.filter(
 				i =>

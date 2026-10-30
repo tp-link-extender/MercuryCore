@@ -10,8 +10,6 @@ SELECT
 	created,
 	updated,
 	maxPlayers,
-	(SELECT username, status
-	FROM $parent<-ownsPlace<-user)[0] AS ownerUser,
 	(SELECT
 		in.username AS username,
 		"Playing" AS status # duh

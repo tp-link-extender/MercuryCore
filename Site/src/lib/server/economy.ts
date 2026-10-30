@@ -1,220 +1,116 @@
+import { ownersOne } from "economy/api"
+import type { TransferWithID } from "economy/economy"
+import * as Econ from "economy/types"
+import type { GroupData, OwnerData, SourceData, UserData } from "$lib/economy"
+import ownersQuery from "$lib/server/owners.surql"
+import ownerUserQuery from "$lib/server/ownerUser.surql"
 import { db, Record } from "$lib/server/surreal"
-import usersQuery from "$lib/server/users.surql"
-
-const economyUrl = "localhost:2009"
 
 export const economyConnFailed = "Cannot connect to Economy service"
 
 export type ReturnValue<T> = Promise<{ ok: true; value: T } | { ok: false }>
 export type ReturnErr = { ok: true } | { ok: false; msg: string }
 
-const tryFetch =
-	<T>(transform: (res: Response) => Promise<T>) =>
-	async (
-		f: typeof globalThis.fetch,
-		url: string
-	): Promise<ReturnValue<T>> => {
-		try {
-			const res = await f(url)
-			if (!res.ok) return { ok: false }
-			return { ok: true, value: await transform(res) }
-		} catch {
-			return { ok: false }
-		}
+export type OwnedUser = BasicUser & { id: string }
+
+async function ownerUser(id: string): Promise<OwnedUser | null> {
+	const [[user]] = await db.query<OwnedUser[][]>(ownerUserQuery, {
+		user: Record("user", id),
+	})
+	return user ?? null
+}
+
+async function itemOwnerSeen(
+	f: typeof globalThis.fetch,
+	i: Econ.CanOwnOne,
+	seen: Set<number>
+): Promise<ReturnValue<OwnedUser | null>> {
+	const owners = await ownersOne(f, i)
+	if (!owners.ok) return { ok: false }
+
+	const list = [...owners.value.set]
+
+	// a user owner resolves directly; a package source owner means the item is nested inside a bundle
+	const user = list.find(o => o instanceof Econ.User)
+	if (user) return { ok: true, value: await ownerUser(user.ID) }
+
+	const pkg = list.find(o => o instanceof Econ.PackageSource)
+	if (pkg) {
+		if (seen.has(pkg.ID)) return { ok: true, value: null }
+		seen.add(pkg.ID)
+		return itemOwnerSeen(f, pkg, seen)
 	}
 
-const tryFetchValue = tryFetch(async res => +(await res.text()))
-const tryFetchJson = <T>() => tryFetch(async res => (await res.json()) as T) // type assertion much?¿
-
-export const getStipend = (f: typeof globalThis.fetch) =>
-	tryFetchValue(f, `${economyUrl}/currentStipend`)
-export const getBalance = (f: typeof globalThis.fetch, user: string) =>
-	tryFetchValue(f, `${economyUrl}/balance/${user}`)
-
-type BaseTx = {
-	Note: string
-	Time: number
-	Id: string
+	return { ok: true, value: null }
 }
 
-type TxTypes =
-	| {
-			Type: "Transaction"
-			From: string
-			To: string
-			Amount: number
-			Link: string
-			Returns: number[]
-			Fee: number
-	  }
-	| {
-			Type: "Mint"
-			To: string
-			Amount: number
-	  }
-	| {
-			Type: "Burn"
-			From: string
-			Amount: number
-			Link: string
-			Returns: number[]
-	  }
-
-type ReceivedTx = BaseTx & TxTypes
-
-export const getTransactions = (f: typeof globalThis.fetch, user: string) =>
-	tryFetchJson<ReceivedTx[]>()(f, `${economyUrl}/transactions/${user}`)
-export const getAdminTransactions = (f: typeof globalThis.fetch) =>
-	tryFetchJson<ReceivedTx[]>()(f, `${economyUrl}/transactions`)
-
-// doin nothing with returns rn
-export async function stipend(f: typeof globalThis.fetch, To: string) {
-	try {
-		await f(`${economyUrl}/stipend/${To}`, { method: "post" })
-	} catch {}
-}
-
-export async function transact(
+/** Resolves the owning user of an item from the Economy service, or null if nobody owns it. */
+export async function itemOwner(
 	f: typeof globalThis.fetch,
-	From: string,
-	To: string,
-	Amount: number,
-	Note: string,
-	Link: string,
-	Returns: { [_: number]: number }
-): Promise<ReturnErr> {
-	try {
-		const res = await f(`${economyUrl}/transact`, {
-			method: "post",
-			body: JSON.stringify({ From, To, Amount, Note, Link, Returns }),
-		})
-		if (res.status === 200) return { ok: true }
-		return { ok: false, msg: await res.text() }
-	} catch (err) {
-		const e = err as Error
-		return { ok: false, msg: e.message }
-	}
+	i: Econ.CanOwnOne
+): Promise<ReturnValue<OwnedUser | null>> {
+	return itemOwnerSeen(f, i, new Set())
 }
 
-async function burn(
+/**
+ * Resolves an asset's owner from the source that issues it.
+ * Packages use a package source; other assets normally use an unlimited source, with a limited-source fallback.
+ */
+export async function assetOwner(
 	f: typeof globalThis.fetch,
-	From: string,
-	Amount: number,
-	Note: string,
-	Link: string,
-	Returns: { [_: number]: number }
-): Promise<ReturnErr> {
-	try {
-		// Who's not entertained by my pain
-		// Who aint cash a cheque off my name
-		// When my campaign turned to a cam-pain
-		// We got $2.5 trillion stored on the blockchain
-		// Uh, ₿urn ₿aby ₿urn
-		const res = await f(`${economyUrl}/burn`, {
-			method: "post",
-			body: JSON.stringify({ From, Amount, Note, Link, Returns }),
-		})
-		if (res.status === 200) return { ok: true }
-		return { ok: false, msg: await res.text() }
-	} catch (err) {
-		const e = err as Error
-		return { ok: false, msg: e.message }
-	}
-}
-
-export const fee = 0.1
-const getFeeBasedPrice = (multiplier: number): number =>
-	Math.round(fee * multiplier * 1e6)
-
-export const getAssetPrice = () => getFeeBasedPrice(75)
-export const getGroupPrice = () => getFeeBasedPrice(50)
-// export const getPlacePrice = () => getFeeBasedPrice(50)
-
-export async function createAsset(
-	f: typeof globalThis.fetch,
-	To: string,
 	id: number,
-	name: string,
-	slug: string
-): Promise<ReturnErr> {
-	const price = getAssetPrice()
-	return await burn(
-		f,
-		To,
-		price,
-		`Created asset ${name}`,
-		`/catalog/${id}/${slug}`,
-		{}
-	)
+	type: number
+): Promise<ReturnValue<OwnedUser | null>> {
+	if (type === 32) return itemOwner(f, new Econ.PackageSource(id))
+
+	const unlimited = await itemOwner(f, new Econ.UnlimitedSource(id))
+	if (!unlimited.ok) return unlimited
+	if (unlimited.value) return unlimited
+
+	return itemOwner(f, new Econ.LimitedSource(id))
 }
 
-// export async function createPlace(
-// 	f: typeof globalThis.fetch,
-// 	To: string,
-// 	id: number,
-// 	name: string,
-// 	slug: string
-// ): Promise<ReturnErr> {
-// 	const price = getPlacePrice()
-// 	return await burn(
-// 		fee,
-// 		To,
-// 		price,
-// 		`Created place ${name}`,
-// 		`/place/${id}/${slug}`,
-// 		{}
-// 	)
-// }
-
-export async function createGroup(
+/** Whether a user owns an item, without resolving the owner's profile data. */
+export async function ownsItem(
 	f: typeof globalThis.fetch,
-	To: string,
-	name: string
-): Promise<ReturnErr> {
-	const price = getGroupPrice()
-	return await burn(
-		f,
-		To,
-		price,
-		`Created group ${name}`,
-		`/groups/${name}`,
-		{}
-	)
-}
-
-export async function transformTransactions(list: ReceivedTx[]) {
-	// Awful no-good terrible code for transforming this stuff. Feels like we're back in the double-database days of Mercury 2
-
-	const users = new Set<string>()
-	for (const tx of list) {
-		if (tx.Type !== "Mint") users.add(tx.From)
-		if (tx.Type !== "Burn") users.add(tx.To)
-	}
-	const [queryUsers] = await db.query<(BasicUser & { id: string })[][]>(
-		usersQuery,
-		{ usersList: Array.from(users).map(u => Record("user", u)) }
-	)
-
-	const idsMap = new Map<string, BasicUser>()
-	const usersMap = new Map<string, BasicUser>()
-	for (const user of queryUsers) {
-		idsMap.set(user.id, {
-			username: user.username,
-			status: user.status,
-		})
-		usersMap.set(user.username, {
-			username: user.username,
-			status: user.status,
-		})
-	}
-
-	for (const tx of list) {
-		if (tx.Type !== "Mint") tx.From = idsMap.get(tx.From)?.username || ""
-		if (tx.Type !== "Burn") tx.To = idsMap.get(tx.To)?.username || ""
-	}
+	userId: string,
+	i: Econ.CanOwnOne
+): Promise<ReturnValue<boolean>> {
+	const owners = await ownersOne(f, i)
+	if (!owners.ok) return { ok: false }
 
 	return {
-		transactions: list,
-		users: Object.fromEntries(usersMap),
+		ok: true,
+		value: [...owners.value.set].some(
+			o => o instanceof Econ.User && o.ID === userId
+		),
+	}
+}
+
+// better code than previously... i guess. whatever
+export async function ownerData(list: TransferWithID[]): Promise<OwnerData> {
+	const owners = [
+		...list.map(tf => tf.Transfer.Send0.Owner),
+		...list.map(tf => tf.Transfer.Send1.Owner),
+	].filter(o => o !== null)
+
+	const [users, groups, sources] = await db.query<
+		[UserData[], GroupData[], SourceData[]]
+	>(ownersQuery, {
+		usersList: owners
+			.filter(o => o instanceof Econ.User)
+			.map(u => Record("user", u.ID)),
+		groupsList: owners
+			.filter(o => o instanceof Econ.Group)
+			.map(g => Record("group", g.ID)),
+		assetsList: owners
+			.filter(Econ.IsSource)
+			.map(s => Record("asset", s.ID)),
+	})
+
+	return {
+		users: Object.fromEntries(users.map(u => [u.id, u])),
+		groups: Object.fromEntries(groups.map(g => [g.id, g])),
+		sources: Object.fromEntries(sources.map(s => [s.id, s])),
 	}
 }

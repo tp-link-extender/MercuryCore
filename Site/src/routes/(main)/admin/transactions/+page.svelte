@@ -1,4 +1,6 @@
 <script lang="ts">
+	import * as Econ from "economy/economy"
+	import { Buf, BufReader } from "economy/items"
 	import Head from "$components/Head.svelte"
 	import SidebarShell from "$components/SidebarShell.svelte"
 	import TabData from "$components/TabData"
@@ -26,17 +28,18 @@
 	<table class="w-full">
 		<thead>
 			<tr>
-				<th>Type</th>
 				<th>From</th>
+				<th>Sent</th>
 				<th>Time</th>
-				<th>Amount</th>
-				<th>Fee</th>
+				<th>Received</th>
 				<th>To</th>
-				<th>Note & link</th>
 			</tr>
 		</thead>
 		<tbody>
 			{#each data.transactions as transaction, num}
+				{@const transfer = Econ.TransferWithID.Deserialise(
+					new BufReader(new Buf(transaction))
+				)}
 				<tr
 					in:fade={{
 						num,
@@ -44,8 +47,8 @@
 						max: 12
 					}}>
 					<Transaction
-						{transaction}
-						users={data.users}
+						{transfer}
+						ownerData={data.ownerData}
 						currencySymbol={data.currencySymbol} />
 				</tr>
 			{/each}

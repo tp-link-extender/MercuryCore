@@ -3,7 +3,6 @@ SELECT
 	name,
 	price,
 	type,
-	(SELECT status, username FROM $parent<-created<-user)[0] AS creator,
 	(SELECT record::id(id) AS id, name
 	FROM $parent->imageAsset->asset)[0] AS imageAsset
 FROM asset WHERE visibility = "Pending"

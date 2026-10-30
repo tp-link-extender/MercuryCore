@@ -1,6 +1,6 @@
 import { authorise } from "$lib/server/auth"
 import pageQuery from "$lib/server/pageQuery"
-import { Record, db } from "$lib/server/surreal"
+import { db, Record } from "$lib/server/surreal"
 import requestsQuery from "./requests.surql"
 
 export async function load({ locals, url }) {

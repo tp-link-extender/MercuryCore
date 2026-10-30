@@ -1,14 +1,16 @@
-// Mercury Economy service
-// "imagine a blockchain but without the blocks or the chain" - Heliodex
-
 package main
 
 import (
-	"encoding/json"
+	"bytes"
+	"encoding/binary"
 	"errors"
+	"flag"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
+	"reflect"
+	"strconv"
 	"time"
 
 	c "github.com/TwiN/go-color"
@@ -17,183 +19,588 @@ import (
 )
 
 const (
-	folderpath = "../data/economy" // kinda jsonl file
-	filepath   = folderpath + "/ledger"
-
-	stipendTime = 12 * 60 * 60 * 1000
+	maxRequestBodyBytes = 1 << 20 // 1 MiB
+	maxHistoryEntries   = 1000
+	maxResponseLogBytes = 64 << 10 // 64 KiB
 )
 
-var currentFilepath = filepath
-
-func toReadable(c Currency) string {
-	return fmt.Sprintf("%d.%06d unit", c/Unit, c%Unit)
+// ahh b2i, my favourite (though this one's with uint8)
+func b2i(b bool) uint8 {
+	if b {
+		return 1
+	}
+	return 0
 }
 
 type EconomyServer struct {
 	*Economy
 }
 
-// func (e *EconomyServer) currentFeeRoute(w http.ResponseWriter, r *http.Request) {
-// 	fmt.Fprint(w, e.GetCurrentFee())
-// }
+// itemTypeName is %T for type parameters: %T on a zero value prints <nil> when T is instantiated with an interface (nil interface = no dynamic type).
+func itemTypeName[T any]() string {
+	return reflect.TypeFor[T]().String()
+}
 
-func (e *EconomyServer) currentStipendRoute(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, Stipend)
+func getItem[T Item](w http.ResponseWriter, r *http.Request) (t T, ok bool) {
+	oi, err := DeserialiseItem(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode %s: %v", itemTypeName[T](), err), http.StatusBadRequest)
+		return
+	}
+
+	o, ok := oi.(T)
+	if !ok {
+		http.Error(w, fmt.Sprintf("item is not %s: %T", itemTypeName[T](), oi), http.StatusBadRequest)
+		return
+	}
+
+	return o, true
+}
+
+func (e *EconomyServer) ownsOneRoute(w http.ResponseWriter, r *http.Request) {
+	o, ok := getItem[Owner](w, r)
+	if !ok {
+		return
+	}
+
+	coo, ok := getItem[CanOwnOne](w, r)
+	if !ok {
+		return
+	}
+
+	w.Write([]byte{b2i(e.OwnsOne(o, coo))})
+}
+
+func (e *EconomyServer) ownsManyRoute(w http.ResponseWriter, r *http.Request) {
+	o, ok := getItem[Owner](w, r)
+	if !ok {
+		return
+	}
+
+	com, ok := getItem[CanOwnMany](w, r)
+	if !ok {
+		return
+	}
+
+	fmt.Fprintf(w, "%d", e.OwnsMany(o, com))
+}
+
+func (e *EconomyServer) ownersOneRoute(w http.ResponseWriter, r *http.Request) {
+	coo, ok := getItem[CanOwnOne](w, r)
+	if !ok {
+		return
+	}
+
+	if err := e.OwnersOne(coo).Serialise(w); err != nil {
+		http.Error(w, fmt.Sprintf("serialise OwnersOne: %v", err.Error()), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (e *EconomyServer) ownersManyRoute(w http.ResponseWriter, r *http.Request) {
+	com, ok := getItem[CanOwnMany](w, r)
+	if !ok {
+		return
+	}
+
+	if err := e.OwnersMany(com).Serialise(w); err != nil {
+		http.Error(w, fmt.Sprintf("serialise OwnersMany: %v", err.Error()), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (e *EconomyServer) countOwnersOneRoute(w http.ResponseWriter, r *http.Request) {
+	coo, ok := getItem[CanOwnOne](w, r)
+	if !ok {
+		return
+	}
+
+	fmt.Fprintf(w, "%d", e.CountOwnersOne(coo))
+}
+
+func (e *EconomyServer) countOwnersManyRoute(w http.ResponseWriter, r *http.Request) {
+	com, ok := getItem[CanOwnMany](w, r)
+	if !ok {
+		return
+	}
+
+	fmt.Fprintf(w, "%d", e.CountOwnersMany(com))
+}
+
+func (e *EconomyServer) inventoryRoute(w http.ResponseWriter, r *http.Request) {
+	o, ok := getItem[Owner](w, r) // oh ok
+	if !ok {
+		return
+	}
+
+	if err := e.Inventory(o).Serialise(w); err != nil {
+		http.Error(w, fmt.Sprintf("serialise inventory: %v", err.Error()), http.StatusInternalServerError)
+		return
+	}
 }
 
 func (e *EconomyServer) balanceRoute(w http.ResponseWriter, r *http.Request) {
-	var u User
-
-	if _, err := fmt.Sscanf(r.PathValue("id"), "%s", &u); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	o, ok := getItem[Owner](w, r)
+	if !ok {
 		return
 	}
 
-	fmt.Fprint(w, e.GetBalance(u))
+	fmt.Fprintf(w, "%d", e.Balance(o))
 }
 
-func (e *EconomyServer) adminTransactionsRoute(w http.ResponseWriter, r *http.Request) {
-	transactions, err := e.LastNTransactions(func(tx map[string]any) bool {
-		return true
-	}, 100)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+// pricesRoute returns the service's configured prices so clients can display exactly what will be charged. Prices are uint64 quantities, so this is returned as 6 consecutive big-endian uint64s in a fixed order.
+func (e *EconomyServer) pricesRoute(w http.ResponseWriter, r *http.Request) {
+	prices := []Quantity{
+		e.PlacePrice,
+		e.GroupPrice,
+		e.LimitedSourcePrice,
+		e.UnlimitedSourcePrice,
+		e.PackageSourcePrice,
+		e.StipendAmount,
 	}
-	if err := json.NewEncoder(w).Encode(transactions); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+
+	buf := make([]byte, 8*len(prices))
+	for i, p := range prices {
+		binary.BigEndian.PutUint64(buf[i*8:], uint64(p))
 	}
+
+	w.Write(buf)
 }
 
-func (e *EconomyServer) transactionsRoute(w http.ResponseWriter, r *http.Request) {
-	id := User(r.PathValue("id"))
-
-	transactions, err := e.LastNTransactions(func(tx map[string]any) bool {
-		return tx["From"] != nil && User(tx["From"].(string)) == id || tx["To"] != nil && User(tx["To"].(string)) == id
-	}, 100)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	if err := json.NewEncoder(w).Encode(transactions); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-}
-
-func (e *EconomyServer) transactRoute(w http.ResponseWriter, r *http.Request) {
-	var stx SentTx
-
-	if err := json.NewDecoder(r.Body).Decode(&stx); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	if err := e.Transact(stx); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	fmt.Println(c.InGreen(fmt.Sprintf("Transaction successful  %s -[%s]-> %s", stx.From, toReadable(stx.Amount), stx.To)))
-}
-
-func (e *EconomyServer) mintRoute(w http.ResponseWriter, r *http.Request) {
-	var sm SentMint
-
-	if err := json.NewDecoder(r.Body).Decode(&sm); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	if err := e.Mint(sm); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	fmt.Println(c.InGreen(fmt.Sprintf("Mint successful         %s <-[%s]-", sm.To, toReadable(sm.Amount))))
-}
-
-func (e *EconomyServer) burnRoute(w http.ResponseWriter, r *http.Request) {
-	var sb SentBurn
-
-	if err := json.NewDecoder(r.Body).Decode(&sb); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	if err := e.Burn(sb); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	fmt.Println(c.InGreen(fmt.Sprintf("Burn successful         %s -[%s]->", sb.From, toReadable(sb.Amount))))
-}
+// we'll expose MintCurrency some other time
 
 func (e *EconomyServer) stipendRoute(w http.ResponseWriter, r *http.Request) {
-	var to User
-
-	if _, err := fmt.Sscanf(r.PathValue("id"), "%s", &to); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	if e.GetPrevStipend(to)+stipendTime > uint64(time.Now().UnixMilli()) {
-		http.Error(w, "Next stipend not available yet", http.StatusBadRequest)
-		return
-	}
-	if err := e.Stipend(to); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	u, ok := getItem[User](w, r)
+	if !ok {
 		return
 	}
 
-	fmt.Println(c.InGreen(fmt.Sprintf("Stipend successful      %s", to)))
+	// wdc about the tid (what would we even do with it in where this API is called from??)
+	if _, err := e.Stipend(u); err != nil {
+		if err == ErrStipendNotReady {
+			http.Error(w, ErrStipendNotReady.Error(), http.StatusTooManyRequests) // we're not using 425
+			return
+		}
+
+		http.Error(w, fmt.Sprintf("stipend error: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
-func createFilepath() (file *os.File, err error) {
-	if file, err = os.OpenFile(currentFilepath, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0o644); err != nil {
-		if !errors.Is(err, os.ErrNotExist) {
-			return nil, fmt.Errorf("failed to open ledger: %w", err)
+func (e *EconomyServer) createLimitedSourceRoute(w http.ResponseWriter, r *http.Request) {
+	u, ok := getItem[User](w, r)
+	if !ok {
+		return
+	}
+
+	qty, err := DeserialiseUint64(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode stock quantity: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	// again wdc about the tid because we'll probably be redirecting and the src is what we actually want
+	src, _, err := e.CreateLimitedSource(u, Quantity(qty))
+	if err != nil {
+		http.Error(w, fmt.Sprintf("create limited source error: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	SerialiseNumeric(src, w)
+}
+
+func (e *EconomyServer) createUnlimitedSourceRoute(w http.ResponseWriter, r *http.Request) {
+	u, ok := getItem[User](w, r)
+	if !ok {
+		return
+	}
+
+	src, _, err := e.CreateUnlimitedSource(u)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("create unlimited source error: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	SerialiseNumeric(src, w)
+}
+
+func (e *EconomyServer) createPlaceRoute(w http.ResponseWriter, r *http.Request) {
+	u, ok := getItem[User](w, r)
+	if !ok {
+		return
+	}
+
+	p, _, err := e.CreatePlace(u)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("create place error: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	SerialiseNumeric(p, w)
+}
+
+func (e *EconomyServer) createGroupRoute(w http.ResponseWriter, r *http.Request) {
+	u, ok := getItem[User](w, r)
+	if !ok {
+		return
+	}
+
+	g, _, err := e.CreateGroup(u)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("create group error: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	SerialiseString(g, w)
+}
+
+func (e *EconomyServer) createPackageSourceRoute(w http.ResponseWriter, r *http.Request) {
+	u, ok := getItem[User](w, r)
+	if !ok {
+		return
+	}
+
+	count, err := DeserialiseUint32(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode component count: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+	if count > MaxCollectionEntries {
+		http.Error(w, fmt.Sprintf("component count %d exceeds limit %d", count, MaxCollectionEntries), http.StatusBadRequest)
+		return
+	}
+
+	comps := make([]PackageComponent, 0, count)
+	for i := uint32(0); i < count; i++ {
+		i, err := DeserialiseItem(r.Body)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("decode component %d: %v", i, err.Error()), http.StatusBadRequest)
+			return
 		}
 
-		fmt.Println(c.InPurple("Economy data folder not found, creating..."))
-		if err = os.MkdirAll(folderpath, 0o644); err != nil {
-			return nil, fmt.Errorf("failed to create *Economy data folder: %w", err)
+		c, ok := i.(PackageComponent)
+		if !ok {
+			http.Error(w, fmt.Sprintf("component %d is not a package component: %T", i, i), http.StatusBadRequest)
+			return
 		}
-		if file, err = os.Create(currentFilepath); err != nil {
-			return nil, fmt.Errorf("failed to create ledger: %w", err)
+		comps = append(comps, c)
+	}
+
+	src, _, err := e.CreatePackageSource(u, comps)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("create package source error: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	SerialiseNumeric(src, w)
+}
+
+func (e *EconomyServer) buyPackageRoute(w http.ResponseWriter, r *http.Request) {
+	u, ok := getItem[User](w, r)
+	if !ok {
+		return
+	}
+
+	src, ok := getItem[PackageSource](w, r)
+	if !ok {
+		return
+	}
+
+	price, err := DeserialiseUint64(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode price: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	if _, _, err := e.BuyPackage(u, src, Quantity(price)); err != nil {
+		http.Error(w, fmt.Sprintf("buy package error: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
+// serialiseItemsOne writes an ItemsOne as a full Items payload. ItemsOne.Serialise on its own only emits the One section, which leaves the trailing ItemsMany length off the end and makes the response unparseable.
+func serialiseItemsOne(items ItemsOne, w io.Writer) error {
+	return Items{One: items}.Serialise(w)
+}
+
+func (e *EconomyServer) packageContentsRoute(w http.ResponseWriter, r *http.Request) {
+	src, ok := getItem[PackageSource](w, r)
+	if !ok {
+		return
+	}
+
+	if err := serialiseItemsOne(e.PackageContents(src), w); err != nil {
+		http.Error(w, fmt.Sprintf("serialise package contents: %v", err.Error()), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (e *EconomyServer) packageItemsRoute(w http.ResponseWriter, r *http.Request) {
+	if err := serialiseItemsOne(e.PackageItems(), w); err != nil {
+		http.Error(w, fmt.Sprintf("serialise package items: %v", err.Error()), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (e *EconomyServer) buyUnlimitedAssetRoute(w http.ResponseWriter, r *http.Request) {
+	u, ok := getItem[User](w, r)
+	if !ok {
+		return
+	}
+
+	src, ok := getItem[UnlimitedSource](w, r)
+	if !ok {
+		return
+	}
+
+	price, err := DeserialiseUint64(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode price: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	if _, _, err := e.BuyUnlimitedAsset(u, src, Quantity(price)); err != nil {
+		http.Error(w, fmt.Sprintf("buy unlimited asset error: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	// really I don't think there's a need to return any actual data here
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (e *EconomyServer) buyLimitedAssetRoute(w http.ResponseWriter, r *http.Request) {
+	u, ok := getItem[User](w, r)
+	if !ok {
+		return
+	}
+
+	src, ok := getItem[LimitedSource](w, r)
+	if !ok {
+		return
+	}
+
+	priceEach, err := DeserialiseUint64(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode priceEach: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	qty, err := DeserialiseUint64(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode quantity: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	if _, _, err := e.BuyLimitedAsset(u, src, Quantity(priceEach), Quantity(qty)); err != nil {
+		http.Error(w, fmt.Sprintf("buy limited asset error: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (e *EconomyServer) historyRoute(w http.ResponseWriter, r *http.Request) {
+	n, err := DeserialiseUint32(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode number: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+	if n > maxHistoryEntries {
+		http.Error(w, fmt.Sprintf("history limit is %d", maxHistoryEntries), http.StatusBadRequest)
+		return
+	}
+
+	history, err := e.TransferHistory(n)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("fetch transfer history: %v", err.Error()), http.StatusInternalServerError)
+		return
+	}
+
+	for _, t := range history {
+		if err := t.Serialise(w); err != nil {
+			http.Error(w, fmt.Sprintf("serialise transfer: %v", err.Error()), http.StatusInternalServerError)
+			return
 		}
 	}
-	return
+}
+
+func (e *EconomyServer) historyOwnerRoute(w http.ResponseWriter, r *http.Request) {
+	n, err := DeserialiseUint32(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode number: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+	if n > maxHistoryEntries {
+		http.Error(w, fmt.Sprintf("history limit is %d", maxHistoryEntries), http.StatusBadRequest)
+		return
+	}
+
+	o, ok := getItem[Owner](w, r)
+	if !ok {
+		return
+	}
+
+	history, err := e.TransferHistoryOwner(n, o)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("fetch transfer history: %v", err.Error()), http.StatusInternalServerError)
+		return
+	}
+
+	for _, t := range history {
+		if err := t.Serialise(w); err != nil {
+			http.Error(w, fmt.Sprintf("serialise transfer: %v", err.Error()), http.StatusInternalServerError)
+			return
+		}
+	}
+}
+
+type CustomResponseWriter struct {
+	http.ResponseWriter
+	log        []byte
+	statusCode int
+}
+
+func (w *CustomResponseWriter) WriteHeader(code int) {
+	w.statusCode = code
+	w.ResponseWriter.WriteHeader(code)
+}
+
+func (w *CustomResponseWriter) Write(b []byte) (int, error) {
+	if remaining := maxResponseLogBytes - len(w.log); remaining > 0 {
+		if len(b) < remaining {
+			w.log = append(w.log, b...)
+		} else {
+			w.log = append(w.log, b[:remaining]...)
+		}
+	}
+	return w.ResponseWriter.Write(b)
+}
+
+func colourCode(cs int) string {
+	scs := strconv.Itoa(cs)
+
+	if cs >= 500 {
+		return c.InRed(scs)
+	}
+	if cs >= 400 {
+		return c.InYellow(scs)
+	}
+	return c.InGreen(scs)
+}
+
+func loggingHandler(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		t := time.Now().Format("2006-01-02 15:04:05")
+
+		bodyBytes, err := io.ReadAll(http.MaxBytesReader(w, r.Body, maxRequestBodyBytes))
+		if err != nil {
+			status := http.StatusBadRequest
+			var maxErr *http.MaxBytesError
+			if errors.As(err, &maxErr) {
+				status = http.StatusRequestEntityTooLarge
+			}
+
+			crw := &CustomResponseWriter{
+				ResponseWriter: w,
+				statusCode:     status,
+			}
+			http.Error(crw, http.StatusText(status), status)
+
+			fmt.Printf("%s %s %s\n", c.InGray(t), colourCode(status), c.InBlue(r.URL.Path))
+			fmt.Println(c.InRed(fmt.Sprintf("Failed to read request body: %v", err)))
+			fmt.Println(c.InPurple(string(crw.log)))
+			return
+		}
+
+		// log the body, then let handlers read it from memory
+		fmt.Println(c.InWhite(bodyBytes))
+		r.Body = io.NopCloser(bytes.NewReader(bodyBytes))
+
+		crw := &CustomResponseWriter{
+			ResponseWriter: w,
+			statusCode:     http.StatusOK,
+		}
+		next.ServeHTTP(crw, r)
+		cs := crw.statusCode
+
+		code := colourCode(cs)
+
+		fmt.Printf("%s %s %s\n", c.InGray(t), code, c.InBlue(r.URL.Path))
+		fmt.Println(c.InPurple(string(crw.log)))
+	})
+}
+
+// routes are kept in step with the Route union in client/api.ts
+var routes = []struct {
+	path string
+	h    func(*EconomyServer, http.ResponseWriter, *http.Request)
+}{
+	{"ownsOne", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.ownsOneRoute(w, r) }},
+	{"ownsMany", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.ownsManyRoute(w, r) }},
+	{"ownersOne", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.ownersOneRoute(w, r) }},
+	{"ownersMany", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.ownersManyRoute(w, r) }},
+	{"countOwnersOne", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.countOwnersOneRoute(w, r) }},
+	{"countOwnersMany", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.countOwnersManyRoute(w, r) }},
+	{"inventory", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.inventoryRoute(w, r) }},
+	{"balance", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.balanceRoute(w, r) }},
+	{"prices", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.pricesRoute(w, r) }},
+	{"stipend", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.stipendRoute(w, r) }},
+	{"createLimitedSource", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.createLimitedSourceRoute(w, r) }},
+	{"createUnlimitedSource", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.createUnlimitedSourceRoute(w, r) }},
+	{"createPlace", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.createPlaceRoute(w, r) }},
+	{"createGroup", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.createGroupRoute(w, r) }},
+	{"buyUnlimitedAsset", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.buyUnlimitedAssetRoute(w, r) }},
+	{"buyLimitedAsset", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.buyLimitedAssetRoute(w, r) }},
+	{"createPackageSource", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.createPackageSourceRoute(w, r) }},
+	{"buyPackage", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.buyPackageRoute(w, r) }},
+	{"packageContents", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.packageContentsRoute(w, r) }},
+	{"packageItems", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.packageItemsRoute(w, r) }},
+	{"history", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.historyRoute(w, r) }},
+	{"historyOwner", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.historyOwnerRoute(w, r) }},
+}
+
+func registerRoutes(mux *http.ServeMux, es *EconomyServer) {
+	for _, r := range routes {
+		mux.HandleFunc("POST /"+r.path, func(w http.ResponseWriter, req *http.Request) {
+			r.h(es, w, req)
+		})
+	}
 }
 
 func main() {
-	fmt.Println(c.InYellow("Loading ledger..."))
-	// create the file if it dont exist
+	dbPath := flag.String("db", "mydb.db", "path to the ledger database")
+	addr := flag.String("addr", ":2009", "address to listen on")
+	flag.Parse()
 
-	file, err := createFilepath()
+	l, err := NewLedger(*dbPath)
 	if err != nil {
-		fmt.Println(c.InRed("Failed to create or open ledger: " + err.Error()))
-		os.Exit(1)
+		panic(err)
 	}
-	defer file.Close()
+	defer l.Close()
 
-	e, err := NewEconomy(file)
-	if err != nil {
-		fmt.Println(c.InRed("Failed to create economy: " + err.Error()))
-		os.Exit(1)
+	fmt.Println("Database opened successfully")
+	fmt.Println()
+
+	e := NewEconomy(l, 10, 10, 100, 10, 10, 10, time.Hour*12)
+
+	if history, err := e.TransferHistory(10); err == nil {
+		fmt.Println("Recent transfer history:")
+		for _, t := range history {
+			fmt.Printf("- %s\n", t.Transfer)
+		}
+		fmt.Println()
+	} else {
+		fmt.Printf("Error fetching transfer history: %v\n", err)
 	}
 
-	e.Stats()
+	registerRoutes(http.DefaultServeMux, &EconomyServer{e})
 
-	es := EconomyServer{Economy: e}
-
-	// http.HandleFunc("GET /currentFee", es.currentFeeRoute)
-	http.HandleFunc("GET /currentStipend", es.currentStipendRoute)
-	http.HandleFunc("GET /balance/{id}", es.balanceRoute)
-	http.HandleFunc("GET /transactions", es.adminTransactionsRoute)
-	http.HandleFunc("GET /transactions/{id}", es.transactionsRoute)
-	http.HandleFunc("POST /transact", es.transactRoute)
-	http.HandleFunc("POST /mint", es.mintRoute)
-	http.HandleFunc("POST /burn", es.burnRoute)
-	http.HandleFunc("POST /stipend/{id}", es.stipendRoute)
-
-	fmt.Println(c.InGreen("~ Economy service is up on port 2009 ~")) // 03/Jan/2009 Chancellor on brink of second bailout for banks
-	if err := http.ListenAndServe(":2009", nil); err != nil {
+	fmt.Printf("%s\n", c.InGreen(fmt.Sprintf("~ Economy service is up on %s (ledger %s) ~", *addr, *dbPath))) // 03/Jan/2009 Chancellor on brink of second bailout for banks
+	if err := http.ListenAndServe(*addr, loggingHandler(http.DefaultServeMux)); err != nil {
 		fmt.Println(c.InRed("Failed to start server: " + err.Error()))
 		os.Exit(1)
 	}

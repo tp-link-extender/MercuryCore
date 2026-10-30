@@ -27,12 +27,16 @@
 		{asset.name}
 		<span class="flex">
 			<strong class="pr-2">by</strong>
-			<User
-				user={asset.creator}
-				size="1.5rem"
-				thin
-				full
-				bg="background" />
+			{#if asset.owner}
+				<User
+					user={asset.owner}
+					size="1.5rem"
+					thin
+					full
+					bg="background" />
+			{:else}
+				<i>Unknown user</i>
+			{/if}
 		</span>
 	</div>
 	<div class="flex flex-col gap-1 p-3">

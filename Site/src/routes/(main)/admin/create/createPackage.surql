@@ -1,5 +1,5 @@
-# Creates a package asset and all of the assets inside it
-# (children are inserted as their own records, and must be offsale)
+# Creates a package asset record and the asset records for everything inside it.
+# Ownership resolution lives in the Economy service, so there are no relation writes here.
 
 CREATE ONLY asset CONTENT {
 	id: $id,
@@ -11,10 +11,5 @@ CREATE ONLY asset CONTENT {
 	type: 32, # package
 	visibility: "Visible",
 };
-RELATE $user->ownsAsset->$pkgRecord;
-RELATE $user->created->$pkgRecord;
 
 INSERT INTO asset $childRows;
-RELATE $user->ownsAsset->$childRecords;
-RELATE $user->created->$childRecords;
-RELATE $pkgRecord->packageItem->$childRecords;

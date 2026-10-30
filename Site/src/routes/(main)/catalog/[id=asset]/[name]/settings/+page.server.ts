@@ -2,7 +2,8 @@ import fs from "node:fs"
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
 import { authorise } from "$lib/server/auth"
-import { isImage, isMesh, isRobloxModel } from "$lib/server/fileType"
+import { assetOwner, economyConnFailed } from "$lib/server/economy"
+import { isAudio, isImage, isMesh, isRobloxModel } from "$lib/server/fileType"
 import formError from "$lib/server/formError"
 import {
 	clothingAsset,
@@ -24,7 +25,6 @@ import updateAssetQuery from "./updateAsset.surql"
 type Asset = {
 	id: string
 	created: Date
-	creator: BasicUser
 	description: string
 	forSale: boolean
 	imageAssetId: number | null
@@ -48,20 +48,22 @@ const reuploadSchema = type({
 	asset: "File",
 })
 
-export async function load({ locals, params }) {
+export async function load({ fetch: f, locals, params }) {
 	const { user } = await authorise(locals)
 	const id = +params.id
 	const [[check]] = await db.query<AssetCheck[][]>(assetCheckQuery, {
 		asset: Record("asset", id),
-		user: Record("user", user.id),
 	})
 	if (!check) error(404, "Not Found")
-	if (!check.isCreator && user.permissionLevel < 3)
+
+	const owner = await assetOwner(f, id, check.type)
+	if (!owner.ok) error(500, economyConnFailed)
+	const isOwner = owner.value?.id === user.id
+	if (!isOwner && user.permissionLevel < 3)
 		error(403, "You do not have permission to view this page")
 
 	const [[asset]] = await db.query<Asset[][]>(assetQuery, {
 		asset: Record("asset", id),
-		user: Record("user", user.id),
 	})
 	if (!asset) error(404, "Not Found")
 
@@ -84,13 +86,12 @@ export async function load({ locals, params }) {
 export const actions: import("./$types").Actions = {}
 
 type AssetCheck = {
-	isCreator: boolean
 	imageAssetId: number | null
 	type: number
 	name: string
 }
 
-actions.settings = async ({ locals, params, request }) => {
+actions.settings = async ({ fetch: f, locals, params, request }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
@@ -98,10 +99,12 @@ actions.settings = async ({ locals, params, request }) => {
 	const id = +params.id
 	const [[asset]] = await db.query<AssetCheck[][]>(assetCheckQuery, {
 		asset: Record("asset", id),
-		user: Record("user", user.id),
 	})
 	if (!asset) error(404, "Not Found")
-	if (!asset.isCreator && user.permissionLevel < 4)
+
+	const owner = await assetOwner(f, id, asset.type)
+	if (!owner.ok) error(500, economyConnFailed)
+	if (owner.value?.id !== user.id && user.permissionLevel < 4)
 		error(403, "You do not have permission to edit this asset")
 
 	await db.query(updateAssetQuery, {
@@ -140,10 +143,12 @@ actions.reupload = async ({
 	const id = +params.id
 	const [[asset]] = await db.query<AssetCheck[][]>(assetCheckQuery, {
 		asset: Record("asset", id),
-		user: Record("user", user.id),
 	})
 	if (!asset) error(404, "Not Found")
-	if (!asset.isCreator && user.permissionLevel < 4)
+
+	const owner = await assetOwner(f, id, asset.type)
+	if (!owner.ok) error(500, economyConnFailed)
+	if (owner.value?.id !== user.id && user.permissionLevel < 4)
 		error(403, "You do not have permission to edit this asset")
 
 	// packages are collections of assets and don't have a file of their own to replace

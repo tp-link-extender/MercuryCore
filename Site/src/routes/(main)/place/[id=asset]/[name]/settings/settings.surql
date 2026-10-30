@@ -5,7 +5,6 @@ SELECT
 	maxPlayers,
 	name,
 	clientVersion,
-	(SELECT status, username FROM $parent<-ownsPlace<-user)[0] AS owner,
 	privateServer,
 	privateTicket,
 	serverAddress,

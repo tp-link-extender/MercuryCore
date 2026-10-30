@@ -1,20 +1,23 @@
 import fs from "node:fs"
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
+import { createPackageSource, createUnlimitedSource } from "economy/api"
+import * as Econ from "economy/types"
 import types, { typeToNumber } from "$lib/assetTypes"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
-import { randomAssetId } from "$lib/server/id"
 import requestRender from "$lib/server/requestRender"
-import { db, Record } from "$lib/server/surreal"
+import { db } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
-import { isXML } from "$lib/server/xml.js"
+import { isXML } from "$lib/server/xml"
+import { encode } from "$lib/urlName"
 import createQuery from "./create.surql"
 import createPackageQuery from "./createPackage.surql"
 
 const schema = type({
 	type: type
 		.enumerated(...Object.values(types))
+		// TODO: compare with the other method in normal creation flow
 		.pipe.try(t => {
 			const num = typeToNumber[t]
 			if (!num) throw new Error("Invalid asset type")
@@ -38,7 +41,7 @@ const packageSchema = type({
 // an equipped package replaces these slots, so a package can't fight itself
 // (hats are the exception, with 3 slots)
 const slotTypes = Object.freeze([2, 8, 11, 12, 18, 25, 26, 27, 28, 29, 30, 31])
-const slotLimits = Object.freeze({
+const slotLimits: Readonly<{ [_: number]: number }> = Object.freeze({
 	2: 1,
 	8: 3,
 	11: 1,
@@ -67,7 +70,8 @@ actions.default = async ({ fetch: f, locals, request }) => {
 	const formData = await request.formData()
 
 	// packages are collections of assets, so they need special handling
-	if (formData.get("type") === "Package") return createPackage(formData, user, f)
+	if (formData.get("type") === "Package")
+		return createPackage(formData, user, f)
 
 	const form = await superValidate(formData, arktype(schema))
 	if (!form.valid) return formError(form)
@@ -84,15 +88,23 @@ actions.default = async ({ fetch: f, locals, request }) => {
 	if (assetType === 18 && !isXML(buf))
 		return formError(form, ["asset"], ["Face assets must be in XML format"])
 
-	if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
-	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
+	// if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
+	// if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
 
-	const [, id] = await db.query<string[]>(createQuery, {
+	const u = new Econ.User(user.id)
+	// TODO: allow without requiring currency
+	const created = await createUnlimitedSource(f, u)
+	if (!created.ok)
+		return formError(form, ["other"], ["Failed to create asset source"])
+
+	const id = created.value.ID
+
+	await db.query<string[]>(createQuery, {
+		id,
 		description,
 		name,
 		price,
 		assetType,
-		user: Record("user", user.id),
 	})
 
 	await Bun.write(`../data/assets/${id}`, buf)
@@ -175,7 +187,7 @@ async function createPackage(
 			return fail("Face assets must be in XML format")
 
 		children.push({
-			id: randomAssetId(),
+			id: 0, // assigned below, from the Economy service
 			description: descriptions[num] ?? "",
 			name,
 			type: assetType,
@@ -196,12 +208,28 @@ async function createPackage(
 			)
 	}
 
+	// Asset ids come from the Economy service, so a package's contents are owned there and can only ever be sold as part of the bundle. Every child needs its own unlimited source, and the package needs a package source holding all of them.
+	const u = new Econ.User(user.id)
+	const comps: Econ.UnlimitedSource[] = []
+	for (const [num, child] of children.entries()) {
+		const created = await createUnlimitedSource(f, u)
+		if (!created.ok)
+			return fail(`Failed to create a source for asset #${num + 1}`)
+
+		comps.push(created.value)
+		child.id = created.value.ID
+	}
+
+	const createdPackage = await createPackageSource(f, u, comps)
+	if (!createdPackage.ok)
+		return fail("Failed to create a source for the package")
+
+	const id = createdPackage.value.ID
+
 	if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
 	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
 
-	const id = randomAssetId()
 	await db.query(createPackageQuery, {
-		childRecords: children.map(c => Record("asset", c.id)),
 		childRows: children.map(c => ({
 			description: [{ text: c.description }],
 			forSale: false, // package items are offsale by default
@@ -214,9 +242,7 @@ async function createPackage(
 		description,
 		id,
 		name,
-		pkgRecord: Record("asset", id),
 		price,
-		user: Record("user", user.id),
 	})
 
 	await Promise.all(
@@ -231,5 +257,5 @@ async function createPackage(
 		console.error(e)
 	}
 
-	redirect(302, `/catalog/${id}`)
+	redirect(302, `/catalog/${id}/${encode(name)}`)
 }

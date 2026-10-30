@@ -7,23 +7,16 @@
 	import { superForm } from "$lib/validate"
 	import clientVersions from "./clientVersions"
 
-	// import beautifyCurrency from "$lib/beautifyCurrency"
-
 	const { data } = $props()
 
 	let formData = $derived(superForm(data.form))
 	export const snapshot = formData
-
-	// const [, c1, c2] = beautifyCurrency(data.price)
 </script>
 
 <Head name={data.siteName} title="Create a place" />
 
 <h1 class="text-center">Create a place</h1>
 
-<!-- submit={data.price > 0
-	? `Create (${data.currencySymbol}${c1}${c2 ? "." : ""}${c2})`
-	: "Create"} -->
 <Form {formData} nopad class="ctnr pt-12 max-w-200 light-text" submit="Create">
 	<Input
 		{formData}

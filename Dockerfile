@@ -3,23 +3,21 @@
 FROM oven/bun AS base
 WORKDIR /app
 
-# install dependencies into temp directory
-# this will cache them and speed up future builds
+# install dependencies in a separate layer so they are cached
 FROM base AS install
 
-# install with --production (exclude devDependencies)
-RUN mkdir -p /temp/prod
-COPY Site/package.json Site/bun.lock /temp/prod/
-RUN cd /temp/prod && bun i --frozen-lockfile -p
+# The Site depends on ../Economy/client, so it must exist at the same relative path during install and build. The release stage copies it too, so Bun's file: dependency resolves whether it is copied or symlinked.
+COPY Economy/client Economy/client
+COPY Site/package.json Site/bun.lock Site/
+WORKDIR /app/Site
+RUN bun i --frozen-lockfile
 
-# copy production dependencies and source code into final image
 FROM base AS release
-COPY --from=install /temp/prod/node_modules node_modules
+COPY --from=install /app/Site/node_modules /app/Site/node_modules
+COPY Economy/client Economy/client
 COPY Assets Assets
 COPY Site Site
 COPY mercury.core.ts mercury.core.ts
-
-# build the app
 WORKDIR /app/Site
 RUN bun run build
 
