@@ -3,8 +3,12 @@ package surreal
 import (
 	"context"
 	"fmt"
+	"net/url"
+	"time"
 
 	surrealdb "github.com/surrealdb/surrealdb.go"
+	"github.com/surrealdb/surrealdb.go/pkg/connection"
+	httpconn "github.com/surrealdb/surrealdb.go/pkg/connection/http"
 )
 
 // Client is a small wrapper around the official SurrealDB Go SDK for the administrative commands in this repository.
@@ -13,12 +17,38 @@ type Client struct {
 	db  *surrealdb.DB
 }
 
-func New(url, namespace, database, user, pass string) (*Client, error) {
+func New(endpoint, namespace, database, user, pass string) (*Client, error) {
+	return NewWithTimeout(endpoint, namespace, database, user, pass, 30*time.Second)
+}
+
+// NewWithTimeout connects to SurrealDB and applies timeout to each HTTP request.
+// The SDK otherwise defaults to a 10 second request timeout, which is too short for the prune cleanup transaction on a large database.
+// A zero timeout disables the per-request timeout.
+func NewWithTimeout(endpoint, namespace, database, user, pass string, timeout time.Duration) (*Client, error) {
 	ctx := context.Background()
-	db, err := surrealdb.FromEndpointURLString(ctx, url)
+
+	u, err := url.ParseRequestURI(endpoint)
+	if err != nil {
+		return nil, fmt.Errorf("parse surreal endpoint: %w", err)
+	}
+
+	var db *surrealdb.DB
+	switch u.Scheme {
+	case "http", "https":
+		conf := connection.NewConfig(u)
+		if err := conf.Validate(); err != nil {
+			return nil, fmt.Errorf("connect surreal: %w", err)
+		}
+		con := httpconn.New(conf)
+		con.SetTimeout(timeout)
+		db, err = surrealdb.FromConnection(ctx, con)
+	default:
+		db, err = surrealdb.FromEndpointURLString(ctx, endpoint)
+	}
 	if err != nil {
 		return nil, fmt.Errorf("connect surreal: %w", err)
 	}
+
 	if err := db.Use(ctx, namespace, database); err != nil {
 		db.Close(ctx)
 		return nil, fmt.Errorf("use surreal namespace/database: %w", err)

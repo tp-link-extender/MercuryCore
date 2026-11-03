@@ -13,7 +13,9 @@ The active ledger is normally `Economy/mydb.db` when the Site starts the Economy
 
 Stop the Site and the Economy service first. The command opens the ledger with bbolt's exclusive lock, so it waits 10 seconds for the Economy service to release it before failing.
 
-If the Site starts SurrealDB (`Database.AutoStart`), stopping the Site also stops it. Start SurrealDB manually for the command, or leave a separately managed instance running.
+If the Site starts SurrealDB (`Database.AutoStart`), stopping the Site also stops it. Start SurrealDB manually for the command, or leave a separately managed instance running. SurrealDB must be running; the Site and Economy service must not be.
+
+The cleanup transaction can take longer than the SDK's 10 second default on a large database. The command defaults to a 5 minute request timeout; raise `--surreal-timeout` (for example `15m`) if it still times out, or use `0` to disable the per-request timeout.
 
 Back up:
 
@@ -84,6 +86,7 @@ mv mydb.pruned.db mydb.db
 - `--report PATH`: JSON report (default `prune-report.json`).
 - `--remove-types LIST`: comma-separated asset types to remove. Packages are always removed. Default `8,18,19,32`.
 - `--surreal URL`, `--namespace`, `--database`, `--surreal-user`, `--surreal-pass`: SurrealDB access.
+- `--surreal-timeout DURATION`: per-request SurrealDB timeout (default `5m`; `0` disables it). The cleanup runs as one transaction, so a large database can need several minutes.
 - `--assets-dir PATH`, `--thumbnails-dir PATH`: file locations (defaults `../data/assets`, `../data/thumbnails`).
 - `--dry-run`: build a temporary ledger and report database/file changes without applying them.
 - `--force`: overwrite an existing output ledger.

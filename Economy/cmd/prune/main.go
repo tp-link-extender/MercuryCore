@@ -18,6 +18,7 @@ import (
 type options struct {
 	db, out, report, surrealURL, namespace, database, surrealUser, surrealPass, removeTypes, assetsDir, thumbnailsDir string
 	dryRun, force, skipLedger, skipSite, skipFiles, dropOrphans, keepOrphans                                          bool
+	surrealTimeout                                                                                                    time.Duration
 	batchSize                                                                                                         int
 }
 
@@ -31,6 +32,7 @@ func main() {
 	flag.StringVar(&o.database, "database", "main", "SurrealDB database")
 	flag.StringVar(&o.surrealUser, "surreal-user", "root", "SurrealDB username")
 	flag.StringVar(&o.surrealPass, "surreal-pass", "root", "SurrealDB password")
+	flag.DurationVar(&o.surrealTimeout, "surreal-timeout", 5*time.Minute, "timeout for each SurrealDB HTTP request; 0 disables it")
 	flag.StringVar(&o.removeTypes, "remove-types", "8,18,19,32", "comma-separated asset types to remove; packages (32) are always removed")
 	flag.StringVar(&o.assetsDir, "assets-dir", "../data/assets", "asset file directory")
 	flag.StringVar(&o.thumbnailsDir, "thumbnails-dir", "../data/thumbnails", "thumbnail file directory")
@@ -112,7 +114,7 @@ func main() {
 }
 
 func run(o options, removeTypes map[int]struct{}, rep *report) error {
-	client, err := sdb.New(o.surrealURL, o.namespace, o.database, o.surrealUser, o.surrealPass)
+	client, err := sdb.NewWithTimeout(o.surrealURL, o.namespace, o.database, o.surrealUser, o.surrealPass, o.surrealTimeout)
 	if err != nil {
 		rep.Errors = append(rep.Errors, err.Error())
 		return err
@@ -263,7 +265,7 @@ func run(o options, removeTypes map[int]struct{}, rep *report) error {
 
 	if err := applySite(client, tables, removedIDs, removedIDStrings, commentIDs, plan.orphanImages); err != nil {
 		rep.Errors = append(rep.Errors, err.Error())
-		return fmt.Errorf("apply SurrealDB cleanup: %w", err)
+		return fmt.Errorf("apply SurrealDB cleanup (try a larger --surreal-timeout for a large database): %w", err)
 	}
 	rep.Site.Committed = true
 
