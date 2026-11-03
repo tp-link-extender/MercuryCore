@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"sync"
+	"time"
 
 	bolt "go.etcd.io/bbolt"
 )
@@ -423,17 +424,58 @@ type Ledger struct {
 }
 
 func NewLedger(dbPath string) (*Ledger, error) {
-	db, err := bolt.Open(dbPath, 0o600, nil)
+	return NewLedgerWithTimeout(dbPath, 0)
+}
+
+// NewLedgerWithTimeout opens a ledger, waiting at most timeout for another process to release the bbolt file.
+// A zero timeout waits indefinitely.
+func NewLedgerWithTimeout(dbPath string, timeout time.Duration) (*Ledger, error) {
+	db, err := bolt.Open(dbPath, 0o600, &bolt.Options{Timeout: timeout})
 	if err != nil {
 		return nil, fmt.Errorf("open db: %w", err)
 	}
 
 	s, err := ReadState(db)
 	if err != nil {
+		db.Close()
 		return nil, fmt.Errorf("read state: %w", err)
 	}
 
 	return &Ledger{db: db, state: s}, nil
+}
+
+// AllOneItems returns a copy of every one-per-owner item that currently has at least one owner.
+// It is read-only and intended for administrative snapshots.
+func (l *Ledger) AllOneItems() map[CanOwnOne]OwnersOne {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+
+	out := make(map[CanOwnOne]OwnersOne, len(l.state.itemOwnersOne))
+	for item, owners := range l.state.itemOwnersOne {
+		c := make(OwnersOne, len(*owners))
+		for owner := range *owners {
+			c[owner] = struct{}{}
+		}
+		out[item] = c
+	}
+	return out
+}
+
+// AllManyItems returns a copy of every many-per-owner item and its owner quantities.
+// It is read-only and intended for administrative snapshots.
+func (l *Ledger) AllManyItems() map[CanOwnMany]OwnersMany {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+
+	out := make(map[CanOwnMany]OwnersMany, len(l.state.itemOwnersMany))
+	for item, owners := range l.state.itemOwnersMany {
+		c := make(OwnersMany, len(*owners))
+		for owner, qty := range *owners {
+			c[owner] = qty
+		}
+		out[item] = c
+	}
+	return out
 }
 
 func (l *Ledger) Close() error {
