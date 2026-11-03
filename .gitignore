@@ -4,3 +4,5 @@
 /keys
 /Economy/Economy
 /Economy/Economy.exe
+prune-report.json
+migration-report.json

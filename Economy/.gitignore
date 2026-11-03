@@ -1,3 +1,5 @@
 *.db
+*.db.*
 *.pem
 migration-report.json
+prune-report.json
