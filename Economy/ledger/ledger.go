@@ -436,6 +436,40 @@ func NewLedger(dbPath string) (*Ledger, error) {
 	return &Ledger{db: db, state: s}, nil
 }
 
+// AllOneItems returns a copy of every one-per-owner item that currently has at least one owner.
+// It is read-only and intended for administrative snapshots.
+func (l *Ledger) AllOneItems() map[CanOwnOne]OwnersOne {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+
+	out := make(map[CanOwnOne]OwnersOne, len(l.state.itemOwnersOne))
+	for item, owners := range l.state.itemOwnersOne {
+		c := make(OwnersOne, len(*owners))
+		for owner := range *owners {
+			c[owner] = struct{}{}
+		}
+		out[item] = c
+	}
+	return out
+}
+
+// AllManyItems returns a copy of every many-per-owner item and its owner quantities.
+// It is read-only and intended for administrative snapshots.
+func (l *Ledger) AllManyItems() map[CanOwnMany]OwnersMany {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+
+	out := make(map[CanOwnMany]OwnersMany, len(l.state.itemOwnersMany))
+	for item, owners := range l.state.itemOwnersMany {
+		c := make(OwnersMany, len(*owners))
+		for owner, qty := range *owners {
+			c[owner] = qty
+		}
+		out[item] = c
+	}
+	return out
+}
+
 func (l *Ledger) Close() error {
 	l.mu.Lock()
 	defer l.mu.Unlock()
