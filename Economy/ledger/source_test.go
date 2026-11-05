@@ -116,3 +116,56 @@ func TestIssuedUnlimitedSourceCanMint(t *testing.T) {
 		t.Fatalf("expected the creator to be paid 10, balance went %d -> %d", before, got)
 	}
 }
+
+// Owning a source is how a creator is represented, not the asset itself, so a creator must still be able to buy their own asset.
+func TestCreatorCanBuyOwnUnlimitedAsset(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{"creator"}
+	fund(t, e, creator)
+
+	src, _, err := e.CreateUnlimitedSource(creator)
+	if err != nil {
+		t.Fatalf("CreateUnlimitedSource: %v", err)
+	}
+
+	before := e.Balance(creator)
+	asset, _, err := e.BuyUnlimitedAsset(creator, src, 10)
+	if err != nil {
+		t.Fatalf("BuyUnlimitedAsset: %v", err)
+	}
+
+	if !e.OwnsOne(creator, asset) {
+		t.Fatalf("expected %v to own %v", creator, asset)
+	}
+	// buying from yourself pays you, so only the asset moves
+	if got := e.Balance(creator); got != before {
+		t.Fatalf("expected the balance to be unchanged at %d, got %d", before, got)
+	}
+}
+
+// the asset itself is still one-per-person, so a second purchase has to be rejected
+func TestBuyingOwnedUnlimitedAssetFails(t *testing.T) {
+	_, e := newTestEconomy(t)
+
+	creator := User{"creator"}
+	buyer := User{"buyer"}
+	fund(t, e, creator, buyer)
+
+	src, _, err := e.CreateUnlimitedSource(creator)
+	if err != nil {
+		t.Fatalf("CreateUnlimitedSource: %v", err)
+	}
+
+	if _, _, err := e.BuyUnlimitedAsset(buyer, src, 10); err != nil {
+		t.Fatalf("BuyUnlimitedAsset: %v", err)
+	}
+
+	before := e.Balance(buyer)
+	if _, _, err := e.BuyUnlimitedAsset(buyer, src, 10); err == nil {
+		t.Fatalf("expected a second purchase to fail")
+	}
+	if got := e.Balance(buyer); got != before {
+		t.Fatalf("expected a rejected purchase to cost nothing, balance went %d -> %d", before, got)
+	}
+}

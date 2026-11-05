@@ -244,11 +244,13 @@ func (e *Economy) CreateGroup(u User) (g Group, tid TransferID, err error) {
 }
 
 func (e *Economy) BuyUnlimitedAsset(u User, src UnlimitedSource, price Quantity) (a UnlimitedAsset, tid TransferID, err error) {
-	if e.OwnsOne(u, src) {
-		return a, tid, fmt.Errorf("user %v already owns unlimited source %v", u, src)
-	}
-
 	a = src.Create()
+
+	// Owning the source is how creators are represented, so checking the source here would stop them from ever buying their own asset.
+	// The thing that can only be owned once is the asset, and the ledger rejects a second copy under the transfer lock anyway.
+	if e.OwnsOne(u, a) {
+		return a, tid, fmt.Errorf("user %v already owns unlimited asset %v", u, a)
+	}
 
 	tf := Transfer{
 		{
