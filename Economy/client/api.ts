@@ -433,10 +433,14 @@ export const buyLimitedAsset = (
 		])
 	).then(res => res.status === 204)
 
-async function getHistory(f: Fetch, body: Buf): ReturnValue<TransferWithID[]> {
+async function getHistory(
+	f: Fetch,
+	route: "history" | "historyOwner",
+	body: Buf
+): ReturnValue<TransferWithID[]> {
 	let res: Response
 	try {
-		res = await request(f, "history", body)
+		res = await request(f, route, body)
 	} catch {
 		return { ok: false }
 	}
@@ -459,7 +463,11 @@ async function getHistory(f: Fetch, body: Buf): ReturnValue<TransferWithID[]> {
 export const history = (
 	f: Fetch,
 	n: number /* the only good thing about rust */
-): ReturnValue<TransferWithID[]> => getHistory(f, SerialiseUint32(n))
+): ReturnValue<TransferWithID[]> => getHistory(f, "history", SerialiseUint32(n))
 
 export const historyOwner = (f: Fetch, n: number, o: Owner) =>
-	getHistory(f, Buf.concat([SerialiseUint32(n), SerialiseItem(o)]))
+	getHistory(
+		f,
+		"historyOwner",
+		Buf.concat([SerialiseUint32(n), SerialiseItem(o)])
+	)
