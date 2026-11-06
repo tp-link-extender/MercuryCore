@@ -2,6 +2,8 @@ package main
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"crypto/subtle"
 	"encoding/binary"
 	"errors"
 	"flag"
@@ -11,6 +13,7 @@ import (
 	"os"
 	"reflect"
 	"strconv"
+	"strings"
 	"time"
 
 	c "github.com/TwiN/go-color"
@@ -563,6 +566,30 @@ var routes = []struct {
 	{"historyOwner", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.historyOwnerRoute(w, r) }},
 }
 
+const bearerPrefix = "Bearer "
+
+// requireEconomyKey rejects every request that doesn't carry the shared secret.
+// Digests are compared instead of raw keys so the comparison is constant time and doesn't leak the key's length.
+func requireEconomyKey(key string, next http.Handler) http.Handler {
+	expected := sha256.Sum256([]byte(key))
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		token, ok := strings.CutPrefix(r.Header.Get("Authorization"), bearerPrefix)
+		if ok {
+			supplied := sha256.Sum256([]byte(token))
+			ok = subtle.ConstantTimeCompare(supplied[:], expected[:]) == 1
+		}
+
+		if !ok {
+			w.Header().Set("WWW-Authenticate", `Bearer realm="economy"`)
+			http.Error(w, "Unauthorised", http.StatusUnauthorized)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 func registerRoutes(mux *http.ServeMux, es *EconomyServer) {
 	for _, r := range routes {
 		mux.HandleFunc("POST /"+r.path, func(w http.ResponseWriter, req *http.Request) {
@@ -573,8 +600,14 @@ func registerRoutes(mux *http.ServeMux, es *EconomyServer) {
 
 func main() {
 	dbPath := flag.String("db", "mydb.db", "path to the ledger database")
-	addr := flag.String("addr", ":2009", "address to listen on")
+	addr := flag.String("addr", "127.0.0.1:2009", "address to listen on")
 	flag.Parse()
+
+	key := os.Getenv("ECONOMY_KEY")
+	if key == "" {
+		fmt.Println(c.InRed("ECONOMY_KEY is not set. Set it to the same value as the Site's ECONOMY_KEY."))
+		os.Exit(1)
+	}
 
 	l, err := NewLedger(*dbPath)
 	if err != nil {
@@ -600,7 +633,7 @@ func main() {
 	registerRoutes(http.DefaultServeMux, &EconomyServer{e})
 
 	fmt.Printf("%s\n", c.InGreen(fmt.Sprintf("~ Economy service is up on %s (ledger %s) ~", *addr, *dbPath))) // 03/Jan/2009 Chancellor on brink of second bailout for banks
-	if err := http.ListenAndServe(*addr, loggingHandler(http.DefaultServeMux)); err != nil {
+	if err := http.ListenAndServe(*addr, requireEconomyKey(key, loggingHandler(http.DefaultServeMux))); err != nil {
 		fmt.Println(c.InRed("Failed to start server: " + err.Error()))
 		os.Exit(1)
 	}
