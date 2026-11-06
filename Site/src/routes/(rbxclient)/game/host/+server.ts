@@ -17,16 +17,12 @@ export async function GET({ url }) {
 	})
 	if (!place) error(400, "Invalid Server ticket")
 
+	const mapLocation = parseMapLocation(url.searchParams.get("autopilot"))
+	if (mapLocation === null) error(400, "Invalid map location")
+
 	const port = place.serverPort
 	// const serverId = placeData.id.toString()
 	const serverPresenceUrl = `http://${config.DomainInsecure}/game/serverpresence?ticket=${ticket}`
-
-	let mapLocation = url.searchParams.get("autopilot")
-	if (mapLocation) {
-		mapLocation = Buffer.from(mapLocation, "base64").toString()
-		if (mapLocation.slice(-5) !== ".rbxl") mapLocation = null
-		else if (mapLocation) mapLocation = `rbxasset://maps/${mapLocation}`
-	}
 
 	const scriptFile = Bun.file("../data/server/loadscripts/host.lua")
 	const script = buildLoadscript(await scriptFile.text(), {
