@@ -38,10 +38,11 @@ Instructions:
 -   Open a terminal and navigate to the directory of the repository
 -   Run `bun i` to install all dependencies
 -   Copy the **Site/.env.example** file to **Site/.env** and modify it to set up the environment variables
+-   If using containers, copy the **.env.example** file in the repository root to **.env** and set `ECONOMY_KEY`
 -   Run `docker compose up -d database economy` to start the database and economy service
 
 > [!TIP]  
-> If you don't have or can't install a container manager, you can start the database manually by [installing SurrealDB](https://surrealdb.com/install) and running `surreal start -l trace -u=root -p=root  file:./data/surreal` in the repository's root directory, and the economy service manually by [installing Go](https://go.dev/dl/) and running `go run .` in the **Economy** directory. You'll need to run these in separate terminals or in the background.
+> If you don't have or can't install a container manager, you can start the database manually by [installing SurrealDB](https://surrealdb.com/install) and running `surreal start -l trace -u=root -p=root  file:./data/surreal` in the repository's root directory, and the economy service manually by [installing Go](https://go.dev/dl/) and running `go run .` in the **Economy** directory with `ECONOMY_KEY` set to the same value as in **Site/.env**. You'll need to run these in separate terminals or in the background.
 
 To start a local dev server, go to the **Site** directory, run `bun dev`, and navigate to the link shown in the terminal (remember not to use HTTPS!). Upon saving a file, your changes will be shown in the web browser.
 
@@ -87,6 +88,7 @@ Instructions:
 -   Run `docker compose up -d database economy` to start the database and economy service
 	-   If you want to run the site in your container manager as well, just run `docker compose up -d` instead to start all services
 -   Copy the **Site/.env.example** file to **Site/.env** and modify it to set up the environment variables
+-   If using containers, copy the **.env.example** file in the repository root to **.env** and set `ECONOMY_KEY`
 -   Run `bun prod` to install dependencies and begin building
 -   Run `bun ./build` (not to be confused with `bun build`) to start Mercury Core.
 
