@@ -47,8 +47,8 @@ type Route =
 	| "history"
 	| "historyOwner"
 
-const url =
-	globalThis.process?.env?.ECONOMY_URL ?? "http://localhost:2009"
+const url = globalThis.process?.env?.ECONOMY_URL ?? "http://localhost:2009"
+const key = globalThis.process?.env?.ECONOMY_KEY ?? ""
 
 // Just use Promise<boolean> if no value is returned
 export type ReturnValue<T> = Promise<{ ok: true; value: T } | { ok: false }>
@@ -59,6 +59,7 @@ const request = (f: Fetch, route: Route, body: Buf): Promise<Response> =>
 	f(`${url}/${route}`, {
 		method: "POST",
 		body: body.buf,
+		headers: key ? { Authorization: `Bearer ${key}` } : undefined,
 	})
 
 export async function ownsOne(
