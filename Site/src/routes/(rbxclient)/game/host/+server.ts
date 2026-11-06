@@ -1,5 +1,6 @@
 import { error } from "@sveltejs/kit"
 import config from "$lib/server/config"
+import { buildLoadscript, parseMapLocation } from "$lib/server/loadscript"
 import { SignScript } from "$lib/server/sign"
 import { db } from "$lib/server/surreal"
 import placeQuery from "./place.surql"
@@ -28,11 +29,12 @@ export async function GET({ url }) {
 	}
 
 	const scriptFile = Bun.file("../data/server/loadscripts/host.lua")
-	const script = (await scriptFile.text())
-		.replaceAll("_BASE_URL", `"${config.DomainInsecure}"`)
-		.replaceAll("_MAP_LOCATION", `"${mapLocation || ""}"`)
-		.replaceAll("_SERVER_PORT", port.toString())
-		.replaceAll("_SERVER_PRESENCE_URL", `"${serverPresenceUrl}"`)
+	const script = buildLoadscript(await scriptFile.text(), {
+		BASE_URL: config.DomainInsecure,
+		MAP_LOCATION: mapLocation,
+		SERVER_PORT: Number(port),
+		SERVER_PRESENCE_URL: serverPresenceUrl,
+	})
 
 	return new Response(await SignScript(script))
 }
