@@ -81,6 +81,7 @@
 					<th scope="col">Options</th>
 					<th scope="col">Registration key</th>
 					<th scope="col">Uses left</th>
+					<th scope="col">Expiry</th>
 					<th scope="col">Creator</th>
 					<th scope="col">Created</th>
 				</tr>
@@ -102,6 +103,16 @@
 						</td>
 						<td>{data.prefix}{regKey.id}</td>
 						<td>{regKey.usesLeft}</td>
+						<td>
+							{#if regKey.expiry}
+								{new Date(regKey.expiry).toLocaleString()}
+								{#if new Date(regKey.expiry) <= new Date()}
+									<span class="text-red-500">(expired)</span>
+								{/if}
+							{:else}
+								<em>Never</em>
+							{/if}
+						</td>
 						<td>
 							{#if regKey.creator}
 								<User user={regKey.creator} full thin />
