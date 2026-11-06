@@ -7,12 +7,14 @@ services:
         # and also caused errors with query parameters (twice)
         build: ./Database
         ports:
-            - 8000:8000
+            - 127.0.0.1:8000:8000
         restart: unless-stopped
         volumes:
             - ./data/surreal:/database
         command:
             - start
+            # :8000 (all interfaces) is needed for the Site container to reach it over the compose network; the host port stays loopback-only
+            - --bind=0.0.0.0:8000
             - -u=root
             - -p=root
             - surrealkv://database
