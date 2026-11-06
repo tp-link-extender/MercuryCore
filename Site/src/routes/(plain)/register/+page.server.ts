@@ -86,7 +86,11 @@ actions.register = async ({ fetch: f, cookies, request }) => {
 			{ key }
 		)
 		if (!regkeyCheck)
-			return formError(form, ["regkey"], ["Registration key is invalid"])
+			return formError(
+				form,
+				["regkey"],
+				["Registration key is invalid or has expired"]
+			)
 		if (regkeyCheck.usesLeft < 1)
 			return formError(
 				form,
@@ -95,7 +99,7 @@ actions.register = async ({ fetch: f, cookies, request }) => {
 			)
 	}
 
-	const [, user] = await db.query<RecordId<"user">[]>(createUserQuery, {
+	const results = await db.query<RecordId<"user">[]>(createUserQuery, {
 		username,
 		email: email || "",
 		// I still love scrypt, though argon2 is better supported
@@ -104,6 +108,16 @@ actions.register = async ({ fetch: f, cookies, request }) => {
 		bodyColours: config.DefaultBodyColors,
 		key,
 	})
+	const user = results.at(-1)
+	if (!user) {
+		if (key)
+			return formError(
+				form,
+				["regkey"],
+				["Registration key is invalid or has expired"]
+			)
+		throw new Error("Failed to create user")
+	}
 
 	try {
 		await requestRender(f, "Avatar", user.id.toString(), username)
@@ -136,13 +150,15 @@ actions.initialAccount = async ({ fetch: f, cookies, request }) => {
 
 	// This is the kind of stuff that always breaks due to never getting tested
 	// Remember: untested === unworking
-	const [, user] = await db.query<RecordId<"user">[]>(createUserQuery, {
+	const results = await db.query<RecordId<"user">[]>(createUserQuery, {
 		username,
 		email: "",
 		hashedPassword: Bun.password.hashSync(password),
 		permissionLevel: 5,
 		bodyColours: config.DefaultBodyColors,
 	})
+	const user = results.at(-1)
+	if (!user) throw new Error("Failed to create initial account")
 
 	try {
 		await requestRender(f, "Avatar", user.id.toString(), username)
