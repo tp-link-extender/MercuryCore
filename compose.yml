@@ -20,7 +20,9 @@ services:
     economy:
         build: ./Economy
         ports:
-            - 2009:2009
+            - 127.0.0.1:2009:2009
+        environment:
+            ECONOMY_KEY: ${ECONOMY_KEY:?set ECONOMY_KEY in a .env file next to compose.yml}
         restart: unless-stopped
         volumes:
             - ./data/economy:/data/economy
@@ -32,6 +34,7 @@ services:
         restart: unless-stopped
         environment:
             ECONOMY_URL: http://economy:2009
+            ECONOMY_KEY: ${ECONOMY_KEY:?set ECONOMY_KEY in a .env file next to compose.yml}
         depends_on:
             - database # will keep retrying until database is ready
             - economy
