@@ -12,8 +12,10 @@ Mercury Core uses [SurrealDB](https://surrealdb.com) as its primary database sol
 The following command can be used to start an instance of SurrealDB, assuming it's ran in the root directory of the Mercury Core repository.
 
 ```bash
-surreal start -u=root -p=root surrealkv://data/surreal
+surreal start --bind=127.0.0.1:8000 -u=root -p=root surrealkv://data/surreal
 ```
+
+SurrealDB listens on loopback only by default, so it is not reachable from other hosts. Container deployments in **compose.yml** keep the published port on `127.0.0.1` and use `--bind=0.0.0.0:8000` inside the container, which lets other containers reach it over the compose network without exposing it publicly.
 
 This should produce output similar to the following:
 

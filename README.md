@@ -42,7 +42,7 @@ Instructions:
 -   Run `docker compose up -d database economy` to start the database and economy service
 
 > [!TIP]  
-> If you don't have or can't install a container manager, you can start the database manually by [installing SurrealDB](https://surrealdb.com/install) and running `surreal start -l trace -u=root -p=root  file:./data/surreal` in the repository's root directory, and the economy service manually by [installing Go](https://go.dev/dl/) and running `go run .` in the **Economy** directory with `ECONOMY_KEY` set to the same value as in **Site/.env**. You'll need to run these in separate terminals or in the background.
+> If you don't have or can't install a container manager, you can start the database manually by [installing SurrealDB](https://surrealdb.com/install) and running `surreal start --bind=127.0.0.1:8000 -l trace -u=root -p=root  file:./data/surreal` in the repository's root directory, and the economy service manually by [installing Go](https://go.dev/dl/) and running `go run .` in the **Economy** directory with `ECONOMY_KEY` set to the same value as in **Site/.env**. You'll need to run these in separate terminals or in the background.
 
 To start a local dev server, go to the **Site** directory, run `bun dev`, and navigate to the link shown in the terminal (remember not to use HTTPS!). Upon saving a file, your changes will be shown in the web browser.
 
