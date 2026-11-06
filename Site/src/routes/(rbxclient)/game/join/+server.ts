@@ -2,6 +2,7 @@ import { error } from "@sveltejs/kit"
 import { membershipType } from "$lib/permissionLevels"
 import config from "$lib/server/config"
 import idToPort, { proxyOffset } from "$lib/server/idToPort"
+import { buildLoadscript, luaRaw } from "$lib/server/loadscript"
 import { toRawId } from "$lib/server/recordId"
 import { SignScript } from "$lib/server/sign"
 import { db, findWhere, Record } from "$lib/server/surreal"
@@ -44,15 +45,16 @@ export async function GET({ url }) {
 
 	if (!clientTicket) {
 		const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
-		const script = (await scriptFile.text())
-			.replaceAll("_PLACE_ID", "0")
-			.replaceAll("_SERVER_ADDRESS", `"localhost"`)
-			.replaceAll("_SERVER_PORT", "53640")
-			.replaceAll("_USER_ID", "0")
-			.replaceAll("_USERNAME", `"Player1"`)
-			.replaceAll("_MEMBERSHIP_TYPE", membershipType(0))
-			.replaceAll("_CHAR_APPEARANCE", `""`)
-			.replaceAll("_PING_URL", `""`)
+		const script = buildLoadscript(await scriptFile.text(), {
+			PLACE_ID: 0,
+			SERVER_ADDRESS: "localhost",
+			SERVER_PORT: 53640,
+			USER_ID: 0,
+			USERNAME: "Player1",
+			MEMBERSHIP_TYPE: luaRaw(membershipType(0)),
+			CHAR_APPEARANCE: "",
+			PING_URL: "",
+		})
 
 		return new Response(await SignScript(script))
 	}
@@ -76,16 +78,16 @@ export async function GET({ url }) {
 	const charApp = `http://${config.DomainInsecure}/asset/characterfetch/${user.username}`
 	const pingUrl = `http://${config.DomainInsecure}/game/clientpresence?ticket=${clientTicket}`
 	const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
-	const script = (await scriptFile.text())
-		.replaceAll("_PLACE_ID", toRawId(place.id))
-		.replaceAll("_SERVER_ADDRESS", `"${serverHostname}"`)
-		.replaceAll("_SERVER_PORT", serverPort.toString())
-		// .replaceAll("_CREATOR_ID", creatorUsername)
-		.replaceAll("_USER_ID", Math.floor(Math.random() * 1e9).toString()) // todo: tho not rly used 4 much atm
-		.replaceAll("_USERNAME", `"${user.username}"`)
-		.replaceAll("_MEMBERSHIP_TYPE", membershipType(user.permissionLevel))
-		.replaceAll("_CHAR_APPEARANCE", `"${charApp}"`)
-		.replaceAll("_PING_URL", `"${pingUrl}"`)
+	const script = buildLoadscript(await scriptFile.text(), {
+		PLACE_ID: luaRaw(toRawId(place.id)),
+		SERVER_ADDRESS: serverHostname,
+		SERVER_PORT: Number(serverPort),
+		USER_ID: Math.floor(Math.random() * 1e9), // todo: tho not rly used 4 much atm
+		USERNAME: user.username,
+		MEMBERSHIP_TYPE: luaRaw(membershipType(user.permissionLevel)),
+		CHAR_APPEARANCE: charApp,
+		PING_URL: pingUrl,
+	})
 
 	return new Response(await SignScript(script))
 }

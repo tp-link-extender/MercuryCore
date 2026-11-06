@@ -1,5 +1,6 @@
 import { error } from "@sveltejs/kit"
 import config from "$lib/server/config"
+import { buildLoadscript, luaRaw } from "$lib/server/loadscript"
 import { toRawId } from "$lib/server/recordId"
 import { SignScript } from "$lib/server/sign"
 import { db } from "$lib/server/surreal"
@@ -30,12 +31,12 @@ export async function GET({ url }) {
 	}
 
 	const scriptFile = Bun.file("../data/server/loadscripts/host2016.lua")
-	const script = (await scriptFile.text())
-		.replaceAll("_PLACE_ID", toRawId(serverId))
-		.replaceAll("_BASE_URL", `"${config.Domain}"`)
-		// .replaceAll("_MAP_LOCATION", `"${mapLocation || ""}"`)
-		.replaceAll("_MAP_LOCATION", `"rbxasset://mbdtf.rbxl"`) // TODO: remove again
-		.replaceAll("_SERVER_PORT", port.toString())
+	const script = buildLoadscript(await scriptFile.text(), {
+		PLACE_ID: luaRaw(toRawId(serverId)),
+		BASE_URL: config.Domain,
+		MAP_LOCATION: "rbxasset://mbdtf.rbxl", // TODO: remove hardcoded map
+		SERVER_PORT: Number(port),
+	})
 
 	return new Response(await SignScript(script))
 }
