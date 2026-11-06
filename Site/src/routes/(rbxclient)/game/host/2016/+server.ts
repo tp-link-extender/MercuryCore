@@ -38,5 +38,11 @@ export async function GET({ url }) {
 		SERVER_PORT: Number(port),
 	})
 
-	return new Response(await SignScript(script))
+	return new Response(await SignScript(script), {
+		headers: {
+			"Cache-Control": "no-store",
+			"Content-Type": "text/plain; charset=utf-8",
+			"X-Content-Type-Options": "nosniff",
+		},
+	})
 }

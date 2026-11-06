@@ -39,6 +39,12 @@ function serverInfo(place: Session["place"]): ServerAddress {
 	}
 }
 
+const scriptHeaders = {
+	"Cache-Control": "no-store",
+	"Content-Type": "text/plain; charset=utf-8",
+	"X-Content-Type-Options": "nosniff",
+}
+
 export async function GET({ url }) {
 	const clientTicket = url.searchParams.get("ticket")
 	const privateServer = url.searchParams.get("privateServer") as string
@@ -56,7 +62,9 @@ export async function GET({ url }) {
 			PING_URL: "",
 		})
 
-		return new Response(await SignScript(script))
+		return new Response(await SignScript(script), {
+			headers: scriptHeaders,
+		})
 	}
 
 	const foundPrivatePlace = await findWhere(
@@ -89,5 +97,5 @@ export async function GET({ url }) {
 		PING_URL: pingUrl,
 	})
 
-	return new Response(await SignScript(script))
+	return new Response(await SignScript(script), { headers: scriptHeaders })
 }
