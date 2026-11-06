@@ -29,7 +29,7 @@ type RegKey = {
 	id: string
 	created: string
 	usesLeft: number
-	expiry: string
+	expiry: Date | string | null
 	creator?: BasicUser
 }
 
