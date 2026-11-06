@@ -51,6 +51,8 @@ func putUint64(w *bytes.Buffer, v uint64) {
 	w.Write(b)
 }
 
+const testEconomyKey = "test-economy-key"
+
 func testServer(t *testing.T) (*httptest.Server, *Economy) {
 	t.Helper()
 
@@ -67,7 +69,7 @@ func testServer(t *testing.T) (*httptest.Server, *Economy) {
 	})
 
 	e := NewEconomy(l, 10, 10, 100, 10, 10, 10, time.Hour*12)
-	return httptest.NewServer(loggingHandler(registerRoutesMux(l, e))), e
+	return httptest.NewServer(requireEconomyKey(testEconomyKey, loggingHandler(registerRoutesMux(l, e)))), e
 }
 
 func registerRoutesMux(l *Ledger, e *Economy) *http.ServeMux {
@@ -76,13 +78,61 @@ func registerRoutesMux(l *Ledger, e *Economy) *http.ServeMux {
 	return mux
 }
 
+func newPostRequest(srv *httptest.Server, route string, body *bytes.Buffer, key string) (*http.Request, error) {
+	req, err := http.NewRequest(http.MethodPost, srv.URL+"/"+route, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/octet-stream")
+	if key != "" {
+		req.Header.Set("Authorization", bearerPrefix+key)
+	}
+	return req, nil
+}
+
 func post(t *testing.T, srv *httptest.Server, route string, body *bytes.Buffer) *http.Response {
 	t.Helper()
-	res, err := srv.Client().Post(srv.URL+"/"+route, "application/octet-stream", body)
+	req, err := newPostRequest(srv, route, body, testEconomyKey)
+	if err != nil {
+		t.Fatalf("POST %s: %v", route, err)
+	}
+	res, err := srv.Client().Do(req)
 	if err != nil {
 		t.Fatalf("POST %s: %v", route, err)
 	}
 	return res
+}
+
+func TestEconomyKeyRequired(t *testing.T) {
+	srv, _ := testServer(t)
+	defer srv.Close()
+
+	for name, authorization := range map[string]string{
+		"missing":    "",
+		"wrong":      "Bearer wrong-key",
+		"malformed":  "Basic dGVzdA==",
+		"empty-bear": bearerPrefix,
+	} {
+		t.Run(name, func(t *testing.T) {
+			req, err := newPostRequest(srv, "prices", bytes.NewBuffer(nil), "")
+			if err != nil {
+				t.Fatalf("build request: %v", err)
+			}
+			if authorization != "" {
+				req.Header.Set("Authorization", authorization)
+			}
+
+			res, err := srv.Client().Do(req)
+			if err != nil {
+				t.Fatalf("POST prices: %v", err)
+			}
+			defer res.Body.Close()
+
+			if res.StatusCode != http.StatusUnauthorized {
+				t.Fatalf("expected 401, got %d", res.StatusCode)
+			}
+		})
+	}
 }
 
 func TestOversizedRequestBodyRejected(t *testing.T) {
@@ -167,10 +217,7 @@ func TestAllRoutesRegistered(t *testing.T) {
 
 	for _, route := range expected {
 		// an empty body decodes to nothing, which is enough to tell 404 apart from a handler running
-		res, err := srv.Client().Post(srv.URL+"/"+route, "application/octet-stream", bytes.NewBuffer(nil))
-		if err != nil {
-			t.Fatalf("POST %s: %v", route, err)
-		}
+		res := post(t, srv, route, bytes.NewBuffer(nil))
 		res.Body.Close()
 
 		if res.StatusCode == http.StatusNotFound {
@@ -352,7 +399,12 @@ func TestConcurrentBuyLimitedAssetOverHTTP(t *testing.T) {
 		go func(body *bytes.Buffer) {
 			defer wg.Done()
 			<-start
-			res, err := srv.Client().Post(srv.URL+"/buyLimitedAsset", "application/octet-stream", body)
+			req, err := newPostRequest(srv, "buyLimitedAsset", body, testEconomyKey)
+			if err != nil {
+				statuses <- 0
+				return
+			}
+			res, err := srv.Client().Do(req)
 			if err != nil {
 				statuses <- 0
 				return
