@@ -39,7 +39,7 @@
 	let tabData = $state(
 		TabData(data.url, [
 			"Comments",
-			...(data.asset.items.length ? ["Package contents"] : []),
+			...(data.asset.items.length > 0 ? ["Package contents"] : []),
 			"Recommended"
 		])
 	)

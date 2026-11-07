@@ -22,7 +22,7 @@
 			currentTarget: EventTarget & HTMLDivElement
 		} & { detail?: { inView: boolean } }
 	) {
-		isInView = !!e?.detail?.inView
+		isInView = Boolean(e?.detail?.inView)
 	}
 </script>
 

@@ -96,7 +96,7 @@ export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 				i.visibility === "Visible" &&
 				packageWearable.includes(i.type)
 		)
-		if (items.length) {
+		if (items.length > 0) {
 			contents.set(
 				asset.id,
 				items.map(i => i.id)
@@ -105,7 +105,7 @@ export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 		}
 	}
 
-	if (wearables.length) {
+	if (wearables.length > 0) {
 		const [worn] = await db.query<WornAsset[][]>(wornQuery, {
 			ids: wearables,
 			user: Record("user", user.id),
@@ -126,7 +126,7 @@ async function getEquipData(e: RequestEvent) {
 
 	if (!assetId) error(400, "Missing asset ID")
 	if (!assetRegex.test(assetId)) error(400, `Invalid asset ID: ${assetId}`)
-	const id = +assetId
+	const id = Number(assetId)
 
 	const limit = ratelimit(null, "equip", e.getClientAddress, 2)
 	if (limit) return { error: limit }
@@ -175,7 +175,7 @@ async function paint({ fetch: f, locals, url }: RequestEvent) {
 	if (
 		!bodyPartQuery ||
 		!bodyColour ||
-		!(brickColours as readonly number[]).includes(+bodyColour) ||
+		!(brickColours as readonly number[]).includes(Number(bodyColour)) ||
 		!bodyParts.includes(bodyPartQuery)
 	)
 		return fail(400)
@@ -183,13 +183,13 @@ async function paint({ fetch: f, locals, url }: RequestEvent) {
 	const bodyPart = bodyPartQuery as keyof typeof user.bodyColours
 	const currentColours = user.bodyColours
 
-	currentColours[bodyPart] = +bodyColour
+	currentColours[bodyPart] = Number(bodyColour)
 
 	await db
 		.update(Record("user", user.id))
 		.merge({ bodyColours: currentColours })
 
-	return await rerender(f, user)
+	return rerender(f, user)
 }
 async function regen({ fetch: f, locals, getClientAddress }: RequestEvent) {
 	const { user } = await authorise(locals)
@@ -197,7 +197,7 @@ async function regen({ fetch: f, locals, getClientAddress }: RequestEvent) {
 	const limit = ratelimit(null, "regen", getClientAddress, 2)
 	if (limit) return limit
 
-	return await rerender(f, user)
+	return rerender(f, user)
 }
 async function equip(e: RequestEvent) {
 	const { user, id, asset, error } = await getEquipData(e)
@@ -212,7 +212,7 @@ async function equip(e: RequestEvent) {
 				i.visibility === "Visible" &&
 				packageWearable.includes(i.type)
 		)
-		if (children.length < 1)
+		if (children.length === 0)
 			return fail(400, { msg: "This package has no items to equip" })
 
 		await db.query(equipPackageQuery, {
@@ -228,7 +228,7 @@ async function equip(e: RequestEvent) {
 			user: Record("user", user.id),
 		})
 
-		return await rerender(e.fetch, user)
+		return rerender(e.fetch, user)
 	}
 
 	// Find if there's more than 3 hats equipped, throw an error if there is
@@ -246,7 +246,7 @@ async function equip(e: RequestEvent) {
 		...(oneEquippable.includes(asset.type) ? asset : {}),
 	})
 
-	return await rerender(e.fetch, user)
+	return rerender(e.fetch, user)
 }
 async function unequip(e: RequestEvent) {
 	const { user, id, asset, error } = await getEquipData(e)
@@ -269,7 +269,7 @@ async function unequip(e: RequestEvent) {
 			user: Record("user", user.id),
 		})
 
-		return await rerender(e.fetch, user)
+		return rerender(e.fetch, user)
 	}
 
 	await db.query(unequipQuery, {
@@ -277,7 +277,7 @@ async function unequip(e: RequestEvent) {
 		user: Record("user", user.id),
 	})
 
-	return await rerender(e.fetch, user)
+	return rerender(e.fetch, user)
 }
 export const actions: import("./$types").Actions = {
 	equip,

@@ -114,7 +114,7 @@ export async function GET({ fetch: f, url }: RequestEvent) {
 	if (!assetId || !intRegex.test(assetId)) error(400, "Invalid Request")
 
 	// all asset ids are now numbered
-	const id = +assetId
+	const id = Number(assetId)
 	console.log("Requested asset", id)
 
 	const result2b = await loadPlaceAsset(id)

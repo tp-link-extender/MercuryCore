@@ -82,7 +82,7 @@ actions.create = async e => {
 		body: bannerText,
 		creator: Record("user", user.id),
 		deleted: false,
-		textLight: !!bannerTextLight,
+		textLight: Boolean(bannerTextLight),
 	})
 
 	return message(form, "Banner created successfully!")
@@ -116,7 +116,7 @@ actions.updateTextLight = async e => {
 
 	await db
 		.update(Record("banner", id))
-		.merge({ textLight: !!bannerTextLight })
+		.merge({ textLight: Boolean(bannerTextLight) })
 }
 actions.show = showHide("show")
 actions.hide = showHide("hide")

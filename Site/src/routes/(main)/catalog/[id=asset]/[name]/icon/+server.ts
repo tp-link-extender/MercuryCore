@@ -16,7 +16,7 @@ const noRenderTypes = Object.freeze([1])
 
 export async function GET({ locals, params }: RequestEvent) {
 	const { user } = await authorise(locals)
-	const id = +params.id
+	const id = Number(params.id)
 	const [[asset]] = await db.query<Asset[][]>(assetQuery, {
 		asset: Record("asset", id),
 	})

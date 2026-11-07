@@ -30,5 +30,5 @@ const types = Object.freeze({
 
 export default types
 export const typeToNumber: { [_: string]: number } = Object.fromEntries(
-	Object.entries(types).map(([key, value]) => [value, +key])
+	Object.entries(types).map(([key, value]) => [value, Number(key)])
 )

@@ -31,7 +31,7 @@ export async function GET({ params, request }: RequestEvent) {
 	if (!gameserverKey || !bearer || !constantTimeEqual(bearer, gameserverKey))
 		error(403, "Unauthorised")
 
-	const id = +params.id
+	const id = Number(params.id)
 
 	const [[place]] = await db.query<Place[][]>(placeQuery, {
 		place: Record("place", id),

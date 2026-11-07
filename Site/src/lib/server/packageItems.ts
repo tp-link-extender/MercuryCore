@@ -59,7 +59,7 @@ export async function packageItems(
 
 	// the ledger reports the package itself first; the caller only wants what's inside it
 	const ids = itemIds(contents.value).filter(itemId => itemId !== id)
-	if (!ids.length) return []
+	if (ids.length === 0) return []
 
 	// the ledger knows which assets exist, the database knows their name, type and visibility
 	const [rows] = await db.query<Omit<PackageItem, "owned">[][]>(query, {

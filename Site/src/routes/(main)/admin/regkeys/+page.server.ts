@@ -66,8 +66,8 @@ actions.create = async e => {
 	} = form.data
 
 	if (
-		(!!enableRegKeyCustom && !regKeyCustom) ||
-		(!!enableRegKeyExpiry && !regKeyExpiry)
+		(Boolean(enableRegKeyCustom) && !regKeyCustom) ||
+		(Boolean(enableRegKeyExpiry) && !regKeyExpiry)
 	)
 		return errMessage(form, "Missing fields")
 
@@ -80,7 +80,7 @@ actions.create = async e => {
 	if (limit) return limit
 
 	try {
-		await db.query<unknown[]>(createQuery, {
+		await db.query(createQuery, {
 			creator: Record("user", user.id),
 			expiry,
 			regKeyCustom,

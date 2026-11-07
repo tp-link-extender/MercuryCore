@@ -28,7 +28,7 @@ export async function GET({
 	request,
 	url,
 }: RequestEvent) {
-	const id = +params.id
+	const id = Number(params.id)
 
 	const [[place]] = await db.query<
 		{
@@ -46,10 +46,10 @@ export async function GET({
 	const privateTicket = url.searchParams.get("privateTicket")
 
 	let authorised =
-		(!!gameserverKey &&
-			!!bearer &&
+		(Boolean(gameserverKey) &&
+			Boolean(bearer) &&
 			constantTimeEqual(bearer, gameserverKey)) ||
-		(!!ticket && constantTimeEqual(ticket, place.serverTicket))
+		(Boolean(ticket) && constantTimeEqual(ticket, place.serverTicket))
 
 	if (!authorised && locals.user) {
 		if (locals.user.permissionLevel >= 5) authorised = true

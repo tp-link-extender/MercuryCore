@@ -8,7 +8,7 @@
 
 	function currentPage() {
 		const pageQ = page.url.searchParams.get("p") || "1"
-		const pp = +pageQ
+		const pp = Number(pageQ)
 		return Number.isNaN(pp) ? 1 : Math.round(pp)
 	}
 
