@@ -30,7 +30,7 @@ export async function GET({ params }) {
 		.replaceAll("_BASE_URL", `"${config.DomainInsecure}"`)
 		.replaceAll(
 			"_MAP_LOCATION",
-			`"http://${config.DomainInsecure}/game/${id}"`
+			`"http://${config.DomainInsecure}/game/${id}?serverTicket=${encodeURIComponent(place.serverTicket)}"`
 		)
 		.replaceAll("_SERVER_PORT", idToPort(id).toString())
 		.replaceAll("_SERVER_PRESENCE_URL", `"${serverPresenceUrl}"`)
