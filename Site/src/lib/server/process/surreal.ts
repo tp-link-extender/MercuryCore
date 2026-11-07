@@ -15,7 +15,7 @@ export default async () => {
 				"-p=root",
 				"surrealkv://data/surreal",
 			],
-			{ cwd: "..", stdout: "pipe", stderr: "pipe" }
+			{ cwd: "..", stderr: "pipe", stdout: "pipe" }
 		)
 
 		process.on("exit", () => {

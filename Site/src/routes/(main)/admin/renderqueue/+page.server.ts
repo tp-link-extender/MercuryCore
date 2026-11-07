@@ -26,5 +26,5 @@ export async function load({ locals }: PageServerLoadEvent) {
 		db.query<Render[][]>(renderQueueQuery),
 	])
 
-	return { status, queue }
+	return { queue, status }
 }

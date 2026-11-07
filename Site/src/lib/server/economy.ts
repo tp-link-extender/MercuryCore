@@ -97,20 +97,20 @@ export async function ownerData(list: TransferWithID[]): Promise<OwnerData> {
 	const [users, groups, sources] = await db.query<
 		[UserData[], GroupData[], SourceData[]]
 	>(ownersQuery, {
-		usersList: owners
-			.filter(o => o instanceof Econ.User)
-			.map(u => Record("user", u.ID)),
-		groupsList: owners
-			.filter(o => o instanceof Econ.Group)
-			.map(g => Record("group", g.ID)),
 		assetsList: owners
 			.filter(Econ.IsSource)
 			.map(s => Record("asset", s.ID)),
+		groupsList: owners
+			.filter(o => o instanceof Econ.Group)
+			.map(g => Record("group", g.ID)),
+		usersList: owners
+			.filter(o => o instanceof Econ.User)
+			.map(u => Record("user", u.ID)),
 	})
 
 	return {
-		users: Object.fromEntries(users.map(u => [u.id, u])),
 		groups: Object.fromEntries(groups.map(g => [g.id, g])),
 		sources: Object.fromEntries(sources.map(s => [s.id, s])),
+		users: Object.fromEntries(users.map(u => [u.id, u])),
 	}
 }

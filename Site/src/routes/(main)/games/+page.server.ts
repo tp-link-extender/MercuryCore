@@ -20,5 +20,5 @@ export async function load({ url }: PageServerLoadEvent) {
 	})
 	checkPages(pages)
 
-	return { places, pages }
+	return { pages, places }
 }

@@ -14,7 +14,6 @@ import moderationOptions from "./moderationOptions"
 import unbanQuery from "./unban.surql"
 
 const schema = type({
-	username: "3 <= string <= 21",
 	// enum to allow 1 to be selected initially
 	action: type.enumerated(...moderationOptions).configure({
 		problem: "must be a valid moderation action",
@@ -26,6 +25,7 @@ const schema = type({
 		return d
 	}),
 	reason: "15 <= string <= 150",
+	username: "3 <= string <= 21",
 })
 
 export async function load({ locals, url }: PageServerLoadEvent) {
@@ -44,8 +44,8 @@ export async function load({ locals, url }: PageServerLoadEvent) {
 	return {
 		form: await superValidate(
 			{
-				username: report.reportee,
 				reason: report.note,
+				username: report.reportee,
 			},
 			arktype(schema)
 		),
@@ -85,8 +85,8 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 	if (limit) return limit
 
 	const qParams = Object.freeze({
-		user: Record("user", user.id),
 		moderatee: Record("user", getModeratee.id),
+		user: Record("user", user.id),
 	})
 
 	if (action === "Unban") {
@@ -125,29 +125,29 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 		)
 
 	const actions: { [_: string]: () => [string, string] } = {
-		Warning: () => [`Warn ${username}`, "warned"],
 		Ban: () => [
 			`Ban ${username}`,
 			`banned until ${banDate?.toLocaleDateString()}`,
 		],
 		Termination: () => [`Terminate ${username}`, "terminated"],
+		Warning: () => [`Warn ${username}`, "warned"],
 	}
 
 	const [note, actioned] = actions[action]()
 
 	await db.query(moderateQuery, {
 		...qParams,
-		reason,
 		moderationAction: action,
-		timeEnds: banDate || new Date(),
 		note: `${note}: ${reason}`,
+		reason,
+		timeEnds: banDate || new Date(),
 	})
 
 	await sendModerationDiscordWebhook({
-		username,
 		action,
-		reason,
 		moderatorUsername: user.username,
+		reason,
+		username,
 	})
 
 	return message(form, `${username} has been ${actioned}`)

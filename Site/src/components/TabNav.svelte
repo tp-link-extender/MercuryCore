@@ -51,11 +51,11 @@
 			if (group) {
 				if (!emitted.has(group.name)) {
 					emitted.add(group.name)
-					out.push({ type: "group", name: group.name, tabs: group.tabs })
+					out.push({ name: group.name, tabs: group.tabs, type: "group" })
 				}
 				continue
 			}
-			out.push({ type: "tab", tab, icons: tabData.icons })
+			out.push({ icons: tabData.icons, tab, type: "tab" })
 		}
 		return out
 	})

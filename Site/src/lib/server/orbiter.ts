@@ -27,10 +27,10 @@ async function fetchGameserver(
 ): Promise<ReturnErr> {
 	try {
 		const res = await f(`${config.Orbiter.PrivateURL}/${path}`, { method })
-		if (!res.ok) return { ok: false, msg: await res.text() }
+		if (!res.ok) return { msg: await res.text(), ok: false }
 	} catch (err) {
 		const e = err as Error
-		return { ok: false, msg: e.message }
+		return { msg: e.message, ok: false }
 	}
 	return { ok: true }
 }

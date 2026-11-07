@@ -21,10 +21,10 @@ export async function GET({ fetch: f, url }: RequestEvent) {
 
 	const params = new URLSearchParams({
 		assetIds: stringAssetId,
-		returnPolicy: "Placeholder",
-		size: `${width}x${height}`,
 		format: "Png",
 		isCircular: "false",
+		returnPolicy: "Placeholder",
+		size: `${width}x${height}`,
 	})
 	const thumb = await f(`https://thumbnails.roblox.com/v1/assets?${params}`)
 

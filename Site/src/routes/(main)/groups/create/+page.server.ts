@@ -24,8 +24,8 @@ export async function load({ fetch: f }: PageServerLoadEvent) {
 }
 
 const errors: { [_: string]: string } = Object.freeze({
-	create: Buffer.from("ZHVtYiBuKiBkZXRlY3RlZA==", "base64").toString(),
 	changed: "Dickhead",
+	create: Buffer.from("ZHVtYiBuKiBkZXRlY3RlZA==", "base64").toString(),
 	wisely: "GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!",
 })
 
@@ -62,9 +62,9 @@ actions.default = async ({ fetch: f, locals, request }) => {
 	const groupId = created.value.ID
 
 	await db.query(createQuery, {
+		economyId: groupId,
 		name,
 		user: Record("user", user.id),
-		economyId: groupId,
 	})
 
 	redirect(302, `/groups/${groupId}`)

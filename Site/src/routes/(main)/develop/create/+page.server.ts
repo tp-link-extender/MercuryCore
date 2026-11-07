@@ -24,6 +24,10 @@ import assetTypes from "./assetTypes"
 import createAssetQuery from "./createAsset.surql"
 
 const schema = type({
+	asset: "File",
+	description: "(0 <= string <= 1000) | undefined",
+	name: "3 <= string <= 50",
+	price: "0 <= number.integer <= 999",
 	// Object.keys(assets) doesn't work
 	type: type
 		.enumerated(...assetTypes)
@@ -31,10 +35,6 @@ const schema = type({
 		.configure({
 			problem: "must be a valid asset type",
 		}),
-	name: "3 <= string <= 50",
-	description: "(0 <= string <= 1000) | undefined",
-	price: "0 <= number.integer <= 999",
-	asset: "File",
 })
 
 // type assetType = (typeof assetTypes)[number]
@@ -44,6 +44,7 @@ export async function load({ url, fetch: f }: PageServerLoadEvent) {
 	const price = p.ok ? p.value.unlimitedSourcePrice : 0n
 	// const urlType = url.searchParams.get("type") as assetType | null
 	return {
+		assetType: url.searchParams.get("asset"),
 		form: await superValidate(
 			arktype(
 				schema
@@ -65,7 +66,6 @@ export async function load({ url, fetch: f }: PageServerLoadEvent) {
 				// }
 			)
 		),
-		assetType: url.searchParams.get("asset"),
 		price,
 	}
 }
@@ -160,12 +160,12 @@ actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 	const id = createdAsset.value.ID
 
 	await db.query(createAssetQuery, {
-		imageAssetId,
-		id,
+		assetType: typeToNumber[type],
 		description,
+		id,
+		imageAssetId,
 		name,
 		price,
-		assetType: typeToNumber[type],
 		visibility: user.permissionLevel < 3 ? "Pending" : "Visible",
 	})
 

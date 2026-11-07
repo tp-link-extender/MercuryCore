@@ -53,14 +53,14 @@ export async function GET({ url }: RequestEvent) {
 	if (!clientTicket) {
 		const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
 		const script = buildLoadscript(await scriptFile.text(), {
+			CHAR_APPEARANCE: "",
+			MEMBERSHIP_TYPE: luaRaw(membershipType(0)),
+			PING_URL: "",
 			PLACE_ID: 0,
 			SERVER_ADDRESS: "localhost",
 			SERVER_PORT: 53640,
 			USER_ID: 0,
 			USERNAME: "Player1",
-			MEMBERSHIP_TYPE: luaRaw(membershipType(0)),
-			CHAR_APPEARANCE: "",
-			PING_URL: "",
 		})
 
 		return new Response(await SignScript(script), {
@@ -88,14 +88,14 @@ export async function GET({ url }: RequestEvent) {
 	const pingUrl = `http://${config.DomainInsecure}/game/clientpresence?ticket=${clientTicket}`
 	const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
 	const script = buildLoadscript(await scriptFile.text(), {
+		CHAR_APPEARANCE: charApp,
+		MEMBERSHIP_TYPE: luaRaw(membershipType(user.permissionLevel)),
+		PING_URL: pingUrl,
 		PLACE_ID: luaRaw(toRawId(place.id)),
 		SERVER_ADDRESS: serverHostname,
 		SERVER_PORT: Number(serverPort),
 		USER_ID: Math.floor(Math.random() * 1e9), // todo: tho not rly used 4 much atm
 		USERNAME: user.username,
-		MEMBERSHIP_TYPE: luaRaw(membershipType(user.permissionLevel)),
-		CHAR_APPEARANCE: charApp,
-		PING_URL: pingUrl,
 	})
 
 	return new Response(await SignScript(script), { headers: scriptHeaders })

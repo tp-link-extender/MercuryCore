@@ -43,9 +43,9 @@ export async function load({ locals, url }: PageServerLoadEvent) {
 	if (!reporteeUser) error(400, "Invalid user")
 
 	return {
+		form: await superValidate(arktype(schema)),
 		reportee,
 		url: reportedUrl,
-		form: await superValidate(arktype(schema)),
 	}
 }
 
@@ -70,11 +70,11 @@ actions.default = async ({ locals, request, url, getClientAddress }) => {
 	if (limit) return limit
 
 	await db.query(reportQuery, {
-		user: Record("user", user.id),
-		reportee,
-		note,
-		reportUrl,
 		category,
+		note,
+		reportee,
+		reportUrl,
+		user: Record("user", user.id),
 	})
 
 	return message(form, "Report sent successfully.")

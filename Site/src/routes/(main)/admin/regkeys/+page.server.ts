@@ -19,8 +19,8 @@ import regkeysQuery from "./regkeys.surql"
 
 const schema = type({
 	enableRegKeyCustom: "boolean | undefined",
-	regKeyCustom: "(3 <= string <= 50 | undefined)?",
 	enableRegKeyExpiry: "boolean | undefined",
+	regKeyCustom: "(3 <= string <= 50 | undefined)?",
 	regKeyExpiry: "string | undefined",
 	regKeyUses: type("1 <= number <= 100").default(1),
 })
@@ -40,8 +40,8 @@ export async function load({ locals }: RequestEvent) {
 	const [regKeys] = await db.query<RegKey[][]>(regkeysQuery)
 	return {
 		form: await superValidate(arktype(schema)),
-		regKeys,
 		prefix: config.Registration.Keys.Prefix,
+		regKeys,
 	}
 }
 
@@ -49,7 +49,7 @@ async function getData({ locals, request }: RequestEvent) {
 	const { user } = await authorise(locals, 5)
 	const form = await superValidate(request, arktype(schema))
 
-	return { user, form, error: !form.valid && formError(form) }
+	return { error: !form.valid && formError(form), form, user }
 }
 
 export const actions: import("./$types").Actions = {}
@@ -81,9 +81,9 @@ actions.create = async e => {
 
 	try {
 		await db.query<unknown[]>(createQuery, {
-			regKeyCustom,
 			creator: Record("user", user.id),
 			expiry,
+			regKeyCustom,
 			regKeyUses,
 		})
 	} catch (e) {
@@ -116,8 +116,8 @@ actions.disable = async e => {
 			UPDATE $regKey SET usesLeft = 0;
 			fn::auditLog("Administration", $msg, $user)`,
 		{
-			regKey: Record("regKey", id),
 			msg: `Disable registration key ${id}`,
+			regKey: Record("regKey", id),
 			user: Record("user", user.id),
 		}
 	)

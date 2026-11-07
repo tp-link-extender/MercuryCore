@@ -76,7 +76,7 @@ export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 		ids: groupIds.map(id => Record("group", id)),
 	})
 
-	return { ...userExists, places, groupsOwned }
+	return { ...userExists, groupsOwned, places }
 }
 
 async function getData({ params }: RequestEvent) {
@@ -103,8 +103,8 @@ const acceptExisting: ActionFunction = (params, user) =>
 		acceptExistingQuery,
 		{
 			...params,
-			relativeId: user.id,
 			note: `${user.username} is now friends with you!`,
+			relativeId: user.id,
 		}
 	)
 
@@ -115,12 +115,12 @@ async function getInteractData(e: RequestEvent) {
 	if (user.id === user2.id) error(400, "You can't friend/follow yourself")
 
 	return {
-		user,
+		data: await formData(e.request),
 		params: {
 			user: Record("user", user.id),
 			user2: Record("user", user2.id),
 		},
-		data: await formData(e.request),
+		user,
 	}
 }
 
@@ -132,8 +132,8 @@ async function rerender(e: RequestEvent) {
 	try {
 		await requestRender(e.fetch, "Avatar", user2.id, user2.username, true)
 		return {
-			avatarBody: `/api/avatar/${e.params.username}-body?r=${Math.random()}`,
 			avatar: `/api/avatar/${e.params.username}?r=${Math.random()}`,
+			avatarBody: `/api/avatar/${e.params.username}-body?r=${Math.random()}`,
 		}
 	} catch (e) {
 		console.error(e)
@@ -145,8 +145,8 @@ actions.follow = async e => {
 	const { user, params } = await getInteractData(e)
 	await db.query(followQuery, {
 		...params,
-		relativeId: user.id,
 		note: `${user.username} is now following you!`,
+		relativeId: user.id,
 	})
 }
 actions.unfollow = async e => {
@@ -175,8 +175,8 @@ actions.request = async e => {
 
 	await db.query(requestQuery, {
 		...params,
-		relativeId: user.id,
 		note: `${user.username} has sent you a friend request.`,
+		relativeId: user.id,
 	})
 }
 actions.cancel = async e => {

@@ -18,8 +18,8 @@ export async function GET({ fetch: f, url }: RequestEvent) {
 
 	return new Response(charApp, {
 		headers: {
-			Pragma: "no-cache",
 			"Cache-Control": "no-cache",
+			Pragma: "no-cache",
 		},
 	})
 }

@@ -23,5 +23,5 @@ export default (url: URL) => {
 		redirect(303, url)
 	}
 
-	return { page, checkPages }
+	return { checkPages, page }
 }

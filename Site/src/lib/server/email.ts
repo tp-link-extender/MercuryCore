@@ -7,13 +7,13 @@ let transport = null as unknown as Mail
 if (!building)
 	try {
 		transport = createTransport({
+			auth: {
+				pass: process.env.EMAIL_PASSWORD,
+				user: config.Email.Username,
+			},
 			host: config.Email.Host,
 			port: config.Email.Port,
 			secure: config.Email.Secure,
-			auth: {
-				user: config.Email.Username,
-				pass: process.env.EMAIL_PASSWORD,
-			},
 		})
 		transport.on("error", err =>
 			console.error("SMTP Transport Error:", err)
@@ -41,9 +41,9 @@ export async function sendEmail(to: string, subject: string, text: string) {
 	console.log(`Queuing email to ${to}`)
 	const result = await transport.sendMail({
 		from: `${config.Name} <noreply@${config.Domain}>`,
-		to,
 		subject,
 		text,
+		to,
 	})
 	if (result.accepted?.length)
 		console.log(`Email to ${to} queued successfully`)

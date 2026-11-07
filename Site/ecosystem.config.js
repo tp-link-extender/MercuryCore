@@ -4,13 +4,13 @@
 module.exports = {
 	apps: [
 		{
-			name: "Mercury",
-			script: "bun",
-			intperpreter: "none",
 			args: "./build",
 			env: {
 				HOST: "0.0.0.0",
 			},
+			intperpreter: "none",
+			name: "Mercury",
+			script: "bun",
 		},
 	],
 }

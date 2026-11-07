@@ -70,12 +70,12 @@ async function reconnect() {
 			await db.close() // doesn't do anything if not connected
 			console.log("connecting to database")
 			await db.connect(url, {
-				namespace: "main",
-				database: "main",
 				authentication: {
-					username: "root", // security B)
 					password: "root",
+					username: "root", // security B)
 				},
+				database: "main",
+				namespace: "main",
 			})
 			console.log("reloaded", (await version()).version)
 			break

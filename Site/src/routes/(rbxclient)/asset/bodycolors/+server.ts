@@ -15,9 +15,9 @@ type User = {
 }
 
 const xmlHeaders = {
-	Pragma: "no-cache",
 	"Cache-Control": "no-cache",
 	"Content-Type": "text/xml",
+	Pragma: "no-cache",
 }
 
 export async function GET({ url }: RequestEvent) {
@@ -50,9 +50,9 @@ export async function GET({ url }: RequestEvent) {
 
 	return new Response(res, {
 		headers: {
-			Pragma: "no-cache",
 			"Cache-Control": "no-cache",
 			"Content-Type": "text/xml",
+			Pragma: "no-cache",
 		},
 	})
 }

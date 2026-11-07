@@ -80,9 +80,9 @@ export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 	if (ids.length === 0) return { assets: [] }
 
 	const [assets] = await db.query<Asset[][]>(assetsQuery, {
+		allowedTypes,
 		assets: ids.map(id => Record("asset", id)),
 		user: Record("user", user.id),
-		allowedTypes,
 	})
 
 	// A package counts as worn when every item inside it is worn, so that
@@ -152,7 +152,7 @@ async function getEquipData(e: RequestEvent) {
 	if (asset.visibility !== "Visible")
 		error(400, "This item hasn't been approved yet")
 
-	return { user, id, asset }
+	return { asset, id, user }
 }
 
 async function rerender(f: typeof globalThis.fetch, user: User) {
@@ -241,8 +241,8 @@ async function equip(e: RequestEvent) {
 	}
 
 	await db.query(equipQuery, {
-		user: Record("user", user.id),
 		asset: Record("asset", id),
+		user: Record("user", user.id),
 		...(oneEquippable.includes(asset.type) ? asset : {}),
 	})
 
@@ -273,15 +273,15 @@ async function unequip(e: RequestEvent) {
 	}
 
 	await db.query(unequipQuery, {
-		user: Record("user", user.id),
 		asset: Record("asset", id),
+		user: Record("user", user.id),
 	})
 
 	return await rerender(e.fetch, user)
 }
 export const actions: import("./$types").Actions = {
+	equip,
 	paint,
 	regen,
-	equip,
 	unequip,
 }

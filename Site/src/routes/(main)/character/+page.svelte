@@ -23,29 +23,29 @@
 	}
 
 	const tabTypes: { [_: string]: number } = Object.freeze({
-		Recent: 0,
+		Faces: 18,
+		Gear: 19,
 		Hats: 8,
 		Heads: 17,
-		Faces: 18,
-		"T-Shirts": 2,
-		Shirts: 11,
-		Pants: 12,
-		Gear: 19,
-		Torso: 27,
 		"Left Arm": 29,
-		"Right Arm": 28,
 		"Left Leg": 30,
+		Packages: 32, 
+		Pants: 12,
+		Recent: 0,
+		"Right Arm": 28,
 		"Right Leg": 31,
-		Packages: 32
+		Shirts: 11,
+		"T-Shirts": 2,
+		Torso: 27
 	})
 	const bodyPartTabs = Object.freeze({
-		Heads: 17,
 		Faces: 18,
-		Torso: 27,
+		Heads: 17,
 		"Left Arm": 29,
-		"Right Arm": 28,
 		"Left Leg": 30,
-		"Right Leg": 31
+		"Right Arm": 28,
+		"Right Leg": 31, 
+		Torso: 27
 	})
 	let tabData = $state(
 		TabData(data.url, Object.keys(tabTypes), undefined, "tab", [
@@ -55,20 +55,20 @@
 
 	const bodyParts: { [_: string]: number } = $state({
 		Head: user.bodyColours.Head,
-		Torso: user.bodyColours.Torso,
 		LeftArm: user.bodyColours.LeftArm,
-		RightArm: user.bodyColours.RightArm,
 		LeftLeg: user.bodyColours.LeftLeg,
-		RightLeg: user.bodyColours.RightLeg
+		RightArm: user.bodyColours.RightArm,
+		RightLeg: user.bodyColours.RightLeg, 
+		Torso: user.bodyColours.Torso
 	})
 	const bodyPartPopovers: { [_: string]: HTMLDivElement } = $state({})
 	const styles: { [_: string]: string } = Object.freeze({
 		Head: "left-17 size-12",
-		Torso: "left-12 top-14 size-22",
 		LeftArm: "left-0 top-14 h-22 w-10",
-		RightArm: "left-36 top-14 h-22 w-10",
 		LeftLeg: "left-12 top-38 h-22 w-10",
-		RightLeg: "left-24 top-38 h-22 w-10"
+		RightArm: "left-36 top-14 h-22 w-10",
+		RightLeg: "left-24 top-38 h-22 w-10", 
+		Torso: "left-12 top-14 size-22"
 	})
 
 	let assets = $derived(

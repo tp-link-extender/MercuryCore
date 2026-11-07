@@ -49,8 +49,8 @@
 		const lastPing = localStorage.getItem("lastPing")
 		if (lastPing && Date.now() - +lastPing < 30e3) return
 		await fetch("/api?/statusping", {
-			method: "post",
-			body: new FormData()
+			body: new FormData(), 
+			method: "post"
 		})
 		localStorage.setItem("lastPing", Date.now().toString())
 	}
@@ -58,14 +58,14 @@
 
 	const notificationNotes: { [_: string]: string } = Object.freeze({
 		AssetApproved: "Asset approval",
-		FriendRequest: "Friend request",
-		Follower: "New follower",
-		ForumPostReply: "Reply to your post",
-		ForumReplyReply: "Reply to your reply",
 		AssetComment: "Comment on your asset",
 		AssetCommentReply: "Reply to your comment",
+		Follower: "New follower",
 		ForumMention: "Mention",
 		ForumPost: "New forum post",
+		ForumPostReply: "Reply to your post",
+		ForumReplyReply: "Reply to your reply",
+		FriendRequest: "Friend request",
 		ItemPurchase: "Item purchased",
 		Message: "New message",
 		NewFriend: "New friend"

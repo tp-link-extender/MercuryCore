@@ -17,16 +17,16 @@ import clientVersions from "./clientVersions"
 import createQuery from "./create.surql"
 
 const schema = type({
-	name: "3 <= string <= 50",
-	description: "string <= 1000",
-	serverAddress: serverAddressTest,
-	// eh, works well enough and the built-in z.string().url() requires a protocol
-	serverPort: serverPortTest.default(53640),
-	maxPlayers: maxPlayersTest.default(10),
 	clientVersion: type.enumerated(...clientVersions).configure({
 		problem: "must be a valid client version",
 	}),
+	description: "string <= 1000",
+	maxPlayers: maxPlayersTest.default(10),
+	name: "3 <= string <= 50",
 	privateServer: "boolean | undefined",
+	serverAddress: serverAddressTest,
+	// eh, works well enough and the built-in z.string().url() requires a protocol
+	serverPort: serverPortTest.default(53640),
 })
 
 export async function load() {
@@ -73,14 +73,14 @@ actions.default = async ({ fetch: f, locals, request }) => {
 	const id = created.value.ID
 
 	await db.query(createQuery, {
-		id,
-		name: filter(name),
+		clientVersion: +clientVersion,
 		description: filter(description),
+		id,
+		maxPlayers,
+		name: filter(name),
+		privateServer,
 		serverAddress,
 		serverPort,
-		privateServer,
-		maxPlayers,
-		clientVersion: +clientVersion,
 	})
 
 	redirect(302, `/place/${id}/${encode(name)}`)

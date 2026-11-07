@@ -58,8 +58,8 @@ export async function load({
 	const privateTicket = url.searchParams.get("privateServer")
 	const id = +params.id
 	const [[place]] = await db.query<Place[][]>(placeQuery, {
-		user: Record("user", user.id),
 		place: Record("place", id),
+		user: Record("user", user.id),
 	})
 	if (!place) error(404, "Place not found")
 
@@ -85,12 +85,12 @@ export async function load({
 	// don't check gameserver status here or your mercury will slow to a crawl
 
 	return {
-		scheme: config.LauncherURI,
 		clientVersion: place.clientVersion,
 		hosting: config.Gameservers.Hosting,
 		orbiterURL: config.Orbiter.PublicURL,
-		slug,
 		place,
+		scheme: config.LauncherURI,
+		slug,
 		thumbnails: [id % thumbnails.length],
 	}
 }
@@ -143,8 +143,8 @@ actions.join = async ({ fetch: f, locals, params, request }) => {
 
 	// Invalidate all game sessions and create valid playing
 	const [, [ticket]] = await db.query<string[][]>(invalidatePlayingQuery, {
-		user: Record("user", user.id),
 		place: placeR,
+		user: Record("user", user.id),
 	})
 
 	return { ticket }

@@ -9,10 +9,10 @@ import type { RequestEvent } from "./$types"
 import assetQuery from "./asset.surql"
 
 const headers = (file: string | Uint8Array) => ({
-	"Content-Type": "binary/octet-stream",
 	"Content-Disposition": `attachment; filename="${createHash("md5")
 		.update(file)
 		.digest("hex")}"`,
+	"Content-Type": "binary/octet-stream",
 })
 
 const response = (file: string | Uint8Array<ArrayBuffer>) =>

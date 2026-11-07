@@ -26,9 +26,9 @@ export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	exclude("Groups")
 	const { user } = await authorise(locals)
 	const [[group]] = await db.query<Group[][]>(groupQuery, {
-		user: Record("user", user.id),
 		// ...params,
 		group: Record("group", params.group),
+		user: Record("user", user.id),
 	})
 	if (!group) error(404, "Not Found")
 
@@ -46,8 +46,8 @@ async function getData({ locals, params }: RequestEvent) {
 	if (!groupExists) fail(404, { msg: "Group not found" })
 
 	return {
-		user: Record("user", user.id),
 		group: Record("group", params.group),
+		user: Record("user", user.id),
 	}
 }
 

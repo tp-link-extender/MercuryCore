@@ -28,9 +28,9 @@ export async function GET({ url }: RequestEvent) {
 	// Autopilot map substitution is disabled for now. If it is re-enabled, pass parseMapLocation(url.searchParams.get("autopilot")) as MAP_LOCATION.
 	const scriptFile = Bun.file("../data/server/loadscripts/host2016.lua")
 	const script = buildLoadscript(await scriptFile.text(), {
-		PLACE_ID: luaRaw(toRawId(serverId)),
 		BASE_URL: config.Domain,
 		MAP_LOCATION: "rbxasset://mbdtf.rbxl", // TODO: remove hardcoded map
+		PLACE_ID: luaRaw(toRawId(serverId)),
 		SERVER_PORT: Number(port),
 	})
 

@@ -7,78 +7,82 @@
 				"organizeImports": "on",
 				"useSortedAttributes": "on",
 				"useSortedEnumMembers": "on",
-				"useSortedInterfaceMembers": "on"
+				"useSortedInterfaceMembers": "on",
+				"useSortedKeys": "on"
 			}
 		},
 		"enabled": true
-	},
-	"formatter": {
-		"indentWidth": 4
-	},
-	"linter": {
-		"rules": {
-			"correctness": {
-				"noUndeclaredDependencies": "off"
-			},
-			"suspicious": {
-				"noEvolvingTypes": "off",
-				"noConsole": "off"
-			},
-			"nursery": {
-				"useExplicitType": "off"
-			},
-			"style": {
-				"useLiteralEnumMembers": "error",
-				"useNodejsImportProtocol": "error",
-				"useAsConstAssertion": "error",
-				"useEnumInitializers": "error",
-				"useSelfClosingElements": "error",
-				"useSingleVarDeclarator": "error",
-				"noUnusedTemplateLiteral": "error",
-				"useNumberNamespace": "error",
-				"noInferrableTypes": "error",
-				"useExponentiationOperator": "error",
-				"useTemplate": "error",
-				"noParameterAssign": "error",
-				"noNonNullAssertion": "error",
-				"useDefaultParameterLast": "error",
-				"useImportType": "error",
-				"useExportType": "error",
-				"noUselessElse": "error",
-				"useShorthandFunctionType": "error"
-			}
-		}
 	},
 	"css": {
 		"parser": {
 			"tailwindDirectives": true
 		}
 	},
+	"formatter": {
+		"indentWidth": 4
+	},
 	"javascript": {
 		"formatter": {
+			"arrowParentheses": "asNeeded",
 			"semicolons": "asNeeded",
-			"trailingCommas": "es5",
-			"arrowParentheses": "asNeeded"
+			"trailingCommas": "es5"
+		}
+	},
+	"linter": {
+		"rules": {
+			"correctness": {
+				"noUndeclaredDependencies": "off"
+			},
+			"nursery": {
+				"useExplicitType": "off"
+			},
+			"style": {
+				"noInferrableTypes": "error",
+				"noNonNullAssertion": "error",
+				"noParameterAssign": "error",
+				"noUnusedTemplateLiteral": "error",
+				"noUselessElse": "error",
+				"useAsConstAssertion": "error",
+				"useDefaultParameterLast": "error",
+				"useEnumInitializers": "error",
+				"useExponentiationOperator": "error",
+				"useExportType": "error",
+				"useImportType": "error",
+				"useLiteralEnumMembers": "error",
+				"useNodejsImportProtocol": "error",
+				"useNumberNamespace": "error",
+				"useSelfClosingElements": "error",
+				"useShorthandFunctionType": "error",
+				"useSingleVarDeclarator": "error",
+				"useTemplate": "error"
+			},
+			"suspicious": {
+				"noConsole": "off",
+				"noEvolvingTypes": "off"
+			}
 		}
 	},
 	"overrides": [
 		{
-			"includes": [".svelte-kit/**", "build/**"],
 			"formatter": {
 				"enabled": false
-			}
+			},
+			"includes": [".svelte-kit/**", "build/**"]
 		},
 		{
+			"formatter": {
+				"enabled": false
+			},
 			"includes": ["**/*.svelte"],
 			"linter": {
 				"rules": {
+					"correctness": {
+						"noUnusedImports": "off",
+						"noUnusedLabels": "off",
+						"noUnusedVariables": "off"
+					},
 					"style": {
 						"useConst": "off"
-					},
-					"correctness": {
-						"noUnusedLabels": "off",
-						"noUnusedImports": "off",
-						"noUnusedVariables": "off"
 					},
 					"suspicious": {
 						"noConfusingLabels": "off",
@@ -86,9 +90,6 @@
 						"noImplicitAnyLet": "off"
 					}
 				}
-			},
-			"formatter": {
-				"enabled": false
 			}
 		}
 	]

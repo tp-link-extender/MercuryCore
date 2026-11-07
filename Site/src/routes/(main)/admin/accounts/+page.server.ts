@@ -15,8 +15,8 @@ import updatePasswordQuery from "./updatePassword.surql"
 import usersQuery from "./users.surql"
 
 const schema = type({
-	username: usernameTest,
 	password: "1 <= string <= 6969",
+	username: usernameTest,
 })
 
 export async function load({ locals }: PageServerLoadEvent) {

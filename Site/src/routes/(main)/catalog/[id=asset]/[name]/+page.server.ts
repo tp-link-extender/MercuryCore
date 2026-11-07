@@ -103,20 +103,20 @@ export async function load({ fetch: f, locals, params }: RequestEvent) {
 	const isOwner = owner?.id === user.id
 
 	return {
-		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
-		failText: failTexts[Math.floor(Math.random() * failTexts.length)],
-		form: await superValidate(arktype(schema)),
-		slug,
 		asset: {
 			...asset,
+			isOwner,
 			items,
 			price: BigInt(asset.price),
-			isOwner,
 		},
-		sold: owners.value,
+		balance: b.value,
+		failText: failTexts[Math.floor(Math.random() * failTexts.length)],
+		form: await superValidate(arktype(schema)),
+		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
 		owned: owned.value,
 		owner,
-		balance: b.value,
+		slug,
+		sold: owners.value,
 	}
 }
 
@@ -126,7 +126,7 @@ async function getBuyData({ locals, params }: RequestEvent) {
 	const assetExists = await find("asset", id)
 	if (!assetExists) error(404)
 
-	return { user, id }
+	return { id, user }
 }
 
 // actions that return things are here because of sveltekit typescript limitations
@@ -265,10 +265,10 @@ actions.buy = async e => {
 		await db.query(
 			'fn::notify($user, $owner, "ItemPurchase", $note, $relativeId)',
 			{
-				user: Record("user", user.id),
-				owner: Record("user", owner.value.id),
 				note: `${user.username} just purchased your item ${asset.name}`,
+				owner: Record("user", owner.value.id),
 				relativeId: e.params.id,
+				user: Record("user", user.id),
 			}
 		)
 }

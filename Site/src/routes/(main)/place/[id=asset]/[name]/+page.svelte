@@ -44,7 +44,7 @@
 	function privateFetchParams() {
 		const body = new FormData()
 		body.append("privateTicket", place.privateTicket)
-		return { method: "post", body }
+		return { body, method: "post" }
 	}
 
 	const launch = (joinscripturl: () => string) => {

@@ -39,7 +39,7 @@ export default async function (
 	// 	`Requesting render of type ${renderType} for ${relativeId} (${relativeName})`
 	// )
 
-	const params = Object.freeze({ renderType, relativeId })
+	const params = Object.freeze({ relativeId, renderType })
 	const [, , render] = await db.query<Render[]>(renderQuery, params)
 	if (render && render.status !== "Error") return
 
@@ -99,8 +99,8 @@ export default async function (
 			waiter,
 			// Uhh carrot just got the
 			f(`${config.RCCServiceProxyURL}/${renderId}`, {
-				method: "post",
 				body: script,
+				method: "post",
 			}),
 		])
 	} catch (e) {

@@ -25,26 +25,17 @@ const optionalPages = Object.freeze(["Statistics", "Groups", "Forum"] as const)
 export type OptionalPage = (typeof optionalPages)[number]
 
 const schema = type({
-	Name: "string >= 1",
-	Domain: "string >= 1",
-	DomainInsecure: "string >= 1",
-	RCCServiceProxyURL: "string >= 1",
-	LauncherURI: "string >= 1",
+	Branding: type({
+		Favicon: "string >= 1",
+		Icon: "string >= 1",
+		LongTagline: "string",
+		Tagline: "string",
+	}),
 	CurrencySymbol: "string >= 1",
-	Pages: type.enumerated(...optionalPages).array(),
 
 	Database: type({
 		AutoStart: "boolean",
 		Domain: "string >= 1",
-	}),
-
-	Economy: type({
-		AutoStart: "boolean",
-	}),
-
-	Orbiter: type({
-		PrivateURL: "string >= 1",
-		PublicURL: "string >= 1",
 	}),
 
 	DefaultBodyColors: type({
@@ -55,45 +46,11 @@ const schema = type({
 		RightLeg: brickColourEnum,
 		Torso: brickColourEnum,
 	}),
+	Domain: "string >= 1",
+	DomainInsecure: "string >= 1",
 
-	Logging: type({
-		Requests: "boolean",
-		FormattedErrors: "boolean",
-		Time: "boolean",
-		DiscordModerationWebhook: "string >= 1",
-	}),
-
-	Images: type({
-		DefaultPlaceIcons: "(string >= 1)[]",
-		DefaultPlaceThumbnails: "(string >= 1)[]",
-	}),
-
-	Branding: type({
-		Favicon: "string >= 1",
-		Icon: "string >= 1",
-		Tagline: "string",
-		LongTagline: "string",
-	}),
-
-	Themes: type({
-		Name: "string >= 1",
-		Path: "string >= 1",
-	})
-		.array()
-		.atLeastLength(1),
-
-	Filtering: type({
-		FilteredWords: "(string >= 1)[]",
-		ReplaceWith: "string",
-		ReplaceType: type.enumerated("Character", "Word"),
-	}),
-
-	Registration: type({
-		Keys: type({
-			Enabled: "boolean",
-			Prefix: "string",
-		}),
-		Emails: "boolean",
+	Economy: type({
+		AutoStart: "boolean",
 	}),
 
 	Email: type({
@@ -103,9 +60,51 @@ const schema = type({
 		Username: "string >= 1",
 	}),
 
+	Filtering: type({
+		FilteredWords: "(string >= 1)[]",
+		ReplaceType: type.enumerated("Character", "Word"),
+		ReplaceWith: "string",
+	}),
+
 	Gameservers: type({
 		Hosting: type.enumerated("Selfhosted", "Dedicated", "Both"),
 	}),
+
+	Images: type({
+		DefaultPlaceIcons: "(string >= 1)[]",
+		DefaultPlaceThumbnails: "(string >= 1)[]",
+	}),
+	LauncherURI: "string >= 1",
+
+	Logging: type({
+		DiscordModerationWebhook: "string >= 1",
+		FormattedErrors: "boolean",
+		Requests: "boolean",
+		Time: "boolean",
+	}),
+	Name: "string >= 1",
+
+	Orbiter: type({
+		PrivateURL: "string >= 1",
+		PublicURL: "string >= 1",
+	}),
+	Pages: type.enumerated(...optionalPages).array(),
+	RCCServiceProxyURL: "string >= 1",
+
+	Registration: type({
+		Emails: "boolean",
+		Keys: type({
+			Enabled: "boolean",
+			Prefix: "string",
+		}),
+	}),
+
+	Themes: type({
+		Name: "string >= 1",
+		Path: "string >= 1",
+	})
+		.array()
+		.atLeastLength(1),
 })
 
 const parseResult = schema(rawconfig)

@@ -10,14 +10,14 @@ import accountRegistered from "../accountRegistered"
 import userQuery from "./user.surql"
 
 const schema = type({
-	username: usernameTest,
 	password: "1 <= string <= 6969",
+	username: usernameTest,
 })
 
 export const load = async () => ({
+	descriptions: Object.entries(config.Branding.Descriptions),
 	form: await superValidate(arktype(schema)),
 	users: await accountRegistered(),
-	descriptions: Object.entries(config.Branding.Descriptions),
 })
 
 export const actions: import("./$types").Actions = {}

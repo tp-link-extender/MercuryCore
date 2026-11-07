@@ -10,8 +10,8 @@ import type { PageServerLoadEvent } from "./$types"
 import createQuery from "./create.surql"
 
 const schema = type({
-	name: "1 <= string <= 50",
 	description: "1 <= string <= 300",
+	name: "1 <= string <= 50",
 })
 
 export async function load({ locals }: PageServerLoadEvent) {

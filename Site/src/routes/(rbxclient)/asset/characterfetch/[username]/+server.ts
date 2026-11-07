@@ -27,9 +27,9 @@ export async function GET({ params }: RequestEvent) {
 
 	return new Response(charApp, {
 		headers: {
-			Pragma: "no-cache",
 			"Cache-Control": "no-cache",
 			"Content-Type": "text/plain",
+			Pragma: "no-cache",
 		},
 	})
 }

@@ -5,9 +5,9 @@
 	const { data } = $props()
 
 	const moderationAction: { [_: string]: string } = {
-		Warning: "Warning",
 		Ban: "Ban",
-		Termination: "Termination"
+		Termination: "Termination", 
+		Warning: "Warning"
 	}
 	let actionType = $derived(moderationAction[data.type])
 

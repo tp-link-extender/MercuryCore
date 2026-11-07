@@ -7,6 +7,7 @@
 
 	let systems = $derived([
 		{
+			err: "", 
 			name: "Mercury Core",
 			ok: true,
 			success: [
@@ -15,20 +16,19 @@
 				"in",
 				"development",
 				"mode"
-			],
-			err: ""
+			]
 		},
 		{
+			err: "", 
 			name: "Database",
 			ok: true,
-			success: ["Connected to", data.database],
-			err: ""
+			success: ["Connected to", data.database]
 		},
 		{
+			err: "Unable to connect to the service", 
 			name: "Economy Service",
 			ok: data.economyOk,
-			success: ["Connected to", "the ledger"],
-			err: "Unable to connect to the service"
+			success: ["Connected to", "the ledger"]
 		}
 	])
 	let working = $derived(systems.every(s => s.ok))
