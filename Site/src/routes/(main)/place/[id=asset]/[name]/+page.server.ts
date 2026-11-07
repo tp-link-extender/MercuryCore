@@ -26,6 +26,7 @@ type FoundPlace = {
 }
 
 interface Place extends FoundPlace {
+	clientVersion: number
 	created: string
 	description: string
 	dislikeCount: number
@@ -35,7 +36,6 @@ interface Place extends FoundPlace {
 	likes: boolean
 	maxPlayers: number
 	name: string
-	clientVersion: number
 	ownerUser: OwnedUser | null
 	players: {
 		status: "Playing"
