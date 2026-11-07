@@ -31,7 +31,7 @@
 	],
 	"rules": {
 		"eslint/capitalized-comments": "off",
-		"eslint/curly": ["error", "multi"],
+		"eslint/curly": "off",
 		"eslint/eqeqeq": ["error", "smart"],
 		"eslint/func-style": "off",
 		"eslint/id-length": "off",
