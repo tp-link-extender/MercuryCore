@@ -1,5 +1,15 @@
 {
 	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"assist": {
+		"actions": {
+			"source": {
+				"noDuplicateClasses": "on",
+				"organizeImports": "on",
+				"useSortedAttributes": "on"
+			}
+		},
+		"enabled": true
+	},
 	"formatter": {
 		"indentWidth": 4
 	},
