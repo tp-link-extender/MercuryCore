@@ -13,8 +13,8 @@ import {
 	serverPortTest,
 } from "$lib/typeTests"
 import { encode } from "$lib/urlName"
-import createQuery from "./create.surql"
 import clientVersions from "./clientVersions"
+import createQuery from "./create.surql"
 
 const schema = type({
 	name: "3 <= string <= 50",
