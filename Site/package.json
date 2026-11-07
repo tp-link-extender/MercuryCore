@@ -1,29 +1,20 @@
 {
 	"name": "mercurycore",
+	"type": "module",
 	"scripts": {
-		"dev": "bun x -b vite dev",
 		"build": "bun x -b vite build",
+		"buildview": "bun x -b vite build && bun x -b vite preview",
+		"dev": "bun x -b vite dev",
 		"format": "biome format src --write",
 		"lint": "biome lint src",
-		"prod": "bun i -p && bun x -b vite build",
-		"preview": "bun x -b vite preview",
-		"buildview": "bun x -b vite build && bun x -b vite preview",
-		"svelte:check": "svelte-check --tsconfig ./tsconfig.json",
-		"svelte:check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
-		"serve": "bun x pm2 start",
 		"list": "bun x pm2 list",
-		"logs": "bun x pm2 logs"
+		"logs": "bun x pm2 logs",
+		"preview": "bun x -b vite preview",
+		"prod": "bun i -p && bun x -b vite build",
+		"serve": "bun x pm2 start",
+		"svelte:check": "svelte-check --tsconfig ./tsconfig.json",
+		"svelte:check:watch": "svelte-check --tsconfig ./tsconfig.json --watch"
 	},
-	"devDependencies": {
-		"@biomejs/biome": "^2.5.15",
-		"@types/bun": "^1.4.3",
-		"@types/d3-interpolate": "^3.0.4",
-		"@types/nodemailer": "^8.0.2",
-		"@types/nprogress": "^0.2.3",
-		"svelte-check": "^4.7.6",
-		"vite-plugin-devtools-json": "^1.1.2"
-	},
-	"type": "module",
 	"dependencies": {
 		"@sveltejs/adapter-node": "^5.5.7",
 		"@sveltejs/kit": "^2.70.3",
@@ -50,6 +41,15 @@
 		"typescript": "^7.0.2",
 		"unocss": "^66.11.0",
 		"vite": "^8.3.4"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.5.15",
+		"@types/bun": "^1.4.3",
+		"@types/d3-interpolate": "^3.0.4",
+		"@types/nodemailer": "^8.0.2",
+		"@types/nprogress": "^0.2.3",
+		"svelte-check": "^4.7.6",
+		"vite-plugin-devtools-json": "^1.1.2"
 	},
 	"trustedDependencies": [
 		"@biomejs/biome",
