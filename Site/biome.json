@@ -10,7 +10,9 @@
 				"useSortedInterfaceMembers": "on",
 				"useSortedKeys": "on",
 				"useSortedPackageJson": "on",
-				"useSortedProperties": "on"
+				"useSortedProperties": "on",
+				"useSortedSelectionSet": "on",
+				"useSortedTypeFields": "on"
 			}
 		},
 		"enabled": true
