@@ -61,7 +61,6 @@
 		"eslint/object-shorthand": "warn",
 		"eslint/one-var": "off",
 		"eslint/prefer-const": "error",
-		"eslint/prefer-destructuring": "off",
 		"eslint/prefer-named-capture-group": "off",
 		"eslint/prefer-object-spread": "off",
 		"eslint/prefer-template": "warn",
