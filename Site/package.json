@@ -8,8 +8,8 @@
 		"prod": "bun i -p && bun x -b vite build",
 		"preview": "bun x -b vite preview",
 		"buildview": "bun x -b vite build && bun x -b vite preview",
-		"check": "svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
+		"svelte:check": "svelte-check --tsconfig ./tsconfig.json",
+		"svelte:check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
 		"serve": "bun x pm2 start",
 		"list": "bun x pm2 list",
 		"logs": "bun x pm2 logs"
