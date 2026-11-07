@@ -19,7 +19,7 @@ if (!building) {
 		}
 	if (config.Economy.AutoStart)
 		try {
-			startEconomy()
+			void startEconomy()
 		} catch (e) {
 			console.log(e)
 			console.error(
@@ -29,7 +29,7 @@ if (!building) {
 		}
 }
 
-await new Promise(resolve => setTimeout(resolve, 500))
+await Bun.sleep(500)
 
 export const db = new Surreal({
 	codecOptions: {
@@ -87,7 +87,7 @@ async function reconnect() {
 					`Multiple connection attempts failed. Make sure the database is running, either locally or in a container, and is accessible at ${url}.`
 				)
 			console.log("Retrying connection in 1 second...")
-			await new Promise(resolve => setTimeout(resolve, 1000))
+			await Bun.sleep(1000)
 		}
 }
 

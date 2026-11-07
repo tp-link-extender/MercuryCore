@@ -31,7 +31,7 @@ export async function GET({ url }: RequestEvent) {
 		BASE_URL: config.Domain,
 		MAP_LOCATION: "rbxasset://mbdtf.rbxl", // TODO: remove hardcoded map
 		PLACE_ID: luaRaw(toRawId(serverId)),
-		SERVER_PORT: Number(port),
+		SERVER_PORT: port,
 	})
 
 	return new Response(await SignScript(script), {

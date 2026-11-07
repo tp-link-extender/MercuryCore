@@ -19,7 +19,7 @@ import { db } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { graphicAsset } from "$lib/server/xmlAsset"
 import { encode } from "$lib/urlName"
-import type { PageServerLoadEvent } from "./$types"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import assetTypes from "./assetTypes"
 import createAssetQuery from "./createAsset.surql"
 
@@ -70,7 +70,7 @@ export async function load({ url, fetch: f }: PageServerLoadEvent) {
 	}
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, arktype(schema))

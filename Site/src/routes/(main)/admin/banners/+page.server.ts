@@ -9,7 +9,7 @@ import {
 	message,
 	superValidate,
 } from "$lib/server/validate"
-import type { PageServerLoadEvent } from "./$types"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import type { RequestEvent } from "./$types.d"
 import activeCountQuery from "./activeCount.surql"
 import bannersQuery from "./banners.surql"
@@ -64,7 +64,7 @@ const showHide = (action: string) => async (e: RequestEvent) => {
 	await db.update(Record("banner", id)).merge({ active })
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.create = async e => {
 	const { user, form, error } = await getData(e)
 	if (error) return error

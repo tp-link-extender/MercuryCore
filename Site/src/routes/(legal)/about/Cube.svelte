@@ -8,7 +8,7 @@
 		j,
 		onmoved,
 		onclicked
-	}: { i: number; j: number; onmoved: () => void; onclicked: () => void } =
+	}: { i: number; j: number; onmoved(): void; onclicked(): void } =
 		$props()
 
 	const opacity = new Spring(0)

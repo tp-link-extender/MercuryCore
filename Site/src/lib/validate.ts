@@ -1,8 +1,12 @@
+// biome-ignore-all lint/suspicious/noExplicitAny: form components are schema-agnostic, so their fields can't be typed ahead of use
+
+import type { SuperForm } from "sveltekit-superforms/client"
+
 // client version of $lib/server/validate
 
-// Form components are schema-agnostic, so their fields can't be typed ahead of use
 export type DynamicSuperForm =
-	// biome-ignore lint/suspicious/noExplicitAny: see above
-	import("sveltekit-superforms/client").SuperForm<any>
+	// oxlint-disable-next-line typescript/no-explicit-any
+	SuperForm<any>
 
-export { type SuperForm, superForm } from "sveltekit-superforms/client"
+export type { SuperForm } from "sveltekit-superforms/client"
+export { superForm } from "sveltekit-superforms/client"

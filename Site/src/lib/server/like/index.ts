@@ -13,8 +13,10 @@ const queries = Object.freeze({
 } as const)
 const actions = Object.keys(queries) as (keyof typeof queries)[]
 
-export default (
+const like = (
 	user: RecordId<"user">,
 	thing: RecordId<(typeof things)[number]>,
 	action: (typeof actions)[number]
 ) => db.query(queries[action], { thing, user })
+
+export default like

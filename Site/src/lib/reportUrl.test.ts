@@ -1,3 +1,4 @@
+// oxlint-disable eslint/no-script-url -- these are intentional test cases
 import { describe, expect, test } from "bun:test"
 import { reportPath } from "./reportUrl"
 

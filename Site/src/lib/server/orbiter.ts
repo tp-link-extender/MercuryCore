@@ -35,7 +35,7 @@ async function fetchGameserver(
 	return { ok: true }
 }
 
-export const startGameserver = async (
+export const startGameserver = (
 	f: typeof globalThis.fetch,
 	placeId: number,
 	clientVersion: number
@@ -46,7 +46,5 @@ export const startGameserver = async (
 		"put"
 	)
 
-export const closeGameserver = async (
-	f: typeof globalThis.fetch,
-	placeId: number
-) => fetchGameserver(f, placeId, "delete")
+export const closeGameserver = (f: typeof globalThis.fetch, placeId: number) =>
+	fetchGameserver(f, placeId, "delete")

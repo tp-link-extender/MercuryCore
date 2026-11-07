@@ -5,11 +5,11 @@
 	import { navigating } from "$app/state"
 	import User from "$components/User.svelte"
 
-	import "/src/nprogress.css"
-	import "/src/global.css"
-	import "/src/icons.css"
-	import "/src/daisyui/dropdown.css"
-	import "/src/daisyui/tooltip.css"
+	import "../nprogress.css"
+	import "../global.css"
+	import "../icons.css"
+	import "../daisyui/dropdown.css"
+	import "../daisyui/tooltip.css"
 	import "uno.css"
 
 	const { data, children } = $props()

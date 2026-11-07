@@ -6,7 +6,7 @@ import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
-import type { PageServerLoadEvent } from "./$types"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import createQuery from "./create.surql"
 
 const schema = type({
@@ -20,7 +20,7 @@ export async function load({ locals }: PageServerLoadEvent) {
 	return { form: await superValidate(arktype(schema)) }
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.default = async ({ locals, request, getClientAddress }) => {
 	exclude("Forum")
 	await authorise(locals, 5)

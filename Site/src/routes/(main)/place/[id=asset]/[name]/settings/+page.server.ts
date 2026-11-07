@@ -17,7 +17,7 @@ import {
 } from "$lib/typeTests"
 import { encode } from "$lib/urlName"
 import clientVersions from "../../../../games/create/clientVersions"
-import type { PageServerLoadEvent } from "./$types"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import type { RequestEvent } from "./$types.d"
 import privateTicketQuery from "./privateTicket.surql"
 import serverTicketQuery from "./serverTicket.surql"
@@ -32,7 +32,7 @@ const viewSchema = type({
 const networkSchema = type({
 	clientVersion: type
 		.enumerated(...clientVersions)
-		.pipe.try(v => Number(v))
+		.pipe.try(Number)
 		.configure({ problem: "must be a valid client version" }),
 	dedicated: "boolean",
 	maxPlayers: maxPlayersTest,
@@ -112,7 +112,7 @@ async function getData({ fetch: f, locals, params }: RequestEvent) {
 	return id
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.view = async e => {
 	const id = await getData(e)
 
@@ -132,7 +132,7 @@ actions.view = async e => {
 			)
 
 		if (!fs.existsSync("../data/icons")) fs.mkdirSync("../data/icons")
-		sharp(await icon.arrayBuffer())
+		void sharp(await icon.arrayBuffer())
 			.resize(270, 270)
 			.avif({ effort: 9 }) // not awaited, so this'll happen in the background (takes a sec or 2)
 			.toFile(`../data/icons/${id}.avif`) // also errors aren't caught but whatever
@@ -141,7 +141,7 @@ actions.view = async e => {
 	await db.query(updateSettingsQuery, {
 		description: filter(description || ""),
 		name: filter(name),
-		place: Record("place", Number(id)),
+		place: Record("place", id),
 	})
 	return message(form, "View settings updated successfully!")
 }

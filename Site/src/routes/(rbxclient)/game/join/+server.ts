@@ -93,7 +93,7 @@ export async function GET({ url }: RequestEvent) {
 		PING_URL: pingUrl,
 		PLACE_ID: luaRaw(toRawId(place.id)),
 		SERVER_ADDRESS: serverHostname,
-		SERVER_PORT: Number(serverPort),
+		SERVER_PORT: serverPort,
 		USER_ID: Math.floor(Math.random() * 1e9), // todo: tho not rly used 4 much atm
 		USERNAME: user.username,
 	})

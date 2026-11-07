@@ -12,7 +12,7 @@ import type { SuperValidated } from "$lib/server/validate"
  * @example
  * return formError(form, ["password"], ["Username or password is incorrect"])
  */
-export default (
+const formError = (
 	form: SuperValidated<
 		{ [_: string]: unknown },
 		unknown,
@@ -29,3 +29,5 @@ export default (
 
 	return fail(400, { form })
 }
+
+export default formError

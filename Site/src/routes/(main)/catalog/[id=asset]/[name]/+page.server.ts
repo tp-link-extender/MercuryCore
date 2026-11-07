@@ -20,7 +20,7 @@ import requestRender from "$lib/server/requestRender"
 import { db, find, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { couldMatch, encode } from "$lib/urlName"
-import type { RequestEvent } from "./$types"
+import type { Actions, RequestEvent } from "./$types"
 import assetQuery from "./asset.surql"
 import buyQuery from "./buy.surql"
 import findAssetQuery from "./findAsset.surql"
@@ -177,7 +177,7 @@ async function rerender({ fetch: f, locals, params }: RequestEvent) {
 		return fail(500, { msg: "Failed to request render" })
 	}
 }
-export const actions: import("./$types").Actions = { rerender }
+export const actions: Actions = { rerender }
 actions.comment = async ({
 	fetch: f,
 	locals,

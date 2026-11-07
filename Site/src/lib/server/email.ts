@@ -27,8 +27,8 @@ if (!building)
 
 		transport.use("stream", (mail, callback) => {
 			console.log("Preparing to send email:")
-			console.log(`From: ${mail.data.from}`)
-			console.log(`To: ${mail.data.to}`)
+			console.log("From:", mail.data.from)
+			console.log("To:", mail.data.to)
 			console.log(`Subject: ${mail.data.subject}`)
 			callback()
 		})

@@ -7,7 +7,7 @@ import formData from "$lib/server/formData"
 import requestRender from "$lib/server/requestRender"
 import { db, Record, type RecordId } from "$lib/server/surreal"
 import type { Group } from "../../groups/+page.server"
-import type { PageServerLoadEvent } from "./$types"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import type { RequestEvent } from "./$types.d"
 import acceptExistingQuery from "./acceptExisting.surql"
 import alreadyFriendsQuery from "./alreadyFriends.surql"
@@ -140,7 +140,7 @@ async function rerender(e: RequestEvent) {
 		return fail(500, { msg: "Failed to request render" })
 	}
 }
-export const actions: import("./$types").Actions = { rerender }
+export const actions: Actions = { rerender }
 actions.follow = async e => {
 	const { user, params } = await getInteractData(e)
 	await db.query(followQuery, {

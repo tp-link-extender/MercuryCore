@@ -14,7 +14,7 @@ import { closeGameserver, startGameserver } from "$lib/server/orbiter"
 import ratelimit from "$lib/server/ratelimit"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
-import type { PageServerLoadEvent } from "./$types"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import findPlaceQuery from "./findPlace.surql"
 import invalidatePlayingQuery from "./invalidatePlaying.surql"
 import placeQuery from "./place.surql"
@@ -136,7 +136,7 @@ async function checkUser(locals: App.Locals) {
 	return user
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.join = async ({ fetch: f, locals, params, request }) => {
 	const user = await checkUser(locals)
 	const [_, placeR] = await findPlace(f, request, Number(params.id), user)
@@ -180,6 +180,7 @@ actions.close = async ({ fetch: f, locals, params, request }) => {
 	const { user } = await authorise(locals)
 	const id = Number(params.id)
 
+	// oxlint-disable-next-line unicorn/no-unreadable-array-destructuring -- query returns [result, error, value]
 	const [, , isOwner] = await findPlace(f, request, id, user)
 
 	if (!isOwner && user.permissionLevel < 4)

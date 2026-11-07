@@ -11,6 +11,9 @@ export function toRawId(value: unknown): string {
 		const maybeRecordId = value as { id?: unknown; tb?: unknown }
 		if (maybeRecordId.id !== undefined) return toRawId(maybeRecordId.id)
 		if (maybeRecordId.tb !== undefined) return toRawId(maybeRecordId.tb)
+		return ""
 	}
-	return String(value)
+	if (typeof value === "boolean") return String(value)
+	if (typeof value === "symbol") return value.description ?? ""
+	return ""
 }

@@ -3,11 +3,13 @@ import { type } from "arktype"
 import { cookieName, cookieOptions, createSession } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
+import { toRawId } from "$lib/server/recordId"
 import requestRender from "$lib/server/requestRender"
 import { db, findWhere, Record, type RecordId } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { usernameTest } from "$lib/typeTests"
 import accountRegistered from "../accountRegistered"
+import type { Actions } from "./$types"
 import createUserQuery from "./createUser.surql"
 import regkeyCheckQuery from "./regkeyCheck.surql"
 
@@ -41,13 +43,14 @@ export const load = async () => ({
 	users: await accountRegistered(),
 })
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.register = async ({ fetch: f, cookies, request }) => {
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
 	const { username, password, cpassword, email } = form.data
-	form.data.password = form.data.cpassword = ""
+	form.data.password = ""
+	form.data.cpassword = ""
 
 	if (cpassword !== password)
 		return formError(
@@ -120,7 +123,7 @@ actions.register = async ({ fetch: f, cookies, request }) => {
 	}
 
 	try {
-		await requestRender(f, "Avatar", user.id.toString(), username)
+		await requestRender(f, "Avatar", toRawId(user.id), username)
 	} catch {}
 
 	cookies.set(cookieName, await createSession(user), cookieOptions)
@@ -133,7 +136,8 @@ actions.initialAccount = async ({ fetch: f, cookies, request }) => {
 	if (!form.valid) return formError(form)
 
 	const { username, password, cpassword } = form.data
-	form.data.password = form.data.cpassword = ""
+	form.data.password = ""
+	form.data.cpassword = ""
 
 	if (cpassword !== password)
 		return formError(
@@ -161,7 +165,7 @@ actions.initialAccount = async ({ fetch: f, cookies, request }) => {
 	if (!user) throw new Error("Failed to create initial account")
 
 	try {
-		await requestRender(f, "Avatar", user.id.toString(), username)
+		await requestRender(f, "Avatar", toRawId(user.id), username)
 	} catch {}
 
 	cookies.set(cookieName, await createSession(user), cookieOptions)

@@ -12,10 +12,12 @@ const replace = (word: string) =>
  * @example
  * filter("FUCK!!!")
  */
-export default (text: string) =>
+const filter = (text: string) =>
 	// Replace all words in the text with #s proportional to the length of the word
 	text.replaceAll(/\b(\w+)\b/g, (_, word) =>
 		(FilteredWords as string[]).includes(word.toLowerCase())
 			? replace(word)
 			: word
 	)
+
+export default filter

@@ -129,11 +129,11 @@ export async function handle(e: Parameters<Handle>[0]) {
 	return finish(e)
 }
 
-export async function handleError({ error }: Parameters<HandleServerError>[0]) {
+export function handleError({ error }: Parameters<HandleServerError>[0]) {
 	if (typeof error === "object" && error != null) {
 		const { status } = error as { status?: number }
 		if (status) {
-			console.error(status, red(error.toString()))
+			console.error(status, red(JSON.stringify(error) ?? ""))
 			return
 		}
 	}

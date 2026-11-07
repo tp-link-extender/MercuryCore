@@ -9,7 +9,7 @@ import { redirect } from "@sveltejs/kit"
  * const [things, pages] = await db.query<[Thing[], number]>(thingQuery, qp)
  * checkPages(pages)
  */
-export default (url: URL) => {
+const pageQuery = (url: URL) => {
 	const pageQ = url.searchParams.get("p") || "1"
 	const page = Number.isNaN(Number(pageQ)) ? 1 : Math.round(Number(pageQ))
 	if (page < 1) {
@@ -25,3 +25,5 @@ export default (url: URL) => {
 
 	return { checkPages, page }
 }
+
+export default pageQuery

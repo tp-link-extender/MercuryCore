@@ -29,7 +29,7 @@ export async function GET({ url }: RequestEvent) {
 	const script = buildLoadscript(await scriptFile.text(), {
 		BASE_URL: config.DomainInsecure,
 		MAP_LOCATION: mapLocation,
-		SERVER_PORT: Number(port),
+		SERVER_PORT: port,
 		SERVER_PRESENCE_URL: serverPresenceUrl,
 	})
 

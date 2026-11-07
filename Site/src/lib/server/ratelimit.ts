@@ -1,8 +1,7 @@
 // TODO: Possibly move this to the database instead of server state
 
 import { fail } from "@sveltejs/kit"
-import type { SuperValidated } from "$lib/server/validate"
-import { message } from "$lib/server/validate"
+import { message, type SuperValidated } from "$lib/server/validate"
 
 const ratelimitTimewindow = new Map<string, number>()
 const ratelimitRequests = new Map<string, number>()
@@ -33,7 +32,7 @@ const winlel =
  *	const limit = ratelimit(form, "comment", getClientAddress, 5)
  *	if (limit) return limit
  */
-export default (
+const ratelimit = (
 	form: Form,
 	category: string,
 	getClientAddress: () => string,
@@ -68,3 +67,5 @@ export default (
 	)
 	ratelimitRequests.set(id, currentRequests)
 }
+
+export default ratelimit

@@ -10,7 +10,7 @@ import {
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { db, Record } from "$lib/server/surreal"
-import type { PageServerLoadEvent } from "./$types"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import type { RequestEvent } from "./$types.d"
 import assetsQuery from "./asset.surql"
 import iaidQuery from "./iaid.surql"
@@ -70,7 +70,7 @@ async function getData({ locals, url }: RequestEvent) {
 // the pull request, the git commit
 // the coder's late-night screams
 // of hallelujah
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.approve = async e => {
 	const { id, params, assetName } = await getData(e)
 	await db.query(visibilityQuery, {

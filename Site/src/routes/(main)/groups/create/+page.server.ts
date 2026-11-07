@@ -7,7 +7,7 @@ import exclude from "$lib/server/exclude"
 import formError from "$lib/server/formError"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
-import type { PageServerLoadEvent } from "./$types"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import createQuery from "./create.surql"
 
 const schema = type({
@@ -29,7 +29,7 @@ const errors: { [_: string]: string } = Object.freeze({
 	wisely: "GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!",
 })
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.default = async ({ fetch: f, locals, request }) => {
 	exclude("Groups")
 	const { user } = await authorise(locals)

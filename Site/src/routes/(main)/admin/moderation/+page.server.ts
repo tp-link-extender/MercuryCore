@@ -6,7 +6,7 @@ import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import { arktype, message, superValidate } from "$lib/server/validate"
-import type { PageServerLoadEvent } from "./$types"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import assocreportQuery from "./assocreport.surql"
 import moderateQuery from "./moderate.surql"
 import moderateeQuery from "./moderatee.surql"
@@ -53,7 +53,7 @@ export async function load({ locals, url }: PageServerLoadEvent) {
 	}
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.default = async ({ locals, request, getClientAddress }) => {
 	const { user } = await authorise(locals, 4)
 	const form = await superValidate(request, arktype(schema))

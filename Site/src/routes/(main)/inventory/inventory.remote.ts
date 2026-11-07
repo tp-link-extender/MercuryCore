@@ -19,6 +19,7 @@ async function getInventory(): Promise<CanOwnOne[]> {
 
 	const u = new Econ.User(user.id)
 	const inv = await inventory(f, u)
+	// oxlint-disable-next-line typescript/only-throw-error -- SvelteKit error() returns a valid response object
 	if (!inv.ok) throw error(500, "failed to fetch inventory")
 
 	return [...inv.value.One]

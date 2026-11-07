@@ -3,7 +3,7 @@ import { assetRegex } from "$lib/paramTests"
 import config from "$lib/server/config"
 import type { RequestEvent } from "./$types"
 
-export async function GET({ url }: RequestEvent) {
+export function GET({ url }: RequestEvent) {
 	const id = url.searchParams.get("id")
 	if (!id || !assetRegex.test(id)) error(400, "Missing id parameter")
 

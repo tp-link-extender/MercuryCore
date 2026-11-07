@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { enhance } from "$app/forms"
-	import type { UserType } from "$components/Comment.svelte"
-	import Comment from "$components/Comment.svelte"
+	import Comment, { type UserType } from "$components/Comment.svelte"
 	import DeleteButton from "$components/DeleteButton.svelte"
 	import PinButton from "$components/PinButton.svelte"
 	import ReportButton from "$components/ReportButton.svelte"

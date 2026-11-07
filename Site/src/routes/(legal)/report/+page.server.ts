@@ -11,7 +11,7 @@ import {
 	message,
 	superValidate,
 } from "$lib/server/validate"
-import type { PageServerLoadEvent } from "./$types"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import getReporteeQuery from "./getReportee.surql"
 import reportQuery from "./report.surql"
 import reports from "./reports"
@@ -49,7 +49,7 @@ export async function load({ locals, url }: PageServerLoadEvent) {
 	}
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.default = async ({ locals, request, url, getClientAddress }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, arktype(schema))
