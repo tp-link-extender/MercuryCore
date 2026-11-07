@@ -15,7 +15,10 @@ export async function sendModerationDiscordWebhook({
 	moderatorUsername = "System",
 	webhookUrl = config.Logging.DiscordModerationWebhook,
 }: ModerationDiscordWebhookPayload) {
-	if (!webhookUrl || webhookUrl.includes("123456789012345678/abcdefghijklmnopqrstuvwxyz"))
+	if (
+		!webhookUrl ||
+		webhookUrl.includes("123456789012345678/abcdefghijklmnopqrstuvwxyz")
+	)
 		return
 
 	try {
@@ -31,10 +34,18 @@ export async function sendModerationDiscordWebhook({
 						title: "Moderation action",
 						description: `**${username}** was moderated by **${moderatorUsername}**.`,
 						fields: [
-							{ name: "User Moderated", value: username, inline: true },
+							{
+								name: "User Moderated",
+								value: username,
+								inline: true,
+							},
 							{ name: "Action", value: action, inline: true },
 							{ name: "Reason", value: reason, inline: false },
-							{ name: "Moderator", value: moderatorUsername, inline: true },
+							{
+								name: "Moderator",
+								value: moderatorUsername,
+								inline: true,
+							},
 						],
 						timestamp: new Date().toISOString(),
 					},

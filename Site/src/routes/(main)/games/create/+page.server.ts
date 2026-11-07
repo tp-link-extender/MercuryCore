@@ -24,8 +24,8 @@ const schema = type({
 	serverPort: serverPortTest.default(53640),
 	maxPlayers: maxPlayersTest.default(10),
 	clientVersion: type.enumerated(...clientVersions).configure({
-			problem: "must be a valid client version",
-		}),
+		problem: "must be a valid client version",
+	}),
 	privateServer: "boolean | undefined",
 })
 
@@ -41,7 +41,13 @@ actions.default = async ({ fetch: f, locals, request }) => {
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
-	const { serverAddress, serverPort, maxPlayers, clientVersion, privateServer } = form.data
+	const {
+		serverAddress,
+		serverPort,
+		maxPlayers,
+		clientVersion,
+		privateServer,
+	} = form.data
 
 	const name = form.data.name.trim()
 	if (!name) return formError(form, ["name"], ["Place must have a name"])
