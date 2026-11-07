@@ -10,6 +10,7 @@ import {
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { db, Record } from "$lib/server/surreal"
+import type { PageServerLoadEvent } from "./$types"
 import type { RequestEvent } from "./$types.d"
 import assetsQuery from "./asset.surql"
 import iaidQuery from "./iaid.surql"
@@ -28,7 +29,7 @@ type Asset = {
 	}
 }
 
-export async function load({ fetch: f, locals }) {
+export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 	await authorise(locals, 3)
 
 	const [assets] = await db.query<Asset[][]>(assetsQuery)

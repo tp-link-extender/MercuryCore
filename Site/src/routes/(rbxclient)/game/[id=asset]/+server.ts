@@ -4,6 +4,7 @@ import * as Econ from "economy/types"
 import { env } from "$env/dynamic/private"
 import { economyConnFailed, ownsItem } from "$lib/server/economy"
 import { db, Record } from "$lib/server/surreal"
+import type { RequestEvent } from "./$types"
 
 const placeAccessQuery = `
 	SELECT
@@ -20,7 +21,13 @@ function constantTimeEqual(a: string, b: string): boolean {
 	return timingSafeEqual(ah, bh)
 }
 
-export async function GET({ fetch: f, locals, params, request, url }) {
+export async function GET({
+	fetch: f,
+	locals,
+	params,
+	request,
+	url,
+}: RequestEvent) {
 	const id = +params.id
 
 	const [[place]] = await db.query<
@@ -45,8 +52,7 @@ export async function GET({ fetch: f, locals, params, request, url }) {
 		(!!ticket && constantTimeEqual(ticket, place.serverTicket))
 
 	if (!authorised && locals.user) {
-		if (locals.user.permissionLevel >= 5)
-			authorised = true
+		if (locals.user.permissionLevel >= 5) authorised = true
 		else {
 			const owns = await ownsItem(f, locals.user.id, new Econ.Place(id))
 			if (!owns.ok) error(500, economyConnFailed)

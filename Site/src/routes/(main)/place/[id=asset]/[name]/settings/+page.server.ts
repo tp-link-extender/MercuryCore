@@ -17,6 +17,7 @@ import {
 } from "$lib/typeTests"
 import { encode } from "$lib/urlName"
 import clientVersions from "../../../../games/create/clientVersions"
+import type { PageServerLoadEvent } from "./$types"
 import type { RequestEvent } from "./$types.d"
 import privateTicketQuery from "./privateTicket.surql"
 import serverTicketQuery from "./serverTicket.surql"
@@ -71,7 +72,7 @@ async function placeQuery(id: number) {
 	return place
 }
 
-export async function load({ fetch: f, locals, params }) {
+export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	const getPlace = await placeQuery(+params.id)
 	if (!getPlace) error(404, "Place not found")
 

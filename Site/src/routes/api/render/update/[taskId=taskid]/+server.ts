@@ -1,15 +1,24 @@
 import { error } from "@sveltejs/kit"
 import { RCC_KEY } from "$env/static/private"
 import { db, Record } from "$lib/server/surreal"
+import type { RequestEvent } from "./$types"
 import completeQuery from "./complete.surql"
 import renderQuery from "./render.surql"
 
 type Render = {
-	type: "Clothing" | "Avatar" | "Package" | "Torso" | "LeftArm" | "RightArm" | "LeftLeg" | "RightLeg"
+	type:
+		| "Clothing"
+		| "Avatar"
+		| "Package"
+		| "Torso"
+		| "LeftArm"
+		| "RightArm"
+		| "LeftLeg"
+		| "RightLeg"
 	relativeId: number
 }
 
-export async function POST({ params, request }) {
+export async function POST({ params, request }: RequestEvent) {
 	// get bearer token from header instead of insecure url
 	const auth = request.headers.get("Authorization")
 	if (!auth || !auth.startsWith("Bearer ") || auth.slice(7) !== RCC_KEY)

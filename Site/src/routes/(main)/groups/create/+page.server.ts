@@ -7,13 +7,14 @@ import exclude from "$lib/server/exclude"
 import formError from "$lib/server/formError"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
+import type { PageServerLoadEvent } from "./$types"
 import createQuery from "./create.surql"
 
 const schema = type({
 	name: "3 <= string <= 40",
 })
 
-export async function load({ fetch: f }) {
+export async function load({ fetch: f }: PageServerLoadEvent) {
 	exclude("Groups")
 	const p = await prices(f)
 	return {
@@ -23,10 +24,7 @@ export async function load({ fetch: f }) {
 }
 
 const errors: { [_: string]: string } = Object.freeze({
-	create: Buffer.from(
-		"ZHVtYiBuKiBkZXRlY3RlZA==",
-		"base64"
-	).toString(),
+	create: Buffer.from("ZHVtYiBuKiBkZXRlY3RlZA==", "base64").toString(),
 	changed: "Dickhead",
 	wisely: "GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!",
 })

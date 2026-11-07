@@ -1,5 +1,6 @@
 import pageQuery from "$lib/server/pageQuery"
 import { db } from "$lib/server/surreal"
+import type { PageServerLoadEvent } from "./$types"
 import gamesQuery from "./games.surql"
 
 type Place = {
@@ -11,7 +12,7 @@ type Place = {
 	dislikeCount: number
 }
 
-export async function load({ url }) {
+export async function load({ url }: PageServerLoadEvent) {
 	const { page, checkPages } = pageQuery(url)
 
 	const [places, pages] = await db.query<[Place[], number]>(gamesQuery, {

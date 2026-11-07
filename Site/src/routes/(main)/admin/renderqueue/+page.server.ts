@@ -1,6 +1,7 @@
 import { authorise } from "$lib/server/auth"
 import type { RenderType, Status } from "$lib/server/requestRender"
 import { db } from "$lib/server/surreal"
+import type { PageServerLoadEvent } from "./$types"
 import renderQueueQuery from "./renderqueue.surql"
 
 type Render = {
@@ -17,7 +18,7 @@ type Render = {
 	}
 }
 
-export async function load({ locals }) {
+export async function load({ locals }: PageServerLoadEvent) {
 	await authorise(locals, 3)
 
 	const [[status], [queue]] = await Promise.all([

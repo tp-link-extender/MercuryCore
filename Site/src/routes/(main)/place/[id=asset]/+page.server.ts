@@ -4,6 +4,7 @@ import { authorise } from "$lib/server/auth"
 import { economyConnFailed, ownsItem } from "$lib/server/economy"
 import { db, Record } from "$lib/server/surreal"
 import { encode } from "$lib/urlName"
+import type { PageServerLoadEvent } from "./$types"
 import placeIdQuery from "./placeId.surql"
 
 // these files r kinda like the no-man's land of the Mercury Core codebase
@@ -13,7 +14,7 @@ type Place = {
 	privateServer: boolean
 }
 
-export async function load({ fetch: f, locals, params }) {
+export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 	const [[place]] = await db.query<Place[][]>(placeIdQuery, {
 		place: Record("place", +params.id),

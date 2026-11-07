@@ -1,6 +1,7 @@
 import { error, redirect } from "@sveltejs/kit"
 import { authorise } from "$lib/server/auth"
 import { db, Record } from "$lib/server/surreal"
+import type { PageServerLoadEvent } from "./$types"
 import getModerationQuery from "./getModeration.surql"
 import unmoderateQuery from "./unmoderate.surql"
 
@@ -21,7 +22,7 @@ async function getModeration(id: string) {
 }
 
 // Make sure a user has been moderated before loading the page.
-export async function load({ locals }) {
+export async function load({ locals }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 	return await getModeration(user.id)
 }

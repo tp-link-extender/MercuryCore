@@ -54,7 +54,7 @@ const noTexts = Object.freeze([
 ])
 const failTexts = Object.freeze(["Bruh", "Okay", "Aight", "Rip", "Aw man..."])
 
-export async function load({ fetch: f, locals, params }) {
+export async function load({ fetch: f, locals, params }: RequestEvent) {
 	const { user } = await authorise(locals)
 	const id = +params.id
 	const [[asset]] = await db.query<Asset[][]>(assetQuery, {

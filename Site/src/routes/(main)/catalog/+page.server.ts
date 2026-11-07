@@ -1,9 +1,10 @@
+import { error } from "@sveltejs/kit"
 import { packageItems as ledgerPackageItems } from "economy/api"
 import * as Econ from "economy/types"
-import { error } from "@sveltejs/kit"
 import { economyConnFailed } from "$lib/server/economy"
 import pageQuery from "$lib/server/pageQuery"
 import { db } from "$lib/server/surreal"
+import type { PageServerLoadEvent } from "./$types"
 import catalogQuery from "./catalog.surql"
 
 export type Asset = {
@@ -22,7 +23,7 @@ async function packageItemIds(f: typeof globalThis.fetch): Promise<number[]> {
 		.map(i => i.ID)
 }
 
-export async function load({ fetch: f, url }) {
+export async function load({ fetch: f, url }: PageServerLoadEvent) {
 	const { page, checkPages } = pageQuery(url)
 	// const type = url.searchParams.get("type") || ""
 	// if (!intRegex.test(type)) error(400, "Invalid type parameter")

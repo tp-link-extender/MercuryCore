@@ -3,8 +3,9 @@ import { balance, historyOwner } from "economy/api"
 import * as Econ from "economy/types"
 import { authorise } from "$lib/server/auth"
 import { economyConnFailed, ownerData } from "$lib/server/economy"
+import type { PageServerLoadEvent } from "./$types"
 
-export async function load({ fetch: f, locals }) {
+export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 
 	const u = new Econ.User(user.id)

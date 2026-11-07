@@ -1,10 +1,11 @@
 import { error } from "@sveltejs/kit"
 import config from "$lib/server/config"
 import { find } from "$lib/server/surreal"
+import type { RequestEvent } from "./$types"
 
 const thumbnails = config.Images.DefaultPlaceThumbnails
 
-export async function GET({ params }) {
+export async function GET({ params }: RequestEvent) {
 	const id = +params.id
 	if (!(await find("place", id))) error(404, "Not Found")
 

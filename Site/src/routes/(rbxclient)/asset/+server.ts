@@ -5,6 +5,7 @@ import { intRegex } from "$lib/paramTests"
 import config from "$lib/server/config"
 import { db, Record } from "$lib/server/surreal"
 import { isXML } from "$lib/server/xml"
+import type { RequestEvent } from "./$types"
 import assetQuery from "./asset.surql"
 
 const headers = (file: string | Uint8Array) => ({
@@ -108,7 +109,7 @@ async function loadOpenCloudAsset(f: typeof globalThis.fetch, id: number) {
 	}
 }
 
-export async function GET({ fetch: f, url }) {
+export async function GET({ fetch: f, url }: RequestEvent) {
 	const assetId = url.searchParams.get("id")
 	if (!assetId || !intRegex.test(assetId)) error(400, "Invalid Request")
 

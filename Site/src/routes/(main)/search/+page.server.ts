@@ -3,6 +3,7 @@ import { packageItems } from "economy/api"
 import * as Econ from "economy/types"
 import { economyConnFailed } from "$lib/server/economy"
 import { db } from "$lib/server/surreal"
+import type { PageServerLoadEvent } from "./$types"
 import searchAssetsQuery from "./searchAssets.surql"
 import searchGroupsQuery from "./searchGroups.surql"
 import searchPlacesQuery from "./searchPlaces.surql"
@@ -39,7 +40,7 @@ type Group = {
 	memberCount: number
 }
 
-export async function load({ fetch: f, url }) {
+export async function load({ fetch: f, url }: PageServerLoadEvent) {
 	const query = url.searchParams.get("q") || ""
 	const category = url.searchParams.get("c")?.toLowerCase() || ""
 	if (!query) error(400, "Missing search query")

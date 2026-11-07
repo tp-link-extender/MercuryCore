@@ -1,6 +1,7 @@
 import { error } from "@sveltejs/kit"
 import config from "$lib/server/config"
 import { db } from "$lib/server/surreal"
+import type { RequestEvent } from "./$types"
 import userQuery from "./user.surql"
 
 type User = {
@@ -15,7 +16,7 @@ type User = {
 	wearing: number[]
 }
 
-export async function GET({ params }) {
+export async function GET({ params }: RequestEvent) {
 	const { username } = params
 	const [[user]] = await db.query<User[][]>(userQuery, { username })
 	if (!user) error(404, "User not found")

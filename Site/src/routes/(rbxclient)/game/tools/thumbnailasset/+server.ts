@@ -2,9 +2,10 @@
 
 import { error, redirect } from "@sveltejs/kit"
 import { db, Record } from "$lib/server/surreal"
+import type { RequestEvent } from "./$types"
 import cachedAssetQuery from "./cache.surql"
 
-export async function GET({ fetch: f, url }) {
+export async function GET({ fetch: f, url }: RequestEvent) {
 	const width = +(url.searchParams.get("wd") as string)
 	const height = +(url.searchParams.get("ht") as string)
 	const assetId = +(url.searchParams.get("aid") as string)

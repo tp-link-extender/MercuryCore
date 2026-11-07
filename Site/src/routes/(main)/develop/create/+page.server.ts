@@ -19,6 +19,7 @@ import { db } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { graphicAsset } from "$lib/server/xmlAsset"
 import { encode } from "$lib/urlName"
+import type { PageServerLoadEvent } from "./$types"
 import assetTypes from "./assetTypes"
 import createAssetQuery from "./createAsset.surql"
 
@@ -38,7 +39,7 @@ const schema = type({
 
 // type assetType = (typeof assetTypes)[number]
 
-export async function load({ url, fetch: f }) {
+export async function load({ url, fetch: f }: PageServerLoadEvent) {
 	const p = await prices(f)
 	const price = p.ok ? p.value.unlimitedSourcePrice : 0n
 	// const urlType = url.searchParams.get("type") as assetType | null

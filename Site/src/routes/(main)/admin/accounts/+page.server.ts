@@ -11,6 +11,7 @@ import {
 	superValidate,
 } from "$lib/server/validate"
 import { usernameTest } from "$lib/typeTests"
+import type { PageServerLoadEvent } from "./$types"
 import updatePasswordQuery from "./updatePassword.surql"
 import usersQuery from "./users.surql"
 
@@ -19,7 +20,7 @@ const schema = type({
 	password: "1 <= string <= 6969",
 })
 
-export async function load({ locals }) {
+export async function load({ locals }: PageServerLoadEvent) {
 	await authorise(locals, 4)
 
 	const [users] = await db.query<BasicUser[][]>(usersQuery)

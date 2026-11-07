@@ -8,13 +8,14 @@ import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
+import type { PageServerLoadEvent } from "./$types"
 
 const schema = type({
 	// title: "1 <= string <= 50",
 	content: "(string <= 3000) | undefined",
 })
 
-export async function load({ url }) {
+export async function load({ url }: PageServerLoadEvent) {
 	exclude("Forum")
 	const categoryParam = url.searchParams.get("category")
 	if (!categoryParam) error(400, "Missing category")

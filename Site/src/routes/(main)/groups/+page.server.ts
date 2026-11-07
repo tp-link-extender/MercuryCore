@@ -1,6 +1,7 @@
 import exclude from "$lib/server/exclude"
 import pageQuery from "$lib/server/pageQuery"
 import { db } from "$lib/server/surreal"
+import type { PageServerLoadEvent } from "./$types"
 import groupsQuery from "./groups.surql"
 
 export type Group = {
@@ -9,7 +10,7 @@ export type Group = {
 	memberCount: number
 }
 
-export async function load({ url }) {
+export async function load({ url }: PageServerLoadEvent) {
 	exclude("Groups")
 	const { page, checkPages } = pageQuery(url)
 

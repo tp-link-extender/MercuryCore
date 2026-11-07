@@ -14,6 +14,7 @@ import { closeGameserver, startGameserver } from "$lib/server/orbiter"
 import ratelimit from "$lib/server/ratelimit"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
+import type { PageServerLoadEvent } from "./$types"
 import findPlaceQuery from "./findPlace.surql"
 import invalidatePlayingQuery from "./invalidatePlaying.surql"
 import placeQuery from "./place.surql"
@@ -47,7 +48,12 @@ interface Place extends FoundPlace {
 
 const thumbnails = config.Images.DefaultPlaceThumbnails
 
-export async function load({ fetch: f, locals, params, url }) {
+export async function load({
+	fetch: f,
+	locals,
+	params,
+	url,
+}: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 	const privateTicket = url.searchParams.get("privateServer")
 	const id = +params.id

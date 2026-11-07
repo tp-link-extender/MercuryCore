@@ -5,8 +5,9 @@ import { toRawId } from "$lib/server/recordId"
 import { SignScript } from "$lib/server/sign"
 import { db } from "$lib/server/surreal"
 import placeQuery from "../place.surql"
+import type { RequestEvent } from "./$types"
 
-export async function GET({ url }) {
+export async function GET({ url }: RequestEvent) {
 	if (config.Gameservers.Hosting === "Dedicated")
 		error(400, "Selfhosted servers are not supported")
 

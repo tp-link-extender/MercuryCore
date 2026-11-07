@@ -8,6 +8,7 @@ import {
 } from "$lib/server/economy"
 import exclude from "$lib/server/exclude"
 import { db, find, Record } from "$lib/server/surreal"
+import type { PageServerLoadEvent } from "./$types"
 import type { RequestEvent } from "./$types.d"
 import groupQuery from "./group.surql"
 import joinQuery from "./join.surql"
@@ -21,7 +22,7 @@ type Group = {
 	owner: OwnedUser | null
 }
 
-export async function load({ fetch: f, locals, params }) {
+export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	exclude("Groups")
 	const { user } = await authorise(locals)
 	const [[group]] = await db.query<Group[][]>(groupQuery, {

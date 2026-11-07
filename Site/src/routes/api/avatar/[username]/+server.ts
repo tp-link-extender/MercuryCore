@@ -1,10 +1,11 @@
 import fs from "node:fs"
 import { error } from "@sveltejs/kit"
 import { db, type RecordId } from "$lib/server/surreal"
+import type { RequestEvent } from "./$types"
 
 const timeout = 10 // seconds
 
-export async function GET({ params, url }) {
+export async function GET({ params, url }: RequestEvent) {
 	let { username } = params
 	if (!username) error(400, "Invalid Request")
 

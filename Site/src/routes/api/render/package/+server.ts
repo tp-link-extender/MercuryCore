@@ -2,8 +2,9 @@ import { error } from "@sveltejs/kit"
 import { assetRegex } from "$lib/paramTests"
 import config from "$lib/server/config"
 import { packageItems } from "$lib/server/packageItems"
+import type { RequestEvent } from "./$types"
 
-export async function GET({ fetch: f, url }) {
+export async function GET({ fetch: f, url }: RequestEvent) {
 	const id = url.searchParams.get("id")
 	if (!id || !assetRegex.test(id)) error(400, "Missing id parameter")
 

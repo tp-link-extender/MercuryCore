@@ -2,6 +2,7 @@ import { error } from "@sveltejs/kit"
 import { assetRegex } from "$lib/paramTests"
 import config from "$lib/server/config"
 import { db, Record } from "$lib/server/surreal"
+import type { RequestEvent } from "./$types"
 import typeQuery from "./type.surql"
 
 // the clothing worn by the render rig depends on which body part is rendered
@@ -18,7 +19,7 @@ const bodyPartClothing = Object.freeze({
 // its matching item of clothing, used by RCC (renderTorso.luau,
 // renderLeftArm.luau, renderRightArm.luau, renderLeftLeg.luau and
 // renderRightLeg.luau)
-export async function GET({ url }) {
+export async function GET({ url }: RequestEvent) {
 	const id = url.searchParams.get("id")
 	if (!id || !assetRegex.test(id)) error(400, "Missing id parameter")
 
