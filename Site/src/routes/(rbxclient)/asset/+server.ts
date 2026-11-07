@@ -91,7 +91,7 @@ async function loadOpenCloudAsset(f: typeof globalThis.fetch, id: number) {
 		if (!req.ok) return
 
 		const json = (await req.json()) as { location: string }
-		const location = json.location
+		const { location } = json
 		if (!location) return
 
 		const res = await f(location)

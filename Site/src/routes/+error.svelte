@@ -12,7 +12,7 @@
 		data: import("./$types").LayoutData
 	} = $props()
 
-	const status = page.status
+	const { status } = page
 	function errors() {
 		if (status === 401 || status === 403) return "403"
 		if (status === 404) return "404"
