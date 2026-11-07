@@ -3,39 +3,39 @@
 
 	&:before,
 	&:after {
-		@apply transition duration-300 ease-in-out;
 		opacity: 0;
+		@apply transition duration-300 ease-in-out;
 	}
 
 	&:before {
-		@apply max-w-48 rounded-2 px-2 py-1 text-sm;
-		content: attr(aria-label);
-		display: block;
 		position: absolute;
-		font-weight: 500;
-		left: 50%;
 		bottom: -160%; /* very magic */
-		transform: translateX(-50%);
-		background-color: rgba(255, 255, 255, 0.624);
-		color: #000;
+		left: 50%;
+		display: block;
 		width: max-content;
+		font-weight: 500;
+		color: #000;
+		content: attr(aria-label);
+		background-color: rgba(255, 255, 255, 0.624);
+		transform: translateX(-50%);
+		@apply max-w-48 rounded-2 px-2 py-1 text-sm;
 	}
 
 	&:after {
-		content: "";
-		border-style: solid;
-		border-width: 0.35rem;
-		width: 0;
-		height: 0;
-		display: block;
 		position: absolute;
-		transform: translateX(-50%);
-		border-color: transparent transparent rgba(255, 255, 255, 0.624)
-			transparent;
 		top: 100%;
-		left: 50%;
 		right: auto;
 		bottom: auto;
+		left: 50%;
+		display: block;
+		width: 0;
+		height: 0;
+		content: "";
+		border-color: transparent transparent rgba(255, 255, 255, 0.624)
+			transparent;
+		border-style: solid;
+		border-width: 0.35rem;
+		transform: translateX(-50%);
 	}
 
 	&:hover:before,

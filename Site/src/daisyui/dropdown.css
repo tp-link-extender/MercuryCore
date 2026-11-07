@@ -1,29 +1,29 @@
 .dropdown-content {
-	@apply transition transition-all duration-300 ease-in-out;
+	right: 0;
 	z-index: 1000;
-	padding-left: 0.5rem;
 	/* biome-ignore lint/complexity/noImportantStyles: overrides daisyUI's dropdown defaults */
 	max-height: 25rem !important;
+	padding-left: 0.5rem;
 	overflow-y: auto;
-	right: 0;
 	filter: drop-shadow(0 10px 8px rgba(255, 255, 255, 0.04))
 		drop-shadow(0 0px 3px rgba(255, 255, 255, 0.1));
+	@apply transition transition-all duration-300 ease-in-out;
 
 	& ul {
-		list-style: none;
 		width: 10rem;
-		background: var(--darker);
 		margin: 0;
+		list-style: none;
+		background: var(--darker);
 	}
 
 	& a,
 	& button {
-		/* biome-ignore lint/complexity/noImportantStyles: overrides daisyUI's dropdown defaults */
-		transition: background 0.2s !important;
 		width: 100%;
-		border: none;
 		/* biome-ignore lint/complexity/noImportantStyles: overrides daisyUI's dropdown defaults */
 		text-align: start !important;
+		border: none;
+		/* biome-ignore lint/complexity/noImportantStyles: overrides daisyUI's dropdown defaults */
+		transition: background 0.2s !important;
 	}
 
 	& a:hover,
@@ -49,10 +49,10 @@
 }
 
 .dropdown-ellipsis {
-	cursor: pointer;
 	padding: 0 0.5rem;
-	transition: opacity 0.2s;
+	cursor: pointer;
 	opacity: 0.5;
+	transition: opacity 0.2s;
 }
 
 .dropdown {
