@@ -6,7 +6,7 @@ import { db } from "$lib/server/surreal"
 import placeQuery from "./place.surql"
 
 export async function GET({ url }) {
-	if (config.Gameservers.Hosting === "Dedicated")
+	if (config.Gameservers.Hosting === "Selfhosted")
 		error(400, "Dedicated servers are not supported")
 
 	const ticket = url.searchParams.get("ticket")

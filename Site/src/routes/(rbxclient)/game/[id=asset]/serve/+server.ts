@@ -12,7 +12,7 @@ type Place = {
 }
 
 export async function GET({ params }) {
-	if (config.Gameservers.Hosting === "Selfhosted")
+	if (config.Gameservers.Hosting === "Dedicated")
 		error(400, "Selfhosted servers are not supported")
 
 	const id = +params.id
