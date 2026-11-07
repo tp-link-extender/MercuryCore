@@ -12,9 +12,9 @@ import createUserQuery from "./createUser.surql"
 import regkeyCheckQuery from "./regkeyCheck.surql"
 
 const schemaInitial = type({
-	username: usernameTest,
-	password: "1 <= string <= 6969",
 	cpassword: "1 <= string <= 6969",
+	password: "1 <= string <= 6969",
+	username: usernameTest,
 })
 const schema = type({
 	username: usernameTest,
@@ -23,8 +23,8 @@ const schema = type({
 			problem: "must be a valid RFC-5321 email address",
 		}),
 	}), // https://youtu.be/mrGfahzt-4Q?t=1563
-	password: "16 <= string <= 6969",
 	cpassword: "16 <= string <= 6969",
+	password: "16 <= string <= 6969",
 	...(config.Registration.Keys.Enabled && {
 		regkey: "1 <= string <= 6969",
 	}),
@@ -34,11 +34,11 @@ const prefix = config.Registration.Keys.Prefix
 const prefixRegex = new RegExp(`^${prefix}(.+)$`)
 
 export const load = async () => ({
-	form: await superValidate(arktype(schema)),
-	users: await accountRegistered(),
-	regKeysEnabled: config.Registration.Keys.Enabled,
 	emailsEnabled: config.Registration.Emails,
+	form: await superValidate(arktype(schema)),
 	prefix,
+	regKeysEnabled: config.Registration.Keys.Enabled,
+	users: await accountRegistered(),
 })
 
 export const actions: import("./$types").Actions = {}
@@ -100,13 +100,13 @@ actions.register = async ({ fetch: f, cookies, request }) => {
 	}
 
 	const results = await db.query<RecordId<"user">[]>(createUserQuery, {
-		username,
+		bodyColours: config.DefaultBodyColors,
 		email: email || "",
 		// I still love scrypt, though argon2 is better supported
 		hashedPassword: Bun.password.hashSync(password),
-		permissionLevel: 1,
-		bodyColours: config.DefaultBodyColors,
 		key,
+		permissionLevel: 1,
+		username,
 	})
 	const user = results.at(-1)
 	if (!user) {
@@ -151,11 +151,11 @@ actions.initialAccount = async ({ fetch: f, cookies, request }) => {
 	// This is the kind of stuff that always breaks due to never getting tested
 	// Remember: untested === unworking
 	const results = await db.query<RecordId<"user">[]>(createUserQuery, {
-		username,
+		bodyColours: config.DefaultBodyColors,
 		email: "",
 		hashedPassword: Bun.password.hashSync(password),
 		permissionLevel: 5,
-		bodyColours: config.DefaultBodyColors,
+		username,
 	})
 	const user = results.at(-1)
 	if (!user) throw new Error("Failed to create initial account")

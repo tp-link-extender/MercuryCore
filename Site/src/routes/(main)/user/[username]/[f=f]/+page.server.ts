@@ -11,9 +11,9 @@ import userQuery from "./user.surql"
 // "$id->friends->user OR $id<-friends<-user" doesn't work
 // "$id<->friends<->user" shows yourself in the list (twice)
 const queries = Object.freeze({
-	friends: friendsQuery,
 	followers: followersQuery,
 	following: followingQuery,
+	friends: friendsQuery,
 })
 
 export async function load({ params }: PageServerLoadEvent) {
@@ -28,8 +28,8 @@ export async function load({ params }: PageServerLoadEvent) {
 
 	return {
 		...params,
+		count,
 		f: params.f as keyof typeof queries,
 		users,
-		count,
 	}
 }

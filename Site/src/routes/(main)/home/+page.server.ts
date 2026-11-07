@@ -47,11 +47,11 @@ export async function load({ locals }: PageServerLoadEvent) {
 	>(homeQuery, { user: Record("user", user.id) })
 
 	return {
-		greet: greets[Math.floor(Math.random() * greets.length)](user.username),
-		form: await superValidate(arktype(schema)),
-		places,
-		friends,
 		feed,
+		form: await superValidate(arktype(schema)),
+		friends,
+		greet: greets[Math.floor(Math.random() * greets.length)](user.username),
+		places,
 	}
 }
 

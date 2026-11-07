@@ -7,9 +7,9 @@
 	const { data } = $props()
 
 	const titles = Object.freeze({
-		friends: () => `${data.username}'s friends`,
 		followers: () => `${data.username}'s followers`,
-		following: () => `Followed by ${data.username}`
+		following: () => `Followed by ${data.username}`, 
+		friends: () => `${data.username}'s friends`
 	})
 	let title = titles[data.f]()
 </script>

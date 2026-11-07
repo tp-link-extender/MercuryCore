@@ -25,15 +25,15 @@
 
 	function updPanel() {
 		panel = {
+			Catalog: [["Asset creation", "create", "fa-file-circle-plus"]],
+			Economy: [
+				["Transactions", "transactions", "fa-money-bill-transfer"]
+			], 
 			Moderation: [
 				["User moderation", "moderation", "fa-user-slash"],
 				["Abuse reports", "reports", "fa-flag"],
 				["Asset approval", "asset", "fa-file-circle-check"],
 				["Render queue", "renderqueue", "fa-file-image"]
-			],
-			Catalog: [["Asset creation", "create", "fa-file-circle-plus"]],
-			Economy: [
-				["Transactions", "transactions", "fa-money-bill-transfer"]
 			]
 		}
 		tabNames = ["Moderation", "Catalog", "Economy", "Statistics"]

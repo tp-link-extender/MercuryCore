@@ -19,14 +19,14 @@ export async function load({ locals, request }: LayoutServerLoadEvent) {
 	const [banners] = await db.query<Banner[][]>(bannersQuery)
 	return {
 		banners,
-		user,
-		notifications: await getNotifications(user),
-		url: request.url,
-		domain: config.Domain,
 		currencySymbol: config.CurrencySymbol,
+		domain: config.Domain,
+		longTagline: config.Branding.LongTagline,
+		notifications: await getNotifications(user),
+		pages: config.Pages,
 		siteName: config.Name,
 		tagline: config.Branding.Tagline,
-		longTagline: config.Branding.LongTagline,
-		pages: config.Pages,
+		url: request.url,
+		user,
 	}
 }

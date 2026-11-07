@@ -17,4 +17,4 @@ export default (
 	user: RecordId<"user">,
 	thing: RecordId<(typeof things)[number]>,
 	action: (typeof actions)[number]
-) => db.query(queries[action], { user, thing })
+) => db.query(queries[action], { thing, user })

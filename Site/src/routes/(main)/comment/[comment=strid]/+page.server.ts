@@ -62,10 +62,10 @@ actions.comment = async ({ locals, params, request, getClientAddress }) => {
 		await db.query(
 			`fn::notify($sender, $receiver, "CommentReply", $note, $relativeId)`,
 			{
-				sender: Record("user", user.id),
-				receiver: Record("user", creatorId),
 				note: `${user.username} replied to your comment: ${content}`,
+				receiver: Record("user", creatorId),
 				relativeId: newCommentId,
+				sender: Record("user", user.id),
 			}
 		)
 }
@@ -96,8 +96,8 @@ actions.delete = async ({ locals, params, url, getClientAddress }) => {
 
 	const [, , ok] = await db.query<1[][]>(removeCommentQuery, {
 		comment: Record("comment", params.comment),
-		user: Record("user", user.id),
 		moderate,
+		user: Record("user", user.id),
 	})
 	if (!ok?.[0]) error(404, "Comment not found or already deleted")
 }

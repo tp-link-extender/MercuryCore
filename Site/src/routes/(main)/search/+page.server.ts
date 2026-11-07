@@ -63,22 +63,22 @@ export async function load({ fetch: f, url }: PageServerLoadEvent) {
 				searchUsersQuery,
 				param
 			)
-			return { query, category, users }
+			return { category, query, users }
 		}
 		case "places": {
 			const [places] = await db.query<Place[][]>(searchPlacesQuery, param)
-			return { query, category, places }
+			return { category, places, query }
 		}
 		case "assets": {
 			const [assets] = await db.query<Asset[][]>(searchAssetsQuery, {
 				...param,
 				packageItems: await packageItemIds(f),
 			})
-			return { query, category, assets }
+			return { assets, category, query }
 		}
 		case "groups": {
 			const [groups] = await db.query<Group[][]>(searchGroupsQuery, param)
-			return { query, category, groups }
+			return { category, groups, query }
 		}
 	}
 	error(400, "Invalid category")

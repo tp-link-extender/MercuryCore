@@ -7,9 +7,9 @@ import { arktype, superValidate } from "$lib/server/validate"
 import findUserQuery from "./findUser.surql"
 
 const schema = type({
+	cnpassword: "16 <= string <= 6969",
 	code: "6 <= string <= 6",
 	npassword: "16 <= string <= 6969",
-	cnpassword: "16 <= string <= 6969",
 })
 
 export const load = async () => ({ form: await superValidate(arktype(schema)) })

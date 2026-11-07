@@ -30,7 +30,7 @@
 	let assets = $state<AssetEntry[]>([])
 	let isPackage = $derived($form.type === "Package")
 
-	const addAsset = () => assets.push({ name: "", description: "", type: "Hat" })
+	const addAsset = () => assets.push({ description: "", name: "", type: "Hat" })
 	const removeAsset = (num: number) => assets.splice(num, 1)
 </script>
 

@@ -15,8 +15,8 @@ export async function GET({ request, url }: RequestEvent) {
 
 	return new Response("OK", {
 		headers: {
-			Pragma: "no-cache",
 			"Cache-Control": "no-cache",
+			Pragma: "no-cache",
 		},
 	})
 }

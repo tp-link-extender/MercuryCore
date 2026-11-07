@@ -25,19 +25,19 @@ import settingsQuery from "./settings.surql"
 import updateSettingsQuery from "./updateSettings.surql"
 
 const viewSchema = type({
-	name: "string <= 100",
-	icon: "(File | undefined)?",
 	description: "(string <= 1000) | undefined",
+	icon: "(File | undefined)?",
+	name: "string <= 100",
 })
 const networkSchema = type({
-	dedicated: "boolean",
-	serverAddress: serverAddressTest.optional(),
-	serverPort: serverPortTest.optional(),
-	maxPlayers: maxPlayersTest,
 	clientVersion: type
 		.enumerated(...clientVersions)
 		.pipe.try(v => +v)
 		.configure({ problem: "must be a valid client version" }),
+	dedicated: "boolean",
+	maxPlayers: maxPlayersTest,
+	serverAddress: serverAddressTest.optional(),
+	serverPort: serverPortTest.optional(),
 })
 const ticketSchema = type({} as never) // I'm a genius
 const privacySchema = type({
@@ -85,16 +85,16 @@ export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	return {
 		...getPlace,
 		clientVersions,
+		dataForm: await superValidate(arktype(dataSchema)),
+		networkForm: await superValidate(arktype(networkSchema)),
+		privacyForm: await superValidate(arktype(privacySchema)),
+		privatelinkForm: await superValidate(arktype(privatelinkSchema)),
 		slug: encode(getPlace.name),
+		ticketForm: await superValidate(arktype(ticketSchema)), // lmaooo it works
 		viewForm: await superValidate(
 			{ name: getPlace.name },
 			arktype(viewSchema)
 		),
-		networkForm: await superValidate(arktype(networkSchema)),
-		ticketForm: await superValidate(arktype(ticketSchema)), // lmaooo it works
-		privacyForm: await superValidate(arktype(privacySchema)),
-		privatelinkForm: await superValidate(arktype(privatelinkSchema)),
-		dataForm: await superValidate(arktype(dataSchema)),
 	}
 }
 
@@ -139,9 +139,9 @@ actions.view = async e => {
 	}
 
 	await db.query(updateSettingsQuery, {
-		place: Record("place", +id),
-		name: filter(name),
 		description: filter(description || ""),
+		name: filter(name),
+		place: Record("place", +id),
 	})
 	return message(form, "View settings updated successfully!")
 }

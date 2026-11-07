@@ -20,15 +20,15 @@ const methodColours = Object.freeze({
 	POST: yellow("POST"),
 })
 const pathnameColours = Object.freeze({
+	admin: red,
 	api: green,
 	download: yellow,
+	login: blue,
 	moderation: yellow,
+	place: magenta,
+	register: blue,
 	report: yellow,
 	statistics: yellow,
-	register: blue,
-	login: blue,
-	place: magenta,
-	admin: red,
 })
 
 function pathnameColour(pathname: string) {
@@ -81,9 +81,9 @@ async function finish({ event, resolve }: Parameters<Handle>[0]) {
 	res.headers.delete("content-length") // prevent cutoff, since the body was modified
 
 	return new Response(text, {
+		headers: res.headers,
 		status: res.status,
 		statusText: res.statusText,
-		headers: res.headers,
 	})
 }
 

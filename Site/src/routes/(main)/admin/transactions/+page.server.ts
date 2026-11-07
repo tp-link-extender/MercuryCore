@@ -11,7 +11,7 @@ export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 	if (!transactions.ok) error(500, economyConnFailed)
 
 	return {
-		transactions: transactions.value.map(t => t.Serialise()),
 		ownerData: await ownerData(transactions.value),
+		transactions: transactions.value.map(t => t.Serialise()),
 	}
 }

@@ -29,8 +29,8 @@ export async function load({ fetch: f, url }: PageServerLoadEvent) {
 	// if (!intRegex.test(type)) error(400, "Invalid type parameter")
 
 	const [, pages] = await db.query<[Asset[], number]>(catalogQuery, {
-		page,
 		packageItems: await packageItemIds(f),
+		page,
 		// type: +type,
 	})
 	checkPages(pages)

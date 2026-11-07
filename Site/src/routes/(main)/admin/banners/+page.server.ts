@@ -15,10 +15,10 @@ import activeCountQuery from "./activeCount.surql"
 import bannersQuery from "./banners.surql"
 
 const schema = type({
-	bannerText: "(string <= 100) | undefined",
-	bannerColour: "string | undefined",
-	bannerTextLight: "boolean | undefined",
 	bannerBody: "string | undefined",
+	bannerColour: "string | undefined",
+	bannerText: "(string <= 100) | undefined",
+	bannerTextLight: "boolean | undefined",
 })
 
 type BannerType = {
@@ -47,7 +47,7 @@ async function getData({ locals, request }: RequestEvent) {
 	const { user } = await authorise(locals, 5)
 	const form = await superValidate(request, arktype(schema))
 
-	return { user, form, error: !form.valid && formError(form) }
+	return { error: !form.valid && formError(form), form, user }
 }
 
 const showHide = (action: string) => async (e: RequestEvent) => {
@@ -78,11 +78,11 @@ actions.create = async e => {
 	if (limit) return limit
 
 	await db.insert(Banner, {
-		deleted: false,
-		body: bannerText,
 		bgColour: bannerColour,
-		textLight: !!bannerTextLight,
+		body: bannerText,
 		creator: Record("user", user.id),
+		deleted: false,
+		textLight: !!bannerTextLight,
 	})
 
 	return message(form, "Banner created successfully!")

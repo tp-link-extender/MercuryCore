@@ -1,11 +1,11 @@
 import config from "$lib/server/config"
 
 const strings = Object.freeze({
-	"T-Shirt": ["ShirtGraphic", "Graphic", "Shirt Graphic"],
-	Shirt: ["Shirt", "ShirtTemplate", "Shirt"],
-	Pants: ["Pants", "PantsTemplate", "Pants"],
 	Decal: ["Decal", "Texture", "Decal"],
 	Face: ["Decal", "Texture", "face"],
+	Pants: ["Pants", "PantsTemplate", "Pants"],
+	Shirt: ["Shirt", "ShirtTemplate", "Shirt"],
+	"T-Shirt": ["ShirtGraphic", "Graphic", "Shirt Graphic"],
 })
 
 /**

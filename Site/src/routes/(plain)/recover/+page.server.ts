@@ -17,9 +17,9 @@ const schema = type({
 })
 
 const cookieOptions = Object.freeze({
-	secure: !dev,
 	maxAge: 24 * 60 * 60, // 1 day
 	path: "", // only this route and /recover/code
+	secure: !dev,
 })
 
 // don't await because if it blocks then a user could tell whether a given email is registered or not

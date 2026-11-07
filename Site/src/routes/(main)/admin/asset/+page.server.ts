@@ -54,8 +54,8 @@ async function getData({ locals, url }: RequestEvent) {
 	const id = +assetId
 
 	const params = Object.freeze({
-		user: Record("user", user.id),
 		asset: Record("asset", id),
+		user: Record("user", user.id),
 	})
 	const [[asset]] = await db.query<{ name: string }[][]>(
 		"SELECT name FROM $asset",
@@ -63,7 +63,7 @@ async function getData({ locals, url }: RequestEvent) {
 	)
 	if (!asset) error(404, "Asset not found")
 
-	return { user, id, params, assetName: asset.name }
+	return { assetName: asset.name, id, params, user }
 }
 
 // it goes like this, the bug, the fix
@@ -75,16 +75,16 @@ actions.approve = async e => {
 	const { id, params, assetName } = await getData(e)
 	await db.query(visibilityQuery, {
 		...params,
-		visibility: "Visible",
 		note: `Approve asset ${assetName} (id ${id})`,
+		visibility: "Visible",
 	})
 }
 actions.deny = async e => {
 	const { id, params, assetName } = await getData(e)
 	await db.query(visibilityQuery, {
 		...params,
-		visibility: "Moderated",
 		note: `Moderate asset ${assetName} (id ${id})`,
+		visibility: "Moderated",
 	})
 }
 actions.rerender = async e => {
@@ -109,8 +109,8 @@ actions.purge = async e => {
 	await Promise.all([
 		db.query(purgeQuery, {
 			...params,
-			note: `Purge asset ${assetName} (id ${id})`,
 			imageAsset: Record("asset", iaid),
+			note: `Purge asset ${assetName} (id ${id})`,
 		}),
 		fs.rm(`../data/assets/${id}`),
 		fs.rm(`../data/assets/${iaid}`),

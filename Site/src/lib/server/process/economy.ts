@@ -26,8 +26,8 @@ export default async () => {
 	console.log(`Starting Economy service (${path})...`)
 	const proc = Bun.spawn([`./${name}`], {
 		cwd,
-		stdout: "pipe",
 		stderr: "pipe",
+		stdout: "pipe",
 	})
 
 	process.on("exit", () => {

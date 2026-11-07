@@ -6,6 +6,7 @@ import presetWind3 from "unocss/preset-wind3"
 import fa from "./src/icons.json"
 
 export default defineConfig({
+	presets: [presetTagify(), presetAttributify(), presetWind3()],
 	rules: [
 		[
 			/^fa-([a-zA-Z0-9-]+)$/,
@@ -15,7 +16,5 @@ export default defineConfig({
 					: "",
 		],
 	],
-
-	presets: [presetTagify(), presetAttributify(), presetWind3()],
 	transformers: [transformerDirectives(), transformerVariantGroup()],
 })

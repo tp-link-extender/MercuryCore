@@ -16,6 +16,10 @@ import createQuery from "./create.surql"
 import createPackageQuery from "./createPackage.surql"
 
 const schema = type({
+	asset: "File | undefined",
+	description: "(string <= 1000) | undefined",
+	name: "3 <= string <= 50",
+	price: "0 <= number.integer <= 999",
 	type: type
 		.enumerated(...Object.values(types))
 		// TODO: compare with the other method in normal creation flow
@@ -27,15 +31,11 @@ const schema = type({
 		.configure({
 			problem: "must be a valid asset type",
 		}),
-	name: "3 <= string <= 50",
-	description: "(string <= 1000) | undefined",
-	price: "0 <= number.integer <= 999",
-	asset: "File | undefined",
 })
 
 const packageSchema = type({
-	name: "3 <= string <= 50",
 	description: "(string <= 1000) | undefined",
+	name: "3 <= string <= 50",
 	price: "0 <= number.integer <= 999",
 })
 
@@ -101,11 +101,11 @@ actions.default = async ({ fetch: f, locals, request }) => {
 	const id = created.value.ID
 
 	await db.query<string[]>(createQuery, {
-		id,
+		assetType,
 		description,
+		id,
 		name,
 		price,
-		assetType,
 	})
 
 	await Bun.write(`../data/assets/${id}`, buf)
@@ -188,11 +188,11 @@ async function createPackage(
 			return fail("Face assets must be in XML format")
 
 		children.push({
-			id: 0, // assigned below, from the Economy service
 			description: descriptions[num] ?? "",
+			file,
+			id: 0, // assigned below, from the Economy service
 			name,
 			type: assetType,
-			file,
 		})
 	}
 

@@ -10,9 +10,9 @@ export async function load({ locals, url }: PageServerLoadEvent) {
 
 	const [users, pages] = await db.query<[BasicUser[], number]>(
 		requestsQuery,
-		{ user: Record("user", user.id), page }
+		{ page, user: Record("user", user.id) }
 	)
 	checkPages(pages)
 
-	return { users, pages }
+	return { pages, users }
 }

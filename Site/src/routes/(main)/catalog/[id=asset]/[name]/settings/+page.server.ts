@@ -36,13 +36,13 @@ type Asset = {
 }
 
 const schema = type({
+	description: "(0 <= string <= 1000) | undefined",
+	forSale: "boolean",
 	// This is how I show my love
 	// I made it in my mind because
 	// I blame it on my ADD, baby
 	name: "3 <= string <= 50",
-	description: "(0 <= string <= 1000) | undefined",
 	price: "0 <= number.integer <= 999",
-	forSale: "boolean",
 })
 
 const reuploadSchema = type({
@@ -70,17 +70,17 @@ export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 
 	return {
 		...asset,
-		slug: encode(asset.name),
+		reuploadForm: await superValidate(arktype(reuploadSchema)),
 		settingsForm: await superValidate(
 			{
-				name: asset.name,
-				forSale: asset.forSale,
 				description: asset.description,
+				forSale: asset.forSale,
+				name: asset.name,
 				price: asset.price,
 			},
 			arktype(schema)
 		),
-		reuploadForm: await superValidate(arktype(reuploadSchema)),
+		slug: encode(asset.name),
 	}
 }
 
@@ -265,9 +265,9 @@ actions.reupload = async ({
 	const visibility = user.permissionLevel >= 3 ? "Visible" : "Pending"
 	await db.query(reuploadQuery, {
 		asset: Record("asset", id),
-		visibility,
 		note: `Reupload asset ${asset.name} (id ${id})`,
 		user: Record("user", user.id),
+		visibility,
 	})
 
 	if ([11, 12].includes(asset.type))

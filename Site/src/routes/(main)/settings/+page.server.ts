@@ -19,9 +19,9 @@ const profileSchema = type({
 	}),
 })
 const passwordSchema = type({
+	cnpassword: "string >= 1",
 	cpassword: "string >= 1",
 	npassword: "string >= 1",
-	cnpassword: "string >= 1",
 })
 const sessionSchema = type({
 	password: "string >= 1",
@@ -31,8 +31,8 @@ const stylingSchema = type({
 })
 
 export const load = async () => ({
-	profileForm: await superValidate(arktype(profileSchema)),
 	passwordForm: await superValidate(arktype(passwordSchema)),
+	profileForm: await superValidate(arktype(profileSchema)),
 	sessionForm: await superValidate(arktype(sessionSchema)),
 	stylingForm: await superValidate(arktype(stylingSchema)),
 	themes: themeNames,
@@ -47,9 +47,9 @@ actions.profile = async ({ locals, request }) => {
 	const { description, theme } = form.data
 
 	await db.query(updateProfileQuery, {
-		user: Record("user", user.id),
 		description,
 		theme,
+		user: Record("user", user.id),
 	})
 
 	return message(form, "Profile updated successfully!")

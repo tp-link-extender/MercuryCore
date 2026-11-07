@@ -34,10 +34,10 @@
 
 	let select = $derived(
 		new Select<string>({
-			value: selected,
 			onValueChange: val => {
 				$form[name] = val
-			}
+			}, 
+			value: selected
 
 			// floatingConfig: {
 			// 	onCompute: a => {

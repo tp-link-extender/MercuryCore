@@ -21,11 +21,11 @@ export default (
 	name = "tab",
 	groups?: { name: string; tabs: string[] }[]
 ) => ({
-	name,
-	tabs,
 	currentTab: new URL(url).searchParams.get(name || "tab") || tabs[0],
-	url,
-	icons,
 	groups,
+	icons,
+	name,
 	num: 0,
+	tabs,
+	url,
 })

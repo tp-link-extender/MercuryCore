@@ -23,34 +23,34 @@ export async function sendModerationDiscordWebhook({
 
 	try {
 		const response = await fetch(webhookUrl, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
 			body: JSON.stringify({
 				embeds: [
 					{
 						color: 0xf59e0b,
-						title: "Moderation action",
 						description: `**${username}** was moderated by **${moderatorUsername}**.`,
 						fields: [
 							{
+								inline: true,
 								name: "User Moderated",
 								value: username,
-								inline: true,
 							},
-							{ name: "Action", value: action, inline: true },
-							{ name: "Reason", value: reason, inline: false },
+							{ inline: true, name: "Action", value: action },
+							{ inline: false, name: "Reason", value: reason },
 							{
+								inline: true,
 								name: "Moderator",
 								value: moderatorUsername,
-								inline: true,
 							},
 						],
 						timestamp: new Date().toISOString(),
+						title: "Moderation action",
 					},
 				],
 			}),
+			headers: {
+				"Content-Type": "application/json",
+			},
+			method: "POST",
 		})
 
 		if (!response.ok)

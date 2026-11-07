@@ -9,6 +9,6 @@ export async function GET({ url }: RequestEvent) {
 	const pageQ = url.searchParams.get("p") || "1"
 	const page = Number.isNaN(+pageQ) ? 1 : Math.max(1, Math.round(+pageQ))
 
-	const [assets] = await db.query<Asset[][]>(catalogQuery, { query, page })
+	const [assets] = await db.query<Asset[][]>(catalogQuery, { page, query })
 	return json(assets)
 }
