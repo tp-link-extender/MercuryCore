@@ -1,5 +1,4 @@
 import { type } from "arktype"
-import { ThrownError } from "surrealdb"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"

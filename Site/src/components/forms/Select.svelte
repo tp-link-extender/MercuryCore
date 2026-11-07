@@ -24,7 +24,7 @@
 		// multiple?: boolean
 		options: readonly string[]
 		selected?: string
-		formData: import("$lib/validate").SuperForm<any>
+		formData: import("$lib/validate").DynamicSuperForm
 	} = $props()
 
 	let { form, errors, constraints } = $derived(formData)
