@@ -161,13 +161,16 @@ a:hover:not(.btn):not(.light-text) {
 }
 
 a:hover.light-text {
+	/* biome-ignore lint/complexity/noImportantStyles: overrides UnoCSS text utilities */
 	color: var(--grey-text) !important;
 }
 
 .bg-background {
+	/* biome-ignore lint/complexity/noImportantStyles: overrides UnoCSS background utilities */
 	background: var(--background) !important;
 }
 .bg-darker {
+	/* biome-ignore lint/complexity/noImportantStyles: overrides UnoCSS background utilities */
 	background: var(--darker) !important;
 }
 .bg-a {
@@ -181,6 +184,11 @@ a:hover.light-text {
 }
 .bg-a3 {
 	background: var(--accent3);
+}
+
+p,
+span {
+	color: var(--light-text);
 }
 
 a.light-text,
@@ -248,11 +256,6 @@ img[src^="/api/avatar"] {
 	font-weight: 400;
 }
 
-p,
-span {
-	color: var(--light-text);
-}
-
 .form-select {
 	padding: 0.5rem 3rem 0.5rem 1rem;
 	background-position: right 1rem center;
@@ -275,9 +278,6 @@ span {
 		background: hsl(var(--hue) 65 20);
 		border-color: hsl(var(--hue) 100 60);
 	}
-}
-.input-group > .btn-secondary {
-	@apply border-l-0;
 }
 .btn-tertiary {
 	background: hsl(0 0 12%);
@@ -373,6 +373,10 @@ span {
 	color: #fff;
 }
 
+.input-group > .btn-secondary {
+	@apply border-l-0;
+}
+
 /* Tables */
 
 table {
@@ -433,6 +437,7 @@ details[open] summary {
 }
 
 .is-invalid {
+	/* biome-ignore lint/complexity/noImportantStyles: overrides UnoCSS border utilities */
 	border-color: hsl(354 70 55) !important;
 	padding-right: 2.2rem;
 	background-image: url(/invalid.svg);
@@ -515,9 +520,11 @@ select,
 
 	& a,
 	& button {
+		/* biome-ignore lint/complexity/noImportantStyles: overrides UnoCSS/daisyUI dropdown styles */
 		transition: background 0.2s !important;
 		width: 100%;
 		border: none;
+		/* biome-ignore lint/complexity/noImportantStyles: overrides UnoCSS/daisyUI dropdown styles */
 		text-align: start !important;
 	}
 
@@ -527,6 +534,7 @@ select,
 	& button:focus,
 	& a[data-highlighted],
 	& button[data-highlighted] {
+		/* biome-ignore lint/complexity/noImportantStyles: overrides UnoCSS/daisyUI dropdown styles */
 		color: var(--grey-text) !important;
 		background: rgba(119, 51, 255, 0.5);
 	}
