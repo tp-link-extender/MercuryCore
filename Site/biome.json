@@ -22,6 +22,9 @@
 			"tailwindDirectives": true
 		}
 	},
+	"files": {
+		"includes": ["src/**", "*.config.js", "*.config.ts", "*.json"]
+	},
 	"formatter": {
 		"indentWidth": 4
 	},
