@@ -1,5 +1,6 @@
 import { type } from "arktype"
 import { brickColoursStrings } from "$lib/brickColours"
+import type { Config } from "../../../../Assets/schema"
 import rawconfig from "../../../../mercury.core"
 
 if (!process.versions.bun || !Bun) {
@@ -117,5 +118,9 @@ if (parseResult instanceof type.errors) {
 
 console.log("Successfully loaded configuration file")
 
-const config = rawconfig // lmfao
+const config = {
+	...rawconfig,
+	// Keep the other options' literal types, but let hosting be compared against any mode
+	Gameservers: rawconfig.Gameservers as Config["Gameservers"],
+} // lmfao
 export default config
