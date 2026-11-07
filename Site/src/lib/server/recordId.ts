@@ -9,10 +9,8 @@ export function toRawId(value: unknown): string {
 		return String(value)
 	if (typeof value === "object") {
 		const maybeRecordId = value as { id?: unknown; tb?: unknown }
-		if (maybeRecordId.id !== undefined)
-			return toRawId(maybeRecordId.id)
-		if (maybeRecordId.tb !== undefined)
-			return toRawId(maybeRecordId.tb)
+		if (maybeRecordId.id !== undefined) return toRawId(maybeRecordId.id)
+		if (maybeRecordId.tb !== undefined) return toRawId(maybeRecordId.tb)
 	}
 	return String(value)
 }

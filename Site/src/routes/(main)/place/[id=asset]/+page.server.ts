@@ -21,7 +21,11 @@ export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	})
 
 	if (place) {
-		const owns = await ownsItem(f, user.id, new Econ.Place(Number(params.id)))
+		const owns = await ownsItem(
+			f,
+			user.id,
+			new Econ.Place(Number(params.id))
+		)
 		if (!owns.ok) error(500, economyConnFailed)
 
 		if (!place.privateServer || owns.value)
