@@ -1,4 +1,6 @@
+import { timingSafeEqual } from "node:crypto"
 import { error } from "@sveltejs/kit"
+import { env } from "$env/dynamic/private"
 import config from "$lib/server/config"
 import idToPort from "$lib/server/idToPort"
 import { SignScript } from "$lib/server/sign"
@@ -11,9 +13,22 @@ type Place = {
 	serverTicket: string
 }
 
-export async function GET({ params }) {
-	if (config.Gameservers.Hosting === "Dedicated")
-		error(400, "Selfhosted servers are not supported")
+function constantTimeEqual(a: string, b: string): boolean {
+	const ah = Buffer.from(a)
+	const bh = Buffer.from(b)
+	if (ah.byteLength !== bh.byteLength) return false
+	return timingSafeEqual(ah, bh)
+}
+
+export async function GET({ params, request }) {
+	if (config.Gameservers.Hosting === "Selfhosted")
+		error(400, "Dedicated servers are not supported")
+
+	const gameserverKey = env.GAMESERVER_KEY
+	const auth = request.headers.get("Authorization")
+	const bearer = auth?.startsWith("Bearer ") ? auth.slice(7) : null
+	if (!gameserverKey || !bearer || !constantTimeEqual(bearer, gameserverKey))
+		error(403, "Unauthorised")
 
 	const id = +params.id
 
