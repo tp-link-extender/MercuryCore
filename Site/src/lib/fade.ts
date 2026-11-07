@@ -4,9 +4,9 @@
 import { type FadeParams, fade } from "svelte/transition"
 
 interface Params extends FadeParams {
+	max?: number
 	num?: number
 	total?: number
-	max?: number
 }
 
 export default (node: HTMLElement, props: Params = { duration: 300 }) => {

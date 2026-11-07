@@ -18,11 +18,6 @@ declare global {
 	}
 
 	declare interface User extends BasicUser {
-		id: string
-		description: {
-			text: string
-			updated: Date
-		}[]
 		bodyColours: {
 			Head: number
 			LeftArm: number
@@ -32,10 +27,15 @@ declare global {
 			Torso: number
 		}
 		created: string
+		css: string
+		description: {
+			text: string
+			updated: Date
+		}[]
 		email: string
+		id: string
 		lastOnline: Date
 		permissionLevel: number
-		css: string
 		theme: number
 	}
 

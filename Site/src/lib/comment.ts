@@ -1,18 +1,14 @@
 import type { Scored } from "$lib/like2"
 
 export interface Comment extends Scored {
-	id: string
 	author: BasicUser
+	comments: Comment[]
 	content: {
 		text: string
 		updated: Date
 	}[]
-	comments: Comment[]
 	created: Date
-	parentId: string
-	pinned: boolean
-	type: string[]
-	visibility: string
+	id: string
 	info?:
 		| {
 				type: "forum"
@@ -24,4 +20,8 @@ export interface Comment extends Scored {
 				asset: string
 				slug: string
 		  }
+	parentId: string
+	pinned: boolean
+	type: string[]
+	visibility: string
 }
