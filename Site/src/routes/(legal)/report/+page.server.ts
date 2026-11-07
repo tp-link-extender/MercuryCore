@@ -11,6 +11,7 @@ import {
 	message,
 	superValidate,
 } from "$lib/server/validate"
+import type { PageServerLoadEvent } from "./$types"
 import getReporteeQuery from "./getReportee.surql"
 import reportQuery from "./report.surql"
 import reports from "./reports"
@@ -28,7 +29,7 @@ async function getReportee(username: string) {
 	return reportee.id
 }
 
-export async function load({ locals, url }) {
+export async function load({ locals, url }: PageServerLoadEvent) {
 	await authorise(locals)
 
 	const reportee = url.searchParams.get("user")

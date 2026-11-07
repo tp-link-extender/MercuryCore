@@ -6,6 +6,7 @@ import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import { arktype, message, superValidate } from "$lib/server/validate"
+import type { PageServerLoadEvent } from "./$types"
 import assocreportQuery from "./assocreport.surql"
 import moderateQuery from "./moderate.surql"
 import moderateeQuery from "./moderatee.surql"
@@ -27,7 +28,7 @@ const schema = type({
 	reason: "15 <= string <= 150",
 })
 
-export async function load({ locals, url }) {
+export async function load({ locals, url }: PageServerLoadEvent) {
 	await authorise(locals, 4)
 
 	const associatedReport = url.searchParams.get("report")

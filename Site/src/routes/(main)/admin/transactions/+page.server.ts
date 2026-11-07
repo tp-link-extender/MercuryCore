@@ -2,8 +2,9 @@ import { error } from "@sveltejs/kit"
 import { history } from "economy/api"
 import { authorise } from "$lib/server/auth"
 import { economyConnFailed, ownerData } from "$lib/server/economy"
+import type { PageServerLoadEvent } from "./$types"
 
-export async function load({ fetch: f, locals }) {
+export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 	await authorise(locals, 5)
 
 	const transactions = await history(f, 100)

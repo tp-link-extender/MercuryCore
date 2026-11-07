@@ -9,6 +9,7 @@ import {
 	message,
 	superValidate,
 } from "$lib/server/validate"
+import type { PageServerLoadEvent } from "./$types"
 import type { RequestEvent } from "./$types.d"
 import activeCountQuery from "./activeCount.surql"
 import bannersQuery from "./banners.surql"
@@ -30,7 +31,7 @@ type BannerType = {
 	textLight: boolean
 }
 
-export async function load({ locals }) {
+export async function load({ locals }: PageServerLoadEvent) {
 	await authorise(locals, 5)
 
 	const [banners] = await db.query<BannerType[][]>(bannersQuery)

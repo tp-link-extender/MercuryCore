@@ -10,6 +10,7 @@ import { packageItems } from "$lib/server/packageItems"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { db, Record } from "$lib/server/surreal"
+import type { PageServerLoadEvent } from "./$types"
 import type { RequestEvent } from "./$types.d"
 import assetsQuery from "./assets.surql"
 import equipQuery from "./equip.surql"
@@ -72,7 +73,7 @@ type WornAsset = {
 	worn: boolean
 }
 
-export async function load({ fetch: f, locals }) {
+export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 	const ids = await getOwnedAssetIds(f, user.id)
 

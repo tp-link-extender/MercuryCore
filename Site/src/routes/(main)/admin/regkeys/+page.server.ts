@@ -33,7 +33,7 @@ type RegKey = {
 	creator?: BasicUser
 }
 
-export async function load({ locals }) {
+export async function load({ locals }: RequestEvent) {
 	if (!config.Registration.Keys.Enabled) error(404, "Not Found")
 	await authorise(locals, 5)
 

@@ -11,6 +11,7 @@ import { db } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { isXML } from "$lib/server/xml"
 import { encode } from "$lib/urlName"
+import type { PageServerLoadEvent } from "./$types"
 import createQuery from "./create.surql"
 import createPackageQuery from "./createPackage.surql"
 
@@ -56,7 +57,7 @@ const slotLimits: Readonly<{ [_: number]: number }> = Object.freeze({
 	31: 1,
 })
 
-export async function load({ locals }) {
+export async function load({ locals }: PageServerLoadEvent) {
 	await authorise(locals, 3)
 
 	return {

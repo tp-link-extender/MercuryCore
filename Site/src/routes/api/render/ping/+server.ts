@@ -1,10 +1,11 @@
 import { error } from "@sveltejs/kit"
 import { RCC_KEY } from "$env/static/private"
 import { db } from "$lib/server/surreal"
+import type { RequestEvent } from "./$types"
 import pingQuery from "./ping.surql"
 
 // TODO: this route isn't actually used for anything at the moment, the RCCService proxy should ping it "every so often"
-export async function POST({ request }) {
+export async function POST({ request }: RequestEvent) {
 	const auth = request.headers.get("Authorization")
 	if (!auth || !auth.startsWith("Bearer ") || auth.slice(7) !== RCC_KEY)
 		error(403, "Nerd")

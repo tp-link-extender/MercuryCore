@@ -17,6 +17,7 @@ import requestRender from "$lib/server/requestRender"
 import { db, Record } from "$lib/server/surreal"
 import { arktype, message, superValidate } from "$lib/server/validate"
 import { encode } from "$lib/urlName"
+import type { PageServerLoadEvent } from "./$types"
 import assetQuery from "./asset.surql"
 import assetCheckQuery from "./assetCheck.surql"
 import reuploadQuery from "./reupload.surql"
@@ -48,7 +49,7 @@ const reuploadSchema = type({
 	asset: "File",
 })
 
-export async function load({ fetch: f, locals, params }) {
+export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 	const id = +params.id
 	const [[check]] = await db.query<AssetCheck[][]>(assetCheckQuery, {

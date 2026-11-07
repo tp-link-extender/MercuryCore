@@ -6,6 +6,7 @@ import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
+import type { PageServerLoadEvent } from "./$types"
 import homeQuery from "./home.surql"
 
 const schema = type({
@@ -37,7 +38,7 @@ const greets: readonly ((u: string) => string)[] = Object.freeze([
 	u => `Hello, ${u}!`,
 ])
 
-export async function load({ locals }) {
+export async function load({ locals }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 	// (main)/+layout.server.ts will handle most redirects for logged-out users, but sometimes errors for this page.
 

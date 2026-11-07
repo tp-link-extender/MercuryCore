@@ -5,6 +5,7 @@ import config from "$lib/server/config"
 import idToPort from "$lib/server/idToPort"
 import { SignScript } from "$lib/server/sign"
 import { db, Record } from "$lib/server/surreal"
+import type { RequestEvent } from "./$types"
 import placeQuery from "./place.surql"
 
 type Place = {
@@ -20,7 +21,7 @@ function constantTimeEqual(a: string, b: string): boolean {
 	return timingSafeEqual(ah, bh)
 }
 
-export async function GET({ params, request }) {
+export async function GET({ params, request }: RequestEvent) {
 	if (config.Gameservers.Hosting === "Selfhosted")
 		error(400, "Dedicated servers are not supported")
 

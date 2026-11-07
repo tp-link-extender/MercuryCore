@@ -2,6 +2,7 @@
 
 import { error } from "@sveltejs/kit"
 import { db, type RecordId } from "$lib/server/surreal"
+import type { PageServerLoadEvent } from "./$types"
 import followersQuery from "./followers.surql"
 import followingQuery from "./following.surql"
 import friendsQuery from "./friends.surql"
@@ -15,7 +16,7 @@ const queries = Object.freeze({
 	following: followingQuery,
 })
 
-export async function load({ params }) {
+export async function load({ params }: PageServerLoadEvent) {
 	const type = params.f as keyof typeof queries
 	const [[user]] = await db.query<{ id: RecordId<"user"> }[][]>(
 		userQuery,

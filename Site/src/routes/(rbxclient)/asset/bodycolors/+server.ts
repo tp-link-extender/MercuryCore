@@ -1,5 +1,6 @@
 import { error } from "@sveltejs/kit"
 import { db } from "$lib/server/surreal"
+import type { RequestEvent } from "./$types"
 import bodyColoursQuery from "./bodyColours.surql"
 
 type User = {
@@ -19,7 +20,7 @@ const xmlHeaders = {
 	"Content-Type": "text/xml",
 }
 
-export async function GET({ url }) {
+export async function GET({ url }: RequestEvent) {
 	const username = url.searchParams.get("username")?.trim()
 	const bodyColoursXml = await Bun.file("xml/bodyColours.xml").text()
 

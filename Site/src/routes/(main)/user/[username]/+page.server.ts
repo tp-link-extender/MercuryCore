@@ -7,6 +7,7 @@ import formData from "$lib/server/formData"
 import requestRender from "$lib/server/requestRender"
 import { db, Record, type RecordId } from "$lib/server/surreal"
 import type { Group } from "../../groups/+page.server"
+import type { PageServerLoadEvent } from "./$types"
 import type { RequestEvent } from "./$types.d"
 import acceptExistingQuery from "./acceptExisting.surql"
 import alreadyFriendsQuery from "./alreadyFriends.surql"
@@ -53,7 +54,7 @@ interface User extends BasicUser {
 	places: OwnedPlace[]
 }
 
-export async function load({ fetch: f, locals, params }) {
+export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 	const [[userExists]] = await db.query<User[][]>(userQuery, {
 		...params,

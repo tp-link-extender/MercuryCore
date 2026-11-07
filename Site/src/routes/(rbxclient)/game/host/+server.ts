@@ -3,9 +3,10 @@ import config from "$lib/server/config"
 import { buildLoadscript, parseMapLocation } from "$lib/server/loadscript"
 import { SignScript } from "$lib/server/sign"
 import { db } from "$lib/server/surreal"
+import type { RequestEvent } from "./$types"
 import placeQuery from "./place.surql"
 
-export async function GET({ url }) {
+export async function GET({ url }: RequestEvent) {
 	if (config.Gameservers.Hosting === "Dedicated")
 		error(400, "Selfhosted servers are not supported")
 

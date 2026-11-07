@@ -4,6 +4,7 @@ import idToPort, { proxyOffset } from "$lib/server/idToPort"
 import { SignData } from "$lib/server/sign"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import joinQuery from "../join.surql"
+import type { RequestEvent } from "./$types"
 
 type Config = {
 	CharacterAppearance: string
@@ -82,7 +83,7 @@ function serverInfo(place: Session["place"]): ServerAddress {
 	}
 }
 
-export async function GET({ url }) {
+export async function GET({ url }: RequestEvent) {
 	const clientTicket = url.searchParams.get("ticket")
 	const privateServer = url.searchParams.get("privateServer") as string
 

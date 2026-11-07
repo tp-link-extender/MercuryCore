@@ -6,6 +6,7 @@ import { buildLoadscript, luaRaw } from "$lib/server/loadscript"
 import { toRawId } from "$lib/server/recordId"
 import { SignScript } from "$lib/server/sign"
 import { db, findWhere, Record } from "$lib/server/surreal"
+import type { RequestEvent } from "./$types"
 import joinQuery from "./join.surql"
 
 type ServerAddress = {
@@ -45,7 +46,7 @@ const scriptHeaders = {
 	"X-Content-Type-Options": "nosniff",
 }
 
-export async function GET({ url }) {
+export async function GET({ url }: RequestEvent) {
 	const clientTicket = url.searchParams.get("ticket")
 	const privateServer = url.searchParams.get("privateServer") as string
 

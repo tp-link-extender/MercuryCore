@@ -8,6 +8,7 @@ import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
+import type { PageServerLoadEvent } from "./$types"
 import removeCommentQuery from "./removeComment.surql"
 
 const schema = type({
@@ -15,7 +16,7 @@ const schema = type({
 	replyId: "string | undefined",
 })
 
-export const load = async ({ params }) => ({
+export const load = async ({ params }: PageServerLoadEvent) => ({
 	commentId: params.comment,
 	form: await superValidate(arktype(schema)),
 })

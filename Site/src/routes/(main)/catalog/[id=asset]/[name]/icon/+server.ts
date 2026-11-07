@@ -2,6 +2,7 @@ import { error, redirect } from "@sveltejs/kit"
 import { authorise } from "$lib/server/auth"
 import { thumbnail, tShirtThumbnail } from "$lib/server/imageAsset"
 import { db, Record } from "$lib/server/surreal"
+import type { RequestEvent } from "./$types"
 import assetQuery from "./asset.surql"
 
 type Asset = {
@@ -13,7 +14,7 @@ type Asset = {
 
 const noRenderTypes = Object.freeze([1])
 
-export async function GET({ locals, params }) {
+export async function GET({ locals, params }: RequestEvent) {
 	const { user } = await authorise(locals)
 	const id = +params.id
 	const [[asset]] = await db.query<Asset[][]>(assetQuery, {
