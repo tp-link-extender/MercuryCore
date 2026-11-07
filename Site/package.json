@@ -6,7 +6,7 @@
 		"buildview": "bun x -b vite build && bun x -b vite preview",
 		"dev": "bun x -b vite dev",
 		"format": "biome format src --write",
-		"lint": "biome lint src",
+		"lint": "oxlint --fix && biome check --fix",
 		"list": "bun x pm2 list",
 		"logs": "bun x pm2 logs",
 		"preview": "bun x -b vite preview",
@@ -48,6 +48,8 @@
 		"@types/d3-interpolate": "^3.0.4",
 		"@types/nodemailer": "^8.0.2",
 		"@types/nprogress": "^0.2.3",
+		"oxlint": "^1.92.0",
+		"oxlint-tsgolint": "^7.0.2006",
 		"svelte-check": "^4.7.8",
 		"vite-plugin-devtools-json": "^1.1.2"
 	},
