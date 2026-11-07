@@ -7,7 +7,7 @@ import pingQuery from "./ping.surql"
 // TODO: this route isn't actually used for anything at the moment, the RCCService proxy should ping it "every so often"
 export async function POST({ request }: RequestEvent) {
 	const auth = request.headers.get("Authorization")
-	if (!auth || !auth.startsWith("Bearer ") || auth.slice(7) !== RCC_KEY)
+	if (!auth?.startsWith("Bearer ") || auth.slice(7) !== RCC_KEY)
 		error(403, "Nerd")
 
 	await db.query(pingQuery)

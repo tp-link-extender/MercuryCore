@@ -21,7 +21,7 @@ type Render = {
 export async function POST({ params, request }: RequestEvent) {
 	// get bearer token from header instead of insecure url
 	const auth = request.headers.get("Authorization")
-	if (!auth || !auth.startsWith("Bearer ") || auth.slice(7) !== RCC_KEY)
+	if (!auth?.startsWith("Bearer ") || auth.slice(7) !== RCC_KEY)
 		error(403, "Stfu")
 
 	const render = Record("render", params.taskId)

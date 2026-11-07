@@ -19,7 +19,7 @@
 		rows?: number
 		lowpad?: boolean
 		defaultValue?: string
-		formData: import("$lib/validate").SuperForm<any>
+		formData: import("$lib/validate").DynamicSuperForm
 	} & HTMLTextareaAttributes = $props()
 
 	let { form, errors, constraints } = $derived(formData)
