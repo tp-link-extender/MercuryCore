@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
-	import { superForm } from "$lib/validate"
 	import Select from "$components/forms/Select.svelte"
+	import { superForm } from "$lib/validate"
 
 	const {
 		data
