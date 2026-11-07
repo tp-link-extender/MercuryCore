@@ -1,6 +1,6 @@
 let started = false
 
-export default async () => {
+const startSurreal = () => {
 	if (started) return
 	started = true
 	console.log("Starting SurrealDB...")
@@ -23,7 +23,8 @@ export default async () => {
 			proc.kill()
 		})
 
-		proc.exited.then(async () => {
+		// oxlint-disable-next-line promise/prefer-await-to-then -- event callback, cannot be awaited
+		void proc.exited.then(async () => {
 			console.error("SurrealDB process exited unexpectedly.")
 			const r = await proc.stderr.getReader().read()
 			const logs = new TextDecoder().decode(r.value)
@@ -38,3 +39,5 @@ export default async () => {
 		process.exit(1)
 	}
 }
+
+export default startSurreal

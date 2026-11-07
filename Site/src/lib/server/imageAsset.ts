@@ -10,6 +10,8 @@ import sharp from "sharp"
  * const id = // Load from database
  * save(id)
  */
+// Async by contract: callers await the returned save function
+// oxlint-disable-next-line typescript/require-await, eslint/require-await
 export async function imageAsset(file: File) {
 	try {
 		const img = new Bun.Image(file)
@@ -33,6 +35,8 @@ export async function imageAsset(file: File) {
  * const id = // Load from database
  * save(id)
  */
+// Async by contract: callers await the returned save function
+// oxlint-disable-next-line typescript/require-await, eslint/require-await
 export async function clothingAsset(file: File) {
 	try {
 		const img = new Bun.Image(file).resize(585, 559, { fit: "fill" }).png()
@@ -54,6 +58,8 @@ export async function clothingAsset(file: File) {
  * const id = // Load from database
  * save(id)
  */
+// Async by contract: callers await the returned save function
+// oxlint-disable-next-line typescript/require-await, eslint/require-await
 export async function thumbnail(b: ArrayBuffer) {
 	try {
 		const img = new Bun.Image(b).resize(420, 420, { fit: "fill" }).webp()

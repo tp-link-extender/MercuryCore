@@ -13,6 +13,7 @@ import {
 	serverPortTest,
 } from "$lib/typeTests"
 import { encode } from "$lib/urlName"
+import type { Actions } from "./$types"
 import clientVersions from "./clientVersions"
 import createQuery from "./create.surql"
 
@@ -35,7 +36,7 @@ export async function load() {
 	}
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.default = async ({ fetch: f, locals, request }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, arktype(schema))

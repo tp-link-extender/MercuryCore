@@ -5,6 +5,7 @@ import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import { db, Record } from "$lib/server/surreal"
 import { arktype, message, superValidate } from "$lib/server/validate"
+import type { Actions } from "./$types"
 import passwordQuery from "./password.surql"
 import updateProfileQuery from "./updateProfile.surql"
 
@@ -38,7 +39,7 @@ export const load = async () => ({
 	themes: themeNames,
 })
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.profile = async ({ locals, request }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, arktype(profileSchema))
@@ -61,7 +62,9 @@ actions.password = async ({ locals, request }) => {
 
 	const { cpassword, npassword, cnpassword } = form.data
 	// Don't send the password back to the client
-	form.data.cpassword = form.data.npassword = form.data.cnpassword = ""
+	form.data.cpassword = ""
+	form.data.npassword = ""
+	form.data.cnpassword = ""
 
 	if (npassword !== cnpassword)
 		return formError(form, ["cnpassword"], ["Passwords do not match"])

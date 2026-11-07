@@ -45,7 +45,7 @@ async function itemOwnerSeen(
 }
 
 /** Resolves the owning user of an item from the Economy service, or null if nobody owns it. */
-export async function itemOwner(
+export function itemOwner(
 	f: typeof globalThis.fetch,
 	i: Econ.CanOwnOne
 ): Promise<ReturnValue<OwnedUser | null>> {

@@ -12,7 +12,7 @@ import {
 	message,
 	superValidate,
 } from "$lib/server/validate"
-import type { RequestEvent } from "./$types"
+import type { Actions, RequestEvent } from "./$types"
 import createQuery from "./create.surql"
 import disabledQuery from "./disabled.surql"
 import regkeysQuery from "./regkeys.surql"
@@ -52,7 +52,7 @@ async function getData({ locals, request }: RequestEvent) {
 	return { error: !form.valid && formError(form), form, user }
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.create = async e => {
 	const { user, form, error } = await getData(e)
 	if (error) return error

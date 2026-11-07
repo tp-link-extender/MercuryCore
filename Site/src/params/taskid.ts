@@ -1,4 +1,5 @@
+import type { ParamMatcher } from "@sveltejs/kit"
+
 const taskIdRegex = /^[\d\w]+$/
 
-export const match: import("@sveltejs/kit").ParamMatcher =
-	taskIdRegex.test.bind(taskIdRegex)
+export const match: ParamMatcher = taskIdRegex.test.bind(taskIdRegex)

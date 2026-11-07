@@ -30,7 +30,7 @@ export async function GET({ fetch: f, url }: RequestEvent) {
 
 	if (thumb.status !== 200) error(400, "Invalid asset")
 
-	const { imageUrl } = JSON.parse(await thumb.text()).data[0]
+	const [{ imageUrl }] = JSON.parse(await thumb.text()).data
 	await db.update(cachedAsset).merge({ url: imageUrl })
 
 	redirect(302, imageUrl)

@@ -1,7 +1,7 @@
 import { error, redirect } from "@sveltejs/kit"
 import { authorise } from "$lib/server/auth"
 import { db, Record } from "$lib/server/surreal"
-import type { PageServerLoadEvent } from "./$types"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import getModerationQuery from "./getModeration.surql"
 import unmoderateQuery from "./unmoderate.surql"
 
@@ -27,7 +27,7 @@ export async function load({ locals }: PageServerLoadEvent) {
 	return getModeration(user.id)
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.default = async ({ locals }) => {
 	const { user } = await authorise(locals)
 	const userModeration = await getModeration(user.id)

@@ -8,7 +8,7 @@
 		domain,
 		siteName
 	}: {
-		beginJoining: (joinscripturl: () => string) => () => void
+		beginJoining(joinscripturl: () => string): () => void
 		scheme: string
 		serverTicket: string
 		domain: string
@@ -20,7 +20,7 @@
 	let validMap = $derived(filepath === "" || isValidMapName(filepath))
 
 	const encodeMap = (value: string): string =>
-		btoa(String.fromCharCode(...new TextEncoder().encode(value)))
+		btoa(String.fromCodePoint(...new TextEncoder().encode(value)))
 
 	let host = $derived(
 		beginJoining(

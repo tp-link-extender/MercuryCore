@@ -10,7 +10,7 @@ import {
 	superValidate,
 } from "$lib/server/validate"
 import { usernameTest } from "$lib/typeTests"
-import type { PageServerLoadEvent } from "./$types"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import updatePasswordQuery from "./updatePassword.surql"
 import usersQuery from "./users.surql"
 
@@ -30,7 +30,7 @@ export async function load({ locals }: PageServerLoadEvent) {
 	}
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.changePassword = async ({ locals, request, getClientAddress }) => {
 	const { user } = await authorise(locals, 5)
 	const form = await superValidate(request, arktype(schema))

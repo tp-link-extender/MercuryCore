@@ -9,10 +9,14 @@ interface Params extends FadeParams {
 	total?: number
 }
 
-export default (node: HTMLElement, props: Params = { duration: 300 }) => {
+const fadeTransition = (node: HTMLElement, props?: Params) => {
+	const params = { duration: 300, ...props }
 	// animationsettings doesn't work, todo look at this again in another year or so
 	// if (get(user)?.animationSettings === "off") return () => {}
-	if (props.num && props.total)
-		props.delay = (props.num * 150) / Math.min(props.total, props?.max || 6)
-	return fade(node, props)
+	if (params.num && params.total)
+		params.delay =
+			(params.num * 150) / Math.min(params.total, params.max || 6)
+	return fade(node, params)
 }
+
+export default fadeTransition

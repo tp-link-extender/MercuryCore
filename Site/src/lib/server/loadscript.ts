@@ -1,7 +1,7 @@
 import { isValidMapName } from "../mapName"
 
 const escapeCharacter = (char: string): string => {
-	const code = char.charCodeAt(0)
+	const code = char.codePointAt(0) ?? 0
 	if (code < 0x20 || code === 0x7f)
 		return `\\${code.toString().padStart(3, "0")}`
 	if (char === "\\") return String.raw`\\`

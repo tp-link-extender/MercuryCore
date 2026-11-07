@@ -17,7 +17,7 @@ import requestRender from "$lib/server/requestRender"
 import { db, Record } from "$lib/server/surreal"
 import { arktype, message, superValidate } from "$lib/server/validate"
 import { encode } from "$lib/urlName"
-import type { PageServerLoadEvent } from "./$types"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import assetQuery from "./asset.surql"
 import assetCheckQuery from "./assetCheck.surql"
 import reuploadQuery from "./reupload.surql"
@@ -84,7 +84,7 @@ export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	}
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 
 type AssetCheck = {
 	imageAssetId: number | null

@@ -8,7 +8,7 @@ import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
-import type { PageServerLoadEvent } from "./$types"
+import type { Actions, PageServerLoadEvent } from "./$types"
 
 const schema = type({
 	// title: "1 <= string <= 50",
@@ -34,7 +34,7 @@ export async function load({ url }: PageServerLoadEvent) {
 	}
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.default = async ({ locals, request, url, getClientAddress }) => {
 	exclude("Forum")
 	const { user } = await authorise(locals)

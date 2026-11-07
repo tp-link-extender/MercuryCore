@@ -14,7 +14,7 @@
  *     { name: "Extras", tabs: ["tab2", "tab3"] },
  * ])
  */
-export default (
+const tabData = (
 	url: string,
 	tabs: string[],
 	icons?: string[],
@@ -29,3 +29,5 @@ export default (
 	tabs,
 	url,
 })
+
+export default tabData

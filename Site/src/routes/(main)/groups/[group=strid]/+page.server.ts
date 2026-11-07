@@ -8,7 +8,7 @@ import {
 } from "$lib/server/economy"
 import exclude from "$lib/server/exclude"
 import { db, find, Record } from "$lib/server/surreal"
-import type { PageServerLoadEvent } from "./$types"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import type { RequestEvent } from "./$types.d"
 import groupQuery from "./group.surql"
 import joinQuery from "./join.surql"
@@ -51,7 +51,7 @@ async function getData({ locals, params }: RequestEvent) {
 	}
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.join = async e => {
 	await db.query(joinQuery, await getData(e))
 }

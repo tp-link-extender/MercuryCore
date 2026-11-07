@@ -11,7 +11,7 @@ import { db } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { isXML } from "$lib/server/xml"
 import { encode } from "$lib/urlName"
-import type { PageServerLoadEvent } from "./$types"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import createQuery from "./create.surql"
 import createPackageQuery from "./createPackage.surql"
 
@@ -65,7 +65,7 @@ export async function load({ locals }: PageServerLoadEvent) {
 	}
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.default = async ({ fetch: f, locals, request }) => {
 	const { user } = await authorise(locals, 3)
 	const formData = await request.formData()

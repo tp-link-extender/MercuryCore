@@ -6,7 +6,7 @@
  * const data = await formData(request)
  * const { text } = data
  */
-export default async function (request: Request) {
+export default async function formData(request: Request) {
 	const entries = Object.fromEntries((await request.formData()).entries())
 	const data: { [_: string]: string } = {}
 	for (const i in entries) if (Object.hasOwn(entries, i)) data[i] = entries[i]

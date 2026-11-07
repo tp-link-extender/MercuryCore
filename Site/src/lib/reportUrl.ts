@@ -3,7 +3,7 @@ const maxLength = 2048
 
 const hasControlCharacter = (value: string): boolean => {
 	for (const char of value) {
-		const code = char.charCodeAt(0)
+		const code = char.codePointAt(0) ?? 0
 		if (code < 0x20 || code === 0x7f) return true
 	}
 	return false

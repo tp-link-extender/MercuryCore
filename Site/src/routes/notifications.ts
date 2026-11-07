@@ -12,7 +12,7 @@ type Notification = {
 	link?: string
 }
 
-export default async function (user: User | null) {
+export default async function getNotifications(user: User | null) {
 	if (!user) return []
 	const [notifications] = await db.query<Notification[][]>(
 		notificationsQuery,

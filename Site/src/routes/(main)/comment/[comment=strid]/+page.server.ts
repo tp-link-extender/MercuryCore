@@ -8,7 +8,7 @@ import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
-import type { PageServerLoadEvent } from "./$types"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import removeCommentQuery from "./removeComment.surql"
 
 const schema = type({
@@ -21,7 +21,7 @@ export const load = async ({ params }: PageServerLoadEvent) => ({
 	form: await superValidate(arktype(schema)),
 })
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.comment = async ({ locals, params, request, getClientAddress }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, arktype(schema))
@@ -94,10 +94,10 @@ actions.delete = async ({ locals, params, url, getClientAddress }) => {
 	const limit = ratelimit(null, "delete", getClientAddress, 5)
 	if (limit) return limit
 
-	const [, , ok] = await db.query<1[][]>(removeCommentQuery, {
+	const deleted = await db.query<1[][]>(removeCommentQuery, {
 		comment: Record("comment", params.comment),
 		moderate,
 		user: Record("user", user.id),
 	})
-	if (!ok?.[0]) error(404, "Comment not found or already deleted")
+	if (!deleted[2]?.[0]) error(404, "Comment not found or already deleted")
 }

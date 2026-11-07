@@ -7,6 +7,7 @@ import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
+import type { Actions } from "./$types"
 import recoveryQuery from "./recovery.surql"
 
 const schema = type({
@@ -39,7 +40,7 @@ https://${config.Domain}`
 
 export const load = async () => ({ form: await superValidate(arktype(schema)) })
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.default = async ({ cookies, request, getClientAddress }) => {
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)

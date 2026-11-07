@@ -41,14 +41,16 @@ export async function GET({ locals, params }: RequestEvent) {
 			// Recreate the T-Shirt thumbnail
 			const file = Bun.file(`../data/assets/${asset.imageAssetId}`)
 			if (await file.exists())
-				tShirtThumbnail(await file.arrayBuffer()).then(f => f(id))
+				// oxlint-disable-next-line promise/prefer-await-to-then -- render should not block the response
+				void tShirtThumbnail(await file.arrayBuffer()).then(f => f(id))
 			break
 		}
 		case 18: {
 			// Recreate the icon thumbnail
 			const file = Bun.file(`../data/assets/${asset.imageAssetId}`)
 			if (await file.exists())
-				thumbnail(await file.arrayBuffer()).then(f => f(id))
+				// oxlint-disable-next-line promise/prefer-await-to-then -- render should not block the response
+				void thumbnail(await file.arrayBuffer()).then(f => f(id))
 			break
 		}
 	}

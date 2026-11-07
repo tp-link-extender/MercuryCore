@@ -10,7 +10,7 @@ import { packageItems } from "$lib/server/packageItems"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { db, Record } from "$lib/server/surreal"
-import type { PageServerLoadEvent } from "./$types"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import type { RequestEvent } from "./$types.d"
 import assetsQuery from "./assets.surql"
 import equipQuery from "./equip.surql"
@@ -279,7 +279,7 @@ async function unequip(e: RequestEvent) {
 
 	return rerender(e.fetch, user)
 }
-export const actions: import("./$types").Actions = {
+export const actions: Actions = {
 	equip,
 	paint,
 	regen,
