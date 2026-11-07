@@ -45,7 +45,7 @@ export async function sendEmail(to: string, subject: string, text: string) {
 		subject,
 		text,
 	})
-	if (result.accepted.length > 0)
+	if (result.accepted?.length)
 		console.log(`Email to ${to} queued successfully`)
 	else console.error(`Failed to queue email to ${to}`)
 }

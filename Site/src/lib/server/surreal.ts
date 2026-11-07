@@ -1,9 +1,4 @@
-import {
-	type Query,
-	Surreal,
-	RecordId as SurrealRecordId,
-	Table,
-} from "surrealdb"
+import { Surreal, RecordId as SurrealRecordId, Table } from "surrealdb"
 import { building } from "$app/environment"
 import config from "$lib/server/config"
 import initQuery from "$lib/server/init.surql"
@@ -49,19 +44,21 @@ const retriable = "This transaction can be retried"
 
 // oof
 // also bad types but who cares
-db.query = async <R extends unknown[]>(
+const retryQuery = async <R extends unknown[]>(
 	query: string,
 	bindings?: Record<string, unknown>
-): Query<R> => {
+) => {
 	try {
-		return await ogq(query, bindings)
+		return await ogq<R>(query, bindings)
 	} catch (err) {
 		const e = err as Error
 		if (!e.message.endsWith(retriable)) throw e
 		console.log("Retrying query:", e.message)
 	}
-	return await db.query(query, bindings)
+	return await ogq<R>(query, bindings)
 }
+
+db.query = retryQuery as unknown as typeof db.query
 
 export const version = db.version.bind(db)
 

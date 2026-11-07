@@ -1,7 +1,7 @@
 // "'Hooks' are app-wide functions you declare that SvelteKit will call in response to specific events, giving you fine-grained control over the framework's behaviour."
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
-import { type Handle, redirect } from "@sveltejs/kit"
+import { type Handle, type HandleServerError, redirect } from "@sveltejs/kit"
 import { stipend } from "economy/api"
 import * as Econ from "economy/types"
 import pc from "picocolors"
@@ -89,7 +89,7 @@ async function finish({ event, resolve }: Parameters<Handle>[0]) {
 
 // Ran every time a dynamic request is made.
 // Requests for prerendered pages do not trigger this hook.
-export async function handle(e) {
+export async function handle(e: Parameters<Handle>[0]) {
 	const { event } = e
 
 	const token = event.cookies.get(cookieName)
@@ -129,7 +129,7 @@ export async function handle(e) {
 	return await finish(e)
 }
 
-export async function handleError({ error }) {
+export async function handleError({ error }: Parameters<HandleServerError>[0]) {
 	if (typeof error === "object" && error != null) {
 		const status = (error as { status?: number }).status
 		if (status) {
