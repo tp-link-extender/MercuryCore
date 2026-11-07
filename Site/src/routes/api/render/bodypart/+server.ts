@@ -24,7 +24,7 @@ export async function GET({ url }: RequestEvent) {
 	if (!id || !assetRegex.test(id)) error(400, "Missing id parameter")
 
 	const [[asset]] = await db.query<{ type: number }[][]>(typeQuery, {
-		asset: Record("asset", +id),
+		asset: Record("asset", Number(id)),
 	})
 	if (!asset) error(404, "Not Found")
 

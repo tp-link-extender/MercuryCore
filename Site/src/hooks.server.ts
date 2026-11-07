@@ -98,11 +98,11 @@ export async function handle(e: Parameters<Handle>[0]) {
 		event.locals.user = null
 		event.cookies.delete(cookieName, { path: "/" })
 
-		return await finish(e)
+		return finish(e)
 	}
 
 	const { session, user } = await validateSessionToken(token)
-	if (!session || !user) return await finish(e)
+	if (!session || !user) return finish(e)
 
 	event.locals.session = session
 	event.locals.user = user
@@ -126,7 +126,7 @@ export async function handle(e: Parameters<Handle>[0]) {
 		console.error("Stipend failed to process")
 	}
 
-	return await finish(e)
+	return finish(e)
 }
 
 export async function handleError({ error }: Parameters<HandleServerError>[0]) {

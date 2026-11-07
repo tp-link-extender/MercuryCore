@@ -51,7 +51,7 @@ async function getData({ locals, url }: RequestEvent) {
 
 	if (!assetId) error(400, "Missing asset ID")
 	if (!assetRegex.test(assetId)) error(400, `Invalid asset ID: ${assetId}`)
-	const id = +assetId
+	const id = Number(assetId)
 
 	const params = Object.freeze({
 		asset: Record("asset", id),

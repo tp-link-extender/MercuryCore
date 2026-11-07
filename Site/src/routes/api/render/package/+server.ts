@@ -9,7 +9,7 @@ export async function GET({ fetch: f, url }: RequestEvent) {
 	if (!id || !assetRegex.test(id)) error(400, "Missing id parameter")
 
 	// no user here: this is a renderer request for the package thumbnail, so ownership isn't needed and the Economy service isn't consulted at all
-	const items = await packageItems(f, +id)
+	const items = await packageItems(f, Number(id))
 
 	// default body colours, then every item in the package (nested included)
 	let charApp = `http://${config.DomainInsecure}/asset/bodycolors.ashx?`

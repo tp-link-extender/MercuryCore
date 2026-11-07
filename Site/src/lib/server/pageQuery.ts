@@ -11,7 +11,7 @@ import { redirect } from "@sveltejs/kit"
  */
 export default (url: URL) => {
 	const pageQ = url.searchParams.get("p") || "1"
-	const page = Number.isNaN(+pageQ) ? 1 : Math.round(+pageQ)
+	const page = Number.isNaN(Number(pageQ)) ? 1 : Math.round(Number(pageQ))
 	if (page < 1) {
 		url.searchParams.set("p", "1")
 		redirect(303, url)

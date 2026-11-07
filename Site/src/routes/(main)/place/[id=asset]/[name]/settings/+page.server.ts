@@ -32,7 +32,7 @@ const viewSchema = type({
 const networkSchema = type({
 	clientVersion: type
 		.enumerated(...clientVersions)
-		.pipe.try(v => +v)
+		.pipe.try(v => Number(v))
 		.configure({ problem: "must be a valid client version" }),
 	dedicated: "boolean",
 	maxPlayers: maxPlayersTest,
@@ -73,11 +73,11 @@ async function placeQuery(id: number) {
 }
 
 export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
-	const getPlace = await placeQuery(+params.id)
+	const getPlace = await placeQuery(Number(params.id))
 	if (!getPlace) error(404, "Place not found")
 
 	const { user } = await authorise(locals)
-	const owns = await ownsItem(f, user.id, new Econ.Place(+params.id))
+	const owns = await ownsItem(f, user.id, new Econ.Place(Number(params.id)))
 	if (!owns.ok) error(500, economyConnFailed)
 	if (!owns.value && user.permissionLevel < 4)
 		error(403, "You do not have permission to view this page.")
@@ -100,7 +100,7 @@ export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 
 async function getData({ fetch: f, locals, params }: RequestEvent) {
 	const { user } = await authorise(locals)
-	const id = +params.id
+	const id = Number(params.id)
 	const getPlace = await placeQuery(id)
 	if (!getPlace) error(404, "Place not found")
 
@@ -141,7 +141,7 @@ actions.view = async e => {
 	await db.query(updateSettingsQuery, {
 		description: filter(description || ""),
 		name: filter(name),
-		place: Record("place", +id),
+		place: Record("place", Number(id)),
 	})
 	return message(form, "View settings updated successfully!")
 }

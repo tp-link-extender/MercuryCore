@@ -56,7 +56,7 @@ export async function load({
 }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 	const privateTicket = url.searchParams.get("privateServer")
-	const id = +params.id
+	const id = Number(params.id)
 	const [[place]] = await db.query<Place[][]>(placeQuery, {
 		place: Record("place", id),
 		user: Record("user", user.id),
@@ -139,7 +139,7 @@ async function checkUser(locals: App.Locals) {
 export const actions: import("./$types").Actions = {}
 actions.join = async ({ fetch: f, locals, params, request }) => {
 	const user = await checkUser(locals)
-	const [_, placeR] = await findPlace(f, request, +params.id, user)
+	const [_, placeR] = await findPlace(f, request, Number(params.id), user)
 
 	// Invalidate all game sessions and create valid playing
 	const [, [ticket]] = await db.query<string[][]>(invalidatePlayingQuery, {
@@ -162,7 +162,7 @@ actions.start = async ({
 	const limit = ratelimit(null, "serverstart", getClientAddress, 20)
 	if (limit) return limit
 
-	const id = +params.id
+	const id = Number(params.id)
 	const [_place, _placeR] = await findPlace(f, request, id, user)
 
 	// check for existence of a place file
@@ -178,7 +178,7 @@ actions.start = async ({
 
 actions.close = async ({ fetch: f, locals, params, request }) => {
 	const { user } = await authorise(locals)
-	const id = +params.id
+	const id = Number(params.id)
 
 	const [, , isOwner] = await findPlace(f, request, id, user)
 

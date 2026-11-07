@@ -73,7 +73,7 @@ actions.default = async ({ fetch: f, locals, request }) => {
 	const id = created.value.ID
 
 	await db.query(createQuery, {
-		clientVersion: +clientVersion,
+		clientVersion: Number(clientVersion),
 		description: filter(description),
 		id,
 		maxPlayers,

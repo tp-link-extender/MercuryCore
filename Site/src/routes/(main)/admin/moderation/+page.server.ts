@@ -21,7 +21,7 @@ const schema = type({
 	banDate: type("string | undefined").pipe.try(date => {
 		if (!date) return undefined
 		const d = new Date(date)
-		if (Number.isNaN(d.getTime())) throw new Error("Invalid date")
+		if (Number.isNaN(d.getTime())) throw new TypeError("Invalid date")
 		return d
 	}),
 	reason: "15 <= string <= 150",

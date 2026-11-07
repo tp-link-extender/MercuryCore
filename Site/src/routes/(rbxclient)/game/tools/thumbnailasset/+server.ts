@@ -6,9 +6,9 @@ import type { RequestEvent } from "./$types"
 import cachedAssetQuery from "./cache.surql"
 
 export async function GET({ fetch: f, url }: RequestEvent) {
-	const width = +(url.searchParams.get("wd") as string)
-	const height = +(url.searchParams.get("ht") as string)
-	const assetId = +(url.searchParams.get("aid") as string)
+	const width = Number(url.searchParams.get("wd"))
+	const height = Number(url.searchParams.get("ht"))
+	const assetId = Number(url.searchParams.get("aid"))
 	const stringAssetId = assetId.toString()
 
 	if (!assetId || !width || !height) error(404, "Asset not found")

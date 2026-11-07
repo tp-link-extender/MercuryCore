@@ -56,7 +56,7 @@ const failTexts = Object.freeze(["Bruh", "Okay", "Aight", "Rip", "Aw man..."])
 
 export async function load({ fetch: f, locals, params }: RequestEvent) {
 	const { user } = await authorise(locals)
-	const id = +params.id
+	const id = Number(params.id)
 	const [[asset]] = await db.query<Asset[][]>(assetQuery, {
 		asset: Record("asset", id),
 		user: Record("user", user.id),
@@ -122,7 +122,7 @@ export async function load({ fetch: f, locals, params }: RequestEvent) {
 
 async function getBuyData({ locals, params }: RequestEvent) {
 	const { user } = await authorise(locals)
-	const id = +params.id
+	const id = Number(params.id)
 	const assetExists = await find("asset", id)
 	if (!assetExists) error(404)
 
@@ -133,7 +133,7 @@ async function getBuyData({ locals, params }: RequestEvent) {
 async function rerender({ fetch: f, locals, params }: RequestEvent) {
 	await authorise(locals, 5)
 
-	const id = +params.id
+	const id = Number(params.id)
 	type FoundAsset = {
 		name: string
 		type: number
@@ -169,7 +169,7 @@ async function rerender({ fetch: f, locals, params }: RequestEvent) {
 	if (!renderType) error(400, "Can't rerender this type of asset")
 
 	try {
-		await requestRender(f, renderType as RenderType, id)
+		await requestRender(f, renderType, id)
 		const icon = `/catalog/${id}/${asset.name}/icon?r=${Math.random()}`
 		return { icon }
 	} catch (e) {
@@ -196,7 +196,7 @@ actions.comment = async ({
 	const limit = ratelimit(form, "comment", getClientAddress, 5)
 	if (limit) return limit
 
-	const id = +params.id
+	const id = Number(params.id)
 	const [getAsset] = await db.query<{ type: number }[]>(
 		"SELECT type FROM ONLY $asset",
 		{ asset: Record("asset", id) }

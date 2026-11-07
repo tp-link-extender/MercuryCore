@@ -6,7 +6,7 @@ import type { RequestEvent } from "./$types"
 const icons = config.Images.DefaultPlaceIcons
 
 export async function GET({ params }: RequestEvent) {
-	const id = +params.id
+	const id = Number(params.id)
 	if (!(await find("place", id))) error(404, "Not Found")
 
 	const file = Bun.file(`../data/icons/${id}.avif`)

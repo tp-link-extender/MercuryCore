@@ -4,8 +4,8 @@ const escapeCharacter = (char: string): string => {
 	const code = char.charCodeAt(0)
 	if (code < 0x20 || code === 0x7f)
 		return `\\${code.toString().padStart(3, "0")}`
-	if (char === "\\") return "\\\\"
-	if (char === '"') return '\\"'
+	if (char === "\\") return String.raw`\\`
+	if (char === '"') return String.raw`\"`
 	return char
 }
 
@@ -44,7 +44,7 @@ export const buildLoadscript = (
 	template: string,
 	values: LoadscriptValues
 ): string =>
-	template.replace(token, (match: string, name: string) => {
+	template.replaceAll(token, (match: string, name: string) => {
 		const value = values[name]
 		if (value === undefined) return match
 		if (typeof value === "object") return value.raw

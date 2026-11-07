@@ -19,7 +19,7 @@ export async function imageAsset(file: File) {
 	} catch (err) {
 		const e = err as Error
 		console.error(e)
-		throw new Error("Image asset failed to upload")
+		throw new Error("Image asset failed to upload", { cause: err })
 	}
 }
 
@@ -40,7 +40,7 @@ export async function clothingAsset(file: File) {
 	} catch (err) {
 		const e = err as Error
 		console.error(e)
-		throw new Error("Clothing asset failed to upload")
+		throw new Error("Clothing asset failed to upload", { cause: err })
 	}
 }
 
@@ -61,7 +61,7 @@ export async function thumbnail(b: ArrayBuffer) {
 	} catch (err) {
 		const e = err as Error
 		console.error(e)
-		throw new Error("Thumbnail failed to upload")
+		throw new Error("Thumbnail failed to upload", { cause: err })
 	}
 }
 

@@ -24,7 +24,7 @@ async function getModeration(id: string) {
 // Make sure a user has been moderated before loading the page.
 export async function load({ locals }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
-	return await getModeration(user.id)
+	return getModeration(user.id)
 }
 
 export const actions: import("./$types").Actions = {}

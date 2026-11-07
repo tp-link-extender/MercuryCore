@@ -46,7 +46,7 @@ const retriable = "This transaction can be retried"
 // also bad types but who cares
 const retryQuery = async <R extends unknown[]>(
 	query: string,
-	bindings?: Record<string, unknown>
+	bindings?: { [_: string]: unknown }
 ) => {
 	try {
 		return await ogq<R>(query, bindings)
@@ -55,7 +55,7 @@ const retryQuery = async <R extends unknown[]>(
 		if (!e.message.endsWith(retriable)) throw e
 		console.log("Retrying query:", e.message)
 	}
-	return await ogq<R>(query, bindings)
+	return ogq<R>(query, bindings)
 }
 
 db.query = retryQuery as unknown as typeof db.query

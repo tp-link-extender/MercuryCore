@@ -10,7 +10,7 @@
 		return url.pathname + url.search
 	}
 	const pageQ = page.url.searchParams.get("p") || "1"
-	const currentPage = Number.isNaN(+pageQ) ? 1 : +pageQ
+	const currentPage = Number.isNaN(Number(pageQ)) ? 1 : Number(pageQ)
 	const prevPage = currentPage - 1
 	const nextPage = currentPage + 1
 

@@ -51,7 +51,7 @@ const reuploadSchema = type({
 
 export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
-	const id = +params.id
+	const id = Number(params.id)
 	const [[check]] = await db.query<AssetCheck[][]>(assetCheckQuery, {
 		asset: Record("asset", id),
 	})
@@ -97,7 +97,7 @@ actions.settings = async ({ fetch: f, locals, params, request }) => {
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
-	const id = +params.id
+	const id = Number(params.id)
 	const [[asset]] = await db.query<AssetCheck[][]>(assetCheckQuery, {
 		asset: Record("asset", id),
 	})
@@ -141,7 +141,7 @@ actions.reupload = async ({
 			["Asset must be less than 20MB in size"]
 		)
 
-	const id = +params.id
+	const id = Number(params.id)
 	const [[asset]] = await db.query<AssetCheck[][]>(assetCheckQuery, {
 		asset: Record("asset", id),
 	})

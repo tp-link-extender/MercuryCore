@@ -45,7 +45,7 @@ actions.changePassword = async ({ locals, request, getClientAddress }) => {
 	try {
 		const [, ok] = await db.query<boolean[]>(updatePasswordQuery, {
 			npassword: Bun.password.hashSync(password),
-			username: username,
+			username,
 		})
 		if (!ok) return errMessage(form, "No user found with given username")
 	} catch (e) {

@@ -28,7 +28,7 @@ describe("parseMapLocation", () => {
 			'x"\nprint("pwned")\n--.rbxl',
 			"../evil.rbxl",
 			"foo/bar.rbxl",
-			"foo\\bar.rbxl",
+			String.raw`foo\bar.rbxl`,
 			'x"y.rbxl',
 			"a\nb.rbxl",
 			"..rbxl",
@@ -63,10 +63,10 @@ describe("luaString", () => {
 		expect(escaped.startsWith('"')).toBe(true)
 		expect(escaped.endsWith('"')).toBe(true)
 		expect(escaped).not.toContain("\n")
-		expect(escaped).toContain('\\"')
-		expect(escaped).toContain("\\\\")
-		expect(escaped).toContain("\\010")
-		expect(escaped).toContain("\\001")
+		expect(escaped).toContain(String.raw`\"`)
+		expect(escaped).toContain(String.raw`\\`)
+		expect(escaped).toContain(String.raw`\010`)
+		expect(escaped).toContain(String.raw`\001`)
 	})
 })
 
@@ -97,7 +97,7 @@ describe("buildLoadscript", () => {
 
 		expect(script.split("\n")).toHaveLength(1)
 		expect(script).not.toContain('\nprint("pwned")')
-		expect(script).toContain('\\"')
+		expect(script).toContain(String.raw`\"`)
 	})
 
 	test("leaves trusted raw values as source", () => {
