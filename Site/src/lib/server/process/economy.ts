@@ -35,7 +35,6 @@ const startEconomy = async () => {
 		proc.kill()
 	})
 
-	// oxlint-disable-next-line promise/prefer-await-to-then -- event callback, cannot be awaited
 	void proc.exited.then(async () => {
 		console.error("Economy service process exited unexpectedly.")
 		const r = await proc.stdout.getReader().read() // maybe stderr idk, I don't think the service uses it tho

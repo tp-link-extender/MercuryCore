@@ -23,7 +23,6 @@ const startSurreal = () => {
 			proc.kill()
 		})
 
-		// oxlint-disable-next-line promise/prefer-await-to-then -- event callback, cannot be awaited
 		void proc.exited.then(async () => {
 			console.error("SurrealDB process exited unexpectedly.")
 			const r = await proc.stderr.getReader().read()
