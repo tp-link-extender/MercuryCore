@@ -11,7 +11,9 @@ SELECT
 		*,
 		record::id(id) AS id,
 		fn::currentContent($this.content) AS content
-	FROM $parent->createdComment->comment LIMIT 40) AS comments,
+	FROM $parent->createdComment->comment
+	ORDER BY created DESC, id DESC
+	LIMIT 40) AS comments,
 
 	count(<->friends) AS friendCount,
 	count(<-follows) AS followerCount,
