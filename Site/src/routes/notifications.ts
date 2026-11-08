@@ -2,14 +2,14 @@ import { db, Record } from "$lib/server/surreal"
 import notificationsQuery from "./notifications.surql"
 
 interface Notification {
-	id: string
 	created: Date
+	id: string
+	link?: string
 	note: string
 	read: boolean
 	relativeId?: string
 	sender: BasicUser
 	type: string
-	link?: string
 }
 
 export default async function getNotifications(user: User | null) {

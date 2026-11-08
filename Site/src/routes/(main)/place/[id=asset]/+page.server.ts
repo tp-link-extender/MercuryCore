@@ -1,5 +1,5 @@
 import { error, redirect } from "@sveltejs/kit"
-import * as Econ from "economy/types"
+import { Place as EconPlace } from "economy/types"
 import { authorise } from "$lib/server/auth"
 import { economyConnFailed, ownsItem } from "$lib/server/economy"
 import { db, Record } from "$lib/server/surreal"
@@ -24,7 +24,7 @@ export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 		const owns = await ownsItem(
 			f,
 			user.id,
-			new Econ.Place(Number(params.id))
+			new EconPlace(Number(params.id))
 		)
 		if (!owns.ok) error(500, economyConnFailed)
 

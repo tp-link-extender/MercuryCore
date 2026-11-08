@@ -2,7 +2,7 @@ import fs from "node:fs"
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { createUnlimitedSource, prices } from "economy/api"
-import * as Econ from "economy/types"
+import { User } from "economy/types"
 import { typeToNumber } from "$lib/assetTypes"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
@@ -76,7 +76,8 @@ actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
-	const { type, name, description, price, asset } = form.data
+	const { type: assetType, name, description, price, asset } = form.data
+	// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 	form.data.asset = null as unknown as File // make sure to return as a POJO
 
 	if (asset.size === 0)
@@ -99,7 +100,7 @@ actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 	let saveImages: ((id: number) => Promise<number> | Promise<void>)[] = []
 
 	try {
-		switch (type) {
+		switch (assetType) {
 			case "T-Shirt":
 				saveImages = await Promise.all([
 					tShirt(asset),
@@ -141,7 +142,7 @@ actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 		return formError(form, ["asset"], ["Asset failed to upload"])
 	}
 
-	const u = new Econ.User(user.id)
+	const u = new User(user.id)
 
 	// TODO: make creating image assets (only image assets) free
 	const createdImageAsset = await createUnlimitedSource(f, u)
@@ -160,7 +161,7 @@ actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 	const id = createdAsset.value.ID
 
 	await db.query(createAssetQuery, {
-		assetType: typeToNumber[type],
+		assetType: typeToNumber[assetType],
 		description,
 		id,
 		imageAssetId,
@@ -169,7 +170,7 @@ actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 		visibility: user.permissionLevel < 3 ? "Pending" : "Visible",
 	})
 
-	await graphicAsset(type, imageAssetId, id)
+	await graphicAsset(assetType, imageAssetId, id)
 
 	try {
 		await Promise.all([saveImages[0](imageAssetId), saveImages[1](id)])

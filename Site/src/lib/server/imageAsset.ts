@@ -19,8 +19,7 @@ export async function imageAsset(file: File) {
 			.png()
 		return (id: number) => img.write(`../data/assets/${id}`)
 	} catch (err) {
-		const e = err as Error
-		console.error(e)
+		console.error(err)
 		throw new Error("Image asset failed to upload", { cause: err })
 	}
 }
@@ -42,8 +41,7 @@ export async function clothingAsset(file: File) {
 		const img = new Bun.Image(file).resize(585, 559, { fit: "fill" }).png()
 		return (id: number) => img.write(`../data/assets/${id}`)
 	} catch (err) {
-		const e = err as Error
-		console.error(e)
+		console.error(err)
 		throw new Error("Clothing asset failed to upload", { cause: err })
 	}
 }
@@ -65,8 +63,7 @@ export async function thumbnail(b: ArrayBuffer) {
 		const img = new Bun.Image(b).resize(420, 420, { fit: "fill" }).webp()
 		return (id: number) => img.write(`../data/thumbnails/${id}`)
 	} catch (err) {
-		const e = err as Error
-		console.error(e)
+		console.error(err)
 		throw new Error("Thumbnail failed to upload", { cause: err })
 	}
 }

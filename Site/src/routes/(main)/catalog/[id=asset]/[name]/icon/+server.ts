@@ -6,10 +6,10 @@ import type { RequestEvent } from "./$types"
 import assetQuery from "./asset.surql"
 
 interface Asset {
-	name: string
-	visibility: string
-	type: number
 	imageAssetId: number
+	name: string
+	type: number
+	visibility: string
 }
 
 const noRenderTypes = Object.freeze([1])

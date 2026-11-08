@@ -1,7 +1,7 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { createPlace } from "economy/api"
-import * as Econ from "economy/types"
+import { User } from "economy/types"
 import { authorise } from "$lib/server/auth"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
@@ -66,7 +66,7 @@ actions.default = async ({ fetch: f, locals, request }) => {
 	// 		["You can't have more than two places"]
 	// 	)
 
-	const u = new Econ.User(user.id)
+	const u = new User(user.id)
 	const created = await createPlace(f, u)
 	if (!created.ok)
 		return formError(form, ["other"], ["failed to create place"])

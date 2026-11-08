@@ -1,8 +1,16 @@
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
 import { inventory } from "economy/api"
-import type { CanOwnOne } from "economy/types"
-import * as Econ from "economy/types"
+import {
+	type CanOwnOne,
+	Group as EconGroup,
+	Place as EconPlace,
+	LimitedSource,
+	Package,
+	UnlimitedAsset,
+	UnlimitedSource,
+	User,
+} from "economy/types"
 import { getRequestEvent, query } from "$app/server"
 import { authorise } from "$lib/server/auth"
 import { db, Record } from "$lib/server/surreal"
@@ -17,7 +25,7 @@ async function getInventory(): Promise<CanOwnOne[]> {
 
 	const { user } = await authorise(locals)
 
-	const u = new Econ.User(user.id)
+	const u = new User(user.id)
 	const inv = await inventory(f, u)
 	// oxlint-disable-next-line typescript/only-throw-error -- SvelteKit error() returns a valid response object
 	if (!inv.ok) throw error(500, "failed to fetch inventory")
@@ -41,15 +49,15 @@ interface AssetBigInt {
 
 interface Group {
 	id: string
-	name: string
 	memberCount: number
+	name: string
 }
 
 interface Place {
-	id: number
-	name: string
-	likeCount: number
 	dislikeCount: number
+	id: number
+	likeCount: number
+	name: string
 	playerCount: number
 }
 
@@ -60,9 +68,7 @@ const assetToBigInt = (a: Asset): AssetBigInt => ({
 
 async function getOwnedAssets(): Promise<AssetBigInt[]> {
 	const ids = (await getInventory())
-		.filter(
-			i => i instanceof Econ.UnlimitedAsset || i instanceof Econ.Package
-		)
+		.filter(i => i instanceof UnlimitedAsset || i instanceof Package)
 		.map(i => Record("asset", i.ID))
 
 	const [assets] = await db.query<[Asset[]]>(queryUnlimitedAssets, { ids })
@@ -75,11 +81,7 @@ export const getAsset = query(getAssetSchema, async t =>
 
 export const getSources = query(async (): Promise<AssetBigInt[]> => {
 	const ids = (await getInventory())
-		.filter(
-			i =>
-				i instanceof Econ.LimitedSource ||
-				i instanceof Econ.UnlimitedSource
-		)
+		.filter(i => i instanceof LimitedSource || i instanceof UnlimitedSource)
 		.map(i => Record("asset", i.ID))
 
 	const [sources] = await db.query<[Asset[]]>(queryUnlimitedAssets, { ids })
@@ -88,7 +90,7 @@ export const getSources = query(async (): Promise<AssetBigInt[]> => {
 
 export const getGroups = query(async (): Promise<Group[]> => {
 	const ids = (await getInventory())
-		.filter(i => i instanceof Econ.Group)
+		.filter(i => i instanceof EconGroup)
 		.map(i => Record("group", i.ID))
 
 	const [groups] = await db.query<[Group[]]>(queryGroups, { ids })
@@ -96,7 +98,7 @@ export const getGroups = query(async (): Promise<Group[]> => {
 })
 export const getPlaces = query(async (): Promise<Place[]> => {
 	const ids = (await getInventory())
-		.filter(i => i instanceof Econ.Place)
+		.filter(i => i instanceof EconPlace)
 		.map(i => Record("place", i.ID))
 
 	const [places] = await db.query<[Place[]]>(queryPlaces, { ids })

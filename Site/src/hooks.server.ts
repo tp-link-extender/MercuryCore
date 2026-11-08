@@ -3,7 +3,7 @@
 
 import { type Handle, type HandleServerError, redirect } from "@sveltejs/kit"
 import { stipend } from "economy/api"
-import * as Econ from "economy/types"
+import { User as EconUser } from "economy/types"
 import pc from "picocolors"
 import {
 	cookieName,
@@ -15,7 +15,7 @@ import { db, Record } from "$lib/server/surreal"
 import moderatedQuery from "./moderated.surql"
 
 const { magenta, red, yellow, green, blue, gray } = pc
-const methodColours = Object.freeze({
+const methodColours: { [_: string]: string } = Object.freeze({
 	GET: green("GET"),
 	POST: yellow("POST"),
 })
@@ -52,7 +52,7 @@ async function finish({ event, resolve }: Parameters<Handle>[0]) {
 
 	if (config.Logging.Requests) {
 		// Fancy logging: time(?), user, method, and path
-		const method = event.request.method as keyof typeof methodColours
+		const { method } = event.request
 		console.log(
 			time(),
 			userLog(user),
@@ -121,7 +121,7 @@ export async function handle(e: Parameters<Handle>[0]) {
 		redirect(302, "/moderation")
 
 	try {
-		await stipend(e.event.fetch, new Econ.User(user.id))
+		await stipend(e.event.fetch, new EconUser(user.id))
 	} catch {
 		console.error("Stipend failed to process")
 	}
@@ -140,5 +140,5 @@ export function handleError({ error }: Parameters<HandleServerError>[0]) {
 
 	// Simple error logging (not a stack trace)
 	if (!config.Logging.FormattedErrors) console.error(error)
-	else console.error(red(error as string))
+	else console.error(red(String(error)))
 }

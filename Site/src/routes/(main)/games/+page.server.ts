@@ -4,12 +4,12 @@ import type { PageServerLoadEvent } from "./$types"
 import gamesQuery from "./games.surql"
 
 interface Place {
+	dislikeCount: number
 	id: number
+	likeCount: number
 	name: string
 	playerCount: number
 	serverPing: number
-	likeCount: number
-	dislikeCount: number
 }
 
 export async function load({ url }: PageServerLoadEvent) {

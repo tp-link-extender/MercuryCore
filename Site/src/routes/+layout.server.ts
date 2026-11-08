@@ -5,10 +5,10 @@ import bannersQuery from "./banners.surql"
 import getNotifications from "./notifications"
 
 interface Banner {
-	// bruce, it's- I'm not doing this again
-	id: string
 	bgColour: string
 	body: string
+	// bruce, it's- I'm not doing this again
+	id: string
 	textLight: boolean
 }
 

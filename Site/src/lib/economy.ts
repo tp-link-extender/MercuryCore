@@ -9,7 +9,7 @@ export type GroupData = StrIDName
 export type SourceData = StrIDName
 
 export interface OwnerData {
-	users: { [id: string]: UserData }
 	groups: { [id: string]: GroupData }
 	sources: { [id: string]: SourceData }
+	users: { [id: string]: UserData }
 }

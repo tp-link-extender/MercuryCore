@@ -124,7 +124,7 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 			["User has already been moderated"]
 		)
 
-	const actions: { [_: string]: () => [string, string] } = {
+	const actionLabels: { [_: string]: () => [string, string] } = {
 		Ban: () => [
 			`Ban ${username}`,
 			`banned until ${banDate?.toLocaleDateString()}`,
@@ -133,7 +133,7 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 		Warning: () => [`Warn ${username}`, "warned"],
 	}
 
-	const [note, actioned] = actions[action]()
+	const [note, actioned] = actionLabels[action]()
 
 	await db.query(moderateQuery, {
 		...qParams,

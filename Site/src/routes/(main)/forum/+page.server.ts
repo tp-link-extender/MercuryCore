@@ -3,10 +3,10 @@ import { db } from "$lib/server/surreal"
 import forumQuery from "./forum.surql"
 
 export interface PreviewPost {
-	id: string
 	author: BasicUser
 	created: Date
 	currentContent: string
+	id: string
 }
 
 interface Category {

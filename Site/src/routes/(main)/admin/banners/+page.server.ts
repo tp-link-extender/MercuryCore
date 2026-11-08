@@ -22,12 +22,12 @@ const schema = type({
 })
 
 interface BannerType {
-	// bruce, it's been five years
-	id: string
 	active: boolean
 	bgColour: string
 	body: string
 	creator: BasicUser
+	// bruce, it's been five years
+	id: string
 	textLight: boolean
 }
 

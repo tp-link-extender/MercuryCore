@@ -8,6 +8,8 @@ const strings = Object.freeze({
 	"T-Shirt": ["ShirtGraphic", "Graphic", "Shirt Graphic"],
 })
 
+type GraphicType = keyof typeof strings
+
 /**
  * Creates a new XML graphic asset and saves it in ../data/assets
  * @param type The type of asset to create
@@ -17,11 +19,11 @@ const strings = Object.freeze({
  * graphicAsset("T-Shirt", imageAssetId, id)
  */
 export async function graphicAsset(
-	type: string,
+	type: GraphicType,
 	imageAssetId: number,
 	graphicAssetId: number
 ) {
-	const stringType = strings[type as keyof typeof strings]
+	const stringType = strings[type]
 	const assetType = ["Decal", "Face"].includes(type) ? "Image" : "Other"
 	const assetUrl = `http://${config.Domain}/asset?id=${imageAssetId}`
 

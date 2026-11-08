@@ -48,7 +48,7 @@ const scriptHeaders = {
 
 export async function GET({ url }: RequestEvent) {
 	const clientTicket = url.searchParams.get("ticket")
-	const privateServer = url.searchParams.get("privateServer") as string
+	const privateServer = url.searchParams.get("privateServer")
 
 	if (!clientTicket) {
 		const scriptFile = Bun.file("../data/server/loadscripts/join.lua")

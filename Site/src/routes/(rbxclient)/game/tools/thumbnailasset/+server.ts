@@ -5,6 +5,22 @@ import { db, Record } from "$lib/server/surreal"
 import type { RequestEvent } from "./$types"
 import cachedAssetQuery from "./cache.surql"
 
+const isThumbnailResponse = (
+	value: unknown
+): value is { data: { imageUrl: string }[] } => {
+	if (typeof value !== "object" || value === null || !("data" in value))
+		return false
+	const { data } = value
+	if (!Array.isArray(data)) return false
+	const first: unknown = data[0]
+	return (
+		typeof first === "object" &&
+		first !== null &&
+		"imageUrl" in first &&
+		typeof first.imageUrl === "string"
+	)
+}
+
 export async function GET({ fetch: f, url }: RequestEvent) {
 	const width = Number(url.searchParams.get("wd"))
 	const height = Number(url.searchParams.get("ht"))
@@ -30,7 +46,9 @@ export async function GET({ fetch: f, url }: RequestEvent) {
 
 	if (thumb.status !== 200) error(400, "Invalid asset")
 
-	const [{ imageUrl }] = JSON.parse(await thumb.text()).data
+	const body: unknown = JSON.parse(await thumb.text())
+	if (!isThumbnailResponse(body)) error(400, "Invalid asset")
+	const [{ imageUrl }] = body.data
 	await db.update(cachedAsset).merge({ url: imageUrl })
 
 	redirect(302, imageUrl)

@@ -1,6 +1,6 @@
 import { timingSafeEqual } from "node:crypto"
 import { error } from "@sveltejs/kit"
-import * as Econ from "economy/types"
+import { Place } from "economy/types"
 import { env } from "$env/dynamic/private"
 import { economyConnFailed, ownsItem } from "$lib/server/economy"
 import { db, Record } from "$lib/server/surreal"
@@ -46,15 +46,15 @@ export async function GET({
 	const privateTicket = url.searchParams.get("privateTicket")
 
 	let authorised =
-		(Boolean(gameserverKey) &&
-			Boolean(bearer) &&
+		(gameserverKey != null &&
+			bearer != null &&
 			constantTimeEqual(bearer, gameserverKey)) ||
-		(Boolean(ticket) && constantTimeEqual(ticket, place.serverTicket))
+		(ticket != null && constantTimeEqual(ticket, place.serverTicket))
 
 	if (!authorised && locals.user)
 		if (locals.user.permissionLevel >= 5) authorised = true
 		else {
-			const owns = await ownsItem(f, locals.user.id, new Econ.Place(id))
+			const owns = await ownsItem(f, locals.user.id, new Place(id))
 			if (!owns.ok) error(500, economyConnFailed)
 			authorised = owns.value
 		}

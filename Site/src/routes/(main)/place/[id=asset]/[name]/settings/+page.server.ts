@@ -1,7 +1,7 @@
 import fs from "node:fs"
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
-import * as Econ from "economy/types"
+import { Place as EconPlace } from "economy/types"
 import sharp from "sharp"
 import { authorise } from "$lib/server/auth"
 import { economyConnFailed, ownsItem } from "$lib/server/economy"
@@ -39,16 +39,19 @@ const networkSchema = type({
 	serverAddress: serverAddressTest.optional(),
 	serverPort: serverPortTest.optional(),
 })
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 const ticketSchema = type({} as never) // I'm a genius
 const privacySchema = type({
 	privateServer: "boolean",
 })
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 const privatelinkSchema = type({} as never)
 const dataSchema = type({
 	file: "File",
 })
 
 interface Place {
+	clientVersion: number
 	created: string
 	dedicated: boolean
 	description: string
@@ -57,7 +60,6 @@ interface Place {
 	name: string
 	privateServer: boolean
 	privateTicket: string
-	clientVersion: number
 	serverAddress: string
 	serverPing: number
 	serverPort: number
@@ -77,7 +79,7 @@ export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	if (!getPlace) error(404, "Place not found")
 
 	const { user } = await authorise(locals)
-	const owns = await ownsItem(f, user.id, new Econ.Place(Number(params.id)))
+	const owns = await ownsItem(f, user.id, new EconPlace(Number(params.id)))
 	if (!owns.ok) error(500, economyConnFailed)
 	if (!owns.value && user.permissionLevel < 4)
 		error(403, "You do not have permission to view this page.")
@@ -104,7 +106,7 @@ async function getData({ fetch: f, locals, params }: RequestEvent) {
 	const getPlace = await placeQuery(id)
 	if (!getPlace) error(404, "Place not found")
 
-	const owns = await ownsItem(f, user.id, new Econ.Place(id))
+	const owns = await ownsItem(f, user.id, new EconPlace(id))
 	if (!owns.ok) error(500, economyConnFailed)
 	if (!owns.value && user.permissionLevel < 4)
 		error(403, "You do not have permission to update this page.")
@@ -195,6 +197,7 @@ actions.data = async e => {
 	if (!form.valid) return formError(form)
 
 	const { file } = form.data
+	// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 	form.data.file = undefined as unknown as File
 	if (file.size > 100e6)
 		return formError(

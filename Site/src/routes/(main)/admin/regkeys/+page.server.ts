@@ -26,11 +26,11 @@ const schema = type({
 })
 
 interface RegKey {
-	id: string
 	created: string
-	usesLeft: number
-	expiry: Date | string | null
 	creator?: BasicUser
+	expiry: Date | string | null
+	id: string
+	usesLeft: number
 }
 
 export async function load({ locals }: RequestEvent) {
@@ -54,8 +54,8 @@ async function getData({ locals, request }: RequestEvent) {
 
 export const actions: Actions = {}
 actions.create = async e => {
-	const { user, form, error } = await getData(e)
-	if (error) return error
+	const { user, form, error: dataError } = await getData(e)
+	if (dataError) return dataError
 
 	const {
 		enableRegKeyCustom,
@@ -86,9 +86,9 @@ actions.create = async e => {
 			regKeyCustom,
 			regKeyUses,
 		})
-	} catch (e) {
+	} catch (err) {
 		// honestly we should really use these error types more, idk if the only just got added or what idc
-		if (!(e instanceof AlreadyExistsError)) throw e
+		if (!(err instanceof AlreadyExistsError)) throw err
 		return errMessage(form, "This registration key already exists")
 	}
 
@@ -98,8 +98,8 @@ actions.create = async e => {
 	)
 }
 actions.disable = async e => {
-	const { user, form, error } = await getData(e)
-	if (error) return error
+	const { user, form, error: dataError } = await getData(e)
+	if (dataError) return dataError
 	const id = e.url.searchParams.get("id")
 	if (!id) return errMessage(form, "Missing fields")
 

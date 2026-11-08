@@ -1,6 +1,6 @@
 import { error, fail } from "@sveltejs/kit"
 import { inventory } from "economy/api"
-import * as Econ from "economy/types"
+import { Group as EconGroup, User as EconUser, Place } from "economy/types"
 import { authorise } from "$lib/server/auth"
 import { economyConnFailed } from "$lib/server/economy"
 import formData from "$lib/server/formData"
@@ -62,12 +62,12 @@ export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	})
 	if (!userExists) error(404, "Not Found")
 
-	const inv = await inventory(f, new Econ.User(userExists.id))
+	const inv = await inventory(f, new EconUser(userExists.id))
 	if (!inv.ok) error(500, economyConnFailed)
 
 	const owned = [...inv.value.One]
-	const placeIds = owned.filter(i => i instanceof Econ.Place).map(i => i.ID)
-	const groupIds = owned.filter(i => i instanceof Econ.Group).map(i => i.ID)
+	const placeIds = owned.filter(i => i instanceof Place).map(i => i.ID)
+	const groupIds = owned.filter(i => i instanceof EconGroup).map(i => i.ID)
 
 	const [places] = await db.query<OwnedPlace[][]>(ownedPlacesQuery, {
 		ids: placeIds.map(id => Record("place", id)),
@@ -135,8 +135,8 @@ async function rerender(e: RequestEvent) {
 			avatar: `/api/avatar/${e.params.username}?r=${Math.random()}`,
 			avatarBody: `/api/avatar/${e.params.username}-body?r=${Math.random()}`,
 		}
-	} catch (e) {
-		console.error(e)
+	} catch (err) {
+		console.error(err)
 		return fail(500, { msg: "Failed to request render" })
 	}
 }
