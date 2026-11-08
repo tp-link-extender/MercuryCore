@@ -9,7 +9,6 @@ const startSurreal = () => {
 		const proc = Bun.spawn(
 			[
 				"surreal",
-				"db",
 				"start",
 				"--bind=127.0.0.1:8000",
 				"-u=root",
