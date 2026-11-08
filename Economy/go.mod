@@ -5,7 +5,7 @@ go 1.26.2
 require (
 	github.com/TwiN/go-color v1.4.1
 	github.com/matoous/go-nanoid/v2 v2.1.0
-	github.com/surrealdb/surrealdb.go v1.7.1
+	github.com/surrealdb/surrealdb.go/v2 v2.0.1
 	go.etcd.io/bbolt v1.5.0
 )
 
