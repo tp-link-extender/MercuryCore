@@ -8,7 +8,7 @@
 		Group as EconGroup,
 		LimitedAsset as EconLimitedAsset,
 		LimitedSource as EconLimitedSource,
-		Owner as EconOwner,
+		type Owner as EconOwner,
 		Package as EconPackage,
 		Place as EconPlace,
 		UnlimitedAsset as EconUnlimitedAsset,
