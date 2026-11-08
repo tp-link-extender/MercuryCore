@@ -31,7 +31,7 @@
 	],
 	"rules": {
 		"eslint/capitalized-comments": "off",
-		"eslint/curly": "off",
+		"eslint/curly": ["error", "multi"],
 		"eslint/eqeqeq": ["error", "smart"],
 		"eslint/func-style": "off",
 		"eslint/id-length": "off",
@@ -82,12 +82,12 @@
 		"promise/avoid-new": "error",
 		"promise/no-nesting": "off",
 		"promise/prefer-await-to-callbacks": "off",
+		"promise/prefer-await-to-then": "off",
 		"typescript/consistent-indexed-object-style": [
 			"error",
 			"index-signature"
 		],
 		"typescript/consistent-return": "off",
-		"typescript/consistent-type-definitions": "off",
 		"typescript/consistent-type-imports": "warn",
 		"typescript/method-signature-style": ["error", "method"],
 		"typescript/no-confusing-void-expression": "off",

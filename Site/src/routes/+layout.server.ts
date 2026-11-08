@@ -4,7 +4,7 @@ import type { LayoutServerLoadEvent } from "./$types"
 import bannersQuery from "./banners.surql"
 import getNotifications from "./notifications"
 
-type Banner = {
+interface Banner {
 	// bruce, it's- I'm not doing this again
 	id: string
 	bgColour: string

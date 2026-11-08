@@ -25,27 +25,27 @@ async function getInventory(): Promise<CanOwnOne[]> {
 	return [...inv.value.One]
 }
 
-type Asset = {
+interface Asset {
 	id: number
 	name: string
 	price: number
 	type: number
 }
 
-type AssetBigInt = {
+interface AssetBigInt {
 	id: number
 	name: string
 	price: bigint
 	type: number
 }
 
-type Group = {
+interface Group {
 	id: string
 	name: string
 	memberCount: number
 }
 
-type Place = {
+interface Place {
 	id: number
 	name: string
 	likeCount: number

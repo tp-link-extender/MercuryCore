@@ -4,7 +4,7 @@ import { db } from "$lib/server/surreal"
 import type { PageServerLoadEvent } from "./$types"
 import groupsQuery from "./groups.surql"
 
-export type Group = {
+export interface Group {
 	id: string
 	name: string
 	memberCount: number

@@ -4,7 +4,7 @@ import { db } from "$lib/server/surreal"
 import type { RequestEvent } from "./$types"
 import userQuery from "./user.surql"
 
-type User = {
+interface User {
 	bodyColours: {
 		Head: number
 		Torso: number

@@ -9,7 +9,7 @@ import placeIdQuery from "./placeId.surql"
 
 // these files r kinda like the no-man's land of the Mercury Core codebase
 
-type Place = {
+interface Place {
 	name: string
 	privateServer: boolean
 }

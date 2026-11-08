@@ -122,7 +122,7 @@ actions.default = async ({ fetch: f, locals, request }) => {
 	redirect(302, `/catalog/${id}`)
 }
 
-type PackageChild = {
+interface PackageChild {
 	id: number
 	description: string
 	name: string

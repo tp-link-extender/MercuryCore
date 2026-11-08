@@ -23,7 +23,7 @@ import assetCheckQuery from "./assetCheck.surql"
 import reuploadQuery from "./reupload.surql"
 import updateAssetQuery from "./updateAsset.surql"
 
-type Asset = {
+interface Asset {
 	id: string
 	created: Date
 	description: string
@@ -86,7 +86,7 @@ export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 
 export const actions: Actions = {}
 
-type AssetCheck = {
+interface AssetCheck {
 	imageAssetId: number | null
 	type: number
 	name: string
@@ -157,11 +157,11 @@ actions.reupload = async ({
 		return formError(form, ["asset"], ["Packages cannot be reuploaded"])
 
 	const buf = await file.arrayBuffer()
-	if (asset.imageAssetId) {
+	if (asset.imageAssetId) 
 		// items with textures (t-shirts, clothing, decals, faces) must be actual images
 		if (!(await isImage(file)))
 			return formError(form, ["asset"], ["File must be an image"])
-	} else
+	 else
 		switch (asset.type) {
 			// natively rich formats: only accept files whose magic bytes match the asset type
 			case 3: {

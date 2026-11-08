@@ -14,7 +14,7 @@ import groupQuery from "./group.surql"
 import joinQuery from "./join.surql"
 import leaveQuery from "./leave.surql"
 
-type Group = {
+interface Group {
 	id: string
 	in: boolean
 	memberCount: number

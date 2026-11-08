@@ -3,7 +3,7 @@ import { db } from "$lib/server/surreal"
 import type { PageServerLoadEvent } from "./$types"
 import logsQuery from "./logs.surql"
 
-type Log = {
+interface Log {
 	action: "Account" | "Administration" | "Economy" | "Moderation"
 	created: Date
 	note: string

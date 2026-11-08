@@ -1,4 +1,4 @@
-type StrID = {
+interface StrID {
 	id: string
 }
 export interface UserData extends BasicUser, StrID {}
@@ -8,7 +8,7 @@ interface StrIDName extends StrID {
 export type GroupData = StrIDName
 export type SourceData = StrIDName
 
-export type OwnerData = {
+export interface OwnerData {
 	users: { [id: string]: UserData }
 	groups: { [id: string]: GroupData }
 	sources: { [id: string]: SourceData }

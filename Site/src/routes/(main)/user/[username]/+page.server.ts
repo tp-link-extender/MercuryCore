@@ -23,7 +23,7 @@ import unfollowQuery from "./unfollow.surql"
 import unfriendQuery from "./unfriend.surql"
 import userQuery from "./user.surql"
 
-type OwnedPlace = {
+interface OwnedPlace {
 	dislikeCount: number
 	id: number
 	likeCount: number

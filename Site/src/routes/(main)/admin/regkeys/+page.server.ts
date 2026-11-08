@@ -25,7 +25,7 @@ const schema = type({
 	regKeyUses: type("1 <= number <= 100").default(1),
 })
 
-type RegKey = {
+interface RegKey {
 	id: string
 	created: string
 	usesLeft: number

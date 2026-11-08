@@ -97,7 +97,7 @@ if (!building) {
 	logo()
 }
 
-type RecordIdTypes = {
+interface RecordIdTypes {
 	asset: number
 	auditLog: string
 	banner: string

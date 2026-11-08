@@ -1,7 +1,7 @@
 import { db, Record } from "$lib/server/surreal"
 import notificationsQuery from "./notifications.surql"
 
-type Notification = {
+interface Notification {
 	id: string
 	created: Date
 	note: string

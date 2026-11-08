@@ -7,7 +7,7 @@ import { db } from "$lib/server/surreal"
 import type { PageServerLoadEvent } from "./$types"
 import catalogQuery from "./catalog.surql"
 
-export type Asset = {
+export interface Asset {
 	name: string
 	price: number
 	id: number

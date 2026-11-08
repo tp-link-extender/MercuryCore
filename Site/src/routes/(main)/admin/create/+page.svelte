@@ -19,7 +19,7 @@
 		TabData(data.url, ["Asset creation"], ["fa-file-circle-plus"])
 	)
 
-	type AssetEntry = {
+	interface AssetEntry {
 		name: string
 		description: string
 		type: string
