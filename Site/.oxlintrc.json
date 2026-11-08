@@ -34,7 +34,6 @@
 		"eslint/curly": ["error", "multi"],
 		"eslint/eqeqeq": ["error", "smart"],
 		"eslint/func-style": "off",
-		"eslint/no-warning-comments": "off",
 		"eslint/id-length": "off",
 		"eslint/init-declarations": "off",
 		"eslint/max-depth": "off",
@@ -59,6 +58,7 @@
 		"eslint/no-useless-concat": "warn",
 		"eslint/no-useless-return": "warn",
 		"eslint/no-var": "error",
+		"eslint/no-warning-comments": "off",
 		"eslint/object-shorthand": "warn",
 		"eslint/one-var": "off",
 		"eslint/prefer-const": "error",
@@ -84,7 +84,10 @@
 		"promise/no-nesting": "off",
 		"promise/prefer-await-to-callbacks": "off",
 		"promise/prefer-await-to-then": "off",
-		"typescript/consistent-indexed-object-style": ["error", "index-signature"],
+		"typescript/consistent-indexed-object-style": [
+			"error",
+			"index-signature"
+		],
 		"typescript/consistent-return": "off",
 		"typescript/consistent-type-imports": "warn",
 		"typescript/method-signature-style": ["error", "method"],
