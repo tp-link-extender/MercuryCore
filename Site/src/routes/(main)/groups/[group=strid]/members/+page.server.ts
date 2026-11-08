@@ -6,7 +6,7 @@ import { db, Record } from "$lib/server/surreal"
 import type { PageServerLoadEvent } from "./$types"
 import membersQuery from "./members.surql"
 
-type Group = {
+interface Group {
 	memberCount: number
 	members: BasicUser[]
 	name: string

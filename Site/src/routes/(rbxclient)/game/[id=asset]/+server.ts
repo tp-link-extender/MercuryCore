@@ -51,14 +51,13 @@ export async function GET({
 			constantTimeEqual(bearer, gameserverKey)) ||
 		(Boolean(ticket) && constantTimeEqual(ticket, place.serverTicket))
 
-	if (!authorised && locals.user) {
+	if (!authorised && locals.user)
 		if (locals.user.permissionLevel >= 5) authorised = true
 		else {
 			const owns = await ownsItem(f, locals.user.id, new Econ.Place(id))
 			if (!owns.ok) error(500, economyConnFailed)
 			authorised = owns.value
 		}
-	}
 
 	if (!authorised && place.privateServer && privateTicket)
 		authorised = constantTimeEqual(privateTicket, place.privateTicket)

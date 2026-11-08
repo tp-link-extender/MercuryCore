@@ -9,12 +9,12 @@ import { db, findWhere, Record } from "$lib/server/surreal"
 import type { RequestEvent } from "./$types"
 import joinQuery from "./join.surql"
 
-type ServerAddress = {
+interface ServerAddress {
 	serverHostname: string
 	serverPort: number
 }
 
-type Session = {
+interface Session {
 	place: {
 		id: number
 		dedicated: boolean

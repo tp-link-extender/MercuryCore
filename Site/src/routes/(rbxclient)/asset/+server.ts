@@ -18,7 +18,7 @@ const headers = (file: string | Uint8Array) => ({
 const response = (file: string | Uint8Array<ArrayBuffer>) =>
 	new Response(file, { headers: headers(file) })
 
-type FoundAsset = {
+interface FoundAsset {
 	id: number
 	name: string
 	visibility: string

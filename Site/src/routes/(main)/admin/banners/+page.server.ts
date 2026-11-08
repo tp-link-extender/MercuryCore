@@ -21,7 +21,7 @@ const schema = type({
 	bannerTextLight: "boolean | undefined",
 })
 
-type BannerType = {
+interface BannerType {
 	// bruce, it's been five years
 	id: string
 	active: boolean

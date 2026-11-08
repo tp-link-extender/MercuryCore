@@ -13,7 +13,7 @@ const schema = type({
 	status: "1 <= string <= 1000",
 })
 
-type Place = {
+interface Place {
 	id: number
 	name: string
 	playerCount: number
@@ -22,7 +22,7 @@ type Place = {
 	dislikeCount: number
 }
 
-type Status = {
+interface Status {
 	id: string
 	author: BasicUser
 	created: Date

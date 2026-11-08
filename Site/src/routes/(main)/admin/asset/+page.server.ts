@@ -17,7 +17,7 @@ import iaidQuery from "./iaid.surql"
 import purgeQuery from "./purge.surql"
 import visibilityQuery from "./visibility.surql"
 
-type Asset = {
+interface Asset {
 	name: string
 	price: number
 	id: number

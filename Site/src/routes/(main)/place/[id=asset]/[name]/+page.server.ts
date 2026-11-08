@@ -19,7 +19,7 @@ import findPlaceQuery from "./findPlace.surql"
 import invalidatePlayingQuery from "./invalidatePlaying.surql"
 import placeQuery from "./place.surql"
 
-type FoundPlace = {
+interface FoundPlace {
 	privateServer: boolean
 	privateTicket: string
 	clientVersion: number

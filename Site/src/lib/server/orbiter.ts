@@ -1,7 +1,7 @@
 import config from "$lib/server/config"
 import type { ReturnErr, ReturnValue } from "./economy"
 
-type Gameserver = {
+interface Gameserver {
 	pid: number
 	startTime: number
 }

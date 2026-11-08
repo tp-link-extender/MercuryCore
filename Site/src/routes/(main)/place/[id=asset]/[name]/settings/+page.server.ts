@@ -48,7 +48,7 @@ const dataSchema = type({
 	file: "File",
 })
 
-type Place = {
+interface Place {
 	created: string
 	dedicated: boolean
 	description: string

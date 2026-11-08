@@ -27,9 +27,9 @@ export const parseMapLocation = (encoded: string | null): string | null => {
 	return `rbxasset://maps/${name}`
 }
 
-export type RawLua = { raw: string }
+export interface RawLua { raw: string }
 export type LoadscriptValue = string | number | RawLua
-export type LoadscriptValues = { [_: string]: LoadscriptValue }
+export interface LoadscriptValues { [_: string]: LoadscriptValue }
 
 /** Marks a value as trusted Lua source rather than a string literal. */
 export const luaRaw = (value: string): RawLua => ({ raw: value })

@@ -30,7 +30,7 @@ const schema = type({
 	replyId: "string | undefined",
 })
 
-type Asset = {
+interface Asset {
 	id: string
 	comments: Comment[]
 	created: Date
@@ -134,7 +134,7 @@ async function rerender({ fetch: f, locals, params }: RequestEvent) {
 	await authorise(locals, 5)
 
 	const id = Number(params.id)
-	type FoundAsset = {
+	interface FoundAsset {
 		name: string
 		type: number
 		visibility: string
@@ -228,7 +228,7 @@ actions.comment = async ({
 actions.buy = async e => {
 	const { user, id } = await getBuyData(e)
 
-	type FoundAsset = {
+	interface FoundAsset {
 		forSale: boolean
 		name: string
 		price: number

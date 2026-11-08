@@ -5,7 +5,7 @@ import type { Actions, PageServerLoadEvent } from "./$types"
 import getModerationQuery from "./getModeration.surql"
 import unmoderateQuery from "./unmoderate.surql"
 
-type Moderation = {
+interface Moderation {
 	type: string
 	note: string
 	time: string

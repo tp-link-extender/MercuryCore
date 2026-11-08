@@ -5,7 +5,7 @@ import type { RequestEvent } from "./$types"
 import completeQuery from "./complete.surql"
 import renderQuery from "./render.surql"
 
-type Render = {
+interface Render {
 	type:
 		| "Clothing"
 		| "Avatar"

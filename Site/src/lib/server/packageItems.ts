@@ -8,7 +8,7 @@ import { economyConnFailed } from "$lib/server/economy"
 import { db, Record } from "$lib/server/surreal"
 import query from "./packageItems.surql"
 
-export type PackageItem = {
+export interface PackageItem {
 	id: number
 	name: string
 	type: number
@@ -25,7 +25,7 @@ const isOwnedItem = (i: Econ.Item): i is OwnedItem =>
 const itemIds = (items: ItemsOneLike): number[] =>
 	[...items.set].filter(isOwnedItem).map(i => i.ID)
 
-type ItemsOneLike = { set: Set<Econ.Item> }
+interface ItemsOneLike { set: Set<Econ.Item> }
 
 // The Economy service is the only authority on who owns what, so ownership for the whole bundle is resolved in one inventory read rather than a query per item.
 async function ownedIds(

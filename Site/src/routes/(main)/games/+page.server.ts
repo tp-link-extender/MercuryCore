@@ -3,7 +3,7 @@ import { db } from "$lib/server/surreal"
 import type { PageServerLoadEvent } from "./$types"
 import gamesQuery from "./games.surql"
 
-type Place = {
+interface Place {
 	id: number
 	name: string
 	playerCount: number

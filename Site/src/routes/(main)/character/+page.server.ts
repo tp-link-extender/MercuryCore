@@ -40,7 +40,7 @@ const bodyParts = Object.freeze([
 	"Torso",
 ])
 
-export type Asset = {
+export interface Asset {
 	id: number
 	name: string
 	price: number
@@ -48,7 +48,7 @@ export type Asset = {
 	wearing: boolean
 }
 
-type AssetData = {
+interface AssetData {
 	id: number
 	type: number
 	visibility: string
@@ -68,7 +68,7 @@ async function getOwnedAssetIds(f: typeof globalThis.fetch, userId: string) {
 	return ownedAssetIds(inv.value.One)
 }
 
-type WornAsset = {
+interface WornAsset {
 	id: number
 	worn: boolean
 }

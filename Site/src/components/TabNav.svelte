@@ -3,7 +3,7 @@
 	import type { ClassValue } from "svelte/elements"
 	import { Tween } from "svelte/motion"
 
-	type Group = { name: string, tabs: string[] }
+	interface Group { name: string, tabs: string[] }
 
 	let {
 		tabData = $bindable(),

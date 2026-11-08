@@ -1,6 +1,6 @@
 import type { RemoteForm } from "@sveltejs/kit"
 
-export type Scored = {
+export interface Scored {
 	dislikeCount?: number
 	dislikes: boolean
 	likeCount?: number
@@ -38,7 +38,7 @@ export const likeFns: { [_: string]: (t: Scored) => void } = Object.freeze({
 	unlike,
 })
 
-type Data = {
+interface Data {
 	id: string
 	action: "like" | "unlike" | "dislike" | "undislike"
 }

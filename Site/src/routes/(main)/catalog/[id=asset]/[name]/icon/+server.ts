@@ -5,7 +5,7 @@ import { db, Record } from "$lib/server/surreal"
 import type { RequestEvent } from "./$types"
 import assetQuery from "./asset.surql"
 
-type Asset = {
+interface Asset {
 	name: string
 	visibility: string
 	type: number

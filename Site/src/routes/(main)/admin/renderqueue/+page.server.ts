@@ -4,7 +4,7 @@ import { db } from "$lib/server/surreal"
 import type { PageServerLoadEvent } from "./$types"
 import renderQueueQuery from "./renderqueue.surql"
 
-type Render = {
+interface Render {
 	id: number
 	type: RenderType
 	status: Status

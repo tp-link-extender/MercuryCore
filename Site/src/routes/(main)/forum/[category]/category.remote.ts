@@ -13,7 +13,7 @@ interface Post extends PreviewPost, Scored {
 	visibility: string
 }
 
-type Category = {
+interface Category {
 	name: string
 	posts: Post[]
 }

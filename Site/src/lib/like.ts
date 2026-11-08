@@ -1,6 +1,6 @@
 import type { SubmitFunction } from "@sveltejs/kit"
 
-export type Scored = {
+export interface Scored {
 	dislikeCount?: number
 	dislikes: boolean
 	likeCount?: number

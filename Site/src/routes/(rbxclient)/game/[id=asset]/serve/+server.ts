@@ -8,7 +8,7 @@ import { db, Record } from "$lib/server/surreal"
 import type { RequestEvent } from "./$types"
 import placeQuery from "./place.surql"
 
-type Place = {
+interface Place {
 	id: number
 	serverPort: number
 	serverTicket: string

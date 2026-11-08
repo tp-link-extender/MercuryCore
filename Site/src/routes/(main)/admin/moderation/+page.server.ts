@@ -63,7 +63,7 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 	if (action === "Ban" && (banDate?.getTime() || 0) < Date.now())
 		return formError(form, ["banDate"], ["Invalid date"])
 
-	type Moderatee = {
+	interface Moderatee {
 		id: string
 		permissionLevel: number
 	}

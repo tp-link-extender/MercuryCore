@@ -19,7 +19,7 @@ async function packageItemIds(f: typeof globalThis.fetch): Promise<number[]> {
 		.map(i => i.ID)
 }
 
-type Place = {
+interface Place {
 	id: number
 	name: string
 	playerCount: number
@@ -28,13 +28,13 @@ type Place = {
 	dislikeCount: number
 }
 
-type Asset = {
+interface Asset {
 	id: number
 	name: string
 	price: number
 }
 
-type Group = {
+interface Group {
 	id: string
 	name: string
 	memberCount: number

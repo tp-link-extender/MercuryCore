@@ -1,6 +1,6 @@
 import config from "./config"
 
-export type ModerationDiscordWebhookPayload = {
+export interface ModerationDiscordWebhookPayload {
 	username: string
 	action: string
 	reason: string

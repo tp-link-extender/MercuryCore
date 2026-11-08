@@ -17,7 +17,7 @@ export type RenderType =
 	| "RightLeg"
 export type Status = "Pending" | "Rendering" | "Completed" | "Error"
 
-type Render = {
+interface Render {
 	status: Status
 }
 
@@ -70,10 +70,10 @@ export default async function requestRender(
 			// console.log(`Waiting for render file at ${path}`)
 			try {
 				const watcher = fs.watch(path, (_, filename) => {
-					if (!filename?.startsWith(relativeId.toString())) {
+					if (!filename?.startsWith(relativeId.toString())) 
 						// console.log(`Ignoring change to ${filename}`)
 						return
-					}
+					
 					watcher.close()
 					// console.log("Watcher detected change!")
 					resolve()

@@ -3,7 +3,7 @@ import { db } from "$lib/server/surreal"
 import type { PageServerLoadEvent } from "./$types"
 import reportsQuery from "./reports.surql"
 
-type Report = {
+interface Report {
 	category: string
 	id: string
 	note: string

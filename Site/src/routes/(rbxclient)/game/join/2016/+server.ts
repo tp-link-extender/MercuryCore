@@ -6,7 +6,7 @@ import { db, findWhere, Record } from "$lib/server/surreal"
 import joinQuery from "../join.surql"
 import type { RequestEvent } from "./$types"
 
-type Config = {
+interface Config {
 	CharacterAppearance: string
 	MachineAddress: string
 	MembershipType: string
@@ -52,12 +52,12 @@ const makeConfig = (c: Config) => ({
 	WaitingForCharacterGuid: "16be1dd8-5462-4ca5-a997-0725d997708b",
 })
 
-type ServerAddress = {
+interface ServerAddress {
 	serverAddress: string
 	serverPort: number
 }
 
-type Session = {
+interface Session {
 	place: {
 		id: number
 		dedicated: boolean
