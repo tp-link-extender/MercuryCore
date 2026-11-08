@@ -3,7 +3,7 @@ import type Mail from "nodemailer/lib/mailer"
 import { building } from "$app/environment"
 import config from "./config"
 
-let transport = null as unknown as Mail
+let transport: Mail | null = null
 if (!building)
 	try {
 		transport = createTransport({
@@ -38,6 +38,7 @@ if (!building)
 	}
 
 export async function sendEmail(to: string, subject: string, text: string) {
+	if (!transport) throw new Error("SMTP transport is not initialised")
 	console.log(`Queuing email to ${to}`)
 	const result = await transport.sendMail({
 		from: `${config.Name} <noreply@${config.Domain}>`,

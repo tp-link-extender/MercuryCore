@@ -7,7 +7,7 @@ import typeQuery from "./type.surql"
 
 // the clothing worn by the render rig depends on which body part is rendered
 // (hardcoded for prod)
-const bodyPartClothing = Object.freeze({
+const bodyPartClothing: { [_: number]: number } = Object.freeze({
 	27: 337622528, // Torso
 	28: 999521121, // Right Arm
 	29: 579211518, // Left Arm
@@ -28,8 +28,7 @@ export async function GET({ url }: RequestEvent) {
 	})
 	if (!asset) error(404, "Not Found")
 
-	const clothing =
-		bodyPartClothing[asset.type as keyof typeof bodyPartClothing]
+	const clothing = bodyPartClothing[asset.type]
 	if (!clothing) error(400, "Not a body part asset")
 
 	const charApp = [

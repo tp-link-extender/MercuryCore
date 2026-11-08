@@ -1,8 +1,8 @@
 <script lang="ts" module>
 	export interface UserType {
-		username: string
 		permissionLevel: number
 		status: "Playing" | "Online" | "Offline"
+		username: string
 	}
 </script>
 

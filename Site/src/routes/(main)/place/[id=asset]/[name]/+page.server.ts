@@ -1,6 +1,6 @@
 import fs from "node:fs"
 import { error, redirect } from "@sveltejs/kit"
-import * as Econ from "economy/types"
+import { Place as EconPlace } from "economy/types"
 import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
 import {
@@ -20,9 +20,9 @@ import invalidatePlayingQuery from "./invalidatePlaying.surql"
 import placeQuery from "./place.surql"
 
 interface FoundPlace {
+	clientVersion: number
 	privateServer: boolean
 	privateTicket: string
-	clientVersion: number
 }
 
 interface Place extends FoundPlace {
@@ -63,7 +63,7 @@ export async function load({
 	})
 	if (!place) error(404, "Place not found")
 
-	const owner = await itemOwner(f, new Econ.Place(id))
+	const owner = await itemOwner(f, new EconPlace(id))
 	if (!owner.ok) error(500, economyConnFailed)
 	place.ownerUser = owner.value
 
@@ -110,7 +110,7 @@ async function findPlace(
 	})
 	if (!place) error(404, "Place not found")
 
-	const owns = await ownsItem(f, user.id, new Econ.Place(id))
+	const owns = await ownsItem(f, user.id, new EconPlace(id))
 	if (!owns.ok) error(500, economyConnFailed)
 
 	if (

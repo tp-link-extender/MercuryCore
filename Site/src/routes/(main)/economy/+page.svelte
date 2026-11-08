@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as Econ from "economy/economy"
+	import { TransferWithID } from "economy/economy"
 	import { Buf, BufReader } from "economy/items"
 	import Head from "$components/Head.svelte"
 	import Transaction from "$components/Transaction.svelte"
@@ -44,7 +44,7 @@
 			</thead>
 			<tbody>
 				{#each data.transactions as transaction, num}
-					{@const transfer = Econ.TransferWithID.Deserialise(
+					{@const transfer = TransferWithID.Deserialise(
 						new BufReader(new Buf(transaction))
 					)}
 					<tr

@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit"
 import { balance, historyOwner } from "economy/api"
-import * as Econ from "economy/types"
+import { User } from "economy/types"
 import { authorise } from "$lib/server/auth"
 import { economyConnFailed, ownerData } from "$lib/server/economy"
 import type { PageServerLoadEvent } from "./$types"
@@ -8,7 +8,7 @@ import type { PageServerLoadEvent } from "./$types"
 export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 
-	const u = new Econ.User(user.id)
+	const u = new User(user.id)
 	const b = await balance(f, u) // fu
 	if (!b.ok) error(500, economyConnFailed)
 

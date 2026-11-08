@@ -20,10 +20,10 @@
 	)
 
 	interface AssetEntry {
-		name: string
 		description: string
-		type: string
 		file: File | undefined
+		name: string
+		type: string
 	}
 
 	// for packages: uploads to include in the package

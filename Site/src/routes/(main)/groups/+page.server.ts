@@ -6,8 +6,8 @@ import groupsQuery from "./groups.surql"
 
 export interface Group {
 	id: string
-	name: string
 	memberCount: number
+	name: string
 }
 
 export async function load({ url }: PageServerLoadEvent) {

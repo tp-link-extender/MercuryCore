@@ -6,10 +6,10 @@ import getModerationQuery from "./getModeration.surql"
 import unmoderateQuery from "./unmoderate.surql"
 
 interface Moderation {
-	type: string
 	note: string
 	time: string
 	timeEnds: string
+	type: string
 }
 
 async function getModeration(id: string) {

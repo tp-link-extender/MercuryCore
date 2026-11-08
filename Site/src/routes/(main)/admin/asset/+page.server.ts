@@ -18,15 +18,15 @@ import purgeQuery from "./purge.surql"
 import visibilityQuery from "./visibility.surql"
 
 interface Asset {
-	name: string
-	price: number
 	id: number
-	type: number
-	owner: OwnedUser | null
 	imageAsset?: {
 		id: number
 		name: string
 	}
+	name: string
+	owner: OwnedUser | null
+	price: number
+	type: number
 }
 
 export async function load({ fetch: f, locals }: PageServerLoadEvent) {
@@ -38,7 +38,7 @@ export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 		assets.map(async asset => {
 			const owner = await assetOwner(f, asset.id, asset.type)
 			if (!owner.ok) error(500, economyConnFailed)
-			return { ...asset, owner: owner.value }
+			return Object.assign(asset, { owner: owner.value })
 		})
 	)
 
@@ -94,8 +94,8 @@ actions.rerender = async e => {
 
 	try {
 		await requestRender(e.fetch, "Clothing", id)
-	} catch (e) {
-		console.error(e)
+	} catch (err) {
+		console.error(err)
 		fail(500, { msg: "Failed to request render" })
 	}
 }

@@ -7,7 +7,13 @@ import {
 	countOwnersOne,
 	ownsOne,
 } from "economy/api"
-import * as Econ from "economy/types"
+import {
+	Package as EconPackage,
+	PackageSource,
+	UnlimitedAsset,
+	UnlimitedSource,
+	User,
+} from "economy/types"
 import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
 import createCommentQuery from "$lib/server/createComment.surql"
@@ -16,7 +22,7 @@ import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import { type PackageItem, packageItems } from "$lib/server/packageItems"
 import ratelimit from "$lib/server/ratelimit"
-import requestRender from "$lib/server/requestRender"
+import requestRender, { type RenderType } from "$lib/server/requestRender"
 import { db, find, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { couldMatch, encode } from "$lib/urlName"
@@ -31,11 +37,11 @@ const schema = type({
 })
 
 interface Asset {
-	id: string
 	comments: Comment[]
 	created: Date
 	description: string
 	forSale: boolean
+	id: string
 	items: PackageItem[]
 	name: string
 	owned: boolean
@@ -67,7 +73,7 @@ export async function load({ fetch: f, locals, params }: RequestEvent) {
 	if (!couldMatch(asset.name, params.name))
 		redirect(302, `/catalog/${id}/${slug}`)
 
-	const u = new Econ.User(user.id)
+	const u = new User(user.id)
 	const b = await balance(f, u)
 	if (!b.ok) {
 		console.error("balance failed")
@@ -76,7 +82,7 @@ export async function load({ fetch: f, locals, params }: RequestEvent) {
 
 	// packages are a distinct type in the ledger, so they need their own item to ask about rather than the plain asset ones
 	const isPackage = asset.type === 32
-	const item = isPackage ? new Econ.Package(id) : new Econ.UnlimitedAsset(id)
+	const item = isPackage ? new EconPackage(id) : new UnlimitedAsset(id)
 
 	const owned = await ownsOne(f, u, item)
 	if (!owned.ok) {
@@ -148,7 +154,7 @@ async function rerender({ fetch: f, locals, params }: RequestEvent) {
 
 	// body parts are rendered as close-ups of the part itself, with its
 	// matching clothing (from api/render/bodypart), using one script per limb
-	const renderTypeFromType = Object.freeze({
+	const renderTypeFromType: { [_: number]: RenderType } = Object.freeze({
 		27: "Torso",
 		28: "RightArm",
 		29: "LeftArm",
@@ -157,7 +163,7 @@ async function rerender({ fetch: f, locals, params }: RequestEvent) {
 	})
 
 	const renderType =
-		renderTypeFromType[asset.type as keyof typeof renderTypeFromType] ??
+		renderTypeFromType[asset.type] ??
 		(asset.type === 8
 			? "Model"
 			: asset.type === 32
@@ -247,16 +253,16 @@ actions.buy = async e => {
 	const owner = await assetOwner(e.fetch, id, asset.type)
 	if (!owner.ok) error(500, economyConnFailed)
 
-	const u = new Econ.User(user.id)
+	const u = new User(user.id)
 	// packages are sold through the Economy service as a bundle: the buyer pays once and receives the package plus everything inside it, so there's nothing to write here
 	const price = BigInt(asset.price)
 	const ok =
 		asset.type === 32
-			? await buyPackage(e.fetch, u, new Econ.PackageSource(id), price)
+			? await buyPackage(e.fetch, u, new PackageSource(id), price)
 			: await buyUnlimitedAsset(
 					e.fetch,
 					u,
-					new Econ.UnlimitedSource(id),
+					new UnlimitedSource(id),
 					price
 				)
 	if (!ok) error(400, "Purchase failed")

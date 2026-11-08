@@ -18,6 +18,12 @@ const headers = (file: string | Uint8Array) => ({
 const response = (file: string | Uint8Array<ArrayBuffer>) =>
 	new Response(file, { headers: headers(file) })
 
+const isAssetDelivery = (value: unknown): value is { location: string } =>
+	typeof value === "object" &&
+	value !== null &&
+	"location" in value &&
+	typeof value.location === "string"
+
 interface FoundAsset {
 	id: number
 	name: string
@@ -90,7 +96,8 @@ async function loadOpenCloudAsset(f: typeof globalThis.fetch, id: number) {
 		)
 		if (!req.ok) return
 
-		const json = (await req.json()) as { location: string }
+		const json: unknown = await req.json()
+		if (!isAssetDelivery(json)) return
 		const { location } = json
 		if (!location) return
 

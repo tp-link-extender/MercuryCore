@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit"
 import { packageItems as ledgerPackageItems } from "economy/api"
-import * as Econ from "economy/types"
+import { UnlimitedAsset } from "economy/types"
 import { economyConnFailed } from "$lib/server/economy"
 import pageQuery from "$lib/server/pageQuery"
 import { db } from "$lib/server/surreal"
@@ -8,9 +8,9 @@ import type { PageServerLoadEvent } from "./$types"
 import catalogQuery from "./catalog.surql"
 
 export interface Asset {
+	id: number
 	name: string
 	price: number
-	id: number
 }
 
 // bundle contents are owned in the Economy service, so the ids to hide come from there
@@ -19,7 +19,7 @@ async function packageItemIds(f: typeof globalThis.fetch): Promise<number[]> {
 	if (!items.ok) error(500, economyConnFailed)
 
 	return [...items.value.set]
-		.filter(i => i instanceof Econ.UnlimitedAsset)
+		.filter(i => i instanceof UnlimitedAsset)
 		.map(i => i.ID)
 }
 

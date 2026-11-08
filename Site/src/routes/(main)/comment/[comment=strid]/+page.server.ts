@@ -48,13 +48,13 @@ actions.comment = async ({ locals, params, request, getClientAddress }) => {
 	)
 	if (!getComment) error(404, "Comment not found")
 
-	const { creatorId, type } = getComment
+	const { creatorId, type: commentTypes } = getComment
 	const content = filter(unfiltered)
 
 	const [, newCommentId] = await db.query<string[]>(createCommentQuery, {
 		comment,
 		content,
-		type: commentType(type, id),
+		type: commentType(commentTypes, id),
 		user: Record("user", user.id),
 	})
 

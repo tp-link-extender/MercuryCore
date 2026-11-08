@@ -51,13 +51,14 @@ const retryQuery = async <R extends unknown[]>(
 	try {
 		return await ogq<R>(query, bindings)
 	} catch (err) {
-		const e = err as Error
-		if (!e.message.endsWith(retriable)) throw e
-		console.log("Retrying query:", e.message)
+		if (!(err instanceof Error) || !err.message.endsWith(retriable))
+			throw err
+		console.log("Retrying query:", err.message)
 	}
 	return ogq<R>(query, bindings)
 }
 
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 db.query = retryQuery as unknown as typeof db.query
 
 export const version = db.version.bind(db)
@@ -80,8 +81,10 @@ async function reconnect() {
 			console.log("reloaded", (await version()).version)
 			break
 		} catch (err) {
-			const e = err as Error
-			console.error("Failed to connect to database:", e.message)
+			console.error(
+				"Failed to connect to database:",
+				err instanceof Error ? err.message : err
+			)
 			if (attempt === 4)
 				console.log(
 					`Multiple connection attempts failed. Make sure the database is running, either locally or in a container, and is accessible at ${url}.`

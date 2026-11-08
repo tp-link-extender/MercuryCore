@@ -14,6 +14,8 @@ export async function listGameservers(
 	try {
 		const res = await f(config.Orbiter.PrivateURL)
 		if (!res.ok) return { ok: false }
+		// the gameserver API is trusted and its shape is verified on the other side
+		// oxlint-disable-next-line typescript/no-unsafe-assignment
 		return { ok: true, value: await res.json() }
 	} catch {
 		return { ok: false }
@@ -29,8 +31,10 @@ async function fetchGameserver(
 		const res = await f(`${config.Orbiter.PrivateURL}/${path}`, { method })
 		if (!res.ok) return { msg: await res.text(), ok: false }
 	} catch (err) {
-		const e = err as Error
-		return { msg: e.message, ok: false }
+		return {
+			msg: err instanceof Error ? err.message : String(err),
+			ok: false,
+		}
 	}
 	return { ok: true }
 }

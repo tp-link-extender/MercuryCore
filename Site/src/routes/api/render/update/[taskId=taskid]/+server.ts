@@ -6,6 +6,7 @@ import completeQuery from "./complete.surql"
 import renderQuery from "./render.surql"
 
 interface Render {
+	relativeId: number
 	type:
 		| "Clothing"
 		| "Avatar"
@@ -15,7 +16,6 @@ interface Render {
 		| "RightArm"
 		| "LeftLeg"
 		| "RightLeg"
-	relativeId: number
 }
 
 export async function POST({ params, request }: RequestEvent) {

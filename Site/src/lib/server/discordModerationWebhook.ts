@@ -1,10 +1,10 @@
 import config from "./config"
 
 export interface ModerationDiscordWebhookPayload {
-	username: string
 	action: string
-	reason: string
 	moderatorUsername?: string
+	reason: string
+	username: string
 	webhookUrl?: string
 }
 

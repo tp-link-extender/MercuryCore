@@ -1,7 +1,7 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { createGroup, prices } from "economy/api"
-import * as Econ from "economy/types"
+import { User } from "economy/types"
 import { authorise } from "$lib/server/auth"
 import exclude from "$lib/server/exclude"
 import formError from "$lib/server/formError"
@@ -53,7 +53,7 @@ actions.default = async ({ fetch: f, locals, request }) => {
 			["A group with this name already exists"]
 		)
 
-	const created = await createGroup(f, new Econ.User(user.id))
+	const created = await createGroup(f, new User(user.id))
 	if (!created.ok)
 		return formError(form, ["other"], ["Failed to create group"])
 

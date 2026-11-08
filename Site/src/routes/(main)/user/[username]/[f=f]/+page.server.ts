@@ -16,8 +16,12 @@ const queries = Object.freeze({
 	friends: friendsQuery,
 })
 
+const isQueryType = (type: string): type is keyof typeof queries =>
+	type in queries
+
 export async function load({ params }: PageServerLoadEvent) {
-	const type = params.f as keyof typeof queries
+	const type = params.f
+	if (!isQueryType(type)) error(404, "Not Found")
 	const [[user]] = await db.query<{ id: RecordId<"user"> }[][]>(
 		userQuery,
 		params
@@ -29,7 +33,7 @@ export async function load({ params }: PageServerLoadEvent) {
 	return {
 		...params,
 		count,
-		f: params.f as keyof typeof queries,
+		f: type,
 		users,
 	}
 }

@@ -5,17 +5,17 @@ import type { PageServerLoadEvent } from "./$types"
 import renderQueueQuery from "./renderqueue.surql"
 
 interface Render {
-	id: number
-	type: RenderType
-	status: Status
-	created: string
-	completed: string | null
-	relativeId: number
-	user?: BasicUser
 	asset?: {
 		id: number
 		name: string
 	}
+	completed: string | null
+	created: string
+	id: number
+	relativeId: number
+	status: Status
+	type: RenderType
+	user?: BasicUser
 }
 
 export async function load({ locals }: PageServerLoadEvent) {

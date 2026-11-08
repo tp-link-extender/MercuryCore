@@ -1,5 +1,5 @@
 import { error, fail } from "@sveltejs/kit"
-import * as Econ from "economy/types"
+import { Group as EconGroup } from "economy/types"
 import { authorise } from "$lib/server/auth"
 import {
 	economyConnFailed,
@@ -32,7 +32,7 @@ export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	})
 	if (!group) error(404, "Not Found")
 
-	const owner = await itemOwner(f, new Econ.Group(params.group))
+	const owner = await itemOwner(f, new EconGroup(params.group))
 	if (!owner.ok) error(500, economyConnFailed)
 
 	return { ...group, owner: owner.value }

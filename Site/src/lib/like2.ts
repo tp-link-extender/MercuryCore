@@ -39,8 +39,8 @@ export const likeFns: { [_: string]: (t: Scored) => void } = Object.freeze({
 })
 
 interface Data {
-	id: string
 	action: "like" | "unlike" | "dislike" | "undislike"
+	id: string
 }
 
 export type LikeForm = RemoteForm<Data, void>

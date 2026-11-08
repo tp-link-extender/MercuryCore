@@ -14,22 +14,22 @@ const schema = type({
 })
 
 interface Place {
+	dislikeCount: number
 	id: number
+	likeCount: number
 	name: string
 	playerCount: number
 	serverPing: number
-	likeCount: number
-	dislikeCount: number
 }
 
 interface Status {
-	id: string
 	author: BasicUser
 	created: Date
+	currentContent: string
+	id: string
 	pinned: boolean
 	replies: number
 	visibility: "Visible" | "Moderated" | "Deleted"
-	currentContent: string
 }
 
 // lazy eval 💞

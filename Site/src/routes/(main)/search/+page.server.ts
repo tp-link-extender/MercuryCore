@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit"
 import { packageItems } from "economy/api"
-import * as Econ from "economy/types"
+import { UnlimitedAsset } from "economy/types"
 import { economyConnFailed } from "$lib/server/economy"
 import { db } from "$lib/server/surreal"
 import type { PageServerLoadEvent } from "./$types"
@@ -15,17 +15,17 @@ async function packageItemIds(f: typeof globalThis.fetch): Promise<number[]> {
 	if (!items.ok) error(500, economyConnFailed)
 
 	return [...items.value.set]
-		.filter(i => i instanceof Econ.UnlimitedAsset)
+		.filter(i => i instanceof UnlimitedAsset)
 		.map(i => i.ID)
 }
 
 interface Place {
+	dislikeCount: number
 	id: number
+	likeCount: number
 	name: string
 	playerCount: number
 	serverPing: number
-	likeCount: number
-	dislikeCount: number
 }
 
 interface Asset {
@@ -36,8 +36,8 @@ interface Asset {
 
 interface Group {
 	id: string
-	name: string
 	memberCount: number
+	name: string
 }
 
 export async function load({ fetch: f, url }: PageServerLoadEvent) {

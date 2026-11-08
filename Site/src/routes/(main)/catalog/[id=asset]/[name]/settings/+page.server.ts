@@ -24,10 +24,10 @@ import reuploadQuery from "./reupload.surql"
 import updateAssetQuery from "./updateAsset.surql"
 
 interface Asset {
-	id: string
 	created: Date
 	description: string
 	forSale: boolean
+	id: string
 	imageAssetId: number | null
 	name: string
 	price: number
@@ -88,8 +88,8 @@ export const actions: Actions = {}
 
 interface AssetCheck {
 	imageAssetId: number | null
-	type: number
 	name: string
+	type: number
 }
 
 actions.settings = async ({ fetch: f, locals, params, request }) => {
@@ -130,6 +130,7 @@ actions.reupload = async ({
 	if (!form.valid) return formError(form)
 
 	const { asset: file } = form.data
+	// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 	form.data.asset = null as unknown as File // make sure to return as a POJO
 
 	if (file.size === 0)
@@ -157,11 +158,10 @@ actions.reupload = async ({
 		return formError(form, ["asset"], ["Packages cannot be reuploaded"])
 
 	const buf = await file.arrayBuffer()
-	if (asset.imageAssetId) 
-		// items with textures (t-shirts, clothing, decals, faces) must be actual images
+	if (asset.imageAssetId) {
 		if (!(await isImage(file)))
+			// items with textures (t-shirts, clothing, decals, faces) must be actual images
 			return formError(form, ["asset"], ["File must be an image"])
-	 else
 		switch (asset.type) {
 			// natively rich formats: only accept files whose magic bytes match the asset type
 			case 3: {
@@ -206,6 +206,7 @@ actions.reupload = async ({
 				break
 			}
 		}
+	}
 
 	if (user.permissionLevel < 3) {
 		const limit = ratelimit(form, "assetReupload", getClientAddress, 30)

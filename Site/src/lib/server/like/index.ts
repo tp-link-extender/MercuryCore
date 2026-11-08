@@ -11,7 +11,12 @@ const queries = Object.freeze({
 	undislike: undislikeQuery,
 	unlike: unlikeQuery,
 } as const)
-const actions = Object.keys(queries) as (keyof typeof queries)[]
+const actions = Object.freeze([
+	"dislike",
+	"like",
+	"undislike",
+	"unlike",
+] as const)
 
 const like = (
 	user: RecordId<"user">,

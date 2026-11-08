@@ -1,7 +1,11 @@
 import { error, fail } from "@sveltejs/kit"
 import { inventory, ownsOne } from "economy/api"
 import type { ItemsOne } from "economy/items"
-import * as Econ from "economy/types"
+import {
+	Package as EconPackage,
+	UnlimitedAsset as EconUnlimitedAsset,
+	User as EconUser,
+} from "economy/types"
 import { brickColours } from "$lib/brickColours"
 import { assetRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/auth"
@@ -40,6 +44,10 @@ const bodyParts = Object.freeze([
 	"Torso",
 ])
 
+type BodyPart = keyof User["bodyColours"]
+const isBodyPart = (part: string): part is BodyPart =>
+	bodyParts.some(bodyPart => bodyPart === part)
+
 export interface Asset {
 	id: number
 	name: string
@@ -57,12 +65,12 @@ interface AssetData {
 const ownedAssetIds = (items: ItemsOne) =>
 	[...items.set]
 		.filter(
-			i => i instanceof Econ.UnlimitedAsset || i instanceof Econ.Package
+			i => i instanceof EconUnlimitedAsset || i instanceof EconPackage
 		)
 		.map(i => i.ID)
 
 async function getOwnedAssetIds(f: typeof globalThis.fetch, userId: string) {
-	const inv = await inventory(f, new Econ.User(userId))
+	const inv = await inventory(f, new EconUser(userId))
 	if (!inv.ok) error(500, economyConnFailed)
 
 	return ownedAssetIds(inv.value.One)
@@ -137,9 +145,9 @@ async function getEquipData(e: RequestEvent) {
 	if (!asset) error(404, "Item not found")
 
 	// packages are their own item type in the ledger, so ownership has to be checked against Package rather than UnlimitedAsset
-	const o = new Econ.User(user.id)
+	const o = new EconUser(user.id)
 	const i =
-		asset.type === 32 ? new Econ.Package(id) : new Econ.UnlimitedAsset(id)
+		asset.type === 32 ? new EconPackage(id) : new EconUnlimitedAsset(id)
 	const owns = await ownsOne(e.fetch, o, i)
 	if (!owns.ok) {
 		console.error("ownsOne failed")
@@ -170,17 +178,17 @@ async function rerender(f: typeof globalThis.fetch, user: User) {
 async function paint({ fetch: f, locals, url }: RequestEvent) {
 	const { user } = await authorise(locals)
 	const bodyPartQuery = url.searchParams.get("p")
-	const bodyColour = url.searchParams.get("c") as string
+	const bodyColour = url.searchParams.get("c")
 
 	if (
 		!bodyPartQuery ||
 		!bodyColour ||
 		!(brickColours as readonly number[]).includes(Number(bodyColour)) ||
-		!bodyParts.includes(bodyPartQuery)
+		!isBodyPart(bodyPartQuery)
 	)
 		return fail(400)
 
-	const bodyPart = bodyPartQuery as keyof typeof user.bodyColours
+	const bodyPart = bodyPartQuery
 	const currentColours = user.bodyColours
 
 	currentColours[bodyPart] = Number(bodyColour)
@@ -200,8 +208,8 @@ async function regen({ fetch: f, locals, getClientAddress }: RequestEvent) {
 	return rerender(f, user)
 }
 async function equip(e: RequestEvent) {
-	const { user, id, asset, error } = await getEquipData(e)
-	if (error) return error
+	const { user, id, asset, error: dataError } = await getEquipData(e)
+	if (dataError) return dataError
 
 	// Packages simply equip the user with every item inside them
 	if (asset.type === 32) {
@@ -249,8 +257,8 @@ async function equip(e: RequestEvent) {
 	return rerender(e.fetch, user)
 }
 async function unequip(e: RequestEvent) {
-	const { user, id, asset, error } = await getEquipData(e)
-	if (error) return error
+	const { user, id, asset, error: dataError } = await getEquipData(e)
+	if (dataError) return dataError
 
 	// Unequipping a package unequips everything inside it
 	if (asset.type === 32) {
