@@ -145,13 +145,18 @@ DEFINE TABLE OVERWRITE recentlyWorn SCHEMAFULL TYPE RELATION FROM user TO asset 
 	DEFINE FIELD OVERWRITE id ON recentlyWorn TYPE string;
 	DEFINE FIELD OVERWRITE time ON recentlyWorn TYPE datetime DEFAULT ALWAYS time::now();
 
+# Only a SHA-256 hash of each recovery token is stored, so read access to the database doesn't give access to accounts. Tokens are deleted once used.
 DEFINE TABLE OVERWRITE recoveryCode SCHEMAFULL TYPE NORMAL;
+	# Clears out codes from before tokens were hashed, along with any that have expired. This must run before the hash field is defined, as SurrealDB won't add a required field to a table with rows that don't have it.
+	DELETE recoveryCode WHERE hash IS NONE OR expires < time::now();
 	DEFINE FIELD OVERWRITE id ON recoveryCode TYPE string;
-	DEFINE FIELD OVERWRITE code ON recoveryCode TYPE string DEFAULT rand::string(6);
 	DEFINE FIELD OVERWRITE created ON recoveryCode TYPE datetime DEFAULT ALWAYS time::now();
-	DEFINE FIELD OVERWRITE expires ON recoveryCode TYPE datetime DEFAULT ALWAYS time::now() + 1d;
-	DEFINE FIELD OVERWRITE used ON recoveryCode TYPE bool DEFAULT false;
+	DEFINE FIELD OVERWRITE expires ON recoveryCode TYPE datetime DEFAULT ALWAYS time::now() + 1h;
+	DEFINE FIELD OVERWRITE hash ON recoveryCode TYPE string;
 	DEFINE FIELD OVERWRITE user ON recoveryCode TYPE record<user>;
+	REMOVE FIELD IF EXISTS code ON recoveryCode;
+	REMOVE FIELD IF EXISTS used ON recoveryCode;
+DEFINE INDEX IF NOT EXISTS recoveryCodeHashI ON recoveryCode COLUMNS hash UNIQUE;
 
 DEFINE TABLE OVERWRITE regKey SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE id ON regKey TYPE string;
