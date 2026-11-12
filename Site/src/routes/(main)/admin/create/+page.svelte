@@ -19,18 +19,18 @@
 		TabData(data.url, ["Asset creation"], ["fa-file-circle-plus"])
 	)
 
-	type AssetEntry = {
-		name: string
+	interface AssetEntry {
 		description: string
-		type: string
 		file: File | undefined
+		name: string
+		type: string
 	}
 
 	// for packages: uploads to include in the package
 	let assets = $state<AssetEntry[]>([])
 	let isPackage = $derived($form.type === "Package")
 
-	const addAsset = () => assets.push({ name: "", description: "", type: "Hat" })
+	const addAsset = () => assets.push({ description: "", name: "", type: "Hat" })
 	const removeAsset = (num: number) => assets.splice(num, 1)
 </script>
 

@@ -6,9 +6,9 @@ import (
 	"net/url"
 	"time"
 
-	surrealdb "github.com/surrealdb/surrealdb.go"
-	"github.com/surrealdb/surrealdb.go/pkg/connection"
-	httpconn "github.com/surrealdb/surrealdb.go/pkg/connection/http"
+	surrealdb "github.com/surrealdb/surrealdb.go/v2"
+	"github.com/surrealdb/surrealdb.go/v2/pkg/connection"
+	httpconn "github.com/surrealdb/surrealdb.go/v2/pkg/connection/http"
 )
 
 // Client is a small wrapper around the official SurrealDB Go SDK for the administrative commands in this repository.

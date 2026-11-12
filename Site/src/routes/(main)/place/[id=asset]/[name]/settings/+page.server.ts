@@ -1,7 +1,7 @@
 import fs from "node:fs"
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
-import * as Econ from "economy/types"
+import { Place as EconPlace } from "economy/types"
 import sharp from "sharp"
 import { authorise } from "$lib/server/auth"
 import { economyConnFailed, ownsItem } from "$lib/server/economy"
@@ -17,6 +17,7 @@ import {
 } from "$lib/typeTests"
 import { encode } from "$lib/urlName"
 import clientVersions from "../../../../games/create/clientVersions"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import type { RequestEvent } from "./$types.d"
 import privateTicketQuery from "./privateTicket.surql"
 import serverTicketQuery from "./serverTicket.surql"
@@ -24,30 +25,33 @@ import settingsQuery from "./settings.surql"
 import updateSettingsQuery from "./updateSettings.surql"
 
 const viewSchema = type({
-	name: "string <= 100",
-	icon: "(File | undefined)?",
 	description: "(string <= 1000) | undefined",
+	icon: "(File | undefined)?",
+	name: "string <= 100",
 })
 const networkSchema = type({
-	dedicated: "boolean",
-	serverAddress: serverAddressTest.optional(),
-	serverPort: serverPortTest.optional(),
-	maxPlayers: maxPlayersTest,
 	clientVersion: type
 		.enumerated(...clientVersions)
-		.pipe.try(v => +v)
+		.pipe.try(Number)
 		.configure({ problem: "must be a valid client version" }),
+	dedicated: "boolean",
+	maxPlayers: maxPlayersTest,
+	serverAddress: serverAddressTest.optional(),
+	serverPort: serverPortTest.optional(),
 })
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 const ticketSchema = type({} as never) // I'm a genius
 const privacySchema = type({
 	privateServer: "boolean",
 })
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 const privatelinkSchema = type({} as never)
 const dataSchema = type({
 	file: "File",
 })
 
-type Place = {
+interface Place {
+	clientVersion: number
 	created: string
 	dedicated: boolean
 	description: string
@@ -56,7 +60,6 @@ type Place = {
 	name: string
 	privateServer: boolean
 	privateTicket: string
-	clientVersion: number
 	serverAddress: string
 	serverPing: number
 	serverPort: number
@@ -71,12 +74,12 @@ async function placeQuery(id: number) {
 	return place
 }
 
-export async function load({ fetch: f, locals, params }) {
-	const getPlace = await placeQuery(+params.id)
+export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
+	const getPlace = await placeQuery(Number(params.id))
 	if (!getPlace) error(404, "Place not found")
 
 	const { user } = await authorise(locals)
-	const owns = await ownsItem(f, user.id, new Econ.Place(+params.id))
+	const owns = await ownsItem(f, user.id, new EconPlace(Number(params.id)))
 	if (!owns.ok) error(500, economyConnFailed)
 	if (!owns.value && user.permissionLevel < 4)
 		error(403, "You do not have permission to view this page.")
@@ -84,26 +87,26 @@ export async function load({ fetch: f, locals, params }) {
 	return {
 		...getPlace,
 		clientVersions,
+		dataForm: await superValidate(arktype(dataSchema)),
+		networkForm: await superValidate(arktype(networkSchema)),
+		privacyForm: await superValidate(arktype(privacySchema)),
+		privatelinkForm: await superValidate(arktype(privatelinkSchema)),
 		slug: encode(getPlace.name),
+		ticketForm: await superValidate(arktype(ticketSchema)), // lmaooo it works
 		viewForm: await superValidate(
 			{ name: getPlace.name },
 			arktype(viewSchema)
 		),
-		networkForm: await superValidate(arktype(networkSchema)),
-		ticketForm: await superValidate(arktype(ticketSchema)), // lmaooo it works
-		privacyForm: await superValidate(arktype(privacySchema)),
-		privatelinkForm: await superValidate(arktype(privatelinkSchema)),
-		dataForm: await superValidate(arktype(dataSchema)),
 	}
 }
 
 async function getData({ fetch: f, locals, params }: RequestEvent) {
 	const { user } = await authorise(locals)
-	const id = +params.id
+	const id = Number(params.id)
 	const getPlace = await placeQuery(id)
 	if (!getPlace) error(404, "Place not found")
 
-	const owns = await ownsItem(f, user.id, new Econ.Place(id))
+	const owns = await ownsItem(f, user.id, new EconPlace(id))
 	if (!owns.ok) error(500, economyConnFailed)
 	if (!owns.value && user.permissionLevel < 4)
 		error(403, "You do not have permission to update this page.")
@@ -111,7 +114,7 @@ async function getData({ fetch: f, locals, params }: RequestEvent) {
 	return id
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.view = async e => {
 	const id = await getData(e)
 
@@ -131,16 +134,16 @@ actions.view = async e => {
 			)
 
 		if (!fs.existsSync("../data/icons")) fs.mkdirSync("../data/icons")
-		sharp(await icon.arrayBuffer())
+		void sharp(await icon.arrayBuffer())
 			.resize(270, 270)
 			.avif({ effort: 9 }) // not awaited, so this'll happen in the background (takes a sec or 2)
 			.toFile(`../data/icons/${id}.avif`) // also errors aren't caught but whatever
 	}
 
 	await db.query(updateSettingsQuery, {
-		place: Record("place", +id),
-		name: filter(name),
 		description: filter(description || ""),
+		name: filter(name),
+		place: Record("place", id),
 	})
 	return message(form, "View settings updated successfully!")
 }
@@ -194,6 +197,7 @@ actions.data = async e => {
 	if (!form.valid) return formError(form)
 
 	const { file } = form.data
+	// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 	form.data.file = undefined as unknown as File
 	if (file.size > 100e6)
 		return formError(

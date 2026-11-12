@@ -1,7 +1,7 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { createPlace } from "economy/api"
-import * as Econ from "economy/types"
+import { User } from "economy/types"
 import { authorise } from "$lib/server/auth"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
@@ -13,20 +13,21 @@ import {
 	serverPortTest,
 } from "$lib/typeTests"
 import { encode } from "$lib/urlName"
-import createQuery from "./create.surql"
+import type { Actions } from "./$types"
 import clientVersions from "./clientVersions"
+import createQuery from "./create.surql"
 
 const schema = type({
-	name: "3 <= string <= 50",
+	clientVersion: type.enumerated(...clientVersions).configure({
+		problem: "must be a valid client version",
+	}),
 	description: "string <= 1000",
+	maxPlayers: maxPlayersTest.default(10),
+	name: "3 <= string <= 50",
+	privateServer: "boolean | undefined",
 	serverAddress: serverAddressTest,
 	// eh, works well enough and the built-in z.string().url() requires a protocol
 	serverPort: serverPortTest.default(53640),
-	maxPlayers: maxPlayersTest.default(10),
-	clientVersion: type.enumerated(...clientVersions).configure({
-			problem: "must be a valid client version",
-		}),
-	privateServer: "boolean | undefined",
 })
 
 export async function load() {
@@ -35,13 +36,19 @@ export async function load() {
 	}
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.default = async ({ fetch: f, locals, request }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
-	const { serverAddress, serverPort, maxPlayers, clientVersion, privateServer } = form.data
+	const {
+		serverAddress,
+		serverPort,
+		maxPlayers,
+		clientVersion,
+		privateServer,
+	} = form.data
 
 	const name = form.data.name.trim()
 	if (!name) return formError(form, ["name"], ["Place must have a name"])
@@ -59,7 +66,7 @@ actions.default = async ({ fetch: f, locals, request }) => {
 	// 		["You can't have more than two places"]
 	// 	)
 
-	const u = new Econ.User(user.id)
+	const u = new User(user.id)
 	const created = await createPlace(f, u)
 	if (!created.ok)
 		return formError(form, ["other"], ["failed to create place"])
@@ -67,14 +74,14 @@ actions.default = async ({ fetch: f, locals, request }) => {
 	const id = created.value.ID
 
 	await db.query(createQuery, {
-		id,
-		name: filter(name),
+		clientVersion: Number(clientVersion),
 		description: filter(description),
+		id,
+		maxPlayers,
+		name: filter(name),
+		privateServer,
 		serverAddress,
 		serverPort,
-		privateServer,
-		maxPlayers,
-		clientVersion: +clientVersion,
 	})
 
 	redirect(302, `/place/${id}/${encode(name)}`)

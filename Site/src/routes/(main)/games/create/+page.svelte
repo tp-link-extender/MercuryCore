@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
-	import Textarea from "$components/forms/Textarea.svelte"
 	import Select from "$components/forms/Select.svelte"
+	import Textarea from "$components/forms/Textarea.svelte"
 	import Head from "$components/Head.svelte"
 	import { superForm } from "$lib/validate"
 	import clientVersions from "./clientVersions"

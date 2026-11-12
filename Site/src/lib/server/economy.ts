@@ -1,6 +1,14 @@
 import { ownersOne } from "economy/api"
 import type { TransferWithID } from "economy/economy"
-import * as Econ from "economy/types"
+import {
+	type CanOwnOne,
+	Group,
+	IsSource,
+	LimitedSource,
+	PackageSource,
+	UnlimitedSource,
+	User,
+} from "economy/types"
 import type { GroupData, OwnerData, SourceData, UserData } from "$lib/economy"
 import ownersQuery from "$lib/server/owners.surql"
 import ownerUserQuery from "$lib/server/ownerUser.surql"
@@ -22,7 +30,7 @@ async function ownerUser(id: string): Promise<OwnedUser | null> {
 
 async function itemOwnerSeen(
 	f: typeof globalThis.fetch,
-	i: Econ.CanOwnOne,
+	i: CanOwnOne,
 	seen: Set<number>
 ): Promise<ReturnValue<OwnedUser | null>> {
 	const owners = await ownersOne(f, i)
@@ -31,10 +39,10 @@ async function itemOwnerSeen(
 	const list = [...owners.value.set]
 
 	// a user owner resolves directly; a package source owner means the item is nested inside a bundle
-	const user = list.find(o => o instanceof Econ.User)
+	const user = list.find(o => o instanceof User)
 	if (user) return { ok: true, value: await ownerUser(user.ID) }
 
-	const pkg = list.find(o => o instanceof Econ.PackageSource)
+	const pkg = list.find(o => o instanceof PackageSource)
 	if (pkg) {
 		if (seen.has(pkg.ID)) return { ok: true, value: null }
 		seen.add(pkg.ID)
@@ -45,9 +53,9 @@ async function itemOwnerSeen(
 }
 
 /** Resolves the owning user of an item from the Economy service, or null if nobody owns it. */
-export async function itemOwner(
+export function itemOwner(
 	f: typeof globalThis.fetch,
-	i: Econ.CanOwnOne
+	i: CanOwnOne
 ): Promise<ReturnValue<OwnedUser | null>> {
 	return itemOwnerSeen(f, i, new Set())
 }
@@ -61,20 +69,20 @@ export async function assetOwner(
 	id: number,
 	type: number
 ): Promise<ReturnValue<OwnedUser | null>> {
-	if (type === 32) return itemOwner(f, new Econ.PackageSource(id))
+	if (type === 32) return itemOwner(f, new PackageSource(id))
 
-	const unlimited = await itemOwner(f, new Econ.UnlimitedSource(id))
+	const unlimited = await itemOwner(f, new UnlimitedSource(id))
 	if (!unlimited.ok) return unlimited
 	if (unlimited.value) return unlimited
 
-	return itemOwner(f, new Econ.LimitedSource(id))
+	return itemOwner(f, new LimitedSource(id))
 }
 
 /** Whether a user owns an item, without resolving the owner's profile data. */
 export async function ownsItem(
 	f: typeof globalThis.fetch,
 	userId: string,
-	i: Econ.CanOwnOne
+	i: CanOwnOne
 ): Promise<ReturnValue<boolean>> {
 	const owners = await ownersOne(f, i)
 	if (!owners.ok) return { ok: false }
@@ -82,7 +90,7 @@ export async function ownsItem(
 	return {
 		ok: true,
 		value: [...owners.value.set].some(
-			o => o instanceof Econ.User && o.ID === userId
+			o => o instanceof User && o.ID === userId
 		),
 	}
 }
@@ -97,20 +105,18 @@ export async function ownerData(list: TransferWithID[]): Promise<OwnerData> {
 	const [users, groups, sources] = await db.query<
 		[UserData[], GroupData[], SourceData[]]
 	>(ownersQuery, {
-		usersList: owners
-			.filter(o => o instanceof Econ.User)
-			.map(u => Record("user", u.ID)),
+		assetsList: owners.filter(IsSource).map(s => Record("asset", s.ID)),
 		groupsList: owners
-			.filter(o => o instanceof Econ.Group)
+			.filter(o => o instanceof Group)
 			.map(g => Record("group", g.ID)),
-		assetsList: owners
-			.filter(Econ.IsSource)
-			.map(s => Record("asset", s.ID)),
+		usersList: owners
+			.filter(o => o instanceof User)
+			.map(u => Record("user", u.ID)),
 	})
 
 	return {
-		users: Object.fromEntries(users.map(u => [u.id, u])),
 		groups: Object.fromEntries(groups.map(g => [g.id, g])),
 		sources: Object.fromEntries(sources.map(s => [s.id, s])),
+		users: Object.fromEntries(users.map(u => [u.id, u])),
 	}
 }

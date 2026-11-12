@@ -44,7 +44,7 @@
 	function privateFetchParams() {
 		const body = new FormData()
 		body.append("privateTicket", place.privateTicket)
-		return { method: "post", body }
+		return { body, method: "post" }
 	}
 
 	const launch = (joinscripturl: () => string) => {
@@ -80,7 +80,7 @@
 			}
 
 			const es = new EventSource(`${data.orbiterURL}/${place.id}`)
-			es.onmessage = (e: MessageEvent<string>) => {
+			es.addEventListener("message", (e: MessageEvent<string>) => {
 				const status = e.data
 				console.log("EVENTSOURCE", status)
 				if (status === "1") current = "starting"
@@ -92,7 +92,7 @@
 					current = "fail"
 					es.close()
 				}
-			}
+			})
 		}
 
 	let loadCommand = $derived(

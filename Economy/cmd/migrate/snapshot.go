@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	surrealdb "github.com/surrealdb/surrealdb.go"
+	surrealdb "github.com/surrealdb/surrealdb.go/v2"
 )
 
 const snapshotVersion = 2

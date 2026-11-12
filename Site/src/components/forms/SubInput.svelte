@@ -15,7 +15,7 @@
 		name: string
 		disabled: boolean
 		type: HTMLInputTypeAttribute
-		formData: import("$lib/validate").SuperForm<any>
+		formData: import("$lib/validate").DynamicSuperForm
 	} & HTMLInputAttributes = $props()
 
 	let { form, errors, constraints } = $derived(formData)

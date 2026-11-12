@@ -18,7 +18,7 @@
 		inline?: boolean
 		nopad?: boolean // Don't pad the icon on the submit button
 		// method?: HTMLFormAttributes["method"]
-		formData: import("$lib/validate").SuperForm<any>
+		formData: import("$lib/validate").DynamicSuperForm
 		children: Snippet
 	} & HTMLFormAttributes = $props()
 

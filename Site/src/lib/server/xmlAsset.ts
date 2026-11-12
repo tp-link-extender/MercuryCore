@@ -1,12 +1,14 @@
 import config from "$lib/server/config"
 
 const strings = Object.freeze({
-	"T-Shirt": ["ShirtGraphic", "Graphic", "Shirt Graphic"],
-	Shirt: ["Shirt", "ShirtTemplate", "Shirt"],
-	Pants: ["Pants", "PantsTemplate", "Pants"],
 	Decal: ["Decal", "Texture", "Decal"],
 	Face: ["Decal", "Texture", "face"],
+	Pants: ["Pants", "PantsTemplate", "Pants"],
+	Shirt: ["Shirt", "ShirtTemplate", "Shirt"],
+	"T-Shirt": ["ShirtGraphic", "Graphic", "Shirt Graphic"],
 })
+
+type GraphicType = keyof typeof strings
 
 /**
  * Creates a new XML graphic asset and saves it in ../data/assets
@@ -17,11 +19,11 @@ const strings = Object.freeze({
  * graphicAsset("T-Shirt", imageAssetId, id)
  */
 export async function graphicAsset(
-	type: string,
+	type: GraphicType,
 	imageAssetId: number,
 	graphicAssetId: number
 ) {
-	const stringType = strings[type as keyof typeof strings]
+	const stringType = strings[type]
 	const assetType = ["Decal", "Face"].includes(type) ? "Image" : "Other"
 	const assetUrl = `http://${config.Domain}/asset?id=${imageAssetId}`
 

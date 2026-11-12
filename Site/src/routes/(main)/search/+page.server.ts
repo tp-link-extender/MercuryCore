@@ -1,8 +1,9 @@
 import { error } from "@sveltejs/kit"
 import { packageItems } from "economy/api"
-import * as Econ from "economy/types"
+import { UnlimitedAsset } from "economy/types"
 import { economyConnFailed } from "$lib/server/economy"
 import { db } from "$lib/server/surreal"
+import type { PageServerLoadEvent } from "./$types"
 import searchAssetsQuery from "./searchAssets.surql"
 import searchGroupsQuery from "./searchGroups.surql"
 import searchPlacesQuery from "./searchPlaces.surql"
@@ -14,32 +15,32 @@ async function packageItemIds(f: typeof globalThis.fetch): Promise<number[]> {
 	if (!items.ok) error(500, economyConnFailed)
 
 	return [...items.value.set]
-		.filter(i => i instanceof Econ.UnlimitedAsset)
+		.filter(i => i instanceof UnlimitedAsset)
 		.map(i => i.ID)
 }
 
-type Place = {
+interface Place {
+	dislikeCount: number
 	id: number
+	likeCount: number
 	name: string
 	playerCount: number
 	serverPing: number
-	likeCount: number
-	dislikeCount: number
 }
 
-type Asset = {
+interface Asset {
 	id: number
 	name: string
 	price: number
 }
 
-type Group = {
+interface Group {
 	id: string
-	name: string
 	memberCount: number
+	name: string
 }
 
-export async function load({ fetch: f, url }) {
+export async function load({ fetch: f, url }: PageServerLoadEvent) {
 	const query = url.searchParams.get("q") || ""
 	const category = url.searchParams.get("c")?.toLowerCase() || ""
 	if (!query) error(400, "Missing search query")
@@ -62,22 +63,22 @@ export async function load({ fetch: f, url }) {
 				searchUsersQuery,
 				param
 			)
-			return { query, category, users }
+			return { category, query, users }
 		}
 		case "places": {
 			const [places] = await db.query<Place[][]>(searchPlacesQuery, param)
-			return { query, category, places }
+			return { category, places, query }
 		}
 		case "assets": {
 			const [assets] = await db.query<Asset[][]>(searchAssetsQuery, {
 				...param,
 				packageItems: await packageItemIds(f),
 			})
-			return { query, category, assets }
+			return { assets, category, query }
 		}
 		case "groups": {
 			const [groups] = await db.query<Group[][]>(searchGroupsQuery, param)
-			return { query, category, groups }
+			return { category, groups, query }
 		}
 	}
 	error(400, "Invalid category")

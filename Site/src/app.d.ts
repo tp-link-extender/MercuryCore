@@ -12,17 +12,12 @@ declare global {
 	/**
 	 * All that's needed to show a user's information/link to their profile.
 	 */
-	declare type BasicUser = {
+	type BasicUser = {
 		status: "Playing" | "Online" | "Offline"
 		username: string
 	}
 
-	declare interface User extends BasicUser {
-		id: string
-		description: {
-			text: string
-			updated: Date
-		}[]
+	interface User extends BasicUser {
 		bodyColours: {
 			Head: number
 			LeftArm: number
@@ -32,14 +27,19 @@ declare global {
 			Torso: number
 		}
 		created: string
+		css: string
+		description: {
+			text: string
+			updated: Date
+		}[]
 		email: string
+		id: string
 		lastOnline: Date
 		permissionLevel: number
-		css: string
 		theme: number
 	}
 
-	declare module "*.surql" {
+	module "*.surql" {
 		const value: string
 		export default value
 	}

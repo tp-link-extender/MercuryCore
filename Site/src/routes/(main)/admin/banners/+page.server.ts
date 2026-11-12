@@ -9,28 +9,29 @@ import {
 	message,
 	superValidate,
 } from "$lib/server/validate"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import type { RequestEvent } from "./$types.d"
 import activeCountQuery from "./activeCount.surql"
 import bannersQuery from "./banners.surql"
 
 const schema = type({
-	bannerText: "(string <= 100) | undefined",
-	bannerColour: "string | undefined",
-	bannerTextLight: "boolean | undefined",
 	bannerBody: "string | undefined",
+	bannerColour: "string | undefined",
+	bannerText: "(string <= 100) | undefined",
+	bannerTextLight: "boolean | undefined",
 })
 
-type BannerType = {
-	// bruce, it's been five years
-	id: string
+interface BannerType {
 	active: boolean
 	bgColour: string
 	body: string
 	creator: BasicUser
+	// bruce, it's been five years
+	id: string
 	textLight: boolean
 }
 
-export async function load({ locals }) {
+export async function load({ locals }: PageServerLoadEvent) {
 	await authorise(locals, 5)
 
 	const [banners] = await db.query<BannerType[][]>(bannersQuery)
@@ -46,7 +47,7 @@ async function getData({ locals, request }: RequestEvent) {
 	const { user } = await authorise(locals, 5)
 	const form = await superValidate(request, arktype(schema))
 
-	return { user, form, error: !form.valid && formError(form) }
+	return { error: !form.valid && formError(form), form, user }
 }
 
 const showHide = (action: string) => async (e: RequestEvent) => {
@@ -63,7 +64,7 @@ const showHide = (action: string) => async (e: RequestEvent) => {
 	await db.update(Record("banner", id)).merge({ active })
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.create = async e => {
 	const { user, form, error } = await getData(e)
 	if (error) return error
@@ -77,11 +78,11 @@ actions.create = async e => {
 	if (limit) return limit
 
 	await db.insert(Banner, {
-		deleted: false,
-		body: bannerText,
 		bgColour: bannerColour,
-		textLight: !!bannerTextLight,
+		body: bannerText,
 		creator: Record("user", user.id),
+		deleted: false,
+		textLight: Boolean(bannerTextLight),
 	})
 
 	return message(form, "Banner created successfully!")
@@ -115,7 +116,7 @@ actions.updateTextLight = async e => {
 
 	await db
 		.update(Record("banner", id))
-		.merge({ textLight: !!bannerTextLight })
+		.merge({ textLight: Boolean(bannerTextLight) })
 }
 actions.show = showHide("show")
 actions.hide = showHide("hide")

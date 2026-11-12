@@ -2,20 +2,21 @@ import { error, redirect } from "@sveltejs/kit"
 import { authorise } from "$lib/server/auth"
 import { thumbnail, tShirtThumbnail } from "$lib/server/imageAsset"
 import { db, Record } from "$lib/server/surreal"
+import type { RequestEvent } from "./$types"
 import assetQuery from "./asset.surql"
 
-type Asset = {
-	name: string
-	visibility: string
-	type: number
+interface Asset {
 	imageAssetId: number
+	name: string
+	type: number
+	visibility: string
 }
 
 const noRenderTypes = Object.freeze([1])
 
-export async function GET({ locals, params }) {
+export async function GET({ locals, params }: RequestEvent) {
 	const { user } = await authorise(locals)
-	const id = +params.id
+	const id = Number(params.id)
 	const [[asset]] = await db.query<Asset[][]>(assetQuery, {
 		asset: Record("asset", id),
 	})
@@ -40,14 +41,14 @@ export async function GET({ locals, params }) {
 			// Recreate the T-Shirt thumbnail
 			const file = Bun.file(`../data/assets/${asset.imageAssetId}`)
 			if (await file.exists())
-				tShirtThumbnail(await file.arrayBuffer()).then(f => f(id))
+				void tShirtThumbnail(await file.arrayBuffer()).then(f => f(id))
 			break
 		}
 		case 18: {
 			// Recreate the icon thumbnail
 			const file = Bun.file(`../data/assets/${asset.imageAssetId}`)
 			if (await file.exists())
-				thumbnail(await file.arrayBuffer()).then(f => f(id))
+				void thumbnail(await file.arrayBuffer()).then(f => f(id))
 			break
 		}
 	}

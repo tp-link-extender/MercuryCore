@@ -6,6 +6,7 @@ import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import { arktype, message, superValidate } from "$lib/server/validate"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import assocreportQuery from "./assocreport.surql"
 import moderateQuery from "./moderate.surql"
 import moderateeQuery from "./moderatee.surql"
@@ -13,7 +14,6 @@ import moderationOptions from "./moderationOptions"
 import unbanQuery from "./unban.surql"
 
 const schema = type({
-	username: "3 <= string <= 21",
 	// enum to allow 1 to be selected initially
 	action: type.enumerated(...moderationOptions).configure({
 		problem: "must be a valid moderation action",
@@ -21,13 +21,14 @@ const schema = type({
 	banDate: type("string | undefined").pipe.try(date => {
 		if (!date) return undefined
 		const d = new Date(date)
-		if (Number.isNaN(d.getTime())) throw new Error("Invalid date")
+		if (Number.isNaN(d.getTime())) throw new TypeError("Invalid date")
 		return d
 	}),
 	reason: "15 <= string <= 150",
+	username: "3 <= string <= 21",
 })
 
-export async function load({ locals, url }) {
+export async function load({ locals, url }: PageServerLoadEvent) {
 	await authorise(locals, 4)
 
 	const associatedReport = url.searchParams.get("report")
@@ -43,8 +44,8 @@ export async function load({ locals, url }) {
 	return {
 		form: await superValidate(
 			{
-				username: report.reportee,
 				reason: report.note,
+				username: report.reportee,
 			},
 			arktype(schema)
 		),
@@ -52,7 +53,7 @@ export async function load({ locals, url }) {
 	}
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.default = async ({ locals, request, getClientAddress }) => {
 	const { user } = await authorise(locals, 4)
 	const form = await superValidate(request, arktype(schema))
@@ -62,7 +63,7 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 	if (action === "Ban" && (banDate?.getTime() || 0) < Date.now())
 		return formError(form, ["banDate"], ["Invalid date"])
 
-	type Moderatee = {
+	interface Moderatee {
 		id: string
 		permissionLevel: number
 	}
@@ -84,8 +85,8 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 	if (limit) return limit
 
 	const qParams = Object.freeze({
-		user: Record("user", user.id),
 		moderatee: Record("user", getModeratee.id),
+		user: Record("user", user.id),
 	})
 
 	if (action === "Unban") {
@@ -123,30 +124,30 @@ actions.default = async ({ locals, request, getClientAddress }) => {
 			["User has already been moderated"]
 		)
 
-	const actions: { [_: string]: () => [string, string] } = {
-		Warning: () => [`Warn ${username}`, "warned"],
+	const actionLabels: { [_: string]: () => [string, string] } = {
 		Ban: () => [
 			`Ban ${username}`,
 			`banned until ${banDate?.toLocaleDateString()}`,
 		],
 		Termination: () => [`Terminate ${username}`, "terminated"],
+		Warning: () => [`Warn ${username}`, "warned"],
 	}
 
-	const [note, actioned] = actions[action]()
+	const [note, actioned] = actionLabels[action]()
 
 	await db.query(moderateQuery, {
 		...qParams,
-		reason,
 		moderationAction: action,
-		timeEnds: banDate || new Date(),
 		note: `${note}: ${reason}`,
+		reason,
+		timeEnds: banDate || new Date(),
 	})
 
 	await sendModerationDiscordWebhook({
-		username,
 		action,
-		reason,
 		moderatorUsername: user.username,
+		reason,
+		username,
 	})
 
 	return message(form, `${username} has been ${actioned}`)

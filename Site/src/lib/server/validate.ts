@@ -12,8 +12,8 @@ export {
 
 export function errMessage<
 	M,
-	T extends Record<string, unknown> = Record<string, unknown>,
-	In extends Record<string, unknown> = Record<string, unknown>,
+	T extends { [_: string]: unknown } = { [_: string]: unknown },
+	In extends { [_: string]: unknown } = { [_: string]: unknown },
 >(
 	form: SuperValidated<T, M, In>,
 	message: M

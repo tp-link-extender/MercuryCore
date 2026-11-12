@@ -17,7 +17,7 @@ On successful startup, the Site will display output similar to the following:
 Starting SurrealDB...
 Starting Economy service (../Economy/Economy)...
 connecting to database
-reloaded surrealdb-3.0.1
+reloaded surrealdb-4.0.0
 
   ██▙    ▟██ Started
   ███▙  ▟███ ▟████▙ ▗████▛▗█████▌██   ██ ▟████▙▝█▙    ▗█▛
@@ -36,3 +36,9 @@ Successfully loaded configuration file
 ```
 
 ![Output on successful startup of Site](../../../assets/startup.png)
+
+## Economy authentication
+
+If you run the Site and Economy service outside containers, the Site reads `ECONOMY_KEY` from **Site/.env** and passes it to the Economy service when auto-starting it. If you start the Economy service yourself, set the same `ECONOMY_KEY` in its environment. The service refuses to start without a key and rejects any request that doesn't carry it. It listens on `127.0.0.1:2009` by default; pass `-addr :2009` only when another container must reach it over a container network.
+
+For compose deployments, set `ECONOMY_KEY` in a **.env** file next to **compose.yml** (copy **.env.example** and replace the value); compose passes it to both containers and keeps the Economy port bound to loopback.

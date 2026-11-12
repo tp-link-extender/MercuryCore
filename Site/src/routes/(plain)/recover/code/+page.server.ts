@@ -4,23 +4,25 @@ import { cookieName, cookieOptions, createSession } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import { db, type RecordId } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
+import type { Actions } from "./$types"
 import findUserQuery from "./findUser.surql"
 
 const schema = type({
+	cnpassword: "16 <= string <= 6969",
 	code: "6 <= string <= 6",
 	npassword: "16 <= string <= 6969",
-	cnpassword: "16 <= string <= 6969",
 })
 
 export const load = async () => ({ form: await superValidate(arktype(schema)) })
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.default = async ({ cookies, request }) => {
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
 	const { code, npassword, cnpassword } = form.data
-	form.data.npassword = form.data.cnpassword = ""
+	form.data.npassword = ""
+	form.data.cnpassword = ""
 
 	if (npassword !== cnpassword)
 		return formError(

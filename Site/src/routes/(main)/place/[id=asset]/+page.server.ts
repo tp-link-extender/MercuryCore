@@ -1,26 +1,31 @@
 import { error, redirect } from "@sveltejs/kit"
-import * as Econ from "economy/types"
+import { Place as EconPlace } from "economy/types"
 import { authorise } from "$lib/server/auth"
 import { economyConnFailed, ownsItem } from "$lib/server/economy"
 import { db, Record } from "$lib/server/surreal"
 import { encode } from "$lib/urlName"
+import type { PageServerLoadEvent } from "./$types"
 import placeIdQuery from "./placeId.surql"
 
 // these files r kinda like the no-man's land of the Mercury Core codebase
 
-type Place = {
+interface Place {
 	name: string
 	privateServer: boolean
 }
 
-export async function load({ fetch: f, locals, params }) {
+export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 	const [[place]] = await db.query<Place[][]>(placeIdQuery, {
-		place: Record("place", +params.id),
+		place: Record("place", Number(params.id)),
 	})
 
 	if (place) {
-		const owns = await ownsItem(f, user.id, new Econ.Place(+params.id))
+		const owns = await ownsItem(
+			f,
+			user.id,
+			new EconPlace(Number(params.id))
+		)
 		if (!owns.ok) error(500, economyConnFailed)
 
 		if (!place.privateServer || owns.value)

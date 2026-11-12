@@ -6,8 +6,8 @@ const out = await Bun.$`bunx unocss ./src/**/*.svelte --stdout`.quiet().text()
 
 const far = /fa-([a-zA-Z0-9-]+)/
 
-const classes = out.split("\n").map(s => s.match(far)?.[1])
-const deduped = [...new Set(classes)].filter(Boolean) as string[]
+const classes = out.split("\n").map(s => (far.exec(s))?.[1])
+const deduped = [...new Set(classes)].filter((c): c is string => c != null)
 
 const fal: { [_: string]: string } = fa
 const script = deduped.flatMap(c => {

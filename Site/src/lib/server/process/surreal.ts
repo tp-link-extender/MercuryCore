@@ -1,6 +1,6 @@
 let started = false
 
-export default async () => {
+const startSurreal = () => {
 	if (started) return
 	started = true
 	console.log("Starting SurrealDB...")
@@ -10,11 +10,12 @@ export default async () => {
 			[
 				"surreal",
 				"start",
+				"--bind=127.0.0.1:8000",
 				"-u=root",
 				"-p=root",
 				"surrealkv://data/surreal",
 			],
-			{ cwd: "..", stdout: "pipe", stderr: "pipe" }
+			{ cwd: "..", stderr: "pipe", stdout: "pipe" }
 		)
 
 		process.on("exit", () => {
@@ -22,7 +23,7 @@ export default async () => {
 			proc.kill()
 		})
 
-		proc.exited.then(async () => {
+		void proc.exited.then(async () => {
 			console.error("SurrealDB process exited unexpectedly.")
 			const r = await proc.stderr.getReader().read()
 			const logs = new TextDecoder().decode(r.value)
@@ -37,3 +38,5 @@ export default async () => {
 		process.exit(1)
 	}
 }
+
+export default startSurreal

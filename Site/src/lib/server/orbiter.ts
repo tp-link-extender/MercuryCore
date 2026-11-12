@@ -1,7 +1,7 @@
 import config from "$lib/server/config"
 import type { ReturnErr, ReturnValue } from "./economy"
 
-type Gameserver = {
+interface Gameserver {
 	pid: number
 	startTime: number
 }
@@ -14,6 +14,8 @@ export async function listGameservers(
 	try {
 		const res = await f(config.Orbiter.PrivateURL)
 		if (!res.ok) return { ok: false }
+		// the gameserver API is trusted and its shape is verified on the other side
+		// oxlint-disable-next-line typescript/no-unsafe-assignment
 		return { ok: true, value: await res.json() }
 	} catch {
 		return { ok: false }
@@ -27,15 +29,17 @@ async function fetchGameserver(
 ): Promise<ReturnErr> {
 	try {
 		const res = await f(`${config.Orbiter.PrivateURL}/${path}`, { method })
-		if (!res.ok) return { ok: false, msg: await res.text() }
+		if (!res.ok) return { msg: await res.text(), ok: false }
 	} catch (err) {
-		const e = err as Error
-		return { ok: false, msg: e.message }
+		return {
+			msg: err instanceof Error ? err.message : String(err),
+			ok: false,
+		}
 	}
 	return { ok: true }
 }
 
-export const startGameserver = async (
+export const startGameserver = (
 	f: typeof globalThis.fetch,
 	placeId: number,
 	clientVersion: number
@@ -46,7 +50,5 @@ export const startGameserver = async (
 		"put"
 	)
 
-export const closeGameserver = async (
-	f: typeof globalThis.fetch,
-	placeId: number
-) => fetchGameserver(f, placeId, "delete")
+export const closeGameserver = (f: typeof globalThis.fetch, placeId: number) =>
+	fetchGameserver(f, placeId, "delete")

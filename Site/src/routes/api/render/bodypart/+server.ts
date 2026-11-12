@@ -2,11 +2,12 @@ import { error } from "@sveltejs/kit"
 import { assetRegex } from "$lib/paramTests"
 import config from "$lib/server/config"
 import { db, Record } from "$lib/server/surreal"
+import type { RequestEvent } from "./$types"
 import typeQuery from "./type.surql"
 
 // the clothing worn by the render rig depends on which body part is rendered
 // (hardcoded for prod)
-const bodyPartClothing = Object.freeze({
+const bodyPartClothing: { [_: number]: number } = Object.freeze({
 	27: 337622528, // Torso
 	28: 999521121, // Right Arm
 	29: 579211518, // Left Arm
@@ -18,17 +19,16 @@ const bodyPartClothing = Object.freeze({
 // its matching item of clothing, used by RCC (renderTorso.luau,
 // renderLeftArm.luau, renderRightArm.luau, renderLeftLeg.luau and
 // renderRightLeg.luau)
-export async function GET({ url }) {
+export async function GET({ url }: RequestEvent) {
 	const id = url.searchParams.get("id")
 	if (!id || !assetRegex.test(id)) error(400, "Missing id parameter")
 
 	const [[asset]] = await db.query<{ type: number }[][]>(typeQuery, {
-		asset: Record("asset", +id),
+		asset: Record("asset", Number(id)),
 	})
 	if (!asset) error(404, "Not Found")
 
-	const clothing =
-		bodyPartClothing[asset.type as keyof typeof bodyPartClothing]
+	const clothing = bodyPartClothing[asset.type]
 	if (!clothing) error(400, "Not a body part asset")
 
 	const charApp = [
@@ -39,8 +39,8 @@ export async function GET({ url }) {
 
 	return new Response(charApp, {
 		headers: {
-			Pragma: "no-cache",
 			"Cache-Control": "no-cache",
+			Pragma: "no-cache",
 		},
 	})
 }

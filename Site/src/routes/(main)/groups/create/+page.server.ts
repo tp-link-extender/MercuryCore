@@ -1,19 +1,20 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { createGroup, prices } from "economy/api"
-import * as Econ from "economy/types"
+import { User } from "economy/types"
 import { authorise } from "$lib/server/auth"
 import exclude from "$lib/server/exclude"
 import formError from "$lib/server/formError"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import createQuery from "./create.surql"
 
 const schema = type({
 	name: "3 <= string <= 40",
 })
 
-export async function load({ fetch: f }) {
+export async function load({ fetch: f }: PageServerLoadEvent) {
 	exclude("Groups")
 	const p = await prices(f)
 	return {
@@ -23,15 +24,12 @@ export async function load({ fetch: f }) {
 }
 
 const errors: { [_: string]: string } = Object.freeze({
-	create: Buffer.from(
-		"ZHVtYiBuKiBkZXRlY3RlZA==",
-		"base64"
-	).toString(),
 	changed: "Dickhead",
+	create: Buffer.from("ZHVtYiBuKiBkZXRlY3RlZA==", "base64").toString(),
 	wisely: "GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!",
 })
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.default = async ({ fetch: f, locals, request }) => {
 	exclude("Groups")
 	const { user } = await authorise(locals)
@@ -55,7 +53,7 @@ actions.default = async ({ fetch: f, locals, request }) => {
 			["A group with this name already exists"]
 		)
 
-	const created = await createGroup(f, new Econ.User(user.id))
+	const created = await createGroup(f, new User(user.id))
 	if (!created.ok)
 		return formError(form, ["other"], ["Failed to create group"])
 
@@ -64,9 +62,9 @@ actions.default = async ({ fetch: f, locals, request }) => {
 	const groupId = created.value.ID
 
 	await db.query(createQuery, {
+		economyId: groupId,
 		name,
 		user: Record("user", user.id),
-		economyId: groupId,
 	})
 
 	redirect(302, `/groups/${groupId}`)

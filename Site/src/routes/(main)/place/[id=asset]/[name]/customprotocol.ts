@@ -1,4 +1,8 @@
-export default (uri: string, success: () => void, fail: () => void) => {
+const handleCustomProtocol = (
+	uri: string,
+	success: () => void,
+	fail: () => void
+) => {
 	// handle page running in an iframe (blur must be registered with top level window)
 	let target = window as Window
 	while (target.parent && target !== target.parent) target = target.parent
@@ -19,3 +23,5 @@ export default (uri: string, success: () => void, fail: () => void) => {
 	target.addEventListener("blur", onBlur, { once: true })
 	window.location.href = uri
 }
+
+export default handleCustomProtocol

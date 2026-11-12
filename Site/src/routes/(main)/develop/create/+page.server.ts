@@ -2,7 +2,7 @@ import fs from "node:fs"
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { createUnlimitedSource, prices } from "economy/api"
-import * as Econ from "economy/types"
+import { User } from "economy/types"
 import { typeToNumber } from "$lib/assetTypes"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
@@ -19,10 +19,15 @@ import { db } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { graphicAsset } from "$lib/server/xmlAsset"
 import { encode } from "$lib/urlName"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import assetTypes from "./assetTypes"
 import createAssetQuery from "./createAsset.surql"
 
 const schema = type({
+	asset: "File",
+	description: "(0 <= string <= 1000) | undefined",
+	name: "3 <= string <= 50",
+	price: "0 <= number.integer <= 999",
 	// Object.keys(assets) doesn't work
 	type: type
 		.enumerated(...assetTypes)
@@ -30,19 +35,16 @@ const schema = type({
 		.configure({
 			problem: "must be a valid asset type",
 		}),
-	name: "3 <= string <= 50",
-	description: "(0 <= string <= 1000) | undefined",
-	price: "0 <= number.integer <= 999",
-	asset: "File",
 })
 
 // type assetType = (typeof assetTypes)[number]
 
-export async function load({ url, fetch: f }) {
+export async function load({ url, fetch: f }: PageServerLoadEvent) {
 	const p = await prices(f)
 	const price = p.ok ? p.value.unlimitedSourcePrice : 0n
 	// const urlType = url.searchParams.get("type") as assetType | null
 	return {
+		assetType: url.searchParams.get("asset"),
 		form: await superValidate(
 			arktype(
 				schema
@@ -64,18 +66,18 @@ export async function load({ url, fetch: f }) {
 				// }
 			)
 		),
-		assetType: url.searchParams.get("asset"),
 		price,
 	}
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
-	const { type, name, description, price, asset } = form.data
+	const { type: assetType, name, description, price, asset } = form.data
+	// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 	form.data.asset = null as unknown as File // make sure to return as a POJO
 
 	if (asset.size === 0)
@@ -98,7 +100,7 @@ actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 	let saveImages: ((id: number) => Promise<number> | Promise<void>)[] = []
 
 	try {
-		switch (type) {
+		switch (assetType) {
 			case "T-Shirt":
 				saveImages = await Promise.all([
 					tShirt(asset),
@@ -140,7 +142,7 @@ actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 		return formError(form, ["asset"], ["Asset failed to upload"])
 	}
 
-	const u = new Econ.User(user.id)
+	const u = new User(user.id)
 
 	// TODO: make creating image assets (only image assets) free
 	const createdImageAsset = await createUnlimitedSource(f, u)
@@ -159,16 +161,16 @@ actions.default = async ({ fetch: f, locals, request, getClientAddress }) => {
 	const id = createdAsset.value.ID
 
 	await db.query(createAssetQuery, {
-		imageAssetId,
-		id,
+		assetType: typeToNumber[assetType],
 		description,
+		id,
+		imageAssetId,
 		name,
 		price,
-		assetType: typeToNumber[type],
 		visibility: user.permissionLevel < 3 ? "Pending" : "Visible",
 	})
 
-	await graphicAsset(type, imageAssetId, id)
+	await graphicAsset(assetType, imageAssetId, id)
 
 	try {
 		await Promise.all([saveImages[0](imageAssetId), saveImages[1](id)])

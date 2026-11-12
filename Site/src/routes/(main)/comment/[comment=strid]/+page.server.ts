@@ -8,6 +8,7 @@ import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import removeCommentQuery from "./removeComment.surql"
 
 const schema = type({
@@ -15,12 +16,12 @@ const schema = type({
 	replyId: "string | undefined",
 })
 
-export const load = async ({ params }) => ({
+export const load = async ({ params }: PageServerLoadEvent) => ({
 	commentId: params.comment,
 	form: await superValidate(arktype(schema)),
 })
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.comment = async ({ locals, params, request, getClientAddress }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, arktype(schema))
@@ -47,13 +48,13 @@ actions.comment = async ({ locals, params, request, getClientAddress }) => {
 	)
 	if (!getComment) error(404, "Comment not found")
 
-	const { creatorId, type } = getComment
+	const { creatorId, type: commentTypes } = getComment
 	const content = filter(unfiltered)
 
 	const [, newCommentId] = await db.query<string[]>(createCommentQuery, {
 		comment,
 		content,
-		type: commentType(type, id),
+		type: commentType(commentTypes, id),
 		user: Record("user", user.id),
 	})
 
@@ -61,10 +62,10 @@ actions.comment = async ({ locals, params, request, getClientAddress }) => {
 		await db.query(
 			`fn::notify($sender, $receiver, "CommentReply", $note, $relativeId)`,
 			{
-				sender: Record("user", user.id),
-				receiver: Record("user", creatorId),
 				note: `${user.username} replied to your comment: ${content}`,
+				receiver: Record("user", creatorId),
 				relativeId: newCommentId,
+				sender: Record("user", user.id),
 			}
 		)
 }
@@ -93,10 +94,10 @@ actions.delete = async ({ locals, params, url, getClientAddress }) => {
 	const limit = ratelimit(null, "delete", getClientAddress, 5)
 	if (limit) return limit
 
-	const [, , ok] = await db.query<1[][]>(removeCommentQuery, {
+	const deleted = await db.query<1[][]>(removeCommentQuery, {
 		comment: Record("comment", params.comment),
-		user: Record("user", user.id),
 		moderate,
+		user: Record("user", user.id),
 	})
-	if (!ok?.[0]) error(404, "Comment not found or already deleted")
+	if (!deleted[2]?.[0]) error(404, "Comment not found or already deleted")
 }

@@ -1,31 +1,32 @@
 import config from "$lib/server/config"
 import { db } from "$lib/server/surreal"
+import type { LayoutServerLoadEvent } from "./$types"
 import bannersQuery from "./banners.surql"
 import getNotifications from "./notifications"
 
-type Banner = {
-	// bruce, it's- I'm not doing this again
-	id: string
+interface Banner {
 	bgColour: string
 	body: string
+	// bruce, it's- I'm not doing this again
+	id: string
 	textLight: boolean
 }
 
-export async function load({ locals, request }) {
+export async function load({ locals, request }: LayoutServerLoadEvent) {
 	const { user } = locals
 	// No authorise() function call, as we don't want to redirect to login page if not logged in
 
 	const [banners] = await db.query<Banner[][]>(bannersQuery)
 	return {
 		banners,
-		user,
-		notifications: await getNotifications(user),
-		url: request.url,
-		domain: config.Domain,
 		currencySymbol: config.CurrencySymbol,
+		domain: config.Domain,
+		longTagline: config.Branding.LongTagline,
+		notifications: await getNotifications(user),
+		pages: config.Pages,
 		siteName: config.Name,
 		tagline: config.Branding.Tagline,
-		longTagline: config.Branding.LongTagline,
-		pages: config.Pages,
+		url: request.url,
+		user,
 	}
 }

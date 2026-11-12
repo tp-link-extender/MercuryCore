@@ -13,7 +13,7 @@
 		help?: string
 		placeholder?: string
 		rows?: number
-		formData: import("$lib/validate").SuperForm<any>
+		formData: import("$lib/validate").DynamicSuperForm
 	} = $props()
 
 	const { form, errors, constraints } = formData

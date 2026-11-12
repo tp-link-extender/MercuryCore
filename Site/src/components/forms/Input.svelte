@@ -25,7 +25,7 @@
 		inline?: boolean
 		column?: boolean
 		disabled?: boolean
-		formData: import("$lib/validate").SuperForm<any>
+		formData: import("$lib/validate").DynamicSuperForm
 	} & HTMLInputAttributes = $props()
 
 	let { errors } = $derived(formData)

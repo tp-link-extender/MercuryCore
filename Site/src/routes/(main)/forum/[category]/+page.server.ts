@@ -1,3 +1,5 @@
-export const load = async ({ params }) => ({
+import type { PageServerLoadEvent } from "./$types"
+
+export const load = ({ params }: PageServerLoadEvent) => ({
 	categoryName: params.category,
 })

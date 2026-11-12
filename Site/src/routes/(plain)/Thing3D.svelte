@@ -9,24 +9,24 @@
 		camPos: [number, number, number]
 	}[] = [
 		{
-			name: "mercury",
-			camPos: [100, 20, 100]
+			camPos: [100, 20, 100], 
+			name: "mercury"
 		},
 		{
-			name: "mercury2",
-			camPos: [100, 20, 100]
+			camPos: [100, 20, 100], 
+			name: "mercury2"
 		},
 		{
-			name: "moon",
-			camPos: [100, 60, 100]
+			camPos: [100, 60, 100], 
+			name: "moon"
 		},
 		// {
 		// 	name: "planetMercury",
 		// 	camPos: [100, 40, 100],
 		// },
 		{
-			name: "rock",
-			camPos: [100, 100, 100]
+			camPos: [100, 100, 100], 
+			name: "rock"
 		}
 	]
 

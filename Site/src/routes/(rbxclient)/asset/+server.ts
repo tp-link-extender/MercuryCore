@@ -5,19 +5,26 @@ import { intRegex } from "$lib/paramTests"
 import config from "$lib/server/config"
 import { db, Record } from "$lib/server/surreal"
 import { isXML } from "$lib/server/xml"
+import type { RequestEvent } from "./$types"
 import assetQuery from "./asset.surql"
 
 const headers = (file: string | Uint8Array) => ({
-	"Content-Type": "binary/octet-stream",
 	"Content-Disposition": `attachment; filename="${createHash("md5")
 		.update(file)
 		.digest("hex")}"`,
+	"Content-Type": "binary/octet-stream",
 })
 
 const response = (file: string | Uint8Array<ArrayBuffer>) =>
 	new Response(file, { headers: headers(file) })
 
-type FoundAsset = {
+const isAssetDelivery = (value: unknown): value is { location: string } =>
+	typeof value === "object" &&
+	value !== null &&
+	"location" in value &&
+	typeof value.location === "string"
+
+interface FoundAsset {
 	id: number
 	name: string
 	visibility: string
@@ -89,8 +96,9 @@ async function loadOpenCloudAsset(f: typeof globalThis.fetch, id: number) {
 		)
 		if (!req.ok) return
 
-		const json = (await req.json()) as { location: string }
-		const location = json.location
+		const json: unknown = await req.json()
+		if (!isAssetDelivery(json)) return
+		const { location } = json
 		if (!location) return
 
 		const res = await f(location)
@@ -108,12 +116,12 @@ async function loadOpenCloudAsset(f: typeof globalThis.fetch, id: number) {
 	}
 }
 
-export async function GET({ fetch: f, url }) {
+export async function GET({ fetch: f, url }: RequestEvent) {
 	const assetId = url.searchParams.get("id")
 	if (!assetId || !intRegex.test(assetId)) error(400, "Invalid Request")
 
 	// all asset ids are now numbered
-	const id = +assetId
+	const id = Number(assetId)
 	console.log("Requested asset", id)
 
 	const result2b = await loadPlaceAsset(id)

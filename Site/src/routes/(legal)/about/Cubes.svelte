@@ -12,8 +12,8 @@
 	}: {
 		columns: number[]
 		rows: number[]
-		onmoved: () => void
-		onclicked: () => void
+		onmoved(): void
+		onclicked(): void
 	} = $props()
 
 	interactivity()

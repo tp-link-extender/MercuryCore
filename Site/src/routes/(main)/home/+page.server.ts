@@ -6,29 +6,30 @@ import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
 import { db, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import homeQuery from "./home.surql"
 
 const schema = type({
 	status: "1 <= string <= 1000",
 })
 
-type Place = {
+interface Place {
+	dislikeCount: number
 	id: number
+	likeCount: number
 	name: string
 	playerCount: number
 	serverPing: number
-	likeCount: number
-	dislikeCount: number
 }
 
-type Status = {
-	id: string
+interface Status {
 	author: BasicUser
 	created: Date
+	currentContent: string
+	id: string
 	pinned: boolean
 	replies: number
 	visibility: "Visible" | "Moderated" | "Deleted"
-	currentContent: string
 }
 
 // lazy eval 💞
@@ -37,7 +38,7 @@ const greets: readonly ((u: string) => string)[] = Object.freeze([
 	u => `Hello, ${u}!`,
 ])
 
-export async function load({ locals }) {
+export async function load({ locals }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 	// (main)/+layout.server.ts will handle most redirects for logged-out users, but sometimes errors for this page.
 
@@ -46,15 +47,15 @@ export async function load({ locals }) {
 	>(homeQuery, { user: Record("user", user.id) })
 
 	return {
-		greet: greets[Math.floor(Math.random() * greets.length)](user.username),
-		form: await superValidate(arktype(schema)),
-		places,
-		friends,
 		feed,
+		form: await superValidate(arktype(schema)),
+		friends,
+		greet: greets[Math.floor(Math.random() * greets.length)](user.username),
+		places,
 	}
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.default = async ({ locals, request, getClientAddress }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, arktype(schema))

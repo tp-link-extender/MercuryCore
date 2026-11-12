@@ -7,7 +7,13 @@ import {
 	countOwnersOne,
 	ownsOne,
 } from "economy/api"
-import * as Econ from "economy/types"
+import {
+	Package as EconPackage,
+	PackageSource,
+	UnlimitedAsset,
+	UnlimitedSource,
+	User,
+} from "economy/types"
 import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
 import createCommentQuery from "$lib/server/createComment.surql"
@@ -20,7 +26,7 @@ import requestRender, { type RenderType } from "$lib/server/requestRender"
 import { db, find, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { couldMatch, encode } from "$lib/urlName"
-import type { RequestEvent } from "./$types"
+import type { Actions, RequestEvent } from "./$types"
 import assetQuery from "./asset.surql"
 import buyQuery from "./buy.surql"
 import findAssetQuery from "./findAsset.surql"
@@ -30,12 +36,12 @@ const schema = type({
 	replyId: "string | undefined",
 })
 
-type Asset = {
-	id: string
+interface Asset {
 	comments: Comment[]
 	created: Date
 	description: string
 	forSale: boolean
+	id: string
 	items: PackageItem[]
 	name: string
 	owned: boolean
@@ -54,9 +60,9 @@ const noTexts = Object.freeze([
 ])
 const failTexts = Object.freeze(["Bruh", "Okay", "Aight", "Rip", "Aw man..."])
 
-export async function load({ fetch: f, locals, params }) {
+export async function load({ fetch: f, locals, params }: RequestEvent) {
 	const { user } = await authorise(locals)
-	const id = +params.id
+	const id = Number(params.id)
 	const [[asset]] = await db.query<Asset[][]>(assetQuery, {
 		asset: Record("asset", id),
 		user: Record("user", user.id),
@@ -67,7 +73,7 @@ export async function load({ fetch: f, locals, params }) {
 	if (!couldMatch(asset.name, params.name))
 		redirect(302, `/catalog/${id}/${slug}`)
 
-	const u = new Econ.User(user.id)
+	const u = new User(user.id)
 	const b = await balance(f, u)
 	if (!b.ok) {
 		console.error("balance failed")
@@ -76,7 +82,7 @@ export async function load({ fetch: f, locals, params }) {
 
 	// packages are a distinct type in the ledger, so they need their own item to ask about rather than the plain asset ones
 	const isPackage = asset.type === 32
-	const item = isPackage ? new Econ.Package(id) : new Econ.UnlimitedAsset(id)
+	const item = isPackage ? new EconPackage(id) : new UnlimitedAsset(id)
 
 	const owned = await ownsOne(f, u, item)
 	if (!owned.ok) {
@@ -103,38 +109,38 @@ export async function load({ fetch: f, locals, params }) {
 	const isOwner = owner?.id === user.id
 
 	return {
-		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
-		failText: failTexts[Math.floor(Math.random() * failTexts.length)],
-		form: await superValidate(arktype(schema)),
-		slug,
 		asset: {
 			...asset,
+			isOwner,
 			items,
 			price: BigInt(asset.price),
-			isOwner,
 		},
-		sold: owners.value,
+		balance: b.value,
+		failText: failTexts[Math.floor(Math.random() * failTexts.length)],
+		form: await superValidate(arktype(schema)),
+		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
 		owned: owned.value,
 		owner,
-		balance: b.value,
+		slug,
+		sold: owners.value,
 	}
 }
 
 async function getBuyData({ locals, params }: RequestEvent) {
 	const { user } = await authorise(locals)
-	const id = +params.id
+	const id = Number(params.id)
 	const assetExists = await find("asset", id)
 	if (!assetExists) error(404)
 
-	return { user, id }
+	return { id, user }
 }
 
 // actions that return things are here because of sveltekit typescript limitations
 async function rerender({ fetch: f, locals, params }: RequestEvent) {
 	await authorise(locals, 5)
 
-	const id = +params.id
-	type FoundAsset = {
+	const id = Number(params.id)
+	interface FoundAsset {
 		name: string
 		type: number
 		visibility: string
@@ -148,7 +154,7 @@ async function rerender({ fetch: f, locals, params }: RequestEvent) {
 
 	// body parts are rendered as close-ups of the part itself, with its
 	// matching clothing (from api/render/bodypart), using one script per limb
-	const renderTypeFromType = Object.freeze({
+	const renderTypeFromType: { [_: number]: RenderType } = Object.freeze({
 		27: "Torso",
 		28: "RightArm",
 		29: "LeftArm",
@@ -157,7 +163,7 @@ async function rerender({ fetch: f, locals, params }: RequestEvent) {
 	})
 
 	const renderType =
-		renderTypeFromType[asset.type as keyof typeof renderTypeFromType] ??
+		renderTypeFromType[asset.type] ??
 		(asset.type === 8
 			? "Model"
 			: asset.type === 32
@@ -169,7 +175,7 @@ async function rerender({ fetch: f, locals, params }: RequestEvent) {
 	if (!renderType) error(400, "Can't rerender this type of asset")
 
 	try {
-		await requestRender(f, renderType as RenderType, id)
+		await requestRender(f, renderType, id)
 		const icon = `/catalog/${id}/${asset.name}/icon?r=${Math.random()}`
 		return { icon }
 	} catch (e) {
@@ -177,7 +183,7 @@ async function rerender({ fetch: f, locals, params }: RequestEvent) {
 		return fail(500, { msg: "Failed to request render" })
 	}
 }
-export const actions: import("./$types").Actions = { rerender }
+export const actions: Actions = { rerender }
 actions.comment = async ({
 	fetch: f,
 	locals,
@@ -196,7 +202,7 @@ actions.comment = async ({
 	const limit = ratelimit(form, "comment", getClientAddress, 5)
 	if (limit) return limit
 
-	const id = +params.id
+	const id = Number(params.id)
 	const [getAsset] = await db.query<{ type: number }[]>(
 		"SELECT type FROM ONLY $asset",
 		{ asset: Record("asset", id) }
@@ -228,7 +234,7 @@ actions.comment = async ({
 actions.buy = async e => {
 	const { user, id } = await getBuyData(e)
 
-	type FoundAsset = {
+	interface FoundAsset {
 		forSale: boolean
 		name: string
 		price: number
@@ -247,16 +253,16 @@ actions.buy = async e => {
 	const owner = await assetOwner(e.fetch, id, asset.type)
 	if (!owner.ok) error(500, economyConnFailed)
 
-	const u = new Econ.User(user.id)
+	const u = new User(user.id)
 	// packages are sold through the Economy service as a bundle: the buyer pays once and receives the package plus everything inside it, so there's nothing to write here
 	const price = BigInt(asset.price)
 	const ok =
 		asset.type === 32
-			? await buyPackage(e.fetch, u, new Econ.PackageSource(id), price)
+			? await buyPackage(e.fetch, u, new PackageSource(id), price)
 			: await buyUnlimitedAsset(
 					e.fetch,
 					u,
-					new Econ.UnlimitedSource(id),
+					new UnlimitedSource(id),
 					price
 				)
 	if (!ok) error(400, "Purchase failed")
@@ -265,10 +271,10 @@ actions.buy = async e => {
 		await db.query(
 			'fn::notify($user, $owner, "ItemPurchase", $note, $relativeId)',
 			{
-				user: Record("user", user.id),
-				owner: Record("user", owner.value.id),
 				note: `${user.username} just purchased your item ${asset.name}`,
+				owner: Record("user", owner.value.id),
 				relativeId: e.params.id,
+				user: Record("user", user.id),
 			}
 		)
 }

@@ -1,18 +1,18 @@
 import { db, Record } from "$lib/server/surreal"
 import notificationsQuery from "./notifications.surql"
 
-type Notification = {
-	id: string
+interface Notification {
 	created: Date
+	id: string
+	link?: string
 	note: string
 	read: boolean
 	relativeId?: string
 	sender: BasicUser
 	type: string
-	link?: string
 }
 
-export default async function (user: User | null) {
+export default async function getNotifications(user: User | null) {
 	if (!user) return []
 	const [notifications] = await db.query<Notification[][]>(
 		notificationsQuery,

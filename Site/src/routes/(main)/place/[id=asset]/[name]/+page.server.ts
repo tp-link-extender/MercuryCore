@@ -1,6 +1,6 @@
 import fs from "node:fs"
 import { error, redirect } from "@sveltejs/kit"
-import * as Econ from "economy/types"
+import { Place as EconPlace } from "economy/types"
 import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
 import {
@@ -14,17 +14,19 @@ import { closeGameserver, startGameserver } from "$lib/server/orbiter"
 import ratelimit from "$lib/server/ratelimit"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import findPlaceQuery from "./findPlace.surql"
 import invalidatePlayingQuery from "./invalidatePlaying.surql"
 import placeQuery from "./place.surql"
 
-type FoundPlace = {
+interface FoundPlace {
+	clientVersion: number
 	privateServer: boolean
 	privateTicket: string
-	clientVersion: number
 }
 
 interface Place extends FoundPlace {
+	clientVersion: number
 	created: string
 	description: string
 	dislikeCount: number
@@ -34,7 +36,6 @@ interface Place extends FoundPlace {
 	likes: boolean
 	maxPlayers: number
 	name: string
-	clientVersion: number
 	ownerUser: OwnedUser | null
 	players: {
 		status: "Playing"
@@ -47,17 +48,22 @@ interface Place extends FoundPlace {
 
 const thumbnails = config.Images.DefaultPlaceThumbnails
 
-export async function load({ fetch: f, locals, params, url }) {
+export async function load({
+	fetch: f,
+	locals,
+	params,
+	url,
+}: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 	const privateTicket = url.searchParams.get("privateServer")
-	const id = +params.id
+	const id = Number(params.id)
 	const [[place]] = await db.query<Place[][]>(placeQuery, {
-		user: Record("user", user.id),
 		place: Record("place", id),
+		user: Record("user", user.id),
 	})
 	if (!place) error(404, "Place not found")
 
-	const owner = await itemOwner(f, new Econ.Place(id))
+	const owner = await itemOwner(f, new EconPlace(id))
 	if (!owner.ok) error(500, economyConnFailed)
 	place.ownerUser = owner.value
 
@@ -79,12 +85,12 @@ export async function load({ fetch: f, locals, params, url }) {
 	// don't check gameserver status here or your mercury will slow to a crawl
 
 	return {
-		scheme: config.LauncherURI,
 		clientVersion: place.clientVersion,
 		hosting: config.Gameservers.Hosting,
 		orbiterURL: config.Orbiter.PublicURL,
-		slug,
 		place,
+		scheme: config.LauncherURI,
+		slug,
 		thumbnails: [id % thumbnails.length],
 	}
 }
@@ -104,7 +110,7 @@ async function findPlace(
 	})
 	if (!place) error(404, "Place not found")
 
-	const owns = await ownsItem(f, user.id, new Econ.Place(id))
+	const owns = await ownsItem(f, user.id, new EconPlace(id))
 	if (!owns.ok) error(500, economyConnFailed)
 
 	if (
@@ -130,15 +136,15 @@ async function checkUser(locals: App.Locals) {
 	return user
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.join = async ({ fetch: f, locals, params, request }) => {
 	const user = await checkUser(locals)
-	const [_, placeR] = await findPlace(f, request, +params.id, user)
+	const [_, placeR] = await findPlace(f, request, Number(params.id), user)
 
 	// Invalidate all game sessions and create valid playing
 	const [, [ticket]] = await db.query<string[][]>(invalidatePlayingQuery, {
-		user: Record("user", user.id),
 		place: placeR,
+		user: Record("user", user.id),
 	})
 
 	return { ticket }
@@ -156,7 +162,7 @@ actions.start = async ({
 	const limit = ratelimit(null, "serverstart", getClientAddress, 20)
 	if (limit) return limit
 
-	const id = +params.id
+	const id = Number(params.id)
 	const [_place, _placeR] = await findPlace(f, request, id, user)
 
 	// check for existence of a place file
@@ -172,8 +178,9 @@ actions.start = async ({
 
 actions.close = async ({ fetch: f, locals, params, request }) => {
 	const { user } = await authorise(locals)
-	const id = +params.id
+	const id = Number(params.id)
 
+	// oxlint-disable-next-line unicorn/no-unreadable-array-destructuring -- query returns [result, error, value]
 	const [, , isOwner] = await findPlace(f, request, id, user)
 
 	if (!isOwner && user.permissionLevel < 4)

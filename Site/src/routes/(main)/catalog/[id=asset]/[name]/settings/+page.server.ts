@@ -17,16 +17,17 @@ import requestRender from "$lib/server/requestRender"
 import { db, Record } from "$lib/server/surreal"
 import { arktype, message, superValidate } from "$lib/server/validate"
 import { encode } from "$lib/urlName"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import assetQuery from "./asset.surql"
 import assetCheckQuery from "./assetCheck.surql"
 import reuploadQuery from "./reupload.surql"
 import updateAssetQuery from "./updateAsset.surql"
 
-type Asset = {
-	id: string
+interface Asset {
 	created: Date
 	description: string
 	forSale: boolean
+	id: string
 	imageAssetId: number | null
 	name: string
 	price: number
@@ -35,22 +36,22 @@ type Asset = {
 }
 
 const schema = type({
+	description: "(0 <= string <= 1000) | undefined",
+	forSale: "boolean",
 	// This is how I show my love
 	// I made it in my mind because
 	// I blame it on my ADD, baby
 	name: "3 <= string <= 50",
-	description: "(0 <= string <= 1000) | undefined",
 	price: "0 <= number.integer <= 999",
-	forSale: "boolean",
 })
 
 const reuploadSchema = type({
 	asset: "File",
 })
 
-export async function load({ fetch: f, locals, params }) {
+export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
-	const id = +params.id
+	const id = Number(params.id)
 	const [[check]] = await db.query<AssetCheck[][]>(assetCheckQuery, {
 		asset: Record("asset", id),
 	})
@@ -69,26 +70,26 @@ export async function load({ fetch: f, locals, params }) {
 
 	return {
 		...asset,
-		slug: encode(asset.name),
+		reuploadForm: await superValidate(arktype(reuploadSchema)),
 		settingsForm: await superValidate(
 			{
-				name: asset.name,
-				forSale: asset.forSale,
 				description: asset.description,
+				forSale: asset.forSale,
+				name: asset.name,
 				price: asset.price,
 			},
 			arktype(schema)
 		),
-		reuploadForm: await superValidate(arktype(reuploadSchema)),
+		slug: encode(asset.name),
 	}
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 
-type AssetCheck = {
+interface AssetCheck {
 	imageAssetId: number | null
-	type: number
 	name: string
+	type: number
 }
 
 actions.settings = async ({ fetch: f, locals, params, request }) => {
@@ -96,7 +97,7 @@ actions.settings = async ({ fetch: f, locals, params, request }) => {
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
-	const id = +params.id
+	const id = Number(params.id)
 	const [[asset]] = await db.query<AssetCheck[][]>(assetCheckQuery, {
 		asset: Record("asset", id),
 	})
@@ -129,6 +130,7 @@ actions.reupload = async ({
 	if (!form.valid) return formError(form)
 
 	const { asset: file } = form.data
+	// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 	form.data.asset = null as unknown as File // make sure to return as a POJO
 
 	if (file.size === 0)
@@ -140,7 +142,7 @@ actions.reupload = async ({
 			["Asset must be less than 20MB in size"]
 		)
 
-	const id = +params.id
+	const id = Number(params.id)
 	const [[asset]] = await db.query<AssetCheck[][]>(assetCheckQuery, {
 		asset: Record("asset", id),
 	})
@@ -157,10 +159,9 @@ actions.reupload = async ({
 
 	const buf = await file.arrayBuffer()
 	if (asset.imageAssetId) {
-		// items with textures (t-shirts, clothing, decals, faces) must be actual images
 		if (!(await isImage(file)))
+			// items with textures (t-shirts, clothing, decals, faces) must be actual images
 			return formError(form, ["asset"], ["File must be an image"])
-	} else
 		switch (asset.type) {
 			// natively rich formats: only accept files whose magic bytes match the asset type
 			case 3: {
@@ -205,6 +206,7 @@ actions.reupload = async ({
 				break
 			}
 		}
+	}
 
 	if (user.permissionLevel < 3) {
 		const limit = ratelimit(form, "assetReupload", getClientAddress, 30)
@@ -264,9 +266,9 @@ actions.reupload = async ({
 	const visibility = user.permissionLevel >= 3 ? "Visible" : "Pending"
 	await db.query(reuploadQuery, {
 		asset: Record("asset", id),
-		visibility,
 		note: `Reupload asset ${asset.name} (id ${id})`,
 		user: Record("user", user.id),
+		visibility,
 	})
 
 	if ([11, 12].includes(asset.type))

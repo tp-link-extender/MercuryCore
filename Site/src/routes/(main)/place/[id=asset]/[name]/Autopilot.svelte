@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { isValidMapName, mapNamePattern } from "$lib/mapName"
+
 	const {
 		beginJoining,
 		scheme,
@@ -6,7 +8,7 @@
 		domain,
 		siteName
 	}: {
-		beginJoining: (joinscripturl: () => string) => () => void
+		beginJoining(joinscripturl: () => string): () => void
 		scheme: string
 		serverTicket: string
 		domain: string
@@ -15,11 +17,16 @@
 
 	let filepath = $state("")
 
+	let validMap = $derived(filepath === "" || isValidMapName(filepath))
+
+	const encodeMap = (value: string): string =>
+		btoa(String.fromCodePoint(...new TextEncoder().encode(value)))
+
 	let host = $derived(
 		beginJoining(
 			() =>
 				// TODO: fix hosting and map opening with correct URI scheme
-				`${scheme}20131+launchmode:ide+script:http://${domain}/game/host?ticket=${serverTicket}&autopilot=${btoa(
+				`${scheme}20131+launchmode:ide+script:http://${domain}/game/host?ticket=${serverTicket}&autopilot=${encodeMap(
 					filepath
 				)}`
 		)
@@ -42,7 +49,11 @@
 		id="filepath"
 		bind:value={filepath}
 		placeholder="Map location"
-		aria-label="Map location" />
+		aria-label="Map location"
+		aria-invalid={!validMap}
+		pattern={mapNamePattern.source}
+		maxlength={69}
+		title="Map names may use letters, numbers, spaces, dots, underscores and hyphens, and must end in .rbxl." />
 	<button
 		class="btn btn-secondary"
 		onclick={beginJoining(() => `${scheme}20131+launchmode:maps`)}
@@ -50,7 +61,11 @@
 		<fa fa-arrow-up-right-from-square></fa>
 		Map Folder
 	</button>
-	<button class="btn btn-primary" onclick={host} type="button">
+	<button
+		class="btn btn-primary"
+		onclick={host}
+		type="button"
+		disabled={!validMap}>
 		<fa fa-wifi></fa>
 		Begin Hosting
 	</button>
@@ -65,7 +80,8 @@
 					<button
 						class="btn light-text pl-4 pr-0 text-start"
 						onclick={host}
-						type="button">
+						type="button"
+						disabled={!validMap}>
 						Begin Hosting (no Studio tools)
 					</button>
 				</li>
@@ -73,6 +89,13 @@
 		</div>
 	</div>
 </div>
+
+{#if !validMap}
+	<small class="text-red-500">
+		Map names may only use letters, numbers, spaces, dots, underscores and
+		hyphens, and must end in .rbxl.
+	</small>
+{/if}
 
 <style>
 	.dropdown-toggle::after {

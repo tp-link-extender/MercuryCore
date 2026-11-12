@@ -14,18 +14,20 @@
  *     { name: "Extras", tabs: ["tab2", "tab3"] },
  * ])
  */
-export default (
+const tabData = (
 	url: string,
 	tabs: string[],
 	icons?: string[],
 	name = "tab",
 	groups?: { name: string; tabs: string[] }[]
 ) => ({
-	name,
-	tabs,
 	currentTab: new URL(url).searchParams.get(name || "tab") || tabs[0],
-	url,
-	icons,
 	groups,
+	icons,
+	name,
 	num: 0,
+	tabs,
+	url,
 })
+
+export default tabData

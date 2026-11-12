@@ -10,6 +10,8 @@ import sharp from "sharp"
  * const id = // Load from database
  * save(id)
  */
+// Async by contract: callers await the returned save function
+// oxlint-disable-next-line typescript/require-await, eslint/require-await
 export async function imageAsset(file: File) {
 	try {
 		const img = new Bun.Image(file)
@@ -17,9 +19,8 @@ export async function imageAsset(file: File) {
 			.png()
 		return (id: number) => img.write(`../data/assets/${id}`)
 	} catch (err) {
-		const e = err as Error
-		console.error(e)
-		throw new Error("Image asset failed to upload")
+		console.error(err)
+		throw new Error("Image asset failed to upload", { cause: err })
 	}
 }
 
@@ -33,14 +34,15 @@ export async function imageAsset(file: File) {
  * const id = // Load from database
  * save(id)
  */
+// Async by contract: callers await the returned save function
+// oxlint-disable-next-line typescript/require-await, eslint/require-await
 export async function clothingAsset(file: File) {
 	try {
 		const img = new Bun.Image(file).resize(585, 559, { fit: "fill" }).png()
 		return (id: number) => img.write(`../data/assets/${id}`)
 	} catch (err) {
-		const e = err as Error
-		console.error(e)
-		throw new Error("Clothing asset failed to upload")
+		console.error(err)
+		throw new Error("Clothing asset failed to upload", { cause: err })
 	}
 }
 
@@ -54,21 +56,22 @@ export async function clothingAsset(file: File) {
  * const id = // Load from database
  * save(id)
  */
+// Async by contract: callers await the returned save function
+// oxlint-disable-next-line typescript/require-await, eslint/require-await
 export async function thumbnail(b: ArrayBuffer) {
 	try {
 		const img = new Bun.Image(b).resize(420, 420, { fit: "fill" }).webp()
 		return (id: number) => img.write(`../data/thumbnails/${id}`)
 	} catch (err) {
-		const e = err as Error
-		console.error(e)
-		throw new Error("Thumbnail failed to upload")
+		console.error(err)
+		throw new Error("Thumbnail failed to upload", { cause: err })
 	}
 }
 
 const tShirtOpts = Object.freeze({
+	background: { alpha: 0, b: 0, g: 0, r: 0 },
 	fit: "contain",
 	position: "top",
-	background: { r: 0, g: 0, b: 0, alpha: 0 },
 })
 
 /**

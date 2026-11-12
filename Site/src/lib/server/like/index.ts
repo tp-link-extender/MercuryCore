@@ -11,10 +11,17 @@ const queries = Object.freeze({
 	undislike: undislikeQuery,
 	unlike: unlikeQuery,
 } as const)
-const actions = Object.keys(queries) as (keyof typeof queries)[]
+const actions = Object.freeze([
+	"dislike",
+	"like",
+	"undislike",
+	"unlike",
+] as const)
 
-export default (
+const like = (
 	user: RecordId<"user">,
 	thing: RecordId<(typeof things)[number]>,
 	action: (typeof actions)[number]
-) => db.query(queries[action], { user, thing })
+) => db.query(queries[action], { thing, user })
+
+export default like

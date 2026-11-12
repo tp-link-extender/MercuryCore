@@ -2,17 +2,19 @@ import { error } from "@sveltejs/kit"
 import { membershipType } from "$lib/permissionLevels"
 import config from "$lib/server/config"
 import idToPort, { proxyOffset } from "$lib/server/idToPort"
+import { buildLoadscript, luaRaw } from "$lib/server/loadscript"
 import { toRawId } from "$lib/server/recordId"
 import { SignScript } from "$lib/server/sign"
 import { db, findWhere, Record } from "$lib/server/surreal"
+import type { RequestEvent } from "./$types"
 import joinQuery from "./join.surql"
 
-type ServerAddress = {
+interface ServerAddress {
 	serverHostname: string
 	serverPort: number
 }
 
-type Session = {
+interface Session {
 	place: {
 		id: number
 		dedicated: boolean
@@ -38,23 +40,32 @@ function serverInfo(place: Session["place"]): ServerAddress {
 	}
 }
 
-export async function GET({ url }) {
+const scriptHeaders = {
+	"Cache-Control": "no-store",
+	"Content-Type": "text/plain; charset=utf-8",
+	"X-Content-Type-Options": "nosniff",
+}
+
+export async function GET({ url }: RequestEvent) {
 	const clientTicket = url.searchParams.get("ticket")
-	const privateServer = url.searchParams.get("privateServer") as string
+	const privateServer = url.searchParams.get("privateServer")
 
 	if (!clientTicket) {
 		const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
-		const script = (await scriptFile.text())
-			.replaceAll("_PLACE_ID", "0")
-			.replaceAll("_SERVER_ADDRESS", `"localhost"`)
-			.replaceAll("_SERVER_PORT", "53640")
-			.replaceAll("_USER_ID", "0")
-			.replaceAll("_USERNAME", `"Player1"`)
-			.replaceAll("_MEMBERSHIP_TYPE", membershipType(0))
-			.replaceAll("_CHAR_APPEARANCE", `""`)
-			.replaceAll("_PING_URL", `""`)
+		const script = buildLoadscript(await scriptFile.text(), {
+			CHAR_APPEARANCE: "",
+			MEMBERSHIP_TYPE: luaRaw(membershipType(0)),
+			PING_URL: "",
+			PLACE_ID: 0,
+			SERVER_ADDRESS: "localhost",
+			SERVER_PORT: 53640,
+			USER_ID: 0,
+			USERNAME: "Player1",
+		})
 
-		return new Response(await SignScript(script))
+		return new Response(await SignScript(script), {
+			headers: scriptHeaders,
+		})
 	}
 
 	const foundPrivatePlace = await findWhere(
@@ -76,16 +87,16 @@ export async function GET({ url }) {
 	const charApp = `http://${config.DomainInsecure}/asset/characterfetch/${user.username}`
 	const pingUrl = `http://${config.DomainInsecure}/game/clientpresence?ticket=${clientTicket}`
 	const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
-	const script = (await scriptFile.text())
-		.replaceAll("_PLACE_ID", toRawId(place.id))
-		.replaceAll("_SERVER_ADDRESS", `"${serverHostname}"`)
-		.replaceAll("_SERVER_PORT", serverPort.toString())
-		// .replaceAll("_CREATOR_ID", creatorUsername)
-		.replaceAll("_USER_ID", Math.floor(Math.random() * 1e9).toString()) // todo: tho not rly used 4 much atm
-		.replaceAll("_USERNAME", `"${user.username}"`)
-		.replaceAll("_MEMBERSHIP_TYPE", membershipType(user.permissionLevel))
-		.replaceAll("_CHAR_APPEARANCE", `"${charApp}"`)
-		.replaceAll("_PING_URL", `"${pingUrl}"`)
+	const script = buildLoadscript(await scriptFile.text(), {
+		CHAR_APPEARANCE: charApp,
+		MEMBERSHIP_TYPE: luaRaw(membershipType(user.permissionLevel)),
+		PING_URL: pingUrl,
+		PLACE_ID: luaRaw(toRawId(place.id)),
+		SERVER_ADDRESS: serverHostname,
+		SERVER_PORT: serverPort,
+		USER_ID: Math.floor(Math.random() * 1e9), // todo: tho not rly used 4 much atm
+		USERNAME: user.username,
+	})
 
-	return new Response(await SignScript(script))
+	return new Response(await SignScript(script), { headers: scriptHeaders })
 }

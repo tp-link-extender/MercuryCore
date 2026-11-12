@@ -7,20 +7,21 @@ import { db, type RecordId } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { usernameTest } from "$lib/typeTests"
 import accountRegistered from "../accountRegistered"
+import type { Actions } from "./$types"
 import userQuery from "./user.surql"
 
 const schema = type({
-	username: usernameTest,
 	password: "1 <= string <= 6969",
+	username: usernameTest,
 })
 
 export const load = async () => ({
+	descriptions: Object.entries(config.Branding.Descriptions),
 	form: await superValidate(arktype(schema)),
 	users: await accountRegistered(),
-	descriptions: Object.entries(config.Branding.Descriptions),
 })
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.default = async ({ cookies, request }) => {
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)

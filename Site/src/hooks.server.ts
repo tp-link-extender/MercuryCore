@@ -1,9 +1,9 @@
 // "'Hooks' are app-wide functions you declare that SvelteKit will call in response to specific events, giving you fine-grained control over the framework's behaviour."
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
-import { type Handle, redirect } from "@sveltejs/kit"
+import { type Handle, type HandleServerError, redirect } from "@sveltejs/kit"
 import { stipend } from "economy/api"
-import * as Econ from "economy/types"
+import { User as EconUser } from "economy/types"
 import pc from "picocolors"
 import {
 	cookieName,
@@ -15,20 +15,20 @@ import { db, Record } from "$lib/server/surreal"
 import moderatedQuery from "./moderated.surql"
 
 const { magenta, red, yellow, green, blue, gray } = pc
-const methodColours = Object.freeze({
+const methodColours: { [_: string]: string } = Object.freeze({
 	GET: green("GET"),
 	POST: yellow("POST"),
 })
 const pathnameColours = Object.freeze({
+	admin: red,
 	api: green,
 	download: yellow,
+	login: blue,
 	moderation: yellow,
+	place: magenta,
+	register: blue,
 	report: yellow,
 	statistics: yellow,
-	register: blue,
-	login: blue,
-	place: magenta,
-	admin: red,
 })
 
 function pathnameColour(pathname: string) {
@@ -52,7 +52,7 @@ async function finish({ event, resolve }: Parameters<Handle>[0]) {
 
 	if (config.Logging.Requests) {
 		// Fancy logging: time(?), user, method, and path
-		const method = event.request.method as keyof typeof methodColours
+		const { method } = event.request
 		console.log(
 			time(),
 			userLog(user),
@@ -81,15 +81,15 @@ async function finish({ event, resolve }: Parameters<Handle>[0]) {
 	res.headers.delete("content-length") // prevent cutoff, since the body was modified
 
 	return new Response(text, {
+		headers: res.headers,
 		status: res.status,
 		statusText: res.statusText,
-		headers: res.headers,
 	})
 }
 
 // Ran every time a dynamic request is made.
 // Requests for prerendered pages do not trigger this hook.
-export async function handle(e) {
+export async function handle(e: Parameters<Handle>[0]) {
 	const { event } = e
 
 	const token = event.cookies.get(cookieName)
@@ -98,11 +98,11 @@ export async function handle(e) {
 		event.locals.user = null
 		event.cookies.delete(cookieName, { path: "/" })
 
-		return await finish(e)
+		return finish(e)
 	}
 
 	const { session, user } = await validateSessionToken(token)
-	if (!session || !user) return await finish(e)
+	if (!session || !user) return finish(e)
 
 	event.locals.session = session
 	event.locals.user = user
@@ -121,24 +121,24 @@ export async function handle(e) {
 		redirect(302, "/moderation")
 
 	try {
-		await stipend(e.event.fetch, new Econ.User(user.id))
+		await stipend(e.event.fetch, new EconUser(user.id))
 	} catch {
 		console.error("Stipend failed to process")
 	}
 
-	return await finish(e)
+	return finish(e)
 }
 
-export async function handleError({ error }) {
+export function handleError({ error }: Parameters<HandleServerError>[0]) {
 	if (typeof error === "object" && error != null) {
-		const status = (error as { status?: number }).status
+		const { status } = error as { status?: number }
 		if (status) {
-			console.error(status, red(error.toString()))
+			console.error(status, red(JSON.stringify(error) ?? ""))
 			return
 		}
 	}
 
 	// Simple error logging (not a stack trace)
 	if (!config.Logging.FormattedErrors) console.error(error)
-	else console.error(red(error as string))
+	else console.error(red(String(error)))
 }

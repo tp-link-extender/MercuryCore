@@ -1,5 +1,4 @@
 import { type } from "arktype"
-import { ThrownError } from "surrealdb"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
@@ -11,15 +10,16 @@ import {
 	superValidate,
 } from "$lib/server/validate"
 import { usernameTest } from "$lib/typeTests"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import updatePasswordQuery from "./updatePassword.surql"
 import usersQuery from "./users.surql"
 
 const schema = type({
-	username: usernameTest,
 	password: "1 <= string <= 6969",
+	username: usernameTest,
 })
 
-export async function load({ locals }) {
+export async function load({ locals }: PageServerLoadEvent) {
 	await authorise(locals, 4)
 
 	const [users] = await db.query<BasicUser[][]>(usersQuery)
@@ -30,7 +30,7 @@ export async function load({ locals }) {
 	}
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.changePassword = async ({ locals, request, getClientAddress }) => {
 	const { user } = await authorise(locals, 5)
 	const form = await superValidate(request, arktype(schema))
@@ -45,7 +45,7 @@ actions.changePassword = async ({ locals, request, getClientAddress }) => {
 	try {
 		const [, ok] = await db.query<boolean[]>(updatePasswordQuery, {
 			npassword: Bun.password.hashSync(password),
-			username: username,
+			username,
 		})
 		if (!ok) return errMessage(form, "No user found with given username")
 	} catch (e) {

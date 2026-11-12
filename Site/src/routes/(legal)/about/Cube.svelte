@@ -8,7 +8,7 @@
 		j,
 		onmoved,
 		onclicked
-	}: { i: number; j: number; onmoved: () => void; onclicked: () => void } =
+	}: { i: number; j: number; onmoved(): void; onclicked(): void } =
 		$props()
 
 	const opacity = new Spring(0)
@@ -17,8 +17,8 @@
 	})
 	const clicked = new Map<string, "hovered" | "clicked">()
 	const scale = new Spring(0, {
-		stiffness: 0.1,
-		damping: 1
+		damping: 1, 
+		stiffness: 0.1
 	})
 
 	let colour = new Tween(

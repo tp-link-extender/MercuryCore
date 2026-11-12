@@ -17,7 +17,7 @@ export type RenderType =
 	| "RightLeg"
 export type Status = "Pending" | "Rendering" | "Completed" | "Error"
 
-type Render = {
+interface Render {
 	status: Status
 }
 
@@ -28,7 +28,7 @@ type Render = {
  * @param relativeName If "Avatar", the name of the user to render their avatar.
  * @param wait Whether to wait for the render to be completed before resolving.
  */
-export default async function (
+export default async function requestRender(
 	f: typeof globalThis.fetch,
 	renderType: RenderType,
 	relativeId: string | number,
@@ -39,7 +39,8 @@ export default async function (
 	// 	`Requesting render of type ${renderType} for ${relativeId} (${relativeName})`
 	// )
 
-	const params = Object.freeze({ renderType, relativeId })
+	const params = Object.freeze({ relativeId, renderType })
+	// oxlint-disable-next-line unicorn/no-unreadable-array-destructuring -- query returns [result, error, value]
 	const [, , render] = await db.query<Render[]>(renderQuery, params)
 	if (render && render.status !== "Error") return
 
@@ -63,14 +64,16 @@ export default async function (
 	// if it does exist, wait for it to be modified
 	const waiter =
 		wait &&
+		// Wrapping the watcher callback in a promise is the simplest way to await it
+		// oxlint-disable-next-line promise/avoid-new
 		new Promise<void>(resolve => {
 			// console.log(`Waiting for render file at ${path}`)
 			try {
 				const watcher = fs.watch(path, (_, filename) => {
-					if (!filename?.startsWith(relativeId.toString())) {
+					if (!filename?.startsWith(relativeId.toString()))
 						// console.log(`Ignoring change to ${filename}`)
 						return
-					}
+
 					watcher.close()
 					// console.log("Watcher detected change!")
 					resolve()
@@ -99,8 +102,8 @@ export default async function (
 			waiter,
 			// Uhh carrot just got the
 			f(`${config.RCCServiceProxyURL}/${renderId}`, {
-				method: "post",
 				body: script,
+				method: "post",
 			}),
 		])
 	} catch (e) {

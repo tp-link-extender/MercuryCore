@@ -1,8 +1,9 @@
 import { authorise } from "$lib/server/auth"
 import { db } from "$lib/server/surreal"
+import type { PageServerLoadEvent } from "./$types"
 import reportsQuery from "./reports.surql"
 
-type Report = {
+interface Report {
 	category: string
 	id: string
 	note: string
@@ -12,7 +13,7 @@ type Report = {
 	url: string
 }
 
-export async function load({ locals }) {
+export async function load({ locals }: PageServerLoadEvent) {
 	await authorise(locals, 5)
 
 	const [reports] = await db.query<Report[][]>(reportsQuery)

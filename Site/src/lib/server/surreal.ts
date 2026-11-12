@@ -1,9 +1,4 @@
-import {
-	type Query,
-	Surreal,
-	RecordId as SurrealRecordId,
-	Table,
-} from "surrealdb"
+import { Surreal, RecordId as SurrealRecordId, Table } from "surrealdb"
 import { building } from "$app/environment"
 import config from "$lib/server/config"
 import initQuery from "$lib/server/init.surql"
@@ -24,7 +19,7 @@ if (!building) {
 		}
 	if (config.Economy.AutoStart)
 		try {
-			startEconomy()
+			void startEconomy()
 		} catch (e) {
 			console.log(e)
 			console.error(
@@ -34,7 +29,7 @@ if (!building) {
 		}
 }
 
-await new Promise(resolve => setTimeout(resolve, 500))
+await Bun.sleep(500)
 
 export const db = new Surreal({
 	codecOptions: {
@@ -49,19 +44,22 @@ const retriable = "This transaction can be retried"
 
 // oof
 // also bad types but who cares
-db.query = async <R extends unknown[]>(
+const retryQuery = async <R extends unknown[]>(
 	query: string,
-	bindings?: Record<string, unknown>
-): Query<R> => {
+	bindings?: { [_: string]: unknown }
+) => {
 	try {
-		return await ogq(query, bindings)
+		return await ogq<R>(query, bindings)
 	} catch (err) {
-		const e = err as Error
-		if (!e.message.endsWith(retriable)) throw e
-		console.log("Retrying query:", e.message)
+		if (!(err instanceof Error) || !err.message.endsWith(retriable))
+			throw err
+		console.log("Retrying query:", err.message)
 	}
-	return await db.query(query, bindings)
+	return ogq<R>(query, bindings)
 }
+
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion
+db.query = retryQuery as unknown as typeof db.query
 
 export const version = db.version.bind(db)
 
@@ -73,24 +71,26 @@ async function reconnect() {
 			await db.close() // doesn't do anything if not connected
 			console.log("connecting to database")
 			await db.connect(url, {
-				namespace: "main",
-				database: "main",
 				authentication: {
-					username: "root", // security B)
 					password: "root",
+					username: "root", // security B)
 				},
+				database: "main",
+				namespace: "main",
 			})
 			console.log("reloaded", (await version()).version)
 			break
 		} catch (err) {
-			const e = err as Error
-			console.error("Failed to connect to database:", e.message)
+			console.error(
+				"Failed to connect to database:",
+				err instanceof Error ? err.message : err
+			)
 			if (attempt === 4)
 				console.log(
 					`Multiple connection attempts failed. Make sure the database is running, either locally or in a container, and is accessible at ${url}.`
 				)
 			console.log("Retrying connection in 1 second...")
-			await new Promise(resolve => setTimeout(resolve, 1000))
+			await Bun.sleep(1000)
 		}
 }
 
@@ -100,7 +100,7 @@ if (!building) {
 	logo()
 }
 
-type RecordIdTypes = {
+interface RecordIdTypes {
 	asset: number
 	auditLog: string
 	banner: string

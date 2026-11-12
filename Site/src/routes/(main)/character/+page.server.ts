@@ -1,7 +1,11 @@
 import { error, fail } from "@sveltejs/kit"
 import { inventory, ownsOne } from "economy/api"
 import type { ItemsOne } from "economy/items"
-import * as Econ from "economy/types"
+import {
+	Package as EconPackage,
+	UnlimitedAsset as EconUnlimitedAsset,
+	User as EconUser,
+} from "economy/types"
 import { brickColours } from "$lib/brickColours"
 import { assetRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/auth"
@@ -10,6 +14,7 @@ import { packageItems } from "$lib/server/packageItems"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { db, Record } from "$lib/server/surreal"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import type { RequestEvent } from "./$types.d"
 import assetsQuery from "./assets.surql"
 import equipQuery from "./equip.surql"
@@ -39,7 +44,11 @@ const bodyParts = Object.freeze([
 	"Torso",
 ])
 
-export type Asset = {
+type BodyPart = keyof User["bodyColours"]
+const isBodyPart = (part: string): part is BodyPart =>
+	bodyParts.some(bodyPart => bodyPart === part)
+
+export interface Asset {
 	id: number
 	name: string
 	price: number
@@ -47,7 +56,7 @@ export type Asset = {
 	wearing: boolean
 }
 
-type AssetData = {
+interface AssetData {
 	id: number
 	type: number
 	visibility: string
@@ -56,32 +65,32 @@ type AssetData = {
 const ownedAssetIds = (items: ItemsOne) =>
 	[...items.set]
 		.filter(
-			i => i instanceof Econ.UnlimitedAsset || i instanceof Econ.Package
+			i => i instanceof EconUnlimitedAsset || i instanceof EconPackage
 		)
 		.map(i => i.ID)
 
 async function getOwnedAssetIds(f: typeof globalThis.fetch, userId: string) {
-	const inv = await inventory(f, new Econ.User(userId))
+	const inv = await inventory(f, new EconUser(userId))
 	if (!inv.ok) error(500, economyConnFailed)
 
 	return ownedAssetIds(inv.value.One)
 }
 
-type WornAsset = {
+interface WornAsset {
 	id: number
 	worn: boolean
 }
 
-export async function load({ fetch: f, locals }) {
+export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 	const ids = await getOwnedAssetIds(f, user.id)
 
 	if (ids.length === 0) return { assets: [] }
 
 	const [assets] = await db.query<Asset[][]>(assetsQuery, {
+		allowedTypes,
 		assets: ids.map(id => Record("asset", id)),
 		user: Record("user", user.id),
-		allowedTypes,
 	})
 
 	// A package counts as worn when every item inside it is worn, so that
@@ -95,7 +104,7 @@ export async function load({ fetch: f, locals }) {
 				i.visibility === "Visible" &&
 				packageWearable.includes(i.type)
 		)
-		if (items.length) {
+		if (items.length > 0) {
 			contents.set(
 				asset.id,
 				items.map(i => i.id)
@@ -104,7 +113,7 @@ export async function load({ fetch: f, locals }) {
 		}
 	}
 
-	if (wearables.length) {
+	if (wearables.length > 0) {
 		const [worn] = await db.query<WornAsset[][]>(wornQuery, {
 			ids: wearables,
 			user: Record("user", user.id),
@@ -125,7 +134,7 @@ async function getEquipData(e: RequestEvent) {
 
 	if (!assetId) error(400, "Missing asset ID")
 	if (!assetRegex.test(assetId)) error(400, `Invalid asset ID: ${assetId}`)
-	const id = +assetId
+	const id = Number(assetId)
 
 	const limit = ratelimit(null, "equip", e.getClientAddress, 2)
 	if (limit) return { error: limit }
@@ -136,9 +145,9 @@ async function getEquipData(e: RequestEvent) {
 	if (!asset) error(404, "Item not found")
 
 	// packages are their own item type in the ledger, so ownership has to be checked against Package rather than UnlimitedAsset
-	const o = new Econ.User(user.id)
+	const o = new EconUser(user.id)
 	const i =
-		asset.type === 32 ? new Econ.Package(id) : new Econ.UnlimitedAsset(id)
+		asset.type === 32 ? new EconPackage(id) : new EconUnlimitedAsset(id)
 	const owns = await ownsOne(e.fetch, o, i)
 	if (!owns.ok) {
 		console.error("ownsOne failed")
@@ -151,7 +160,7 @@ async function getEquipData(e: RequestEvent) {
 	if (asset.visibility !== "Visible")
 		error(400, "This item hasn't been approved yet")
 
-	return { user, id, asset }
+	return { asset, id, user }
 }
 
 async function rerender(f: typeof globalThis.fetch, user: User) {
@@ -169,26 +178,26 @@ async function rerender(f: typeof globalThis.fetch, user: User) {
 async function paint({ fetch: f, locals, url }: RequestEvent) {
 	const { user } = await authorise(locals)
 	const bodyPartQuery = url.searchParams.get("p")
-	const bodyColour = url.searchParams.get("c") as string
+	const bodyColour = url.searchParams.get("c")
 
 	if (
 		!bodyPartQuery ||
 		!bodyColour ||
-		!(brickColours as readonly number[]).includes(+bodyColour) ||
-		!bodyParts.includes(bodyPartQuery)
+		!(brickColours as readonly number[]).includes(Number(bodyColour)) ||
+		!isBodyPart(bodyPartQuery)
 	)
 		return fail(400)
 
-	const bodyPart = bodyPartQuery as keyof typeof user.bodyColours
+	const bodyPart = bodyPartQuery
 	const currentColours = user.bodyColours
 
-	currentColours[bodyPart] = +bodyColour
+	currentColours[bodyPart] = Number(bodyColour)
 
 	await db
 		.update(Record("user", user.id))
 		.merge({ bodyColours: currentColours })
 
-	return await rerender(f, user)
+	return rerender(f, user)
 }
 async function regen({ fetch: f, locals, getClientAddress }: RequestEvent) {
 	const { user } = await authorise(locals)
@@ -196,11 +205,11 @@ async function regen({ fetch: f, locals, getClientAddress }: RequestEvent) {
 	const limit = ratelimit(null, "regen", getClientAddress, 2)
 	if (limit) return limit
 
-	return await rerender(f, user)
+	return rerender(f, user)
 }
 async function equip(e: RequestEvent) {
-	const { user, id, asset, error } = await getEquipData(e)
-	if (error) return error
+	const { user, id, asset, error: dataError } = await getEquipData(e)
+	if (dataError) return dataError
 
 	// Packages simply equip the user with every item inside them
 	if (asset.type === 32) {
@@ -211,7 +220,7 @@ async function equip(e: RequestEvent) {
 				i.visibility === "Visible" &&
 				packageWearable.includes(i.type)
 		)
-		if (children.length < 1)
+		if (children.length === 0)
 			return fail(400, { msg: "This package has no items to equip" })
 
 		await db.query(equipPackageQuery, {
@@ -227,7 +236,7 @@ async function equip(e: RequestEvent) {
 			user: Record("user", user.id),
 		})
 
-		return await rerender(e.fetch, user)
+		return rerender(e.fetch, user)
 	}
 
 	// Find if there's more than 3 hats equipped, throw an error if there is
@@ -240,16 +249,16 @@ async function equip(e: RequestEvent) {
 	}
 
 	await db.query(equipQuery, {
-		user: Record("user", user.id),
 		asset: Record("asset", id),
+		user: Record("user", user.id),
 		...(oneEquippable.includes(asset.type) ? asset : {}),
 	})
 
-	return await rerender(e.fetch, user)
+	return rerender(e.fetch, user)
 }
 async function unequip(e: RequestEvent) {
-	const { user, id, asset, error } = await getEquipData(e)
-	if (error) return error
+	const { user, id, asset, error: dataError } = await getEquipData(e)
+	if (dataError) return dataError
 
 	// Unequipping a package unequips everything inside it
 	if (asset.type === 32) {
@@ -268,19 +277,19 @@ async function unequip(e: RequestEvent) {
 			user: Record("user", user.id),
 		})
 
-		return await rerender(e.fetch, user)
+		return rerender(e.fetch, user)
 	}
 
 	await db.query(unequipQuery, {
-		user: Record("user", user.id),
 		asset: Record("asset", id),
+		user: Record("user", user.id),
 	})
 
-	return await rerender(e.fetch, user)
+	return rerender(e.fetch, user)
 }
-export const actions: import("./$types").Actions = {
+export const actions: Actions = {
+	equip,
 	paint,
 	regen,
-	equip,
 	unequip,
 }

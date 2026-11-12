@@ -2,6 +2,7 @@
 
 import { error } from "@sveltejs/kit"
 import { db, type RecordId } from "$lib/server/surreal"
+import type { PageServerLoadEvent } from "./$types"
 import followersQuery from "./followers.surql"
 import followingQuery from "./following.surql"
 import friendsQuery from "./friends.surql"
@@ -10,13 +11,17 @@ import userQuery from "./user.surql"
 // "$id->friends->user OR $id<-friends<-user" doesn't work
 // "$id<->friends<->user" shows yourself in the list (twice)
 const queries = Object.freeze({
-	friends: friendsQuery,
 	followers: followersQuery,
 	following: followingQuery,
+	friends: friendsQuery,
 })
 
-export async function load({ params }) {
-	const type = params.f as keyof typeof queries
+const isQueryType = (type: string): type is keyof typeof queries =>
+	type in queries
+
+export async function load({ params }: PageServerLoadEvent) {
+	const type = params.f
+	if (!isQueryType(type)) error(404, "Not Found")
 	const [[user]] = await db.query<{ id: RecordId<"user"> }[][]>(
 		userQuery,
 		params
@@ -27,8 +32,8 @@ export async function load({ params }) {
 
 	return {
 		...params,
-		f: params.f as keyof typeof queries,
-		users,
 		count,
+		f: type,
+		users,
 	}
 }

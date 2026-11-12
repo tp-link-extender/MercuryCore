@@ -2,7 +2,7 @@ import fs from "node:fs"
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { createPackageSource, createUnlimitedSource } from "economy/api"
-import * as Econ from "economy/types"
+import { User as EconUser, type UnlimitedSource } from "economy/types"
 import types, { typeToNumber } from "$lib/assetTypes"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
@@ -11,10 +11,15 @@ import { db } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { isXML } from "$lib/server/xml"
 import { encode } from "$lib/urlName"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import createQuery from "./create.surql"
 import createPackageQuery from "./createPackage.surql"
 
 const schema = type({
+	asset: "File | undefined",
+	description: "(string <= 1000) | undefined",
+	name: "3 <= string <= 50",
+	price: "0 <= number.integer <= 999",
 	type: type
 		.enumerated(...Object.values(types))
 		// TODO: compare with the other method in normal creation flow
@@ -26,15 +31,11 @@ const schema = type({
 		.configure({
 			problem: "must be a valid asset type",
 		}),
-	name: "3 <= string <= 50",
-	description: "(string <= 1000) | undefined",
-	price: "0 <= number.integer <= 999",
-	asset: "File | undefined",
 })
 
 const packageSchema = type({
-	name: "3 <= string <= 50",
 	description: "(string <= 1000) | undefined",
+	name: "3 <= string <= 50",
 	price: "0 <= number.integer <= 999",
 })
 
@@ -56,7 +57,7 @@ const slotLimits: Readonly<{ [_: number]: number }> = Object.freeze({
 	31: 1,
 })
 
-export async function load({ locals }) {
+export async function load({ locals }: PageServerLoadEvent) {
 	await authorise(locals, 3)
 
 	return {
@@ -64,7 +65,7 @@ export async function load({ locals }) {
 	}
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.default = async ({ fetch: f, locals, request }) => {
 	const { user } = await authorise(locals, 3)
 	const formData = await request.formData()
@@ -78,6 +79,7 @@ actions.default = async ({ fetch: f, locals, request }) => {
 
 	const { data } = form
 	const { asset, description, name, price, type: assetType } = data
+	// oxlint-disable-next-line typescript/no-unsafe-type-assertion
 	form.data.asset = null as unknown as File // make sure to return as a POJO
 
 	if (!(asset instanceof File) || asset.size === 0)
@@ -91,7 +93,7 @@ actions.default = async ({ fetch: f, locals, request }) => {
 	// if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
 	// if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
 
-	const u = new Econ.User(user.id)
+	const u = new EconUser(user.id)
 	// TODO: allow without requiring currency
 	const created = await createUnlimitedSource(f, u)
 	if (!created.ok)
@@ -100,11 +102,11 @@ actions.default = async ({ fetch: f, locals, request }) => {
 	const id = created.value.ID
 
 	await db.query<string[]>(createQuery, {
-		id,
+		assetType,
 		description,
+		id,
 		name,
 		price,
-		assetType,
 	})
 
 	await Bun.write(`../data/assets/${id}`, buf)
@@ -121,12 +123,12 @@ actions.default = async ({ fetch: f, locals, request }) => {
 	redirect(302, `/catalog/${id}`)
 }
 
-type PackageChild = {
-	id: number
+interface PackageChild {
 	description: string
+	file: File
+	id: number
 	name: string
 	type: number
-	file: File
 }
 
 async function createPackage(
@@ -149,7 +151,7 @@ async function createPackage(
 	const typeNames = (
 		formData.getAll("childType") as FormDataEntryValue[]
 	).map(String)
-	const files = formData.getAll("childAsset") as File[]
+	const files = formData.getAll("childAsset")
 
 	// every asset in a package needs a name, description, type and file
 	if (names.length < 2)
@@ -162,8 +164,8 @@ async function createPackage(
 		return fail("Package contents must be complete")
 
 	const children: PackageChild[] = []
-	for (const [num, name] of names.entries()) {
-		if (name.length < 3 || name.length > 50)
+	for (const [num, childName] of names.entries()) {
+		if (childName.length < 3 || childName.length > 50)
 			return fail(
 				`Asset #${num + 1} name must be between 3 and 50 characters`
 			)
@@ -187,11 +189,11 @@ async function createPackage(
 			return fail("Face assets must be in XML format")
 
 		children.push({
-			id: 0, // assigned below, from the Economy service
 			description: descriptions[num] ?? "",
-			name,
-			type: assetType,
 			file,
+			id: 0, // assigned below, from the Economy service
+			name: childName,
+			type: assetType,
 		})
 	}
 
@@ -209,8 +211,8 @@ async function createPackage(
 	}
 
 	// Asset ids come from the Economy service, so a package's contents are owned there and can only ever be sold as part of the bundle. Every child needs its own unlimited source, and the package needs a package source holding all of them.
-	const u = new Econ.User(user.id)
-	const comps: Econ.UnlimitedSource[] = []
+	const u = new EconUser(user.id)
+	const comps: UnlimitedSource[] = []
 	for (const [num, child] of children.entries()) {
 		const created = await createUnlimitedSource(f, u)
 		if (!created.ok)

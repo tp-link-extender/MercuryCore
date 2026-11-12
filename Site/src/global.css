@@ -35,25 +35,25 @@
 }
 
 code {
-	font-size: 1rem;
 	font-family: Azeret, monospace;
+	font-size: 1rem;
 	font-feature-settings: "ss09", "ss12", "ss15", "ss16";
-	word-wrap: break-word;
 	color: #d63384;
+	word-wrap: break-word;
 }
 
 p {
-	margin: 0;
 	padding-bottom: 1rem;
+	margin: 0;
 }
 
 body {
-	background: var(--background);
-	margin: 0;
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
+	margin: 0;
 	line-height: 1.5;
+	background: var(--background);
 }
 
 main {
@@ -103,8 +103,8 @@ h1 {
 }
 
 textarea {
-	resize: vertical;
 	font-family: inherit;
+	resize: vertical;
 }
 
 fieldset {
@@ -133,8 +133,8 @@ input {
 	font-family: inherit;
 
 	&[disabled] {
-		opacity: 0.6;
 		cursor: not-allowed;
+		opacity: 0.6;
 	}
 }
 
@@ -161,13 +161,16 @@ a:hover:not(.btn):not(.light-text) {
 }
 
 a:hover.light-text {
+	/* biome-ignore lint/complexity/noImportantStyles: overrides UnoCSS text utilities */
 	color: var(--grey-text) !important;
 }
 
 .bg-background {
+	/* biome-ignore lint/complexity/noImportantStyles: overrides UnoCSS background utilities */
 	background: var(--background) !important;
 }
 .bg-darker {
+	/* biome-ignore lint/complexity/noImportantStyles: overrides UnoCSS background utilities */
 	background: var(--darker) !important;
 }
 .bg-a {
@@ -181,6 +184,11 @@ a:hover.light-text {
 }
 .bg-a3 {
 	background: var(--accent3);
+}
+
+p,
+span {
+	color: var(--light-text);
 }
 
 a.light-text,
@@ -201,20 +209,20 @@ img[src^="/api/avatar"] {
 }
 
 ::-webkit-scrollbar {
-	width: 0.8rem;
-	height: 0.8rem;
 	position: absolute;
 	z-index: 1;
+	width: 0.8rem;
+	height: 0.8rem;
 }
 ::-webkit-scrollbar-track,
 ::-webkit-scrollbar-corner {
 	background: var(--accent);
 }
 ::-webkit-scrollbar-thumb {
-	border-radius: 1rem;
+	width: 0.5rem;
 	background: var(--background);
 	border: 0.15rem solid var(--accent);
-	width: 0.5rem;
+	border-radius: 1rem;
 	&:hover {
 		background: var(--accent3);
 	}
@@ -231,26 +239,21 @@ img[src^="/api/avatar"] {
 }
 
 .btn {
-	@apply transition no-underline bg-transparent;
+	display: inline-block;
+	padding: 0.7rem 1rem;
+	font-size: 0.9rem;
+	cursor: pointer;
 	outline: transparent;
 	border: 1px solid transparent;
-	display: inline-block;
-	font-size: 0.9rem;
 	border-radius: var(--rounding);
-	cursor: pointer;
-	padding: 0.7rem 1rem;
+	@apply transition no-underline bg-transparent;
 }
 
 .btn-sm {
-	font-size: 0.8rem;
 	padding: 0.25rem 0.5rem;
-	border-radius: 0.25rem;
+	font-size: 0.8rem;
 	font-weight: 400;
-}
-
-p,
-span {
-	color: var(--light-text);
+	border-radius: 0.25rem;
 }
 
 .form-select {
@@ -259,43 +262,40 @@ span {
 }
 
 .btn-primary {
-	background: hsl(var(--hue) 85 55);
 	--un-ring-color: hsl(var(--hue) 75 55);
+	background: hsl(var(--hue) 85 55);
 	&:hover:not(:disabled),
 	&:focus:not(:active):not(:disabled) {
 		background: hsl(var(--hue) 100 60);
 	}
 }
 .btn-secondary {
+	--un-ring-color: hsl(var(--hue) 75 55);
 	background: hsl(var(--hue) 66 15);
 	border-color: hsl(var(--hue) 100 60);
-	--un-ring-color: hsl(var(--hue) 75 55);
 	&:hover:not(:disabled),
 	&:focus:not(:active):not(:disabled) {
 		background: hsl(var(--hue) 65 20);
 		border-color: hsl(var(--hue) 100 60);
 	}
 }
-.input-group > .btn-secondary {
-	@apply border-l-0;
-}
 .btn-tertiary {
-	background: hsl(0 0 12%);
-	color: hsl(var(--hue) 100 66);
 	--un-ring-color: hsl(var(--hue) 75 55);
+	color: hsl(var(--hue) 100 66);
+	background: hsl(0 0 12%);
 	&:hover:not(:disabled),
 	&:focus:not(:active):not(:disabled) {
-		background: hsl(var(--hue) 55 20);
 		color: white;
+		background: hsl(var(--hue) 55 20);
 	}
 }
 .btn-quatenary {
-	color: hsl(var(--hue) 100 66);
 	--un-ring-color: hsl(var(--hue) 55 35);
+	color: hsl(var(--hue) 100 66);
 	&:hover:not(:disabled),
 	&:focus:not(:active):not(:disabled) {
-		background: hsl(0 0 10);
 		color: hsl(var(--hue) 100 70);
+		background: hsl(0 0 10);
 	}
 	&:active:not(:disabled) {
 		background: hsl(var(--hue) 66 15);
@@ -348,10 +348,10 @@ span {
 .btn-danger,
 .btn-light,
 .btn-dark {
-	@apply border-1 ring-offset-neutral-900;
 	transition:
 		all 0.3s,
 		box-shadow 0.15s;
+	@apply border-1 ring-offset-neutral-900;
 	&:active:not(:disabled) {
 		@apply ring-2;
 	}
@@ -373,11 +373,15 @@ span {
 	color: #fff;
 }
 
+.input-group > .btn-secondary {
+	@apply border-l-0;
+}
+
 /* Tables */
 
 table {
-	vertical-align: top;
 	margin-bottom: 0.5rem;
+	vertical-align: top;
 	& th,
 	& td {
 		padding: 0.5rem;
@@ -395,9 +399,9 @@ thead th {
 
 .ctnr {
 	max-width: 75rem;
-	margin: 0 auto;
-	padding-left: 1rem;
 	padding-right: 1rem;
+	padding-left: 1rem;
+	margin: 0 auto;
 }
 
 ul,
@@ -405,8 +409,8 @@ ol,
 dl,
 dd,
 dt {
-	margin: 0;
 	padding: 0;
+	margin: 0;
 }
 
 dd,
@@ -415,8 +419,8 @@ dt {
 }
 
 dt::after {
-	content: ":";
 	padding-right: 0.5rem;
+	content: ":";
 }
 
 summary {
@@ -433,12 +437,13 @@ details[open] summary {
 }
 
 .is-invalid {
-	border-color: hsl(354 70 55) !important;
 	padding-right: 2.2rem;
 	background-image: url(/invalid.svg);
 	background-repeat: no-repeat;
 	background-position: right 0.5rem center;
 	background-size: 1.2rem;
+	/* biome-ignore lint/complexity/noImportantStyles: overrides UnoCSS border utilities */
+	border-color: hsl(354 70 55) !important;
 }
 
 @keyframes checkmark {
@@ -458,14 +463,14 @@ input,
 textarea,
 select,
 .fakeselect {
-	background-color: var(--accent);
+	--un-ring-color: #5c29c2;
+	font-size: 0.875rem;
 	color: var(--light-text);
-	border: 1px solid var(--accent2);
 	appearance: none;
 	outline: transparent;
+	background-color: var(--accent);
+	border: 1px solid var(--accent2);
 	border-radius: var(--rounding);
-	font-size: 0.875rem;
-	--un-ring-color: #5c29c2;
 	@apply ring-offset-neutral-9;
 	@media (prefers-reduced-motion: no-preference) {
 		transition: box-shadow 0.15s ease-in-out;
@@ -483,11 +488,11 @@ select,
 .fakeselect {
 	width: 100%;
 	padding: 0.7rem 1rem;
+	cursor: pointer;
 	background-image: url(/select.svg);
 	background-repeat: no-repeat;
 	background-position: right 0.75rem center;
 	background-size: 1rem 0.75rem;
-	cursor: pointer;
 }
 
 .fakeselect {
@@ -495,11 +500,11 @@ select,
 }
 
 [data-melt-select-content] {
-	@apply m-0 border-none transition-opacity duration-300 rounded-xl p-2;
+	max-height: min(50vh, 20rem);
 	background: var(--darker);
 	filter: drop-shadow(0 10px 8px rgba(255, 255, 255, 0.04))
 		drop-shadow(0 0px 3px rgba(255, 255, 255, 0.1));
-	max-height: min(50vh, 20rem);
+	@apply m-0 border-none transition-opacity duration-300 rounded-xl p-2;
 
 	@starting-style {
 		opacity: 0;
@@ -507,18 +512,20 @@ select,
 	}
 
 	& ul {
-		list-style: none;
 		width: 10rem;
-		background: var(--darker);
 		margin: 0;
+		list-style: none;
+		background: var(--darker);
 	}
 
 	& a,
 	& button {
-		transition: background 0.2s !important;
 		width: 100%;
-		border: none;
+		/* biome-ignore lint/complexity/noImportantStyles: overrides UnoCSS/daisyUI dropdown styles */
 		text-align: start !important;
+		border: none;
+		/* biome-ignore lint/complexity/noImportantStyles: overrides UnoCSS/daisyUI dropdown styles */
+		transition: background 0.2s !important;
 	}
 
 	& a:hover,
@@ -527,6 +534,7 @@ select,
 	& button:focus,
 	& a[data-highlighted],
 	& button[data-highlighted] {
+		/* biome-ignore lint/complexity/noImportantStyles: overrides UnoCSS/daisyUI dropdown styles */
 		color: var(--grey-text) !important;
 		background: rgba(119, 51, 255, 0.5);
 	}
@@ -570,18 +578,18 @@ input[type="file"] {
 	}
 	/* ...and make our own */
 	&::before {
-		content: "Choose file";
 		display: inline-block;
 		padding: 0.7rem 1rem;
 		margin-right: 0.7rem;
+		content: "Choose file";
 		background-color: var(--background);
 		border-radius: var(--rounding) 0 0 var(--rounding);
 	}
 }
 
 input[type="checkbox"] {
-	height: 1.5rem;
 	width: 1.5rem;
+	height: 1.5rem;
 	cursor: pointer;
 
 	&:checked {
@@ -636,15 +644,15 @@ input[type="number"] {
 	}
 
 	& > input {
-		width: 1%;
 		flex: 1 1 auto;
+		width: 1%;
 	}
 }
 
 .alert {
-	@apply p-4 px-6 rounded-2;
-	border-width: 1px;
 	border-style: solid;
+	border-width: 1px;
+	@apply p-4 px-6 rounded-2;
 	&.alert-primary {
 		background: #2c145d;
 		border-color: #73f;
@@ -655,22 +663,22 @@ input[type="number"] {
 }
 
 [popover="auto"] {
-	@apply border-none transition-all duration-300 ease-in-out overflow-y-auto rounded-2 py-6;
-	background: var(--darker);
+	max-height: calc(100vh - 5rem);
 	outline: transparent;
+	background: var(--darker);
+	border: 1px solid var(--accent);
 	filter: drop-shadow(0 20px 13px rgba(255, 255, 255, 0.02))
 		drop-shadow(0 8px 5px rgba(255, 255, 255, 0.05));
-	max-height: calc(100vh - 5rem);
-	border: 1px solid var(--accent);
+	@apply border-none transition-all duration-300 ease-in-out overflow-y-auto rounded-2 py-6;
 	@starting-style {
 		opacity: 0;
 		translate: 0 2rem;
 	}
 
 	&::backdrop {
-		transition: all 0.3s;
 		background: black;
 		opacity: 0.5;
+		transition: all 0.3s;
 	}
 }
 
