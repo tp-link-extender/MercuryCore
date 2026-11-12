@@ -42,6 +42,15 @@ function pathnameColour(pathname: string) {
 const redact = (pathname: string) =>
 	pathname.startsWith("/recover/") ? "/recover/[redacted]" : pathname
 
+// Malformed percent-encoding (such as /%FF) makes decodeURI throw, so log the raw path instead
+function readablePath(pathname: string) {
+	try {
+		return decodeURI(pathname)
+	} catch {
+		return pathname
+	}
+}
+
 const time = () =>
 	config.Logging.Time ? gray(new Date().toLocaleString()) : ""
 
@@ -62,7 +71,7 @@ async function finish({ event, resolve }: Parameters<Handle>[0]) {
 			userLog(user),
 			methodColours[method] || method,
 			" ".repeat(7 - method.length),
-			pathnameColour(redact(decodeURI(pathname)) + search)
+			pathnameColour(redact(readablePath(pathname)) + search)
 		)
 	}
 
