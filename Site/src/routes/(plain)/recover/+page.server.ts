@@ -1,12 +1,14 @@
-import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { dev } from "$app/environment"
 import config from "$lib/server/config"
 import { sendEmail } from "$lib/server/email"
 import formError from "$lib/server/formError"
 import ratelimit from "$lib/server/ratelimit"
+import {
+	createRecoveryToken,
+	hashRecoveryToken,
+} from "$lib/server/recoveryToken"
 import { db } from "$lib/server/surreal"
-import { arktype, superValidate } from "$lib/server/validate"
+import { arktype, message, superValidate } from "$lib/server/validate"
 import type { Actions } from "./$types"
 import recoveryQuery from "./recovery.surql"
 
@@ -17,22 +19,15 @@ const schema = type({
 	}),
 })
 
-const cookieOptions = Object.freeze({
-	maxAge: 24 * 60 * 60, // 1 day
-	path: "", // only this route and /recover/code
-	secure: !dev,
-})
-
-// don't await because if it blocks then a user could tell whether a given email is registered or not
-const sendRecoveryEmail = (email: string, code: string) =>
+const sendRecoveryEmail = (email: string, token: string) =>
 	sendEmail(
 		email,
 		`${config.Name} - Account recovery`,
-		`We received a request to recover your ${config.Name} account. Enter the recovery code below on https://${config.Domain}/recover/code to reset your password. This code is valid for 24 hours, or until you recover your account, whichever is sooner.
+		`We received a request to recover your ${config.Name} account. Open the link below to reset your password. This link is valid for 1 hour, and can only be used once.
 
-${code}
+https://${config.Domain}/recover/${token}
 
-If you did not request this code, please ignore this email.
+If you did not request this, please ignore this email. Your password will not be changed.
 
 ${config.Name}
 https://${config.Domain}`
@@ -41,7 +36,7 @@ https://${config.Domain}`
 export const load = async () => ({ form: await superValidate(arktype(schema)) })
 
 export const actions: Actions = {}
-actions.default = async ({ cookies, request, getClientAddress }) => {
+actions.default = async ({ request, getClientAddress }) => {
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
 
@@ -49,10 +44,22 @@ actions.default = async ({ cookies, request, getClientAddress }) => {
 	if (limit) return limit
 
 	const { email } = form.data
-	cookies.set("recoverEmail", email, cookieOptions)
+	const token = createRecoveryToken()
 
-	const [, id, code] = await db.query<string[]>(recoveryQuery, { email })
-	if (id && code) await sendRecoveryEmail(email, code)
+	// oxlint-disable-next-line unicorn/no-unreadable-array-destructuring -- query returns [let, if, exists]
+	const [, , exists] = await db.query<boolean[]>(recoveryQuery, {
+		email,
+		hash: hashRecoveryToken(token),
+	})
 
-	redirect(302, "/recover/code")
+	// Not awaited, so the response time doesn't reveal whether an email address is registered
+	if (exists)
+		sendRecoveryEmail(email, token).catch((err: unknown) =>
+			console.error("Failed to send recovery email:", err)
+		)
+
+	return message(
+		form,
+		"If an account uses this email address, we've sent it a link to reset your password. The link is valid for 1 hour."
+	)
 }
