@@ -9,6 +9,10 @@ import {
 
 const encode = (value: string): string => Buffer.from(value).toString("base64")
 
+// data/ is gitignored, so the real host template is absent from a clean checkout such as CI. That test only runs where the template exists.
+const hostTemplatePath = "../data/server/loadscripts/host.lua"
+const hostTemplateExists = await Bun.file(hostTemplatePath).exists()
+
 describe("parseMapLocation", () => {
 	test("treats a missing or empty map as no map", () => {
 		expect(parseMapLocation(null)).toBe("")
@@ -108,22 +112,24 @@ describe("buildLoadscript", () => {
 		expect(script).toBe("local m=Enum.MembershipType.None")
 	})
 
-	test("fills the real host loadscript safely", async () => {
-		const template = await Bun.file(
-			"../data/server/loadscripts/host.lua"
-		).text()
-		const script = buildLoadscript(template, {
-			BASE_URL: "www.example.com",
-			MAP_LOCATION: "rbxasset://maps/CoolMap.rbxl",
-			SERVER_PORT: 53640,
-			SERVER_PRESENCE_URL: "http://www.example.com/game/serverpresence",
-		})
+	test.skipIf(!hostTemplateExists)(
+		"fills the real host loadscript safely",
+		async () => {
+			const template = await Bun.file(hostTemplatePath).text()
+			const script = buildLoadscript(template, {
+				BASE_URL: "www.example.com",
+				MAP_LOCATION: "rbxasset://maps/CoolMap.rbxl",
+				SERVER_PORT: 53640,
+				SERVER_PRESENCE_URL:
+					"http://www.example.com/game/serverpresence",
+			})
 
-		expect(script).not.toContain("_MAP_LOCATION")
-		expect(script).toContain(
-			'local k,l="www.example.com","rbxasset://maps/CoolMap.rbxl"'
-		)
-	})
+			expect(script).not.toContain("_MAP_LOCATION")
+			expect(script).toContain(
+				'local k,l="www.example.com","rbxasset://maps/CoolMap.rbxl"'
+			)
+		}
+	)
 
 	test("leaves unknown placeholders alone", () => {
 		expect(buildLoadscript("_UNKNOWN _G", {})).toBe("_UNKNOWN _G")
