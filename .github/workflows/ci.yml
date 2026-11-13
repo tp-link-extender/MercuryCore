@@ -1,0 +1,79 @@
+name: CI
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+
+concurrency:
+    group: ci-${{ github.ref }}
+    cancel-in-progress: true
+
+# Read-only: nothing here writes to the repository. The jobs read the checkout and report. Stated explicitly so the token cannot inherit a read-write default from an older repository or organisation.
+# Note: there is no database in CI, so nothing here may dial one.
+permissions:
+    contents: read
+
+jobs:
+    site:
+        name: Site (SvelteKit)
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        defaults:
+            run:
+                working-directory: Site
+        env:
+            # `.env` is gitignored, so these are supplied as placeholders. SvelteKit needs them when generating types and building, because the Site imports them from `$env/static/private`. Nothing here ever uses them to reach a real service.
+            RCC_KEY: ci-placeholder
+            OPEN_CLOUD_KEY: ci-placeholder
+        steps:
+            - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+            # No bun-version lookup: Site/package.json has no packageManager field, so the version is pinned here to match local dev (bun 1.4.4).
+            - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+              with:
+                  bun-version: 1.4.4
+
+            - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+              with:
+                  path: ~/.bun/install/cache
+                  key: bun-${{ runner.os }}-${{ hashFiles('Site/bun.lock') }}
+                  restore-keys: |
+                      bun-${{ runner.os }}-
+
+            # The Site depends on ../Economy/client through a file: dependency, so the whole repository has to be checked out, which the checkout above does.
+            - run: bun install --frozen-lockfile
+
+            # Generates `.svelte-kit/` (route types and `$env` declarations). It is gitignored, but the typecheck and Oxlint's type-aware rules both need it to resolve imports.
+            - run: bunx svelte-kit sync
+
+            # `bun check` is Bun's built-in typecheck over the Site's tsconfig. `svelte-check` is not used: svelte-check 4.x refuses to run with TypeScript 7 without the tsgo flag, so it cannot gate CI yet.
+            - name: Typecheck
+              run: bun check
+
+            # Hermetic: the tests cover pure libs only, so no database, no network, no secrets.
+            - name: Unit tests
+              run: bun test
+
+            - name: Build
+              env:
+                  CI: "true"
+              run: bun run build
+
+    economy:
+        name: Economy (Go)
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        defaults:
+            run:
+                working-directory: Economy
+        steps:
+            - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+            # The Go version comes from go.mod, the same one the Economy Dockerfile builds against.
+            - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+              with:
+                  go-version-file: Economy/go.mod
+                  cache-dependency-path: Economy/go.sum
+
+            - run: go vet ./...
+            # Hermetic: no test in the Economy reads the environment or dials a server, so no database, no network, no secrets.
+            - run: go test ./...

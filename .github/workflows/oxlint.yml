@@ -1,0 +1,70 @@
+name: Oxlint
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+
+# Shared with the Biome workflow: both rewrite files, and running them at the same time lets one push race the other. Queuing instead of cancelling means a fix run always sees the latest commit.
+concurrency:
+    group: lint-fixes-${{ github.ref }}
+    cancel-in-progress: false
+
+# This workflow rewrites files and commits the fixes, so it needs write access to repository contents.
+permissions:
+    contents: write
+
+jobs:
+    oxlint:
+        # The fixup push below would otherwise trigger another run that finds nothing to do.
+        if: github.actor != 'github-actions[bot]'
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        env:
+            # Placeholders for the `$env/static/private` keys, which `svelte-kit sync` needs to generate types. Same as the CI workflow.
+            RCC_KEY: ci-placeholder
+            OPEN_CLOUD_KEY: ci-placeholder
+        steps:
+            - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+              with:
+                  ref: ${{ github.head_ref || github.ref_name }}
+                  token: ${{ secrets.GITHUB_TOKEN }}
+            # Oxlint is a devDependency of the Site, so it has to come from Site/bun.lock rather than a floating `bunx oxlint` download. Its type-aware rules also need oxlint-tsgolint from the same install. The version is pinned because Site/package.json has no packageManager field.
+            - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+              with:
+                  bun-version: 1.4.4
+
+            - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+              with:
+                  path: ~/.bun/install/cache
+                  key: bun-${{ runner.os }}-${{ hashFiles('Site/bun.lock') }}
+                  restore-keys: |
+                      bun-${{ runner.os }}-
+
+            - name: Install
+              run: bun install --frozen-lockfile
+              working-directory: Site
+
+            # Type-aware linting reads the generated `.svelte-kit/` types. Without them, imports through those are `error` typed and the rules report them as "unsafe assignment of an error typed value" warnings. Same step as the CI workflow.
+            - name: Generate SvelteKit types
+              run: bunx svelte-kit sync
+              working-directory: Site
+
+            # The Economy is Go and the Docs have their own Biome setup, so Oxlint only applies to the Site, where Site/.oxlintrc.json lives. `--fix` applies Oxlint's safe fixes only. Suggestions are left alone because they can change behaviour.
+            - name: Apply Oxlint fixes
+              run: bunx oxlint --fix
+              working-directory: Site
+            - name: Commit fixes
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                  git add -A
+                  if ! git diff --cached --quiet; then
+                    git commit -m "Apply Oxlint fixes"
+                    git push
+                  fi
+
+            # Runs after the commit step so fixes that were applied are pushed even when something unfixable remains. This step then fails the job on whatever is left, since warnings are denied in Site/.oxlintrc.json.
+            - name: Check for remaining issues
+              run: bunx oxlint
+              working-directory: Site
