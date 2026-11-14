@@ -32,9 +32,13 @@ services:
     site:
         build: .
         ports:
-            - 4443:4443
+            # loopback only: Caddy on the host is the public entry point
+            - 127.0.0.1:4443:4443
         restart: unless-stopped
         environment:
+            # Caddy puts the client's address last in X-Forwarded-For, which is what ratelimits are keyed on
+            ADDRESS_HEADER: X-Forwarded-For
+            XFF_DEPTH: "1"
             ECONOMY_URL: http://economy:2009
             ECONOMY_KEY: ${ECONOMY_KEY:?set ECONOMY_KEY in a .env file next to compose.yml}
         depends_on:

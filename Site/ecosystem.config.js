@@ -6,7 +6,11 @@ module.exports = {
 		{
 			args: "./build",
 			env: {
-				HOST: "0.0.0.0",
+				// Caddy puts the client's address last in X-Forwarded-For, which is what ratelimits are keyed on
+				ADDRESS_HEADER: "X-Forwarded-For",
+				// Only Caddy should reach the Site, so don't listen on public interfaces
+				HOST: "127.0.0.1",
+				XFF_DEPTH: "1",
 			},
 			intperpreter: "none",
 			name: "Mercury",
