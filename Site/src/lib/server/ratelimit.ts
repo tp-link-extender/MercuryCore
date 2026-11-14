@@ -17,6 +17,27 @@ const limit = (form: Form) =>
 		? message(form, "Too many requests", { status: 429 })
 		: fail(429, { msg: "Too many requests" })
 
+/** Like `ratelimit`, but counts requests under a key chosen by the caller, such as a username, instead of the client's address.
+ * @param form The superForm object sent by the client. Can be null, in which case a fail object is returned.
+ * @param category The category to ratelimit by.
+ * @param key What to count requests by within the category.
+ * @param timeWindow The length of the time window in seconds.
+ * @param maxRequests The maximum number of requests allowed in the time window.
+ */
+export function ratelimitKey(
+	form: Form,
+	category: string,
+	key: string,
+	timeWindow: number,
+	maxRequests = 1
+) {
+	if (windows.hit(`${key}\0${category}`, timeWindow * 1000, maxRequests))
+		return
+
+	console.log(`Ratelimited ${category}`)
+	return limit(form)
+}
+
 /** Allows for a function to be ratelimited by a category, and returns a 429 failure if too many requests are sent.
  * @param form The superForm object sent by the client. Can be null, in which case a fail object is returned.
  * @param category The category to ratelimit by.
@@ -28,24 +49,20 @@ const limit = (form: Form) =>
  *	const limit = ratelimit(form, "comment", getClientAddress, 5)
  *	if (limit) return limit
  */
-const ratelimit = (
+function ratelimit(
 	form: Form,
 	category: string,
 	getClientAddress: () => string,
 	timeWindow: number,
 	maxRequests = 1
-) => {
+) {
 	// Fails closed: when the address can't be determined (for example ADDRESS_HEADER is set but the request didn't come through the proxy), such requests share one bucket instead of going unlimited
 	let address = "unknown"
 	try {
 		address = getClientAddress()
 	} catch {}
 
-	if (windows.hit(`${address}\0${category}`, timeWindow * 1000, maxRequests))
-		return
-
-	console.log(`Ratelimited ${category}`)
-	return limit(form)
+	return ratelimitKey(form, category, address, timeWindow, maxRequests)
 }
 
 export default ratelimit

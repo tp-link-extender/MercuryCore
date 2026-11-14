@@ -9,6 +9,8 @@ import {
 } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
+import { hashPassword, verifyPassword } from "$lib/server/password"
+import { ratelimitKey } from "$lib/server/ratelimit"
 import { db, Record } from "$lib/server/surreal"
 import { arktype, message, superValidate } from "$lib/server/validate"
 import type { Actions } from "./$types"
@@ -82,15 +84,19 @@ actions.password = async ({ cookies, locals, request }) => {
 			["New password cannot be the same as the current password", ""]
 		)
 
+	// Counted per account, shared with the sessions action, so a stolen session can't be used to guess the password
+	const limit = ratelimitKey(form, "currentPassword", user.id, 300, 10)
+	if (limit) return limit
+
 	const userR = Record("user", user.id)
 	const [[{ hashedPassword }]] = await db.query<
 		{ hashedPassword: string }[][]
 	>(passwordQuery, { user: userR })
-	if (!Bun.password.verifySync(cpassword, hashedPassword))
+	if (!(await verifyPassword(cpassword, hashedPassword)))
 		return formError(form, ["cpassword"], ["Incorrect password"])
 
 	await db.query(changePasswordQuery, {
-		hashedPassword: Bun.password.hashSync(npassword),
+		hashedPassword: await hashPassword(npassword),
 		user: userR,
 	})
 	// All sessions, including this one, were just ended
@@ -106,10 +112,13 @@ actions.sessions = async ({ cookies, locals, request }) => {
 	const { password } = form.data
 	form.data.password = "" // will only send back in the event of failure I think
 
+	const limit = ratelimitKey(form, "currentPassword", user.id, 300, 10)
+	if (limit) return limit
+
 	const [[{ hashedPassword }]] = await db.query<
 		{ hashedPassword: string }[][]
 	>(passwordQuery, { user: Record("user", user.id) })
-	if (!Bun.password.verifySync(password, hashedPassword))
+	if (!(await verifyPassword(password, hashedPassword)))
 		return formError(form, ["password"], ["Incorrect password"])
 
 	await invalidateAllSessions(user.id)

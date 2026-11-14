@@ -3,6 +3,8 @@ import { type } from "arktype"
 import { cookieName, cookieOptions, createSession } from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
+import { hashPassword } from "$lib/server/password"
+import ratelimit from "$lib/server/ratelimit"
 import { toRawId } from "$lib/server/recordId"
 import requestRender from "$lib/server/requestRender"
 import { db, findWhere, Record, type RecordId } from "$lib/server/surreal"
@@ -44,9 +46,12 @@ export const load = async () => ({
 })
 
 export const actions: Actions = {}
-actions.register = async ({ fetch: f, cookies, request }) => {
+actions.register = async ({ fetch: f, cookies, getClientAddress, request }) => {
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
+
+	const limit = ratelimit(form, "register", getClientAddress, 600, 5)
+	if (limit) return limit
 
 	const { username, password, cpassword, email } = form.data
 	form.data.password = ""
@@ -108,7 +113,7 @@ actions.register = async ({ fetch: f, cookies, request }) => {
 		bodyColours: config.DefaultBodyColors,
 		email: email || "",
 		// I still love scrypt, though argon2 is better supported
-		hashedPassword: Bun.password.hashSync(password),
+		hashedPassword: await hashPassword(password),
 		key,
 		permissionLevel: 1,
 		username,
@@ -159,7 +164,7 @@ actions.initialAccount = async ({ fetch: f, cookies, request }) => {
 	const results = await db.query<RecordId<"user">[]>(createUserQuery, {
 		bodyColours: config.DefaultBodyColors,
 		email: "",
-		hashedPassword: Bun.password.hashSync(password),
+		hashedPassword: await hashPassword(password),
 		permissionLevel: 5,
 		username,
 	})

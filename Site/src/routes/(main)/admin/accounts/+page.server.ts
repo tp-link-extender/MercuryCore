@@ -1,6 +1,7 @@
 import { type } from "arktype"
 import { authorise } from "$lib/server/auth"
 import formError from "$lib/server/formError"
+import { hashPassword } from "$lib/server/password"
 import ratelimit from "$lib/server/ratelimit"
 import { db, Record } from "$lib/server/surreal"
 import {
@@ -45,7 +46,7 @@ actions.changePassword = async ({ locals, request, getClientAddress }) => {
 	try {
 		// oxlint-disable-next-line unicorn/no-unreadable-array-destructuring -- the query returns [result, loop result, ok]
 		const [, , ok] = await db.query<boolean[]>(updatePasswordQuery, {
-			npassword: Bun.password.hashSync(password),
+			npassword: await hashPassword(password),
 			username,
 		})
 		if (!ok) return errMessage(form, "No user found with given username")
