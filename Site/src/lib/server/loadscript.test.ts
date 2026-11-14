@@ -60,18 +60,65 @@ describe("isValidMapName", () => {
 	})
 })
 
-describe("luaString", () => {
-	test("escapes quotes, backslashes and control characters", () => {
-		const escaped = luaString('x"\\\n\u0001')
+// Runs Lua source with luau when it's installed, to check that escaped values parse and come out unchanged. CI doesn't have luau, so these checks are skipped there.
+const luau = Bun.which("luau")
 
-		expect(escaped.startsWith('"')).toBe(true)
-		expect(escaped.endsWith('"')).toBe(true)
-		expect(escaped).not.toContain("\n")
-		expect(escaped).toContain(String.raw`\"`)
-		expect(escaped).toContain(String.raw`\\`)
-		expect(escaped).toContain(String.raw`\010`)
-		expect(escaped).toContain(String.raw`\001`)
+async function runLua(source: string): Promise<string> {
+	if (!luau) throw new Error("luau is not installed")
+	const path = `/tmp/loadscript-test-${crypto.randomUUID()}.luau`
+	await Bun.write(path, source)
+	try {
+		const proc = Bun.spawn([luau, path], { stderr: "pipe", stdout: "pipe" })
+		const [out, err] = await Promise.all([
+			new Response(proc.stdout).text(),
+			new Response(proc.stderr).text(),
+		])
+		if ((await proc.exited) !== 0) throw new Error(err || out)
+		return out
+	} finally {
+		await Bun.file(path).delete()
+	}
+}
+
+// Prints each value as hex, so the comparison doesn't depend on how luau prints control characters
+const hexPrint = (expr: string): string =>
+	`print((string.gsub(${expr}, ".", function(c) return string.format("%02x", string.byte(c)) end)))`
+const hex = (value: string): string => `${Buffer.from(value).toString("hex")}\n`
+
+const payloads = Object.freeze([
+	"",
+	"plain value 123",
+	"a'b",
+	'a"b',
+	"x');print('pwned')--",
+	'x");print("pwned")--',
+	"back\\slash\\",
+	String.raw`\'`,
+	"]]print('pwned')--[[",
+	"]==]",
+	"line\nbreak\r\u0000\u0001\u007F",
+	"--comment",
+	"emoji 🙂 and é",
+	"_SERVER_ADDRESS",
+])
+
+describe("luaString", () => {
+	test("only leaves safe characters unescaped", () => {
+		const escaped = luaString("a'\"\\\n]-[=b")
+
+		expect(escaped).toBe(String.raw`"a\039\034\092\010\093-\091=b"`)
 	})
+
+	test("escapes multi-byte characters byte by byte", () => {
+		expect(luaString("é")).toBe(String.raw`"\195\169"`)
+	})
+
+	test.skipIf(!luau).each(payloads)(
+		"round-trips %j through Lua",
+		async value => {
+			expect(await runLua(hexPrint(luaString(value)))).toBe(hex(value))
+		}
+	)
 })
 
 describe("buildLoadscript", () => {
@@ -100,8 +147,82 @@ describe("buildLoadscript", () => {
 		})
 
 		expect(script.split("\n")).toHaveLength(1)
-		expect(script).not.toContain('\nprint("pwned")')
-		expect(script).toContain(String.raw`\"`)
+		expect(script).not.toContain('"pwned"')
+	})
+
+	test("escapes values inside single- and double-quoted strings", () => {
+		const template = "j.Name='_USER_NAME' print \"at _SERVER_ADDRESS\""
+		const script = buildLoadscript(template, {
+			SERVER_ADDRESS: 'a"b',
+			USER_NAME: "x');print('pwned')--",
+		})
+
+		expect(script).toBe(
+			String.raw`j.Name='x\039\041\059print\040\039pwned\039\041--' print "at a\034b"`
+		)
+	})
+
+	test("escapes raw values and numbers inside strings", () => {
+		const script = buildLoadscript("print'place _PLACE_ID port _PORT'", {
+			PLACE_ID: luaRaw("1'2"),
+			PORT: 53640,
+		})
+
+		expect(script).toBe(String.raw`print'place 1\0392 port 53640'`)
+	})
+
+	test("only replaces whole identifiers", () => {
+		const script = buildLoadscript("local FOO_BAR,_BAR=1,_BAR", {
+			BAR: 2,
+		})
+
+		expect(script).toBe("local FOO_BAR,2=1,2")
+	})
+
+	test("keeps escapes in the template's strings intact", () => {
+		const script = buildLoadscript(String.raw`print('it\'s _NAME')`, {
+			NAME: "x",
+		})
+
+		expect(script).toBe(String.raw`print('it\'s x')`)
+	})
+
+	test("leaves comments and Lua globals alone", () => {
+		const template =
+			"-- uses _NOT_SET\nprint(_G, _VERSION) --[[ _ALSO_NOT_SET ]]"
+
+		expect(buildLoadscript(template, {})).toBe(template)
+	})
+
+	test("refuses a placeholder inside a long string", () => {
+		expect(() => buildLoadscript("print[[_NAME]]", { NAME: "x" })).toThrow(
+			"long string"
+		)
+		expect(buildLoadscript("print[==[_OTHER]==]", { NAME: "x" })).toBe(
+			"print[==[_OTHER]==]"
+		)
+	})
+
+	test("refuses placeholders with no value", () => {
+		expect(() => buildLoadscript("print(_UNKNOWN)", {})).toThrow(
+			"_UNKNOWN has no value"
+		)
+		expect(() => buildLoadscript("print'_UNKNOWN'", {})).toThrow(
+			"_UNKNOWN has no value"
+		)
+	})
+
+	test("refuses non-finite numbers and wraps negative ones", () => {
+		expect(() => buildLoadscript("x=_N", { N: Number.NaN })).toThrow(
+			"finite"
+		)
+		expect(buildLoadscript("x=-_N", { N: -1 })).toBe("x=-(-1)")
+	})
+
+	test("refuses unterminated strings", () => {
+		expect(() => buildLoadscript("print('_NAME", { NAME: "x" })).toThrow(
+			"Unterminated"
+		)
 	})
 
 	test("leaves trusted raw values as source", () => {
@@ -111,6 +232,20 @@ describe("buildLoadscript", () => {
 
 		expect(script).toBe("local m=Enum.MembershipType.None")
 	})
+
+	test.skipIf(!luau).each(payloads)(
+		"keeps %j as data in every quoting style",
+		async value => {
+			const script = buildLoadscript(
+				"local a,b,c=_V,'_V',\"_V\" -- _V\nlocal d=[==[x]==]",
+				{ V: value }
+			)
+			const out = await runLua(
+				`${script}\n${hexPrint("a")}\n${hexPrint("b")}\n${hexPrint("c")}`
+			)
+			expect(out).toBe(hex(value).repeat(3))
+		}
+	)
 
 	test.skipIf(!hostTemplateExists)(
 		"fills the real host loadscript safely",
@@ -130,8 +265,4 @@ describe("buildLoadscript", () => {
 			)
 		}
 	)
-
-	test("leaves unknown placeholders alone", () => {
-		expect(buildLoadscript("_UNKNOWN _G", {})).toBe("_UNKNOWN _G")
-	})
 })
