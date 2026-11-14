@@ -2,17 +2,17 @@
 
 /// <reference types="@types/bun" />
 
-declare namespace svelteHTML {
-	import type { AttributifyAttributes } from "@unocss/preset-attributify"
-
-	type HTMLAttributes = AttributifyAttributes
-}
+import type { AttributifyAttributes } from "@unocss/preset-attributify"
 
 declare global {
+	namespace svelteHTML {
+		type HTMLAttributes = AttributifyAttributes
+	}
+
 	/**
 	 * All that's needed to show a user's information/link to their profile.
 	 */
-	type BasicUser = {
+	interface BasicUser {
 		status: "Playing" | "Online" | "Offline"
 		username: string
 	}
@@ -39,11 +39,6 @@ declare global {
 		theme: number
 	}
 
-	module "*.surql" {
-		const value: string
-		export default value
-	}
-
 	namespace App {
 		interface Locals {
 			session: string | null
@@ -51,5 +46,3 @@ declare global {
 		}
 	}
 }
-
-export type {}
