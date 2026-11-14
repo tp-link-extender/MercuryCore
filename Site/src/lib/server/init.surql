@@ -138,6 +138,8 @@ DEFINE TABLE OVERWRITE place SCHEMAFULL TYPE NORMAL;
 
 DEFINE TABLE OVERWRITE playing SCHEMAFULL TYPE RELATION FROM user TO place ENFORCED;
 	DEFINE FIELD OVERWRITE id ON playing TYPE string;
+	# A play ticket can only be used shortly after it's created. Optional because SurrealDB won't add a required field to a table that already has rows; old tickets without it are never accepted.
+	DEFINE FIELD OVERWRITE created ON playing TYPE option<datetime> DEFAULT time::now();
 	DEFINE FIELD OVERWRITE ping ON playing TYPE datetime DEFAULT ALWAYS time::now();
 	DEFINE FIELD OVERWRITE valid ON playing TYPE bool DEFAULT true;
 

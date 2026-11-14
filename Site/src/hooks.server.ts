@@ -11,6 +11,7 @@ import {
 	validateSessionToken,
 } from "$lib/server/auth"
 import config from "$lib/server/config"
+import { redactSearch } from "$lib/server/redact"
 import { db, Record } from "$lib/server/surreal"
 import moderatedQuery from "./moderated.surql"
 
@@ -71,7 +72,9 @@ async function finish({ event, resolve }: Parameters<Handle>[0]) {
 			userLog(user),
 			methodColours[method] || method,
 			" ".repeat(7 - method.length),
-			pathnameColour(redact(readablePath(pathname)) + search)
+			pathnameColour(
+				redact(readablePath(pathname)) + redactSearch(search)
+			)
 		)
 	}
 

@@ -77,8 +77,10 @@ export async function GET({ url }: RequestEvent) {
 		error(400, "Invalid Private Server")
 
 	const playing = Record("playing", clientTicket)
-	// also invalidates the session
-	const [gameSession] = await db.query<Session[]>(joinQuery, { playing })
+	// claims the ticket: it works once, and only shortly after it's created
+	const [, gameSession] = await db.query<(Session | null)[]>(joinQuery, {
+		playing,
+	})
 	if (!gameSession) error(400, "Invalid Game Session")
 
 	const { place, user } = gameSession
