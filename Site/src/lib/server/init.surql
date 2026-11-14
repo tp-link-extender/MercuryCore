@@ -138,8 +138,9 @@ DEFINE TABLE OVERWRITE place SCHEMAFULL TYPE NORMAL;
 
 DEFINE TABLE OVERWRITE playing SCHEMAFULL TYPE RELATION FROM user TO place ENFORCED;
 	DEFINE FIELD OVERWRITE id ON playing TYPE string;
-	# A play ticket can only be used shortly after it's created. Optional because SurrealDB won't add a required field to a table that already has rows; old tickets without it are never accepted.
-	DEFINE FIELD OVERWRITE created ON playing TYPE option<datetime> DEFAULT time::now();
+	# A play ticket can only be used shortly after it's created. Tickets from before this field existed get the epoch, so they are never accepted.
+	DEFINE FIELD OVERWRITE created ON playing TYPE datetime DEFAULT time::now()
+		MIGRATE EXISTING ROWS AS playingCreated USING <datetime> $value FALLBACK d'1970-01-01T00:00:00Z';
 	DEFINE FIELD OVERWRITE ping ON playing TYPE datetime DEFAULT ALWAYS time::now();
 	DEFINE FIELD OVERWRITE valid ON playing TYPE bool DEFAULT true;
 
@@ -225,16 +226,19 @@ DEFINE TABLE OVERWRITE user SCHEMAFULL TYPE NORMAL;
 		}; # parens no longer needed
 	DEFINE FIELD OVERWRITE theme ON user TYPE int DEFAULT 0;
 	DEFINE FIELD OVERWRITE username ON user TYPE string;
-	# Lowercased copy of username, kept up to date on every write. Usernames are matched case-insensitively at login and password reset, so they need to be unique case-insensitively too. This can't be a COMPUTED field (those can't be indexed), and it's optional because SurrealDB won't add a required field to a table that already has rows.
-	DEFINE FIELD OVERWRITE usernameLower ON user TYPE option<string> VALUE string::lowercase(username);
+# SurrealDB won't redefine a field while an index reads it, so the index is rebuilt each time
+REMOVE INDEX IF EXISTS usernameLowerI ON user;
+	# Lowercased copy of username, kept up to date on every write. Usernames are matched case-insensitively at login and password reset, so they need to be unique case-insensitively too. This can't be a COMPUTED field (those can't be indexed), and existing rows start empty and are filled in below, since the migration expression can't read other fields.
+	DEFINE FIELD OVERWRITE usernameLower ON user TYPE string VALUE string::lowercase(username)
+		MIGRATE EXISTING ROWS AS userUsernameLower USING $value ?? "" FALLBACK "";
 DEFINE INDEX IF NOT EXISTS usernameI ON user COLUMNS username UNIQUE;
 # Accounts whose usernames differ only in case must be renamed or removed by hand before the site can start
-LET $usernameCollisions = SELECT string::lowercase(username) AS name, count() AS n FROM user WHERE usernameLower IS NONE GROUP BY name;
+LET $usernameCollisions = SELECT string::lowercase(username) AS name, count() AS n FROM user GROUP BY name;
 IF array::len($usernameCollisions.filter(|$c| $c.n > 1)) > 0 {
 	THROW "Several users have usernames that differ only in case: " + <string> $usernameCollisions.filter(|$c| $c.n > 1).map(|$c| $c.name) + ". Rename or remove all but one of each before starting the site.";
 };
+UPDATE user SET usernameLower = string::lowercase(username) WHERE usernameLower = "";
 DEFINE INDEX IF NOT EXISTS usernameLowerI ON user COLUMNS usernameLower UNIQUE;
-UPDATE user SET usernameLower = string::lowercase(username) WHERE usernameLower IS NONE;
 # DEFINE INDEX IF NOT EXISTS emailI ON user COLUMNS email UNIQUE; # doesn't work with empty strings
 
 DEFINE TABLE OVERWRITE used SCHEMAFULL TYPE RELATION FROM user TO regKey ENFORCED;
