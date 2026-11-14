@@ -223,7 +223,16 @@ DEFINE TABLE OVERWRITE user SCHEMAFULL TYPE NORMAL;
 		}; # parens no longer needed
 	DEFINE FIELD OVERWRITE theme ON user TYPE int DEFAULT 0;
 	DEFINE FIELD OVERWRITE username ON user TYPE string;
+	# Lowercased copy of username, kept up to date on every write. Usernames are matched case-insensitively at login and password reset, so they need to be unique case-insensitively too. This can't be a COMPUTED field (those can't be indexed), and it's optional because SurrealDB won't add a required field to a table that already has rows.
+	DEFINE FIELD OVERWRITE usernameLower ON user TYPE option<string> VALUE string::lowercase(username);
 DEFINE INDEX IF NOT EXISTS usernameI ON user COLUMNS username UNIQUE;
+# Accounts whose usernames differ only in case must be renamed or removed by hand before the site can start
+LET $usernameCollisions = SELECT string::lowercase(username) AS name, count() AS n FROM user WHERE usernameLower IS NONE GROUP BY name;
+IF array::len($usernameCollisions.filter(|$c| $c.n > 1)) > 0 {
+	THROW "Several users have usernames that differ only in case: " + <string> $usernameCollisions.filter(|$c| $c.n > 1).map(|$c| $c.name) + ". Rename or remove all but one of each before starting the site.";
+};
+DEFINE INDEX IF NOT EXISTS usernameLowerI ON user COLUMNS usernameLower UNIQUE;
+UPDATE user SET usernameLower = string::lowercase(username) WHERE usernameLower IS NONE;
 # DEFINE INDEX IF NOT EXISTS emailI ON user COLUMNS email UNIQUE; # doesn't work with empty strings
 
 DEFINE TABLE OVERWRITE used SCHEMAFULL TYPE RELATION FROM user TO regKey ENFORCED;

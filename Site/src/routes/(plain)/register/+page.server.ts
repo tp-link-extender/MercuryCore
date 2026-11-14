@@ -59,9 +59,11 @@ actions.register = async ({ fetch: f, cookies, request }) => {
 			[" ", "Passwords do not match"]
 		)
 
-	const userCheck = await findWhere("user", "username = $username", {
-		username,
-	})
+	const userCheck = await findWhere(
+		"user",
+		"usernameLower = string::lowercase($username)",
+		{ username }
+	)
 	if (userCheck)
 		return formError(
 			form,
