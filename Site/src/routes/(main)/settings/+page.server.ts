@@ -1,11 +1,18 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { authorise, cookieName, invalidateAllSessions } from "$lib/server/auth"
+import {
+	authorise,
+	cookieName,
+	cookieOptions,
+	createSession,
+	invalidateAllSessions,
+} from "$lib/server/auth"
 import config from "$lib/server/config"
 import formError from "$lib/server/formError"
 import { db, Record } from "$lib/server/surreal"
 import { arktype, message, superValidate } from "$lib/server/validate"
 import type { Actions } from "./$types"
+import changePasswordQuery from "./changePassword.surql"
 import passwordQuery from "./password.surql"
 import updateProfileQuery from "./updateProfile.surql"
 
@@ -55,7 +62,7 @@ actions.profile = async ({ locals, request }) => {
 
 	return message(form, "Profile updated successfully!")
 }
-actions.password = async ({ locals, request }) => {
+actions.password = async ({ cookies, locals, request }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, arktype(passwordSchema))
 	if (!form.valid) return formError(form)
@@ -82,9 +89,12 @@ actions.password = async ({ locals, request }) => {
 	if (!Bun.password.verifySync(cpassword, hashedPassword))
 		return formError(form, ["cpassword"], ["Incorrect password"])
 
-	await db
-		.update(userR)
-		.merge({ hashedPassword: Bun.password.hashSync(npassword) })
+	await db.query(changePasswordQuery, {
+		hashedPassword: Bun.password.hashSync(npassword),
+		user: userR,
+	})
+	// All sessions, including this one, were just ended
+	cookies.set(cookieName, await createSession(userR), cookieOptions)
 
 	return message(form, "Password updated successfully!")
 }

@@ -43,7 +43,8 @@ actions.changePassword = async ({ locals, request, getClientAddress }) => {
 	form.data.password = ""
 
 	try {
-		const [, ok] = await db.query<boolean[]>(updatePasswordQuery, {
+		// oxlint-disable-next-line unicorn/no-unreadable-array-destructuring -- the query returns [result, loop result, ok]
+		const [, , ok] = await db.query<boolean[]>(updatePasswordQuery, {
 			npassword: Bun.password.hashSync(password),
 			username,
 		})
