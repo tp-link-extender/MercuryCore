@@ -1,5 +1,6 @@
 import fs from "node:fs"
 import config from "$lib/server/config"
+import { buildLoadscript } from "$lib/server/loadscript"
 import { db, Record } from "$lib/server/surreal"
 import createRenderQuery from "./createRender.surql"
 import renderQuery from "./render.surql"
@@ -88,11 +89,12 @@ export default async function requestRender(
 	// Send the script to the RCCService proxy
 	const pingUrl = `http://localhost:64990/ping/${renderId}` // the proxy will handle sending to /api/render/update
 
-	const script = scriptText
-		.replaceAll("_BASE_URL", `"${config.Domain}"`)
-		.replaceAll("_RENDER_TYPE", `"${renderType}"`)
-		.replaceAll("_ASSET_ID", `"${relativeName}"`) // TODO: make not string
-		.replaceAll("_PING_URL", `"${pingUrl}"`)
+	const script = buildLoadscript(scriptText, {
+		ASSET_ID: relativeName.toString(), // TODO: make not string
+		BASE_URL: config.Domain,
+		PING_URL: pingUrl,
+		RENDER_TYPE: renderType,
+	})
 
 	// console.log(
 	// 	`Sending render request to RCCService for render ID ${renderId}`

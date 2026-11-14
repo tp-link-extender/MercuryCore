@@ -10,7 +10,7 @@ import type { RequestEvent } from "./$types"
 import joinQuery from "./join.surql"
 
 interface ServerAddress {
-	serverHostname: string
+	serverAddress: string
 	serverPort: number
 }
 
@@ -35,7 +35,7 @@ function serverInfo(place: Session["place"]): ServerAddress {
 
 	const url = new URL(config.Orbiter.PublicURL)
 	return {
-		serverHostname: url.hostname, // no scheme, the address doesn't usually have a path anyway
+		serverAddress: url.hostname, // no scheme, the address doesn't usually have a path anyway
 		serverPort: idToPort(place.id) + proxyOffset, // select the proxy port rather than the port of the server itself
 	}
 }
@@ -54,12 +54,14 @@ export async function GET({ url }: RequestEvent) {
 		const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
 		const script = buildLoadscript(await scriptFile.text(), {
 			CHAR_APPEARANCE: "",
+			CREATOR_ID: 0,
 			MEMBERSHIP_TYPE: luaRaw(membershipType(0)),
 			PING_URL: "",
 			PLACE_ID: 0,
 			SERVER_ADDRESS: "localhost",
 			SERVER_PORT: 53640,
 			USER_ID: 0,
+			USER_NAME: "Player1",
 			USERNAME: "Player1",
 		})
 
@@ -84,19 +86,21 @@ export async function GET({ url }: RequestEvent) {
 	if (!gameSession) error(400, "Invalid Game Session")
 
 	const { place, user } = gameSession
-	const { serverHostname, serverPort } = serverInfo(place)
+	const { serverAddress, serverPort } = serverInfo(place)
 
 	const charApp = `http://${config.DomainInsecure}/asset/characterfetch/${user.username}`
 	const pingUrl = `http://${config.DomainInsecure}/game/clientpresence?ticket=${clientTicket}`
 	const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
 	const script = buildLoadscript(await scriptFile.text(), {
 		CHAR_APPEARANCE: charApp,
+		CREATOR_ID: 0, // todo: the place's creator
 		MEMBERSHIP_TYPE: luaRaw(membershipType(user.permissionLevel)),
 		PING_URL: pingUrl,
 		PLACE_ID: luaRaw(toRawId(place.id)),
-		SERVER_ADDRESS: serverHostname,
+		SERVER_ADDRESS: serverAddress,
 		SERVER_PORT: serverPort,
 		USER_ID: Math.floor(Math.random() * 1e9), // todo: tho not rly used 4 much atm
+		USER_NAME: user.username, // join.lua compiled before 2013@5fe7aa8 uses _USER_NAME
 		USERNAME: user.username,
 	})
 

@@ -3,6 +3,7 @@ import { error } from "@sveltejs/kit"
 import { env } from "$env/dynamic/private"
 import config from "$lib/server/config"
 import idToPort from "$lib/server/idToPort"
+import { buildLoadscript } from "$lib/server/loadscript"
 import { SignScript } from "$lib/server/sign"
 import { db, Record } from "$lib/server/surreal"
 import type { RequestEvent } from "./$types"
@@ -42,14 +43,12 @@ export async function GET({ params, request }: RequestEvent) {
 	const serverPresenceUrl = `http://${config.DomainInsecure}/game/serverpresence?ticket=${place.serverTicket}`
 
 	const scriptFile = Bun.file("../data/server/loadscripts/host.lua")
-	const script = (await scriptFile.text())
-		.replaceAll("_BASE_URL", `"${config.DomainInsecure}"`)
-		.replaceAll(
-			"_MAP_LOCATION",
-			`"http://${config.DomainInsecure}/game/${id}?serverTicket=${encodeURIComponent(place.serverTicket)}"`
-		)
-		.replaceAll("_SERVER_PORT", idToPort(id).toString())
-		.replaceAll("_SERVER_PRESENCE_URL", `"${serverPresenceUrl}"`)
+	const script = buildLoadscript(await scriptFile.text(), {
+		BASE_URL: config.DomainInsecure,
+		MAP_LOCATION: `http://${config.DomainInsecure}/game/${id}?serverTicket=${encodeURIComponent(place.serverTicket)}`,
+		SERVER_PORT: idToPort(id),
+		SERVER_PRESENCE_URL: serverPresenceUrl,
+	})
 
 	return new Response(await SignScript(script))
 }
