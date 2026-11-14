@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	sdb "Economy/internal/surreal"
 	"Economy/ledger"
 )
 
@@ -59,14 +60,15 @@ func main() {
 	flag.StringVar(&o.surrealURL, "surreal", "http://localhost:8000", "SurrealDB HTTP endpoint")
 	flag.StringVar(&o.namespace, "namespace", "main", "SurrealDB namespace")
 	flag.StringVar(&o.database, "database", "main", "SurrealDB database")
-	flag.StringVar(&o.surrealUser, "surreal-user", "root", "SurrealDB username")
-	flag.StringVar(&o.surrealPass, "surreal-pass", "root", "SurrealDB password")
+	flag.StringVar(&o.surrealUser, "surreal-user", sdb.DefaultUser(), "SurrealDB username; root signs in as the root user, anything else as a user of --namespace/--database (default from DATABASE_USER)")
+	flag.StringVar(&o.surrealPass, "surreal-pass", "", "SurrealDB password (default from DATABASE_PASSWORD, or DATABASE_ROOT_PASSWORD for root)")
 	flag.StringVar(&o.fallbackUser, "fallback-user", "", "user ID to assign to otherwise unowned assets/places/groups")
 	flag.BoolVar(&o.skipOrphans, "skip-orphans", false, "ignore creator/owner/package relations that point to missing records, and balances for missing users")
 	flag.BoolVar(&o.dryRun, "dry-run", false, "validate and build a temporary ledger without writing the output")
 	flag.BoolVar(&o.force, "force", false, "overwrite the output ledger if it exists")
 	flag.IntVar(&o.batchSize, "batch-size", 500, "transfers per bbolt import batch")
 	flag.Parse()
+	o.surrealPass = sdb.Password(o.surrealUser, o.surrealPass)
 
 	if o.export != "" && o.input != "" {
 		fmt.Fprintln(os.Stderr, "--export and --input cannot be used together")

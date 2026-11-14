@@ -11,6 +11,8 @@ import (
 	"time"
 
 	surrealdb "github.com/surrealdb/surrealdb.go/v2"
+
+	sdb "Economy/internal/surreal"
 )
 
 const snapshotVersion = 2
@@ -91,7 +93,7 @@ func newSurrealClient(url, namespace, database, user, pass string) (*surrealClie
 		db.Close(ctx)
 		return nil, fmt.Errorf("use surreal namespace/database: %w", err)
 	}
-	if _, err := db.SignIn(ctx, surrealdb.Auth{Username: user, Password: pass}); err != nil {
+	if _, err := db.SignIn(ctx, sdb.Auth(namespace, database, user, pass)); err != nil {
 		db.Close(ctx)
 		return nil, fmt.Errorf("sign in to surreal: %w", err)
 	}

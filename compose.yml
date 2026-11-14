@@ -11,13 +11,27 @@ services:
         restart: unless-stopped
         volumes:
             - ./data/surreal:/database
+        environment:
+            # Read by `surreal start` instead of -u/-p, so the password doesn't show up in `ps`. It only sets the root password of a new store; database-setup changes it on an existing one.
+            SURREAL_USER: root
+            SURREAL_PASS: ${DATABASE_ROOT_PASSWORD:?set DATABASE_ROOT_PASSWORD in a .env file next to compose.yml}
         command:
             - start
             # :8000 (all interfaces) is needed for the Site container to reach it over the compose network; the host port stays loopback-only
             - --bind=0.0.0.0:8000
-            - -u=root
-            - -p=root
             - surrealkv://database
+
+    # One-shot: defines the namespace, database and the Site's user, and changes root's password from the old default. Safe to run again.
+    database-setup:
+        build: .
+        entrypoint: ["bun", "src/lib/server/dbSetup.ts", "--url", "ws://database:8000"]
+        restart: "no"
+        environment:
+            DATABASE_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD:?set DATABASE_ROOT_PASSWORD in a .env file next to compose.yml}
+            DATABASE_USER: ${DATABASE_USER:-site}
+            DATABASE_PASSWORD: ${DATABASE_PASSWORD:?set DATABASE_PASSWORD in a .env file next to compose.yml}
+        depends_on:
+            - database
 
     economy:
         build: ./Economy
@@ -41,6 +55,12 @@ services:
             XFF_DEPTH: "1"
             ECONOMY_URL: http://economy:2009
             ECONOMY_KEY: ${ECONOMY_KEY:?set ECONOMY_KEY in a .env file next to compose.yml}
+            DATABASE_USER: ${DATABASE_USER:-site}
+            DATABASE_PASSWORD: ${DATABASE_PASSWORD:?set DATABASE_PASSWORD in a .env file next to compose.yml}
         depends_on:
-            - database # will keep retrying until database is ready
-            - economy
+            database:
+                condition: service_started # the Site keeps retrying until the database is ready
+            database-setup:
+                condition: service_completed_successfully
+            economy:
+                condition: service_started

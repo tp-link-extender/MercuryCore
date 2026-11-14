@@ -1,6 +1,6 @@
 let started = false
 
-const startSurreal = () => {
+function startSurreal(rootPassword: string): void {
 	if (started) return
 	started = true
 	console.log("Starting SurrealDB...")
@@ -11,11 +11,19 @@ const startSurreal = () => {
 				"surreal",
 				"start",
 				"--bind=127.0.0.1:8000",
-				"-u=root",
-				"-p=root",
 				"surrealkv://data/surreal",
 			],
-			{ cwd: "..", stderr: "pipe", stdout: "pipe" }
+			{
+				cwd: "..",
+				// Passed in the environment rather than as arguments, which other users can see in `ps`. Only used if the store has no root user yet.
+				env: {
+					...process.env,
+					SURREAL_PASS: rootPassword,
+					SURREAL_USER: "root",
+				},
+				stderr: "pipe",
+				stdout: "pipe",
+			}
 		)
 
 		process.on("exit", () => {

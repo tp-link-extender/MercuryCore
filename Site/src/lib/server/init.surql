@@ -1,7 +1,5 @@
 # Overwrites are needed to ensure that the schema is correct when changing in dev mode/on deployment
-
-DEFINE NAMESPACE OVERWRITE main;
-DEFINE DATABASE OVERWRITE main STRICT;
+# The namespace and database are defined by the database setup (dbSetup.ts), as the Site's user can't define them
 
 DEFINE TABLE OVERWRITE asset SCHEMAFULL TYPE NORMAL;
 	# privileged assets are 8 digits, user-uploaded assets are 9 (max is 2^31-1 = 2147483647 (usually), we need numeric ids for reasons... eugh)

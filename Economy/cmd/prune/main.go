@@ -30,8 +30,8 @@ func main() {
 	flag.StringVar(&o.surrealURL, "surreal", "http://localhost:8000", "SurrealDB HTTP endpoint")
 	flag.StringVar(&o.namespace, "namespace", "main", "SurrealDB namespace")
 	flag.StringVar(&o.database, "database", "main", "SurrealDB database")
-	flag.StringVar(&o.surrealUser, "surreal-user", "root", "SurrealDB username")
-	flag.StringVar(&o.surrealPass, "surreal-pass", "root", "SurrealDB password")
+	flag.StringVar(&o.surrealUser, "surreal-user", sdb.DefaultUser(), "SurrealDB username; root signs in as the root user, anything else as a user of --namespace/--database (default from DATABASE_USER)")
+	flag.StringVar(&o.surrealPass, "surreal-pass", "", "SurrealDB password (default from DATABASE_PASSWORD, or DATABASE_ROOT_PASSWORD for root)")
 	flag.DurationVar(&o.surrealTimeout, "surreal-timeout", 5*time.Minute, "timeout for each SurrealDB HTTP request; 0 disables it")
 	flag.StringVar(&o.removeTypes, "remove-types", "8,18,19,32", "comma-separated asset types to remove; packages (32) are always removed")
 	flag.StringVar(&o.assetsDir, "assets-dir", "../data/assets", "asset file directory")
@@ -45,6 +45,7 @@ func main() {
 	flag.BoolVar(&o.keepOrphans, "keep-orphan-images", false, "keep image assets that are only linked to removed assets")
 	flag.IntVar(&o.batchSize, "batch-size", 500, "transfers per ledger import batch")
 	flag.Parse()
+	o.surrealPass = sdb.Password(o.surrealUser, o.surrealPass)
 
 	removeTypes, err := parseTypes(o.removeTypes)
 	if err != nil {

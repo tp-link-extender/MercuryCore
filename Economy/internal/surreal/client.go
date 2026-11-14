@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"os"
 	"time"
 
 	surrealdb "github.com/surrealdb/surrealdb.go/v2"
@@ -15,6 +16,34 @@ import (
 type Client struct {
 	ctx context.Context
 	db  *surrealdb.DB
+}
+
+// DefaultUser is the username the administrative commands sign in with when --surreal-user isn't given: DATABASE_USER, or the Site's default user.
+func DefaultUser() string {
+	if user := os.Getenv("DATABASE_USER"); user != "" {
+		return user
+	}
+	return "site"
+}
+
+// Password returns pass, or the password for user from the environment when pass is empty: DATABASE_ROOT_PASSWORD for root and DATABASE_PASSWORD for anyone else.
+// Reading it from the environment keeps it out of the command line, where other users can see it in `ps`.
+func Password(user, pass string) string {
+	if pass != "" {
+		return pass
+	}
+	if user == "root" {
+		return os.Getenv("DATABASE_ROOT_PASSWORD")
+	}
+	return os.Getenv("DATABASE_PASSWORD")
+}
+
+// Auth returns the sign-in details for user. root signs in at root level; any other user is a database user, which only exists in namespace/database.
+func Auth(namespace, database, user, pass string) surrealdb.Auth {
+	if user == "root" {
+		return surrealdb.Auth{Username: user, Password: pass}
+	}
+	return surrealdb.Auth{Namespace: namespace, Database: database, Username: user, Password: pass}
 }
 
 func New(endpoint, namespace, database, user, pass string) (*Client, error) {
@@ -53,7 +82,7 @@ func NewWithTimeout(endpoint, namespace, database, user, pass string, timeout ti
 		db.Close(ctx)
 		return nil, fmt.Errorf("use surreal namespace/database: %w", err)
 	}
-	if _, err := db.SignIn(ctx, surrealdb.Auth{Username: user, Password: pass}); err != nil {
+	if _, err := db.SignIn(ctx, Auth(namespace, database, user, pass)); err != nil {
 		db.Close(ctx)
 		return nil, fmt.Errorf("sign in to surreal: %w", err)
 	}

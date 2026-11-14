@@ -4,6 +4,7 @@
 	"scripts": {
 		"build": "bun x -b vite build",
 		"buildview": "bun x -b vite build && bun x -b vite preview",
+		"db:setup": "bun src/lib/server/dbSetup.ts",
 		"dev": "bun x -b vite dev",
 		"format": "biome format src --write",
 		"lint": "oxlint --fix && biome check --fix",

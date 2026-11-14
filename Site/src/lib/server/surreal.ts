@@ -1,19 +1,49 @@
 import { Surreal, RecordId as SurrealRecordId, Table } from "surrealdb"
 import { building } from "$app/environment"
+import { env } from "$env/dynamic/private"
 import config from "$lib/server/config"
+import {
+	type DatabaseCredentials,
+	databaseCredentials,
+	rootPassword,
+} from "$lib/server/dbCredentials"
+import { setupDatabase } from "$lib/server/dbSetup"
 import initQuery from "$lib/server/init.surql"
 import logo from "$lib/server/logo" // because this is usually one of the first files loaded
 import startEconomy from "$lib/server/process/economy"
 import startSurreal from "$lib/server/process/surreal"
 
-if (!building) {
+function credentials(): DatabaseCredentials {
+	try {
+		return databaseCredentials(env)
+	} catch (err) {
+		console.error(err instanceof Error ? err.message : err)
+		console.error(
+			"Set DATABASE_PASSWORD (and optionally DATABASE_USER) in Site/.env. See Site/.env.example."
+		)
+		process.exit(1)
+	}
+}
+
+const site = building ? null : credentials()
+const url = new URL(`ws://${config.Database.Domain}`) // must be ws:// to prevent token expiration, http:// will expire after 1 hour by default
+
+if (site) {
 	if (config.Database.AutoStart)
 		try {
-			startSurreal()
+			const root = rootPassword(env)
+			startSurreal(root)
+			// The Site owns this instance, so it sets up its own user too
+			await setupDatabase({
+				addOnly: false,
+				rootPassword: root,
+				site,
+				url,
+			})
 		} catch (e) {
-			console.log(e)
+			console.error(e instanceof Error ? e.message : e)
 			console.error(
-				"Failed to start SurrealDB. Make sure it is installed and accessible as `surreal`."
+				"Failed to start or set up SurrealDB. Make sure it is installed and accessible as `surreal`, and that DATABASE_ROOT_PASSWORD is set in Site/.env."
 			)
 			process.exit(1)
 		}
@@ -63,17 +93,17 @@ db.query = retryQuery as unknown as typeof db.query
 
 export const version = db.version.bind(db)
 
-const url = new URL(`ws://${config.Database.Domain}`) // must be ws:// to prevent token expiration, http:// will expire after 1 hour by default
-
-async function reconnect() {
+async function reconnect(creds: DatabaseCredentials) {
 	for (let attempt = 0; ; attempt++)
 		try {
 			await db.close() // doesn't do anything if not connected
 			console.log("connecting to database")
 			await db.connect(url, {
 				authentication: {
-					password: "root",
-					username: "root", // security B)
+					database: "main",
+					namespace: "main",
+					password: creds.password,
+					username: creds.user,
 				},
 				database: "main",
 				namespace: "main",
@@ -94,8 +124,8 @@ async function reconnect() {
 		}
 }
 
-if (!building) {
-	await reconnect()
+if (site) {
+	await reconnect(site)
 	await db.query(initQuery)
 	logo()
 }
