@@ -67,7 +67,7 @@ If using the Docker layout, the final ledger path is `/data/economy/mydb.db`; th
 - `--old-ledger PATH`: old JSONL ledger (default `../data/economy/ledger`).
 - `--out PATH`: new bbolt ledger. Required unless using `--dry-run` or `--export`.
 - `--report PATH`: JSON report (default `migration-report.json`).
-- `--surreal URL`, `--namespace`, `--database`, `--surreal-user`, `--surreal-pass`: SurrealDB access.
+- `--surreal URL`, `--namespace`, `--database`, `--surreal-user`, `--surreal-pass`: SurrealDB access. The user defaults to `DATABASE_USER` (or `site`) and signs in as a user of the namespace and database; `--surreal-user root` signs in as root. The password defaults to `DATABASE_PASSWORD`, or `DATABASE_ROOT_PASSWORD` for root, so it stays off the command line.
 - `--fallback-user ID`: owner for otherwise unresolved assets/places/groups. Must be an existing user.
 - `--skip-orphans`: ignore creator/owner/package relations that point to missing records, and balances for missing users.
 - `--dry-run`: build and verify a temporary ledger without writing the output.

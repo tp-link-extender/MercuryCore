@@ -37,12 +37,12 @@ Instructions:
 -   Clone the repository to your local machine
 -   Open a terminal and navigate to the directory of the repository
 -   Run `bun i` to install all dependencies
--   Copy the **Site/.env.example** file to **Site/.env** and modify it to set up the environment variables
--   If using containers, copy the **.env.example** file in the repository root to **.env** and set `ECONOMY_KEY`
--   Run `docker compose up -d database economy` to start the database and economy service
+-   Copy the **Site/.env.example** file to **Site/.env** and modify it to set up the environment variables, including `DATABASE_PASSWORD` and `DATABASE_ROOT_PASSWORD` (generate each with `openssl rand -hex 32`)
+-   If using containers, copy the **.env.example** file in the repository root to **.env** and set `ECONOMY_KEY`, `DATABASE_ROOT_PASSWORD` and `DATABASE_PASSWORD` (the same `DATABASE_PASSWORD` as in **Site/.env**)
+-   Run `docker compose up -d database database-setup economy` to start the database and economy service and set up the Site's database user
 
 > [!TIP]  
-> If you don't have or can't install a container manager, you can start the database manually by [installing SurrealDB](https://surrealdb.com/install) and running `surreal start --bind=127.0.0.1:8000 -l trace -u=root -p=root surrealkv://data/surreal` in the repository's root directory, and the economy service manually by [installing Go](https://go.dev/dl/) and running `go run .` in the **Economy** directory with `ECONOMY_KEY` set to the same value as in **Site/.env**. You'll need to run these in separate terminals or in the background. If you are starting an existing 3.x datastore on SurrealDB 4.x for the first time, add `SURREAL_EXPERIMENTAL_UPGRADE_FROM_3X=true` and take an export first.
+> If you don't have or can't install a container manager, the Site starts SurrealDB itself and sets up its database user when `Database.AutoStart` is on in **mercury.core.ts**. To start the database manually instead, [install SurrealDB](https://surrealdb.com/install), run `SURREAL_USER=root SURREAL_PASS=<DATABASE_ROOT_PASSWORD> surreal start --bind=127.0.0.1:8000 -l trace surrealkv://data/surreal` in the repository's root directory, then `bun run db:setup` in the **Site** directory. Start the economy service manually by [installing Go](https://go.dev/dl/) and running `go run .` in the **Economy** directory with `ECONOMY_KEY` set to the same value as in **Site/.env**. You'll need to run these in separate terminals or in the background. If you are starting an existing 3.x datastore on SurrealDB 4.x for the first time, add `SURREAL_EXPERIMENTAL_UPGRADE_FROM_3X=true` and take an export first.
 
 To start a local dev server, go to the **Site** directory, run `bun dev`, and navigate to the link shown in the terminal (remember not to use HTTPS!). Upon saving a file, your changes will be shown in the web browser.
 
@@ -85,10 +85,14 @@ Instructions:
 -   Run `caddy start` to start the Caddy reverse proxy server
     -   You can also run `caddy reload` to reload the configuration file without restarting the server.
     -   If you're using Caddy with multiple configuration files, import the Caddyfile in the repository's root directory into a Caddyfile somewhere else, and run `caddy start` and `caddy reload` from there.
--   Run `docker compose up -d database economy` to start the database and economy service
+-   Copy the **Site/.env.example** file to **Site/.env** and modify it to set up the environment variables, including `DATABASE_PASSWORD` and `DATABASE_ROOT_PASSWORD` (generate each with `openssl rand -hex 32`)
+-   If using containers, copy the **.env.example** file in the repository root to **.env** and set `ECONOMY_KEY`, `DATABASE_ROOT_PASSWORD` and `DATABASE_PASSWORD`
+-   Run `docker compose up -d database database-setup economy` to start the database and economy service and set up the Site's database user
 	-   If you want to run the site in your container manager as well, just run `docker compose up -d` instead to start all services
--   Copy the **Site/.env.example** file to **Site/.env** and modify it to set up the environment variables
--   If using containers, copy the **.env.example** file in the repository root to **.env** and set `ECONOMY_KEY`
+
+> [!WARNING]  
+> If you're updating an existing install whose database still uses the old `root`/`root` login, follow [Moving an existing database](https://docs.mercs.dev/services/database/#moving-an-existing-database) instead. Changing root's password before the new Site is deployed locks the old one out.
+
 -   Run `bun prod` to install dependencies and begin building
 -   Run `bun ./build` (not to be confused with `bun build`) to start Mercury Core.
 

@@ -43,6 +43,10 @@ Successfully loaded configuration file
 
 ![Output on successful startup of Site](../../../assets/startup.png)
 
+## Database credentials
+
+The Site connects to SurrealDB as `DATABASE_USER` (default `site`) with `DATABASE_PASSWORD`, a user limited to the `main` database, and refuses to start if the password is missing or too weak. When `Database.AutoStart` is on it also needs `DATABASE_ROOT_PASSWORD`, as it starts SurrealDB and runs the database setup itself. Otherwise run `bun run db:setup` once before starting the Site. See [Database](/services/database/#credentials) for the details and for moving an existing database.
+
 ## Economy authentication
 
 If you run the Site and Economy service outside containers, the Site reads `ECONOMY_KEY` from **Site/.env** and passes it to the Economy service when auto-starting it. If you start the Economy service yourself, set the same `ECONOMY_KEY` in its environment. The service refuses to start without a key and rejects any request that doesn't carry it. It listens on `127.0.0.1:2009` by default; pass `-addr :2009` only when another container must reach it over a container network.

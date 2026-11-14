@@ -85,7 +85,7 @@ mv mydb.pruned.db mydb.db
 - `--out PATH`: pruned ledger. Required unless `--dry-run` or `--skip-ledger`.
 - `--report PATH`: JSON report (default `prune-report.json`).
 - `--remove-types LIST`: comma-separated asset types to remove. Packages are always removed. Default `8,18,19,32`.
-- `--surreal URL`, `--namespace`, `--database`, `--surreal-user`, `--surreal-pass`: SurrealDB access.
+- `--surreal URL`, `--namespace`, `--database`, `--surreal-user`, `--surreal-pass`: SurrealDB access. The user defaults to `DATABASE_USER` (or `site`) and signs in as a user of the namespace and database; `--surreal-user root` signs in as root. The password defaults to `DATABASE_PASSWORD`, or `DATABASE_ROOT_PASSWORD` for root, so it stays off the command line.
 - `--surreal-timeout DURATION`: per-request SurrealDB timeout (default `5m`; `0` disables it). The cleanup runs as one transaction, so a large database can need several minutes.
 - `--assets-dir PATH`, `--thumbnails-dir PATH`: file locations (defaults `../data/assets`, `../data/thumbnails`).
 - `--dry-run`: build a temporary ledger and report database/file changes without applying them.
