@@ -1,24 +1,16 @@
-import fs from "node:fs"
 import { error, redirect } from "@sveltejs/kit"
 import { Place as EconPlace } from "economy/types"
 import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
 import constantTimeEqual from "$lib/server/constantTimeEqual"
-import { usesDedicated } from "$lib/server/dedicated"
 import {
 	economyConnFailed,
 	itemOwner,
 	type OwnedUser,
-	ownsItem,
 } from "$lib/server/economy"
-import formData from "$lib/server/formData"
-import { closeGameserver, startGameserver } from "$lib/server/orbiter"
-import { ratelimit, ratelimitKey } from "$lib/server/ratelimit"
-import { db, findWhere, Record } from "$lib/server/surreal"
+import { db, Record } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
-import type { Actions, PageServerLoadEvent } from "./$types"
-import findPlaceQuery from "./findPlace.surql"
-import invalidatePlayingQuery from "./invalidatePlaying.surql"
+import type { PageServerLoadEvent } from "./$types"
 import placeQuery from "./place.surql"
 
 interface FoundPlace {
@@ -103,105 +95,4 @@ export async function load({
 		slug,
 		thumbnails: [id % thumbnails.length],
 	}
-}
-
-async function findPlace(
-	f: typeof globalThis.fetch,
-	request: Request,
-	id: number,
-	user: User
-) {
-	const data = await formData(request)
-	const privateTicket = data?.privateTicket
-
-	const placeR = Record("place", id)
-	const [[place]] = await db.query<FoundPlace[][]>(findPlaceQuery, {
-		place: placeR,
-	})
-	if (!place) error(404, "Place not found")
-
-	const owns = await ownsItem(f, user.id, new EconPlace(id))
-	if (!owns.ok) error(500, economyConnFailed)
-
-	if (
-		!owns.value &&
-		place.privateServer &&
-		!ticketMatches(privateTicket, place)
-	)
-		error(404, "Place not found")
-
-	return [place, placeR, owns.value] as const
-}
-
-async function checkUser(locals: App.Locals) {
-	const { user } = await authorise(locals)
-
-	const foundModerated = await findWhere(
-		"moderation",
-		"out = $user AND active = true",
-		{ user: Record("user", user.id) }
-	)
-	if (foundModerated) error(403, "You cannot currently play games")
-
-	return user
-}
-
-export const actions: Actions = {}
-actions.join = async ({ fetch: f, locals, params, request }) => {
-	const user = await checkUser(locals)
-	const [_, placeR] = await findPlace(f, request, Number(params.id), user)
-
-	// Invalidate all game sessions and create valid playing
-	const [, [ticket]] = await db.query<string[][]>(invalidatePlayingQuery, {
-		place: placeR,
-		user: Record("user", user.id),
-	})
-
-	return { ticket }
-}
-
-actions.start = async ({
-	fetch: f,
-	locals,
-	params,
-	request,
-	getClientAddress,
-}) => {
-	const user = await checkUser(locals)
-	const id = Number(params.id)
-	const [_place] = await findPlace(f, request, id, user)
-	// Self-hosted places don't use a dedicated server, so there's nothing to start
-	if (!usesDedicated(_place.dedicated)) return { dedicated: false }
-
-	const limit =
-		ratelimit("serverstart", getClientAddress, 20) ||
-		ratelimitKey("serverstart", user.id, 20)
-	if (limit) return limit
-
-	// check for existence of a place file
-	const placeFile = `../data/places/${id}`
-	if (!fs.existsSync(placeFile)) error(404, "Place file not found")
-
-	const res = await startGameserver(f, id, _place.clientVersion)
-	if (res.ok) return { dedicated: true }
-
-	console.error("Failed to start dedicated gameserver for id", id, res.msg)
-	error(500, "Failed to start dedicated server")
-}
-
-actions.close = async ({ fetch: f, locals, params, request }) => {
-	const { user } = await authorise(locals)
-	const id = Number(params.id)
-
-	// oxlint-disable-next-line unicorn/no-unreadable-array-destructuring -- query returns [result, error, value]
-	const [, , isOwner] = await findPlace(f, request, id, user)
-
-	if (!isOwner && user.permissionLevel < 4)
-		error(403, "You do not have permission to close this server.")
-
-	const res = await closeGameserver(f, id)
-	if (res.ok) return
-
-	console.error("Failed to close dedicated gameserver for id", id, res.msg)
-	error(500, "Failed to close dedicated server")
 }

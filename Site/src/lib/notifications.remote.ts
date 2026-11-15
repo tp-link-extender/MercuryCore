@@ -1,0 +1,24 @@
+import { error } from "@sveltejs/kit"
+import { type } from "arktype"
+import { form, getRequestEvent } from "$app/server"
+import { authorise } from "$lib/server/auth"
+import readQuery from "$lib/server/readNotification.surql"
+import { db, Record } from "$lib/server/surreal"
+
+const schema = type({
+	id: "string",
+})
+
+export const dismissForm = form(schema, async ({ id }) => {
+	const { locals } = getRequestEvent()
+	const { user } = await authorise(locals)
+
+	try {
+		await db.query(readQuery, {
+			notification: Record("notification", id),
+			user: Record("user", user.id),
+		})
+	} catch {
+		error(400)
+	}
+})

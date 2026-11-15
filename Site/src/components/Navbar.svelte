@@ -1,9 +1,10 @@
 <script lang="ts">
+	
 	import { untrack } from "svelte"
 	import { slide } from "svelte/transition"
-	import { enhance } from "$app/forms"
 	import Search from "$components/Search.svelte"
 	import User from "$components/User.svelte"
+import { logoutForm } from "$lib/session.remote"
 
 	const { data }: { data: import("../routes/$types").LayoutData } = $props()
 
@@ -101,10 +102,7 @@
 								</li>
 							{/each}
 							<li class="rounded-2">
-								<form
-									use:enhance
-									method="post"
-									action="/api?/logout">
+								<form {...logoutForm}>
 									<button class="btn text-red-500 pl-4 pr-0">
 										<fa
 											fa-arrow-right-from-bracket

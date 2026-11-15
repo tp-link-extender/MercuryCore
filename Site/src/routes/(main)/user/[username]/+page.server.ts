@@ -1,27 +1,13 @@
-import { error, fail } from "@sveltejs/kit"
+import { error } from "@sveltejs/kit"
 import { inventory } from "economy/api"
 import { Group as EconGroup, User as EconUser, Place } from "economy/types"
 import { authorise } from "$lib/server/auth"
 import { economyConnFailed } from "$lib/server/economy"
-import formData from "$lib/server/formData"
-import { ratelimitKey } from "$lib/server/ratelimit"
-import requestRender from "$lib/server/requestRender"
-import { db, Record, type RecordId } from "$lib/server/surreal"
+import { db, Record } from "$lib/server/surreal"
 import type { Group } from "../../groups/+page.server"
-import type { Actions, PageServerLoadEvent } from "./$types"
-import type { RequestEvent } from "./$types.d"
-import acceptExistingQuery from "./acceptExisting.surql"
-import alreadyFriendsQuery from "./alreadyFriends.surql"
-import cancelQuery from "./cancel.surql"
-import declineQuery from "./decline.surql"
-import findUserQuery from "./findUser.surql"
-import followQuery from "./follow.surql"
-import incomingQuery from "./incoming.surql"
+import type { PageServerLoadEvent } from "./$types"
 import ownedGroupsQuery from "./ownedGroups.surql"
 import ownedPlacesQuery from "./ownedPlaces.surql"
-import requestQuery from "./request.surql"
-import unfollowQuery from "./unfollow.surql"
-import unfriendQuery from "./unfriend.surql"
 import userQuery from "./user.surql"
 
 interface OwnedPlace {
@@ -78,127 +64,4 @@ export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	})
 
 	return { ...userExists, groupsOwned, places }
-}
-
-async function getData({ params }: RequestEvent) {
-	const [[user2]] = await db.query<{ id: string }[][]>(findUserQuery, params)
-	if (!user2) error(404, "User not found")
-
-	return {
-		id: user2.id,
-		username: params.username,
-	}
-}
-
-type ActionFunction = (
-	params: {
-		user: RecordId<"user">
-		user2: RecordId<"user">
-	},
-	user: { id: string; username: string }
-) => Promise<unknown>
-
-const acceptExisting: ActionFunction = (params, user) =>
-	db.query(
-		// The direction of the ->friends relationship matches the direction of the previous ->request relationship.
-		acceptExistingQuery,
-		{
-			...params,
-			note: `${user.username} is now friends with you!`,
-			relativeId: user.id,
-		}
-	)
-
-async function getInteractData(e: RequestEvent) {
-	const { user } = await authorise(e.locals)
-	const user2 = await getData(e)
-
-	if (user.id === user2.id) error(400, "You can't friend/follow yourself")
-
-	return {
-		data: await formData(e.request),
-		params: {
-			user: Record("user", user.id),
-			user2: Record("user", user2.id),
-		},
-		user,
-	}
-}
-
-async function rerender(e: RequestEvent) {
-	await authorise(e.locals, 5)
-
-	const user2 = await getData(e)
-
-	try {
-		await requestRender(e.fetch, "Avatar", user2.id, user2.username, true)
-		return {
-			avatar: `/api/avatar/${e.params.username}?r=${Math.random()}`,
-			avatarBody: `/api/avatar/${e.params.username}-body?r=${Math.random()}`,
-		}
-	} catch (err) {
-		console.error(err)
-		return fail(500, { msg: "Failed to request render" })
-	}
-}
-export const actions: Actions = { rerender }
-actions.follow = async e => {
-	const { user, params } = await getInteractData(e)
-	// Following, unfollowing and following again sends a new notification each time
-	const limit = ratelimitKey("follow", user.id, 600, 30)
-	if (limit) return limit
-
-	await db.query(followQuery, {
-		...params,
-		note: `${user.username} is now following you!`,
-		relativeId: user.id,
-	})
-}
-actions.unfollow = async e => {
-	const { params } = await getInteractData(e)
-	await db.query(unfollowQuery, params)
-}
-actions.unfriend = async e => {
-	const { params } = await getInteractData(e)
-	await db.query(unfriendQuery, params)
-}
-actions.request = async e => {
-	const { user, params } = await getInteractData(e)
-	const limit = ratelimitKey("friendRequest", user.id, 600, 30)
-	if (limit) return limit
-
-	// Make sure users are not already friends
-	const [alreadyFriends] = await db.query<boolean[]>(
-		alreadyFriendsQuery,
-		params
-	)
-	if (alreadyFriends) error(400, "Already friends")
-
-	const [incoming] = await db.query<boolean[]>(incomingQuery, params)
-	if (incoming) {
-		await acceptExisting(params, user)
-		return
-	}
-
-	await db.query(requestQuery, {
-		...params,
-		note: `${user.username} has sent you a friend request.`,
-		relativeId: user.id,
-	})
-}
-actions.cancel = async e => {
-	const { params } = await getInteractData(e)
-	await db.query(cancelQuery, params)
-}
-actions.decline = async e => {
-	const { params } = await getInteractData(e)
-	await db.query(declineQuery, params)
-}
-actions.accept = async e => {
-	const { user, params } = await getInteractData(e)
-	// Make sure an incoming request exists before accepting
-	const [incoming] = await db.query<boolean[]>(incomingQuery, params)
-	if (!incoming) error(400, "No friend request to accept")
-
-	await acceptExisting(params, user)
 }

@@ -1,22 +1,34 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
 	import fade from "$lib/fade"
+	import {
+		acceptForm,
+		cancelForm,
+		declineForm,
+		followForm,
+		requestForm,
+		unfollowForm,
+		unfriendForm,
+	} from "$lib/interactions.remote"
 
 	const { data }: { data: import("./$types").PageData } = $props()
+
+	const friendForm = (data.friends
+		? unfriendForm
+		: data.outgoingRequest
+			? cancelForm
+			: data.incomingRequest
+				? acceptForm
+				: requestForm
+	).for(data.username)
+	const followFormFor = (data.following ? unfollowForm : followForm).for(
+		data.username
+	)
 </script>
 
 <div class="flex gap-2">
 	<form
-		use:enhance
+		{...friendForm}
 		in:fade
-		method="post"
-		action="?/{data.friends
-			? 'unfriend'
-			: data.outgoingRequest
-				? 'cancel'
-				: data.incomingRequest
-					? 'accept'
-					: 'request'}"
 		class="flex gap-2">
 		<button
 			class="btn {data.friends || data.outgoingRequest
@@ -36,21 +48,11 @@
 		</button>
 	</form>
 	{#if data.incomingRequest}
-		<form
-			use:enhance
-			in:fade
-			method="post"
-			action="?/decline"
-			class="flex gap-2">
+		<form {...declineForm.for(data.username)} in:fade class="flex gap-2">
 			<button class="btn btn-red-secondary">Decline request</button>
 		</form>
 	{/if}
-	<form
-		use:enhance
-		in:fade
-		method="post"
-		action="?/{data.following ? 'unfollow' : 'follow'}"
-		class="flex gap-2">
+	<form {...followFormFor} in:fade class="flex gap-2">
 		<button
 			name="action"
 			class="btn h-full {data.following

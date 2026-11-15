@@ -1,26 +1,19 @@
 <script lang="ts">
-	import { applyAction, enhance } from "$app/forms"
-	import { invalidateAll } from "$app/navigation"
 	import TabData from "$components/TabData"
 	import TabNav from "$components/TabNav.svelte"
 	import { brickColours, brickToHex } from "$lib/brickColours"
 	import AvatarItem from "./AvatarItem.svelte"
+	import { paintForm, regenForm } from "./character.remote"
 
-	const { data, form } = $props()
+	const { data } = $props()
 
 	let { user } = $derived(data)
 
-	let regenerating = $state(false)
-
-	const enhanceRegen: import("./$types").SubmitFunction = () => {
-		regenerating = true
-		return async ({ result }) => {
-			// if (result.type === "success") // invalidateAll() anyway, even if the render fails
-			await invalidateAll()
-			await applyAction(result)
-			regenerating = false
-		}
-	}
+	// Every render is requested server-side, so a changing query string shows the new one instead of the browser's cached copy
+	let avatarVersion = $state(0)
+	const avatarUrl = $derived(
+		`/api/avatar/${user.username}-body?r=${avatarVersion}`
+	)
 
 	const tabTypes: { [_: string]: number } = Object.freeze({
 		Faces: 18,
@@ -88,22 +81,23 @@
 	<div class="grid lg:grid-cols-4 gap-4 pt-6">
 		<div class="<md:col-span-3 flex lg:flex-col gap-4">
 			<div class="card w-full p-4">
-				<form use:enhance={enhanceRegen} method="post" action="?/regen">
+				<form
+					{...regenForm}
+					onsubmit={() => {
+						avatarVersion++
+					}}>
 					<button class="btn btn-secondary w-full">
 						<fa fa-rotate></fa>
 						Regenerate
 					</button>
 				</form>
-				<p class="text-red-500">
-					{form?.msg || ""}
-				</p>
 				<img
 					alt="Your character"
 					class={[
 						"w-full transition-opacity duration-300",
-						{ "opacity-50": regenerating }
+						{ "opacity-50": regenForm.pending > 0 }
 					]}
-					src={form?.avatar || `/api/avatar/${user.username}-body`} />
+					src={avatarUrl} />
 			</div>
 			<div class="card w-full p-4">
 				Body colours
@@ -134,9 +128,7 @@
 						<AvatarItem
 							{asset}
 							{num}
-							total={(assets || []).length}
-							currentTab={tabData.currentTab}
-							{enhanceRegen} />
+							total={(assets || []).length} />
 					{/each}
 				</div>
 			{:else if tabData.currentTab === "Recent"}
@@ -165,14 +157,20 @@
 		<div class="text-left max-w-108 flex flex-wrap gap-2">
 			{#each brickColours as colour}
 				<form
-					use:enhance={enhanceRegen}
-					method="post"
-					action="?/paint&p={bodyPart}&c={colour}"
+					{...paintForm}
 					onsubmit={() => {
 						bodyParts[bodyPart] = colour
+						avatarVersion++
 						bodyPartPopovers[bodyPart].hidePopover()
 					}}
 					class="inline">
+					<input
+						{...paintForm.fields.p.as("hidden", bodyPart)} />
+					<input
+						{...paintForm.fields.c.as(
+							"hidden",
+							colour.toString()
+						)} />
 					<button
 						class="btn colour size-10"
 						style="background-color: #{brickToHex[colour]}"

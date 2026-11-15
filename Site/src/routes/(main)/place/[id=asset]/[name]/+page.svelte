@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { deserialize, enhance } from "$app/forms"
+	import { enhance } from "$app/forms"
 	import Head from "$components/Head.svelte"
 	import ReportButton from "$components/ReportButton.svelte"
 	import Tab from "$components/Tab.svelte"
@@ -10,6 +10,7 @@
 	import { likeEnhance } from "$lib/like"
 	import Autopilot from "./Autopilot.svelte"
 	import customProtocol from "./customprotocol"
+	import { closeForm, join, start } from "./play.remote"
 	import Thumbnails from "./Thumbnails.svelte"
 
 	const { data } = $props()
@@ -41,12 +42,6 @@
 	let popover = $state<HTMLDivElement>()
 	let current = $state<State>("not installed")
 
-	function privateFetchParams() {
-		const body = new FormData()
-		body.append("privateTicket", place.privateTicket)
-		return { body, method: "post" }
-	}
-
 	const launch = (joinscripturl: () => string) => {
 		customProtocol(
 			joinscripturl(),
@@ -72,24 +67,18 @@
 				return
 			}
 
-			let start: { status: number; data?: { dedicated?: boolean } }
+			let started: { dedicated: boolean }
 			try {
-				const response = await fetch(
-					`${currentPath}?/start`,
-					privateFetchParams()
-				)
-				start = deserialize(await response.text()) as typeof start
+				started = await start({
+					id: place.id,
+					privateTicket: place.privateTicket,
+				})
 			} catch {
 				current = "fail"
 				return
 			}
-			// 429 means a start was already requested recently, so wait for that server instead
-			if (start.status !== 200 && start.status !== 429) {
-				current = "fail"
-				return
-			}
 			// A self-hosted place has no dedicated server to wait for
-			if (start.status === 200 && !start.data?.dedicated) {
+			if (!started.dedicated) {
 				launch(joinscripturl)
 				return
 			}
@@ -118,18 +107,18 @@
 		current = "waiting"
 
 		// Get the joinscript URL
-		const response = await fetch(
-			`${currentPath}?/join`,
-			privateFetchParams()
-		)
-		const joinScriptData = deserialize(await response.text()) as {
-			status: number
-			data: { ticket: string }
+		let ticket: string
+		try {
+			;({ ticket } = await join({
+				id: place.id,
+				privateTicket: place.privateTicket,
+			}))
+		} catch {
+			return
 		}
-		if (joinScriptData.status !== 200) return
 
 		// JoinScript is my favourite programming language (-i mean scripting language)
-		const joinUri = data.scheme + data.clientVersion + joinScriptData.data.ticket
+		const joinUri = data.scheme + data.clientVersion + ticket
 		beginJoining(() => joinUri, true)()
 	}
 
@@ -324,11 +313,7 @@
 					Join server
 				</button>
 				{#if isOwner && tabs.includes("Selfhosted") || user.permissionLevel === 5}
-					<form
-						use:enhance
-						method="post"
-						action="?/close"
-						class="pt-2">
+					<form {...closeForm.for(place.id)} class="pt-2">
 						<button id="close" class="btn btn-sm btn-red-secondary">
 							Close server
 						</button>

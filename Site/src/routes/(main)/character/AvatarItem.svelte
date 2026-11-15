@@ -1,15 +1,13 @@
 <script lang="ts">
 	// An equippable avatar item component
 
-	import { enhance } from "$app/forms"
 	import fade from "$lib/fade"
+	import { equipForm, unequipForm } from "./character.remote"
 
 	const {
 		asset,
 		num,
-		total,
-		currentTab,
-		enhanceRegen
+		total
 	}: {
 		asset: {
 			name: string
@@ -18,18 +16,12 @@
 		}
 		num: number
 		total: number
-		currentTab: string
-		enhanceRegen: import("./$types").SubmitFunction
 	} = $props()
+
+	const itemForm = (asset.wearing ? unequipForm : equipForm).for(asset.id)
 </script>
 
-<form
-	use:enhance={enhanceRegen}
-	method="post"
-	action="/character?/{asset.wearing
-		? 'un'
-		: ''}equip&tab={currentTab}&id={asset.id}"
-	class="no-underline">
+<form {...itemForm} class="no-underline">
 	<button
 		in:fade|global={{ num, total }}
 		class="card bg-a assetcard size-full p-4 cursor-pointer">

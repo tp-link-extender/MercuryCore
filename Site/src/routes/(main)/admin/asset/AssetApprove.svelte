@@ -1,7 +1,12 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
+	import {
+		approveForm,
+		denyForm,
+		purgeForm,
+		rerenderForm,
+	} from "./actions.remote.js"
 
 	const {
 		asset,
@@ -12,6 +17,11 @@
 		num: number
 		total: number
 	} = $props()
+
+	const approveFormFor = approveForm.for(asset.id)
+	const denyFormFor = denyForm.for(asset.id)
+	const rerenderFormFor = rerenderForm.for(asset.id)
+	const purgeFormFor = purgeForm.for(asset.id)
 </script>
 
 <div in:fade|global={{ num, total }} class="card">
@@ -40,16 +50,10 @@
 		</span>
 	</div>
 	<div class="flex flex-col gap-1 p-3">
-		<form
-			use:enhance
-			method="post"
-			action="/admin/asset?/approve&id={asset.id}">
+		<form {...approveFormFor}>
 			<button class="btn btn-sm btn-secondary w-full">Approve</button>
 		</form>
-		<form
-			use:enhance
-			method="post"
-			action="/admin/asset?/deny&id={asset.id}">
+		<form {...denyFormFor}>
 			<button class="btn btn-sm btn-red-secondary w-full">Deny</button>
 		</form>
 	</div>
@@ -70,11 +74,7 @@
 				alt={asset.imageAsset.name} />
 		</div>
 
-		<form
-			use:enhance
-			method="post"
-			action="/admin/asset?/rerender&id={asset.id}"
-			class="w-full pb-3">
+		<form {...rerenderFormFor} class="w-full pb-3">
 			<button class="btn btn-lg btn-primary w-full">
 				<fa fa-arrows-rotate class="pr-1"></fa>
 				Rerender
@@ -102,10 +102,7 @@
 	</p>
 
 	<div class="flex flex-wrap gap-3">
-		<form
-			use:enhance
-			method="post"
-			action="/admin/asset?/purge&id={asset.id}">
+		<form {...purgeFormFor}>
 			<button class="btn btn-danger bg-red-900 border-red-900">
 				Yes, do as I say!
 			</button>

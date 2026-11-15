@@ -1,9 +1,8 @@
-import { error, redirect } from "@sveltejs/kit"
+import { redirect } from "@sveltejs/kit"
 import { authorise } from "$lib/server/auth"
 import { db, Record } from "$lib/server/surreal"
-import type { Actions, PageServerLoadEvent } from "./$types"
+import type { PageServerLoadEvent } from "./$types"
 import getModerationQuery from "./getModeration.surql"
-import unmoderateQuery from "./unmoderate.surql"
 
 interface Moderation {
 	note: string
@@ -25,18 +24,4 @@ async function getModeration(id: string) {
 export async function load({ locals }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 	return getModeration(user.id)
-}
-
-export const actions: Actions = {}
-actions.default = async ({ locals }) => {
-	const { user } = await authorise(locals)
-	const userModeration = await getModeration(user.id)
-	if (new Date(userModeration.timeEnds).getTime() > Date.now())
-		error(400, "Your moderation action has not yet ended")
-	if (userModeration.type === "Termination")
-		error(400, "You cannot reactivate your account")
-
-	await db.query(unmoderateQuery, { user: Record("user", user.id) })
-
-	redirect(302, "/home")
 }

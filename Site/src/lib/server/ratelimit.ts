@@ -38,6 +38,23 @@ function hit(
 	return true
 }
 
+export const tooManyRequests = msg
+
+/** Whether a request is over the limit, for callers that report the failure themselves.
+ * @param category The category to ratelimit by.
+ * @param getClientAddress The client's IP address, set by the adapter.
+ * @param timeWindow The length of the time window in seconds.
+ * @param maxRequests The maximum number of requests allowed in the time window.
+ */
+export function ratelimited(
+	category: string,
+	getClientAddress: () => string,
+	timeWindow: number,
+	maxRequests = 1
+) {
+	return hit(category, address(getClientAddress), timeWindow, maxRequests)
+}
+
 /** Allows for a function to be ratelimited by a category, and returns a 429 failure if too many requests are sent.
  * @param category The category to ratelimit by.
  * @param getClientAddress The client's IP address, set by the adapter. Behind a proxy this relies on ADDRESS_HEADER and XFF_DEPTH being set.

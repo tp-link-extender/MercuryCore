@@ -35,10 +35,8 @@
 		image?: boolean
 		bottom?: boolean
 		rerender?: {
-			form?: {
-				avatar?: string
-			} | null
-			regenerating?: boolean
+			avatar?: string
+			pending?: boolean
 		} | null // Used on profile page for rerender button
 		size?: string
 		bg?: keyof typeof transitionBackgrounds
@@ -65,12 +63,11 @@
 			<div class="pfp" style={pfpstyle}>
 				{#if rerender}
 					<img
-						src={rerender.form?.avatar ||
-							`/api/avatar/${user.username}`}
+						src={rerender.avatar || `/api/avatar/${user.username}`}
 						alt={user.username}
 						class={[
 							"transition-opacity duration-300 rounded-full rounded-t-0",
-							{ "opacity-50": rerender.regenerating }
+							{ "opacity-50": rerender.pending }
 						]}
 						{style} />
 				{:else}

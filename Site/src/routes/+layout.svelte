@@ -1,9 +1,12 @@
 <script lang="ts">
+	
 	import nprogress from "nprogress"
 	import { onMount } from "svelte"
 	import { enhance } from "$app/forms"
 	import { navigating } from "$app/state"
 	import User from "$components/User.svelte"
+import { dismissForm } from "$lib/notifications.remote"
+	import { statusPing } from "$lib/session.remote"
 
 	import "../nprogress.css"
 	import "../global.css"
@@ -48,10 +51,7 @@
 		// Save to localStorage so we don't ping multiple times if the user has multiple tabs open
 		const lastPing = localStorage.getItem("lastPing")
 		if (lastPing && Date.now() - Number(lastPing) < 30e3) return
-		await fetch("/api?/statusping", {
-			body: new FormData(), 
-			method: "post"
-		})
+		await statusPing()
 		localStorage.setItem("lastPing", Date.now().toString())
 	}
 	onMount(() => setInterval(ping, 30e3))
@@ -113,10 +113,8 @@
 						{notification.created.toLocaleString()}
 					</small>
 				</a>
-				<form
-					use:enhance
-					method="post"
-					action="/notifications?s={notification.id}">
+				{const dismiss = dismissForm.for(notification.id)}
+				<form {...dismiss}>
 					<button
 						class="btn p-0 px-1 text-white hover:text-neutral-500"
 						aria-label="Close">
