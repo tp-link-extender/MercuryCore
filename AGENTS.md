@@ -59,11 +59,12 @@ None of this should conflict with the formatting or linting rules of Biome.
 - If something is only intended to run once, prefer onMount() over $effect()
 	- Prefer onDestroy() over $effect(() => (() => { ... })())
 
-## Remote forms
+## SvelteKit – Remote forms
 
 - Forms are remote functions (`form()` from `$app/server`) in a `*.remote.ts` module next to the route, not page actions
 - Type a form exported from a route with `ClientForm<typeof schema.infer>`, or `.inferIn` when a schema transforms its input (pipes such as a theme name to an index)
-- Validation happens before the handler, so a field that can be absent from the submitted data needs an optional key (`"description?": "string"`), not an `| undefined` union. Checkboxes and unselected files are absent, not `undefined`
+- Validation happens before the handler, so a field that can be absent from the submitted data needs an optional key (`"description?": "string"`), not an `| undefined` union
+	- Checkboxes and unselected files are absent, not `undefined`
 - Use `.for(id)` for forms repeated per row; the key is injected into the data as `id` as-is, so a numeric id needs a schema that accepts a number
 - File fields must use `formFile` from `$lib/server/formFile`: SvelteKit hands uploads over as Blob-backed objects that arktype's `File` check and `Bun.Image` reject, so `imageAsset.ts` and `fileType.ts` read the bytes before handing them over
 - Send user-facing validation failures through `issues.field("message")`; the `Form` component shows form-level issues and `result.success` itself
