@@ -17,7 +17,9 @@ func newConcurrentEconomy(t *testing.T) *Economy {
 	if err != nil {
 		t.Fatalf("create ledger: %v", err)
 	}
-	t.Cleanup(func() { l.Close() })
+	t.Cleanup(func() {
+		l.Close()
+	})
 
 	return NewEconomy(l, 10, 10, 100, 10, 10, 10, time.Hour*12)
 }

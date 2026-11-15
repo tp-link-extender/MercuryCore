@@ -10,7 +10,7 @@ import (
 )
 
 type testLedger struct {
-	l   *ledger.Ledger
+	l *ledger.Ledger
 	seq int
 }
 
@@ -20,7 +20,9 @@ func newTestLedger(t *testing.T) *testLedger {
 	if err != nil {
 		t.Fatalf("NewLedger: %v", err)
 	}
-	t.Cleanup(func() { l.Close() })
+	t.Cleanup(func() {
+		l.Close()
+	})
 	return &testLedger{l: l}
 }
 
@@ -79,14 +81,14 @@ func fixturePlan(t *testing.T) (*testLedger, []dbAsset, *prunePlan) {
 		userA = "userA"
 		userB = "userB"
 
-		retained     uint32 = 1000
+		retained uint32 = 1000
 		packageChild uint32 = 1001
-		retainedTwo  uint32 = 1002
-		hat          uint32 = 2000
-		packageHat   uint32 = 2001
-		pkg          uint32 = 3000
-		imageAsset   uint32 = 4000
-		limited      uint32 = 5000
+		retainedTwo uint32 = 1002
+		hat uint32 = 2000
+		packageHat uint32 = 2001
+		pkg uint32 = 3000
+		imageAsset uint32 = 4000
+		limited uint32 = 5000
 	)
 
 	mintCurrency(t, tl, userA, 100)
@@ -113,7 +115,7 @@ func fixturePlan(t *testing.T) (*testLedger, []dbAsset, *prunePlan) {
 	tl.apply(t, ledger.Transfer{
 		{Owner: ledger.User{Id: userA}, Items: ledger.Items{One: ledger.ItemsOne{
 			ledger.UnlimitedSource{Id: packageChild}: {},
-			ledger.UnlimitedSource{Id: packageHat}:   {},
+			ledger.UnlimitedSource{Id: packageHat}: {},
 		}}},
 		{Owner: ledger.PackageSource{Id: pkg}},
 	})
@@ -243,7 +245,7 @@ func TestPruneDropsLedgerOrphans(t *testing.T) {
 
 func TestCleanupSQLSkipsMissingTables(t *testing.T) {
 	sql := cleanupSQL(map[string]bool{
-		"asset":   true,
+		"asset": true,
 		"comment": true,
 	})
 	if strings.Contains(sql, "DELETE packageItem") {

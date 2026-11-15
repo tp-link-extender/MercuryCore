@@ -31,7 +31,7 @@ func RandStringId() (id string) {
 
 type TransferID struct {
 	timestamp uint64
-	id        string
+	id string
 }
 
 func (t TransferID) String() string {
@@ -41,7 +41,7 @@ func (t TransferID) String() string {
 func MakeTransferID() TransferID {
 	return TransferID{
 		timestamp: uint64(time.Now().UnixNano()),
-		id:        RandStringId(),
+		id: RandStringId(),
 	}
 }
 
@@ -158,7 +158,7 @@ func (t Transfer) String() string {
 }
 
 type TransferWithID struct {
-	ID       TransferID
+	ID TransferID
 	Transfer Transfer
 }
 
@@ -175,7 +175,7 @@ func (t TransferWithID) Serialise(w io.Writer) error {
 
 var (
 	ErrNoSourceOrDestination = errors.New("transfer has no source or destination")
-	ErrNoItems               = errors.New("transfer has no items")
+	ErrNoItems = errors.New("transfer has no items")
 )
 
 func (t Transfer) Valid() error {

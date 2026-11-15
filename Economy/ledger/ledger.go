@@ -11,17 +11,17 @@ import (
 )
 
 type State struct {
-	ownerItems      map[Owner]*Items
-	itemOwnersOne   map[CanOwnOne]*OwnersOne
-	itemOwnersMany  map[CanOwnMany]*OwnersMany
+	ownerItems map[Owner]*Items
+	itemOwnersOne map[CanOwnOne]*OwnersOne
+	itemOwnersMany map[CanOwnMany]*OwnersMany
 	userLastStipend map[User]TransferID
 }
 
 func makeState() State {
 	return State{
-		ownerItems:      make(map[Owner]*Items),
-		itemOwnersOne:   make(map[CanOwnOne]*OwnersOne),
-		itemOwnersMany:  make(map[CanOwnMany]*OwnersMany),
+		ownerItems: make(map[Owner]*Items),
+		itemOwnersOne: make(map[CanOwnOne]*OwnersOne),
+		itemOwnersMany: make(map[CanOwnMany]*OwnersMany),
 		userLastStipend: make(map[User]TransferID),
 	}
 }
@@ -418,8 +418,8 @@ func ReadState(db *bolt.DB) (State, error) {
 
 type Ledger struct {
 	// mu guards state. Transfers hold the write lock for the whole check, persist and apply sequence, so no two transfers can validate against the same state.
-	mu    sync.RWMutex
-	db    *bolt.DB
+	mu sync.RWMutex
+	db *bolt.DB
 	state State
 }
 
@@ -706,7 +706,7 @@ func (l *Ledger) TransferHistory(n int) (twids []TransferWithID, err error) {
 			}
 
 			twids = append(twids, TransferWithID{
-				ID:       id,
+				ID: id,
 				Transfer: t,
 			})
 		}
@@ -740,7 +740,7 @@ func (l *Ledger) TransferHistoryOwner(n int, o Owner) (twids []TransferWithID, e
 			}
 
 			twids = append(twids, TransferWithID{
-				ID:       id,
+				ID: id,
 				Transfer: t,
 			})
 		}

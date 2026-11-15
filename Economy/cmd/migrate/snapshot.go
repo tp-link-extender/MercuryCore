@@ -18,68 +18,68 @@ import (
 const snapshotVersion = 2
 
 type legacyAsset struct {
-	ID   uint32 `json:"id"`
-	Type int    `json:"type"`
+	ID uint32 `json:"id"`
+	Type int `json:"type"`
 	Name string `json:"name"`
 }
 
 type legacyCreator struct {
 	AssetID uint32 `json:"assetId"`
-	UserID  string `json:"userId"`
+	UserID string `json:"userId"`
 }
 
 type legacyAssetOwner struct {
 	AssetID uint32 `json:"assetId"`
-	UserID  string `json:"userId"`
+	UserID string `json:"userId"`
 }
 
 type legacyPackageChild struct {
 	PackageID uint32 `json:"packageId"`
-	ChildID   uint32 `json:"childId"`
+	ChildID uint32 `json:"childId"`
 }
 
 type legacyPlace struct {
-	ID   uint32 `json:"id"`
+	ID uint32 `json:"id"`
 	Name string `json:"name"`
 }
 
 type legacyPlaceOwner struct {
 	PlaceID uint32 `json:"placeId"`
-	UserID  string `json:"userId"`
+	UserID string `json:"userId"`
 }
 
 type legacyGroup struct {
-	ID   string `json:"id"`
+	ID string `json:"id"`
 	Name string `json:"name"`
 }
 
 type legacyGroupOwner struct {
 	GroupID string `json:"groupId"`
-	UserID  string `json:"userId"`
+	UserID string `json:"userId"`
 }
 
 type legacySnapshot struct {
-	Version         int                  `json:"version"`
-	CreatedAt       time.Time            `json:"createdAt"`
-	OldLedger       string               `json:"oldLedger"`
-	Users           []string             `json:"users"`
-	Assets          []legacyAsset        `json:"assets"`
-	Creators        []legacyCreator      `json:"creators"`
-	AssetOwners     []legacyAssetOwner   `json:"assetOwners"`
+	Version int `json:"version"`
+	CreatedAt time.Time `json:"createdAt"`
+	OldLedger string `json:"oldLedger"`
+	Users []string `json:"users"`
+	Assets []legacyAsset `json:"assets"`
+	Creators []legacyCreator `json:"creators"`
+	AssetOwners []legacyAssetOwner `json:"assetOwners"`
 	PackageChildren []legacyPackageChild `json:"packageChildren"`
-	Places          []legacyPlace        `json:"places"`
-	PlaceOwners     []legacyPlaceOwner   `json:"placeOwners"`
-	Groups          []legacyGroup        `json:"groups"`
-	GroupOwners     []legacyGroupOwner   `json:"groupOwners"`
-	BalancesMicro   map[string]uint64    `json:"balancesMicro"`
-	DustMicro       map[string]uint64    `json:"dustMicro"`
-	LastStipends    map[string]uint64    `json:"lastStipends"`
-	Warnings        []string             `json:"warnings"`
+	Places []legacyPlace `json:"places"`
+	PlaceOwners []legacyPlaceOwner `json:"placeOwners"`
+	Groups []legacyGroup `json:"groups"`
+	GroupOwners []legacyGroupOwner `json:"groupOwners"`
+	BalancesMicro map[string]uint64 `json:"balancesMicro"`
+	DustMicro map[string]uint64 `json:"dustMicro"`
+	LastStipends map[string]uint64 `json:"lastStipends"`
+	Warnings []string `json:"warnings"`
 }
 
 type surrealClient struct {
 	ctx context.Context
-	db  *surrealdb.DB
+	db *surrealdb.DB
 }
 
 func newSurrealClient(url, namespace, database, user, pass string) (*surrealClient, error) {
@@ -129,12 +129,12 @@ func query[T any](c *surrealClient, sql string, vars map[string]any) ([]T, error
 
 func exportSnapshot(c *surrealClient, oldLedger string) (*legacySnapshot, error) {
 	s := &legacySnapshot{
-		Version:       snapshotVersion,
-		CreatedAt:     time.Now().UTC(),
-		OldLedger:     oldLedger,
+		Version: snapshotVersion,
+		CreatedAt: time.Now().UTC(),
+		OldLedger: oldLedger,
 		BalancesMicro: make(map[string]uint64),
-		DustMicro:     make(map[string]uint64),
-		LastStipends:  make(map[string]uint64),
+		DustMicro: make(map[string]uint64),
+		LastStipends: make(map[string]uint64),
 	}
 
 	if rows, err := query[string](c, "SELECT VALUE record::id(id) FROM user;", nil); err != nil {
@@ -196,7 +196,9 @@ func exportSnapshot(c *surrealClient, oldLedger string) (*legacySnapshot, error)
 // holy sorting taskmanager
 func sortSnapshot(s *legacySnapshot) {
 	sort.Strings(s.Users)
-	sort.Slice(s.Assets, func(i, j int) bool { return s.Assets[i].ID < s.Assets[j].ID })
+	sort.Slice(s.Assets, func(i, j int) bool {
+		return s.Assets[i].ID < s.Assets[j].ID
+	})
 	sort.Slice(s.Creators, func(i, j int) bool {
 		if s.Creators[i].AssetID != s.Creators[j].AssetID {
 			return s.Creators[i].AssetID < s.Creators[j].AssetID
@@ -215,14 +217,18 @@ func sortSnapshot(s *legacySnapshot) {
 		}
 		return s.PackageChildren[i].ChildID < s.PackageChildren[j].ChildID
 	})
-	sort.Slice(s.Places, func(i, j int) bool { return s.Places[i].ID < s.Places[j].ID })
+	sort.Slice(s.Places, func(i, j int) bool {
+		return s.Places[i].ID < s.Places[j].ID
+	})
 	sort.Slice(s.PlaceOwners, func(i, j int) bool {
 		if s.PlaceOwners[i].PlaceID != s.PlaceOwners[j].PlaceID {
 			return s.PlaceOwners[i].PlaceID < s.PlaceOwners[j].PlaceID
 		}
 		return s.PlaceOwners[i].UserID < s.PlaceOwners[j].UserID
 	})
-	sort.Slice(s.Groups, func(i, j int) bool { return s.Groups[i].ID < s.Groups[j].ID })
+	sort.Slice(s.Groups, func(i, j int) bool {
+		return s.Groups[i].ID < s.Groups[j].ID
+	})
 	sort.Slice(s.GroupOwners, func(i, j int) bool {
 		if s.GroupOwners[i].GroupID != s.GroupOwners[j].GroupID {
 			return s.GroupOwners[i].GroupID < s.GroupOwners[j].GroupID
@@ -232,13 +238,13 @@ func sortSnapshot(s *legacySnapshot) {
 }
 
 type oldLedgerRecord struct {
-	To      string            `json:"To"`
-	From    string            `json:"From"`
-	Amount  uint64            `json:"Amount"`
-	Note    string            `json:"Note"`
-	Link    string            `json:"Link"`
-	Time    uint64            `json:"Time"`
-	ID      string            `json:"Id"`
+	To string `json:"To"`
+	From string `json:"From"`
+	Amount uint64 `json:"Amount"`
+	Note string `json:"Note"`
+	Link string `json:"Link"`
+	Time uint64 `json:"Time"`
+	ID string `json:"Id"`
 	Returns map[string]uint64 `json:"Returns"`
 }
 

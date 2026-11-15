@@ -9,14 +9,14 @@ import (
 )
 
 type dbAsset struct {
-	ID   uint32 `json:"id"`
-	Type int    `json:"type"`
+	ID uint32 `json:"id"`
+	Type int `json:"type"`
 	Name string `json:"name"`
 }
 
 type dbPackageChild struct {
 	PackageID uint32 `json:"packageId"`
-	ChildID   uint32 `json:"childId"`
+	ChildID uint32 `json:"childId"`
 }
 
 type sourceKind int
@@ -27,27 +27,27 @@ const (
 )
 
 type sourcePlan struct {
-	ID    uint32
-	Kind  sourceKind
+	ID uint32
+	Kind sourceKind
 	Owner string
 }
 
 type prunePlan struct {
-	removed         map[uint32]removedAsset
-	orphanImages    []uint32
-	balances        map[uint32]map[string]uint64 // currency ID -> user -> quantity
-	places          map[uint32]string
-	groups          map[string]string
-	sources         map[uint32]sourcePlan
-	itemsOne        map[uint32]map[string]struct{}
-	itemsMany       map[uint32]map[string]uint64
-	limitedStock    map[uint32]uint64
-	burnedCurrency  map[uint32]uint64
-	packageBurned   map[uint32]uint64
-	movedCurrency   map[uint32]uint64
+	removed map[uint32]removedAsset
+	orphanImages []uint32
+	balances map[uint32]map[string]uint64 // currency ID -> user -> quantity
+	places map[uint32]string
+	groups map[string]string
+	sources map[uint32]sourcePlan
+	itemsOne map[uint32]map[string]struct{}
+	itemsMany map[uint32]map[string]uint64
+	limitedStock map[uint32]uint64
+	burnedCurrency map[uint32]uint64
+	packageBurned map[uint32]uint64
+	movedCurrency map[uint32]uint64
 	packageChildren int
-	retainedAssets  int
-	warnings        []string
+	retainedAssets int
+	warnings []string
 }
 
 func (p *prunePlan) removedIDs() []uint32 {
@@ -55,7 +55,9 @@ func (p *prunePlan) removedIDs() []uint32 {
 	for id := range p.removed {
 		ids = append(ids, id)
 	}
-	sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
+	sort.Slice(ids, func(i, j int) bool {
+		return ids[i] < ids[j]
+	})
 	return ids
 }
 
@@ -323,7 +325,9 @@ func sortedUint32Keys[V any](m map[uint32]V) []uint32 {
 	for id := range m {
 		out = append(out, id)
 	}
-	sort.Slice(out, func(i, j int) bool { return out[i] < out[j] })
+	sort.Slice(out, func(i, j int) bool {
+		return out[i] < out[j]
+	})
 	return out
 }
 
@@ -362,18 +366,18 @@ func buildPlan(
 	}
 
 	plan := &prunePlan{
-		removed:         make(map[uint32]removedAsset, len(removed)),
-		orphanImages:    orphanImages,
-		balances:        make(map[uint32]map[string]uint64),
-		places:          make(map[uint32]string),
-		groups:          make(map[string]string),
-		sources:         make(map[uint32]sourcePlan),
-		itemsOne:        make(map[uint32]map[string]struct{}),
-		itemsMany:       make(map[uint32]map[string]uint64),
-		limitedStock:    make(map[uint32]uint64),
-		burnedCurrency:  make(map[uint32]uint64),
-		packageBurned:   make(map[uint32]uint64),
-		movedCurrency:   make(map[uint32]uint64),
+		removed: make(map[uint32]removedAsset, len(removed)),
+		orphanImages: orphanImages,
+		balances: make(map[uint32]map[string]uint64),
+		places: make(map[uint32]string),
+		groups: make(map[string]string),
+		sources: make(map[uint32]sourcePlan),
+		itemsOne: make(map[uint32]map[string]struct{}),
+		itemsMany: make(map[uint32]map[string]uint64),
+		limitedStock: make(map[uint32]uint64),
+		burnedCurrency: make(map[uint32]uint64),
+		packageBurned: make(map[uint32]uint64),
+		movedCurrency: make(map[uint32]uint64),
 		packageChildren: packageChildCount,
 	}
 	for id := range dbAssets {

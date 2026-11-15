@@ -158,13 +158,13 @@ func (i Currency) ID() uint32 {
 	return i.Id
 }
 
-func (Currency) Mintable()   {}
+func (Currency) Mintable() {}
 func (Currency) CanOwnMany() {}
 
 var (
 	_ NumericItem = Currency{}
-	_ CanOwnMany  = Currency{}
-	_ Mintable    = Currency{}
+	_ CanOwnMany = Currency{}
+	_ Mintable = Currency{}
 )
 
 type LimitedAsset struct {
@@ -191,8 +191,8 @@ func (LimitedAsset) CanOwnMany() {}
 
 var (
 	_ NumericItem = LimitedAsset{}
-	_ CanOwnMany  = LimitedAsset{}
-	_ Mintable    = LimitedAsset{}
+	_ CanOwnMany = LimitedAsset{}
+	_ Mintable = LimitedAsset{}
 )
 
 type UnlimitedAsset struct {
@@ -215,7 +215,7 @@ func (UnlimitedAsset) CanOwnOne() {}
 
 var (
 	_ NumericItem = UnlimitedAsset{}
-	_ CanOwnOne   = UnlimitedAsset{}
+	_ CanOwnOne = UnlimitedAsset{}
 )
 
 type LimitedSource struct {
@@ -235,18 +235,18 @@ func (i LimitedSource) ID() uint32 {
 }
 
 func (LimitedSource) CanOwnOne() {}
-func (LimitedSource) Mintable()  {}
-func (LimitedSource) Owner()     {}
-func (LimitedSource) Source()    {}
+func (LimitedSource) Mintable() {}
+func (LimitedSource) Owner() {}
+func (LimitedSource) Source() {}
 
 // func (LimitedSource) Single()    {}
 
 var (
 	_ NumericItem = LimitedSource{}
-	_ CanOwnOne   = LimitedSource{}
-	_ Mintable    = LimitedSource{}
-	_ Owner       = LimitedSource{}
-	_ Source      = LimitedSource{}
+	_ CanOwnOne = LimitedSource{}
+	_ Mintable = LimitedSource{}
+	_ Owner = LimitedSource{}
+	_ Source = LimitedSource{}
 )
 
 func (i LimitedSource) Create() LimitedAsset {
@@ -274,18 +274,18 @@ func (i UnlimitedSource) ID() uint32 {
 }
 
 func (UnlimitedSource) CanOwnOne() {}
-func (UnlimitedSource) Mintable()  {}
-func (UnlimitedSource) Owner()     {}
-func (UnlimitedSource) Source()    {}
+func (UnlimitedSource) Mintable() {}
+func (UnlimitedSource) Owner() {}
+func (UnlimitedSource) Source() {}
 
 // func (UnlimitedSource) Single()    {}
 
 var (
 	_ NumericItem = UnlimitedSource{}
-	_ CanOwnOne   = UnlimitedSource{}
-	_ Mintable    = UnlimitedSource{}
-	_ Owner       = UnlimitedSource{}
-	_ Source      = UnlimitedSource{}
+	_ CanOwnOne = UnlimitedSource{}
+	_ Mintable = UnlimitedSource{}
+	_ Owner = UnlimitedSource{}
+	_ Source = UnlimitedSource{}
 )
 
 func (i UnlimitedSource) Create() UnlimitedAsset {
@@ -317,7 +317,7 @@ func (Package) CanOwnOne() {}
 
 var (
 	_ NumericItem = Package{}
-	_ CanOwnOne   = Package{}
+	_ CanOwnOne = Package{}
 )
 
 // A PackageSource creates a Package and holds the sources for everything inside it, so it can reissue the whole bundle indefinitely. It is an ordinary source as far as the ledger is concerned: the only thing that makes it special is that its inventory contains other sources.
@@ -338,16 +338,16 @@ func (i PackageSource) ID() uint32 {
 }
 
 func (PackageSource) CanOwnOne() {}
-func (PackageSource) Mintable()  {}
-func (PackageSource) Owner()     {}
-func (PackageSource) Source()    {}
+func (PackageSource) Mintable() {}
+func (PackageSource) Owner() {}
+func (PackageSource) Source() {}
 
 var (
 	_ NumericItem = PackageSource{}
-	_ CanOwnOne   = PackageSource{}
-	_ Mintable    = PackageSource{}
-	_ Owner       = PackageSource{}
-	_ Source      = PackageSource{}
+	_ CanOwnOne = PackageSource{}
+	_ Mintable = PackageSource{}
+	_ Owner = PackageSource{}
+	_ Source = PackageSource{}
 )
 
 func (i PackageSource) Create() Package {
@@ -380,14 +380,14 @@ func (i Place) ID() uint32 {
 }
 
 func (Place) CanOwnOne() {}
-func (Place) Mintable()  {}
+func (Place) Mintable() {}
 
 // func (Place) Single()    {}
 
 var (
 	_ NumericItem = Place{}
-	_ CanOwnOne   = Place{}
-	_ Mintable    = Place{}
+	_ CanOwnOne = Place{}
+	_ Mintable = Place{}
 )
 
 func RandPlace() Place {
@@ -419,7 +419,7 @@ func (User) Owner() {}
 
 var (
 	_ StringItem = User{}
-	_ Owner      = User{}
+	_ Owner = User{}
 )
 
 type Group struct {
@@ -439,16 +439,16 @@ func (i Group) ID() string {
 }
 
 func (Group) CanOwnOne() {}
-func (Group) Mintable()  {}
-func (Group) Owner()     {}
+func (Group) Mintable() {}
+func (Group) Owner() {}
 
 // func (Group) Single()    {}
 
 var (
 	_ StringItem = Group{}
-	_ CanOwnOne  = Group{}
-	_ Mintable   = Group{}
-	_ Owner      = Group{}
+	_ CanOwnOne = Group{}
+	_ Mintable = Group{}
+	_ Owner = Group{}
 )
 
 func RandGroup() Group {

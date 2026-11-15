@@ -15,7 +15,7 @@ import (
 // Client is a small wrapper around the official SurrealDB Go SDK for the administrative commands in this repository.
 type Client struct {
 	ctx context.Context
-	db  *surrealdb.DB
+	db *surrealdb.DB
 }
 
 // DefaultUser is the username the administrative commands sign in with when --surreal-user isn't given: DATABASE_USER, or the Site's default user.

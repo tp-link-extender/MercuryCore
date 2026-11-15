@@ -51,7 +51,7 @@ func loadPackageChildren(c *sdb.Client, tables map[string]bool) ([]dbPackageChil
 
 func loadCommentIDs(c *sdb.Client, removedIDs []uint32, removedIDStrings []string) ([]string, error) {
 	rows, err := sdb.Query[string](c, `SELECT VALUE record::id(id) FROM comment WHERE type[0] = "asset" AND (type[1] IN $removedIds OR type[1] IN $removedIdStrings);`, map[string]any{
-		"removedIds":       removedIDs,
+		"removedIds": removedIDs,
 		"removedIdStrings": removedIDStrings,
 	})
 	if err != nil {
@@ -88,21 +88,23 @@ func loadOrphanImages(c *sdb.Client, tables map[string]bool, primary []uint32) (
 		seen[id] = struct{}{}
 		orphans = append(orphans, id)
 	}
-	sort.Slice(orphans, func(i, j int) bool { return orphans[i] < orphans[j] })
+	sort.Slice(orphans, func(i, j int) bool {
+		return orphans[i] < orphans[j]
+	})
 	return orphans, nil
 }
 
 type countQuery struct {
 	name string
-	sql  string
+	sql string
 }
 
 func siteCounts(c *sdb.Client, tables map[string]bool, removedIDs []uint32, removedIDStrings []string, commentIDs []string, orphanIDs []uint32) (map[string]int, error) {
 	vars := map[string]any{
-		"removedIds":       removedIDs,
+		"removedIds": removedIDs,
 		"removedIdStrings": removedIDStrings,
-		"commentIds":       commentIDs,
-		"orphanIds":        orphanIDs,
+		"commentIds": commentIDs,
+		"orphanIds": orphanIDs,
 	}
 	queries := []countQuery{
 		{"assets", `SELECT count() AS n FROM asset WHERE record::id(id) IN $removedIds GROUP ALL;`},
@@ -187,10 +189,10 @@ func cleanupSQL(tables map[string]bool) string {
 
 func applySite(c *sdb.Client, tables map[string]bool, removedIDs []uint32, removedIDStrings []string, commentIDs []string, orphanIDs []uint32) error {
 	return sdb.Exec(c, cleanupSQL(tables), map[string]any{
-		"removedIds":       removedIDs,
+		"removedIds": removedIDs,
 		"removedIdStrings": removedIDStrings,
-		"commentIds":       commentIDs,
-		"orphanIds":        orphanIDs,
+		"commentIds": commentIDs,
+		"orphanIds": orphanIDs,
 	})
 }
 

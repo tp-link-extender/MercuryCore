@@ -11,43 +11,43 @@ import (
 )
 
 type options struct {
-	input        string
-	export       string
-	oldLedger    string
-	out          string
-	report       string
-	surrealURL   string
-	namespace    string
-	database     string
-	surrealUser  string
-	surrealPass  string
+	input string
+	export string
+	oldLedger string
+	out string
+	report string
+	surrealURL string
+	namespace string
+	database string
+	surrealUser string
+	surrealPass string
 	fallbackUser string
-	skipOrphans  bool
-	dryRun       bool
-	force        bool
-	batchSize    int
+	skipOrphans bool
+	dryRun bool
+	force bool
+	batchSize int
 }
 
 type report struct {
-	Version      int            `json:"version"`
-	StartedAt    time.Time      `json:"startedAt"`
-	FinishedAt   time.Time      `json:"finishedAt"`
-	DryRun       bool           `json:"dryRun"`
-	Snapshot     string         `json:"snapshot,omitempty"`
-	OldLedger    string         `json:"oldLedger,omitempty"`
-	OutputLedger string         `json:"outputLedger,omitempty"`
-	Counts       map[string]int `json:"counts"`
-	Balances     balanceReport  `json:"balances"`
-	Warnings     []string       `json:"warnings,omitempty"`
-	Errors       []string       `json:"errors,omitempty"`
-	Verification []string       `json:"verification,omitempty"`
+	Version int `json:"version"`
+	StartedAt time.Time `json:"startedAt"`
+	FinishedAt time.Time `json:"finishedAt"`
+	DryRun bool `json:"dryRun"`
+	Snapshot string `json:"snapshot,omitempty"`
+	OldLedger string `json:"oldLedger,omitempty"`
+	OutputLedger string `json:"outputLedger,omitempty"`
+	Counts map[string]int `json:"counts"`
+	Balances balanceReport `json:"balances"`
+	Warnings []string `json:"warnings,omitempty"`
+	Errors []string `json:"errors,omitempty"`
+	Verification []string `json:"verification,omitempty"`
 }
 
 type balanceReport struct {
-	Users      int    `json:"users"`
+	Users int `json:"users"`
 	TotalUnits uint64 `json:"totalUnits"`
-	DustUsers  int    `json:"dustUsers"`
-	DustTotal  uint64 `json:"dustTotalMicro"`
+	DustUsers int `json:"dustUsers"`
+	DustTotal uint64 `json:"dustTotalMicro"`
 }
 
 func main() {
@@ -80,10 +80,10 @@ func main() {
 	}
 
 	rep := &report{
-		Version:   1,
+		Version: 1,
 		StartedAt: time.Now().UTC(),
-		DryRun:    o.dryRun,
-		Counts:    make(map[string]int),
+		DryRun: o.dryRun,
+		Counts: make(map[string]int),
 	}
 
 	var err error

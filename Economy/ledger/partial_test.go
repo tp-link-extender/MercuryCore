@@ -25,15 +25,15 @@ func sampleTransfer() Transfer {
 			Items: Items{
 				One: ItemsOne{
 					unlimitedAsset: {},
-					unlimitedSrc:   {},
-					limitedSrc:     {},
-					pkgSrc:         {},
-					pkg:            {},
-					RandPlace():    {},
-					RandGroup():    {},
+					unlimitedSrc: {},
+					limitedSrc: {},
+					pkgSrc: {},
+					pkg: {},
+					RandPlace(): {},
+					RandGroup(): {},
 				},
 				Many: ItemsMany{
-					currency:     100,
+					currency: 100,
 					limitedAsset: 5,
 				},
 			},
@@ -42,7 +42,7 @@ func sampleTransfer() Transfer {
 			Owner: pkgSrc,
 			Items: Items{
 				One: ItemsOne{
-					pkg:            {},
+					pkg: {},
 					unlimitedAsset: {},
 				},
 				Many: ItemsMany{
@@ -89,9 +89,9 @@ func TestDeserialiseItemsFromPartialReads(t *testing.T) {
 
 func TestDeserialiseOwnersFromPartialReads(t *testing.T) {
 	one := OwnersOne{
-		User{Id: "user"}:     {},
+		User{Id: "user"}: {},
 		PackageSource{Id: 3}: {},
-		RandGroup():          {},
+		RandGroup(): {},
 	}
 	buf := &bytes.Buffer{}
 	if err := one.Serialise(buf); err != nil {
@@ -106,7 +106,7 @@ func TestDeserialiseOwnersFromPartialReads(t *testing.T) {
 	}
 
 	many := OwnersMany{
-		User{Id: "user"}:       5,
+		User{Id: "user"}: 5,
 		UnlimitedSource{Id: 1}: 7,
 	}
 	buf = &bytes.Buffer{}

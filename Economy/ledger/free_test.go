@@ -14,7 +14,9 @@ func newFreeEconomy(t *testing.T) *Economy {
 	if err != nil {
 		t.Fatalf("create ledger: %v", err)
 	}
-	t.Cleanup(func() { l.Close() })
+	t.Cleanup(func() {
+		l.Close()
+	})
 
 	return NewEconomy(l, 0, 0, 0, 0, 0, 10, time.Hour*12)
 }

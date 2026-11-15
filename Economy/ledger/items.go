@@ -139,7 +139,7 @@ func DeserialiseItemsOne(r io.Reader) (ItemsOne, error) {
 }
 
 type (
-	Quantity  uint64
+	Quantity uint64
 	ItemsMany map[CanOwnMany]Quantity
 )
 
@@ -220,7 +220,7 @@ func DeserialiseItemsMany(r io.Reader) (ItemsMany, error) {
 }
 
 type Items struct {
-	One  ItemsOne
+	One ItemsOne
 	Many ItemsMany
 }
 
@@ -296,7 +296,7 @@ func (im ItemsMany) cloneNonZero() ItemsMany {
 
 func (is Items) clone() Items {
 	return Items{
-		One:  is.One.clone(),
+		One: is.One.clone(),
 		Many: is.Many.clone(),
 	}
 }
@@ -304,7 +304,7 @@ func (is Items) clone() Items {
 // cloneNonZero copies an inventory, dropping zero quantities the same way GetInventory used to.
 func (is Items) cloneNonZero() Items {
 	return Items{
-		One:  is.One.clone(),
+		One: is.One.clone(),
 		Many: is.Many.cloneNonZero(),
 	}
 }

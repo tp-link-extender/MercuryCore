@@ -271,7 +271,7 @@ func buyAssetTest(l *Ledger, t *testing.T, user User, currency Currency, src Unl
 
 	xinv := Items{
 		One: ItemsOne{
-			src:          {},
+			src: {},
 			src.Create(): {},
 		},
 		Many: ItemsMany{
@@ -791,7 +791,9 @@ func newTestEconomy(t *testing.T) (*Ledger, *Economy) {
 	if err != nil {
 		t.Fatalf("create ledger: %v", err)
 	}
-	t.Cleanup(func() { os.Remove(name) })
+	t.Cleanup(func() {
+		os.Remove(name)
+	})
 
 	return l, NewEconomy(l, 10, 10, 100, 10, 10, 10, time.Hour*12)
 }

@@ -21,8 +21,8 @@ Transaction {"From":"userA","To":"userB","Amount":5000000,"Note":"Purchase","Lin
 
 	s := &legacySnapshot{
 		BalancesMicro: make(map[string]uint64),
-		DustMicro:     make(map[string]uint64),
-		LastStipends:  make(map[string]uint64),
+		DustMicro: make(map[string]uint64),
+		LastStipends: make(map[string]uint64),
 	}
 	if err := parseOldLedger(path, s); err != nil {
 		t.Fatalf("parseOldLedger: %v", err)
@@ -52,8 +52,8 @@ func TestParseOldLedgerRejectsReturns(t *testing.T) {
 
 	s := &legacySnapshot{
 		BalancesMicro: make(map[string]uint64),
-		DustMicro:     make(map[string]uint64),
-		LastStipends:  make(map[string]uint64),
+		DustMicro: make(map[string]uint64),
+		LastStipends: make(map[string]uint64),
 	}
 	err := parseOldLedger(path, s)
 	if err == nil || !strings.Contains(err.Error(), "returns") {
@@ -63,9 +63,9 @@ func TestParseOldLedgerRejectsReturns(t *testing.T) {
 
 func fixtureSnapshot() *legacySnapshot {
 	return &legacySnapshot{
-		Version:   2,
+		Version: 2,
 		OldLedger: "testdata/old-ledger",
-		Users:     []string{"userA", "userB"},
+		Users: []string{"userA", "userB"},
 		Assets: []legacyAsset{
 			{ID: 1, Type: 8, Name: "Standalone"},
 			{ID: 2, Type: 32, Name: "Package"},
@@ -92,15 +92,15 @@ func fixtureSnapshot() *legacySnapshot {
 			{PackageID: 2, ChildID: 4},
 			{PackageID: 4, ChildID: 5},
 		},
-		Places:      []legacyPlace{{ID: 10, Name: "Place"}},
+		Places: []legacyPlace{{ID: 10, Name: "Place"}},
 		PlaceOwners: []legacyPlaceOwner{{PlaceID: 10, UserID: "userA"}},
-		Groups:      []legacyGroup{{ID: "group1", Name: "Group"}},
+		Groups: []legacyGroup{{ID: "group1", Name: "Group"}},
 		GroupOwners: []legacyGroupOwner{{GroupID: "group1", UserID: "userA"}},
 		BalancesMicro: map[string]uint64{
 			"userA": 50_000_000,
 			"userB": 2_500_000,
 		},
-		DustMicro:    map[string]uint64{"userB": 500_000},
+		DustMicro: map[string]uint64{"userB": 500_000},
 		LastStipends: map[string]uint64{},
 	}
 }

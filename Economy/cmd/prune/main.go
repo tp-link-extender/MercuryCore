@@ -17,9 +17,9 @@ import (
 
 type options struct {
 	db, out, report, surrealURL, namespace, database, surrealUser, surrealPass, removeTypes, assetsDir, thumbnailsDir string
-	dryRun, force, skipLedger, skipSite, skipFiles, dropOrphans, keepOrphans                                          bool
-	surrealTimeout                                                                                                    time.Duration
-	batchSize                                                                                                         int
+	dryRun, force, skipLedger, skipSite, skipFiles, dropOrphans, keepOrphans bool
+	surrealTimeout time.Duration
+	batchSize int
 }
 
 func main() {
@@ -83,13 +83,13 @@ func main() {
 	}
 
 	rep := &report{
-		Version:     1,
-		StartedAt:   time.Now().UTC(),
-		DryRun:      o.dryRun,
-		LedgerPath:  o.db,
+		Version: 1,
+		StartedAt: time.Now().UTC(),
+		DryRun: o.dryRun,
+		LedgerPath: o.db,
 		RemoveTypes: sortedInts(removeTypes),
-		Counts:      make(map[string]int),
-		Ledger:      ledgerReport{Counts: make(map[string]int)},
+		Counts: make(map[string]int),
+		Ledger: ledgerReport{Counts: make(map[string]int)},
 	}
 
 	err = run(o, removeTypes, rep)
@@ -169,7 +169,9 @@ func run(o options, removeTypes map[int]struct{}, rep *report) error {
 		asset := plan.removed[id]
 		rep.Removed = append(rep.Removed, asset)
 	}
-	sort.Slice(rep.Removed, func(i, j int) bool { return rep.Removed[i].ID < rep.Removed[j].ID })
+	sort.Slice(rep.Removed, func(i, j int) bool {
+		return rep.Removed[i].ID < rep.Removed[j].ID
+	})
 	if len(plan.removed) == 0 {
 		rep.Warnings = append(rep.Warnings, "no matching assets found; nothing to prune")
 		return nil

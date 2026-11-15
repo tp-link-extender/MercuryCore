@@ -9,39 +9,39 @@ import (
 const microPerUnit = 1_000_000
 
 type migrationData struct {
-	users         map[string]struct{}
-	assets        map[uint32]legacyAsset
-	creators      map[uint32][]legacyCreator
-	owners        map[uint32]map[string]struct{}
-	children      map[uint32][]uint32
-	parents       map[uint32]map[uint32]struct{}
-	places        map[uint32]legacyPlace
-	placeOwners   map[uint32]map[string]struct{}
-	groups        map[string]legacyGroup
-	groupOwners   map[string]map[string]struct{}
+	users map[string]struct{}
+	assets map[uint32]legacyAsset
+	creators map[uint32][]legacyCreator
+	owners map[uint32]map[string]struct{}
+	children map[uint32][]uint32
+	parents map[uint32]map[uint32]struct{}
+	places map[uint32]legacyPlace
+	placeOwners map[uint32]map[string]struct{}
+	groups map[string]legacyGroup
+	groupOwners map[string]map[string]struct{}
 	balancesMicro map[string]uint64
-	dust          map[string]uint64
-	fallbackUser  string
-	skipOrphans   bool
-	warnings      []string
-	errors        []string
+	dust map[string]uint64
+	fallbackUser string
+	skipOrphans bool
+	warnings []string
+	errors []string
 }
 
 func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool) *migrationData {
 	d := &migrationData{
-		users:         make(map[string]struct{}, len(s.Users)),
-		assets:        make(map[uint32]legacyAsset),
-		creators:      make(map[uint32][]legacyCreator),
-		owners:        make(map[uint32]map[string]struct{}),
-		children:      make(map[uint32][]uint32),
-		parents:       make(map[uint32]map[uint32]struct{}),
-		places:        make(map[uint32]legacyPlace),
-		placeOwners:   make(map[uint32]map[string]struct{}),
-		groups:        make(map[string]legacyGroup),
-		groupOwners:   make(map[string]map[string]struct{}),
+		users: make(map[string]struct{}, len(s.Users)),
+		assets: make(map[uint32]legacyAsset),
+		creators: make(map[uint32][]legacyCreator),
+		owners: make(map[uint32]map[string]struct{}),
+		children: make(map[uint32][]uint32),
+		parents: make(map[uint32]map[uint32]struct{}),
+		places: make(map[uint32]legacyPlace),
+		placeOwners: make(map[uint32]map[string]struct{}),
+		groups: make(map[string]legacyGroup),
+		groupOwners: make(map[string]map[string]struct{}),
 		balancesMicro: make(map[string]uint64, len(s.BalancesMicro)),
-		dust:          make(map[string]uint64, len(s.DustMicro)),
-		skipOrphans:   skipOrphans,
+		dust: make(map[string]uint64, len(s.DustMicro)),
+		skipOrphans: skipOrphans,
 	}
 	d.warnings = append(d.warnings, s.Warnings...)
 
@@ -393,7 +393,9 @@ func (d *migrationData) packageOrder() ([]uint32, error) {
 			packages = append(packages, id)
 		}
 	}
-	sort.Slice(packages, func(i, j int) bool { return packages[i] < packages[j] })
+	sort.Slice(packages, func(i, j int) bool {
+		return packages[i] < packages[j]
+	})
 	for pkg, children := range d.children {
 		for _, child := range children {
 			if d.assets[child].Type == 32 {
@@ -448,7 +450,9 @@ func (d *migrationData) sortedAssetIDs() []uint32 {
 	for id := range d.assets {
 		ids = append(ids, id)
 	}
-	sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
+	sort.Slice(ids, func(i, j int) bool {
+		return ids[i] < ids[j]
+	})
 	return ids
 }
 
@@ -457,7 +461,9 @@ func (d *migrationData) sortedPlaceIDs() []uint32 {
 	for id := range d.places {
 		ids = append(ids, id)
 	}
-	sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
+	sort.Slice(ids, func(i, j int) bool {
+		return ids[i] < ids[j]
+	})
 	return ids
 }
 

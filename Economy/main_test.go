@@ -108,9 +108,9 @@ func TestEconomyKeyRequired(t *testing.T) {
 	defer srv.Close()
 
 	for name, authorization := range map[string]string{
-		"missing":    "",
-		"wrong":      "Bearer wrong-key",
-		"malformed":  "Basic dGVzdA==",
+		"missing": "",
+		"wrong": "Bearer wrong-key",
+		"malformed": "Basic dGVzdA==",
 		"empty-bear": bearerPrefix,
 	} {
 		t.Run(name, func(t *testing.T) {

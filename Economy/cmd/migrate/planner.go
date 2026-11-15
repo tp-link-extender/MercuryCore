@@ -9,13 +9,13 @@ import (
 )
 
 type planner struct {
-	ledger    *ledger.Ledger
-	base      uint64
-	seq       int
-	batchIDs  []ledger.TransferID
-	batchTFs  []ledger.Transfer
+	ledger *ledger.Ledger
+	base uint64
+	seq int
+	batchIDs []ledger.TransferID
+	batchTFs []ledger.Transfer
 	batchSize int
-	counts    map[string]int
+	counts map[string]int
 }
 
 func newPlanner(l *ledger.Ledger, batchSize int) *planner {
@@ -23,10 +23,10 @@ func newPlanner(l *ledger.Ledger, batchSize int) *planner {
 		batchSize = 500
 	}
 	return &planner{
-		ledger:    l,
-		base:      uint64(time.Now().UnixNano()),
+		ledger: l,
+		base: uint64(time.Now().UnixNano()),
 		batchSize: batchSize,
-		counts:    make(map[string]int),
+		counts: make(map[string]int),
 	}
 }
 

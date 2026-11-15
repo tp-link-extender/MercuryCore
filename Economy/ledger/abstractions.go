@@ -8,24 +8,24 @@ import (
 
 // Abstractions
 type Economy struct {
-	ledger                                                                               *Ledger
-	defaultCurrency                                                                      Currency
+	ledger *Ledger
+	defaultCurrency Currency
 	PlacePrice, GroupPrice, LimitedSourcePrice, UnlimitedSourcePrice, PackageSourcePrice Quantity
-	StipendAmount                                                                        Quantity
-	StipendTime                                                                          time.Duration
+	StipendAmount Quantity
+	StipendTime time.Duration
 }
 
 func NewEconomy(ledger *Ledger, placePrice, groupPrice, limitedSourcePrice, unlimitedSourcePrice, packageSourcePrice, stipendAmount Quantity, stipendTime time.Duration) *Economy {
 	return &Economy{
 		ledger: ledger,
 		// default 0 currency
-		PlacePrice:           placePrice,
-		GroupPrice:           groupPrice,
-		LimitedSourcePrice:   limitedSourcePrice,
+		PlacePrice: placePrice,
+		GroupPrice: groupPrice,
+		LimitedSourcePrice: limitedSourcePrice,
 		UnlimitedSourcePrice: unlimitedSourcePrice,
-		PackageSourcePrice:   packageSourcePrice,
-		StipendAmount:        stipendAmount,
-		StipendTime:          stipendTime,
+		PackageSourcePrice: packageSourcePrice,
+		StipendAmount: stipendAmount,
+		StipendTime: stipendTime,
 	}
 }
 

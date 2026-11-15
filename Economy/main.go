@@ -23,7 +23,7 @@ import (
 
 const (
 	maxRequestBodyBytes = 1 << 20 // 1 MiB
-	maxHistoryEntries   = 1000
+	maxHistoryEntries = 1000
 	maxResponseLogBytes = 64 << 10 // 64 KiB
 )
 
@@ -463,7 +463,7 @@ func (e *EconomyServer) historyOwnerRoute(w http.ResponseWriter, r *http.Request
 
 type CustomResponseWriter struct {
 	http.ResponseWriter
-	log        []byte
+	log []byte
 	statusCode int
 }
 
@@ -509,7 +509,7 @@ func loggingHandler(next http.Handler) http.Handler {
 
 			crw := &CustomResponseWriter{
 				ResponseWriter: w,
-				statusCode:     status,
+				statusCode: status,
 			}
 			http.Error(crw, http.StatusText(status), status)
 
@@ -525,7 +525,7 @@ func loggingHandler(next http.Handler) http.Handler {
 
 		crw := &CustomResponseWriter{
 			ResponseWriter: w,
-			statusCode:     http.StatusOK,
+			statusCode: http.StatusOK,
 		}
 		next.ServeHTTP(crw, r)
 		cs := crw.statusCode
@@ -540,30 +540,74 @@ func loggingHandler(next http.Handler) http.Handler {
 // routes are kept in step with the Route union in client/api.ts
 var routes = []struct {
 	path string
-	h    func(*EconomyServer, http.ResponseWriter, *http.Request)
+	h func(*EconomyServer, http.ResponseWriter, *http.Request)
 }{
-	{"ownsOne", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.ownsOneRoute(w, r) }},
-	{"ownsMany", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.ownsManyRoute(w, r) }},
-	{"ownersOne", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.ownersOneRoute(w, r) }},
-	{"ownersMany", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.ownersManyRoute(w, r) }},
-	{"countOwnersOne", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.countOwnersOneRoute(w, r) }},
-	{"countOwnersMany", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.countOwnersManyRoute(w, r) }},
-	{"inventory", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.inventoryRoute(w, r) }},
-	{"balance", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.balanceRoute(w, r) }},
-	{"prices", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.pricesRoute(w, r) }},
-	{"stipend", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.stipendRoute(w, r) }},
-	{"createLimitedSource", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.createLimitedSourceRoute(w, r) }},
-	{"createUnlimitedSource", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.createUnlimitedSourceRoute(w, r) }},
-	{"createPlace", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.createPlaceRoute(w, r) }},
-	{"createGroup", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.createGroupRoute(w, r) }},
-	{"buyUnlimitedAsset", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.buyUnlimitedAssetRoute(w, r) }},
-	{"buyLimitedAsset", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.buyLimitedAssetRoute(w, r) }},
-	{"createPackageSource", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.createPackageSourceRoute(w, r) }},
-	{"buyPackage", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.buyPackageRoute(w, r) }},
-	{"packageContents", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.packageContentsRoute(w, r) }},
-	{"packageItems", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.packageItemsRoute(w, r) }},
-	{"history", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.historyRoute(w, r) }},
-	{"historyOwner", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) { s.historyOwnerRoute(w, r) }},
+	{"ownsOne", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.ownsOneRoute(w, r)
+	}},
+	{"ownsMany", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.ownsManyRoute(w, r)
+	}},
+	{"ownersOne", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.ownersOneRoute(w, r)
+	}},
+	{"ownersMany", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.ownersManyRoute(w, r)
+	}},
+	{"countOwnersOne", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.countOwnersOneRoute(w, r)
+	}},
+	{"countOwnersMany", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.countOwnersManyRoute(w, r)
+	}},
+	{"inventory", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.inventoryRoute(w, r)
+	}},
+	{"balance", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.balanceRoute(w, r)
+	}},
+	{"prices", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.pricesRoute(w, r)
+	}},
+	{"stipend", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.stipendRoute(w, r)
+	}},
+	{"createLimitedSource", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.createLimitedSourceRoute(w, r)
+	}},
+	{"createUnlimitedSource", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.createUnlimitedSourceRoute(w, r)
+	}},
+	{"createPlace", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.createPlaceRoute(w, r)
+	}},
+	{"createGroup", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.createGroupRoute(w, r)
+	}},
+	{"buyUnlimitedAsset", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.buyUnlimitedAssetRoute(w, r)
+	}},
+	{"buyLimitedAsset", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.buyLimitedAssetRoute(w, r)
+	}},
+	{"createPackageSource", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.createPackageSourceRoute(w, r)
+	}},
+	{"buyPackage", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.buyPackageRoute(w, r)
+	}},
+	{"packageContents", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.packageContentsRoute(w, r)
+	}},
+	{"packageItems", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.packageItemsRoute(w, r)
+	}},
+	{"history", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.historyRoute(w, r)
+	}},
+	{"historyOwner", func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+		s.historyOwnerRoute(w, r)
+	}},
 }
 
 const bearerPrefix = "Bearer "
