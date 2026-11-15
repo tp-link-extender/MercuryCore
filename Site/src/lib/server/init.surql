@@ -275,8 +275,9 @@ DEFINE FUNCTION OVERWRITE fn::getComments($comment: record<comment>, $depth: num
 	RETURN SELECT
 		record::id(id) AS id,
 		author,
-		SELECT text, updated FROM $parent.content
-		ORDER BY updated DESC AS content,
+		# Only the newest version: earlier ones include the text of deleted and moderated comments
+		(SELECT text, updated FROM $parent.content
+		ORDER BY updated DESC LIMIT 1) AS content,
 		array::flatten(
 			(SELECT 
 				fn::getComments($this.id, $depth + 1, $user) AS comments,
