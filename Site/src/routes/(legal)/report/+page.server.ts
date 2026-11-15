@@ -21,12 +21,14 @@ const schema = type({
 	note: "string <= 1000 | undefined",
 })
 
-async function getReportee(username: string) {
+async function getReportee(
+	username: string
+): Promise<RecordId<"user"> | undefined> {
 	const [[reportee]] = await db.query<{ id: RecordId<"user"> }[][]>(
 		getReporteeQuery,
 		{ username }
 	)
-	return reportee.id
+	return reportee?.id
 }
 
 export async function load({ locals, url }: PageServerLoadEvent) {
