@@ -45,6 +45,9 @@ export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 	return { assets: withOwners }
 }
 
+// Catalog Managers (level 3) review the pending queue. Acting on an asset that's already been reviewed, such as making a moderated asset visible again or purging a visible one, needs a Moderator (level 4).
+const reviewedLevel = 4
+
 async function getData({ locals, url }: RequestEvent) {
 	const { user } = await authorise(locals, 3)
 	const assetId = url.searchParams.get("id")
@@ -57,11 +60,16 @@ async function getData({ locals, url }: RequestEvent) {
 		asset: Record("asset", id),
 		user: Record("user", user.id),
 	})
-	const [[asset]] = await db.query<{ name: string }[][]>(
-		"SELECT name FROM $asset",
+	const [[asset]] = await db.query<{ name: string; visibility: string }[][]>(
+		"SELECT name, visibility FROM $asset",
 		params
 	)
 	if (!asset) error(404, "Asset not found")
+	if (asset.visibility !== "Pending" && user.permissionLevel < reviewedLevel)
+		error(
+			403,
+			"Only moderators can act on assets that have already been reviewed"
+		)
 
 	return { assetName: asset.name, id, params, user }
 }
@@ -96,7 +104,7 @@ actions.rerender = async e => {
 		await requestRender(e.fetch, "Clothing", id)
 	} catch (err) {
 		console.error(err)
-		fail(500, { msg: "Failed to request render" })
+		return fail(500, { msg: "Failed to request render" })
 	}
 }
 actions.purge = async e => {
@@ -106,14 +114,17 @@ actions.purge = async e => {
 		asset: Record("asset", id),
 	})
 
-	await Promise.all([
-		db.query(purgeQuery, {
-			...params,
-			imageAsset: Record("asset", iaid),
-			note: `Purge asset ${assetName} (id ${id})`,
-		}),
-		fs.rm(`../data/assets/${id}`),
-		fs.rm(`../data/assets/${iaid}`),
-		fs.rm(`../data/thumbnails/${id}`),
-	])
+	// The records go first, so a missing file can't fail the purge after the asset is already gone
+	await db.query(purgeQuery, {
+		...params,
+		imageAsset: Record("asset", iaid),
+		note: `Purge asset ${assetName} (id ${id})`,
+	})
+	await Promise.all(
+		[
+			`../data/assets/${id}`,
+			`../data/assets/${iaid}`,
+			`../data/thumbnails/${id}`,
+		].map(path => fs.rm(path, { force: true }))
+	)
 }
