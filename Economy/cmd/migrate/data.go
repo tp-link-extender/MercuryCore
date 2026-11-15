@@ -6,8 +6,6 @@ import (
 	"strings"
 )
 
-const microPerUnit = 1_000_000
-
 type migrationData struct {
 	users map[string]struct{}
 	assets map[uint32]legacyAsset
@@ -19,12 +17,317 @@ type migrationData struct {
 	placeOwners map[uint32]map[string]struct{}
 	groups map[string]legacyGroup
 	groupOwners map[string]map[string]struct{}
-	balancesMicro map[string]uint64
-	dust map[string]uint64
+	balancesMicro, dust map[string]uint64
 	fallbackUser string
 	skipOrphans bool
-	warnings []string
-	errors []string
+	warnings, errors []string
+}
+
+const microPerUnit = 1_000_000
+
+func appendUnique(list []uint32, v uint32) []uint32 {
+	for _, existing := range list {
+		if existing == v {
+			return list
+		}
+	}
+
+	return append(list, v)
+}
+
+func (d *migrationData) errorf(format string, args ...any) {
+	d.errors = append(d.errors, fmt.Sprintf(format, args...))
+}
+
+func (d *migrationData) isChild(id uint32) bool {
+	_, ok := d.parents[id]
+
+	return ok
+}
+
+func (d *migrationData) packageOrder() ([]uint32, error) {
+	childPackages := make(map[uint32][]uint32)
+	packages := make([]uint32, 0)
+
+	for id, asset := range d.assets {
+		if asset.Type == 32 {
+			packages = append(packages, id)
+		}
+	}
+	sort.Slice(packages, func(i, j int) bool {
+		return packages[i] < packages[j]
+	})
+	for pkg, children := range d.children {
+		for _, child := range children {
+			if d.assets[child].Type == 32 {
+				childPackages[pkg] = append(childPackages[pkg], child)
+			}
+		}
+	}
+
+	for pkg := range childPackages {
+		sort.Slice(childPackages[pkg], func(i, j int) bool {
+			return childPackages[pkg][i] < childPackages[pkg][j]
+		})
+	}
+
+	state := make(map[uint32]uint8, len(packages))
+	order := make([]uint32, 0, len(packages))
+
+	var visit func(uint32) error
+
+	visit = func(pkg uint32) error {
+		switch state[pkg] {
+		case 1:
+			return fmt.Errorf("package cycle involving %d", pkg)
+		case 2:
+			return nil
+		}
+
+		state[pkg] = 1
+		order = append(order, pkg)
+
+		for _, child := range childPackages[pkg] {
+			if err := visit(child); err != nil {
+				return err
+			}
+		}
+
+		state[pkg] = 2
+
+		return nil
+	}
+
+	for _, pkg := range packages {
+		if len(d.parents[pkg]) == 0 {
+			if err := visit(pkg); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	for _, pkg := range packages {
+		if state[pkg] == 0 {
+			return nil, fmt.Errorf("package cycle or unreachable package involving %d", pkg)
+		}
+	}
+
+	return order, nil
+}
+
+func (d *migrationData) packageParent(id uint32) (uint32, bool) {
+	for parent := range d.parents[id] {
+		return parent, true
+	}
+
+	return 0, false
+}
+
+func (d *migrationData) sortedAssetIDs() []uint32 {
+	ids := make([]uint32, 0, len(d.assets))
+
+	for id := range d.assets {
+		ids = append(ids, id)
+	}
+	sort.Slice(ids, func(i, j int) bool {
+		return ids[i] < ids[j]
+	})
+	return ids
+}
+
+func (d *migrationData) sortedBalanceUsers() []string {
+	users := make([]string, 0, len(d.balancesMicro))
+
+	for user := range d.balancesMicro {
+		users = append(users, user)
+	}
+	sort.Strings(users)
+	return users
+}
+
+func (d *migrationData) sortedGroupIDs() []string {
+	ids := make([]string, 0, len(d.groups))
+
+	for id := range d.groups {
+		ids = append(ids, id)
+	}
+	sort.Strings(ids)
+	return ids
+}
+
+func (d *migrationData) sortedPlaceIDs() []uint32 {
+	ids := make([]uint32, 0, len(d.places))
+
+	for id := range d.places {
+		ids = append(ids, id)
+	}
+	sort.Slice(ids, func(i, j int) bool {
+		return ids[i] < ids[j]
+	})
+	return ids
+}
+
+func (d *migrationData) validateStringID(id, what string) {
+	if id == "" {
+		d.errorf("%s has an empty id", what)
+		return
+	}
+
+	if len([]byte(id)) > 255 {
+		d.errorf("%s id %q is longer than 255 bytes", what, id)
+	}
+}
+
+func (d *migrationData) validateUserID(id, what string) {
+	if id == "" {
+		d.errorf("%s has an empty user id", what)
+		return
+	}
+
+	if len([]byte(id)) > 255 {
+		d.errorf("%s id %q is longer than 255 bytes", what, id)
+	}
+}
+
+func (d *migrationData) warnf(format string, args ...any) {
+	d.warnings = append(d.warnings, fmt.Sprintf(format, args...))
+}
+
+func (d *migrationData) checkUser(id, what string) bool {
+	d.validateUserID(id, what)
+	if id == "" {
+		return false
+	}
+
+	if _, ok := d.users[id]; ok {
+		return true
+	}
+
+	if d.skipOrphans {
+		d.warnf("ignoring %s with missing user %s", what, id)
+		return false
+	}
+	d.errorf("%s references missing user %s", what, id)
+	return false
+}
+
+func sortedAmountUsers(amounts map[string]uint64) []string {
+	users := make([]string, 0, len(amounts))
+
+	for user := range amounts {
+		users = append(users, user)
+	}
+	sort.Strings(users)
+	return users
+}
+
+func sortedUsers(set map[string]struct{}) []string {
+	users := make([]string, 0, len(set))
+
+	for user := range set {
+		users = append(users, user)
+	}
+	sort.Strings(users)
+	return users
+}
+
+func (d *migrationData) detectConflicts() {
+	for id, creators := range d.creators {
+		users := make(map[string]struct{}, len(creators))
+
+		for _, c := range creators {
+			users[c.UserID] = struct{}{}
+		}
+
+		if len(users) > 1 {
+			d.errorf("asset %d has multiple creators (%s); resolve this before migrating", id, strings.Join(sortedUsers(users), ", "))
+		}
+	}
+
+	for id, owners := range d.placeOwners {
+		if len(owners) > 1 {
+			d.errorf("place %d has multiple owners (%s); resolve this before migrating", id, strings.Join(sortedUsers(owners), ", "))
+		}
+	}
+
+	for id, owners := range d.groupOwners {
+		if len(owners) > 1 {
+			d.errorf("group %q has multiple owners (%s); resolve this before migrating", id, strings.Join(sortedUsers(owners), ", "))
+		}
+	}
+
+	for child, parents := range d.parents {
+		if len(parents) > 1 {
+			list := make([]string, 0, len(parents))
+
+			for parent := range parents {
+				list = append(list, fmt.Sprintf("%d", parent))
+			}
+			sort.Strings(list)
+			d.errorf("asset %d is contained by multiple packages (%s); resolve this before migrating (2E)", child, strings.Join(list, ", "))
+		}
+	}
+
+	for id, asset := range d.assets {
+		if asset.Type == 32 && len(d.children[id]) == 0 {
+			d.warnf("package %d has no children and will not be sellable", id)
+		}
+	}
+}
+
+func (d *migrationData) detectUnresolvedSources() {
+	for _, id := range d.sortedAssetIDs() {
+		asset := d.assets[id]
+
+		if d.isChild(id) {
+			continue // the package source owns this source
+		}
+
+		kind := "asset"
+
+		if asset.Type == 32 {
+			kind = "package"
+		}
+
+		if len(d.creators[id]) > 0 {
+			continue
+		}
+
+		if owners := d.owners[id]; len(owners) > 0 {
+			d.warnf("%s %d has no creator; using owner %s as source owner", kind, id, sortedUsers(owners)[0])
+			continue
+		}
+
+		if d.fallbackUser != "" {
+			d.warnf("%s %d has no creator or owner; using fallback user %s", kind, id, d.fallbackUser)
+			continue
+		}
+		d.errorf("%s %d has no creator, owner, or fallback user", kind, id)
+	}
+
+	for _, id := range d.sortedPlaceIDs() {
+		if len(d.placeOwners[id]) > 0 {
+			continue
+		}
+
+		if d.fallbackUser != "" {
+			d.warnf("place %d has no owner; using fallback user %s", id, d.fallbackUser)
+			continue
+		}
+		d.errorf("place %d has no owner or fallback user", id)
+	}
+
+	for _, id := range d.sortedGroupIDs() {
+		if len(d.groupOwners[id]) > 0 {
+			continue
+		}
+
+		if d.fallbackUser != "" {
+			d.warnf("group %q has no owner; using fallback user %s", id, d.fallbackUser)
+			continue
+		}
+		d.errorf("group %q has no owner or fallback user", id)
+	}
 }
 
 func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool) *migrationData {
@@ -51,13 +354,16 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 			d.users[id] = struct{}{}
 		}
 	}
+
 	if fallbackUser != "" {
 		d.validateUserID(fallbackUser, "fallback user")
 		if _, ok := d.users[fallbackUser]; !ok {
 			d.errorf("fallback user %q is not a known user", fallbackUser)
+
 			fallbackUser = ""
 		}
 	}
+
 	d.fallbackUser = fallbackUser
 
 	for _, a := range s.Assets {
@@ -65,21 +371,26 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 			d.errorf("duplicate asset id %d", a.ID)
 			continue
 		}
+
 		d.assets[a.ID] = a
 	}
+
 	for _, p := range s.Places {
 		if _, ok := d.places[p.ID]; ok {
 			d.errorf("duplicate place id %d", p.ID)
 			continue
 		}
+
 		d.places[p.ID] = p
 	}
+
 	for _, g := range s.Groups {
 		d.validateStringID(g.ID, fmt.Sprintf("group %q", g.ID))
 		if _, ok := d.groups[g.ID]; ok {
 			d.errorf("duplicate group id %q", g.ID)
 			continue
 		}
+
 		d.groups[g.ID] = g
 	}
 
@@ -92,11 +403,14 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 			d.errorf("creator relation points to missing asset %d", c.AssetID)
 			continue
 		}
+
 		if !d.checkUser(c.UserID, fmt.Sprintf("creator of asset %d", c.AssetID)) {
 			continue
 		}
+
 		d.creators[c.AssetID] = append(d.creators[c.AssetID], c)
 	}
+
 	for _, o := range s.AssetOwners {
 		if _, ok := d.assets[o.AssetID]; !ok {
 			if skipOrphans {
@@ -106,14 +420,18 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 			d.errorf("asset owner relation points to missing asset %d", o.AssetID)
 			continue
 		}
+
 		if !d.checkUser(o.UserID, fmt.Sprintf("owner of asset %d", o.AssetID)) {
 			continue
 		}
+
 		if d.owners[o.AssetID] == nil {
 			d.owners[o.AssetID] = make(map[string]struct{})
 		}
+
 		d.owners[o.AssetID][o.UserID] = struct{}{}
 	}
+
 	for _, child := range s.PackageChildren {
 		pkg, ok := d.assets[child.PackageID]
 		if !ok {
@@ -124,10 +442,12 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 			d.errorf("package relation points to missing package %d", child.PackageID)
 			continue
 		}
+
 		if pkg.Type != 32 {
 			d.errorf("package relation source %d has type %d, not 32", child.PackageID, pkg.Type)
 			continue
 		}
+
 		if _, ok := d.assets[child.ChildID]; !ok {
 			if skipOrphans {
 				d.warnf("ignoring package %d relation to missing asset %d", child.PackageID, child.ChildID)
@@ -136,12 +456,16 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 			d.errorf("package %d contains missing asset %d", child.PackageID, child.ChildID)
 			continue
 		}
+
 		d.children[child.PackageID] = appendUnique(d.children[child.PackageID], child.ChildID)
+
 		if d.parents[child.ChildID] == nil {
 			d.parents[child.ChildID] = make(map[uint32]struct{})
 		}
+
 		d.parents[child.ChildID][child.PackageID] = struct{}{}
 	}
+
 	for _, o := range s.PlaceOwners {
 		if _, ok := d.places[o.PlaceID]; !ok {
 			if skipOrphans {
@@ -151,14 +475,18 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 			d.errorf("place owner relation points to missing place %d", o.PlaceID)
 			continue
 		}
+
 		if !d.checkUser(o.UserID, fmt.Sprintf("owner of place %d", o.PlaceID)) {
 			continue
 		}
+
 		if d.placeOwners[o.PlaceID] == nil {
 			d.placeOwners[o.PlaceID] = make(map[string]struct{})
 		}
+
 		d.placeOwners[o.PlaceID][o.UserID] = struct{}{}
 	}
+
 	for _, o := range s.GroupOwners {
 		if _, ok := d.groups[o.GroupID]; !ok {
 			if skipOrphans {
@@ -168,12 +496,15 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 			d.errorf("group owner relation points to missing group %q", o.GroupID)
 			continue
 		}
+
 		if !d.checkUser(o.UserID, fmt.Sprintf("owner of group %q", o.GroupID)) {
 			continue
 		}
+
 		if d.groupOwners[o.GroupID] == nil {
 			d.groupOwners[o.GroupID] = make(map[string]struct{})
 		}
+
 		d.groupOwners[o.GroupID][o.UserID] = struct{}{}
 	}
 
@@ -181,187 +512,31 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 		if !d.checkUser(user, "balance") {
 			continue
 		}
+
 		if micro := s.BalancesMicro[user]; micro > 0 {
 			d.balancesMicro[user] = micro
 		}
 	}
+
 	for user, micro := range s.DustMicro {
 		if _, ok := d.users[user]; ok {
 			d.dust[user] = micro
 		}
 	}
-
 	d.detectConflicts()
 	d.detectUnresolvedSources()
 	return d
 }
 
-func (d *migrationData) errorf(format string, args ...any) {
-	d.errors = append(d.errors, fmt.Sprintf(format, args...))
-}
-
-func (d *migrationData) warnf(format string, args ...any) {
-	d.warnings = append(d.warnings, fmt.Sprintf(format, args...))
-}
-
-func (d *migrationData) validateUserID(id, what string) {
-	if id == "" {
-		d.errorf("%s has an empty user id", what)
-		return
-	}
-	if len([]byte(id)) > 255 {
-		d.errorf("%s id %q is longer than 255 bytes", what, id)
-	}
-}
-
-func (d *migrationData) checkUser(id, what string) bool {
-	d.validateUserID(id, what)
-	if id == "" {
-		return false
-	}
-	if _, ok := d.users[id]; ok {
-		return true
-	}
-	if d.skipOrphans {
-		d.warnf("ignoring %s with missing user %s", what, id)
-		return false
-	}
-	d.errorf("%s references missing user %s", what, id)
-	return false
-}
-
-func (d *migrationData) validateStringID(id, what string) {
-	if id == "" {
-		d.errorf("%s has an empty id", what)
-		return
-	}
-	if len([]byte(id)) > 255 {
-		d.errorf("%s id %q is longer than 255 bytes", what, id)
-	}
-}
-
-func appendUnique(list []uint32, v uint32) []uint32 {
-	for _, existing := range list {
-		if existing == v {
-			return list
-		}
-	}
-	return append(list, v)
-}
-
-func sortedUsers(set map[string]struct{}) []string {
-	users := make([]string, 0, len(set))
-	for user := range set {
-		users = append(users, user)
-	}
-	sort.Strings(users)
-	return users
-}
-
-func sortedAmountUsers(amounts map[string]uint64) []string {
-	users := make([]string, 0, len(amounts))
-	for user := range amounts {
-		users = append(users, user)
-	}
-	sort.Strings(users)
-	return users
-}
-
-func (d *migrationData) detectConflicts() {
-	for id, creators := range d.creators {
-		users := make(map[string]struct{}, len(creators))
-		for _, c := range creators {
-			users[c.UserID] = struct{}{}
-		}
-		if len(users) > 1 {
-			d.errorf("asset %d has multiple creators (%s); resolve this before migrating", id, strings.Join(sortedUsers(users), ", "))
-		}
-	}
-	for id, owners := range d.placeOwners {
-		if len(owners) > 1 {
-			d.errorf("place %d has multiple owners (%s); resolve this before migrating", id, strings.Join(sortedUsers(owners), ", "))
-		}
-	}
-	for id, owners := range d.groupOwners {
-		if len(owners) > 1 {
-			d.errorf("group %q has multiple owners (%s); resolve this before migrating", id, strings.Join(sortedUsers(owners), ", "))
-		}
-	}
-
-	for child, parents := range d.parents {
-		if len(parents) > 1 {
-			list := make([]string, 0, len(parents))
-			for parent := range parents {
-				list = append(list, fmt.Sprintf("%d", parent))
-			}
-			sort.Strings(list)
-			d.errorf("asset %d is contained by multiple packages (%s); resolve this before migrating (2E)", child, strings.Join(list, ", "))
-		}
-	}
-
-	for id, asset := range d.assets {
-		if asset.Type == 32 && len(d.children[id]) == 0 {
-			d.warnf("package %d has no children and will not be sellable", id)
-		}
-	}
-}
-
-func (d *migrationData) detectUnresolvedSources() {
-	for _, id := range d.sortedAssetIDs() {
-		asset := d.assets[id]
-		if d.isChild(id) {
-			continue // the package source owns this source
-		}
-
-		kind := "asset"
-		if asset.Type == 32 {
-			kind = "package"
-		}
-		if len(d.creators[id]) > 0 {
-			continue
-		}
-		if owners := d.owners[id]; len(owners) > 0 {
-			d.warnf("%s %d has no creator; using owner %s as source owner", kind, id, sortedUsers(owners)[0])
-			continue
-		}
-		if d.fallbackUser != "" {
-			d.warnf("%s %d has no creator or owner; using fallback user %s", kind, id, d.fallbackUser)
-			continue
-		}
-		d.errorf("%s %d has no creator, owner, or fallback user", kind, id)
-	}
-	for _, id := range d.sortedPlaceIDs() {
-		if len(d.placeOwners[id]) > 0 {
-			continue
-		}
-		if d.fallbackUser != "" {
-			d.warnf("place %d has no owner; using fallback user %s", id, d.fallbackUser)
-			continue
-		}
-		d.errorf("place %d has no owner or fallback user", id)
-	}
-	for _, id := range d.sortedGroupIDs() {
-		if len(d.groupOwners[id]) > 0 {
-			continue
-		}
-		if d.fallbackUser != "" {
-			d.warnf("group %q has no owner; using fallback user %s", id, d.fallbackUser)
-			continue
-		}
-		d.errorf("group %q has no owner or fallback user", id)
-	}
-}
-
-func (d *migrationData) sourceOwner(id uint32) (string, bool) {
-	if creators := d.creators[id]; len(creators) > 0 {
-		return creators[0].UserID, true
-	}
-	if owners := d.owners[id]; len(owners) > 0 {
+func (d *migrationData) groupOwner(id string) (string, bool) {
+	if owners := d.groupOwners[id]; len(owners) > 0 {
 		return sortedUsers(owners)[0], true
 	}
+
 	if d.fallbackUser != "" {
 		return d.fallbackUser, true
 	}
+
 	return "", false
 }
 
@@ -369,130 +544,26 @@ func (d *migrationData) placeOwner(id uint32) (string, bool) {
 	if owners := d.placeOwners[id]; len(owners) > 0 {
 		return sortedUsers(owners)[0], true
 	}
+
 	if d.fallbackUser != "" {
 		return d.fallbackUser, true
 	}
+
 	return "", false
 }
 
-func (d *migrationData) groupOwner(id string) (string, bool) {
-	if owners := d.groupOwners[id]; len(owners) > 0 {
+func (d *migrationData) sourceOwner(id uint32) (string, bool) {
+	if creators := d.creators[id]; len(creators) > 0 {
+		return creators[0].UserID, true
+	}
+
+	if owners := d.owners[id]; len(owners) > 0 {
 		return sortedUsers(owners)[0], true
 	}
+
 	if d.fallbackUser != "" {
 		return d.fallbackUser, true
 	}
+
 	return "", false
-}
-
-func (d *migrationData) packageOrder() ([]uint32, error) {
-	packages := make([]uint32, 0)
-	childPackages := make(map[uint32][]uint32)
-	for id, asset := range d.assets {
-		if asset.Type == 32 {
-			packages = append(packages, id)
-		}
-	}
-	sort.Slice(packages, func(i, j int) bool {
-		return packages[i] < packages[j]
-	})
-	for pkg, children := range d.children {
-		for _, child := range children {
-			if d.assets[child].Type == 32 {
-				childPackages[pkg] = append(childPackages[pkg], child)
-			}
-		}
-	}
-	for pkg := range childPackages {
-		sort.Slice(childPackages[pkg], func(i, j int) bool {
-			return childPackages[pkg][i] < childPackages[pkg][j]
-		})
-	}
-
-	state := make(map[uint32]uint8, len(packages))
-	order := make([]uint32, 0, len(packages))
-	var visit func(uint32) error
-	visit = func(pkg uint32) error {
-		switch state[pkg] {
-		case 1:
-			return fmt.Errorf("package cycle involving %d", pkg)
-		case 2:
-			return nil
-		}
-		state[pkg] = 1
-		order = append(order, pkg)
-		for _, child := range childPackages[pkg] {
-			if err := visit(child); err != nil {
-				return err
-			}
-		}
-		state[pkg] = 2
-		return nil
-	}
-
-	for _, pkg := range packages {
-		if len(d.parents[pkg]) == 0 {
-			if err := visit(pkg); err != nil {
-				return nil, err
-			}
-		}
-	}
-	for _, pkg := range packages {
-		if state[pkg] == 0 {
-			return nil, fmt.Errorf("package cycle or unreachable package involving %d", pkg)
-		}
-	}
-	return order, nil
-}
-
-func (d *migrationData) sortedAssetIDs() []uint32 {
-	ids := make([]uint32, 0, len(d.assets))
-	for id := range d.assets {
-		ids = append(ids, id)
-	}
-	sort.Slice(ids, func(i, j int) bool {
-		return ids[i] < ids[j]
-	})
-	return ids
-}
-
-func (d *migrationData) sortedPlaceIDs() []uint32 {
-	ids := make([]uint32, 0, len(d.places))
-	for id := range d.places {
-		ids = append(ids, id)
-	}
-	sort.Slice(ids, func(i, j int) bool {
-		return ids[i] < ids[j]
-	})
-	return ids
-}
-
-func (d *migrationData) sortedGroupIDs() []string {
-	ids := make([]string, 0, len(d.groups))
-	for id := range d.groups {
-		ids = append(ids, id)
-	}
-	sort.Strings(ids)
-	return ids
-}
-
-func (d *migrationData) sortedBalanceUsers() []string {
-	users := make([]string, 0, len(d.balancesMicro))
-	for user := range d.balancesMicro {
-		users = append(users, user)
-	}
-	sort.Strings(users)
-	return users
-}
-
-func (d *migrationData) isChild(id uint32) bool {
-	_, ok := d.parents[id]
-	return ok
-}
-
-func (d *migrationData) packageParent(id uint32) (uint32, bool) {
-	for parent := range d.parents[id] {
-		return parent, true
-	}
-	return 0, false
 }

@@ -1,11 +1,10 @@
 package main
 
 import (
+	"Economy/ledger"
 	"fmt"
 	"slices"
 	"time"
-
-	"Economy/ledger"
 )
 
 type planner struct {
@@ -22,12 +21,28 @@ func newPlanner(l *ledger.Ledger, batchSize int) *planner {
 	if batchSize <= 0 {
 		batchSize = 500
 	}
+
 	return &planner{
 		ledger: l,
 		base: uint64(time.Now().UnixNano()),
 		batchSize: batchSize,
 		counts: make(map[string]int),
 	}
+}
+
+func (p *planner) flush() error {
+	if len(p.batchTFs) == 0 {
+		return nil
+	}
+
+	if err := p.ledger.Import(p.batchIDs, p.batchTFs); err != nil {
+		return fmt.Errorf("import migration batch: %w", err)
+	}
+
+	p.batchIDs = p.batchIDs[:0]
+	p.batchTFs = p.batchTFs[:0]
+
+	return nil
 }
 
 func (p *planner) emit(category string, tf ledger.Transfer) error {
@@ -40,18 +55,7 @@ func (p *planner) emit(category string, tf ledger.Transfer) error {
 	if len(p.batchTFs) >= p.batchSize {
 		return p.flush()
 	}
-	return nil
-}
 
-func (p *planner) flush() error {
-	if len(p.batchTFs) == 0 {
-		return nil
-	}
-	if err := p.ledger.Import(p.batchIDs, p.batchTFs); err != nil {
-		return fmt.Errorf("import migration batch: %w", err)
-	}
-	p.batchIDs = p.batchIDs[:0]
-	p.batchTFs = p.batchTFs[:0]
 	return nil
 }
 
@@ -62,11 +66,20 @@ func (p *planner) plan(d *migrationData) error {
 		if units == 0 {
 			continue
 		}
+
 		if err := p.emit("balance", ledger.Transfer{
-			{Owner: ledger.User{Id: user}},
+			{
+				Owner: ledger.User{
+					Id: user,
+				},
+			},
 			{
 				Items: ledger.Items{
-					Many: ledger.ItemsMany{ledger.Currency{Id: 0}: ledger.Quantity(units)},
+					Many: ledger.ItemsMany{
+						ledger.Currency{
+							Id: 0,
+						}: ledger.Quantity(units),
+					},
 				},
 			},
 		}); err != nil {
@@ -80,24 +93,43 @@ func (p *planner) plan(d *migrationData) error {
 		if !ok {
 			return fmt.Errorf("place %d has no owner", id)
 		}
+
 		if err := p.emit("place", ledger.Transfer{
-			{Owner: ledger.User{Id: owner}},
 			{
-				Items: ledger.Items{One: ledger.ItemsOne{ledger.NewPlace(id): {}}},
+				Owner: ledger.User{
+					Id: owner,
+				},
+			},
+			{
+				Items: ledger.Items{
+					One: ledger.ItemsOne{
+						ledger.NewPlace(id): {},
+					},
+				},
 			},
 		}); err != nil {
 			return err
 		}
 	}
+
 	for _, id := range d.sortedGroupIDs() {
 		owner, ok := d.groupOwner(id)
 		if !ok {
 			return fmt.Errorf("group %q has no owner", id)
 		}
+
 		if err := p.emit("group", ledger.Transfer{
-			{Owner: ledger.User{Id: owner}},
 			{
-				Items: ledger.Items{One: ledger.ItemsOne{ledger.NewGroup(id): {}}},
+				Owner: ledger.User{
+					Id: owner,
+				},
+			},
+			{
+				Items: ledger.Items{
+					One: ledger.ItemsOne{
+						ledger.NewGroup(id): {},
+					},
+				},
 			},
 		}); err != nil {
 			return err
@@ -111,16 +143,28 @@ func (p *planner) plan(d *migrationData) error {
 
 	// Package sources first, parents before children, so nested sources have an owner to move into.
 	for _, pkg := range order {
-		src := ledger.PackageSource{Id: pkg}
+		src := ledger.PackageSource{
+			Id: pkg,
+		}
+
 		if parent, nested := d.packageParent(pkg); nested {
 			if err := p.emit("packageSource", ledger.Transfer{
-				{Owner: ledger.PackageSource{Id: parent}},
 				{
-					Items: ledger.Items{One: ledger.ItemsOne{src: {}}},
+					Owner: ledger.PackageSource{
+						Id: parent,
+					},
+				},
+				{
+					Items: ledger.Items{
+						One: ledger.ItemsOne{
+							src: {},
+						},
+					},
 				},
 			}); err != nil {
 				return err
 			}
+
 			continue
 		}
 
@@ -128,10 +172,19 @@ func (p *planner) plan(d *migrationData) error {
 		if !ok {
 			return fmt.Errorf("package %d has no source owner", pkg)
 		}
+
 		if err := p.emit("packageSource", ledger.Transfer{
-			{Owner: ledger.User{Id: owner}},
 			{
-				Items: ledger.Items{One: ledger.ItemsOne{src: {}}},
+				Owner: ledger.User{
+					Id: owner,
+				},
+			},
+			{
+				Items: ledger.Items{
+					One: ledger.ItemsOne{
+						src: {},
+					},
+				},
 			},
 		}); err != nil {
 			return err
@@ -140,18 +193,29 @@ func (p *planner) plan(d *migrationData) error {
 
 	// Sources for standalone assets.
 	for _, id := range d.sortedAssetIDs() {
-		a := d.assets[id]
-		if a.Type == 32 || d.isChild(id) {
+		if a := d.assets[id]; a.Type == 32 || d.isChild(id) {
 			continue
 		}
+
 		owner, ok := d.sourceOwner(id)
 		if !ok {
 			return fmt.Errorf("asset %d has no source owner", id)
 		}
+
 		if err := p.emit("assetSource", ledger.Transfer{
-			{Owner: ledger.User{Id: owner}},
 			{
-				Items: ledger.Items{One: ledger.ItemsOne{ledger.UnlimitedSource{Id: id}: {}}},
+				Owner: ledger.User{
+					Id: owner,
+				},
+			},
+			{
+				Items: ledger.Items{
+					One: ledger.ItemsOne{
+						ledger.UnlimitedSource{
+							Id: id,
+						}: {},
+					},
+				},
 			},
 		}); err != nil {
 			return err
@@ -161,15 +225,27 @@ func (p *planner) plan(d *migrationData) error {
 	// Sources for normal assets contained in packages.
 	for _, pkg := range order {
 		children := append([]uint32(nil), d.children[pkg]...)
+
 		slices.Sort(children)
 		for _, child := range children {
 			if d.assets[child].Type == 32 {
 				continue
 			}
+
 			if err := p.emit("packageChildSource", ledger.Transfer{
-				{Owner: ledger.PackageSource{Id: pkg}},
 				{
-					Items: ledger.Items{One: ledger.ItemsOne{ledger.UnlimitedSource{Id: child}: {}}},
+					Owner: ledger.PackageSource{
+						Id: pkg,
+					},
+				},
+				{
+					Items: ledger.Items{
+						One: ledger.ItemsOne{
+							ledger.UnlimitedSource{
+								Id: child,
+							}: {},
+						},
+					},
 				},
 			}); err != nil {
 				return err
@@ -179,18 +255,31 @@ func (p *planner) plan(d *migrationData) error {
 
 	// Issue asset items to their old owners.
 	for _, id := range d.sortedAssetIDs() {
-		a := d.assets[id]
-		if a.Type == 32 || d.isChild(id) {
+		if a := d.assets[id]; a.Type == 32 || d.isChild(id) {
 			continue
 		}
-		src := ledger.UnlimitedSource{Id: id}
+
+		src := ledger.UnlimitedSource{
+			Id: id,
+		}
+
 		for _, owner := range sortedUsers(d.owners[id]) {
 			if err := p.emit("assetOwner", ledger.Transfer{
 				{
 					Owner: src,
-					Items: ledger.Items{One: ledger.ItemsOne{ledger.UnlimitedAsset{Id: id}: {}}},
+					Items: ledger.Items{
+						One: ledger.ItemsOne{
+							ledger.UnlimitedAsset{
+								Id: id,
+							}: {},
+						},
+					},
 				},
-				{Owner: ledger.User{Id: owner}},
+				{
+					Owner: ledger.User{
+						Id: owner,
+					},
+				},
 			}); err != nil {
 				return err
 			}
@@ -199,32 +288,57 @@ func (p *planner) plan(d *migrationData) error {
 
 	// Packages and their child asset items.
 	for _, pkg := range order {
-		src := ledger.PackageSource{Id: pkg}
+		src := ledger.PackageSource{
+			Id: pkg,
+		}
+
 		for _, owner := range sortedUsers(d.owners[pkg]) {
 			if err := p.emit("packageOwner", ledger.Transfer{
 				{
 					Owner: src,
-					Items: ledger.Items{One: ledger.ItemsOne{ledger.Package{Id: pkg}: {}}},
+					Items: ledger.Items{
+						One: ledger.ItemsOne{
+							ledger.Package{
+								Id: pkg,
+							}: {},
+						},
+					},
 				},
-				{Owner: ledger.User{Id: owner}},
+				{
+					Owner: ledger.User{
+						Id: owner,
+					},
+				},
 			}); err != nil {
 				return err
 			}
 		}
 
 		children := append([]uint32(nil), d.children[pkg]...)
+
 		slices.Sort(children)
 		for _, child := range children {
 			if d.assets[child].Type == 32 {
 				continue
 			}
+
 			for _, owner := range sortedUsers(d.owners[child]) {
 				if err := p.emit("packageChildOwner", ledger.Transfer{
 					{
 						Owner: src,
-						Items: ledger.Items{One: ledger.ItemsOne{ledger.UnlimitedAsset{Id: child}: {}}},
+						Items: ledger.Items{
+							One: ledger.ItemsOne{
+								ledger.UnlimitedAsset{
+									Id: child,
+								}: {},
+							},
+						},
 					},
-					{Owner: ledger.User{Id: owner}},
+					{
+						Owner: ledger.User{
+							Id: owner,
+						},
+					},
 				}); err != nil {
 					return err
 				}
