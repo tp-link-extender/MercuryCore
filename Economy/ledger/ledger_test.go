@@ -1046,6 +1046,33 @@ func TestBuyLimitedAssetRespectsStock(t *testing.T) {
 	}
 }
 
+// a total that wraps around uint64 is refused rather than charged at the wrapped amount
+func TestBuyLimitedAssetPriceOverflow(t *testing.T) {
+	_, e := newTestEconomy(t)
+	buyer := User{"buyer"}
+	creator := User{"creator"}
+
+	fund(t, e, creator, buyer)
+
+	src, _, err := e.CreateLimitedSource(creator, 4)
+	if err != nil {
+		t.Fatalf("CreateLimitedSource: %v", err)
+	}
+
+	// 2^62 * 4 wraps to exactly 0, which would make the purchase free
+	if _, _, err := e.BuyLimitedAsset(buyer, src, 1<<62, 4); !errors.Is(err, ErrPriceOverflow) {
+		t.Fatalf("expected ErrPriceOverflow, got %v", err)
+	}
+
+	if got := e.OwnersMany(src.Create())[buyer]; got != 0 {
+		t.Fatalf("expected buyer to own nothing, got %d", got)
+	}
+
+	if got := e.Balance(buyer); got != 200 {
+		t.Fatalf("expected buyer balance 200, got %d", got)
+	}
+}
+
 // nested packages: buying the outer package hands over the inner package and its contents
 func TestBuyNestedPackage(t *testing.T) {
 	_, e := newTestEconomy(t)
