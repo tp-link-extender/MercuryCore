@@ -92,6 +92,34 @@ interface AssetCheck {
 	type: number
 }
 
+// Hats, gear, models, animations, heads and limbs
+const modelTypes = Object.freeze(
+	new Set([8, 10, 17, 19, 24, 25, 26, 27, 28, 29, 30, 31, 42])
+)
+
+/** Checks that a reuploaded file is the right kind for the asset's type. Returns why it isn't, or nothing if it is. */
+async function reuploadProblem(
+	asset: AssetCheck,
+	file: File,
+	buf: ArrayBuffer,
+	permissionLevel: number
+): Promise<string | undefined> {
+	// items with textures (t-shirts, clothing, decals, faces) and images themselves must be actual images
+	if (asset.imageAssetId || asset.type === 1)
+		return (await isImage(file)) ? undefined : "File must be an image"
+	// natively rich formats: only accept files whose magic bytes match the asset type
+	if (asset.type === 3)
+		return isAudio(buf) ? undefined : "File must be an audio file"
+	if (asset.type === 4)
+		return isMesh(buf) ? undefined : "File must be a mesh file"
+	if (modelTypes.has(asset.type))
+		return isRobloxModel(buf) || isMesh(buf)
+			? undefined
+			: "File must be a Roblox mesh or model file"
+	// Other types (such as Lua or plugins) have no format to check, so only staff can replace them
+	if (permissionLevel < 3) return "Only staff can reupload this type of asset"
+}
+
 actions.settings = async ({ fetch: f, locals, params, request }) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, arktype(schema))
@@ -158,55 +186,13 @@ actions.reupload = async ({
 		return formError(form, ["asset"], ["Packages cannot be reuploaded"])
 
 	const buf = await file.arrayBuffer()
-	if (asset.imageAssetId) {
-		if (!(await isImage(file)))
-			// items with textures (t-shirts, clothing, decals, faces) must be actual images
-			return formError(form, ["asset"], ["File must be an image"])
-		switch (asset.type) {
-			// natively rich formats: only accept files whose magic bytes match the asset type
-			case 3: {
-				if (!isAudio(buf))
-					return formError(
-						form,
-						["asset"],
-						["File must be an audio file"]
-					)
-				break
-			}
-			case 4: {
-				if (!isMesh(buf))
-					return formError(
-						form,
-						["asset"],
-						["File must be a mesh file"]
-					)
-				break
-			}
-			case 8:
-			case 10:
-			case 17:
-			case 19:
-			case 24:
-			case 25:
-			case 26:
-			case 27:
-			case 28:
-			case 29:
-			case 30:
-			case 31:
-			case 32:
-			case 42: {
-				// hats, gear, models, animations, packages, heads and limbs
-				if (!isRobloxModel(buf) && !isMesh(buf))
-					return formError(
-						form,
-						["asset"],
-						["File must be a Roblox mesh or model file"]
-					)
-				break
-			}
-		}
-	}
+	const problem = await reuploadProblem(
+		asset,
+		file,
+		buf,
+		user.permissionLevel
+	)
+	if (problem) return formError(form, ["asset"], [problem])
 
 	if (user.permissionLevel < 3) {
 		const limit = ratelimit(form, "assetReupload", getClientAddress, 30)
