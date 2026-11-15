@@ -1,7 +1,7 @@
 import { error } from "@sveltejs/kit"
 import { env } from "$env/dynamic/private"
+import { bearerMatches } from "$lib/server/bearer"
 import config from "$lib/server/config"
-import constantTimeEqual from "$lib/server/constantTimeEqual"
 import idToPort from "$lib/server/idToPort"
 import { buildLoadscript } from "$lib/server/loadscript"
 import { SignScript } from "$lib/server/sign"
@@ -19,10 +19,7 @@ export async function GET({ params, request }: RequestEvent) {
 	if (config.Gameservers.Hosting === "Selfhosted")
 		error(400, "Dedicated servers are not supported")
 
-	const gameserverKey = env.GAMESERVER_KEY
-	const auth = request.headers.get("Authorization")
-	const bearer = auth?.startsWith("Bearer ") ? auth.slice(7) : null
-	if (!gameserverKey || !bearer || !constantTimeEqual(bearer, gameserverKey))
+	if (!bearerMatches(request, env.GAMESERVER_KEY, "GAMESERVER_KEY"))
 		error(403, "Unauthorised")
 
 	const id = Number(params.id)

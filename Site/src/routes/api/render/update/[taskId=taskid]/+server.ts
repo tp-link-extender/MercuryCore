@@ -1,5 +1,6 @@
 import { error } from "@sveltejs/kit"
 import { RCC_KEY } from "$env/static/private"
+import { bearerMatches } from "$lib/server/bearer"
 import { db, Record } from "$lib/server/surreal"
 import type { RequestEvent } from "./$types"
 import completeQuery from "./complete.surql"
@@ -20,9 +21,7 @@ interface Render {
 
 export async function POST({ params, request }: RequestEvent) {
 	// get bearer token from header instead of insecure url
-	const auth = request.headers.get("Authorization")
-	if (!auth?.startsWith("Bearer ") || auth.slice(7) !== RCC_KEY)
-		error(403, "Stfu")
+	if (!bearerMatches(request, RCC_KEY, "RCC_KEY")) error(403, "Stfu")
 
 	const render = Record("render", params.taskId)
 	const [[task]] = await db.query<Render[][]>(renderQuery, { render })
