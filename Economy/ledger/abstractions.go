@@ -3,6 +3,7 @@ package ledger
 import (
 	"errors"
 	"fmt"
+	"math/bits"
 	"time"
 )
 
@@ -107,13 +108,22 @@ func currencyItems(currency Currency, qty Quantity) ItemsMany {
 	}
 }
 
+var ErrPriceOverflow = errors.New("total price overflows")
+
 func (e *Economy) BuyLimitedAsset(u User, src LimitedSource, priceEach, qty Quantity) (a LimitedAsset, tid TransferID, err error) {
 	a = src.Create()
+
+	// A wrapped total would charge far less than the real price
+	hi, total := bits.Mul64(uint64(priceEach), uint64(qty))
+	if hi != 0 {
+		return a, tid, ErrPriceOverflow
+	}
+
 	tf := Transfer{
 		{
 			Owner: u,
 			Items: Items{
-				Many: currencyItems(e.defaultCurrency, priceEach*qty),
+				Many: currencyItems(e.defaultCurrency, Quantity(total)),
 			},
 		},
 		{
