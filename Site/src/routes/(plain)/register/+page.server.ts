@@ -16,8 +16,8 @@ import createUserQuery from "./createUser.surql"
 import regkeyCheckQuery from "./regkeyCheck.surql"
 
 const schemaInitial = type({
-	cpassword: "1 <= string <= 6969",
-	password: "1 <= string <= 6969",
+	cpassword: "16 <= string <= 6969",
+	password: "16 <= string <= 6969",
 	username: usernameTest,
 })
 const schema = type({

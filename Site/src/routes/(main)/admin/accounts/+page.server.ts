@@ -16,7 +16,7 @@ import updatePasswordQuery from "./updatePassword.surql"
 import usersQuery from "./users.surql"
 
 const schema = type({
-	password: "1 <= string <= 6969",
+	password: "16 <= string <= 6969",
 	username: usernameTest,
 })
 

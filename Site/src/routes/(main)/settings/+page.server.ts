@@ -28,10 +28,11 @@ const profileSchema = type({
 		return index
 	}),
 })
+// The current password may predate the 16-character minimum, so only new passwords are held to it
 const passwordSchema = type({
-	cnpassword: "string >= 1",
-	cpassword: "string >= 1",
-	npassword: "string >= 1",
+	cnpassword: "16 <= string <= 6969",
+	cpassword: "1 <= string <= 6969",
+	npassword: "16 <= string <= 6969",
 })
 const sessionSchema = type({
 	password: "string >= 1",
