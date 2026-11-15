@@ -1,4 +1,4 @@
-import { error, fail } from "@sveltejs/kit"
+import { error } from "@sveltejs/kit"
 import { Group as EconGroup } from "economy/types"
 import { authorise } from "$lib/server/auth"
 import {
@@ -43,7 +43,7 @@ async function getData({ locals, params }: RequestEvent) {
 	const { user } = await authorise(locals)
 
 	const groupExists = await find("group", params.group)
-	if (!groupExists) fail(404, { msg: "Group not found" })
+	if (!groupExists) error(404, "Group not found")
 
 	return {
 		group: Record("group", params.group),
