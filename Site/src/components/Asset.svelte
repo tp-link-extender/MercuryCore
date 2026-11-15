@@ -12,7 +12,7 @@
 		asset: {
 			id: number
 			name: string
-			price: number
+			price: number | bigint
 			// ratio?: string | number
 		}
 		// ratio?: string | number

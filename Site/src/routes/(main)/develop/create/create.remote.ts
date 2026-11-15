@@ -1,11 +1,11 @@
 import fs from "node:fs"
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
+import { createUnlimitedSource } from "economy/api"
+import { User } from "economy/types"
 import { form, getRequestEvent } from "$app/server"
 import { typeToNumber } from "$lib/assetTypes"
 import { authorise } from "$lib/server/auth"
-import { createAsset } from "$lib/server/economy"
-import { randomAssetId } from "$lib/server/id"
 import {
 	clothingAsset,
 	imageAsset,
@@ -15,7 +15,7 @@ import {
 } from "$lib/server/imageAsset"
 import { ratelimitRemote } from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
-import { db, Record } from "$lib/server/surreal"
+import { db } from "$lib/server/surreal"
 import { graphicAsset } from "$lib/server/xmlAsset"
 import { encode } from "$lib/urlName"
 import type { ClientForm } from "$lib/validate"
@@ -23,24 +23,26 @@ import assetTypes from "./assetTypes"
 import createAssetQuery from "./createAsset.surql"
 
 const schema = type({
-	// Object.keys(assets) doesn't work
-	type: type.enumerated(...assetTypes).configure({
-		problem: "must be a valid asset type",
-	}),
-	name: "3 <= string <= 50",
-	"description?": "1 <= string <= 1000",
-	price: "number.integer <= 999",
 	asset: "File",
+	description: "(0 <= string <= 1000) | undefined",
+	name: "3 <= string <= 50",
+	price: "0 <= number.integer <= 999",
+	// Object.keys(assets) doesn't work
+	type: type
+		.enumerated(...assetTypes)
+		// TODO: compare with the other method in admin creation flow
+		.configure({
+			problem: "must be a valid asset type",
+		}),
 })
 
 export const formData: ClientForm<typeof schema.infer> = form(
 	schema,
-	async ({ type, name, description, price, asset }, issues) => {
+	async ({ type: assetType, name, description, price, asset }, issues) => {
 		const { fetch: f, locals, getClientAddress } = getRequestEvent()
 		const { user } = await authorise(locals)
 
-		if (!asset || asset.size === 0)
-			return issues.asset("You must upload an asset")
+		if (asset.size === 0) return issues.asset("You must upload an asset")
 		if (asset.size > 20e6)
 			return issues.asset("Asset must be less than 20MB in size")
 
@@ -61,7 +63,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 		let saveImages: ((id: number) => Promise<number> | Promise<void>)[] = []
 
 		try {
-			switch (type) {
+			switch (assetType) {
 				case "T-Shirt":
 					saveImages = await Promise.all([
 						tShirt(asset),
@@ -100,27 +102,30 @@ export const formData: ClientForm<typeof schema.infer> = form(
 			return issues.asset("Asset failed to upload")
 		}
 
-		const slug = encode(name)
-		const imageAssetId = randomAssetId()
-		const id = randomAssetId()
+		const u = new User(user.id)
 
-		if (user.permissionLevel < 3) {
-			const created = await createAsset(f, user.id, id, name, slug)
-			if (!created.ok) return issues(created.msg)
-		}
+		// TODO: make creating image assets (only image assets) free
+		const createdImageAsset = await createUnlimitedSource(f, u)
+		if (!createdImageAsset.ok)
+			return issues("Failed to create image asset source")
+
+		const createdAsset = await createUnlimitedSource(f, u)
+		if (!createdAsset.ok) return issues("Failed to create asset source")
+
+		const imageAssetId = createdImageAsset.value.ID
+		const id = createdAsset.value.ID
 
 		await db.query(createAssetQuery, {
-			name,
-			assetType: typeToNumber[type],
-			price,
+			assetType: typeToNumber[assetType],
 			description,
-			user: Record("user", user.id),
-			imageAssetId,
 			id,
+			imageAssetId,
+			name,
+			price,
 			visibility: user.permissionLevel < 3 ? "Pending" : "Visible",
 		})
 
-		await graphicAsset(type, imageAssetId, id)
+		await graphicAsset(assetType, imageAssetId, id)
 
 		try {
 			await Promise.all([saveImages[0](imageAssetId), saveImages[1](id)])
@@ -129,6 +134,6 @@ export const formData: ClientForm<typeof schema.infer> = form(
 			console.error(e)
 		}
 
-		redirect(302, `/catalog/${id}/${name}`)
+		redirect(302, `/catalog/${id}/${encode(name)}`)
 	}
 )

@@ -76,12 +76,12 @@
 				id={name.toString()}
 				value={select.value || options[0]} />
 
-			<button {...select.trigger} {disabled} class="fakeselect">
+			<button {...select.trigger} type="button" {disabled} class="fakeselect">
 				{select.value || options[0] || "Select an option"}
 			</button>
 			<div {...select.content}>
 				{#each options as opt}
-					<button {...select.getOption(opt)} class="btn light-text">
+					<button {...select.getOption(opt)} type="button" class="btn light-text">
 						<fa
 							fa-check
 							class={["pr-2", { hidden: opt !== select.value }]}>

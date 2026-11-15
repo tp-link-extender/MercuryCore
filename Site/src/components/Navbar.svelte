@@ -40,7 +40,7 @@
 		untrack(() => {
 			// have fun with your infinite effect loops lmaooo
 			// "Why is my Mercury Core suddenly running really slow?"
-			if (user && user.permissionLevel >= 4)
+			if (user && user.permissionLevel >= 3)
 				usernav.unshift(["fa-diamond-half-stroke", "Admin", "/admin"])
 		})
 	}

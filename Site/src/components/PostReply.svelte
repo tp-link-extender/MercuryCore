@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/state"
 
-	const { formData }: { formData: import("$lib/validate").SuperForm<any> } =
+	const { formData }: { formData: import("$lib/validate").DynamicSuperForm } =
 		$props()
 
 	const { form, errors, message, constraints, enhance, delayed } = formData

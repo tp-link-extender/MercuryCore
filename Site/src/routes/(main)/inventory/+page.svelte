@@ -1,26 +1,26 @@
 <script lang="ts">
-	import { page } from "$app/state"
 	import Asset from "$components/Asset.svelte"
 	import Head from "$components/Head.svelte"
-	import Pagination from "$components/Pagination.svelte"
 	import SidebarShell from "$components/SidebarShell.svelte"
 	import TabData from "$components/TabData"
+	import { getAsset } from "./inventory.remote"
 
 	const { data } = $props()
 
-	const tabTypes: { [_: string]: number } = Object.freeze({
-		Hats: 8,
-		"T-Shirts": 2,
-		Shirts: 11,
-		Pants: 12,
+	const tabTypes = Object.freeze({
 		Decals: 13,
-		Faces: 18
+		Faces: 18,
+		Hats: 8,
+		Packages: 32, 
+		Pants: 12,
+		Shirts: 11,
+		"T-Shirts": 2
 	})
 
 	let tabData = $state(TabData(data.url, Object.keys(tabTypes)))
 
-	let assets = $derived(
-		data.assets.filter(a => a.type === tabTypes[tabData.currentTab])
+	const assets = $derived(
+		await getAsset(tabTypes[tabData.currentTab as keyof typeof tabTypes])
 	)
 </script>
 
@@ -40,9 +40,6 @@
 					symbol={data.currencySymbol} />
 			{/each}
 		</div>
-		{#key page.url}
-			<Pagination totalPages={data.pages} />
-		{/key}
 	{:else}
 		<h2 class="pt-12 text-center">
 			You don't have any {tabData.currentTab} yet.

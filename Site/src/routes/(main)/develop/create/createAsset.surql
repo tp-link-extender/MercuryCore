@@ -1,11 +1,11 @@
+# The image is only the texture of the item, so it isn't sold on its own
 LET $imageAsset = CREATE ONLY asset CONTENT {
+	forSale: false,
 	id: $imageAssetId,
 	name: $name,
 	type: 1,
 	visibility: $visibility,
 };
-RELATE $user->ownsAsset->$imageAsset;
-RELATE $user->created->$imageAsset;
 
 LET $asset = CREATE ONLY asset CONTENT {
 	id: $id,
@@ -17,6 +17,4 @@ LET $asset = CREATE ONLY asset CONTENT {
 	type: $assetType,
 	visibility: $visibility,
 };
-RELATE $user->ownsAsset->$asset;
-RELATE $user->created->$asset;
 RELATE $asset->imageAsset->$imageAsset;

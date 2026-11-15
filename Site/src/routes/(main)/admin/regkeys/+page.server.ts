@@ -12,36 +12,36 @@ import {
 	message,
 	superValidate,
 } from "$lib/server/validate"
-import type { RequestEvent } from "./$types"
+import type { Actions, RequestEvent } from "./$types"
 import createQuery from "./create.surql"
 import disabledQuery from "./disabled.surql"
 import regkeysQuery from "./regkeys.surql"
 
 const schema = type({
 	enableRegKeyCustom: "boolean | undefined",
-	regKeyCustom: "(3 <= string <= 50 | undefined)?",
 	enableRegKeyExpiry: "boolean | undefined",
+	regKeyCustom: "(3 <= string <= 50 | undefined)?",
 	regKeyExpiry: "string | undefined",
 	regKeyUses: type("1 <= number <= 100").default(1),
 })
 
-type RegKey = {
-	id: string
+interface RegKey {
 	created: string
-	usesLeft: number
-	expiry: string
 	creator?: BasicUser
+	expiry: Date | string | null
+	id: string
+	usesLeft: number
 }
 
-export async function load({ locals }) {
+export async function load({ locals }: RequestEvent) {
 	if (!config.Registration.Keys.Enabled) error(404, "Not Found")
 	await authorise(locals, 5)
 
 	const [regKeys] = await db.query<RegKey[][]>(regkeysQuery)
 	return {
-		form: await superValidate(null, arktype(schema)),
-		regKeys,
+		form: await superValidate(arktype(schema)),
 		prefix: config.Registration.Keys.Prefix,
+		regKeys,
 	}
 }
 
@@ -49,13 +49,13 @@ async function getData({ locals, request }: RequestEvent) {
 	const { user } = await authorise(locals, 5)
 	const form = await superValidate(request, arktype(schema))
 
-	return { user, form, error: !form.valid && formError(form) }
+	return { error: !form.valid && formError(form), form, user }
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.create = async e => {
-	const { user, form, error } = await getData(e)
-	if (error) return error
+	const { user, form, error: dataError } = await getData(e)
+	if (dataError) return dataError
 
 	const {
 		enableRegKeyCustom,
@@ -66,29 +66,29 @@ actions.create = async e => {
 	} = form.data
 
 	if (
-		(!!enableRegKeyCustom && !regKeyCustom) ||
-		(!!enableRegKeyExpiry && !regKeyExpiry)
+		(Boolean(enableRegKeyCustom) && !regKeyCustom) ||
+		(Boolean(enableRegKeyExpiry) && !regKeyExpiry)
 	)
 		return errMessage(form, "Missing fields")
 
 	const expiry = regKeyExpiry ? new Date(regKeyExpiry) : undefined
 
-	if (!!enableRegKeyExpiry && (expiry?.getTime() || 0) < Date.now())
+	if (enableRegKeyExpiry && (expiry?.getTime() || 0) < Date.now())
 		return formError(form, ["regKeyExpiry"], ["Invalid date"])
 
 	const limit = ratelimit(form, "createRegKey", e.getClientAddress, 30)
 	if (limit) return limit
 
 	try {
-		await db.query<unknown[]>(createQuery, {
-			regKeyCustom,
+		await db.query(createQuery, {
 			creator: Record("user", user.id),
 			expiry,
+			regKeyCustom,
 			regKeyUses,
 		})
-	} catch (e) {
+	} catch (err) {
 		// honestly we should really use these error types more, idk if the only just got added or what idc
-		if (!(e instanceof AlreadyExistsError)) throw e
+		if (!(err instanceof AlreadyExistsError)) throw err
 		return errMessage(form, "This registration key already exists")
 	}
 
@@ -98,14 +98,17 @@ actions.create = async e => {
 	)
 }
 actions.disable = async e => {
-	const { user, form, error } = await getData(e)
-	if (error) return error
+	const { user, form, error: dataError } = await getData(e)
+	if (dataError) return dataError
 	const id = e.url.searchParams.get("id")
 	if (!id) return errMessage(form, "Missing fields")
 
-	const [[key]] =
-		await db.query<({ disabled: boolean } | null)[][]>(disabledQuery)
-	if (key?.disabled)
+	const regKey = Record("regKey", id)
+	const [[key]] = await db.query<{ disabled: boolean }[][]>(disabledQuery, {
+		regKey,
+	})
+	if (!key) return errMessage(form, "Registration key not found")
+	if (key.disabled)
 		return errMessage(
 			form,
 			"Registration key is already disabled or has already ran out of uses"
@@ -116,8 +119,8 @@ actions.disable = async e => {
 			UPDATE $regKey SET usesLeft = 0;
 			fn::auditLog("Administration", $msg, $user)`,
 		{
-			regKey: Record("regKey", id),
 			msg: `Disable registration key ${id}`,
+			regKey,
 			user: Record("user", user.id),
 		}
 	)

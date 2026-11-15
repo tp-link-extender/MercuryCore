@@ -6,14 +6,14 @@
 
 	const notificationNotes: { [_: string]: string } = {
 		AssetApproved: "Asset approval",
-		FriendRequest: "Friend request",
-		Follower: "New follower",
-		ForumPostReply: "Reply to your post",
-		ForumReplyReply: "Reply to your reply",
 		AssetComment: "Comment on your asset",
 		AssetCommentReply: "Reply to your comment",
+		Follower: "New follower",
 		ForumMention: "Mention",
 		ForumPost: "New forum post",
+		ForumPostReply: "Reply to your post",
+		ForumReplyReply: "Reply to your reply",
+		FriendRequest: "Friend request",
 		ItemPurchase: "Item purchased",
 		Message: "New message",
 		NewFriend: "New friend"

@@ -1,3 +1,3 @@
 IF $user NOT IN $thing<-dislikes<-user {
-	RELATE $user->dislikes->$thing;
+	RELATE $user -> dislikes -> $thing;
 };

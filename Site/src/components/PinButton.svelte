@@ -9,7 +9,7 @@
 		id: string
 		pinned?: boolean
 		// Replies need to be re-ordered after a reply is pinned or unpinned
-		refreshComments: import("@sveltejs/kit").SubmitFunction<any, any>
+		refreshComments: import("@sveltejs/kit").SubmitFunction
 	} = $props()
 
 	let text = $derived(pinned ? "unpin" : "pin")

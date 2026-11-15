@@ -1,7 +1,5 @@
 # Overwrites are needed to ensure that the schema is correct when changing in dev mode/on deployment
-
-DEFINE NAMESPACE OVERWRITE main;
-DEFINE DATABASE OVERWRITE main STRICT;
+# The namespace and database are defined by the database setup (dbSetup.ts), as the Site's user can't define them
 
 DEFINE TABLE OVERWRITE asset SCHEMAFULL TYPE NORMAL;
 	# privileged assets are 8 digits, user-uploaded assets are 9 (max is 2^31-1 = 2147483647 (usually), we need numeric ids for reasons... eugh)
@@ -117,24 +115,15 @@ DEFINE TABLE OVERWRITE notification SCHEMAFULL TYPE RELATION FROM user TO user E
 	DEFINE FIELD OVERWRITE relativeId ON notification TYPE string;
 	DEFINE FIELD OVERWRITE type ON notification TYPE string;
 
-DEFINE TABLE OVERWRITE ownsAsset SCHEMAFULL TYPE RELATION FROM user TO asset ENFORCED;
-	DEFINE FIELD OVERWRITE id ON ownsAsset TYPE string;
-	DEFINE FIELD OVERWRITE created ON ownsAsset TYPE datetime DEFAULT ALWAYS time::now();
-
-DEFINE TABLE OVERWRITE ownsGroup SCHEMAFULL TYPE RELATION FROM user TO group ENFORCED;
-	DEFINE FIELD OVERWRITE id ON ownsGroup TYPE string;
-
-DEFINE TABLE OVERWRITE ownsPlace SCHEMAFULL TYPE RELATION FROM user TO place ENFORCED;
-	DEFINE FIELD OVERWRITE id ON ownsPlace TYPE string;
-
 DEFINE TABLE OVERWRITE place SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE id ON place TYPE int;
 	DEFINE FIELD OVERWRITE created ON place TYPE datetime DEFAULT ALWAYS time::now();
 	DEFINE FIELD OVERWRITE dedicated ON place TYPE bool DEFAULT ALWAYS false;
+	DEFINE FIELD OVERWRITE clientVersion ON place TYPE int DEFAULT ALWAYS 2013;
 	DEFINE FIELD OVERWRITE deleted ON place TYPE bool DEFAULT false;
 	DEFINE FIELD OVERWRITE description ON place TYPE array<object> DEFAULT ALWAYS [];
-		DEFINE FIELD OVERWRITE description.*.text ON place TYPE string;
-		DEFINE FIELD OVERWRITE description.*.updated ON place TYPE datetime DEFAULT ALWAYS time::now();
+	DEFINE FIELD OVERWRITE description.*.text ON place TYPE string;
+	DEFINE FIELD OVERWRITE description.*.updated ON place TYPE datetime DEFAULT ALWAYS time::now();
 	DEFINE FIELD OVERWRITE maxPlayers ON place TYPE int DEFAULT 0;
 	DEFINE FIELD OVERWRITE name ON place TYPE string DEFAULT "";
 	DEFINE FIELD OVERWRITE privateServer ON place TYPE bool DEFAULT false;
@@ -147,6 +136,9 @@ DEFINE TABLE OVERWRITE place SCHEMAFULL TYPE NORMAL;
 
 DEFINE TABLE OVERWRITE playing SCHEMAFULL TYPE RELATION FROM user TO place ENFORCED;
 	DEFINE FIELD OVERWRITE id ON playing TYPE string;
+	# A play ticket can only be used shortly after it's created. Tickets from before this field existed get the epoch, so they are never accepted.
+	DEFINE FIELD OVERWRITE created ON playing TYPE datetime DEFAULT time::now()
+		MIGRATE EXISTING ROWS AS playingCreated USING <datetime> $value FALLBACK d'1970-01-01T00:00:00Z';
 	DEFINE FIELD OVERWRITE ping ON playing TYPE datetime DEFAULT ALWAYS time::now();
 	DEFINE FIELD OVERWRITE valid ON playing TYPE bool DEFAULT true;
 
@@ -154,13 +146,18 @@ DEFINE TABLE OVERWRITE recentlyWorn SCHEMAFULL TYPE RELATION FROM user TO asset 
 	DEFINE FIELD OVERWRITE id ON recentlyWorn TYPE string;
 	DEFINE FIELD OVERWRITE time ON recentlyWorn TYPE datetime DEFAULT ALWAYS time::now();
 
+# Only a SHA-256 hash of each recovery token is stored, so read access to the database doesn't give access to accounts. Tokens are deleted once used.
 DEFINE TABLE OVERWRITE recoveryCode SCHEMAFULL TYPE NORMAL;
+	# Clears out codes from before tokens were hashed, along with any that have expired. This must run before the hash field is defined, as SurrealDB won't add a required field to a table with rows that don't have it.
+	DELETE recoveryCode WHERE hash IS NONE OR expires < time::now();
 	DEFINE FIELD OVERWRITE id ON recoveryCode TYPE string;
-	DEFINE FIELD OVERWRITE code ON recoveryCode TYPE string DEFAULT rand::string(6);
 	DEFINE FIELD OVERWRITE created ON recoveryCode TYPE datetime DEFAULT ALWAYS time::now();
-	DEFINE FIELD OVERWRITE expires ON recoveryCode TYPE datetime DEFAULT ALWAYS time::now() + 1d;
-	DEFINE FIELD OVERWRITE used ON recoveryCode TYPE bool DEFAULT false;
+	DEFINE FIELD OVERWRITE expires ON recoveryCode TYPE datetime DEFAULT ALWAYS time::now() + 1h;
+	DEFINE FIELD OVERWRITE hash ON recoveryCode TYPE string;
 	DEFINE FIELD OVERWRITE user ON recoveryCode TYPE record<user>;
+	REMOVE FIELD IF EXISTS code ON recoveryCode;
+	REMOVE FIELD IF EXISTS used ON recoveryCode;
+DEFINE INDEX IF NOT EXISTS recoveryCodeHashI ON recoveryCode COLUMNS hash UNIQUE;
 
 DEFINE TABLE OVERWRITE regKey SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE id ON regKey TYPE string;
@@ -217,7 +214,7 @@ DEFINE TABLE OVERWRITE user SCHEMAFULL TYPE NORMAL;
 	DEFINE FIELD OVERWRITE hashedPassword ON user TYPE string;
 	DEFINE FIELD OVERWRITE lastOnline ON user TYPE datetime DEFAULT ALWAYS time::now();
 	DEFINE FIELD OVERWRITE permissionLevel ON user TYPE int;
-	DEFINE FIELD OVERWRITE status ON user COMPUTED
+	DEFINE FIELD OVERWRITE status ON user TYPE string COMPUTED
 		IF ->playing[WHERE valid AND ping > time::now() - 35s] {
 			"Playing"
 		} ELSE IF lastOnline > time::now() - 35s {
@@ -227,11 +224,27 @@ DEFINE TABLE OVERWRITE user SCHEMAFULL TYPE NORMAL;
 		}; # parens no longer needed
 	DEFINE FIELD OVERWRITE theme ON user TYPE int DEFAULT 0;
 	DEFINE FIELD OVERWRITE username ON user TYPE string;
+# SurrealDB won't redefine a field while an index reads it, so the index is rebuilt each time
+REMOVE INDEX IF EXISTS usernameLowerI ON user;
+	# Lowercased copy of username, kept up to date on every write. Usernames are matched case-insensitively at login and password reset, so they need to be unique case-insensitively too. This can't be a COMPUTED field (those can't be indexed), and existing rows start empty and are filled in below, since the migration expression can't read other fields.
+	DEFINE FIELD OVERWRITE usernameLower ON user TYPE string VALUE string::lowercase(username)
+		MIGRATE EXISTING ROWS AS userUsernameLower USING $value ?? "" FALLBACK "";
 DEFINE INDEX IF NOT EXISTS usernameI ON user COLUMNS username UNIQUE;
+# Accounts whose usernames differ only in case must be renamed or removed by hand before the site can start
+LET $usernameCollisions = SELECT string::lowercase(username) AS name, count() AS n FROM user GROUP BY name;
+IF array::len($usernameCollisions.filter(|$c| $c.n > 1)) > 0 {
+	THROW "Several users have usernames that differ only in case: " + <string> $usernameCollisions.filter(|$c| $c.n > 1).map(|$c| $c.name) + ". Rename or remove all but one of each before starting the site.";
+};
+UPDATE user SET usernameLower = string::lowercase(username) WHERE usernameLower = "";
+DEFINE INDEX IF NOT EXISTS usernameLowerI ON user COLUMNS usernameLower UNIQUE;
 # DEFINE INDEX IF NOT EXISTS emailI ON user COLUMNS email UNIQUE; # doesn't work with empty strings
 
 DEFINE TABLE OVERWRITE used SCHEMAFULL TYPE RELATION FROM user TO regKey ENFORCED;
 	DEFINE FIELD OVERWRITE id ON used TYPE string;
+
+DEFINE TABLE OVERWRITE wearing SCHEMAFULL TYPE RELATION FROM user TO asset ENFORCED;
+	DEFINE FIELD OVERWRITE id ON wearing TYPE string;
+	DEFINE FIELD OVERWRITE time ON wearing TYPE datetime DEFAULT ALWAYS time::now();
 
 DEFINE FUNCTION OVERWRITE fn::assetId() {
 	RETURN rand::int(100_000_000, 999_999_999);
@@ -262,8 +275,9 @@ DEFINE FUNCTION OVERWRITE fn::getComments($comment: record<comment>, $depth: num
 	RETURN SELECT
 		record::id(id) AS id,
 		author,
-		SELECT text, updated FROM $parent.content
-		ORDER BY updated DESC AS content,
+		# Only the newest version: earlier ones include the text of deleted and moderated comments
+		(SELECT text, updated FROM $parent.content
+		ORDER BY updated DESC LIMIT 1) AS content,
 		array::flatten(
 			(SELECT 
 				fn::getComments($this.id, $depth + 1, $user) AS comments,
@@ -316,19 +330,13 @@ DEFINE FUNCTION OVERWRITE fn::notify($sender: record, $receiver: record, $type: 
 DEFINE EVENT OVERWRITE bannerCreateLog ON TABLE banner
 WHEN $event = "CREATE" THEN
 	fn::auditLog("Administration", string::concat('Create banner "', $after.body, '"'), $after.creator);
-DEFINE EVENT OVERWRITE bannerDeleteLog ON TABLE banner
-WHEN $event = "UPDATE" AND !$before.deleted AND $after.deleted THEN
-	fn::auditLog("Administration", string::concat('Delete banner "', $after.body, '"'), $after.creator);
+# Banner changes are logged by the admin actions instead, so the log names the admin who made them
+REMOVE EVENT IF EXISTS bannerDeleteLog ON TABLE banner;
 DEFINE EVENT OVERWRITE regKeyCreateLog ON TABLE regKey
 WHEN $event = "CREATE" THEN
 	fn::auditLog("Administration", string::concat("Create registration key ", record::id($after.id)), $after.creator);
 
 # separation of concerns, maaaan
-
-DEFINE FUNCTION OVERWRITE fn::filterInventory($thing: object, $user: record<user>) {
-	RETURN $user IN $thing<-ownsAsset<-user
-		AND $thing.type IN [2, 8, 11, 12, 13, 18]
-};
 
 DEFINE FUNCTION OVERWRITE fn::filterGames($thing: object) {
 	RETURN !$thing.privateServer AND !$thing.deleted

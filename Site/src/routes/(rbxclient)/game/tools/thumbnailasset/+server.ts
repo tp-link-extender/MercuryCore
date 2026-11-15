@@ -2,12 +2,29 @@
 
 import { error, redirect } from "@sveltejs/kit"
 import { db, Record } from "$lib/server/surreal"
+import type { RequestEvent } from "./$types"
 import cachedAssetQuery from "./cache.surql"
 
-export async function GET({ fetch: f, url }) {
-	const width = +(url.searchParams.get("wd") as string)
-	const height = +(url.searchParams.get("ht") as string)
-	const assetId = +(url.searchParams.get("aid") as string)
+const isThumbnailResponse = (
+	value: unknown
+): value is { data: { imageUrl: string }[] } => {
+	if (typeof value !== "object" || value === null || !("data" in value))
+		return false
+	const { data } = value
+	if (!Array.isArray(data)) return false
+	const first: unknown = data[0]
+	return (
+		typeof first === "object" &&
+		first !== null &&
+		"imageUrl" in first &&
+		typeof first.imageUrl === "string"
+	)
+}
+
+export async function GET({ fetch: f, url }: RequestEvent) {
+	const width = Number(url.searchParams.get("wd"))
+	const height = Number(url.searchParams.get("ht"))
+	const assetId = Number(url.searchParams.get("aid"))
 	const stringAssetId = assetId.toString()
 
 	if (!assetId || !width || !height) error(404, "Asset not found")
@@ -20,16 +37,18 @@ export async function GET({ fetch: f, url }) {
 
 	const params = new URLSearchParams({
 		assetIds: stringAssetId,
-		returnPolicy: "Placeholder",
-		size: `${width}x${height}`,
 		format: "Png",
 		isCircular: "false",
+		returnPolicy: "Placeholder",
+		size: `${width}x${height}`,
 	})
 	const thumb = await f(`https://thumbnails.roblox.com/v1/assets?${params}`)
 
 	if (thumb.status !== 200) error(400, "Invalid asset")
 
-	const { imageUrl } = JSON.parse(await thumb.text()).data[0]
+	const body: unknown = JSON.parse(await thumb.text())
+	if (!isThumbnailResponse(body)) error(400, "Invalid asset")
+	const [{ imageUrl }] = body.data
 	await db.update(cachedAsset).merge({ url: imageUrl })
 
 	redirect(302, imageUrl)

@@ -38,12 +38,14 @@ export default {
 		Requests: true,
 		FormattedErrors: false,
 		Time: true,
+		DiscordModerationWebhook: "https://discord.com/api/webhooks/123456789012345678/abcdefghijklmnopqrstuvwxyz",
 	},
 
 	Branding: {
 		Favicon: "Branding/Favicon.svg",
 		Icon: "Branding/Icon.svg",
 		Tagline: "Revival tagline",
+		LongTagline: "Endless possibilities. New features. Same nostalgia.",
 		Descriptions: {
 			"Endless possibilites":
 				"Create or play your favourite games and customise your character with items on our catalog.",

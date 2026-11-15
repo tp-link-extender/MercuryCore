@@ -1,31 +1,41 @@
-import { error, fail } from "@sveltejs/kit"
+import { error } from "@sveltejs/kit"
+import { Group as EconGroup } from "economy/types"
 import { authorise } from "$lib/server/auth"
+import {
+	economyConnFailed,
+	itemOwner,
+	type OwnedUser,
+} from "$lib/server/economy"
 import exclude from "$lib/server/exclude"
 import { db, find, Record } from "$lib/server/surreal"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import type { RequestEvent } from "./$types.d"
 import groupQuery from "./group.surql"
 import joinQuery from "./join.surql"
 import leaveQuery from "./leave.surql"
 
-type Group = {
+interface Group {
 	id: string
 	in: boolean
 	memberCount: number
 	name: string
-	owner: BasicUser
+	owner: OwnedUser | null
 }
 
-export async function load({ locals, params }) {
+export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	exclude("Groups")
 	const { user } = await authorise(locals)
 	const [[group]] = await db.query<Group[][]>(groupQuery, {
-		user: Record("user", user.id),
 		// ...params,
 		group: Record("group", params.group),
+		user: Record("user", user.id),
 	})
 	if (!group) error(404, "Not Found")
 
-	return group
+	const owner = await itemOwner(f, new EconGroup(params.group))
+	if (!owner.ok) error(500, economyConnFailed)
+
+	return { ...group, owner: owner.value }
 }
 
 async function getData({ locals, params }: RequestEvent) {
@@ -33,15 +43,15 @@ async function getData({ locals, params }: RequestEvent) {
 	const { user } = await authorise(locals)
 
 	const groupExists = await find("group", params.group)
-	if (!groupExists) fail(404, { msg: "Group not found" })
+	if (!groupExists) error(404, "Group not found")
 
 	return {
-		user: Record("user", user.id),
 		group: Record("group", params.group),
+		user: Record("user", user.id),
 	}
 }
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.join = async e => {
 	await db.query(joinQuery, await getData(e))
 }

@@ -1,9 +1,14 @@
 import { error, fail } from "@sveltejs/kit"
+import { inventory } from "economy/api"
+import { Group as EconGroup, User as EconUser, Place } from "economy/types"
 import { authorise } from "$lib/server/auth"
+import { economyConnFailed } from "$lib/server/economy"
 import formData from "$lib/server/formData"
+import { ratelimitKey } from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { db, Record, type RecordId } from "$lib/server/surreal"
 import type { Group } from "../../groups/+page.server"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import type { RequestEvent } from "./$types.d"
 import acceptExistingQuery from "./acceptExisting.surql"
 import alreadyFriendsQuery from "./alreadyFriends.surql"
@@ -12,12 +17,28 @@ import declineQuery from "./decline.surql"
 import findUserQuery from "./findUser.surql"
 import followQuery from "./follow.surql"
 import incomingQuery from "./incoming.surql"
+import ownedGroupsQuery from "./ownedGroups.surql"
+import ownedPlacesQuery from "./ownedPlaces.surql"
 import requestQuery from "./request.surql"
 import unfollowQuery from "./unfollow.surql"
 import unfriendQuery from "./unfriend.surql"
 import userQuery from "./user.surql"
 
+interface OwnedPlace {
+	dislikeCount: number
+	id: number
+	likeCount: number
+	name: string
+	playerCount: number
+}
+
 interface User extends BasicUser {
+	comments: {
+		id: string
+		created: Date
+		content: string
+		visibility: string
+	}[]
 	description: string
 	follower: boolean
 	followerCount: number
@@ -27,25 +48,14 @@ interface User extends BasicUser {
 	friends: boolean
 	groups: Group[]
 	groupsOwned: Group[]
+	id: string
 	incomingRequest: boolean
 	outgoingRequest: boolean
 	permissionLevel: number
-	places: {
-		dislikeCount: number
-		id: string
-		likeCount: number
-		name: string
-		playerCount: number
-	}[]
-	comments: {
-		id: string
-		created: Date
-		content: string
-		visibility: string
-	}[]
+	places: OwnedPlace[]
 }
 
-export async function load({ locals, params }) {
+export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 	const [[userExists]] = await db.query<User[][]>(userQuery, {
 		...params,
@@ -53,7 +63,21 @@ export async function load({ locals, params }) {
 	})
 	if (!userExists) error(404, "Not Found")
 
-	return userExists
+	const inv = await inventory(f, new EconUser(userExists.id))
+	if (!inv.ok) error(500, economyConnFailed)
+
+	const owned = [...inv.value.One]
+	const placeIds = owned.filter(i => i instanceof Place).map(i => i.ID)
+	const groupIds = owned.filter(i => i instanceof EconGroup).map(i => i.ID)
+
+	const [places] = await db.query<OwnedPlace[][]>(ownedPlacesQuery, {
+		ids: placeIds.map(id => Record("place", id)),
+	})
+	const [groupsOwned] = await db.query<Group[][]>(ownedGroupsQuery, {
+		ids: groupIds.map(id => Record("group", id)),
+	})
+
+	return { ...userExists, groupsOwned, places }
 }
 
 async function getData({ params }: RequestEvent) {
@@ -80,8 +104,8 @@ const acceptExisting: ActionFunction = (params, user) =>
 		acceptExistingQuery,
 		{
 			...params,
-			relativeId: user.id,
 			note: `${user.username} is now friends with you!`,
+			relativeId: user.id,
 		}
 	)
 
@@ -92,12 +116,12 @@ async function getInteractData(e: RequestEvent) {
 	if (user.id === user2.id) error(400, "You can't friend/follow yourself")
 
 	return {
-		user,
+		data: await formData(e.request),
 		params: {
 			user: Record("user", user.id),
 			user2: Record("user", user2.id),
 		},
-		data: await formData(e.request),
+		user,
 	}
 }
 
@@ -109,22 +133,25 @@ async function rerender(e: RequestEvent) {
 	try {
 		await requestRender(e.fetch, "Avatar", user2.id, user2.username, true)
 		return {
-			avatarBody: `/api/avatar/${e.params.username}-body?r=${Math.random()}`,
 			avatar: `/api/avatar/${e.params.username}?r=${Math.random()}`,
+			avatarBody: `/api/avatar/${e.params.username}-body?r=${Math.random()}`,
 		}
-	} catch (e) {
-		// TODO: i love yo shadow
-		console.error(e)
+	} catch (err) {
+		console.error(err)
 		return fail(500, { msg: "Failed to request render" })
 	}
 }
-export const actions: import("./$types").Actions = { rerender }
+export const actions: Actions = { rerender }
 actions.follow = async e => {
 	const { user, params } = await getInteractData(e)
+	// Following, unfollowing and following again sends a new notification each time
+	const limit = ratelimitKey(null, "follow", user.id, 600, 30)
+	if (limit) return limit
+
 	await db.query(followQuery, {
 		...params,
-		relativeId: user.id,
 		note: `${user.username} is now following you!`,
+		relativeId: user.id,
 	})
 }
 actions.unfollow = async e => {
@@ -137,6 +164,8 @@ actions.unfriend = async e => {
 }
 actions.request = async e => {
 	const { user, params } = await getInteractData(e)
+	const limit = ratelimitKey(null, "friendRequest", user.id, 600, 30)
+	if (limit) return limit
 
 	// Make sure users are not already friends
 	const [alreadyFriends] = await db.query<boolean[]>(
@@ -153,8 +182,8 @@ actions.request = async e => {
 
 	await db.query(requestQuery, {
 		...params,
-		relativeId: user.id,
 		note: `${user.username} has sent you a friend request.`,
+		relativeId: user.id,
 	})
 }
 actions.cancel = async e => {

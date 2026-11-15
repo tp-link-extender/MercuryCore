@@ -1,9 +1,10 @@
 import os from "node:os"
 import { authorise } from "$lib/server/auth"
+import type { PageServerLoadEvent } from "./$types"
 
 // Admin pages on the site require a user to have at least permissionLevel 3
 // Remember to do this for every admin page: authentication is done at the hooks level, authorisation is not
-export async function load({ locals }) {
+export async function load({ locals }: PageServerLoadEvent) {
 	await authorise(locals, 3)
 
 	return {

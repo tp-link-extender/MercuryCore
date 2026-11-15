@@ -44,7 +44,7 @@
 	function privateFetchParams() {
 		const body = new FormData()
 		body.append("privateTicket", place.privateTicket)
-		return { method: "post", body }
+		return { body, method: "post" }
 	}
 
 	const launch = (joinscripturl: () => string) => {
@@ -72,15 +72,30 @@
 				return
 			}
 
+			let start: { status: number; data?: { dedicated?: boolean } }
 			try {
-				await fetch(`${currentPath}?/start`, privateFetchParams())
+				const response = await fetch(
+					`${currentPath}?/start`,
+					privateFetchParams()
+				)
+				start = deserialize(await response.text()) as typeof start
 			} catch {
 				current = "fail"
 				return
 			}
+			// 429 means a start was already requested recently, so wait for that server instead
+			if (start.status !== 200 && start.status !== 429) {
+				current = "fail"
+				return
+			}
+			// A self-hosted place has no dedicated server to wait for
+			if (start.status === 200 && !start.data?.dedicated) {
+				launch(joinscripturl)
+				return
+			}
 
 			const es = new EventSource(`${data.orbiterURL}/${place.id}`)
-			es.onmessage = (e: MessageEvent<string>) => {
+			es.addEventListener("message", (e: MessageEvent<string>) => {
 				const status = e.data
 				console.log("EVENTSOURCE", status)
 				if (status === "1") current = "starting"
@@ -92,7 +107,7 @@
 					current = "fail"
 					es.close()
 				}
-			}
+			})
 		}
 
 	let loadCommand = $derived(
@@ -114,12 +129,12 @@
 		if (joinScriptData.status !== 200) return
 
 		// JoinScript is my favourite programming language (-i mean scripting language)
-		const joinUri = data.scheme + joinScriptData.data.ticket
+		const joinUri = data.scheme + data.clientVersion + joinScriptData.data.ticket
 		beginJoining(() => joinUri, true)()
 	}
 
 	const tabs = ["Description", "Servers"]
-	const isOwner = data.place.ownerUser?.username === user.username
+	const isOwner = data.place.ownerUser?.id === user.id
 	if (
 		(isOwner || user.permissionLevel === 5) &&
 		(data.hosting === "Selfhosted" || data.hosting === "Both")
@@ -148,7 +163,7 @@
 			<div class="card bg-darker p-4 pb-6 block">
 				<div class="flex justify-between">
 					<h1 class="text-2xl">{place.name}</h1>
-					{#if place.ownerUser?.username === user.username || user.permissionLevel >= 4}
+					{#if place.ownerUser?.id === user.id || user.permissionLevel >= 4}
 						<div>
 							<a
 								aria-label="Place settings"
@@ -168,6 +183,8 @@
 							bg="background"
 							full
 							thin />
+					{:else}
+						<i>Unknown owner</i>
 					{/if}
 				</span>
 				<div>
@@ -178,6 +195,10 @@
 						? 'bg-emerald-600'
 						: 'bg-red-500'} p-2 py-1">
 					{online ? "Online" : "Offline"}
+				</small>
+				<small
+					class="text-white rounded-2 bg-purple-600 p-2 py-1">
+					{place.clientVersion}
 				</small>
 				<span class="float-end">
 					<span class="dropdown">
@@ -302,7 +323,7 @@
 					class="btn btn-sm btn-primary">
 					Join server
 				</button>
-				{#if isOwner && tabs.includes("Selfhosted")}
+				{#if isOwner && tabs.includes("Selfhosted") || user.permissionLevel === 5}
 					<form
 						use:enhance
 						method="post"
@@ -349,7 +370,7 @@
 							<button
 								class="btn btn-sm btn-tertiary"
 								onclick={beginJoining(
-									() => `${data.scheme}1+launchmode:ide`
+									() => `${data.scheme}20131+launchmode:ide`
 								)}>
 								<fa fa-arrow-up-right-from-square></fa>
 								Studio

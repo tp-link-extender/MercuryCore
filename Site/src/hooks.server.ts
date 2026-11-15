@@ -1,7 +1,9 @@
 // "'Hooks' are app-wide functions you declare that SvelteKit will call in response to specific events, giving you fine-grained control over the framework's behaviour."
 // See https://kit.svelte.dev/docs/hooks/ for more info.
 
-import { type Handle, redirect } from "@sveltejs/kit"
+import { type Handle, type HandleServerError, redirect } from "@sveltejs/kit"
+import { stipend } from "economy/api"
+import { User as EconUser } from "economy/types"
 import pc from "picocolors"
 import {
 	cookieName,
@@ -9,25 +11,26 @@ import {
 	validateSessionToken,
 } from "$lib/server/auth"
 import config from "$lib/server/config"
-import { stipend } from "$lib/server/economy"
+import { redactSearch } from "$lib/server/redact"
+import { styleText } from "$lib/server/styleText"
 import { db, Record } from "$lib/server/surreal"
 import moderatedQuery from "./moderated.surql"
 
 const { magenta, red, yellow, green, blue, gray } = pc
-const methodColours = Object.freeze({
+const methodColours: { [_: string]: string } = Object.freeze({
 	GET: green("GET"),
 	POST: yellow("POST"),
 })
 const pathnameColours = Object.freeze({
+	admin: red,
 	api: green,
 	download: yellow,
+	login: blue,
 	moderation: yellow,
+	place: magenta,
+	register: blue,
 	report: yellow,
 	statistics: yellow,
-	register: blue,
-	login: blue,
-	place: magenta,
-	admin: red,
 })
 
 function pathnameColour(pathname: string) {
@@ -35,6 +38,19 @@ function pathnameColour(pathname: string) {
 		if (pathname.startsWith(`/${prefix}`)) return colour(pathname)
 
 	return pathname
+}
+
+// Account recovery tokens are in the path, so they mustn't end up in logs
+const redact = (pathname: string) =>
+	pathname.startsWith("/recover/") ? "/recover/[redacted]" : pathname
+
+// Malformed percent-encoding (such as /%FF) makes decodeURI throw, so log the raw path instead
+function readablePath(pathname: string) {
+	try {
+		return decodeURI(pathname)
+	} catch {
+		return pathname
+	}
 }
 
 const time = () =>
@@ -51,13 +67,15 @@ async function finish({ event, resolve }: Parameters<Handle>[0]) {
 
 	if (config.Logging.Requests) {
 		// Fancy logging: time(?), user, method, and path
-		const method = event.request.method as keyof typeof methodColours
+		const { method } = event.request
 		console.log(
 			time(),
 			userLog(user),
 			methodColours[method] || method,
 			" ".repeat(7 - method.length),
-			pathnameColour(decodeURI(pathname) + search)
+			pathnameColour(
+				redact(readablePath(pathname)) + redactSearch(search)
+			)
 		)
 	}
 
@@ -68,27 +86,28 @@ async function finish({ event, resolve }: Parameters<Handle>[0]) {
 	const file = Bun.file(`../Assets/${config.Themes[user?.theme || 0].Path}`)
 	const themecss = await file.text()
 	const customcss = user?.css
-		? `<style id="custom-css">${user.css}</style>`
+		? `<style id="custom-css">${styleText(user.css)}</style>`
 		: ""
 
 	// duplicate the response to avoid modifying the original
+	// A function replacement, so patterns like $& in the user's CSS are inserted as written
 	const text = (await res.clone().text()).replace(
 		"</body>",
-		`<style>${themecss}</style>${customcss}</body>`
+		() => `<style>${themecss}</style>${customcss}</body>`
 	)
 
 	res.headers.delete("content-length") // prevent cutoff, since the body was modified
 
 	return new Response(text, {
+		headers: res.headers,
 		status: res.status,
 		statusText: res.statusText,
-		headers: res.headers,
 	})
 }
 
 // Ran every time a dynamic request is made.
 // Requests for prerendered pages do not trigger this hook.
-export async function handle(e) {
+export async function handle(e: Parameters<Handle>[0]) {
 	const { event } = e
 
 	const token = event.cookies.get(cookieName)
@@ -97,11 +116,11 @@ export async function handle(e) {
 		event.locals.user = null
 		event.cookies.delete(cookieName, { path: "/" })
 
-		return await finish(e)
+		return finish(e)
 	}
 
 	const { session, user } = await validateSessionToken(token)
-	if (!session || !user) return await finish(e)
+	if (!session || !user) return finish(e)
 
 	event.locals.session = session
 	event.locals.user = user
@@ -119,21 +138,25 @@ export async function handle(e) {
 	)
 		redirect(302, "/moderation")
 
-	await stipend(e.event.fetch, user.id)
+	try {
+		await stipend(e.event.fetch, new EconUser(user.id))
+	} catch {
+		console.error("Stipend failed to process")
+	}
 
-	return await finish(e)
+	return finish(e)
 }
 
-export async function handleError({ error }) {
+export function handleError({ error }: Parameters<HandleServerError>[0]) {
 	if (typeof error === "object" && error != null) {
-		const status = (error as { status?: number }).status
+		const { status } = error as { status?: number }
 		if (status) {
-			console.error(status, red(error.toString()))
+			console.error(status, red(JSON.stringify(error) ?? ""))
 			return
 		}
 	}
 
 	// Simple error logging (not a stack trace)
 	if (!config.Logging.FormattedErrors) console.error(error)
-	else console.error(red(error as string))
+	else console.error(red(String(error)))
 }

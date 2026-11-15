@@ -1,24 +1,25 @@
 import { authorise } from "$lib/server/auth"
 import { db, Record } from "$lib/server/surreal"
+import type { PageServerLoadEvent } from "./$types"
 import homeQuery from "./home.surql"
 
-type Place = {
+interface Place {
+	dislikeCount: number
 	id: number
+	likeCount: number
 	name: string
 	playerCount: number
 	serverPing: number
-	likeCount: number
-	dislikeCount: number
 }
 
-type Status = {
-	id: string
+interface Status {
 	author: BasicUser
 	created: Date
+	currentContent: string
+	id: string
 	pinned: boolean
 	replies: number
 	visibility: "Visible" | "Moderated" | "Deleted"
-	currentContent: string
 }
 
 // lazy eval 💞
@@ -27,7 +28,7 @@ const greets: readonly ((u: string) => string)[] = Object.freeze([
 	u => `Hello, ${u}!`,
 ])
 
-export async function load({ locals }) {
+export async function load({ locals }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 	// (main)/+layout.server.ts will handle most redirects for logged-out users, but sometimes errors for this page.
 
@@ -36,9 +37,9 @@ export async function load({ locals }) {
 	>(homeQuery, { user: Record("user", user.id) })
 
 	return {
+		feed,
+		friends,
 		greet: greets[Math.floor(Math.random() * greets.length)](user.username),
 		places,
-		friends,
-		feed,
 	}
 }

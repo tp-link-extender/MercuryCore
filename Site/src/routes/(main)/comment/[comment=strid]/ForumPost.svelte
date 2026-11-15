@@ -15,9 +15,9 @@
 	}: {
 		comment: Awaited<ReturnType<typeof getComment>>
 		likeForm: Omit<LikeForm, "for">
-		onResult: (result: {
+		onResult(result: {
 			result: import("@sveltejs/kit").ActionResult
-		}) => Promise<void>
+		}): Promise<void>
 		user: import("./$types").PageData["user"]
 	} = $props()
 

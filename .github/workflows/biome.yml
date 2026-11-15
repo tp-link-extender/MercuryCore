@@ -1,0 +1,46 @@
+name: Biome
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+
+# Shared with the Oxlint workflow: both rewrite files, and running them at the same time lets one push race the other. Queuing instead of cancelling means a fix run always sees the latest commit.
+concurrency:
+    group: lint-fixes-${{ github.ref }}
+    cancel-in-progress: false
+
+# This workflow rewrites files and commits the fixes, so it needs write access to repository contents.
+permissions:
+    contents: write
+
+jobs:
+    biome:
+        # The fixup push below would otherwise trigger another run that finds nothing to do.
+        if: github.actor != 'github-actions[bot]'
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        steps:
+            - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+              with:
+                  ref: ${{ github.head_ref || github.ref_name }}
+                  token: ${{ secrets.GITHUB_TOKEN }}
+            # Biome ships as a single binary, so there is no Bun toolchain or `bun install` just to run the formatter. The version is pinned here to match the Biome devDependency in Site/bun.lock (2.6.6): setup-biome only reads npm, pnpm and yarn lockfiles, so it cannot detect the version from bun.lock.
+            - uses: biomejs/setup-biome@4c91541eaada48f67d7dbd7833600ce162b68f51 # v2
+              with:
+                  version: 2.6.6
+
+            # Only the Site has a Biome config that covers source files. The root has no biome.json, so a root-level run fails on nested-config conflicts. Economy is Go and Docs has its own Biome setup that is not yet clean, so it is left out until it is.
+            # `check` covers format, lint and organise-imports in one pass, so one run and one fixup commit instead of two of each.
+            - name: Apply Biome fixes
+              run: biome check --write .
+              working-directory: Site
+            - name: Commit fixes
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                  git add -A
+                  if ! git diff --cached --quiet; then
+                    git commit -m "Apply Biome fixes"
+                    git push
+                  fi

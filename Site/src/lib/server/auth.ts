@@ -20,11 +20,13 @@ type SessionValidationResult =
 export async function validateSessionToken(
 	token: string
 ): Promise<SessionValidationResult> {
-	const [, , , res] = await db.query<SessionValidationResult[]>(
+	// The last statement's result is the session and user
+	const results = await db.query<SessionValidationResult[]>(
 		getSessionAndUserQuery,
 		{ sess: Record("session", token) }
 	)
-	if (!res.session || !res.user) return { session: null, user: null }
+	const res = results.at(-1)
+	if (!res?.session || !res.user) return { session: null, user: null }
 	return res
 }
 
@@ -42,9 +44,9 @@ export async function invalidateAllSessions(user: string): Promise<void> {
 
 export const cookieName = "session"
 export const cookieOptions = Object.freeze({
-	secure: !dev,
 	maxAge: 30 * 24 * 60 * 60, // 30 days
 	path: "/",
+	secure: !dev,
 })
 
 /**
@@ -55,10 +57,13 @@ export const cookieOptions = Object.freeze({
  * @example
  * const { session, user } = await authorise(locals)
  */
+// Kept async so its many call sites can continue to await it
+// oxlint-disable-next-line typescript/require-await, eslint/require-await
 export async function authorise(
 	{ session, user }: { session: string | null; user: User | null },
 	level?: number
-) {	if (!session || !user)
+) {
+	if (!session || !user)
 		// TODO: get session and user from getRequestEvent() locals
 		redirect(302, "/login")
 	if (level && user.permissionLevel < level)

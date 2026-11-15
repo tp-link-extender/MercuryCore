@@ -13,7 +13,7 @@ interface Post extends PreviewPost, Scored {
 	visibility: string
 }
 
-type Category = {
+interface Category {
 	name: string
 	posts: Post[]
 }
@@ -27,7 +27,7 @@ export const getCategory = query(schema, async name => {
 	const { user } = await authorise(locals)
 
 	const pageQ = url.searchParams.get("p") || "1"
-	const page = Number.isNaN(+pageQ) ? 1 : Math.round(+pageQ)
+	const page = Number.isNaN(Number(pageQ)) ? 1 : Math.round(Number(pageQ))
 	if (page < 1) redirect(303, `/forum/${name}?p=1`)
 
 	const [category, pages] = await db.query<[Category, number]>(

@@ -15,7 +15,7 @@
 		)
 	)
 
-	const current = data.queue[0]
+	const [current] = data.queue
 </script>
 
 <Head name={data.siteName} title="Render queue - Admin" />

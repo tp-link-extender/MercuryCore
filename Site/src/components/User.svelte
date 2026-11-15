@@ -4,18 +4,18 @@
 	import type { ClassValue } from "svelte/elements"
 
 	const statusColours = Object.freeze({
-		// 8 months late lmao
-		Playing: "#238560",
+		Offline: "transparent", 
 		Online: "#3459e6",
-		Offline: "transparent"
+		// 8 months late lmao
+		Playing: "#238560"
 	})
 	const transitionBackgrounds = Object.freeze({
-		darker: "background",
-		background: "accent",
 		accent: "accent1",
 		accent1: "accent2",
 		accent2: "accent3",
-		accent3: "accent2"
+		accent3: "accent2", 
+		background: "accent",
+		darker: "background"
 	})
 
 	const {

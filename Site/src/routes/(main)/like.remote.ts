@@ -5,8 +5,8 @@ import like from "$lib/server/like"
 import { Record } from "$lib/server/surreal"
 
 const schema = type({
-	id: "string",
 	action: type.enumerated("like", "unlike", "dislike", "undislike"),
+	id: "string",
 })
 
 export const likeForm = form(schema, async ({ id, action }) => {

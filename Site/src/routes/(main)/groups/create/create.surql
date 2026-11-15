@@ -1,3 +1,2 @@
-LET $group = CREATE group SET name = $name;
-RELATE $user->ownsGroup->$group;
-RELATE $user->member->$group SET time = time::now();
+LET $group = CREATE type::record("group", $economyId) SET name = $name;
+RELATE $user->member->$group;

@@ -25,7 +25,8 @@
 			{/if}
 		</div>
 		<div class="sm:text-right <sm:pt-4">
-			<div class="flex <sm:flex-col sm:gap-3 justify-end pb-2">
+			<div class="flex <sm:flex-col sm:gap-4 justify-end pb-2">
+				<a class="light-text" href="/about">About</a>
 				{#if data.user && data.pages.includes("Statistics")}
 					<a class="light-text" href="/statistics">Statistics</a>
 				{/if}

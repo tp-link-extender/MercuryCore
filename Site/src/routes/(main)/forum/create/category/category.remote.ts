@@ -9,8 +9,8 @@ import type { ClientForm } from "$lib/validate"
 import createQuery from "./create.surql"
 
 const schema = type({
-	name: "1 <= string <= 50",
 	description: "1 <= string <= 300",
+	name: "1 <= string <= 50",
 })
 
 export const formData = form(schema, async ({ description, name }, issues) => {

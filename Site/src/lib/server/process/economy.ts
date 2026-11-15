@@ -4,7 +4,7 @@ const path = `${cwd}/${name}`
 
 let started = false
 
-export default async () => {
+const startEconomy = async () => {
 	if (started) return
 	started = true
 
@@ -16,7 +16,7 @@ export default async () => {
 			await Bun.spawn(["go", "build"], { cwd }).exited
 		} catch {
 			console.error(
-				"The attempt to  automatically build the Economy service failed. Please build the service automatically, by navigating to the Economy folder and running `go build`, or make sure Go is installed and accessible as `go`."
+				"The attempt to automatically build the Economy service failed. Please build the service automatically, by navigating to the Economy folder and running `go build`, or make sure Go is installed and accessible as `go`."
 			)
 			console.error("https://docs.mercs.dev/install/go/")
 			process.exit(1)
@@ -26,8 +26,8 @@ export default async () => {
 	console.log(`Starting Economy service (${path})...`)
 	const proc = Bun.spawn([`./${name}`], {
 		cwd,
-		stdout: "pipe",
 		stderr: "pipe",
+		stdout: "pipe",
 	})
 
 	process.on("exit", () => {
@@ -35,7 +35,7 @@ export default async () => {
 		proc.kill()
 	})
 
-	proc.exited.then(async () => {
+	void proc.exited.then(async () => {
 		console.error("Economy service process exited unexpectedly.")
 		const r = await proc.stdout.getReader().read() // maybe stderr idk, I don't think the service uses it tho
 		const logs = new TextDecoder().decode(r.value)
@@ -43,3 +43,5 @@ export default async () => {
 		process.exit(1)
 	})
 }
+
+export default startEconomy

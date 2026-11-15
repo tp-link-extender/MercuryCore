@@ -1,24 +1,19 @@
 <script lang="ts">
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
+	import Select from "$components/forms/Select.svelte"
 	import Textarea from "$components/forms/Textarea.svelte"
 	import Head from "$components/Head.svelte"
+	import clientVersions from "./clientVersions"
 	import { formData } from "./create.remote"
 
-	// import beautifyCurrency from "$lib/beautifyCurrency"
-
 	const { data } = $props()
-
-	// const [, c1, c2] = beautifyCurrency(data.price)
 </script>
 
 <Head name={data.siteName} title="Create a place" />
 
 <h1 class="text-center">Create a place</h1>
 
-<!-- submit={data.price > 0
-	? `Create (${data.currencySymbol}${c1}${c2 ? "." : ""}${c2})`
-	: "Create"} -->
 <Form {formData} nopad class="ctnr pt-12 max-w-200 light-text" submit="Create">
 	<Input
 		{formData}
@@ -48,6 +43,12 @@
 		name="maxPlayers"
 		label="Player limit"
 		placeholder="1-99 players" />
+	<Select
+		{formData}
+		options={clientVersions}
+		name="clientVersion"
+		selected={data.clientVersion}
+		label="Client version " />
 	<Input
 		{formData}
 		type="checkbox"

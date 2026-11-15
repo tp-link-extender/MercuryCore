@@ -18,4 +18,6 @@ const permissionMembershipTypes = Object.freeze([
 export const membershipType = (permissionLevel: number) =>
 	`Enum.MembershipType.${permissionMembershipTypes[permissionLevel - 1]}`
 
-export default (permissionLevel: number) => permissions[permissionLevel - 1]
+const permissionLevel = (level: number) => permissions[level - 1]
+
+export default permissionLevel

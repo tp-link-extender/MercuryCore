@@ -118,6 +118,10 @@ export type Config = {
 		 * Whether to log the time of each request.
 		 */
 		Time: boolean
+		/**
+		 * The Discord webhook URL to send moderation logs to a specific channel. This is used for logging moderation actions.
+		 */
+		DiscordModerationWebhook: string
 	}
 
 	/**
@@ -133,11 +137,17 @@ export type Config = {
 		 */
 		Icon: string
 		/**
-		 * A very short tagline for your revival. This is displayed in the footer as  well as on the login and register pages.
+		 * A very short tagline for your revival. This is displayed in the footer as well as on the login, register, and about pages.
 		 *
 		 * If set to an empty string, this does not display.
 		 */
 		Tagline: string
+		/**
+		 * A longer tagline for your revival. This is displayed on the landing and about pages.
+		 *
+		 * If set to an empty string, this does not display.
+		 */
+		LongTagline: string
 		/**
 		 * Descriptions for your revival's features. These are displayed on the register page.
 		 *

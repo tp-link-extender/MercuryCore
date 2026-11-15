@@ -1,4 +1,4 @@
-import sharp, { type ResizeOptions } from "sharp"
+import sharp from "sharp"
 
 /**
  * Creates an image asset based off a file object
@@ -10,19 +10,18 @@ import sharp, { type ResizeOptions } from "sharp"
  * const id = // Load from database
  * save(id)
  */
-export async function imageAsset(file: File, sharpOptions?: ResizeOptions) {
-	const { buffer } = await sharp(await file.arrayBuffer())
-		.resize(256, 256, {
-			fit: "contain",
-			...sharpOptions,
-		})
-		.png()
-		.toBuffer()
-		.catch(() => {
-			throw new Error("Image asset failed to upload")
-		})
-
-	return (id: number) => Bun.write(`../data/assets/${id}`, buffer)
+// Async by contract: callers await the returned save function
+// oxlint-disable-next-line typescript/require-await, eslint/require-await
+export async function imageAsset(file: File) {
+	try {
+		const img = new Bun.Image(file)
+			.resize(256, 256, { fit: "inside" })
+			.png()
+		return (id: number) => img.write(`../data/assets/${id}`)
+	} catch (err) {
+		console.error(err)
+		throw new Error("Image asset failed to upload", { cause: err })
+	}
 }
 
 /**
@@ -35,19 +34,16 @@ export async function imageAsset(file: File, sharpOptions?: ResizeOptions) {
  * const id = // Load from database
  * save(id)
  */
-export async function clothingAsset(file: File, sharpOptions?: ResizeOptions) {
-	const { buffer } = await sharp(await file.arrayBuffer())
-		.resize(585, 559, {
-			fit: "fill",
-			...sharpOptions,
-		})
-		.png()
-		.toBuffer()
-		.catch(() => {
-			throw new Error("Image asset failed to upload")
-		})
-
-	return (id: number) => Bun.write(`../data/assets/${id}`, buffer)
+// Async by contract: callers await the returned save function
+// oxlint-disable-next-line typescript/require-await, eslint/require-await
+export async function clothingAsset(file: File) {
+	try {
+		const img = new Bun.Image(file).resize(585, 559, { fit: "fill" }).png()
+		return (id: number) => img.write(`../data/assets/${id}`)
+	} catch (err) {
+		console.error(err)
+		throw new Error("Clothing asset failed to upload", { cause: err })
+	}
 }
 
 /**
@@ -60,25 +56,22 @@ export async function clothingAsset(file: File, sharpOptions?: ResizeOptions) {
  * const id = // Load from database
  * save(id)
  */
-export async function thumbnail(b: ArrayBuffer, sharpOptions?: ResizeOptions) {
-	const { buffer } = await sharp(b)
-		.resize(420, 420, {
-			fit: "fill",
-			...sharpOptions,
-		})
-		.webp() // sorry avif, but webp is just magic (just here)
-		.toBuffer()
-		.catch(() => {
-			throw new Error("Thumbnail failed to upload")
-		})
-
-	return (id: number) => Bun.write(`../data/thumbnails/${id}`, buffer)
+// Async by contract: callers await the returned save function
+// oxlint-disable-next-line typescript/require-await, eslint/require-await
+export async function thumbnail(b: ArrayBuffer) {
+	try {
+		const img = new Bun.Image(b).resize(420, 420, { fit: "fill" }).webp()
+		return (id: number) => img.write(`../data/thumbnails/${id}`)
+	} catch (err) {
+		console.error(err)
+		throw new Error("Thumbnail failed to upload", { cause: err })
+	}
 }
 
 const tShirtOpts = Object.freeze({
+	background: { alpha: 0, b: 0, g: 0, r: 0 },
 	fit: "contain",
 	position: "top",
-	background: { r: 0, g: 0, b: 0, alpha: 0 },
 })
 
 /**

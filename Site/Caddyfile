@@ -17,9 +17,47 @@ mercs.dev, http://www.mercs.dev  {
 	rewrite /Game/Tools/InsertAsset.ashx /game/tools/insertasset
 	rewrite /Game/Tools/ThumbnailAsset.ashx /game/tools/thumbnailasset
 	rewrite /UploadMedia/PostImage.aspx /studio/uploadmedia/screenshot
+	rewrite /asset/bodycolors.ashx /asset/bodycolors
+	rewrite /Game/PlaceLauncher.ashx /game/placelauncher
 
 	rewrite /Setting/QuietGet/ClientSharedSettings/* /api/clientsharedsettings
+	rewrite /Setting/QuietGet/ClientSharedSettings /api/clientsharedsettings
 	rewrite /Setting/QuietGet/ClientAppSettings/* /api/clientappsettings
+	rewrite /Setting/QuietGet/ClientAppSettings /api/clientappsettings
+	rewrite /Setting/QuietGet/AndroidAppSettings/* /api/clientappsettings/2016
+	rewrite /Setting/QuietGet/AndroidAppSettings /api/clientappsettings/2016
+
+	rewrite /Error/Dmp.ashx /dmp
+
+	rewrite /universes/validate-place-join /api/validateplacejoin
 
 	reverse_proxy localhost:4443
+}
+
+# todo: see if we can remove the trailing slashes someday
+
+clientsettings.api.mercs.dev {
+	rewrite /Setting/QuietGet/ClientSharedSettings/* /api/clientsharedsettings/2016
+	rewrite /Setting/QuietGet/ClientSharedSettings /api/clientsharedsettings/2016
+	rewrite /Setting/QuietGet/ClientAppSettings/* /api/clientappsettings/2016
+	rewrite /Setting/QuietGet/ClientAppSettings /api/clientappsettings/2016
+	rewrite /Setting/QuietGet/AndroidAppSettings/* /api/clientappsettings/2016
+	rewrite /Setting/QuietGet/AndroidAppSettings /api/clientappsettings/2016
+
+	# temporary api subdomain duplicates
+	rewrite /GetAllowedSecurityVersions/* /api/getallowedsecurityversions
+	rewrite /GetAllowedSecurityVersions /api/getallowedsecurityversions
+	rewrite /GetAllowedMD5Hashes/* /api/getallowedmd5hashes
+	rewrite /GetAllowedMD5Hashes /api/getallowedmd5hashes
+	rewrite /game/players/* /api/game/players
+	rewrite /game/players/ /api/game/players
+
+	reverse_proxy localhost:4443
+}
+
+api.mercs.dev {
+	rewrite /GetAllowedSecurityVersions/* /api/getallowedsecurityversions
+	rewrite /GetAllowedSecurityVersions /api/getallowedsecurityversions
+	rewrite /GetAllowedMD5Hashes/* /api/getallowedmd5hashes
+	rewrite /GetAllowedMD5Hashes /api/getallowedmd5hashes
 }

@@ -2,6 +2,7 @@ SELECT
 	record::id(id) AS id,
 	name,
 	serverPing,
+	clientVersion,
 	count(
 		SELECT 1 FROM $parent<-playing
 		WHERE valid AND ping > time::now() - 35s

@@ -1,19 +1,26 @@
+// biome-ignore-all lint/suspicious/noExplicitAny: form components are schema-agnostic, so their fields can't be typed ahead of use
+
 // client version of $lib/server/validate
 
 import type {
-	ActionFailure,
 	RemoteForm,
 	RemoteFormInput,
 	ValidationError,
 } from "@sveltejs/kit"
+import type { SuperForm } from "sveltekit-superforms/client"
+
+export type DynamicSuperForm =
+	// oxlint-disable-next-line typescript/no-explicit-any
+	SuperForm<any>
 
 export type { SuperForm } from "sveltekit-superforms/client"
+export { superForm } from "sveltekit-superforms/client"
 
 type FormErrors<T> = { [K in keyof T]?: string[] }
 
 type FormConstraints<T> = { [K in keyof T]?: { [_: string]: string } }
 
-type BaseForm<T> = {
+interface BaseForm<T> {
 	constraints: FormConstraints<T>
 	errors: FormErrors<T>
 	message: string
@@ -30,9 +37,8 @@ export type Issues = (message: string) => Issue
 
 export type ClientForm<T extends RemoteFormInput> = RemoteForm<
 	T,
-	Issue
+	Issue | { success: string }
 	// Issue | { success: string }
-	// Issue | ActionFailure<{ msg: string }>
 >
 
 export type ExtractId<Input> = Input extends { id: infer Id }

@@ -1,6 +1,6 @@
 import type { SubmitFunction } from "@sveltejs/kit"
 
-export type Scored = {
+export interface Scored {
 	dislikeCount?: number
 	dislikes: boolean
 	likeCount?: number
@@ -42,7 +42,8 @@ const fns: { [_: string]: (t: Scored) => void } = Object.freeze({
 export const likeEnhance =
 	<T extends Scored>(t: T, set: (t: T) => void): SubmitFunction =>
 	({ formData }) => {
-		fns[formData.get("action")?.toString() || ""](t)
+		const action = formData.get("action")
+		fns[typeof action === "string" ? action : ""](t)
 
 		set(t)
 		return () => {} // yes, very necessary

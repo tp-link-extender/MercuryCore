@@ -3,18 +3,22 @@ import { type } from "arktype"
 import { form, getRequestEvent } from "$app/server"
 import { cookieName, cookieOptions, createSession } from "$lib/server/auth"
 import config from "$lib/server/config"
+import { hashPassword } from "$lib/server/password"
+import { ratelimitRemote } from "$lib/server/ratelimit"
+import { toRawId } from "$lib/server/recordId"
 import requestRender from "$lib/server/requestRender"
 import { db, findWhere, Record, type RecordId } from "$lib/server/surreal"
 import { usernameTest } from "$lib/typeTests"
 import type { ClientForm } from "$lib/validate"
 import accountRegistered from "../accountRegistered"
 import createUserQuery from "./createUser.surql"
+import initialAccountQuery from "./initialAccount.surql"
 import regkeyCheckQuery from "./regkeyCheck.surql"
 
 const schemaInitial = type({
+	cpassword: "16 <= string <= 6969",
+	password: "16 <= string <= 6969",
 	username: usernameTest,
-	password: "1 <= string <= 6969",
-	cpassword: "1 <= string <= 6969",
 })
 const schema = type({
 	username: usernameTest,
@@ -23,8 +27,8 @@ const schema = type({
 			problem: "must be a valid RFC-5321 email address",
 		}),
 	}), // https://youtu.be/mrGfahzt-4Q?t=1563
-	password: "16 <= string <= 6969",
 	cpassword: "16 <= string <= 6969",
+	password: "16 <= string <= 6969",
 	...(config.Registration.Keys.Enabled && {
 		regkey: "1 <= string <= 6969",
 	}),
@@ -36,14 +40,30 @@ const prefixRegex = new RegExp(`^${prefix}(.+)$`)
 export const register: ClientForm<typeof schema.infer> = form(
 	schema,
 	async ({ username, email, password, cpassword, regkey }, issues) => {
-		const { fetch: f, cookies, locals } = getRequestEvent()
+		const {
+			fetch: f,
+			cookies,
+			locals,
+			getClientAddress,
+		} = getRequestEvent()
 		if (locals.session) return redirect(302, "/home")
+
+		const limit = ratelimitRemote(
+			issues,
+			"register",
+			getClientAddress,
+			600,
+			5
+		)
+		if (limit) return limit
 
 		if (cpassword !== password) return issues("Passwords do not match")
 
-		const userCheck = await findWhere("user", "username = $username", {
-			username,
-		})
+		const userCheck = await findWhere(
+			"user",
+			"usernameLower = string::lowercase($username)",
+			{ username }
+		)
 		if (userCheck) return issues.username("This username is already in use")
 
 		if (config.Registration.Emails) {
@@ -65,25 +85,35 @@ export const register: ClientForm<typeof schema.infer> = form(
 				{ key }
 			)
 			if (!regkeyCheck)
-				return issues.regkey("Registration key is invalid")
+				return issues.regkey(
+					"Registration key is invalid or has expired"
+				)
 			if (regkeyCheck.usesLeft < 1)
 				return issues.regkey(
 					"This registration key has ran out of uses"
 				)
 		}
 
-		const [, user] = await db.query<RecordId<"user">[]>(createUserQuery, {
-			username,
+		const results = await db.query<RecordId<"user">[]>(createUserQuery, {
+			bodyColours: config.DefaultBodyColors,
 			email: email || "",
 			// I still love scrypt, though argon2 is better supported
-			hashedPassword: Bun.password.hashSync(password),
-			permissionLevel: 1,
-			bodyColours: config.DefaultBodyColors,
+			hashedPassword: await hashPassword(password),
 			key,
+			permissionLevel: 1,
+			username,
 		})
+		const user = results.at(-1)
+		if (!user) {
+			if (key)
+				return issues.regkey(
+					"Registration key is invalid or has expired"
+				)
+			throw new Error("Failed to create user")
+		}
 
 		try {
-			await requestRender(f, "Avatar", user.id.toString(), username)
+			await requestRender(f, "Avatar", toRawId(user.id), username)
 		} catch {}
 
 		cookies.set(cookieName, await createSession(user), cookieOptions)
@@ -104,16 +134,29 @@ export const initialAccount: ClientForm<typeof schemaInitial.infer> = form(
 
 		// This is the kind of stuff that always breaks due to never getting tested
 		// Remember: untested === unworking
-		const [, user] = await db.query<RecordId<"user">[]>(createUserQuery, {
-			username,
-			email: "",
-			hashedPassword: Bun.password.hashSync(password),
-			permissionLevel: 5,
-			bodyColours: config.DefaultBodyColors,
-		})
+		const hashedPassword = await hashPassword(password)
+		let user: RecordId<"user"> | undefined
+		try {
+			const results = await db.query<RecordId<"user">[]>(
+				initialAccountQuery,
+				{
+					bodyColours: config.DefaultBodyColors,
+					hashedPassword,
+					username,
+				}
+			)
+			// The last result is COMMIT's, so the user is the one before it
+			user = results.at(-2)
+		} catch (err) {
+			// Another request created the initial account first
+			if (await accountRegistered())
+				return issues("There's already an account registered")
+			throw err
+		}
+		if (!user) throw new Error("Failed to create initial account")
 
 		try {
-			await requestRender(f, "Avatar", user.id.toString(), username)
+			await requestRender(f, "Avatar", toRawId(user.id), username)
 		} catch {}
 
 		cookies.set(cookieName, await createSession(user), cookieOptions)

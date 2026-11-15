@@ -1,6 +1,6 @@
 let started = false
 
-export default async () => {
+function startSurreal(rootPassword: string): void {
 	if (started) return
 	started = true
 	console.log("Starting SurrealDB...")
@@ -10,11 +10,20 @@ export default async () => {
 			[
 				"surreal",
 				"start",
-				"-u=root",
-				"-p=root",
+				"--bind=127.0.0.1:8000",
 				"surrealkv://data/surreal",
 			],
-			{ cwd: "..", stdout: "pipe", stderr: "pipe" }
+			{
+				cwd: "..",
+				// Passed in the environment rather than as arguments, which other users can see in `ps`. Only used if the store has no root user yet.
+				env: {
+					...process.env,
+					SURREAL_PASS: rootPassword,
+					SURREAL_USER: "root",
+				},
+				stderr: "pipe",
+				stdout: "pipe",
+			}
 		)
 
 		process.on("exit", () => {
@@ -22,7 +31,7 @@ export default async () => {
 			proc.kill()
 		})
 
-		proc.exited.then(async () => {
+		void proc.exited.then(async () => {
 			console.error("SurrealDB process exited unexpectedly.")
 			const r = await proc.stderr.getReader().read()
 			const logs = new TextDecoder().decode(r.value)
@@ -37,3 +46,5 @@ export default async () => {
 		process.exit(1)
 	}
 }
+
+export default startSurreal

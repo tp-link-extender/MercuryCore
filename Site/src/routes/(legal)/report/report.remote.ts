@@ -1,5 +1,6 @@
 import { type } from "arktype"
 import { form, getRequestEvent } from "$app/server"
+import { reportPath } from "$lib/reportUrl"
 import { authorise } from "$lib/server/auth"
 import { ratelimitRemote } from "$lib/server/ratelimit"
 import { db, Record, type RecordId } from "$lib/server/surreal"
@@ -10,7 +11,7 @@ import reports from "./reports"
 
 const schema = type({
 	category: type.enumerated(...reports).describe("a valid report category"),
-	note: "string <= 1000",
+	note: "string <= 1000 | undefined",
 })
 
 async function getReportee(username: string) {
@@ -21,27 +22,33 @@ async function getReportee(username: string) {
 	return reportee?.id
 }
 
-export const formData = form(schema, async ({ category, note }, issues) => {
-	const { locals, url, getClientAddress } = getRequestEvent()
-	const { user } = await authorise(locals)
+export const formData: ClientForm<typeof schema.infer> = form(
+	schema,
+	async ({ category, note }, issues) => {
+		const { locals, url, getClientAddress } = getRequestEvent()
+		const { user } = await authorise(locals)
 
-	const username = url.searchParams.get("user")
-	const reportUrl = url.searchParams.get("url")
-	if (!username || !reportUrl) return issues("Missing fields")
+		const username = url.searchParams.get("user")
+		const rawReportUrl = url.searchParams.get("url")
+		if (!username || !rawReportUrl) return issues("Missing fields")
 
-	const reportee = await getReportee(username)
-	if (!reportee) return issues("Invalid user")
+		const reportUrl = reportPath(rawReportUrl)
+		if (!reportUrl) return issues("Invalid report URL")
 
-	const limit = ratelimitRemote(issues, "report", getClientAddress, 120)
-	if (limit) return limit
+		const reportee = await getReportee(username)
+		if (!reportee) return issues("Invalid user")
 
-	await db.query(reportQuery, {
-		user: Record("user", user.id),
-		reportee,
-		note: note?.trim(),
-		reportUrl,
-		category,
-	})
+		const limit = ratelimitRemote(issues, "report", getClientAddress, 120)
+		if (limit) return limit
 
-	return { success: "Report sent successfully." }
-}) as ClientForm<typeof schema.infer>
+		await db.query(reportQuery, {
+			category,
+			note: note?.trim(),
+			reportee,
+			reportUrl,
+			user: Record("user", user.id),
+		})
+
+		return { success: "Report sent successfully." }
+	}
+)

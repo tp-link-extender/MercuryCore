@@ -5,11 +5,11 @@
 	import { navigating } from "$app/state"
 	import User from "$components/User.svelte"
 
-	import "/src/nprogress.css"
-	import "/src/global.css"
-	import "/src/icons.css"
-	import "/src/daisyui/dropdown.css"
-	import "/src/daisyui/tooltip.css"
+	import "../nprogress.css"
+	import "../global.css"
+	import "../icons.css"
+	import "../daisyui/dropdown.css"
+	import "../daisyui/tooltip.css"
 	import "uno.css"
 
 	const { data, children } = $props()
@@ -47,10 +47,10 @@
 
 		// Save to localStorage so we don't ping multiple times if the user has multiple tabs open
 		const lastPing = localStorage.getItem("lastPing")
-		if (lastPing && Date.now() - +lastPing < 30e3) return
+		if (lastPing && Date.now() - Number(lastPing) < 30e3) return
 		await fetch("/api?/statusping", {
-			method: "post",
-			body: new FormData()
+			body: new FormData(), 
+			method: "post"
 		})
 		localStorage.setItem("lastPing", Date.now().toString())
 	}
@@ -58,14 +58,14 @@
 
 	const notificationNotes: { [_: string]: string } = Object.freeze({
 		AssetApproved: "Asset approval",
-		FriendRequest: "Friend request",
-		Follower: "New follower",
-		ForumPostReply: "Reply to your post",
-		ForumReplyReply: "Reply to your reply",
 		AssetComment: "Comment on your asset",
 		AssetCommentReply: "Reply to your comment",
+		Follower: "New follower",
 		ForumMention: "Mention",
 		ForumPost: "New forum post",
+		ForumPostReply: "Reply to your post",
+		ForumReplyReply: "Reply to your reply",
+		FriendRequest: "Friend request",
 		ItemPurchase: "Item purchased",
 		Message: "New message",
 		NewFriend: "New friend"

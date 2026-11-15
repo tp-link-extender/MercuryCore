@@ -1,9 +1,10 @@
 import { error } from "@sveltejs/kit"
 import config from "$lib/server/config"
 import { db } from "$lib/server/surreal"
+import type { RequestEvent } from "./$types"
 import userQuery from "./user.surql"
 
-type User = {
+interface User {
 	bodyColours: {
 		Head: number
 		Torso: number
@@ -15,20 +16,20 @@ type User = {
 	wearing: number[]
 }
 
-export async function GET({ params }) {
+export async function GET({ params }: RequestEvent) {
 	const { username } = params
 	const [[user]] = await db.query<User[][]>(userQuery, { username })
 	if (!user) error(404, "User not found")
 
-	let charApp = `http://${config.DomainInsecure}/asset/bodycolours/${username}?`
+	let charApp = `http://${config.DomainInsecure}/asset/bodycolors.ashx?username=${username}`
 	for (const asset of user.wearing)
-		charApp += `;http://${config.DomainInsecure}/asset?id=${asset}`
+		charApp += `;https://${config.Domain}/asset?id=${asset}`
 
 	return new Response(charApp, {
 		headers: {
-			Pragma: "no-cache",
 			"Cache-Control": "no-cache",
 			"Content-Type": "text/plain",
+			Pragma: "no-cache",
 		},
 	})
 }

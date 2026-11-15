@@ -2,35 +2,51 @@ import fs from "node:fs/promises"
 import { error, fail } from "@sveltejs/kit"
 import { assetRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/auth"
+import {
+	assetOwner,
+	economyConnFailed,
+	type OwnedUser,
+} from "$lib/server/economy"
 import ratelimit from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { db, Record } from "$lib/server/surreal"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import type { RequestEvent } from "./$types.d"
 import assetsQuery from "./asset.surql"
 import iaidQuery from "./iaid.surql"
 import purgeQuery from "./purge.surql"
 import visibilityQuery from "./visibility.surql"
 
-type Asset = {
-	name: string
-	price: number
+interface Asset {
 	id: number
-	type: string
-	creator: BasicUser
 	imageAsset?: {
 		id: number
 		name: string
 	}
+	name: string
+	owner: OwnedUser | null
+	price: number
+	type: number
 }
 
-export async function load({ locals }) {
-	const { user } = await authorise(locals, 3)
+export async function load({ fetch: f, locals }: PageServerLoadEvent) {
+	await authorise(locals, 3)
 
-	const [assets] = await db.query<Asset[][]>(assetsQuery, {
-		user: Record("user", user.id),
-	})
-	return { assets }
+	const [assets] = await db.query<Asset[][]>(assetsQuery)
+
+	const withOwners = await Promise.all(
+		assets.map(async asset => {
+			const owner = await assetOwner(f, asset.id, asset.type)
+			if (!owner.ok) error(500, economyConnFailed)
+			return Object.assign(asset, { owner: owner.value })
+		})
+	)
+
+	return { assets: withOwners }
 }
+
+// Catalog Managers (level 3) review the pending queue. Acting on an asset that's already been reviewed, such as making a moderated asset visible again or purging a visible one, needs a Moderator (level 4).
+const reviewedLevel = 4
 
 async function getData({ locals, url }: RequestEvent) {
 	const { user } = await authorise(locals, 3)
@@ -38,40 +54,45 @@ async function getData({ locals, url }: RequestEvent) {
 
 	if (!assetId) error(400, "Missing asset ID")
 	if (!assetRegex.test(assetId)) error(400, `Invalid asset ID: ${assetId}`)
-	const id = +assetId
+	const id = Number(assetId)
 
 	const params = Object.freeze({
-		user: Record("user", user.id),
 		asset: Record("asset", id),
+		user: Record("user", user.id),
 	})
-	const [[asset]] = await db.query<{ name: string }[][]>(
-		"SELECT name FROM $asset",
+	const [[asset]] = await db.query<{ name: string; visibility: string }[][]>(
+		"SELECT name, visibility FROM $asset",
 		params
 	)
 	if (!asset) error(404, "Asset not found")
+	if (asset.visibility !== "Pending" && user.permissionLevel < reviewedLevel)
+		error(
+			403,
+			"Only moderators can act on assets that have already been reviewed"
+		)
 
-	return { user, id, params, assetName: asset.name }
+	return { assetName: asset.name, id, params, user }
 }
 
 // it goes like this, the bug, the fix
 // the pull request, the git commit
 // the coder's late-night screams
 // of hallelujah
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.approve = async e => {
 	const { id, params, assetName } = await getData(e)
 	await db.query(visibilityQuery, {
 		...params,
-		visibility: "Visible",
 		note: `Approve asset ${assetName} (id ${id})`,
+		visibility: "Visible",
 	})
 }
 actions.deny = async e => {
 	const { id, params, assetName } = await getData(e)
 	await db.query(visibilityQuery, {
 		...params,
-		visibility: "Moderated",
 		note: `Moderate asset ${assetName} (id ${id})`,
+		visibility: "Moderated",
 	})
 }
 actions.rerender = async e => {
@@ -81,9 +102,9 @@ actions.rerender = async e => {
 
 	try {
 		await requestRender(e.fetch, "Clothing", id)
-	} catch (e) {
-		console.error(e)
-		fail(500, { msg: "Failed to request render" })
+	} catch (err) {
+		console.error(err)
+		return fail(500, { msg: "Failed to request render" })
 	}
 }
 actions.purge = async e => {
@@ -93,14 +114,17 @@ actions.purge = async e => {
 		asset: Record("asset", id),
 	})
 
-	await Promise.all([
-		db.query(purgeQuery, {
-			...params,
-			note: `Purge asset ${assetName} (id ${id})`,
-			imageAsset: Record("asset", iaid),
-		}),
-		fs.rm(`../data/assets/${id}`),
-		fs.rm(`../data/assets/${iaid}`),
-		fs.rm(`../data/thumbnails/${id}`),
-	])
+	// The records go first, so a missing file can't fail the purge after the asset is already gone
+	await db.query(purgeQuery, {
+		...params,
+		imageAsset: Record("asset", iaid),
+		note: `Purge asset ${assetName} (id ${id})`,
+	})
+	await Promise.all(
+		[
+			`../data/assets/${id}`,
+			`../data/assets/${iaid}`,
+			`../data/thumbnails/${id}`,
+		].map(path => fs.rm(path, { force: true }))
+	)
 }

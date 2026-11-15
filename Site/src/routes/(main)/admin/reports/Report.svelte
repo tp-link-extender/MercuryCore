@@ -1,11 +1,14 @@
 <script lang="ts">
 	import User from "$components/User.svelte"
+	import { reportPath } from "$lib/reportUrl"
 
 	const {
 		report
 	}: {
 		report: import("./$types").PageData["reports"][0]
 	} = $props()
+
+	let safeUrl = $derived(reportPath(report.url))
 </script>
 
 <div id={report.id} class="light-text p-4 max-w-180" popover="auto">
@@ -35,7 +38,15 @@
 			</tr>
 			<tr>
 				<td>URL</td>
-				<td><a href={report.url}>{report.url}</a></td>
+				<td>
+					{#if safeUrl}
+						<a href={safeUrl}>{report.url}</a>
+					{:else}
+						<span title="This URL is not a safe same-site path and was not linked.">
+							{report.url}
+						</span>
+					{/if}
+				</td>
 			</tr>
 		</tbody>
 	</table>

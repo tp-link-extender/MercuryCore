@@ -20,8 +20,10 @@ const logo = `
 
 let done = false
 
-export default () => {
+const showLogo = () => {
 	if (done) return
 	done = true
 	console.log(magenta(logo))
 }
+
+export default showLogo

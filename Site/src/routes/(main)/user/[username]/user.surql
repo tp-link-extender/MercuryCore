@@ -1,6 +1,7 @@
 # You could start with five or six queries, or ~just one~
 
 SELECT
+	record::id(id) AS id,
 	username,
 	number,
 	permissionLevel,
@@ -10,18 +11,9 @@ SELECT
 		*,
 		record::id(id) AS id,
 		fn::currentContent($this.content) AS content
-	FROM $parent->createdComment->comment LIMIT 40) AS comments,
-
-	(SELECT
-		record::id(id) AS id,
-		name,
-		count(
-			SELECT 1 FROM $parent<-playing WHERE valid AND ping > time::now() - 35s
-		) AS playerCount,
-
-		count(<-likes) AS likeCount,
-		count(<-dislikes) AS dislikeCount
-	FROM $parent->ownsPlace->place) AS places,
+	FROM $parent->createdComment->comment
+	ORDER BY created DESC, id DESC
+	LIMIT 40) AS comments,
 
 	count(<->friends) AS friendCount,
 	count(<-follows) AS followerCount,
@@ -33,14 +25,9 @@ SELECT
 	$user IN ->request->user AS incomingRequest,
 	$user IN <-request<-user AS outgoingRequest,
 
-	(SELECT 
+	(SELECT
 		record::id(id) AS id,
 		name,
 		count(<-member) AS memberCount
-	FROM $parent->member->group) AS groups,
-	(SELECT 
-		record::id(id) AS id,
-		name,
-		count(<-member) AS memberCount
-	FROM $parent->ownsGroup->group) AS groupsOwned
+	FROM $parent->member->group) AS groups
 FROM user WHERE username = $username;

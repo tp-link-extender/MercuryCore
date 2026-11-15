@@ -1,15 +1,17 @@
 import config from "$lib/server/config"
-import { SignData } from "$lib/server/sign"
+import { buildLoadscript } from "$lib/server/loadscript"
+import { SignScript } from "$lib/server/sign"
 
 const port = 53640
 
 export async function GET() {
 	const scriptFile = Bun.file("../data/server/loadscripts/host.lua")
-	const script = (await scriptFile.text())
-		.replaceAll("_BASE_URL", `"${config.DomainInsecure}"`)
-		.replaceAll("_MAP_LOCATION", `""`)
-		.replaceAll("_SERVER_PORT", port.toString())
-		.replaceAll("_SERVER_PRESENCE_URL", `""`)
+	const script = buildLoadscript(await scriptFile.text(), {
+		BASE_URL: config.DomainInsecure,
+		MAP_LOCATION: "",
+		SERVER_PORT: port,
+		SERVER_PRESENCE_URL: "",
+	})
 
-	return new Response(await SignData(script))
+	return new Response(await SignScript(script))
 }

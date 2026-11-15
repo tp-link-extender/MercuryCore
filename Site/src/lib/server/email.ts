@@ -3,17 +3,17 @@ import type Mail from "nodemailer/lib/mailer"
 import { building } from "$app/environment"
 import config from "./config"
 
-let transport = null as unknown as Mail
+let transport: Mail | null = null
 if (!building)
 	try {
 		transport = createTransport({
+			auth: {
+				pass: process.env.EMAIL_PASSWORD,
+				user: config.Email.Username,
+			},
 			host: config.Email.Host,
 			port: config.Email.Port,
 			secure: config.Email.Secure,
-			auth: {
-				user: config.Email.Username,
-				pass: process.env.EMAIL_PASSWORD,
-			},
 		})
 		transport.on("error", err =>
 			console.error("SMTP Transport Error:", err)
@@ -27,8 +27,7 @@ if (!building)
 
 		transport.use("stream", (mail, callback) => {
 			console.log("Preparing to send email:")
-			console.log(`From: ${mail.data.from}`)
-			console.log(`To: ${mail.data.to}`)
+			console.log("From:", mail.data.from)
 			console.log(`Subject: ${mail.data.subject}`)
 			callback()
 		})
@@ -37,15 +36,17 @@ if (!building)
 		throw error
 	}
 
+// Recipient addresses are never logged, so the logs don't reveal who has an account or asked to recover one
 export async function sendEmail(to: string, subject: string, text: string) {
-	console.log(`Queuing email to ${to}`)
+	if (!transport) throw new Error("SMTP transport is not initialised")
+	console.log(`Queuing email "${subject}"`)
 	const result = await transport.sendMail({
 		from: `${config.Name} <noreply@${config.Domain}>`,
-		to,
 		subject,
 		text,
+		to,
 	})
-	if (result.accepted.length > 0)
-		console.log(`Email to ${to} queued successfully`)
-	else console.error(`Failed to queue email to ${to}`)
+	if (result.accepted?.length)
+		console.log(`Email "${subject}" queued successfully`)
+	else console.error(`Failed to queue email "${subject}"`)
 }

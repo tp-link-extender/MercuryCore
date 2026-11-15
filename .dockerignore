@@ -1,7 +1,14 @@
 *
 !Site
 !Assets
+!Economy
+!Economy/client
+!Economy/client/**
 !mercury.core.ts
+
+Economy/mydb.db
+Economy/Economy
+Economy/Economy.exe
 
 Site/.gitignore
 Site/node_modules

@@ -2,15 +2,16 @@ import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { form, getRequestEvent } from "$app/server"
 import { cookieName, cookieOptions, createSession } from "$lib/server/auth"
-import { ratelimitRemote } from "$lib/server/ratelimit"
+import { verifyPassword } from "$lib/server/password"
+import { ratelimitRemote, ratelimitRemoteKey } from "$lib/server/ratelimit"
 import { db, type RecordId } from "$lib/server/surreal"
 import { usernameTest } from "$lib/typeTests"
 import type { ClientForm } from "$lib/validate"
 import userQuery from "./user.surql"
 
 const schema = type({
-	username: usernameTest,
 	password: "1 <= string <= 6969",
+	username: usernameTest,
 })
 
 export const formData: ClientForm<typeof schema.infer> = form(
@@ -19,6 +20,18 @@ export const formData: ClientForm<typeof schema.infer> = form(
 		const { cookies, locals, getClientAddress } = getRequestEvent()
 		if (locals.session) redirect(302, "/home")
 
+		// Per address against guessing many accounts, and per account against guessing from many addresses
+		const limit =
+			ratelimitRemote(issues, "login", getClientAddress, 300, 10) ||
+			ratelimitRemoteKey(
+				issues,
+				"loginUser",
+				username.toLowerCase(),
+				300,
+				10
+			)
+		if (limit) return limit
+
 		const [[user]] = await db.query<
 			{
 				id: RecordId<"user">
@@ -26,11 +39,11 @@ export const formData: ClientForm<typeof schema.infer> = form(
 			}[][]
 		>(userQuery, { username })
 
-		const limit = ratelimitRemote(issues, "login", getClientAddress, 1000)
-		if (limit) return limit
-
-		if (!user || !Bun.password.verifySync(password, user.hashedPassword))
-			// remove this statement and we'll end up like Mercury 1 💀
+		// Checked even when the user doesn't exist, so the response time doesn't reveal which usernames are registered
+		const valid = await verifyPassword(password, user?.hashedPassword)
+		// remove this statement and we'll end up like Mercury 1 💀
+		if (!user || !valid)
+			// Don't give any extra information which may be useful to attackers
 			return issues("Incorrect username or password")
 
 		cookies.set(cookieName, await createSession(user.id), cookieOptions)

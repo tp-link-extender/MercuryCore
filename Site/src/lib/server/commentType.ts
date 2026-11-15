@@ -1,5 +1,5 @@
-export default (type: string[], id: string) => {
-	const mtype = type[0]
+const commentType = (type: string[], id: string) => {
+	const [mtype] = type
 	if (
 		(mtype === "status" && type.length === 1) || // status post
 		(mtype === "forum" && type.length === 2) || // forum post
@@ -12,3 +12,5 @@ export default (type: string[], id: string) => {
 	// asset comment comment
 	return type
 }
+
+export default commentType

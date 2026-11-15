@@ -12,7 +12,7 @@
 		data: import("./$types").LayoutData
 	} = $props()
 
-	const status = page.status
+	const { status } = page
 	function errors() {
 		if (status === 401 || status === 403) return "403"
 		if (status === 404) return "404"
@@ -36,7 +36,7 @@
 			<a
 				href="https://http.cat/images/{status}.jpg"
 				target="_blank"
-				rel="noopener noreferrer"
+				rel="noreferrer"
 				class="light-text no-underline">
 				Error {status}
 			</a>

@@ -1,23 +1,35 @@
 import fs from "node:fs"
 import { error, redirect } from "@sveltejs/kit"
+import { Place as EconPlace } from "economy/types"
 import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
+import constantTimeEqual from "$lib/server/constantTimeEqual"
+import { usesDedicated } from "$lib/server/dedicated"
+import {
+	economyConnFailed,
+	itemOwner,
+	type OwnedUser,
+	ownsItem,
+} from "$lib/server/economy"
 import formData from "$lib/server/formData"
 import { closeGameserver, startGameserver } from "$lib/server/orbiter"
-import ratelimit from "$lib/server/ratelimit"
+import ratelimit, { ratelimitKey } from "$lib/server/ratelimit"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import findPlaceQuery from "./findPlace.surql"
 import invalidatePlayingQuery from "./invalidatePlaying.surql"
 import placeQuery from "./place.surql"
 
-type FoundPlace = {
-	ownerUsername: string
+interface FoundPlace {
+	clientVersion: number
+	dedicated: boolean
 	privateServer: boolean
 	privateTicket: string
 }
 
 interface Place extends FoundPlace {
+	clientVersion: number
 	created: string
 	description: string
 	dislikeCount: number
@@ -27,7 +39,7 @@ interface Place extends FoundPlace {
 	likes: boolean
 	maxPlayers: number
 	name: string
-	ownerUser: BasicUser
+	ownerUser: OwnedUser | null
 	players: {
 		status: "Playing"
 		username: string
@@ -39,25 +51,41 @@ interface Place extends FoundPlace {
 
 const thumbnails = config.Images.DefaultPlaceThumbnails
 
-export async function load({ locals, params, url }) {
+/** Whether the ticket supplied by the client opens a private place. */
+const ticketMatches = (supplied: unknown, place: FoundPlace): boolean =>
+	typeof supplied === "string" &&
+	supplied !== "" &&
+	constantTimeEqual(supplied, place.privateTicket)
+
+export async function load({
+	fetch: f,
+	locals,
+	params,
+	url,
+}: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 	const privateTicket = url.searchParams.get("privateServer")
-	const id = +params.id
+	const id = Number(params.id)
 	const [[place]] = await db.query<Place[][]>(placeQuery, {
-		user: Record("user", user.id),
 		place: Record("place", id),
+		user: Record("user", user.id),
 	})
 	if (!place) error(404, "Place not found")
 
-	const isOwner = user.username === place.ownerUser.username
-	if (
-		!isOwner &&
-		place.privateServer &&
-		privateTicket !== place.privateTicket
-	)
+	const owner = await itemOwner(f, new EconPlace(id))
+	if (!owner.ok) error(500, economyConnFailed)
+	place.ownerUser = owner.value
+
+	const isOwner = place.ownerUser?.id === user.id
+	const hasTicket = ticketMatches(privateTicket, place)
+	if (!isOwner && place.privateServer && !hasTicket)
 		error(404, "Place not found")
 
-	if (!isOwner || user.permissionLevel !== 5) place.serverTicket = ""
+	if (!isOwner && user.permissionLevel !== 5) place.serverTicket = ""
+	// Non-owners only get back the ticket they came with, so seeing a place while it's public doesn't give access once it's private
+	if (!isOwner)
+		place.privateTicket =
+			place.privateServer && hasTicket ? place.privateTicket : ""
 
 	// ahh, reminds me of early Mercury 2
 	const slug = encode(place.name)
@@ -67,16 +95,22 @@ export async function load({ locals, params, url }) {
 	// don't check gameserver status here or your mercury will slow to a crawl
 
 	return {
-		scheme: config.LauncherURI,
+		clientVersion: place.clientVersion,
 		hosting: config.Gameservers.Hosting,
 		orbiterURL: config.Orbiter.PublicURL,
-		slug,
 		place,
+		scheme: config.LauncherURI,
+		slug,
 		thumbnails: [id % thumbnails.length],
 	}
 }
 
-async function findPlace(request: Request, id: number, user: User) {
+async function findPlace(
+	f: typeof globalThis.fetch,
+	request: Request,
+	id: number,
+	user: User
+) {
 	const data = await formData(request)
 	const privateTicket = data?.privateTicket
 
@@ -84,16 +118,19 @@ async function findPlace(request: Request, id: number, user: User) {
 	const [[place]] = await db.query<FoundPlace[][]>(findPlaceQuery, {
 		place: placeR,
 	})
+	if (!place) error(404, "Place not found")
+
+	const owns = await ownsItem(f, user.id, new EconPlace(id))
+	if (!owns.ok) error(500, economyConnFailed)
 
 	if (
-		!place ||
-		(user.username !== place.ownerUsername &&
-			place.privateServer &&
-			privateTicket !== place.privateTicket)
+		!owns.value &&
+		place.privateServer &&
+		!ticketMatches(privateTicket, place)
 	)
 		error(404, "Place not found")
 
-	return [place, placeR] as const
+	return [place, placeR, owns.value] as const
 }
 
 async function checkUser(locals: App.Locals) {
@@ -109,15 +146,15 @@ async function checkUser(locals: App.Locals) {
 	return user
 }
 
-export const actions: import("./$types").Actions = {}
-actions.join = async ({ locals, params, request }) => {
+export const actions: Actions = {}
+actions.join = async ({ fetch: f, locals, params, request }) => {
 	const user = await checkUser(locals)
-	const [_, placeR] = await findPlace(request, +params.id, user)
+	const [_, placeR] = await findPlace(f, request, Number(params.id), user)
 
 	// Invalidate all game sessions and create valid playing
 	const [, [ticket]] = await db.query<string[][]>(invalidatePlayingQuery, {
-		user: Record("user", user.id),
 		place: placeR,
+		user: Record("user", user.id),
 	})
 
 	return { ticket }
@@ -131,19 +168,22 @@ actions.start = async ({
 	getClientAddress,
 }) => {
 	const user = await checkUser(locals)
+	const id = Number(params.id)
+	const [_place] = await findPlace(f, request, id, user)
+	// Self-hosted places don't use a dedicated server, so there's nothing to start
+	if (!usesDedicated(_place.dedicated)) return { dedicated: false }
 
-	const limit = ratelimit(null, "serverstart", getClientAddress, 20)
+	const limit =
+		ratelimit(null, "serverstart", getClientAddress, 20) ||
+		ratelimitKey(null, "serverstart", user.id, 20)
 	if (limit) return limit
-
-	const id = +params.id
-	await findPlace(request, id, user)
 
 	// check for existence of a place file
 	const placeFile = `../data/places/${id}`
 	if (!fs.existsSync(placeFile)) error(404, "Place file not found")
 
-	const res = await startGameserver(f, id)
-	if (res.ok) return
+	const res = await startGameserver(f, id, _place.clientVersion)
+	if (res.ok) return { dedicated: true }
 
 	console.error("Failed to start dedicated gameserver for id", id, res.msg)
 	error(500, "Failed to start dedicated server")
@@ -151,11 +191,12 @@ actions.start = async ({
 
 actions.close = async ({ fetch: f, locals, params, request }) => {
 	const { user } = await authorise(locals)
-	const id = +params.id
+	const id = Number(params.id)
 
-	const [place] = await findPlace(request, id, user)
+	// oxlint-disable-next-line unicorn/no-unreadable-array-destructuring -- query returns [result, error, value]
+	const [, , isOwner] = await findPlace(f, request, id, user)
 
-	if (user.username !== place.ownerUsername && user.permissionLevel < 4)
+	if (!isOwner && user.permissionLevel < 4)
 		error(403, "You do not have permission to close this server.")
 
 	const res = await closeGameserver(f, id)

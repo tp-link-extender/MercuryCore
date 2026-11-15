@@ -2,14 +2,14 @@ import exclude from "$lib/server/exclude"
 import { db } from "$lib/server/surreal"
 import forumQuery from "./forum.surql"
 
-export type PreviewPost = {
-	id: string
+export interface PreviewPost {
 	author: BasicUser
 	created: Date
 	currentContent: string
+	id: string
 }
 
-type Category = {
+interface Category {
 	description: string
 	latestPost: PreviewPost
 	name: string

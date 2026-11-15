@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
+	import Select from "$components/forms/Select.svelte"
 	import { superForm } from "$lib/validate"
 
 	const {
@@ -39,5 +40,11 @@
 		label="Port"
 		type="number"
 		help="Using a port number lower than 49152 may not work correctly." />
+	<Select
+		{formData}
+		name="clientVersion"
+		label="Client version"
+		options={data.clientVersions}
+		selected={data.clientVersion} />
 	<Input {formData} name="maxPlayers" label="Server limit" type="number" />
 </Form>

@@ -1,36 +1,35 @@
-import { error, redirect } from "@sveltejs/kit"
+import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
+import { createGroup, prices } from "economy/api"
+import { User } from "economy/types"
 import { authorise } from "$lib/server/auth"
-import { createGroup, getGroupPrice } from "$lib/server/economy"
 import exclude from "$lib/server/exclude"
 import formError from "$lib/server/formError"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
+import type { Actions, PageServerLoadEvent } from "./$types"
 import createQuery from "./create.surql"
 
 const schema = type({
 	name: "3 <= string <= 40",
 })
 
-export async function load() {
+export async function load({ fetch: f }: PageServerLoadEvent) {
 	exclude("Groups")
-	const price = await getGroupPrice()
+	const p = await prices(f)
 	return {
-		form: await superValidate(null, arktype(schema)),
-		price,
+		form: await superValidate(arktype(schema)),
+		price: p.ok ? p.value.groupPrice : 0n,
 	}
 }
 
 const errors: { [_: string]: string } = Object.freeze({
-	create: Buffer.from(
-		"RXJyb3IgMTY6IGR1bWIgbmlnZ2EgZGV0ZWN0ZWQ",
-		"base64"
-	).toString(),
 	changed: "Dickhead",
+	create: Buffer.from("ZHVtYiBuKiBkZXRlY3RlZA==", "base64").toString(),
 	wisely: "GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!",
 })
 
-export const actions: import("./$types").Actions = {}
+export const actions: Actions = {}
 actions.default = async ({ fetch: f, locals, request }) => {
 	exclude("Groups")
 	const { user } = await authorise(locals)
@@ -54,13 +53,19 @@ actions.default = async ({ fetch: f, locals, request }) => {
 			["A group with this name already exists"]
 		)
 
-	const created = await createGroup(f, user.id, name)
-	if (!created.ok) return formError(form, ["other"], [created.msg])
+	const created = await createGroup(f, new User(user.id))
+	if (!created.ok)
+		return formError(form, ["other"], ["Failed to create group"])
+
+	// The Economy service issues the group's ID, and the database record
+	// uses it as its own ID so ownership can be resolved from the ledger.
+	const groupId = created.value.ID
 
 	await db.query(createQuery, {
+		economyId: groupId,
 		name,
 		user: Record("user", user.id),
 	})
 
-	redirect(302, `/groups/${name}`)
+	redirect(302, `/groups/${groupId}`)
 }

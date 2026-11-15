@@ -42,7 +42,7 @@ If you wish to use containers instead of SurrealDB and Go, install the latest ve
 
 4. Copy the **Site/.env.example** file to **Site/.env** and modify it to set up the environment variables.
 
-5. If using containers, run `docker compose up -d` to start the Database and Economy services.
+5. If using containers, copy the **.env.example** file in the root of the repository to **.env**, set `ECONOMY_KEY`, and run `docker compose up -d` to start the Database and Economy services.
 
 6. Run `bun dev` to start the development server and open the web interface in your default browser. This will start the Database and Economy services automatically if they are not already running.
 	{% aside type="tip" title="Hot reloading" %}

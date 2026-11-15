@@ -1,8 +1,9 @@
 import { error } from "@sveltejs/kit"
 import exclude from "$lib/server/exclude"
 import { db } from "$lib/server/surreal"
+import type { PageServerLoadEvent } from "./$types"
 
-export async function load({ url }) {
+export async function load({ url }: PageServerLoadEvent) {
 	exclude("Forum")
 	const categoryParam = url.searchParams.get("category")
 	if (!categoryParam) error(400, "Missing category")

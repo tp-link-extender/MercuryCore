@@ -9,8 +9,8 @@ RUN go mod download && go mod verify
 
 COPY . .
 
-# create and give permissions to use ../data/ledger file
-RUN mkdir /economy/data
+RUN mkdir -p /data/economy && go build .
 
-RUN go build .
-CMD ["./Economy"]
+# the compose volume mounts ./data/economy at /data/economy
+# :2009 (all interfaces) is needed for the Site container to reach it over the compose network; the host port stays loopback-only
+CMD ["./Economy", "-db", "/data/economy/mydb.db", "-addr", ":2009"]

@@ -1,22 +1,23 @@
 import { error } from "@sveltejs/kit"
 import { membershipType } from "$lib/permissionLevels"
 import config from "$lib/server/config"
+import { usesDedicated } from "$lib/server/dedicated"
 import idToPort, { proxyOffset } from "$lib/server/idToPort"
-import { SignData } from "$lib/server/sign"
+import { buildLoadscript, luaRaw } from "$lib/server/loadscript"
+import { toRawId } from "$lib/server/recordId"
+import { SignScript } from "$lib/server/sign"
 import { db, findWhere, Record } from "$lib/server/surreal"
+import type { RequestEvent } from "./$types"
 import joinQuery from "./join.surql"
 
-type ServerAddress = {
-	serverHostname: string
+interface ServerAddress {
+	serverAddress: string
 	serverPort: number
 }
 
-type Session = {
+interface Session {
 	place: {
 		id: number
-		ownerUser: {
-			username: string
-		}
 		dedicated: boolean
 	} & ServerAddress
 	user: {
@@ -25,38 +26,44 @@ type Session = {
 	}
 }
 
-const serverDedicated = (dedicated: boolean) =>
-	config.Gameservers.Hosting === "Both"
-		? dedicated
-		: config.Gameservers.Hosting === "Dedicated"
-
 function serverInfo(place: Session["place"]): ServerAddress {
-	if (!serverDedicated(place.dedicated)) return place
+	if (!usesDedicated(place.dedicated)) return place
 
 	const url = new URL(config.Orbiter.PublicURL)
 	return {
-		serverHostname: url.hostname, // no scheme, the address doesn't usually have a path anyway
+		serverAddress: url.hostname, // no scheme, the address doesn't usually have a path anyway
 		serverPort: idToPort(place.id) + proxyOffset, // select the proxy port rather than the port of the server itself
 	}
 }
 
-export async function GET({ url }) {
+const scriptHeaders = {
+	"Cache-Control": "no-store",
+	"Content-Type": "text/plain; charset=utf-8",
+	"X-Content-Type-Options": "nosniff",
+}
+
+export async function GET({ url }: RequestEvent) {
 	const clientTicket = url.searchParams.get("ticket")
-	const privateServer = url.searchParams.get("privateServer") as string
+	const privateServer = url.searchParams.get("privateServer")
 
 	if (!clientTicket) {
 		const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
-		const script = (await scriptFile.text())
-			.replaceAll("_PLACE_ID", "0")
-			.replaceAll("_SERVER_ADDRESS", `"localhost"`)
-			.replaceAll("_SERVER_PORT", "53640")
-			.replaceAll("_USER_ID", "0")
-			.replaceAll("_USERNAME", `"Player1"`)
-			.replaceAll("_MEMBERSHIP_TYPE", membershipType(0))
-			.replaceAll("_CHAR_APPEARANCE", `""`)
-			.replaceAll("_PING_URL", `""`)
+		const script = buildLoadscript(await scriptFile.text(), {
+			CHAR_APPEARANCE: "",
+			CREATOR_ID: 0,
+			MEMBERSHIP_TYPE: luaRaw(membershipType(0)),
+			PING_URL: "",
+			PLACE_ID: 0,
+			SERVER_ADDRESS: "localhost",
+			SERVER_PORT: 53640,
+			USER_ID: 0,
+			USER_NAME: "Player1",
+			USERNAME: "Player1",
+		})
 
-		return new Response(await SignData(script))
+		return new Response(await SignScript(script), {
+			headers: scriptHeaders,
+		})
 	}
 
 	const foundPrivatePlace = await findWhere(
@@ -68,27 +75,30 @@ export async function GET({ url }) {
 		error(400, "Invalid Private Server")
 
 	const playing = Record("playing", clientTicket)
-	// also invalidates the session
-	const [gameSession] = await db.query<Session[]>(joinQuery, { playing })
+	// claims the ticket: it works once, and only shortly after it's created
+	const [, gameSession] = await db.query<(Session | null)[]>(joinQuery, {
+		playing,
+	})
 	if (!gameSession) error(400, "Invalid Game Session")
 
 	const { place, user } = gameSession
-	const { serverHostname, serverPort } = serverInfo(place)
+	const { serverAddress, serverPort } = serverInfo(place)
 
-	// const creatorUsername = place.ownerUser?.username;
 	const charApp = `http://${config.DomainInsecure}/asset/characterfetch/${user.username}`
 	const pingUrl = `http://${config.DomainInsecure}/game/clientpresence?ticket=${clientTicket}`
 	const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
-	const script = (await scriptFile.text())
-		.replaceAll("_PLACE_ID", place.id.toString())
-		.replaceAll("_SERVER_ADDRESS", `"${serverHostname}"`)
-		.replaceAll("_SERVER_PORT", serverPort.toString())
-		// .replaceAll("_CREATOR_ID", creatorUsername)
-		.replaceAll("_USER_ID", Math.floor(Math.random() * 1e9).toString()) // todo: tho not rly used 4 much atm
-		.replaceAll("_USERNAME", `"${user.username}"`)
-		.replaceAll("_MEMBERSHIP_TYPE", membershipType(user.permissionLevel))
-		.replaceAll("_CHAR_APPEARANCE", `"${charApp}"`)
-		.replaceAll("_PING_URL", `"${pingUrl}"`)
+	const script = buildLoadscript(await scriptFile.text(), {
+		CHAR_APPEARANCE: charApp,
+		CREATOR_ID: 0, // todo: the place's creator
+		MEMBERSHIP_TYPE: luaRaw(membershipType(user.permissionLevel)),
+		PING_URL: pingUrl,
+		PLACE_ID: luaRaw(toRawId(place.id)),
+		SERVER_ADDRESS: serverAddress,
+		SERVER_PORT: serverPort,
+		USER_ID: Math.floor(Math.random() * 1e9), // todo: tho not rly used 4 much atm
+		USER_NAME: user.username, // join.lua compiled before 2013@5fe7aa8 uses _USER_NAME
+		USERNAME: user.username,
+	})
 
-	return new Response(await SignData(script))
+	return new Response(await SignScript(script), { headers: scriptHeaders })
 }

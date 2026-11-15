@@ -41,7 +41,7 @@ If you wish to use containers instead of SurrealDB and Go, install the latest ve
     - You can also run `caddy reload` to reload the configuration file without restarting the server.
     - If you're using Caddy with multiple configuration files, import the Caddyfile in the repository's root directory into a Caddyfile somewhere else, and run `caddy start` and `caddy reload` from there.
 
-7. If using containers, run `docker compose up -d` to start the Database and Economy services.
+7. If using containers, copy the **.env.example** file in the root of the repository to **.env** and set `ECONOMY_KEY`, then run `docker compose up -d` to start the Database and Economy services.
 
 8. Run `bun ./build` (not to be confused with `bun build`) to start Mercury Core. This will start the Database and Economy services automatically if they are not already running.
 	{% aside type="tip" title="Running in the background" %}

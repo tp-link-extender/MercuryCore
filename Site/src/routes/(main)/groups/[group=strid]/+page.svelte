@@ -13,7 +13,11 @@
 		<h1>{data.name}</h1>
 		<div class="flex">
 			<b class="pr-2">by</b>
-			<User user={data.owner} full thin bg="accent" size="1.5rem" />
+			{#if data.owner}
+				<User user={data.owner} full thin bg="accent" size="1.5rem" />
+			{:else}
+				<i>Unknown owner</i>
+			{/if}
 		</div>
 		<div class="flex pt-6 justify-between">
 			<a

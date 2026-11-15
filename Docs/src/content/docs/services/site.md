@@ -11,13 +11,19 @@ A development server can be started with `bun dev`. This will start the server i
 
 For a full production deployment, run `bun run build` followed by `bun -b ./build`. The server will be started on the port specified in your **.env** file. We use port 4443, and if not specified the default is 3000, though this can be changed to any port you wish.
 
+## Running behind Caddy
+
+The Site expects to run behind a reverse proxy such as Caddy, and should not be reachable directly. Listen on loopback only (`HOST=127.0.0.1`; **ecosystem.config.js** and **compose.yml** already do this), and set `ADDRESS_HEADER=X-Forwarded-For` and `XFF_DEPTH=1` so the Site can tell clients apart. Without them every client appears to come from the proxy's address, so ratelimits apply to the whole site at once. Caddy replaces any `X-Forwarded-For` header sent by the client with the client's real address, so it can't be spoofed as long as nothing else can reach the Site. Don't set `ADDRESS_HEADER` if the Site is exposed to clients directly, as then they can choose their own address.
+
+If you have a firewall, there's no need to open port 4443 to the outside.
+
 On successful startup, the Site will display output similar to the following:
 
 ```
 Starting SurrealDB...
 Starting Economy service (../Economy/Economy)...
 connecting to database
-reloaded surrealdb-3.0.1
+reloaded surrealdb-4.0.0
 
   ██▙    ▟██ Started
   ███▙  ▟███ ▟████▙ ▗████▛▗█████▌██   ██ ▟████▙▝█▙    ▗█▛
@@ -36,3 +42,13 @@ Successfully loaded configuration file
 ```
 
 ![Output on successful startup of Site](../../../assets/startup.png)
+
+## Database credentials
+
+The Site connects to SurrealDB as `DATABASE_USER` (default `site`) with `DATABASE_PASSWORD`, a user limited to the `main` database, and refuses to start if the password is missing or too weak. When `Database.AutoStart` is on it also needs `DATABASE_ROOT_PASSWORD`, as it starts SurrealDB and runs the database setup itself. Otherwise run `bun run db:setup` once before starting the Site. See [Database](/services/database/#credentials) for the details and for moving an existing database.
+
+## Economy authentication
+
+If you run the Site and Economy service outside containers, the Site reads `ECONOMY_KEY` from **Site/.env** and passes it to the Economy service when auto-starting it. If you start the Economy service yourself, set the same `ECONOMY_KEY` in its environment. The service refuses to start without a key and rejects any request that doesn't carry it. It listens on `127.0.0.1:2009` by default; pass `-addr :2009` only when another container must reach it over a container network.
+
+For compose deployments, set `ECONOMY_KEY` in a **.env** file next to **compose.yml** (copy **.env.example** and replace the value); compose passes it to both containers and keeps the Economy port bound to loopback.

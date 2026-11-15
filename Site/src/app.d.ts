@@ -3,28 +3,22 @@
 /// <reference types="@types/bun" />
 
 import type { RemoteFormInput as RFI } from "@sveltejs/kit"
-
-declare namespace svelteHTML {
-	import type { AttributifyAttributes } from "@unocss/preset-attributify"
-
-	type HTMLAttributes = AttributifyAttributes
-}
+import type { AttributifyAttributes } from "@unocss/preset-attributify"
 
 declare global {
+	namespace svelteHTML {
+		type HTMLAttributes = AttributifyAttributes
+	}
+
 	/**
 	 * All that's needed to show a user's information/link to their profile.
 	 */
-	declare type BasicUser = {
+	interface BasicUser {
 		status: "Playing" | "Online" | "Offline"
 		username: string
 	}
 
-	declare interface User extends BasicUser {
-		id: string
-		description: {
-			text: string
-			updated: Date
-		}[]
+	interface User extends BasicUser {
 		bodyColours: {
 			Head: number
 			LeftArm: number
@@ -34,21 +28,21 @@ declare global {
 			Torso: number
 		}
 		created: string
+		css: string
+		description: {
+			text: string
+			updated: Date
+		}[]
 		email: string
+		id: string
 		lastOnline: Date
 		permissionLevel: number
-		css: string
 		theme: number
 	}
 
 	// just useful in form component generics
 	// can't export straight from the package right here, it'll cause the other types (such as Locals) to not be global
 	type RemoteFormInput = RFI
-
-	declare module "*.surql" {
-		const value: string
-		export default value
-	}
 
 	namespace App {
 		interface Locals {

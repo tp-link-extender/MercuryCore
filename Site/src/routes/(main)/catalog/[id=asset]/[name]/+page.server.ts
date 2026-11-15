@@ -1,22 +1,32 @@
 import { error, fail, redirect } from "@sveltejs/kit"
 import { type } from "arktype"
+import {
+	balance,
+	buyPackage,
+	buyUnlimitedAsset,
+	countOwnersOne,
+	ownsOne,
+} from "economy/api"
+import {
+	Package as EconPackage,
+	PackageSource,
+	UnlimitedAsset,
+	UnlimitedSource,
+	User,
+} from "economy/types"
 import type { Comment } from "$lib/comment"
 import { authorise } from "$lib/server/auth"
 import createCommentQuery from "$lib/server/createComment.surql"
-import {
-	economyConnFailed,
-	fee,
-	getBalance,
-	transact,
-} from "$lib/server/economy"
+import { assetOwner, economyConnFailed } from "$lib/server/economy"
 import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
+import { type PackageItem, packageItems } from "$lib/server/packageItems"
 import ratelimit from "$lib/server/ratelimit"
-import requestRender from "$lib/server/requestRender"
+import requestRender, { type RenderType } from "$lib/server/requestRender"
 import { db, find, Record } from "$lib/server/surreal"
 import { arktype, superValidate } from "$lib/server/validate"
 import { couldMatch, encode } from "$lib/urlName"
-import type { RequestEvent } from "./$types"
+import type { Actions, RequestEvent } from "./$types"
 import assetQuery from "./asset.surql"
 import buyQuery from "./buy.surql"
 import findAssetQuery from "./findAsset.surql"
@@ -26,14 +36,13 @@ const schema = type({
 	replyId: "string | undefined",
 })
 
-type Asset = {
-	id: string
+interface Asset {
 	comments: Comment[]
 	created: Date
-	creator: BasicUser
 	description: string
 	forSale: boolean
-	isCreator: boolean
+	id: string
+	items: PackageItem[]
 	name: string
 	owned: boolean
 	price: number
@@ -51,48 +60,91 @@ const noTexts = Object.freeze([
 ])
 const failTexts = Object.freeze(["Bruh", "Okay", "Aight", "Rip", "Aw man..."])
 
-export async function load({ fetch: f, locals, params }) {
+export async function load({ fetch: f, locals, params }: RequestEvent) {
 	const { user } = await authorise(locals)
-	const id = +params.id
+	const id = Number(params.id)
 	const [[asset]] = await db.query<Asset[][]>(assetQuery, {
 		asset: Record("asset", id),
 		user: Record("user", user.id),
 	})
-	if (!asset?.creator) error(404, "Not Found")
+	if (!asset) error(404, "Not Found")
+
+	// resolve the source's owner to the profile data the page uses
+	const ownerResult = await assetOwner(f, id, asset.type)
+	if (!ownerResult.ok) {
+		console.error("asset owner lookup failed")
+		error(500, economyConnFailed)
+	}
+	const owner = ownerResult.value
+	const isOwner = owner?.id === user.id
+	// Pending and moderated assets are only shown to their owner and to Catalog Managers and above, so their name and description stay private until approved
+	if (asset.visibility !== "Visible" && !isOwner && user.permissionLevel < 3)
+		error(404, "Not Found")
 
 	const slug = encode(asset.name)
 	if (!couldMatch(asset.name, params.name))
 		redirect(302, `/catalog/${id}/${slug}`)
 
-	const balance = await getBalance(f, user.id)
-	if (!balance.ok) error(500, economyConnFailed)
+	const u = new User(user.id)
+	const b = await balance(f, u)
+	if (!b.ok) {
+		console.error("balance failed")
+		error(500, economyConnFailed)
+	}
+
+	// packages are a distinct type in the ledger, so they need their own item to ask about rather than the plain asset ones
+	const isPackage = asset.type === 32
+	const item = isPackage ? new EconPackage(id) : new UnlimitedAsset(id)
+
+	const owned = await ownsOne(f, u, item)
+	if (!owned.ok) {
+		console.error("ownsOne failed")
+		error(500, economyConnFailed)
+	}
+
+	const owners = await countOwnersOne(f, item)
+	if (!owners.ok) {
+		console.error("countOwnersOne for owners failed")
+		error(500, economyConnFailed)
+	}
+
+	// what the buyer receives along with the package itself
+	const items = isPackage ? await packageItems(f, id, user.id) : []
 
 	return {
-		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
+		asset: {
+			...asset,
+			forSale: asset.forSale && asset.type !== 1,
+			isOwner,
+			items,
+			price: BigInt(asset.price),
+		},
+		balance: b.value,
 		failText: failTexts[Math.floor(Math.random() * failTexts.length)],
-		form: await superValidate(null, arktype(schema)),
+		form: await superValidate(arktype(schema)),
+		noText: noTexts[Math.floor(Math.random() * noTexts.length)],
+		owned: owned.value,
+		owner,
 		slug,
-		asset,
-		balance: balance.value,
-		currentFee: fee,
+		sold: owners.value,
 	}
 }
 
-async function getBuyData(e: RequestEvent) {
-	const { user } = await authorise(e.locals)
-	const id = +e.params.id
+async function getBuyData({ locals, params }: RequestEvent) {
+	const { user } = await authorise(locals)
+	const id = Number(params.id)
 	const assetExists = await find("asset", id)
 	if (!assetExists) error(404)
 
-	return { user, id }
+	return { id, user }
 }
 
 // actions that return things are here because of sveltekit typescript limitations
 async function rerender({ fetch: f, locals, params }: RequestEvent) {
 	await authorise(locals, 5)
 
-	const id = +params.id
-	type FoundAsset = {
+	const id = Number(params.id)
+	interface FoundAsset {
 		name: string
 		type: number
 		visibility: string
@@ -104,20 +156,45 @@ async function rerender({ fetch: f, locals, params }: RequestEvent) {
 	if (asset.visibility === "Moderated")
 		error(400, "Can't rerender a moderated asset")
 
-	if ([8, 11, 12].includes(asset.type))
-		try {
-			await requestRender(f, asset.type === 8 ? "Model" : "Clothing", id)
-			const icon = `/catalog/${id}/${asset.name}/icon?r=${Math.random()}`
-			return { icon }
-		} catch (e) {
-			console.error(e)
-			return fail(500, { msg: "Failed to request render" })
-		}
+	// body parts are rendered as close-ups of the part itself, with its
+	// matching clothing (from api/render/bodypart), using one script per limb
+	const renderTypeFromType: { [_: number]: RenderType } = Object.freeze({
+		27: "Torso",
+		28: "RightArm",
+		29: "LeftArm",
+		30: "LeftLeg",
+		31: "RightLeg",
+	})
 
-	error(400, "Can't rerender this type of asset")
+	const renderType =
+		renderTypeFromType[asset.type] ??
+		(asset.type === 8
+			? "Model"
+			: asset.type === 32
+				? "Package"
+				: [11, 12].includes(asset.type)
+					? "Clothing"
+					: null)
+
+	if (!renderType) error(400, "Can't rerender this type of asset")
+
+	try {
+		await requestRender(f, renderType, id)
+		const icon = `/catalog/${id}/${asset.name}/icon?r=${Math.random()}`
+		return { icon }
+	} catch (e) {
+		console.error(e)
+		return fail(500, { msg: "Failed to request render" })
+	}
 }
-export const actions: import("./$types").Actions = { rerender }
-actions.comment = async ({ locals, params, request, getClientAddress }) => {
+export const actions: Actions = { rerender }
+actions.comment = async ({
+	fetch: f,
+	locals,
+	params,
+	request,
+	getClientAddress,
+}) => {
 	const { user } = await authorise(locals)
 	const form = await superValidate(request, arktype(schema))
 	if (!form.valid) return formError(form)
@@ -129,17 +206,18 @@ actions.comment = async ({ locals, params, request, getClientAddress }) => {
 	const limit = ratelimit(form, "comment", getClientAddress, 5)
 	if (limit) return limit
 
-	const id = +params.id
-	const [getAsset] = await db.query<{ creatorId: string }[]>(
-		`
-			SELECT
-				record::id(<-created[0]<-user[0].id) AS creatorId
-			FROM ONLY $asset`,
+	const id = Number(params.id)
+	const [getAsset] = await db.query<{ type: number }[]>(
+		"SELECT type FROM ONLY $asset",
 		{ asset: Record("asset", id) }
 	)
 	if (!getAsset) error(404)
 
-	const { creatorId } = getAsset
+	let ownerId: string | null = null
+	const owner = await assetOwner(f, id, getAsset.type)
+	if (!owner.ok) console.error("asset owner lookup failed")
+	else ownerId = owner.value?.id ?? null
+
 	const content = filter(unfiltered)
 
 	const [, newCommentId] = await db.query<string[]>(createCommentQuery, {
@@ -148,10 +226,10 @@ actions.comment = async ({ locals, params, request, getClientAddress }) => {
 		user: Record("user", user.id),
 	})
 
-	if (user.id !== creatorId)
+	if (ownerId && user.id !== ownerId)
 		await db.run("fn::notify", [
 			Record("user", user.id),
-			Record("user", creatorId),
+			Record("user", ownerId),
 			"AssetComment",
 			`${user.username} commented on your asset: ${content}`,
 			newCommentId,
@@ -160,55 +238,58 @@ actions.comment = async ({ locals, params, request, getClientAddress }) => {
 actions.buy = async e => {
 	const { user, id } = await getBuyData(e)
 
-	type FoundAsset = {
-		creator: {
-			id: string
-			username: string
-		}
+	interface FoundAsset {
 		forSale: boolean
 		name: string
-		owned: boolean
 		price: number
+		type: number
 		visibility: string
 	}
 	const [[asset]] = await db.query<FoundAsset[][]>(buyQuery, {
-		user: Record("user", user.id),
 		asset: Record("asset", id),
 	})
 	if (!asset) error(404, "Not Found")
-	if (asset.owned) error(400, "You already own this item")
 	if (asset.visibility !== "Visible")
 		error(400, "This item hasn't been approved yet")
-	if (!asset.forSale) error(400, "This item is not for sale")
+	// Images are the textures of other items, and older ones were created as for sale
+	if (!asset.forSale || asset.type === 1)
+		error(400, "This item is not for sale")
 
-	if (asset.price > 0) {
-		// todo work out how free assets are supposed to work
-		const tx = await transact(
-			e.fetch,
-			user.id,
-			asset.creator.id,
-			asset.price,
-			`Purchased asset ${asset.name}`,
-			`/catalog/${id}/${asset.name}`,
-			{}
+	// The buyer confirms the price they were shown, so a price change after they opened the dialog can't charge them more
+	const data = await e.request.formData()
+	const shownPrice = data.get("price")
+	if (shownPrice !== String(asset.price))
+		error(
+			409,
+			"This item's price has changed. Reload the page to see the new price."
 		)
-		if (!tx.ok) error(400, tx.msg)
-	}
 
-	await Promise.all([
-		db.query("RELATE $user->ownsAsset->$asset", {
-			asset: Record("asset", id),
-			user: Record("user", user.id),
-		}),
-		user.id === asset.creator.id ||
-			db.query(
-				'fn::notify($user, $creator, "ItemPurchase", $note, $relativeId)',
-				{
-					user: Record("user", user.id),
-					creator: Record("user", asset.creator.id),
-					note: `${user.username} just purchased your item ${asset.name}`,
-					relativeId: e.params.id,
-				}
-			),
-	])
+	// resolve the owner before charging, so a notification lookup can't fail after a successful purchase
+	const owner = await assetOwner(e.fetch, id, asset.type)
+	if (!owner.ok) error(500, economyConnFailed)
+
+	const u = new User(user.id)
+	// packages are sold through the Economy service as a bundle: the buyer pays once and receives the package plus everything inside it, so there's nothing to write here
+	const price = BigInt(asset.price)
+	const ok =
+		asset.type === 32
+			? await buyPackage(e.fetch, u, new PackageSource(id), price)
+			: await buyUnlimitedAsset(
+					e.fetch,
+					u,
+					new UnlimitedSource(id),
+					price
+				)
+	if (!ok) error(400, "Purchase failed")
+
+	if (owner.value && user.id !== owner.value.id)
+		await db.query(
+			'fn::notify($user, $owner, "ItemPurchase", $note, $relativeId)',
+			{
+				note: `${user.username} just purchased your item ${asset.name}`,
+				owner: Record("user", owner.value.id),
+				relativeId: e.params.id,
+				user: Record("user", user.id),
+			}
+		)
 }

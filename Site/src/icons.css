@@ -5,9 +5,10 @@
 	src: url(/fonts/Icons.woff2) format("woff2");
 }
 
+/* biome-ignore lint/correctness/noUnknownTypeSelector: <fa> is a custom element used for icons */
 fa {
-	font-family: Icons, sans-serif;
 	display: inline-block;
+	font-family: Icons, sans-serif;
 	font-style: normal;
 	font-variant: normal;
 	line-height: 1;

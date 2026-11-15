@@ -13,7 +13,7 @@
 
 	function scroll(e: MouseEvent) {
 		const url = new URL((e.target as HTMLAnchorElement)?.href).hash.slice(1)
-		document.getElementById(url)?.scrollIntoView(false) // (false) prevents page scrolling to top of element
+		document.querySelector(`#${url}`)?.scrollIntoView(false) // (false) prevents page scrolling to top of element
 	}
 </script>
 

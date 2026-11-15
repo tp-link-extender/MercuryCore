@@ -14,7 +14,7 @@
 	let searchText = $state("Search")
 
 	// only show after JS loads to allow for ctrl+k to be detected
-	new Promise(r => r(0)).then(() => {
+	queueMicrotask(() => {
 		if (browser) searchText += " (ctrl+k)"
 	})
 

@@ -18,9 +18,8 @@
 	const { data, form } = $props()
 
 	let { user } = $derived(data)
-	let fee = $derived((data.currentFee * data.asset.price).toFixed(2))
-	let totalPrice = $derived((1 + data.currentFee) * data.asset.price)
-	let itsFree = $derived(data.asset.price === 0) // IT'S FREEEEEEEEEEEEEE
+	let totalPrice = $derived(data.asset.price)
+	let itsFree = $derived(totalPrice === 0n) // IT'S FREEEEEEEEEEEEEE
 
 	let regenerating = $state(false)
 
@@ -37,11 +36,18 @@
 
 	let formData = $derived(superForm(data.form))
 
-	let tabData = $state(TabData(data.url, ["Recommended", "Comments"]))
+	let tabData = $state(
+		TabData(data.url, [
+			"Comments",
+			...(data.asset.items.length > 0 ? ["Package contents"] : []),
+			"Recommended"
+		])
+	)
 </script>
 
 <Head name={data.siteName} title={data.asset.name} />
 
+{#key data.asset.id}
 <div class="ctnr max-w-240">
 	<div class="flex <sm:flex-col">
 		<div class="pr-4 pb-4">
@@ -59,7 +65,7 @@
 				<h1>{data.asset.name}</h1>
 
 				<div class="flex flex-col items-center">
-					{#if data.asset.isCreator || user.permissionLevel >= 4}
+					{#if data.asset.isOwner || user.permissionLevel >= 4}
 						<div>
 							<a
 								aria-label="Asset settings"
@@ -70,7 +76,7 @@
 							</a>
 						</div>
 					{/if}
-					{#if user.permissionLevel >= 5 && [8, 11, 12].includes(data.asset.type)}
+					{#if user.permissionLevel >= 5 && [8, 11, 12, 32, 27, 28, 29, 30, 31].includes(data.asset.type)}
 						<span class="dropdown pt-2">
 							<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
 							<div class="dropdown-content">
@@ -99,9 +105,9 @@
 			<div class="flex">
 				<strong class="pr-2">by:</strong>
 
-				{#if data.asset.creator}
+				{#if data.owner}
 					<User
-						user={data.asset.creator}
+						user={data.owner}
 						size="1.5rem"
 						full
 						thin
@@ -120,7 +126,7 @@
 			<div class="flex flex-wrap pb-2">
 				<div class="w-full md:w-1/3">
 					<p class="pb-2">
-						<strong>{data.asset.sold}</strong>
+						<strong>{data.sold}</strong>
 						sold
 					</p>
 					<p>
@@ -134,26 +140,12 @@
 							{#if itsFree}
 								<b class="pb-2">Free</b>
 							{:else}
-								<table>
-									<tbody>
-										<tr>
-											<td>Price</td>
-											<td class="text-emerald-600">
-												{data.currencySymbol}
-												{data.asset.price}
-											</td>
-										</tr>
-										<tr>
-											<td>Fee</td>
-											<td class="text-yellow-500">
-												{data.currencySymbol}
-												{fee}
-											</td>
-										</tr>
-									</tbody>
-								</table>
+								<span class="text-emerald-600">
+									{data.currencySymbol}
+									{data.asset.price}
+								</span>
 							{/if}
-							{#if !data.asset.owned}
+							{#if !data.owned}
 								<button
 									popovertarget="buy"
 									class="btn btn-success">
@@ -176,8 +168,6 @@
 
 	<TabNav bind:tabData justify />
 
-	<Tab bind:tabData />
-
 	<Tab bind:tabData class={{ "pb-32": comments.length > 0 }}>
 		<PostReply {formData} />
 		{#if comments.length > 0}
@@ -196,6 +186,30 @@
 			</h3>
 		{/if}
 	</Tab>
+
+	{#if data.asset.items.length > 0}
+		<Tab bind:tabData>
+			<div
+				class="grid gap-4 grid-cols-2 xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-3">
+				{#each data.asset.items as item}
+					<a
+						href="/catalog/{item.id}/{item.name}"
+						class="contents-item card bg-a p-4 no-underline text-center"
+						aria-label={item.name}>
+						<div class="pb-4">
+							<img
+								src="/catalog/{item.id}/{item.name}/icon"
+								alt={item.name}
+								class="w-85%" />
+						</div>
+						<span>{item.name}</span>
+					</a>
+				{/each}
+			</div>
+		</Tab>
+	{/if}
+
+	<Tab bind:tabData />
 </div>
 
 <div id="buy" class="light-text p-4 min-w-120" popover="auto">
@@ -214,6 +228,7 @@
 		</p>
 
 		<form method="post" action="?/buy" class="inline">
+			<input type="hidden" name="price" value={data.asset.price} />
 			<button class="btn btn-success">
 				{itsFree ? "Get" : "Buy now"}
 			</button>
@@ -244,6 +259,7 @@
 		</button>
 	{/if}
 </div>
+{/key}
 
 <style>
 	.image {
@@ -272,6 +288,14 @@
 		padding: 0;
 		&:first-child {
 			padding-right: 0.5rem;
+		}
+	}
+
+	.contents-item {
+		border: 1px solid var(--accent2);
+		transition: 0.3s;
+		&:hover {
+			background: var(--darker) !important;
 		}
 	}
 </style>

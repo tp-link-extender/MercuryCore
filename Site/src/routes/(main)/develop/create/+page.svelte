@@ -4,7 +4,6 @@
 	import Select from "$components/forms/Select.svelte"
 	import Textarea from "$components/forms/Textarea.svelte"
 	import Head from "$components/Head.svelte"
-	import beautifyCurrency from "$lib/beautifyCurrency"
 	import assetTypes from "./assetTypes"
 	import { formData } from "./create.remote.js"
 
@@ -12,11 +11,7 @@
 
 	let { user } = $derived(data)
 
-	let [, c1, c2] = $derived(beautifyCurrency(data.price))
-
-	let currency = $derived(
-		` (${data.currencySymbol}${c1}${c2 ? "." : ""}${c2})`
-	)
+	let currency = $derived(` (${data.currencySymbol}${data.price})`)
 </script>
 
 <Head name={data.siteName} title="Develop - Create" />

@@ -110,11 +110,11 @@
 					{/if}
 				</div>
 				{#if data.username !== user.username}
-					<span class="dropdown float-end">
+					<span class="<lg:hidden dropdown float-end">
 						<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
 						<div class="dropdown-content pt-2">
 							<ul class="p-2 rounded-3">
-								<ReportButton
+								b1<ReportButton
 									user={data.username}
 									url="/user/{data.username}" />
 							</ul>
@@ -130,7 +130,7 @@
 					<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
 					<div class="dropdown-content pt-2">
 						<ul class="p-2 rounded-3">
-							<ReportButton
+							b2<ReportButton
 								user={data.username}
 								url="/user/{data.username}" />
 						</ul>
@@ -141,7 +141,7 @@
 	</div>
 	<div class="sm:grid grid-cols-2 gap-4">
 		<div>
-			{#if data.description && data.description.text}
+			{#if data.description}
 				<div class="pt-6">
 					<div class="flex justify-between">
 						<h2>Description</h2>
@@ -155,7 +155,7 @@
 						{/if}
 					</div>
 					<p class="pl-2 pt-4 whitespace-pre-line">
-						{data.description.text}
+						{data.description}
 					</p>
 				</div>
 			{:else if data.username === user.username}

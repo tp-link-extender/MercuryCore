@@ -7,61 +7,101 @@ This page provides information about the database used in Mercury Core, includin
 
 Mercury Core uses [SurrealDB](https://surrealdb.com) as its primary database solution. By default, Surreal is started on port 8000, and will fail to start if that port is already in use. If you have started the database before, it may already be running in the background, and you may wish to stop it before starting a new instance.
 
+## Credentials
+
+The Site doesn't connect as root. It uses a database user (`site` by default) that can only use the `main` database, with the `EDITOR` role: it can read and write data and change the schema there, but can't define users, switch namespace or reach anything at root level. Three environment variables are involved:
+
+- `DATABASE_ROOT_PASSWORD`: SurrealDB's root password. Only the database and the setup step need it.
+- `DATABASE_USER` (default `site`) and `DATABASE_PASSWORD`: what the Site connects with. The Site refuses to start without a password.
+
+Passwords must be at least 32 characters of letters, digits, underscores and hyphens, as SurrealDB doesn't accept parameters in `DEFINE USER`, so they are written into the statement. Generate each one with `openssl rand -hex 32`.
+
+The setup step, `bun run db:setup` in the **Site** directory, signs in as root and:
+
+1. defines the `main` namespace and the `main` database (`STRICT`)
+2. defines or updates the Site's user with `DATABASE_PASSWORD`
+3. changes root's password to `DATABASE_ROOT_PASSWORD` if it is still the old default, `root`
+4. checks that the Site's user can sign in, and fails if `root`/`root` still works
+
+It is safe to run more than once. Pass `--url ws://host:port` if the database isn't at `ws://localhost:8000`, and `--add-only` to skip step 3 (see [Moving an existing database](#moving-an-existing-database)).
+
+When `Database.AutoStart` is on, the Site starts SurrealDB and runs the setup itself, so local development only needs the three variables in **Site/.env**. In compose, the one-shot `database-setup` service runs it before the Site starts.
+
+:::caution
+`surreal start` only uses `SURREAL_PASS` (or `-p`) to create the root user of a new store. On an existing store it logs "existing root users were found" and keeps the old password. Changing the password in the environment therefore doesn't change it in the database; the setup step does that with `ALTER USER`.
+:::
+
 ## Startup
 
-The following command can be used to start an instance of SurrealDB, assuming it's ran in the root directory of the Mercury Core repository.
+The following command can be used to start an instance of SurrealDB, assuming it's ran in the root directory of the Mercury Core repository. The root password is passed in the environment rather than with `-p`, so it doesn't show up in `ps`.
 
 ```bash
-surreal start -u=root -p=root surrealkv://data/surreal
+SURREAL_USER=root SURREAL_PASS="$DATABASE_ROOT_PASSWORD" surreal start --bind=127.0.0.1:8000 surrealkv://data/surreal
 ```
 
-This should produce output similar to the following:
+Then run `bun run db:setup` in the **Site** directory.
+
+SurrealDB listens on loopback only by default, so it is not reachable from other hosts. Container deployments in **compose.yml** keep the published port on `127.0.0.1` and use `--bind=0.0.0.0:8000` inside the container, which lets other containers reach it over the compose network without exposing it publicly.
+
+This should produce output indicating the SurrealKV store started and the web server is listening, for example:
 
 ```log
- .d8888b.                                             888 8888888b.  888888b.
-d88P  Y88b                                            888 888  'Y88b 888  '88b
-Y88b.                                                 888 888    888 888  .88P
- 'Y888b.   888  888 888d888 888d888  .d88b.   8888b.  888 888    888 8888888K.
-    'Y88b. 888  888 888P'   888P'   d8P  Y8b     '88b 888 888    888 888  'Y88b
-      '888 888  888 888     888     88888888 .d888888 888 888    888 888    888
-Y88b  d88P Y88b 888 888     888     Y8b.     888  888 888 888  .d88P 888   d88P
- 'Y8888P'   'Y88888 888     888      'Y8888  'Y888888 888 8888888P'  8888888P'
-
-
-2038-01-19T03:14:07.640032Z  INFO surrealdb_server::env: Running 3.0.1 for linux on x86_64
-2038-01-19T03:14:07.640049Z  INFO surrealdb::core::kvs::ds: Starting kvs store at relative path surrealkv://data/surreal
-2038-01-19T03:14:07.640649Z  INFO surrealdb::core::kvs::surrealkv: Enabling value log separation: true
-2038-01-19T03:14:07.740677Z  INFO surrealdb::core::kvs::surrealkv: Setting value log max file size: 268435456
-2038-01-19T03:14:07.740689Z  INFO surrealdb::core::kvs::surrealkv: Setting value log threshold: 4096
-2038-01-19T03:14:07.740691Z  INFO surrealdb::core::kvs::surrealkv: Versioning enabled: false with retention period: 0ns
-2038-01-19T03:14:07.740692Z  INFO surrealdb::core::kvs::surrealkv: Versioning with versioned_index: false
-2038-01-19T03:14:07.816428Z  INFO surrealdb::core::kvs::surrealkv: Setting block cache capacity: 15303714816
-2038-01-19T03:14:07.816442Z  INFO surrealdb::core::kvs::surrealkv: Setting block size: 65536
-2038-01-19T03:14:07.816465Z  INFO surrealkv::lsm: === Starting LSM tree initialization ===
-2038-01-19T03:14:07.816467Z  INFO surrealkv::lsm: Database path: "data/surreal"
-2038-01-19T03:14:07.816527Z  INFO surrealkv::levels: Loading manifest from "data/surreal/manifest/00000000000000000000.manifest"
-2038-01-19T03:14:07.816609Z  INFO surrealkv::levels: Manifest loaded successfully: version=1, log_number=9, last_sequence=18926, tables=9, levels=6
-2038-01-19T03:14:07.816727Z  INFO surrealkv::lsm: Manifest state: log_number=9, last_sequence=18926
-2038-01-19T03:14:07.816731Z  INFO surrealkv::wal::recovery: Starting WAL recovery from directory: "data/surreal/wal"
-2038-01-19T03:14:07.816742Z  INFO surrealkv::wal::recovery: Replaying WAL segments #00000000000000000009 to #00000000000000000009
-2038-01-19T03:14:07.816984Z  INFO surrealkv::wal::recovery: WAL recovery complete: 0 batches across 0 segments, 0 memtables created, max_seq_num=None
-2038-01-19T03:14:07.817046Z  INFO surrealkv::lsm: === LSM tree initialization complete ===
-2038-01-19T03:14:07.841220Z  INFO surrealdb::core::kvs::surrealkv: Sync mode: every transaction commit
-2038-01-19T03:14:07.841236Z  INFO surrealdb::core::kvs::surrealkv: Grouped commit: enabled (timeout=5000000ns, wait_threshold=12, max_batch_size=4096)
-2038-01-19T03:14:07.841298Z  INFO surrealdb::core::kvs::ds: Started surrealkv kvs store
-2038-01-19T03:14:07.841805Z  INFO surreal::dbs: Operation succeeded operation="check_version" attempts=1
-2038-01-19T03:14:07.842192Z  INFO surreal::dbs: Initialising credentials user=root
-2038-01-19T03:14:07.842565Z  WARN surrealdb::core::kvs::ds: Credentials were provided, but existing root users were found. The root user 'root' will not be created
-2038-01-19T03:14:07.842585Z  INFO surreal::dbs: Operation succeeded operation="initialise_credentials" attempts=1
-2038-01-19T03:14:07.842576Z  WARN surrealdb::core::kvs::ds: Consider removing the --user and --pass arguments from the server start command
-2038-01-19T03:14:07.972126Z  INFO surreal::dbs: Operation succeeded operation="Insert node" attempts=1
-2038-01-19T03:14:07.973186Z  INFO surreal::dbs: Operation succeeded operation="Expire nodes" attempts=1
-2038-01-19T03:14:07.975329Z  INFO surreal::dbs: Operation succeeded operation="Remove nodes" attempts=1
-2038-01-19T03:14:07.979977Z  INFO surrealdb::net: Started web server on 127.0.0.1:8000
-2038-01-19T03:14:07.980039Z  INFO surrealdb::net: Listening for a system shutdown signal.
+INFO surreal::dbs: Initialising credentials user=root
+INFO surrealdb::net: Started web server on 127.0.0.1:8000
+INFO surrealdb::net: Listening for a system shutdown signal.
 ```
 
+The exact banner and log lines vary between SurrealDB releases. If you are upgrading an existing 3.x datastore in place, the first 4.x start needs `SURREAL_EXPERIMENTAL_UPGRADE_FROM_3X=true` and may take longer while the data is migrated.
+
 Omitting the `surrealkv://data/surreal` path argument will cause SurrealDB to use an in-memory database, which is useful for testing purposes. You may see a warning about the root user account already existing; which is normal if you have started the database before.
+
+## Moving an existing database
+
+A database set up before this change has root's password set to `root`, and the running Site signs in with it. Changing root's password first would lock that Site out, so move in this order:
+
+1. Take an export of the database (`surreal export`) and check it.
+2. Generate `DATABASE_ROOT_PASSWORD` and `DATABASE_PASSWORD` with `openssl rand -hex 32` and add them, with `DATABASE_USER=site`, to wherever the Site's environment comes from (see below).
+3. Run `bun run db:setup --add-only` in the **Site** directory. This adds the Site's user and leaves root alone, so the old Site keeps working.
+4. Deploy the new Site and check that it starts and serves pages.
+5. Run `bun run db:setup` without `--add-only`. It changes root's password and checks that `root`/`root` is refused.
+6. Update the database service's own root password setting (`SURREAL_PASS`, or `-p` if it is still on the command line) to the new password, so it matches if the store is ever recreated.
+7. Check that the Economy tools still connect (see [Economy tools](#economy-tools)).
+
+If the Site starts SurrealDB itself (`Database.AutoStart`), it runs the full setup every time it starts, so steps 3 to 5 happen together when the new Site starts. Nothing else is signed in as root then, so that's safe, but take the export first and put `DATABASE_ROOT_PASSWORD` in the Site's environment before deploying.
+
+The compose `database-setup` service does steps 3 and 5 at once. That's right for a new install, but don't let it be the first thing to run against an existing database: run `--add-only` by hand first.
+
+### systemd
+
+Put the variables in an environment file only the service's user can read, such as **/etc/mercury/site.env** with mode `0600`, and load it from the unit:
+
+```ini
+[Service]
+WorkingDirectory=/path/to/MercuryCore/Site
+EnvironmentFile=/etc/mercury/site.env
+ExecStart=/usr/bin/env bun -b ./build
+```
+
+Run setup with the same file, for example `sudo -u mercury sh -c 'set -a; . /etc/mercury/site.env; bun run db:setup --add-only'`, then `systemctl daemon-reload` and `systemctl restart` the Site. If SurrealDB has its own unit, give it `Environment=SURREAL_USER=root` and `SURREAL_PASS` from a root-only environment file instead of `-p=root` in `ExecStart`.
+
+### pm2
+
+pm2 starts the Site from the **Site** directory, where Bun loads **Site/.env**, so add the variables there (keep it `0600`) rather than in **ecosystem.config.js**, which is in source control. Run `bun run db:setup --add-only` in the same directory, then `bun x pm2 restart Mercury`.
+
+### Compose
+
+Add the variables to the **.env** file next to **compose.yml**. For an existing database, run the setup by hand before bringing up the new Site:
+
+```bash
+docker compose run --rm database-setup --add-only
+docker compose up -d --build site
+```
+
+Once the Site is working, `docker compose run --rm database-setup` changes root's password.
+
+## Economy tools
+
+The `migrate` and `prune` commands in **Economy/cmd** sign in as `DATABASE_USER` (default `site`) with `DATABASE_PASSWORD` from the environment, as a user of `--namespace`/`--database`. Pass `--surreal-user root` to sign in as root instead, which reads `DATABASE_ROOT_PASSWORD`. `--surreal-pass` still works but puts the password on the command line.
 
 ## Database inspection
 
@@ -71,7 +111,7 @@ A database management tool is available through the [Surrealist](https://app.sur
 
 ### Connection problems
 
-SurrealDB supports connections via both HTTP (http://, https://) and WebSocket (ws://, wss://) protocols. Using the insecure versions should be fine if the service is running in local development or connected to from the Site hosted on the same machine, but if connecting remotely (such as to remotely manage the database on a VPS), the secure versions should be used. Add a domain configuration to the Caddyfile and change the default password to allow for this.
+SurrealDB supports connections via both HTTP (http://, https://) and WebSocket (ws://, wss://) protocols. Using the insecure versions should be fine if the service is running in local development or connected to from the Site hosted on the same machine, but if connecting remotely (such as to remotely manage the database on a VPS), the secure versions should be used. Add a domain configuration to the Caddyfile to allow for this.
 
 The WebSocket versions of the connection are broadly recommended over the HTTP versions, as they provide improved reliability and don't require re-authentication every 1 hour after connecting. If your connection seems to drop after being open for a long time (>1 hour), it may be over HTTP..
 
@@ -82,16 +122,5 @@ In some cases, the database may fail to start due to filesystem permission issue
 An example of potential output could be as follows:
 
 ```log
-2038-01-19T03:14:07.436374Z  INFO surrealdb_server::env: Running 3.0.1 for linux on x86_64
-2038-01-19T03:14:07.436400Z  INFO surrealdb::core::kvs::ds: Starting kvs store at relative path surrealkv://data/surreal
-2038-01-19T03:14:07.437518Z  INFO surrealdb::core::kvs::surrealkv: Enabling value log separation: true
-2038-01-19T03:14:07.521204Z  INFO surrealdb::core::kvs::surrealkv: Setting value log max file size: 268435456
-2038-01-19T03:14:07.521216Z  INFO surrealdb::core::kvs::surrealkv: Setting value log threshold: 4096
-2038-01-19T03:14:07.521217Z  INFO surrealdb::core::kvs::surrealkv: Versioning enabled: false with retention period: 0ns
-2038-01-19T03:14:07.521218Z  INFO surrealdb::core::kvs::surrealkv: Versioning with versioned_index: false
-2038-01-19T03:14:07.591389Z  INFO surrealdb::core::kvs::surrealkv: Setting block cache capacity: 15303714816
-2038-01-19T03:14:07.591404Z  INFO surrealdb::core::kvs::surrealkv: Setting block size: 65536
-2038-01-19T03:14:07.591810Z ERROR surrealdb_server::cli: There was a problem with the datastore: IO error: Permission denied (os error 13)
-Goodbye!
-[process exited with code 1]
+ERROR surrealdb_server::cli: There was a problem with the datastore: IO error: Permission denied (os error 13)
 ```
