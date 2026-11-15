@@ -6,6 +6,7 @@ import { User } from "economy/types"
 import { form, getRequestEvent } from "$app/server"
 import { typeToNumber } from "$lib/assetTypes"
 import { authorise } from "$lib/server/auth"
+import { formFile } from "$lib/server/formFile"
 import {
 	clothingAsset,
 	imageAsset,
@@ -23,8 +24,8 @@ import assetTypes from "./assetTypes"
 import createAssetQuery from "./createAsset.surql"
 
 const schema = type({
-	asset: "File",
-	description: "(0 <= string <= 1000) | undefined",
+	asset: formFile,
+	"description?": "0 <= string <= 1000",
 	name: "3 <= string <= 50",
 	price: "0 <= number.integer <= 999",
 	// Object.keys(assets) doesn't work

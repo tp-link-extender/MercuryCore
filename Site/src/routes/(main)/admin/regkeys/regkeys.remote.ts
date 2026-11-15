@@ -11,10 +11,10 @@ import createQuery from "./create.surql"
 import disabledQuery from "./disabled.surql"
 
 const schema = type({
-	enableRegKeyCustom: "boolean | undefined",
-	enableRegKeyExpiry: "boolean | undefined",
+	"enableRegKeyCustom?": "boolean",
+	"enableRegKeyExpiry?": "boolean",
 	regKeyCustom: "(3 <= string <= 50 | undefined)?",
-	regKeyExpiry: "string | undefined",
+	"regKeyExpiry?": "string",
 	regKeyUses: type("1 <= number <= 100").default(1),
 })
 

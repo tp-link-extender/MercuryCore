@@ -10,7 +10,7 @@ import updateQuery from "./update.surql"
 const createSchema = type({
 	bannerColour: "string",
 	bannerText: "string <= 100",
-	bannerTextLight: "boolean | undefined",
+	"bannerTextLight?": "boolean",
 })
 
 const deleteSchema = type({
@@ -28,7 +28,7 @@ const bodySchema = type({
 })
 
 const textLightSchema = type({
-	bannerTextLight: "boolean | undefined",
+	"bannerTextLight?": "boolean",
 	id: "string",
 })
 

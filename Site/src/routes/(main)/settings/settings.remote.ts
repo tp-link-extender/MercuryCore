@@ -20,7 +20,7 @@ import updateProfileQuery from "./updateProfile.surql"
 const themeNames = config.Themes.map(t => t.Name)
 
 const profileSchema = type({
-	description: "(string <= 1000) | undefined",
+	"description?": "string <= 1000",
 	theme: type.enumerated(...themeNames).pipe.try(t => {
 		const index = themeNames.indexOf(t)
 		if (index === -1) throw new Error("must be a valid theme")
@@ -37,7 +37,7 @@ const sessionSchema = type({
 	password: "string >= 1",
 })
 const stylingSchema = type({
-	css: "(string <= 10000) | undefined",
+	"css?": "string <= 10000",
 })
 
 export const profileForm: ClientForm<typeof profileSchema.inferIn> = form(

@@ -6,6 +6,7 @@ import { User as EconUser, type UnlimitedSource } from "economy/types"
 import { form, getRequestEvent } from "$app/server"
 import types, { typeToNumber } from "$lib/assetTypes"
 import { authorise } from "$lib/server/auth"
+import { formFile } from "$lib/server/formFile"
 import requestRender from "$lib/server/requestRender"
 import { db } from "$lib/server/surreal"
 import { isXML } from "$lib/server/xml"
@@ -15,16 +16,16 @@ import createQuery from "./create.surql"
 import createPackageQuery from "./createPackage.surql"
 
 const packageChildSchema = type({
-	asset: "File | undefined",
+	"asset?": formFile,
 	description: "string <= 1000",
 	name: "3 <= string <= 50",
 	type: type.enumerated(...Object.values(types)),
 })
 
 const schema = type({
-	asset: "File | undefined",
+	"asset?": formFile,
 	"children?": packageChildSchema.array(),
-	description: "(string <= 1000) | undefined",
+	"description?": "string <= 1000",
 	name: "3 <= string <= 50",
 	price: "0 <= number.integer <= 999",
 	type: type
@@ -85,7 +86,7 @@ export const formData: ClientForm<typeof schema.inferIn> = form(
 				issues
 			)
 
-		if (!(asset instanceof File) || asset.size === 0)
+		if (!asset || asset.size === 0)
 			return issues.asset("You must upload an asset")
 
 		// to prevent faces being uploaded as images
@@ -125,7 +126,7 @@ export const formData: ClientForm<typeof schema.inferIn> = form(
 
 async function createPackage(
 	children: {
-		asset: File | undefined
+		asset?: File
 		description: string
 		name: string
 		type: string
@@ -160,7 +161,7 @@ async function createPackage(
 			return fail(`Asset #${num + 1} must have a valid asset type`)
 
 		const file = child.asset
-		if (!(file instanceof File) || file.size === 0)
+		if (!file || file.size === 0)
 			return fail(`Asset #${num + 1} must have an upload`)
 		if (file.size > 20e6)
 			return fail(`Asset #${num + 1} must be less than 20MB in size`)

@@ -6,6 +6,7 @@ import { authorise } from "$lib/server/auth"
 import { assetOwner, economyConnFailed } from "$lib/server/economy"
 import { isAudio, isImage, isMesh, isRobloxModel } from "$lib/server/fileType"
 import filter from "$lib/server/filter"
+import { formFile } from "$lib/server/formFile"
 import {
 	clothingAsset,
 	imageAsset,
@@ -28,8 +29,8 @@ interface AssetCheck {
 }
 
 const schema = type({
-	description: "(0 <= string <= 1000) | undefined",
-	forSale: "boolean | undefined",
+	"description?": "0 <= string <= 1000",
+	"forSale?": "boolean",
 	id: "string",
 	// This is how I show my love
 	// I made it in my mind because
@@ -39,7 +40,7 @@ const schema = type({
 })
 
 const reuploadSchema = type({
-	asset: "File",
+	asset: formFile,
 	id: "string",
 })
 

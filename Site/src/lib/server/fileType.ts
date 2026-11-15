@@ -13,7 +13,8 @@ export const isAudio = (buf: ArrayBuffer) => startsWith(buf, "OggS")
 
 export const isImage = async (file: File) => {
 	try {
-		await new Bun.Image(file).metadata()
+		// Read the bytes: remote forms hand over Blob-backed uploads, which Bun.Image doesn't accept directly
+		await new Bun.Image(await file.arrayBuffer()).metadata()
 		return true
 	} catch {
 		return false

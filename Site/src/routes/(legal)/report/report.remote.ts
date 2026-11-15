@@ -11,7 +11,7 @@ import reports from "./reports"
 
 const schema = type({
 	category: type.enumerated(...reports).describe("a valid report category"),
-	note: "string <= 1000 | undefined",
+	"note?": "string <= 1000",
 })
 
 async function getReportee(username: string) {

@@ -7,6 +7,7 @@ import { form, getRequestEvent } from "$app/server"
 import { authorise } from "$lib/server/auth"
 import { economyConnFailed, ownsItem } from "$lib/server/economy"
 import filter from "$lib/server/filter"
+import { formFile } from "$lib/server/formFile"
 import { closeGameserver } from "$lib/server/orbiter"
 import { db, Record } from "$lib/server/surreal"
 import {
@@ -39,10 +40,13 @@ interface Place {
 	updated: Date
 }
 
+// Place ids are numbers, so `.for()` instances send a number and the form data has to take it as one
+const placeIdSchema = type("string | number").pipe(String)
+
 const viewSchema = type({
-	description: "(string <= 1000) | undefined",
-	icon: "File | undefined",
-	id: "string",
+	"description?": "string <= 1000",
+	"icon?": formFile,
+	id: placeIdSchema,
 	name: "string <= 100",
 })
 const networkSchema = type({
@@ -50,22 +54,22 @@ const networkSchema = type({
 		.enumerated(...clientVersions)
 		.pipe.try(Number)
 		.configure({ problem: "must be a valid client version" }),
-	dedicated: "boolean | undefined",
-	id: "string",
+	"dedicated?": "boolean",
+	id: placeIdSchema,
 	maxPlayers: maxPlayersTest,
 	serverAddress: serverAddressTest.optional(),
 	serverPort: serverPortTest.optional(),
 })
 const ticketSchema = type({
-	id: "string",
+	id: placeIdSchema,
 })
 const privacySchema = type({
-	id: "string",
-	privateServer: "boolean | undefined",
+	id: placeIdSchema,
+	"privateServer?": "boolean",
 })
 const dataSchema = type({
-	file: "File",
-	id: "string",
+	file: formFile,
+	id: placeIdSchema,
 })
 
 async function placeQuery(id: number) {
@@ -90,7 +94,7 @@ async function getData(id: string) {
 	return placeId
 }
 
-export const viewForm: ClientForm<typeof viewSchema.infer> = form(
+export const viewForm: ClientForm<typeof viewSchema.inferIn> = form(
 	viewSchema,
 	async ({ id, name, icon, description }, issues) => {
 		const placeId = await getData(id)
@@ -115,12 +119,14 @@ export const viewForm: ClientForm<typeof viewSchema.infer> = form(
 	}
 )
 
-export const ticketForm: ClientForm<typeof ticketSchema.infer> = form(
+export const ticketForm: ClientForm<typeof ticketSchema.inferIn> = form(
 	ticketSchema,
 	async ({ id }) => {
-		const placeId = await getData(id)
+		const ticketPlaceId = await getData(id)
 
-		await db.query(serverTicketQuery, { place: Record("place", placeId) })
+		await db.query(serverTicketQuery, {
+			place: Record("place", ticketPlaceId),
+		})
 		return { success: "Regenerated!" }
 	}
 )
@@ -160,7 +166,7 @@ export const networkForm: ClientForm<typeof networkSchema.inferIn> = form(
 	}
 )
 
-export const privacyForm: ClientForm<typeof privacySchema.infer> = form(
+export const privacyForm: ClientForm<typeof privacySchema.inferIn> = form(
 	privacySchema,
 	async ({ id, privateServer }) => {
 		const placeId = await getData(id)
@@ -173,25 +179,27 @@ export const privacyForm: ClientForm<typeof privacySchema.infer> = form(
 	}
 )
 
-export const privatelinkForm: ClientForm<typeof ticketSchema.infer> = form(
+export const privatelinkForm: ClientForm<typeof ticketSchema.inferIn> = form(
 	ticketSchema,
 	async ({ id }) => {
-		const placeId = await getData(id)
+		const linkPlaceId = await getData(id)
 
-		await db.query(privateTicketQuery, { place: Record("place", placeId) })
+		await db.query(privateTicketQuery, {
+			place: Record("place", linkPlaceId),
+		})
 		return { success: "Regenerated!" }
 	}
 )
 
-export const dataForm: ClientForm<typeof dataSchema.infer> = form(
+export const dataForm: ClientForm<typeof dataSchema.inferIn> = form(
 	dataSchema,
 	async ({ id, file }, issues) => {
-		const placeId = await getData(id)
+		const dataPlaceId = await getData(id)
 
 		if (file.size > 100e6)
 			return issues.file("File must be less than 100MB in size")
 
-		await Bun.write(`../data/places/${placeId}`, file)
+		await Bun.write(`../data/places/${dataPlaceId}`, file)
 		return { success: "Place data updated successfully!" }
 	}
 )
