@@ -22,15 +22,19 @@ export async function readLimited(
 	}
 	if (!res.body) return new Uint8Array()
 
+	// The stream is read through its reader, as the reader holds the stream's lock and is what has to cancel it
+	const reader = res.body.getReader()
 	const chunks: Uint8Array[] = []
 	let size = 0
-	for await (const chunk of res.body) {
-		size += chunk.byteLength
+	for (;;) {
+		const { done, value } = await reader.read()
+		if (done) break
+		size += value.byteLength
 		if (size > limit) {
-			await res.body.cancel()
+			await reader.cancel()
 			throw new TooLargeError(limit)
 		}
-		chunks.push(chunk)
+		chunks.push(value)
 	}
 
 	const out = new Uint8Array(size)
