@@ -3,6 +3,7 @@ package main
 import (
 	"Economy/ledger"
 	"fmt"
+	"maps"
 	"slices"
 	"sort"
 	"strings"
@@ -401,10 +402,7 @@ func buildPlan(led *ledger.Ledger, assets []dbAsset, packageChildren []dbPackage
 
 	removed := make(map[uint32]string, len(primary)+len(orphanImages))
 
-	for id, reason := range primary {
-		removed[id] = reason
-	}
-
+	maps.Copy(removed, primary)
 	for _, id := range orphanImages {
 		removed[id] = "orphanImage"
 	}
