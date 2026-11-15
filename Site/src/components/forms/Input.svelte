@@ -11,6 +11,7 @@
 		label = "",
 		help = "",
 		after = "",
+		defaultValue,
 		type = "text",
 		inline = false,
 		column = false,
@@ -22,6 +23,7 @@
 		label?: string
 		help?: string
 		after?: string
+		defaultValue?: boolean | string
 		// type?: HTMLInputTypeAttribute
 		type?: "text" | "number" | "color" | "date" | "checkbox" | "file" | "password"
 		inline?: boolean
@@ -34,7 +36,7 @@
 </script>
 
 {#snippet subinput()}
-	<SubInput {name} {type} {disabled} {formData} {...rest} />
+	<SubInput {name} {type} {disabled} {defaultValue} {formData} {...rest} />
 {/snippet}
 
 <div class="flex flex-wrap {inline ? 'flex-1' : 'pb-8'}">

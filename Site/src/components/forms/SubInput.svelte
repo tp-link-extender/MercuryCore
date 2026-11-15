@@ -9,12 +9,14 @@
 		name,
 		disabled = false,
 		type,
+		defaultValue,
 		formData,
 		...rest
 	}: {
 		// Imported into Input.svelte to prevent code duplication
 		name: ExtractId<T>
 		disabled: boolean
+		defaultValue?: boolean | string
 		// type: HTMLInputTypeAttribute
 		type: "text" | "number" | "color" | "date" | "checkbox" | "file" | "password"
 		formData: ClientForm<T>
@@ -23,7 +25,7 @@
 
 {#if type === "checkbox"}
 	<input
-		{...formData.fields[name].as("checkbox")}
+		{...formData.fields[name].as("checkbox", defaultValue)}
 		{...rest}
 		{name}
 		id={name}
@@ -31,7 +33,7 @@
 		{disabled} />
 {:else}
 	<input
-		{...formData.fields[name].as(type)}
+		{...formData.fields[name].as(type, defaultValue)}
 		{...rest}
 		{name}
 		id={name}

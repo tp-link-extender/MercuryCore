@@ -23,7 +23,7 @@
 	} & HTMLFormAttributes = $props()
 
 	let valid: string | undefined = $derived(formData.result?.success)
-	let invalid: string | undefined = $derived(formData.result?.message)
+	let issues = $derived(formData.fields.allIssues() || [])
 	let pending = $derived(formData.pending > 0)
 </script>
 
@@ -45,11 +45,11 @@
 		{valid}
 	</p>
 {/if}
-{#if invalid}
+{#each issues as issue}
 	<p class={["text-red-500", { "pb-0": inline }]}>
-		{invalid}
+		{issue.message}
 	</p>
-{/if}
+{/each}
 
 <style>
 	button:not(.nopad) {

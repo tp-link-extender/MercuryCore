@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
-	import { refreshComments } from "$lib/refreshComments"
+	import { deleteForm } from "$lib/commentActions.remote"
 
 	const {
 		id,
@@ -10,15 +9,18 @@
 		moderate?: boolean
 	} = $props()
 
+	const deleteFormFor = deleteForm.for(id)
+
 	let text = $derived(moderate ? "remove" : "delete")
 </script>
 
 <li class="rounded-2">
-	<form
-		use:enhance={refreshComments}
-		method="post"
-		action="/comment/{id}?/delete&action={text}"
-		class="inline">
+	<form {...deleteFormFor} class="inline">
+		<input
+			{...deleteFormFor.fields.action.as(
+				"hidden",
+				moderate ? "remove" : "delete"
+			)} />
 		<button
 			class={[
 				"btn pl-4 pr-2",

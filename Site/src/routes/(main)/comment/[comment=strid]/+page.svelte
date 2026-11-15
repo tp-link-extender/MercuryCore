@@ -5,7 +5,7 @@
 	import Comment from "$components/Comment.svelte"
 	import Head from "$components/Head.svelte"
 	import PostReply from "$components/PostReply.svelte"
-	import { superForm } from "$lib/validate"
+	import { replyForm } from "$lib/commentActions.remote"
 	import { likeForm } from "../../like.remote"
 	import { getComment } from "./comment.remote"
 	import ForumPost from "./ForumPost.svelte"
@@ -22,7 +22,7 @@
 	async function onResult({ result }: { result: ActionResult }) {
 		if (result.type === "success") await invalidateAll()
 	}
-	let formData = $derived(superForm(data.form))
+	const formData = replyForm.for(data.commentId)
 
 	const elide = (c: string) => (c.length > 50 ? `${c.slice(0, 50)}...` : c)
 
