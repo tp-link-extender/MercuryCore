@@ -330,9 +330,8 @@ DEFINE FUNCTION OVERWRITE fn::notify($sender: record, $receiver: record, $type: 
 DEFINE EVENT OVERWRITE bannerCreateLog ON TABLE banner
 WHEN $event = "CREATE" THEN
 	fn::auditLog("Administration", string::concat('Create banner "', $after.body, '"'), $after.creator);
-DEFINE EVENT OVERWRITE bannerDeleteLog ON TABLE banner
-WHEN $event = "UPDATE" AND !$before.deleted AND $after.deleted THEN
-	fn::auditLog("Administration", string::concat('Delete banner "', $after.body, '"'), $after.creator);
+# Banner changes are logged by the admin actions instead, so the log names the admin who made them
+REMOVE EVENT IF EXISTS bannerDeleteLog ON TABLE banner;
 DEFINE EVENT OVERWRITE regKeyCreateLog ON TABLE regKey
 WHEN $event = "CREATE" THEN
 	fn::auditLog("Administration", string::concat("Create registration key ", record::id($after.id)), $after.creator);
