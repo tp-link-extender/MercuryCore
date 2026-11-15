@@ -69,6 +69,18 @@ export async function load({ fetch: f, locals, params }: RequestEvent) {
 	})
 	if (!asset) error(404, "Not Found")
 
+	// resolve the source's owner to the profile data the page uses
+	const ownerResult = await assetOwner(f, id, asset.type)
+	if (!ownerResult.ok) {
+		console.error("asset owner lookup failed")
+		error(500, economyConnFailed)
+	}
+	const owner = ownerResult.value
+	const isOwner = owner?.id === user.id
+	// Pending and moderated assets are only shown to their owner and to Catalog Managers and above, so their name and description stay private until approved
+	if (asset.visibility !== "Visible" && !isOwner && user.permissionLevel < 3)
+		error(404, "Not Found")
+
 	const slug = encode(asset.name)
 	if (!couldMatch(asset.name, params.name))
 		redirect(302, `/catalog/${id}/${slug}`)
@@ -98,15 +110,6 @@ export async function load({ fetch: f, locals, params }: RequestEvent) {
 
 	// what the buyer receives along with the package itself
 	const items = isPackage ? await packageItems(f, id, user.id) : []
-
-	// resolve the source's owner to the profile data the page uses
-	const ownerResult = await assetOwner(f, id, asset.type)
-	if (!ownerResult.ok) {
-		console.error("asset owner lookup failed")
-		error(500, economyConnFailed)
-	}
-	const owner = ownerResult.value
-	const isOwner = owner?.id === user.id
 
 	return {
 		asset: {
