@@ -4,6 +4,7 @@ import { type } from "arktype"
 import { authorise } from "$lib/server/auth"
 import { assetOwner, economyConnFailed } from "$lib/server/economy"
 import { isAudio, isImage, isMesh, isRobloxModel } from "$lib/server/fileType"
+import filter from "$lib/server/filter"
 import formError from "$lib/server/formError"
 import {
 	clothingAsset,
@@ -136,12 +137,23 @@ actions.settings = async ({ fetch: f, locals, params, request }) => {
 	if (owner.value?.id !== user.id && user.permissionLevel < 4)
 		error(403, "You do not have permission to edit this asset")
 
-	await db.query(updateAssetQuery, {
+	const review = user.permissionLevel < 3
+	const results = await db.query(updateAssetQuery, {
 		asset: Record("asset", id),
-		...form.data,
+		description: filter(form.data.description || ""),
+		forSale: form.data.forSale,
+		name: filter(form.data.name),
+		price: form.data.price,
+		review,
 	})
+	const changed = results.at(-1) === true
 
-	return message(form, "Asset data updated successfully!")
+	return message(
+		form,
+		changed && review
+			? "Asset data updated and is pending approval!"
+			: "Asset data updated successfully!"
+	)
 }
 
 // the approval rule matches asset creation: regular users go to the review queue, catalog managers and above (permissionLevel 3+) skip approval.

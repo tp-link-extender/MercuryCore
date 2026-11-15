@@ -1,4 +1,5 @@
-LET $og = SELECT VALUE fn::currentContent($this.description) FROM $asset;
+LET $og = (SELECT name, fn::currentContent($this.description) AS description FROM ONLY $asset);
+LET $changed = $og.name != $name OR $og.description != $description;
 
 UPDATE $asset MERGE {
 	name: $name,
@@ -6,8 +7,15 @@ UPDATE $asset MERGE {
 	price: $price,
 };
 
-IF $og != $description {
+IF $og.description != $description {
 	UPDATE $asset SET description += {
 		text: $description,
 	};
 };
+
+# A changed name or description goes back to review, like a reupload, unless staff made the change
+IF $changed AND $review {
+	UPDATE $asset SET visibility = "Pending" WHERE visibility = "Visible";
+};
+
+$changed;
