@@ -2,6 +2,7 @@ import fs from "node:fs"
 import config from "$lib/server/config"
 import { buildLoadscript } from "$lib/server/loadscript"
 import { db, Record } from "$lib/server/surreal"
+import { waitForChange } from "$lib/server/waitForChange"
 import createRenderQuery from "./createRender.surql"
 import renderQuery from "./render.surql"
 
@@ -21,6 +22,9 @@ export type Status = "Pending" | "Rendering" | "Completed" | "Error"
 interface Render {
 	status: Status
 }
+
+// How long a caller waits for a render to finish
+const renderTimeout = 60_000
 
 /**
  * Requests a render from RCCService
@@ -61,30 +65,12 @@ export default async function requestRender(
 		renderType === "Avatar" ? "../data/avatars" : "../data/thumbnails"
 	if (!fs.existsSync(path)) fs.mkdirSync(path)
 
-	// If the file doesn't exist, wait for it to be created
-	// if it does exist, wait for it to be modified
+	// Wait for the render's file to be created or modified, but not forever
 	const waiter =
 		wait &&
-		// Wrapping the watcher callback in a promise is the simplest way to await it
-		// oxlint-disable-next-line promise/avoid-new
-		new Promise<void>(resolve => {
-			// console.log(`Waiting for render file at ${path}`)
-			try {
-				const watcher = fs.watch(path, (_, filename) => {
-					if (!filename?.startsWith(relativeId.toString()))
-						// console.log(`Ignoring change to ${filename}`)
-						return
-
-					watcher.close()
-					// console.log("Watcher detected change!")
-					resolve()
-				})
-				// console.log("Watcher started")
-			} catch {
-				// console.log("Watcher failed!", e)
-				resolve()
-			}
-		})
+		waitForChange(path, renderTimeout, filename =>
+			Boolean(filename?.startsWith(relativeId.toString()))
+		)
 
 	// Send the script to the RCCService proxy
 	const pingUrl = `http://localhost:64990/ping/${renderId}` // the proxy will handle sending to /api/render/update
