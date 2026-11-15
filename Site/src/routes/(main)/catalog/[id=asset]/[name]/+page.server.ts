@@ -249,6 +249,15 @@ actions.buy = async e => {
 		error(400, "This item hasn't been approved yet")
 	if (!asset.forSale) error(400, "This item is not for sale")
 
+	// The buyer confirms the price they were shown, so a price change after they opened the dialog can't charge them more
+	const data = await e.request.formData()
+	const shownPrice = data.get("price")
+	if (shownPrice !== String(asset.price))
+		error(
+			409,
+			"This item's price has changed. Reload the page to see the new price."
+		)
+
 	// resolve the owner before charging, so a notification lookup can't fail after a successful purchase
 	const owner = await assetOwner(e.fetch, id, asset.type)
 	if (!owner.ok) error(500, economyConnFailed)

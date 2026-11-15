@@ -228,6 +228,7 @@
 		</p>
 
 		<form method="post" action="?/buy" class="inline">
+			<input type="hidden" name="price" value={data.asset.price} />
 			<button class="btn btn-success">
 				{itsFree ? "Get" : "Buy now"}
 			</button>
