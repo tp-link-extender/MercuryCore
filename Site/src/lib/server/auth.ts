@@ -20,12 +20,13 @@ type SessionValidationResult =
 export async function validateSessionToken(
 	token: string
 ): Promise<SessionValidationResult> {
-	// oxlint-disable-next-line unicorn/no-unreadable-array-destructuring -- query returns [result, error, status, value]
-	const [, , , res] = await db.query<SessionValidationResult[]>(
+	// The last statement's result is the session and user
+	const results = await db.query<SessionValidationResult[]>(
 		getSessionAndUserQuery,
 		{ sess: Record("session", token) }
 	)
-	if (!res.session || !res.user) return { session: null, user: null }
+	const res = results.at(-1)
+	if (!res?.session || !res.user) return { session: null, user: null }
 	return res
 }
 
