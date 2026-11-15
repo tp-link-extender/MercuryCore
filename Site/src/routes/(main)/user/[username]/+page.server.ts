@@ -4,6 +4,7 @@ import { Group as EconGroup, User as EconUser, Place } from "economy/types"
 import { authorise } from "$lib/server/auth"
 import { economyConnFailed } from "$lib/server/economy"
 import formData from "$lib/server/formData"
+import { ratelimitKey } from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { db, Record, type RecordId } from "$lib/server/surreal"
 import type { Group } from "../../groups/+page.server"
@@ -143,6 +144,10 @@ async function rerender(e: RequestEvent) {
 export const actions: Actions = { rerender }
 actions.follow = async e => {
 	const { user, params } = await getInteractData(e)
+	// Following, unfollowing and following again sends a new notification each time
+	const limit = ratelimitKey(null, "follow", user.id, 600, 30)
+	if (limit) return limit
+
 	await db.query(followQuery, {
 		...params,
 		note: `${user.username} is now following you!`,
@@ -159,6 +164,8 @@ actions.unfriend = async e => {
 }
 actions.request = async e => {
 	const { user, params } = await getInteractData(e)
+	const limit = ratelimitKey(null, "friendRequest", user.id, 600, 30)
+	if (limit) return limit
 
 	// Make sure users are not already friends
 	const [alreadyFriends] = await db.query<boolean[]>(
