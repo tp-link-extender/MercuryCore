@@ -33,6 +33,17 @@ ${config.Name}
 https://${config.Domain}`
 	)
 
+// Nodemailer's error messages can include the recipient's address (for example "Recipient address rejected: ..."), so only the error codes are logged
+function logSendError(err: unknown): void {
+	const { code, responseCode } = (err ?? {}) as {
+		code?: string
+		responseCode?: number
+	}
+	console.error(
+		`Failed to send recovery email (code ${code ?? "unknown"}, SMTP response ${responseCode ?? "none"})`
+	)
+}
+
 export const load = async () => ({ form: await superValidate(arktype(schema)) })
 
 export const actions: Actions = {}
@@ -53,10 +64,7 @@ actions.default = async ({ request, getClientAddress }) => {
 	})
 
 	// Not awaited, so the response time doesn't reveal whether an email address is registered
-	if (exists)
-		sendRecoveryEmail(email, token).catch((err: unknown) =>
-			console.error("Failed to send recovery email:", err)
-		)
+	if (exists) sendRecoveryEmail(email, token).catch(logSendError)
 
 	return message(
 		form,

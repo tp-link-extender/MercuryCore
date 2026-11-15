@@ -28,7 +28,6 @@ if (!building)
 		transport.use("stream", (mail, callback) => {
 			console.log("Preparing to send email:")
 			console.log("From:", mail.data.from)
-			console.log("To:", mail.data.to)
 			console.log(`Subject: ${mail.data.subject}`)
 			callback()
 		})
@@ -37,9 +36,10 @@ if (!building)
 		throw error
 	}
 
+// Recipient addresses are never logged, so the logs don't reveal who has an account or asked to recover one
 export async function sendEmail(to: string, subject: string, text: string) {
 	if (!transport) throw new Error("SMTP transport is not initialised")
-	console.log(`Queuing email to ${to}`)
+	console.log(`Queuing email "${subject}"`)
 	const result = await transport.sendMail({
 		from: `${config.Name} <noreply@${config.Domain}>`,
 		subject,
@@ -47,6 +47,6 @@ export async function sendEmail(to: string, subject: string, text: string) {
 		to,
 	})
 	if (result.accepted?.length)
-		console.log(`Email to ${to} queued successfully`)
-	else console.error(`Failed to queue email to ${to}`)
+		console.log(`Email "${subject}" queued successfully`)
+	else console.error(`Failed to queue email "${subject}"`)
 }
