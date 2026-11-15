@@ -50,6 +50,14 @@ jobs:
             - name: Typecheck
               run: bun check
 
+            # The loadscript injection tests run escaped values through real Lua when `luau` is on PATH, and skip without it. Pinned to a release and checked against a hash, like the actions, so CI runs them rather than skipping them. `unzip` is on the runner.
+            - name: Install Luau
+              run: |
+                  curl -fsSL -o /tmp/luau-ubuntu.zip https://github.com/luau-lang/luau/releases/download/0.747/luau-ubuntu.zip
+                  echo "6a740240248e872815865a2cb03b0c327f24939478f1d0081a0540cdfd77fdaa  /tmp/luau-ubuntu.zip" | sha256sum -c -
+                  sudo unzip -q /tmp/luau-ubuntu.zip luau -d /usr/local/bin
+                  luau --help > /dev/null
+
             # Hermetic: the tests cover pure libs only, so no database, no network, no secrets.
             - name: Unit tests
               run: bun test

@@ -10,9 +10,11 @@ import {
 
 const encode = (value: string): string => Buffer.from(value).toString("base64")
 
-// data/ is gitignored, so the real host template is absent from a clean checkout such as CI. That test only runs where the template exists.
+// data/ is gitignored, so the real host template is absent from a clean checkout such as CI. That test only runs where the template exists; the committed fixture below covers every context everywhere.
 const hostTemplatePath = "../data/server/loadscripts/host.lua"
 const hostTemplateExists = await Bun.file(hostTemplatePath).exists()
+const fixturePath = "src/lib/server/loadscript.fixture.lua"
+const fixture = await Bun.file(fixturePath).text()
 
 describe("parseMapLocation", () => {
 	test("treats a missing or empty map as no map", () => {
@@ -61,7 +63,7 @@ describe("isValidMapName", () => {
 	})
 })
 
-// Runs Lua source with luau when it's installed, to check that escaped values parse and come out unchanged. CI doesn't have luau, so these checks are skipped there.
+// Runs Lua source with luau when it's installed, to check that escaped values parse and come out unchanged. CI installs luau, so these checks run there too; without it they're skipped.
 const luau = Bun.which("luau")
 
 async function runLua(source: string): Promise<string> {
@@ -251,6 +253,32 @@ describe("buildLoadscript", () => {
 		expect(luaId(0)).toEqual({ raw: "0" })
 		expect(luaId(987654321)).toEqual({ raw: "987654321" })
 	})
+
+	test("fills the fixture template in every context", () => {
+		for (const payload of payloads) {
+			const script = buildLoadscript(fixture, { NAME: payload })
+			const content = luaString(payload).slice(1, -1)
+
+			// Code, single quotes and double quotes each get an escaped copy
+			expect(script).toContain(
+				`{${luaString(payload)}, '${content}', "${content}"}`
+			)
+			// Comments and long strings are left alone
+			expect(script).toContain("-- _NAME stays as written in a comment.")
+			expect(script).toContain("[==[_NOT_A_VALUE]==]")
+		}
+	})
+
+	test.skipIf(!luau).each(payloads)(
+		"runs the fixture with %j as data",
+		async value => {
+			const script = buildLoadscript(fixture, { NAME: value })
+
+			expect(await runLua(script)).toBe(
+				`${hex(value).repeat(3)}done true\n`
+			)
+		}
+	)
 
 	test.skipIf(!luau).each(payloads)(
 		"keeps %j as data in every quoting style",
