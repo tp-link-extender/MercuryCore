@@ -1,7 +1,7 @@
-import { timingSafeEqual } from "node:crypto"
 import { error } from "@sveltejs/kit"
 import { Place } from "economy/types"
 import { env } from "$env/dynamic/private"
+import constantTimeEqual from "$lib/server/constantTimeEqual"
 import { economyConnFailed, ownsItem } from "$lib/server/economy"
 import { db, Record } from "$lib/server/surreal"
 import type { RequestEvent } from "./$types"
@@ -13,13 +13,6 @@ const placeAccessQuery = `
 		serverTicket
 	FROM $place;
 `
-
-function constantTimeEqual(a: string, b: string): boolean {
-	const ah = Buffer.from(a)
-	const bh = Buffer.from(b)
-	if (ah.byteLength !== bh.byteLength) return false
-	return timingSafeEqual(ah, bh)
-}
 
 export async function GET({
 	fetch: f,

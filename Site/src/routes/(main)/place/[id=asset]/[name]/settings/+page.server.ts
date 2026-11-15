@@ -19,6 +19,7 @@ import { encode } from "$lib/urlName"
 import clientVersions from "../../../../games/create/clientVersions"
 import type { Actions, PageServerLoadEvent } from "./$types"
 import type { RequestEvent } from "./$types.d"
+import privacyQuery from "./privacy.surql"
 import privateTicketQuery from "./privateTicket.surql"
 import serverTicketQuery from "./serverTicket.surql"
 import settingsQuery from "./settings.surql"
@@ -178,7 +179,10 @@ actions.privacy = async e => {
 
 	const { privateServer } = form.data
 
-	await db.update(Record("place", id)).merge({ privateServer })
+	await db.query(privacyQuery, {
+		place: Record("place", id),
+		privateServer,
+	})
 	return message(form, "Privacy settings updated successfully!")
 }
 actions.privatelink = async e => {

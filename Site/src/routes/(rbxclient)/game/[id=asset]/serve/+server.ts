@@ -1,7 +1,7 @@
-import { timingSafeEqual } from "node:crypto"
 import { error } from "@sveltejs/kit"
 import { env } from "$env/dynamic/private"
 import config from "$lib/server/config"
+import constantTimeEqual from "$lib/server/constantTimeEqual"
 import idToPort from "$lib/server/idToPort"
 import { buildLoadscript } from "$lib/server/loadscript"
 import { SignScript } from "$lib/server/sign"
@@ -13,13 +13,6 @@ interface Place {
 	id: number
 	serverPort: number
 	serverTicket: string
-}
-
-function constantTimeEqual(a: string, b: string): boolean {
-	const ah = Buffer.from(a)
-	const bh = Buffer.from(b)
-	if (ah.byteLength !== bh.byteLength) return false
-	return timingSafeEqual(ah, bh)
 }
 
 export async function GET({ params, request }: RequestEvent) {

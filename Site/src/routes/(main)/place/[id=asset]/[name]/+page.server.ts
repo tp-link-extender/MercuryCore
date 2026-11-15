@@ -3,6 +3,7 @@ import { error, redirect } from "@sveltejs/kit"
 import { Place as EconPlace } from "economy/types"
 import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
+import constantTimeEqual from "$lib/server/constantTimeEqual"
 import {
 	economyConnFailed,
 	itemOwner,
@@ -48,6 +49,12 @@ interface Place extends FoundPlace {
 
 const thumbnails = config.Images.DefaultPlaceThumbnails
 
+/** Whether the ticket supplied by the client opens a private place. */
+const ticketMatches = (supplied: unknown, place: FoundPlace): boolean =>
+	typeof supplied === "string" &&
+	supplied !== "" &&
+	constantTimeEqual(supplied, place.privateTicket)
+
 export async function load({
 	fetch: f,
 	locals,
@@ -68,14 +75,15 @@ export async function load({
 	place.ownerUser = owner.value
 
 	const isOwner = place.ownerUser?.id === user.id
-	if (
-		!isOwner &&
-		place.privateServer &&
-		privateTicket !== place.privateTicket
-	)
+	const hasTicket = ticketMatches(privateTicket, place)
+	if (!isOwner && place.privateServer && !hasTicket)
 		error(404, "Place not found")
 
 	if (!isOwner && user.permissionLevel !== 5) place.serverTicket = ""
+	// Non-owners only get back the ticket they came with, so seeing a place while it's public doesn't give access once it's private
+	if (!isOwner)
+		place.privateTicket =
+			place.privateServer && hasTicket ? place.privateTicket : ""
 
 	// ahh, reminds me of early Mercury 2
 	const slug = encode(place.name)
@@ -116,7 +124,7 @@ async function findPlace(
 	if (
 		!owns.value &&
 		place.privateServer &&
-		privateTicket !== place.privateTicket
+		!ticketMatches(privateTicket, place)
 	)
 		error(404, "Place not found")
 
