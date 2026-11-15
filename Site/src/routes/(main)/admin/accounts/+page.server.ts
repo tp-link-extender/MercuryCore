@@ -1,24 +1,7 @@
-import { type } from "arktype"
 import { authorise } from "$lib/server/auth"
-import formError from "$lib/server/formError"
-import { hashPassword } from "$lib/server/password"
-import ratelimit from "$lib/server/ratelimit"
-import { db, Record } from "$lib/server/surreal"
-import {
-	arktype,
-	errMessage,
-	message,
-	superValidate,
-} from "$lib/server/validate"
-import { usernameTest } from "$lib/typeTests"
-import type { Actions, PageServerLoadEvent } from "./$types"
-import updatePasswordQuery from "./updatePassword.surql"
+import { db } from "$lib/server/surreal"
+import type { PageServerLoadEvent } from "./$types"
 import usersQuery from "./users.surql"
-
-const schema = type({
-	password: "16 <= string <= 6969",
-	username: usernameTest,
-})
 
 export async function load({ locals }: PageServerLoadEvent) {
 	await authorise(locals, 4)
@@ -26,40 +9,6 @@ export async function load({ locals }: PageServerLoadEvent) {
 	const [users] = await db.query<BasicUser[][]>(usersQuery)
 
 	return {
-		form: await superValidate(null, arktype(schema)),
 		users,
 	}
-}
-
-export const actions: Actions = {}
-actions.changePassword = async ({ locals, request, getClientAddress }) => {
-	const { user } = await authorise(locals, 5)
-	const form = await superValidate(request, arktype(schema))
-	if (!form.valid) return formError(form)
-
-	const limit = ratelimit(form, "changePassword", getClientAddress, 30)
-	if (limit) return limit
-
-	const { username, password } = form.data
-	form.data.password = ""
-
-	try {
-		// oxlint-disable-next-line unicorn/no-unreadable-array-destructuring -- the query returns [result, loop result, ok]
-		const [, , ok] = await db.query<boolean[]>(updatePasswordQuery, {
-			npassword: await hashPassword(password),
-			username,
-		})
-		if (!ok) return errMessage(form, "No user found with given username")
-	} catch (e) {
-		console.error(e)
-		return errMessage(form, "An error occurred")
-	}
-
-	await db.run("fn::auditLog", [
-		"Account",
-		`Change account password for ${username}`,
-		Record("user", user.id),
-	])
-
-	return message(form, "Password changed successfully!")
 }

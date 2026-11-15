@@ -35,7 +35,7 @@
 	<div class={["w-full", { "md:w-3/4": label }]}>
 		<!-- TODO: prevent tabs in textarea caused by... the formatter.... -->
 		<textarea
-			{...formData.fields[name].as("text")}
+			{...formData.fields[name].as("text", defaultValue)}
 			{...rest}
 			{name}
 			id={name}

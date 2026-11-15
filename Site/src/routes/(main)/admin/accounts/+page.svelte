@@ -6,12 +6,9 @@
 	import Tab from "$components/Tab.svelte"
 	import TabData from "$components/TabData"
 	import User from "$components/User.svelte"
-	import { superForm } from "$lib/validate"
+	import { formData } from "./accounts.remote.js"
 
 	const { data } = $props()
-
-	let formData = $derived(superForm(data.form))
-	export const snapshot = formData
 
 	let tabData = $state(
 		TabData(
@@ -34,10 +31,7 @@
 
 <SidebarShell bind:tabData>
 	<Tab bind:tabData>
-		<Form
-			{formData}
-			submit="<fa fa-key></fa> Change password"
-			action="?/changePassword">
+		<Form {formData} submit="<fa fa-key></fa> Change password">
 			<Input {formData} name="username" label="Username" />
 			<Input
 				{formData}

@@ -1,22 +1,27 @@
-<script lang="ts">
+<script lang="ts" generics="T extends RemoteFormInput">
+	import type { HTMLTextareaAttributes } from "svelte/elements"
+	import type { ClientForm, ExtractId } from "$lib/validate"
+
 	const {
 		name,
 		label = "",
 		help = "",
 		placeholder = "",
-		rows,
+		rows = 3,
+		defaultValue = "",
 		formData,
 		...rest
 	}: {
-		name: string
+		name: ExtractId<T>
 		label?: string
 		help?: string
 		placeholder?: string
 		rows?: number
-		formData: import("$lib/validate").DynamicSuperForm
-	} = $props()
+		defaultValue?: string
+		formData: ClientForm<T>
+	} & HTMLTextareaAttributes = $props()
 
-	const { form, errors, constraints } = formData
+	let issues = $derived(formData.fields[name]?.issues() || [])
 </script>
 
 <div class="flex flex-wrap pb-8">
@@ -27,14 +32,12 @@
 	{/if}
 	<div class={["w-full", { "md:w-3/4": label }]}>
 		<textarea
+			{...formData.fields[name].as("text", defaultValue)}
 			{...rest}
-			bind:value={$form[name]}
-			{...$constraints[name]}
 			{name}
 			id={name}
 			{rows}
-			placeholder={placeholder || null}
-			class={{ "is-invalid": $errors[name] }}>
+			placeholder={placeholder || null}>
 		</textarea>
 
 		{#if help}
@@ -43,8 +46,10 @@
 			</small>
 		{/if}
 
-		<small class="pb-4 text-red-500">
-			{$errors[name] || ""}
-		</small>
+		{#each issues as issue}
+			<small class="block text-red-500">
+				{issue.message}
+			</small>
+		{/each}
 	</div>
 </div>

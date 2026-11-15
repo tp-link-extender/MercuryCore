@@ -1,71 +1,11 @@
-import { redirect } from "@sveltejs/kit"
-import { type } from "arktype"
-import { createGroup, prices } from "economy/api"
-import { User } from "economy/types"
-import { authorise } from "$lib/server/auth"
+import { prices } from "economy/api"
 import exclude from "$lib/server/exclude"
-import formError from "$lib/server/formError"
-import { db, findWhere, Record } from "$lib/server/surreal"
-import { arktype, superValidate } from "$lib/server/validate"
-import type { Actions, PageServerLoadEvent } from "./$types"
-import createQuery from "./create.surql"
-
-const schema = type({
-	name: "3 <= string <= 40",
-})
+import type { PageServerLoadEvent } from "./$types"
 
 export async function load({ fetch: f }: PageServerLoadEvent) {
 	exclude("Groups")
 	const p = await prices(f)
 	return {
-		form: await superValidate(arktype(schema)),
 		price: p.ok ? p.value.groupPrice : 0n,
 	}
-}
-
-const errors: { [_: string]: string } = Object.freeze({
-	changed: "Dickhead",
-	create: Buffer.from("ZHVtYiBuKiBkZXRlY3RlZA==", "base64").toString(),
-	wisely: "GRRRRRRRRRRRRRRRRRRRRR!!!!!!!!!!!!!!!!!",
-})
-
-export const actions: Actions = {}
-actions.default = async ({ fetch: f, locals, request }) => {
-	exclude("Groups")
-	const { user } = await authorise(locals)
-	const form = await superValidate(request, arktype(schema))
-	if (!form.valid) return formError(form)
-
-	const { name } = form.data
-	const lowercaseName = name.toLowerCase()
-	if (errors[lowercaseName])
-		return formError(form, ["name"], [errors[lowercaseName]])
-
-	const foundGroup = await findWhere(
-		"group",
-		"string::lowercase(name) = $lowercaseName",
-		{ lowercaseName }
-	)
-	if (foundGroup)
-		return formError(
-			form,
-			["name"],
-			["A group with this name already exists"]
-		)
-
-	const created = await createGroup(f, new User(user.id))
-	if (!created.ok)
-		return formError(form, ["other"], ["Failed to create group"])
-
-	// The Economy service issues the group's ID, and the database record
-	// uses it as its own ID so ownership can be resolved from the ledger.
-	const groupId = created.value.ID
-
-	await db.query(createQuery, {
-		economyId: groupId,
-		name,
-		user: Record("user", user.id),
-	})
-
-	redirect(302, `/groups/${groupId}`)
 }

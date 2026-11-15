@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
 	import Head from "$components/Head.svelte"
@@ -8,13 +7,9 @@
 	import TabData from "$components/TabData"
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
-	import { superForm } from "$lib/validate"
+	import { disableForm, formData } from "./regkeys.remote.js"
 
 	const { data } = $props()
-
-	let formData = $derived(superForm(data.form))
-	export const snapshot = formData
-	let { form } = $derived(formData)
 
 	const tomorrow = new Date(Date.now() + 86400e3).toISOString().slice(0, 10)
 
@@ -39,13 +34,13 @@
 
 <SidebarShell bind:tabData class="max-w-280">
 	<Tab bind:tabData>
-		<Form {formData} action="?/create" submit="Create">
+		<Form {formData} submit="Create">
 			<Input
 				{formData}
 				name="enableRegKeyCustom"
 				label="Enable custom key"
 				type="checkbox" />
-			{#if $form.enableRegKeyCustom}
+			{#if formData.fields.enableRegKeyCustom.value()}
 				<div transition:fade>
 					<Input
 						{formData}
@@ -59,7 +54,7 @@
 				name="enableRegKeyExpiry"
 				label="Enable expiry"
 				type="checkbox" />
-			{#if $form.enableRegKeyExpiry}
+			{#if formData.fields.enableRegKeyExpiry.value()}
 				<div transition:fade>
 					<Input
 						{formData}
@@ -88,12 +83,12 @@
 			</thead>
 			<tbody>
 				{#each data.regKeys as regKey}
+					{const disable = disableForm.for(regKey.id)}
 					<tr>
 						<td>
-							<form
-								use:enhance
-								method="post"
-								action="?/disable&id={regKey.id}">
+							<form {...disable}>
+								<input
+									{...disable.fields.id.as("hidden", regKey.id)} />
 								<button
 									class="btn btn-sm no-underline text-red-500 my-0">
 									<fa fa-ban></fa>
