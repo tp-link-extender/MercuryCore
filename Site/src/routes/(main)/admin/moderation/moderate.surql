@@ -4,3 +4,4 @@ RELATE $user->moderation->$moderatee CONTENT {
 	timeEnds: $timeEnds,
 	type: $moderationAction,
 };
+fn::auditLog("Moderation", $note, $user);
