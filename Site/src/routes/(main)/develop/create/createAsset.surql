@@ -1,4 +1,6 @@
+# The image is only the texture of the item, so it isn't sold on its own
 LET $imageAsset = CREATE ONLY asset CONTENT {
+	forSale: false,
 	id: $imageAssetId,
 	name: $name,
 	type: 1,

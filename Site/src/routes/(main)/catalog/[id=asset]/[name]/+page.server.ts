@@ -114,6 +114,7 @@ export async function load({ fetch: f, locals, params }: RequestEvent) {
 	return {
 		asset: {
 			...asset,
+			forSale: asset.forSale && asset.type !== 1,
 			isOwner,
 			items,
 			price: BigInt(asset.price),
@@ -250,7 +251,9 @@ actions.buy = async e => {
 	if (!asset) error(404, "Not Found")
 	if (asset.visibility !== "Visible")
 		error(400, "This item hasn't been approved yet")
-	if (!asset.forSale) error(400, "This item is not for sale")
+	// Images are the textures of other items, and older ones were created as for sale
+	if (!asset.forSale || asset.type === 1)
+		error(400, "This item is not for sale")
 
 	// The buyer confirms the price they were shown, so a price change after they opened the dialog can't charge them more
 	const data = await e.request.formData()
