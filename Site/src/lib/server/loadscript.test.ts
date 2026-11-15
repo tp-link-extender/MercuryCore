@@ -2,7 +2,8 @@ import { describe, expect, test } from "bun:test"
 import { isValidMapName } from "../mapName"
 import {
 	buildLoadscript,
-	luaRaw,
+	luaId,
+	luaName,
 	luaString,
 	parseMapLocation,
 } from "./loadscript"
@@ -162,13 +163,13 @@ describe("buildLoadscript", () => {
 		)
 	})
 
-	test("escapes raw values and numbers inside strings", () => {
+	test("writes ids and numbers as content inside strings", () => {
 		const script = buildLoadscript("print'place _PLACE_ID port _PORT'", {
-			PLACE_ID: luaRaw("1'2"),
+			PLACE_ID: luaId(123),
 			PORT: 53640,
 		})
 
-		expect(script).toBe(String.raw`print'place 1\0392 port 53640'`)
+		expect(script).toBe("print'place 123 port 53640'")
 	})
 
 	test("only replaces whole identifiers", () => {
@@ -225,12 +226,30 @@ describe("buildLoadscript", () => {
 		)
 	})
 
-	test("leaves trusted raw values as source", () => {
+	test("leaves trusted names as source", () => {
 		const script = buildLoadscript("local m=_MEMBERSHIP_TYPE", {
-			MEMBERSHIP_TYPE: luaRaw("Enum.MembershipType.None"),
+			MEMBERSHIP_TYPE: luaName("Enum.MembershipType.None"),
 		})
 
 		expect(script).toBe("local m=Enum.MembershipType.None")
+	})
+
+	test("refuses names and ids that could be source", () => {
+		for (const name of [
+			"",
+			"Enum. MembershipType.None",
+			"Enum.MembershipType.None; print(1)",
+			'Enum.MembershipType["None"]',
+			"1Name",
+			"a.b-c",
+		])
+			expect(() => luaName(name)).toThrow("not a Lua identifier")
+
+		for (const id of [-1, 1.5, Number.NaN, Number.POSITIVE_INFINITY])
+			expect(() => luaId(id)).toThrow("non-negative safe integer")
+
+		expect(luaId(0)).toEqual({ raw: "0" })
+		expect(luaId(987654321)).toEqual({ raw: "987654321" })
 	})
 
 	test.skipIf(!luau).each(payloads)(

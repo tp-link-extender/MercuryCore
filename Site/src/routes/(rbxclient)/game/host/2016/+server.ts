@@ -1,7 +1,6 @@
 import { error } from "@sveltejs/kit"
 import config from "$lib/server/config"
-import { buildLoadscript, luaRaw } from "$lib/server/loadscript"
-import { toRawId } from "$lib/server/recordId"
+import { buildLoadscript, luaId } from "$lib/server/loadscript"
 import { SignScript } from "$lib/server/sign"
 import { db } from "$lib/server/surreal"
 import placeQuery from "../place.surql"
@@ -30,7 +29,7 @@ export async function GET({ url }: RequestEvent) {
 	const script = buildLoadscript(await scriptFile.text(), {
 		BASE_URL: config.Domain,
 		MAP_LOCATION: "rbxasset://mbdtf.rbxl", // TODO: remove hardcoded map
-		PLACE_ID: luaRaw(toRawId(serverId)),
+		PLACE_ID: luaId(serverId),
 		SERVER_PORT: port,
 	})
 

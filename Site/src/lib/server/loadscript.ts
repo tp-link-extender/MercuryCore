@@ -41,8 +41,25 @@ export interface LoadscriptValues {
 	[_: string]: LoadscriptValue
 }
 
-/** Marks a value as trusted Lua source rather than a string literal. */
-export const luaRaw = (value: string): RawLua => ({ raw: value })
+/** Lua identifiers, optionally dotted, such as `Enum.MembershipType.None`. */
+const luaNamePattern = /^[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*$/
+
+/**
+ * Marks a value as trusted Lua source rather than a string literal.
+ * Only for names this codebase writes itself, never for anything a user can influence: the value is written as-is.
+ */
+export const luaName = (value: string): RawLua => {
+	if (!luaNamePattern.test(value))
+		throw new TypeError("Loadscript name is not a Lua identifier")
+	return { raw: value }
+}
+
+/** Marks a numeric id as trusted Lua source rather than a string literal. */
+export const luaId = (id: number): RawLua => {
+	if (!Number.isSafeInteger(id) || id < 0)
+		throw new TypeError("Loadscript id must be a non-negative safe integer")
+	return { raw: id.toString() }
+}
 
 const placeholder = /^_([A-Z][A-Z0-9_]*)$/
 const word = /[A-Za-z0-9_]+/y
