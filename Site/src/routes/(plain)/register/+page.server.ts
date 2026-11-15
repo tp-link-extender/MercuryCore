@@ -13,6 +13,7 @@ import { usernameTest } from "$lib/typeTests"
 import accountRegistered from "../accountRegistered"
 import type { Actions } from "./$types"
 import createUserQuery from "./createUser.surql"
+import initialAccountQuery from "./initialAccount.surql"
 import regkeyCheckQuery from "./regkeyCheck.surql"
 
 const schemaInitial = type({
@@ -161,14 +162,29 @@ actions.initialAccount = async ({ fetch: f, cookies, request }) => {
 
 	// This is the kind of stuff that always breaks due to never getting tested
 	// Remember: untested === unworking
-	const results = await db.query<RecordId<"user">[]>(createUserQuery, {
-		bodyColours: config.DefaultBodyColors,
-		email: "",
-		hashedPassword: await hashPassword(password),
-		permissionLevel: 5,
-		username,
-	})
-	const user = results.at(-1)
+	const hashedPassword = await hashPassword(password)
+	let user: RecordId<"user"> | undefined
+	try {
+		const results = await db.query<RecordId<"user">[]>(
+			initialAccountQuery,
+			{
+				bodyColours: config.DefaultBodyColors,
+				hashedPassword,
+				username,
+			}
+		)
+		// The last result is COMMIT's, so the user is the one before it
+		user = results.at(-2)
+	} catch (err) {
+		// Another request created the initial account first
+		if (await accountRegistered())
+			return formError(
+				form,
+				["username"],
+				["There's already an account registered"]
+			)
+		throw err
+	}
 	if (!user) throw new Error("Failed to create initial account")
 
 	try {
