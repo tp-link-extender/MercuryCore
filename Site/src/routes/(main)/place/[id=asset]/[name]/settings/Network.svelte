@@ -2,49 +2,47 @@
 	import Form from "$components/forms/Form.svelte"
 	import Input from "$components/forms/Input.svelte"
 	import Select from "$components/forms/Select.svelte"
-	import { superForm } from "$lib/validate"
+	import { networkForm } from "./settings.remote.js"
 
-	const {
-		data
-	}: {
-		data: import("./$types").PageData
-	} = $props()
+	const { data }: { data: import("./$types").PageData } = $props()
 
-	let formData = $derived(superForm(data.networkForm))
-	let { form } = $derived(formData)
-
-	if (data.dedicated) $form.dedicated = data.dedicated
-	if (data.serverAddress) $form.serverAddress = data.serverAddress
-	if (data.serverPort) $form.serverPort = data.serverPort
-	if (data.maxPlayers) $form.maxPlayers = data.maxPlayers
+	const networkFormFor = networkForm.for(data.id)
+	const dedicated = $derived(
+		networkFormFor.fields.dedicated.value() ?? data.dedicated
+	)
 </script>
 
-<Form
-	{formData}
-	submit=" <fa fa-save></fa> Save changes"
-	action="?/network&tab=Network">
+<Form formData={networkFormFor} submit=" <fa fa-save></fa> Save changes">
 	<Input
-		{formData}
+		formData={networkFormFor}
 		name="dedicated"
 		label="Dedicated server"
-		type="checkbox" />
+		type="checkbox"
+		defaultValue={data.dedicated} />
 	<Input
-		{formData}
-		disabled={$form.dedicated}
+		formData={networkFormFor}
+		disabled={dedicated}
 		name="serverAddress"
-		label="Address" />
+		label="Address"
+		defaultValue={data.serverAddress} />
 	<Input
-		{formData}
-		disabled={$form.dedicated}
+		formData={networkFormFor}
+		disabled={dedicated}
 		name="serverPort"
 		label="Port"
 		type="number"
+		defaultValue={data.serverPort.toString()}
 		help="Using a port number lower than 49152 may not work correctly." />
 	<Select
-		{formData}
+		formData={networkFormFor}
 		name="clientVersion"
 		label="Client version"
 		options={data.clientVersions}
-		selected={data.clientVersion} />
-	<Input {formData} name="maxPlayers" label="Server limit" type="number" />
+		selected={data.clientVersion.toString()} />
+	<Input
+		formData={networkFormFor}
+		name="maxPlayers"
+		label="Server limit"
+		type="number"
+		defaultValue={data.maxPlayers.toString()} />
 </Form>

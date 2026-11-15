@@ -11,7 +11,7 @@ import { assetRegex } from "$lib/paramTests"
 import { authorise } from "$lib/server/auth"
 import { economyConnFailed } from "$lib/server/economy"
 import { packageItems } from "$lib/server/packageItems"
-import ratelimit from "$lib/server/ratelimit"
+import { ratelimit } from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { db, Record } from "$lib/server/surreal"
 import type { Actions, PageServerLoadEvent } from "./$types"
@@ -136,7 +136,7 @@ async function getEquipData(e: RequestEvent) {
 	if (!assetRegex.test(assetId)) error(400, `Invalid asset ID: ${assetId}`)
 	const id = Number(assetId)
 
-	const limit = ratelimit(null, "equip", e.getClientAddress, 2)
+	const limit = ratelimit("equip", e.getClientAddress, 2)
 	if (limit) return { error: limit }
 
 	const [[asset]] = await db.query<AssetData[][]>(equipDataQuery, {
@@ -202,7 +202,7 @@ async function paint({ fetch: f, locals, url }: RequestEvent) {
 async function regen({ fetch: f, locals, getClientAddress }: RequestEvent) {
 	const { user } = await authorise(locals)
 
-	const limit = ratelimit(null, "regen", getClientAddress, 2)
+	const limit = ratelimit("regen", getClientAddress, 2)
 	if (limit) return limit
 
 	return rerender(f, user)

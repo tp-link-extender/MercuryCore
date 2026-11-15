@@ -38,7 +38,6 @@
 		"surrealdb": "^2.2.2",
 		"svelte": "^5.57.3",
 		"svelte-inview": "^4.0.5",
-		"sveltekit-superforms": "^2.31.0",
 		"typescript": "^7.0.2",
 		"unocss": "^66.12.0",
 		"vite": "^8.3.6"

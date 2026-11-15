@@ -1,15 +1,12 @@
 <script lang="ts">
-	import { page } from "$app/state"
-	import { superForm } from "$lib/validate"
+	import { ticketForm } from "./settings.remote.js"
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	let { message, enhance, delayed } = $derived(superForm(data.ticketForm, {
-		id: "ticket"
-	}))
+	const ticketFormFor = ticketForm.for(data.id)
 </script>
 
-<form use:enhance method="post" action="?/ticket&tab=Network">
+<form {...ticketFormFor}>
 	<fieldset class="flex flex-wrap pb-4">
 		<label for="ticket" class="w-full md:w-1/4">Server ticket</label>
 		<div class="w-full md:w-3/4">
@@ -20,14 +17,14 @@
 					value={data.serverTicket}
 					disabled />
 				<button
-					class="btn btn-{$message && page.status === 200
+					class="btn btn-{ticketFormFor.result?.success
 						? 'success'
 						: 'secondary'}">
 					<fa fa-rotate></fa>
-					{#if $delayed}
+					{#if ticketFormFor.pending > 0}
 						Working...
 					{:else}
-						{$message || "Regenerate"}
+						{ticketFormFor.result?.success || "Regenerate"}
 					{/if}
 				</button>
 			</div>

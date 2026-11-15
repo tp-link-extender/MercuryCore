@@ -1,22 +1,12 @@
 // TODO: Possibly move this to the database instead of server state
 
 import { fail } from "@sveltejs/kit"
-import { message, type SuperValidated } from "$lib/server/validate"
 import type { Issues } from "$lib/validate"
 import { FixedWindow } from "./fixedWindow"
 
 const windows = new FixedWindow()
 
-type Form = SuperValidated<
-	{ [_: string]: unknown },
-	unknown,
-	{ [_: string]: unknown }
-> | null
-
 const msg = "Too many requests"
-
-const limit = (form: Form) =>
-	form ? message(form, msg, { status: 429 }) : fail(429, { msg })
 
 // Fails closed: when the address can't be determined (for example ADDRESS_HEADER is set but the request didn't come through the proxy), such requests share one bucket instead of going unlimited
 const address = (getClientAddress: () => string) => {
@@ -48,21 +38,40 @@ function hit(
 	return true
 }
 
+/** Allows for a function to be ratelimited by a category, and returns a 429 failure if too many requests are sent.
+ * @param category The category to ratelimit by.
+ * @param getClientAddress The client's IP address, set by the adapter. Behind a proxy this relies on ADDRESS_HEADER and XFF_DEPTH being set.
+ * @param timeWindow The length of the time window in seconds. It starts at the first request, and the count resets when it ends.
+ * @param maxRequests The maximum number of requests allowed in the time window.
+ * @returns A failure with a "Too many requests" message, if the ratelimit is exceeded.
+ * @example
+ *	const limit = ratelimit("comment", getClientAddress, 5)
+ *	if (limit) return limit
+ */
+export function ratelimit(
+	category: string,
+	getClientAddress: () => string,
+	timeWindow: number,
+	maxRequests = 1
+) {
+	if (hit(category, address(getClientAddress), timeWindow, maxRequests))
+		return fail(429, { msg })
+}
+
 /** Like `ratelimit`, but counts requests under a key chosen by the caller, such as a username, instead of the client's address.
- * @param form The superForm object sent by the client. Can be null, in which case a fail object is returned.
  * @param category The category to ratelimit by.
  * @param key What to count requests by within the category.
  * @param timeWindow The length of the time window in seconds.
  * @param maxRequests The maximum number of requests allowed in the time window.
+ * @returns A failure with a "Too many requests" message, if the ratelimit is exceeded.
  */
 export function ratelimitKey(
-	form: Form,
 	category: string,
 	key: string,
 	timeWindow: number,
 	maxRequests = 1
 ) {
-	if (hit(category, key, timeWindow, maxRequests)) return limit(form)
+	if (hit(category, key, timeWindow, maxRequests)) return fail(429, { msg })
 }
 
 /** Allows for a remote form function to be ratelimited by a category, and returns a 429 issue if too many requests are sent.
@@ -103,32 +112,3 @@ export function ratelimitRemoteKey(
 ) {
 	if (hit(category, key, timeWindow, maxRequests)) return issues(msg)
 }
-
-/** Allows for a function to be ratelimited by a category, and returns a 429 failure if too many requests are sent.
- * @param form The superForm object sent by the client. Can be null, in which case a fail object is returned.
- * @param category The category to ratelimit by.
- * @param getClientAddress The client's IP address, set by the adapter. Behind a proxy this relies on ADDRESS_HEADER and XFF_DEPTH being set.
- * @param timeWindow The length of the time window in seconds. It starts at the first request, and the count resets when it ends.
- * @param maxRequests The maximum number of requests allowed in the time window.
- * @returns The form object with a "Too many requests" error, if the ratelimit is exceeded.
- * @example
- *	const limit = ratelimit(form, "comment", getClientAddress, 5)
- *	if (limit) return limit
- */
-function ratelimit(
-	form: Form,
-	category: string,
-	getClientAddress: () => string,
-	timeWindow: number,
-	maxRequests = 1
-) {
-	return ratelimitKey(
-		form,
-		category,
-		address(getClientAddress),
-		timeWindow,
-		maxRequests
-	)
-}
-
-export default ratelimit

@@ -19,7 +19,6 @@ export const formData = form(schema, async ({ description, name }, issues) => {
 	await authorise(locals, 5)
 	// Conflicts with /forum/create
 	if (name.toLowerCase() === "create")
-		// return formError(form, ["name"], ["Can't park there mate"])
 		return issues.name("Can't park there mate")
 
 	const limit = ratelimitRemote(issues, "forumCategory", getClientAddress, 30)

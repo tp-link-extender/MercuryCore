@@ -145,7 +145,7 @@ export const actions: Actions = { rerender }
 actions.follow = async e => {
 	const { user, params } = await getInteractData(e)
 	// Following, unfollowing and following again sends a new notification each time
-	const limit = ratelimitKey(null, "follow", user.id, 600, 30)
+	const limit = ratelimitKey("follow", user.id, 600, 30)
 	if (limit) return limit
 
 	await db.query(followQuery, {
@@ -164,7 +164,7 @@ actions.unfriend = async e => {
 }
 actions.request = async e => {
 	const { user, params } = await getInteractData(e)
-	const limit = ratelimitKey(null, "friendRequest", user.id, 600, 30)
+	const limit = ratelimitKey("friendRequest", user.id, 600, 30)
 	if (limit) return limit
 
 	// Make sure users are not already friends

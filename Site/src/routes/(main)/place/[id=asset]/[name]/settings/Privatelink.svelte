@@ -1,15 +1,10 @@
 <script lang="ts">
-	import { page } from "$app/state"
 	import fade from "$lib/fade"
-	import { superForm } from "$lib/validate"
+	import { privatelinkForm } from "./settings.remote.js"
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	let { message, enhance, delayed } = $derived(
-		superForm(data.privatelinkForm, {
-			id: "privatelink"
-		})
-	)
+	const privatelinkFormFor = privatelinkForm.for(data.id)
 
 	let value = $derived(
 		encodeURI(
@@ -20,7 +15,7 @@
 	let copiedSuccess = $state(false)
 </script>
 
-<form use:enhance method="post" action="?/privatelink&tab=Privacy">
+<form {...privatelinkFormFor}>
 	<fieldset class="flex flex-wrap pb-2">
 		<label for="privateLink" class="w-full md:w-1/4">
 			Private server link
@@ -29,6 +24,7 @@
 			<div class="input-group">
 				<input id="privateLink" {value} disabled />
 				<button
+					type="button"
 					onclick={() => {
 						navigator.clipboard.writeText(value)
 						copiedSuccess = true
@@ -39,14 +35,14 @@
 					<fa fa-copy></fa>
 				</button>
 				<button
-					class="btn btn-{$message && page.status === 200
+					class="btn btn-{privatelinkFormFor.result?.success
 						? 'success'
 						: 'secondary'}">
 					<fa fa-rotate></fa>
-					{#if $delayed}
+					{#if privatelinkFormFor.pending > 0}
 						Working...
 					{:else}
-						{$message || "Regenerate"}
+						{privatelinkFormFor.result?.success || "Regenerate"}
 					{/if}
 				</button>
 			</div>

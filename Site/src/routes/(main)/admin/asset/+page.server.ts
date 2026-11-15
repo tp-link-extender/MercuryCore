@@ -7,7 +7,7 @@ import {
 	economyConnFailed,
 	type OwnedUser,
 } from "$lib/server/economy"
-import ratelimit from "$lib/server/ratelimit"
+import { ratelimit } from "$lib/server/ratelimit"
 import requestRender from "$lib/server/requestRender"
 import { db, Record } from "$lib/server/surreal"
 import type { Actions, PageServerLoadEvent } from "./$types"
@@ -97,7 +97,7 @@ actions.deny = async e => {
 }
 actions.rerender = async e => {
 	const { id } = await getData(e)
-	const limit = ratelimit(null, "rerender", e.getClientAddress, 10)
+	const limit = ratelimit("rerender", e.getClientAddress, 10)
 	if (limit) return limit
 
 	try {

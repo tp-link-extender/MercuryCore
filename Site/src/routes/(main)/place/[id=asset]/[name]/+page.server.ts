@@ -13,7 +13,7 @@ import {
 } from "$lib/server/economy"
 import formData from "$lib/server/formData"
 import { closeGameserver, startGameserver } from "$lib/server/orbiter"
-import ratelimit, { ratelimitKey } from "$lib/server/ratelimit"
+import { ratelimit, ratelimitKey } from "$lib/server/ratelimit"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
 import type { Actions, PageServerLoadEvent } from "./$types"
@@ -174,8 +174,8 @@ actions.start = async ({
 	if (!usesDedicated(_place.dedicated)) return { dedicated: false }
 
 	const limit =
-		ratelimit(null, "serverstart", getClientAddress, 20) ||
-		ratelimitKey(null, "serverstart", user.id, 20)
+		ratelimit("serverstart", getClientAddress, 20) ||
+		ratelimitKey("serverstart", user.id, 20)
 	if (limit) return limit
 
 	// check for existence of a place file

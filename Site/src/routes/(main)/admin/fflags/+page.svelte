@@ -9,13 +9,7 @@
 	import User from "$components/User.svelte"
 	import fade from "$lib/fade"
 
-	//import { superForm } from "$lib/validate"
-
 	const { data } = $props()
-
-	//let formData = $derived(superForm(data.form))
-	//export const snapshot = formData
-	//let { form } = $derived(formData)
 
 	const tomorrow = new Date(Date.now() + 86400e3).toISOString().slice(0, 10)
 
