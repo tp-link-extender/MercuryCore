@@ -72,10 +72,25 @@
 				return
 			}
 
+			let start: { status: number; data?: { dedicated?: boolean } }
 			try {
-				await fetch(`${currentPath}?/start`, privateFetchParams())
+				const response = await fetch(
+					`${currentPath}?/start`,
+					privateFetchParams()
+				)
+				start = deserialize(await response.text()) as typeof start
 			} catch {
 				current = "fail"
+				return
+			}
+			// 429 means a start was already requested recently, so wait for that server instead
+			if (start.status !== 200 && start.status !== 429) {
+				current = "fail"
+				return
+			}
+			// A self-hosted place has no dedicated server to wait for
+			if (start.status === 200 && !start.data?.dedicated) {
+				launch(joinscripturl)
 				return
 			}
 

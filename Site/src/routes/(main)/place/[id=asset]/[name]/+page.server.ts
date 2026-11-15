@@ -4,6 +4,7 @@ import { Place as EconPlace } from "economy/types"
 import { authorise } from "$lib/server/auth"
 import config from "$lib/server/config"
 import constantTimeEqual from "$lib/server/constantTimeEqual"
+import { usesDedicated } from "$lib/server/dedicated"
 import {
 	economyConnFailed,
 	itemOwner,
@@ -12,7 +13,7 @@ import {
 } from "$lib/server/economy"
 import formData from "$lib/server/formData"
 import { closeGameserver, startGameserver } from "$lib/server/orbiter"
-import ratelimit from "$lib/server/ratelimit"
+import ratelimit, { ratelimitKey } from "$lib/server/ratelimit"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import { couldMatch, encode } from "$lib/urlName"
 import type { Actions, PageServerLoadEvent } from "./$types"
@@ -22,6 +23,7 @@ import placeQuery from "./place.surql"
 
 interface FoundPlace {
 	clientVersion: number
+	dedicated: boolean
 	privateServer: boolean
 	privateTicket: string
 }
@@ -166,19 +168,22 @@ actions.start = async ({
 	getClientAddress,
 }) => {
 	const user = await checkUser(locals)
-
-	const limit = ratelimit(null, "serverstart", getClientAddress, 20)
-	if (limit) return limit
-
 	const id = Number(params.id)
-	const [_place, _placeR] = await findPlace(f, request, id, user)
+	const [_place] = await findPlace(f, request, id, user)
+	// Self-hosted places don't use a dedicated server, so there's nothing to start
+	if (!usesDedicated(_place.dedicated)) return { dedicated: false }
+
+	const limit =
+		ratelimit(null, "serverstart", getClientAddress, 20) ||
+		ratelimitKey(null, "serverstart", user.id, 20)
+	if (limit) return limit
 
 	// check for existence of a place file
 	const placeFile = `../data/places/${id}`
 	if (!fs.existsSync(placeFile)) error(404, "Place file not found")
 
 	const res = await startGameserver(f, id, _place.clientVersion)
-	if (res.ok) return
+	if (res.ok) return { dedicated: true }
 
 	console.error("Failed to start dedicated gameserver for id", id, res.msg)
 	error(500, "Failed to start dedicated server")

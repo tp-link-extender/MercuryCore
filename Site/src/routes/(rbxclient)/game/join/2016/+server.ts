@@ -1,5 +1,6 @@
 import { error } from "@sveltejs/kit"
 import config from "$lib/server/config"
+import { usesDedicated } from "$lib/server/dedicated"
 import idToPort, { proxyOffset } from "$lib/server/idToPort"
 import { SignData } from "$lib/server/sign"
 import { db, findWhere, Record } from "$lib/server/surreal"
@@ -68,13 +69,8 @@ interface Session {
 	}
 }
 
-const serverDedicated = (dedicated: boolean) =>
-	config.Gameservers.Hosting === "Both"
-		? dedicated
-		: config.Gameservers.Hosting === "Dedicated"
-
 function serverInfo(place: Session["place"]): ServerAddress {
-	if (!serverDedicated(place.dedicated)) return place
+	if (!usesDedicated(place.dedicated)) return place
 
 	const url = new URL(config.Orbiter.PublicURL)
 	return {

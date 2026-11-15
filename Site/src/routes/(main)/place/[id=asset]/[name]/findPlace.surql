@@ -1,5 +1,6 @@
 SELECT
 	privateServer,
 	privateTicket,
-	clientVersion
+	clientVersion,
+	dedicated
 FROM $place;
