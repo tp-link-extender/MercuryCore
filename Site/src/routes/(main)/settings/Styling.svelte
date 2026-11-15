@@ -32,7 +32,7 @@
 				if (!style) style = document.createElement("style")
 
 				style.id = "custom-css"
-				style.innerHTML = $form.css
+				style.textContent = $form.css
 				document.body.appendChild(style)
 			}}>
 			Preview

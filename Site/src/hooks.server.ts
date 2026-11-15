@@ -12,6 +12,7 @@ import {
 } from "$lib/server/auth"
 import config from "$lib/server/config"
 import { redactSearch } from "$lib/server/redact"
+import { styleText } from "$lib/server/styleText"
 import { db, Record } from "$lib/server/surreal"
 import moderatedQuery from "./moderated.surql"
 
@@ -85,13 +86,14 @@ async function finish({ event, resolve }: Parameters<Handle>[0]) {
 	const file = Bun.file(`../Assets/${config.Themes[user?.theme || 0].Path}`)
 	const themecss = await file.text()
 	const customcss = user?.css
-		? `<style id="custom-css">${user.css}</style>`
+		? `<style id="custom-css">${styleText(user.css)}</style>`
 		: ""
 
 	// duplicate the response to avoid modifying the original
+	// A function replacement, so patterns like $& in the user's CSS are inserted as written
 	const text = (await res.clone().text()).replace(
 		"</body>",
-		`<style>${themecss}</style>${customcss}</body>`
+		() => `<style>${themecss}</style>${customcss}</body>`
 	)
 
 	res.headers.delete("content-length") // prevent cutoff, since the body was modified
