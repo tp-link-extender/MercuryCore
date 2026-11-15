@@ -103,9 +103,12 @@ actions.disable = async e => {
 	const id = e.url.searchParams.get("id")
 	if (!id) return errMessage(form, "Missing fields")
 
-	const [[key]] =
-		await db.query<({ disabled: boolean } | null)[][]>(disabledQuery)
-	if (key?.disabled)
+	const regKey = Record("regKey", id)
+	const [[key]] = await db.query<{ disabled: boolean }[][]>(disabledQuery, {
+		regKey,
+	})
+	if (!key) return errMessage(form, "Registration key not found")
+	if (key.disabled)
 		return errMessage(
 			form,
 			"Registration key is already disabled or has already ran out of uses"
@@ -117,7 +120,7 @@ actions.disable = async e => {
 			fn::auditLog("Administration", $msg, $user)`,
 		{
 			msg: `Disable registration key ${id}`,
-			regKey: Record("regKey", id),
+			regKey,
 			user: Record("user", user.id),
 		}
 	)
