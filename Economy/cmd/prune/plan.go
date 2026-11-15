@@ -3,6 +3,7 @@ package main
 import (
 	"Economy/ledger"
 	"fmt"
+	"slices"
 	"sort"
 	"strings"
 )
@@ -357,9 +358,7 @@ func sortedUint32Keys[V any](m map[uint32]V) []uint32 {
 	for id := range m {
 		out = append(out, id)
 	}
-	sort.Slice(out, func(i, j int) bool {
-		return out[i] < out[j]
-	})
+	slices.Sort(out)
 	return out
 }
 
