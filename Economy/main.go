@@ -40,6 +40,145 @@ const (
 	bearerPrefix = "Bearer "
 )
 
+// routes are kept in step with the Route union in client/api.ts
+var routes = []struct {
+	path string
+	h func(*EconomyServer, http.ResponseWriter, *http.Request)
+}{
+	{
+		"ownsOne",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.ownsOneRoute(w, r)
+		},
+	},
+	{
+		"ownsMany",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.ownsManyRoute(w, r)
+		},
+	},
+	{
+		"ownersOne",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.ownersOneRoute(w, r)
+		},
+	},
+	{
+		"ownersMany",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.ownersManyRoute(w, r)
+		},
+	},
+	{
+		"countOwnersOne",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.countOwnersOneRoute(w, r)
+		},
+	},
+	{
+		"countOwnersMany",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.countOwnersManyRoute(w, r)
+		},
+	},
+	{
+		"inventory",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.inventoryRoute(w, r)
+		},
+	},
+	{
+		"balance",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.balanceRoute(w, r)
+		},
+	},
+	{
+		"prices",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.pricesRoute(w, r)
+		},
+	},
+	{
+		"stipend",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.stipendRoute(w, r)
+		},
+	},
+	{
+		"createLimitedSource",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.createLimitedSourceRoute(w, r)
+		},
+	},
+	{
+		"createUnlimitedSource",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.createUnlimitedSourceRoute(w, r)
+		},
+	},
+	{
+		"createPlace",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.createPlaceRoute(w, r)
+		},
+	},
+	{
+		"createGroup",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.createGroupRoute(w, r)
+		},
+	},
+	{
+		"buyUnlimitedAsset",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.buyUnlimitedAssetRoute(w, r)
+		},
+	},
+	{
+		"buyLimitedAsset",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.buyLimitedAssetRoute(w, r)
+		},
+	},
+	{
+		"createPackageSource",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.createPackageSourceRoute(w, r)
+		},
+	},
+	{
+		"buyPackage",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.buyPackageRoute(w, r)
+		},
+	},
+	{
+		"packageContents",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.packageContentsRoute(w, r)
+		},
+	},
+	{
+		"packageItems",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.packageItemsRoute(w, r)
+		},
+	},
+	{
+		"history",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.historyRoute(w, r)
+		},
+	},
+	{
+		"historyOwner",
+		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
+			s.historyOwnerRoute(w, r)
+		},
+	},
+}
+
 func (w *CustomResponseWriter) Write(b []byte) (int, error) {
 	if remaining := maxResponseLogBytes - len(w.log); remaining > 0 {
 		if len(b) < remaining {
@@ -580,145 +719,6 @@ func main() {
 		fmt.Println(c.InRed("Failed to start server: " + err.Error()))
 		os.Exit(1)
 	}
-}
-
-// routes are kept in step with the Route union in client/api.ts
-var routes = []struct {
-	path string
-	h func(*EconomyServer, http.ResponseWriter, *http.Request)
-}{
-	{
-		"ownsOne",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.ownsOneRoute(w, r)
-		},
-	},
-	{
-		"ownsMany",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.ownsManyRoute(w, r)
-		},
-	},
-	{
-		"ownersOne",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.ownersOneRoute(w, r)
-		},
-	},
-	{
-		"ownersMany",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.ownersManyRoute(w, r)
-		},
-	},
-	{
-		"countOwnersOne",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.countOwnersOneRoute(w, r)
-		},
-	},
-	{
-		"countOwnersMany",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.countOwnersManyRoute(w, r)
-		},
-	},
-	{
-		"inventory",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.inventoryRoute(w, r)
-		},
-	},
-	{
-		"balance",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.balanceRoute(w, r)
-		},
-	},
-	{
-		"prices",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.pricesRoute(w, r)
-		},
-	},
-	{
-		"stipend",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.stipendRoute(w, r)
-		},
-	},
-	{
-		"createLimitedSource",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.createLimitedSourceRoute(w, r)
-		},
-	},
-	{
-		"createUnlimitedSource",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.createUnlimitedSourceRoute(w, r)
-		},
-	},
-	{
-		"createPlace",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.createPlaceRoute(w, r)
-		},
-	},
-	{
-		"createGroup",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.createGroupRoute(w, r)
-		},
-	},
-	{
-		"buyUnlimitedAsset",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.buyUnlimitedAssetRoute(w, r)
-		},
-	},
-	{
-		"buyLimitedAsset",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.buyLimitedAssetRoute(w, r)
-		},
-	},
-	{
-		"createPackageSource",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.createPackageSourceRoute(w, r)
-		},
-	},
-	{
-		"buyPackage",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.buyPackageRoute(w, r)
-		},
-	},
-	{
-		"packageContents",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.packageContentsRoute(w, r)
-		},
-	},
-	{
-		"packageItems",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.packageItemsRoute(w, r)
-		},
-	},
-	{
-		"history",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.historyRoute(w, r)
-		},
-	},
-	{
-		"historyOwner",
-		func(s *EconomyServer, w http.ResponseWriter, r *http.Request) {
-			s.historyOwnerRoute(w, r)
-		},
-	},
 }
 
 // serialiseItemsOne writes an ItemsOne as a full Items payload. ItemsOne.Serialise on its own only emits the One section, which leaves the trailing ItemsMany length off the end and makes the response unparseable.

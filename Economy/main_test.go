@@ -45,7 +45,7 @@ func TestResponseLogIsCapped(t *testing.T) {
 func createdSrc(t *testing.T, body io.Reader) PackageSource {
 	t.Helper()
 
-	buf := new(bytes.Buffer)
+	buf := &bytes.Buffer{}
 
 	buf.ReadFrom(body)
 	if buf.Len() != 5 {
@@ -242,7 +242,7 @@ func TestBuyFreeAssetOverHTTP(t *testing.T) {
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusNoContent {
-		buf := new(bytes.Buffer)
+		buf := &bytes.Buffer{}
 
 		buf.ReadFrom(res.Body)
 		t.Fatalf("expected 204, got %d: %s", res.StatusCode, buf.String())
@@ -502,7 +502,7 @@ func TestCreatePackageSourceRejectsLimitedOverHTTP(t *testing.T) {
 		t.Fatalf("expected 400 for a limited component, got %d", res.StatusCode)
 	}
 
-	buf := new(bytes.Buffer)
+	buf := &bytes.Buffer{}
 
 	buf.ReadFrom(res.Body)
 	if !bytes.Contains(buf.Bytes(), []byte("limited")) {
@@ -653,7 +653,7 @@ func TestPackageContentsOverHTTP(t *testing.T) {
 		t.Fatalf("packageContents: %d", res.StatusCode)
 	}
 
-	buf := new(bytes.Buffer)
+	buf := &bytes.Buffer{}
 
 	buf.ReadFrom(res.Body)
 
@@ -679,7 +679,7 @@ func TestPackageContentsOverHTTP(t *testing.T) {
 		t.Fatalf("packageItems: %d", res.StatusCode)
 	}
 
-	buf = new(bytes.Buffer)
+	buf = &bytes.Buffer{}
 
 	buf.ReadFrom(res.Body)
 
@@ -747,7 +747,7 @@ func TestPackageOverHTTP(t *testing.T) {
 		t.Fatalf("expected 200 from createPackageSource, got %d", res.StatusCode)
 	}
 
-	buf := new(bytes.Buffer)
+	buf := &bytes.Buffer{}
 
 	buf.ReadFrom(res.Body)
 
@@ -816,7 +816,7 @@ func TestRegisterRoutesDispatchesIndependently(t *testing.T) {
 		t.Fatalf("expected 200 from balance, got %d", res.StatusCode)
 	}
 
-	buf := new(bytes.Buffer)
+	buf := &bytes.Buffer{}
 
 	buf.ReadFrom(res.Body)
 	if buf.Len() == 0 {

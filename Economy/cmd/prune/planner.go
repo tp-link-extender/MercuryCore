@@ -139,9 +139,7 @@ func (p *planner) plan(plan *prunePlan) error {
 	}
 
 	for _, id := range sortedUint32Keys(plan.sources) {
-		source := plan.sources[id]
-
-		switch source.Kind {
+		switch source := plan.sources[id]; source.Kind {
 		case sourceUnlimited:
 			if err := p.emit("unlimitedSource", ledger.Transfer{
 				{

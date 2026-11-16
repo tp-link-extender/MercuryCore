@@ -1022,30 +1022,6 @@ func TestBuyLimitedAsset(t *testing.T) {
 	}
 }
 
-// a source can't oversell itself
-func TestBuyLimitedAssetRespectsStock(t *testing.T) {
-	_, e := newTestEconomy(t)
-	buyer := User{"buyer"}
-	creator := User{"creator"}
-
-	fund(t, e, creator, buyer)
-
-	const stock = 2
-
-	src, _, err := e.CreateLimitedSource(creator, stock)
-	if err != nil {
-		t.Fatalf("CreateLimitedSource: %v", err)
-	}
-
-	if _, _, err := e.BuyLimitedAsset(buyer, src, 10, stock); err != nil {
-		t.Fatalf("BuyLimitedAsset: %v", err)
-	}
-
-	if _, _, err := e.BuyLimitedAsset(buyer, src, 10, 1); err == nil {
-		t.Fatalf("expected buying past stock to fail, got nil")
-	}
-}
-
 // a total that wraps around uint64 is refused rather than charged at the wrapped amount
 func TestBuyLimitedAssetPriceOverflow(t *testing.T) {
 	_, e := newTestEconomy(t)
@@ -1070,6 +1046,30 @@ func TestBuyLimitedAssetPriceOverflow(t *testing.T) {
 
 	if got := e.Balance(buyer); got != 200 {
 		t.Fatalf("expected buyer balance 200, got %d", got)
+	}
+}
+
+// a source can't oversell itself
+func TestBuyLimitedAssetRespectsStock(t *testing.T) {
+	_, e := newTestEconomy(t)
+	buyer := User{"buyer"}
+	creator := User{"creator"}
+
+	fund(t, e, creator, buyer)
+
+	const stock = 2
+
+	src, _, err := e.CreateLimitedSource(creator, stock)
+	if err != nil {
+		t.Fatalf("CreateLimitedSource: %v", err)
+	}
+
+	if _, _, err := e.BuyLimitedAsset(buyer, src, 10, stock); err != nil {
+		t.Fatalf("BuyLimitedAsset: %v", err)
+	}
+
+	if _, _, err := e.BuyLimitedAsset(buyer, src, 10, 1); err == nil {
+		t.Fatalf("expected buying past stock to fail, got nil")
 	}
 }
 

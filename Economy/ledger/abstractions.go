@@ -20,6 +20,18 @@ type (
 	PackageComponent = CanOwnOne
 )
 
+var (
+	ErrStipendNotReady = errors.New("stipend not available yet")
+	ErrNoStock = errors.New("limited source needs a stock of at least one")
+	ErrPriceOverflow = errors.New("total price overflows")
+	ErrEmptyPackage = errors.New("package needs at least one component")
+	ErrSelfNestedPackage = errors.New("package cannot contain itself")
+
+	// ErrUnsupportedPackageComponent is returned for a component a package can't reissue, which is anything that isn't an unlimited asset source or a nested package source.
+	// Limited sources are the awkward case: their asset is CanOwnMany, so it can't travel in a One and the contents walk would drop it without a word, leaving the buyer short of what they paid for.
+	ErrUnsupportedPackageComponent = errors.New("package components must be unlimited asset sources or package sources")
+)
+
 func (e *Economy) Inventory(o Owner) Items {
 	return e.ledger.Inventory(o)
 }
@@ -75,13 +87,9 @@ func (e *Economy) TransferHistory(n uint32) ([]TransferWithID, error) {
 	return e.ledger.TransferHistory(int(n))
 }
 
-var ErrStipendNotReady = errors.New("stipend not available yet")
-
 func (e *Economy) TransferHistoryOwner(n uint32, o Owner) ([]TransferWithID, error) {
 	return e.ledger.TransferHistoryOwner(int(n), o)
 }
-
-var ErrNoStock = errors.New("limited source needs a stock of at least one")
 
 func NewEconomy(ledger *Ledger, placePrice, groupPrice, limitedSourcePrice, unlimitedSourcePrice, packageSourcePrice, stipendAmount Quantity, stipendTime time.Duration) *Economy {
 	return &Economy{
@@ -107,8 +115,6 @@ func currencyItems(currency Currency, qty Quantity) ItemsMany {
 		currency: qty,
 	}
 }
-
-var ErrPriceOverflow = errors.New("total price overflows")
 
 func (e *Economy) BuyLimitedAsset(u User, src LimitedSource, priceEach, qty Quantity) (a LimitedAsset, tid TransferID, err error) {
 	a = src.Create()
@@ -256,15 +262,6 @@ func (e *Economy) CreateGroup(u User) (g Group, tid TransferID, err error) {
 
 	return g, tid, nil
 }
-
-var (
-	ErrEmptyPackage = errors.New("package needs at least one component")
-	ErrSelfNestedPackage = errors.New("package cannot contain itself")
-
-	// ErrUnsupportedPackageComponent is returned for a component a package can't reissue, which is anything that isn't an unlimited asset source or a nested package source.
-	// Limited sources are the awkward case: their asset is CanOwnMany, so it can't travel in a One and the contents walk would drop it without a word, leaving the buyer short of what they paid for.
-	ErrUnsupportedPackageComponent = errors.New("package components must be unlimited asset sources or package sources")
-)
 
 // CreateLimitedSource mints a limited source and stocks it with qty of the asset it creates.
 // The source has to go to the user while its stock has to go to the source, which needs two transfers. They are applied as one batch, so a failure in either leaves neither the charge nor the source behind.

@@ -260,9 +260,7 @@ func singleOwner(led *ledger.Ledger, source ledger.CanOwnOne) (ledger.Owner, boo
 }
 
 func resolveUserOwner(led *ledger.Ledger, owner ledger.Owner) (ledger.User, bool) {
-	seen := make(map[ledger.Owner]struct{})
-
-	for {
+	for seen := make(map[ledger.Owner]struct{}); ; {
 		if _, ok := seen[owner]; ok {
 			return ledger.User{}, false
 		}

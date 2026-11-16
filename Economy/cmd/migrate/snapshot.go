@@ -241,10 +241,7 @@ func parseOldLedger(path string, s *legacySnapshot) error {
 	scanner := bufio.NewScanner(f)
 
 	scanner.Buffer(make([]byte, 0, 64<<10), 4<<20)
-
-	var lineNo int
-
-	for scanner.Scan() {
+	for lineNo := 0; scanner.Scan(); {
 		lineNo++
 		line := strings.TrimSpace(scanner.Text())
 		if line == "" {

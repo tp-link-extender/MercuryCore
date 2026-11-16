@@ -28,6 +28,8 @@ type (
 
 const bucketName = "ledger"
 
+var bucketNameBytes = []byte(bucketName)
+
 // AllManyItems returns a copy of every many-per-owner item and its owner quantities.
 // It is read-only and intended for administrative snapshots.
 func (l *Ledger) AllManyItems() map[CanOwnMany]OwnersMany {
@@ -398,8 +400,6 @@ func (l *Ledger) PackageContents(src PackageSource) ItemsOne {
 
 	return l.state.PackageContents(src)
 }
-
-var bucketNameBytes = []byte(bucketName)
 
 // PackageItems returns every asset that is inside some package, across every package in the ledger.
 // The Site uses this to keep bundle contents out of catalog and search results, which used to be done by checking for a packageItem relation in the database.

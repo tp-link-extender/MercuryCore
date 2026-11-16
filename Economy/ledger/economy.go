@@ -48,6 +48,12 @@ type (
 
 const idchars = "0123456789abcdefghijklmnopqrstuvwxyz"
 
+var (
+	ErrInvalidTransferID = errors.New("invalid TransferID")
+	ErrNoSourceOrDestination = errors.New("transfer has no source or destination")
+	ErrNoItems = errors.New("transfer has no items")
+)
+
 func DeserialiseOwnersMany(r io.Reader) (OwnersMany, error) {
 	var lbuf [4]byte
 
@@ -178,8 +184,6 @@ func NewTransferID(timestamp uint64, id string) TransferID {
 	}
 }
 
-var ErrInvalidTransferID = errors.New("invalid TransferID")
-
 func (om *OwnersMany) Add(o Owner, qty Quantity) {
 	if *om == nil {
 		*om = OwnersMany{
@@ -264,11 +268,6 @@ func (s Send) Equal(other Send) bool {
 func (t Transfer) Equal(other Transfer) bool {
 	return t[0].Equal(other[0]) && t[1].Equal(other[1])
 }
-
-var (
-	ErrNoSourceOrDestination = errors.New("transfer has no source or destination")
-	ErrNoItems = errors.New("transfer has no items")
-)
 
 func (s Send) String() string {
 	if s.Owner == nil {
