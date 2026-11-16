@@ -145,7 +145,6 @@ func DeserialiseSend(r io.Reader) (Send, error) {
 
 	// decode Items
 	s.Items, err = DeserialiseItems(r)
-
 	if err != nil {
 		return s, fmt.Errorf("decode items: %w", err)
 	}
@@ -201,6 +200,7 @@ func (om OwnersMany) Serialise(w io.Writer) error {
 
 	binary.BigEndian.PutUint32(lbuf[:], uint32(len(om)))
 	w.Write(lbuf[:])
+
 	for o, qty := range om {
 		if !SerialiseItem(o, w) {
 			return fmt.Errorf("unknown Owner type: %T", o)
@@ -232,6 +232,7 @@ func (oo OwnersOne) Serialise(w io.Writer) error {
 
 	binary.BigEndian.PutUint32(lbuf[:], uint32(len(oo)))
 	w.Write(lbuf[:])
+
 	for o := range oo {
 		if !SerialiseItem(o, w) {
 			return fmt.Errorf("unknown Owner type: %T", o)
@@ -247,6 +248,7 @@ func RandNumericId() (id uint32) {
 
 func RandStringId() (id string) {
 	id, _ = gonanoid.Generate(idchars, 20) // doesn't error at runtime, really
+
 	return
 }
 
@@ -377,6 +379,7 @@ func (t TransferID) Serialise() []byte {
 
 	binary.BigEndian.PutUint64(bs[:8], t.timestamp)
 	copy(bs[8:], t.id)
+
 	return bs
 }
 
@@ -399,6 +402,7 @@ func (t TransferWithID) Serialise(w io.Writer) error {
 
 	w.Write([]byte{byte(len(idBytes))})
 	w.Write(idBytes)
+
 	return t.Transfer.Serialise(w)
 }
 

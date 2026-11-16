@@ -44,6 +44,7 @@ func TestBuyEmptyPackageRejected(t *testing.T) {
 	}
 
 	before := e.Balance(buyer)
+
 	beforeHistory, err := e.TransferHistory(10)
 	if err != nil {
 		t.Fatalf("TransferHistory: %v", err)
@@ -81,6 +82,7 @@ func TestBuyPackageOfOnlyEmptyPackagesRejected(t *testing.T) {
 	fund(t, e, creator, buyer)
 
 	inner := mintEmptyPackageSource(t, l, creator)
+
 	outer, _, err := e.CreatePackageSource(creator, []PackageComponent{inner})
 	if err != nil {
 		t.Fatalf("CreatePackageSource: %v", err)
@@ -91,6 +93,7 @@ func TestBuyPackageOfOnlyEmptyPackagesRejected(t *testing.T) {
 	}
 
 	before := e.Balance(buyer)
+
 	beforeHistory, err := e.TransferHistory(10)
 	if err != nil {
 		t.Fatalf("TransferHistory: %v", err)

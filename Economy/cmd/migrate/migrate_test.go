@@ -9,11 +9,12 @@ import (
 )
 
 func TestParseOldLedger(t *testing.T) {
-	path := filepath.Join(t.TempDir(), "legacy-ledger")
-	content := `Mint {"To":"userA","Amount":10000000,"Note":"Stipend","Time":1,"Id":"a"}
+	const content string = `Mint {"To":"userA","Amount":10000000,"Note":"Stipend","Time":1,"Id":"a"}
 Burn {"From":"userA","Amount":2500000,"Note":"Created asset","Link":"/catalog/1/x","Returns":{},"Time":2,"Id":"b"}
 Transaction {"From":"userA","To":"userB","Amount":5000000,"Note":"Purchase","Link":"/catalog/1/x","Returns":{},"Time":3,"Id":"c"}
 `
+
+	path := filepath.Join(t.TempDir(), "legacy-ledger")
 
 	if err := os.WriteFile(path, []byte(content), 0o600); err != nil {
 		t.Fatal(err)
@@ -47,9 +48,10 @@ Transaction {"From":"userA","To":"userB","Amount":5000000,"Note":"Purchase","Lin
 }
 
 func TestParseOldLedgerRejectsReturns(t *testing.T) {
-	path := filepath.Join(t.TempDir(), "legacy-ledger")
-	content := `Transaction {"From":"userA","To":"userB","Amount":1000000,"Note":"swap","Link":"/","Returns":{"asset-1":1},"Time":1,"Id":"a"}
+	const content string = `Transaction {"From":"userA","To":"userB","Amount":1000000,"Note":"swap","Link":"/","Returns":{"asset-1":1},"Time":1,"Id":"a"}
 `
+
+	path := filepath.Join(t.TempDir(), "legacy-ledger")
 
 	if err := os.WriteFile(path, []byte(content), 0o600); err != nil {
 		t.Fatal(err)
@@ -60,6 +62,7 @@ func TestParseOldLedgerRejectsReturns(t *testing.T) {
 		DustMicro: make(map[string]uint64),
 		LastStipends: make(map[string]uint64),
 	}
+
 	err := parseOldLedger(path, s)
 	if err == nil || !strings.Contains(err.Error(), "returns") {
 		t.Fatalf("expected unsupported returns error, got %v", err)
@@ -210,12 +213,14 @@ func fixtureSnapshot() *legacySnapshot {
 
 func TestMigrationFixture(t *testing.T) {
 	s := fixtureSnapshot()
+
 	data := buildMigrationData(s, "", false)
 	if len(data.errors) > 0 {
 		t.Fatalf("unexpected validation errors: %v", data.errors)
 	}
 
 	path := filepath.Join(t.TempDir(), "migrated.db")
+
 	l, err := ledger.NewLedger(path)
 	if err != nil {
 		t.Fatalf("NewLedger: %v", err)
@@ -239,6 +244,7 @@ func TestMigrationFixture(t *testing.T) {
 func TestMigrationRejectsMissingUser(t *testing.T) {
 	s := fixtureSnapshot()
 	s.Users = []string{"userA"}
+
 	data := buildMigrationData(s, "", false)
 	if len(data.errors) == 0 {
 		t.Fatalf("expected missing-user errors")
@@ -263,6 +269,7 @@ func TestMigrationRejectsMultiplePackageParents(t *testing.T) {
 		PackageID: 4,
 		ChildID: 3,
 	})
+
 	data := buildMigrationData(s, "", false)
 	if len(data.errors) == 0 {
 		t.Fatalf("expected a multiple-package-parent error")
@@ -328,6 +335,7 @@ func TestMigrationRejectsUnknownFallbackUser(t *testing.T) {
 func TestMigrationSkipsMissingUser(t *testing.T) {
 	s := fixtureSnapshot()
 	s.Users = []string{"userA"}
+
 	data := buildMigrationData(s, "", true)
 	if len(data.errors) > 0 {
 		t.Fatalf("unexpected validation errors: %v", data.errors)
@@ -351,6 +359,7 @@ func TestMigrationSkipsPackageOrphans(t *testing.T) {
 		PackageID: 2,
 		ChildID: 999,
 	})
+
 	data := buildMigrationData(s, "", true)
 	if len(data.errors) > 0 {
 		t.Fatalf("unexpected validation errors: %v", data.errors)

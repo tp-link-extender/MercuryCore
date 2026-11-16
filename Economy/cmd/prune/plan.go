@@ -187,9 +187,9 @@ func (p *prunePlan) removedIDs() []uint32 {
 	for id := range p.removed {
 		ids = append(ids, id)
 	}
-	sort.Slice(ids, func(i, j int) bool {
-		return ids[i] < ids[j]
-	})
+
+	slices.Sort(ids)
+
 	return ids
 }
 
@@ -204,46 +204,38 @@ func (p *prunePlan) removedIDStrings() []string {
 	return out
 }
 
-func (p *prunePlan) totalBalances() uint64 {
-	var total uint64
-
+func (p *prunePlan) totalBalances() (total uint64) {
 	for _, users := range p.balances {
 		for _, qty := range users {
 			total += qty
 		}
 	}
 
-	return total
+	return
 }
 
-func (p *prunePlan) totalBurned() uint64 {
-	var total uint64
-
+func (p *prunePlan) totalBurned() (total uint64) {
 	for _, qty := range p.burnedCurrency {
 		total += qty
 	}
 
-	return total
+	return
 }
 
-func (p *prunePlan) totalMoved() uint64 {
-	var total uint64
-
+func (p *prunePlan) totalMoved() (total uint64) {
 	for _, qty := range p.movedCurrency {
 		total += qty
 	}
 
-	return total
+	return
 }
 
-func (p *prunePlan) totalPackageBurned() uint64 {
-	var total uint64
-
+func (p *prunePlan) totalPackageBurned() (total uint64) {
 	for _, qty := range p.packageBurned {
 		total += qty
 	}
 
-	return total
+	return
 }
 
 func singleOwner(led *ledger.Ledger, source ledger.CanOwnOne) (ledger.Owner, bool) {
@@ -308,7 +300,9 @@ func singleUserOwner(owners ledger.OwnersOne) (string, error) {
 		for owner := range owners {
 			users = append(users, fmt.Sprintf("%v", owner))
 		}
+
 		sort.Strings(users)
+
 		return "", fmt.Errorf("has multiple owners (%s), but the ledger allows one", strings.Join(users, ", "))
 	}
 
@@ -357,7 +351,9 @@ func sortedUint32Keys[V any](m map[uint32]V) []uint32 {
 	for id := range m {
 		out = append(out, id)
 	}
+
 	slices.Sort(out)
+
 	return out
 }
 
@@ -392,7 +388,6 @@ func buildPlan(led *ledger.Ledger, assets []dbAsset, packageChildren []dbPackage
 
 	if orphanImagesFn != nil {
 		orphanImages, err = orphanImagesFn(sortedUint32Keys(primary))
-
 		if err != nil {
 			return nil, fmt.Errorf("find orphan image assets: %w", err)
 		}
@@ -401,6 +396,7 @@ func buildPlan(led *ledger.Ledger, assets []dbAsset, packageChildren []dbPackage
 	removed := make(map[uint32]string, len(primary)+len(orphanImages))
 
 	maps.Copy(removed, primary)
+
 	for _, id := range orphanImages {
 		removed[id] = "orphanImage"
 	}
@@ -483,6 +479,7 @@ func buildPlan(led *ledger.Ledger, assets []dbAsset, packageChildren []dbPackage
 			}
 
 			removed[id] = "ledgerOrphan"
+
 			continue
 		}
 
@@ -539,8 +536,10 @@ func buildPlan(led *ledger.Ledger, assets []dbAsset, packageChildren []dbPackage
 					if !ok {
 						plan.warnings = append(plan.warnings, fmt.Sprintf("burning %d of currency %d held by %v", qty, currency.Id, owner))
 						plan.burnedCurrency[currency.Id] += uint64(qty)
+
 						continue
 					}
+
 					plan.addBalance(currency.Id, user.Id, uint64(qty))
 
 					plan.movedCurrency[currency.Id] += uint64(qty)
@@ -554,8 +553,10 @@ func buildPlan(led *ledger.Ledger, assets []dbAsset, packageChildren []dbPackage
 					if !ok {
 						plan.warnings = append(plan.warnings, fmt.Sprintf("burning %d of currency %d held by %v", qty, currency.Id, owner))
 						plan.burnedCurrency[currency.Id] += uint64(qty)
+
 						continue
 					}
+
 					plan.addBalance(currency.Id, user.Id, uint64(qty))
 
 					plan.movedCurrency[currency.Id] += uint64(qty)
@@ -585,6 +586,7 @@ func buildPlan(led *ledger.Ledger, assets []dbAsset, packageChildren []dbPackage
 			}
 
 			removed[id] = "ledgerOrphan"
+
 			continue
 		}
 

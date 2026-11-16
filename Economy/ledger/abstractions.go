@@ -173,6 +173,7 @@ func (e *Economy) BuyPackage(u User, src PackageSource, price Quantity) (p Packa
 			if s.ownsOne(u, item) {
 				continue
 			}
+
 			issued.Add(item)
 		}
 
@@ -191,7 +192,6 @@ func (e *Economy) BuyPackage(u User, src PackageSource, price Quantity) (p Packa
 			},
 		}, nil
 	})
-
 	if err != nil {
 		if errors.Is(err, ErrEmptyPackage) {
 			return p, TransferID{}, ErrEmptyPackage
@@ -401,6 +401,7 @@ func (e *Economy) Stipend(user User) (tid TransferID, err error) {
 	}
 
 	tid = MakeTransferID()
+
 	// The eligibility check runs inside the ledger lock, so two simultaneous requests can't both pass it and mint two stipends.
 	if err := e.ledger.transferWithCheck(tid, tf, func(s *State) error {
 		if lastStipend, ok := s.userLastStipend[user]; ok && time.Since(time.Unix(0, int64(lastStipend.timestamp))) < e.StipendTime {

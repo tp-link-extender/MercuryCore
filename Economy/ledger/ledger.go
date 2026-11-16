@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"maps"
 	"sync"
 	"time"
 
@@ -42,9 +43,7 @@ func (l *Ledger) AllManyItems() map[CanOwnMany]OwnersMany {
 	for item, owners := range l.state.itemOwnersMany {
 		c := make(OwnersMany, len(*owners))
 
-		for owner, qty := range *owners {
-			c[owner] = qty
-		}
+		maps.Copy(c, *owners)
 
 		out[item] = c
 	}
@@ -99,7 +98,6 @@ func (l *Ledger) GetTransfer(tid TransferID) (t Transfer, err error) {
 		var err2 error
 
 		t, err2 = DeserialiseTransfer(bytes.NewReader(v))
-
 		if err2 != nil {
 			return fmt.Errorf("decode transfer: %w", err2)
 		}
@@ -285,6 +283,7 @@ func (s *State) ForceApply(t Transfer) {
 		}
 
 		dst := s.GetInventory(other.Owner)
+
 		// fmt.Printf("Starting inventory for %v: %v\n", other.Owner, dst)
 		for item := range send.Items.One {
 			dst.One.Add(item)
@@ -302,6 +301,7 @@ func (s *State) ForceApply(t Transfer) {
 					continue
 				}
 			}
+
 			dst.Many.Add(item, qty)
 
 			oMany := s.GetOwnersMany(item)
@@ -385,6 +385,7 @@ func (s *State) packageContents(src Source) ItemsOne {
 	contents := ItemsOne{}
 
 	s.collectPackageContents(src, contents, make(map[Source]struct{}))
+
 	return contents
 }
 
@@ -419,6 +420,7 @@ func (s *State) PackageItems() ItemsOne {
 			if item == ps.Create() {
 				continue
 			}
+
 			items.Add(item)
 		}
 	}
@@ -495,7 +497,9 @@ func (s *State) TryApply(t Transfer) error {
 	if err := s.CanApply(t); err != nil {
 		return err
 	}
+
 	s.ForceApply(t)
+
 	return nil
 }
 
@@ -527,9 +531,7 @@ func (s *State) snapshotOwnersMany(i CanOwnMany) OwnersMany {
 
 	out := make(OwnersMany, len(*om))
 
-	for o, qty := range *om {
-		out[o] = qty
-	}
+	maps.Copy(out, *om)
 
 	return out
 }
@@ -614,6 +616,7 @@ func (l *Ledger) applyLocked(tid TransferID, t Transfer) error {
 
 	// Apply the transfer to the in-memory state
 	l.state.ForceApply(t)
+
 	return nil
 }
 
@@ -753,16 +756,12 @@ func (s *State) clone() State {
 	for i, om := range s.itemOwnersMany {
 		c := make(OwnersMany, len(*om))
 
-		for o, qty := range *om {
-			c[o] = qty
-		}
+		maps.Copy(c, *om)
 
 		out.itemOwnersMany[i] = &c
 	}
 
-	for u, tid := range s.userLastStipend {
-		out.userLastStipend[u] = tid
-	}
+	maps.Copy(out.userLastStipend, s.userLastStipend)
 
 	return out
 }
@@ -785,6 +784,7 @@ func (l *Ledger) transferBatchWithOptions(tids []TransferID, transfers []Transfe
 
 		seen[tid] = struct{}{}
 	}
+
 	l.mu.Lock()
 
 	defer l.mu.Unlock()
@@ -832,6 +832,7 @@ func (l *Ledger) transferBatchWithOptions(tids []TransferID, transfers []Transfe
 		if t.Stipend() {
 			l.state.updateStipend(tids[i], t)
 		}
+
 		l.state.ForceApply(t)
 	}
 

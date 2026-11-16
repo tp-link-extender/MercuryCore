@@ -81,6 +81,8 @@ func TestAbstractions1(t *testing.T) {
 }
 
 func TestAbstractions2(t *testing.T) {
+	const price1 = 15
+
 	name := os.TempDir() + "/ledger_test.db"
 
 	os.Remove(name)
@@ -102,8 +104,6 @@ func TestAbstractions2(t *testing.T) {
 			t.Fatalf("MintCurrency: %v", err)
 		}
 	}
-
-	const price1 = 15
 
 	source, _, err := e.CreateUnlimitedSource(users[0])
 	if err != nil {
@@ -214,6 +214,7 @@ func TestAbstractions3(t *testing.T) {
 
 	e := NewEconomy(l, 10, 10, 100, 10, 10, 10, time.Hour*12)
 	user := User{"testuser3"}
+
 	sid, err := e.Stipend(user)
 	if err != nil {
 		t.Fatalf("Stipend: %v", err)
@@ -241,6 +242,7 @@ func TestAbstractions3(t *testing.T) {
 	}
 
 	user2 := User{"testuser4"}
+
 	history2, err := e.TransferHistoryOwner(2, user2)
 	if err != nil {
 		t.Fatalf("TransferHistoryOwner: %v", err)
@@ -252,6 +254,8 @@ func TestAbstractions3(t *testing.T) {
 }
 
 func TestEncItemsOne(t *testing.T) {
+	const expLen = 13
+
 	items := Items{
 		One: ItemsOne{
 			RandPlace(): {},
@@ -262,8 +266,6 @@ func TestEncItemsOne(t *testing.T) {
 	if err := items.Serialise(ibuf); err != nil {
 		t.Fatalf("Items.Serialise: %v", err)
 	}
-
-	const expLen = 13
 
 	if ibuf.Len() != expLen {
 		t.Fatalf("expected serialised Items length %d, got %d", expLen, ibuf.Len())
@@ -280,11 +282,11 @@ func TestEncItemsOne(t *testing.T) {
 }
 
 func TestEncTransferID(t *testing.T) {
-	tid := MakeTransferID()
-	b := tid.Serialise()
-
 	const expLen = 28
 
+	tid := MakeTransferID()
+
+	b := tid.Serialise()
 	if len(b) != expLen {
 		t.Fatalf("expected serialised TransferID length %d, got %d", expLen, len(b))
 	}
@@ -346,6 +348,8 @@ func TestGetTransfer(t *testing.T) {
 }
 
 func TestReopen(t *testing.T) {
+	const qty = 100
+
 	name := os.TempDir() + "/ledger_test.db"
 
 	os.Remove(name)
@@ -354,8 +358,6 @@ func TestReopen(t *testing.T) {
 
 	currency3 := Currency{3}
 	user4 := User{"user4"}
-
-	const qty = 100
 
 	for i := Quantity(qty); i < 10*qty; i += qty {
 		l, err := NewLedger(name)
@@ -388,6 +390,7 @@ func TestReopen(t *testing.T) {
 		if inv := l.Inventory(user4); !inv.Equal(xinv) {
 			t.Fatalf("expected inventory %v, got %v", xinv, inv)
 		}
+
 		l.Close()
 	}
 }
@@ -484,6 +487,7 @@ func TestTransferHistoryUser(t *testing.T) {
 	}
 
 	user6 := User{"user6"}
+
 	history2, err := l.TransferHistoryOwner(1, user6)
 	if err != nil {
 		t.Fatalf("TransferHistoryOwner: %v", err)
@@ -679,6 +683,8 @@ func createSourceTest(l *Ledger, t *testing.T, user User, currency Currency) Unl
 }
 
 func encItemsMany(t *testing.T) Items {
+	const expLen = 21
+
 	ibuf := &bytes.Buffer{}
 	items := Items{
 		Many: ItemsMany{
@@ -689,8 +695,6 @@ func encItemsMany(t *testing.T) Items {
 	if err := items.Serialise(ibuf); err != nil {
 		t.Fatalf("Items.Serialise: %v", err)
 	}
-
-	const expLen = 21
 
 	if ibuf.Len() != expLen {
 		t.Fatalf("expected serialised Items length %d, got %d", expLen, ibuf.Len())
@@ -709,6 +713,8 @@ func encItemsMany(t *testing.T) Items {
 }
 
 func encTransfer(t *testing.T, user User, items Items) {
+	const expLen = 40
+
 	transfer := Transfer{
 		{
 			Owner: user,
@@ -743,8 +749,6 @@ func encTransfer(t *testing.T, user User, items Items) {
 		t.Fatalf("serialise Transfer: %v", err)
 	}
 
-	const expLen = 40
-
 	if tbuf.Len() != expLen {
 		t.Fatalf("expected serialised Transfer length %d, got %d", expLen, tbuf.Len())
 	}
@@ -768,6 +772,7 @@ func TestEncodeDecode(t *testing.T) {
 
 func fund(t *testing.T, e *Economy, users ...User) {
 	t.Helper()
+
 	for _, user := range users {
 		if _, err := e.MintCurrency(user, 200); err != nil {
 			t.Fatalf("MintCurrency %v: %v", user, err)
@@ -909,6 +914,7 @@ func TestStipend(t *testing.T) {
 	currency := Currency{0}
 	user1 := User{"user1"}
 	tid := mintTest(l, t, currency, user1)
+
 	tid2, ok := l.GetUserLastStipend(user1)
 	if !ok {
 		t.Fatalf("expected last stipend for user %v, got none", user1)
@@ -931,9 +937,11 @@ func newTestEconomy(t *testing.T) (*Ledger, *Economy) {
 	if err != nil {
 		t.Fatalf("create ledger: %v", err)
 	}
+
 	t.Cleanup(func() {
 		os.Remove(name)
 	})
+
 	return l, NewEconomy(l, 10, 10, 100, 10, 10, 10, time.Hour*12)
 }
 
@@ -972,17 +980,17 @@ func TestAddPackageComponentsRejectsLimitedSource(t *testing.T) {
 }
 
 func TestBuyLimitedAsset(t *testing.T) {
-	_, e := newTestEconomy(t)
-	buyer := User{"buyer"}
-	creator := User{"creator"}
-
-	fund(t, e, creator, buyer)
-
 	const (
 		stock = 5
 		price = 10
 		qty = 3
 	)
+
+	_, e := newTestEconomy(t)
+	buyer := User{"buyer"}
+	creator := User{"creator"}
+
+	fund(t, e, creator, buyer)
 
 	src, _, err := e.CreateLimitedSource(creator, stock)
 	if err != nil {
@@ -1051,13 +1059,13 @@ func TestBuyLimitedAssetPriceOverflow(t *testing.T) {
 
 // a source can't oversell itself
 func TestBuyLimitedAssetRespectsStock(t *testing.T) {
+	const stock = 2
+
 	_, e := newTestEconomy(t)
 	buyer := User{"buyer"}
 	creator := User{"creator"}
 
 	fund(t, e, creator, buyer)
-
-	const stock = 2
 
 	src, _, err := e.CreateLimitedSource(creator, stock)
 	if err != nil {
@@ -1126,6 +1134,8 @@ func TestBuyNestedPackage(t *testing.T) {
 
 // buying a package gives the buyer the package and every component, in one transfer
 func TestBuyPackage(t *testing.T) {
+	const price = 40
+
 	_, e := newTestEconomy(t)
 	buyer := User{"buyer"}
 	creator := User{"creator"}
@@ -1133,8 +1143,6 @@ func TestBuyPackage(t *testing.T) {
 	fund(t, e, creator, buyer)
 
 	pkgSrc, comps := createPackageFixture(t, e, creator, 3)
-
-	const price = 40
 
 	pkg, _, err := e.BuyPackage(buyer, pkgSrc, price)
 	if err != nil {
@@ -1264,6 +1272,7 @@ func TestBuyPackageSkipsOwnedComponents(t *testing.T) {
 func TestCreateLimitedSourceFailureIsClean(t *testing.T) {
 	_, e := newTestEconomy(t)
 	broke := User{"broke"}
+
 	src, _, err := e.CreateLimitedSource(broke, 1000)
 	if err == nil {
 		t.Fatalf("expected CreateLimitedSource to fail for a user with no currency")
@@ -1280,12 +1289,12 @@ func TestCreateLimitedSourceFailureIsClean(t *testing.T) {
 
 // The user is charged before any stock is granted, so a creation that fails partway through must not leave that stock behind. Otherwise anyone who can't afford a source can strand unlimited copies in the ledger forever, since the stock quantity is unbounded and there's nothing to claw it back with.
 func TestCreateLimitedSourceFailureStrandsNoStock(t *testing.T) {
+	const stock = 1000
+
 	_, e := newTestEconomy(t)
 
 	// no currency at all, so the handover can't possibly be paid for
 	broke := User{"broke"}
-
-	const stock = 1000
 
 	src, _, err := e.CreateLimitedSource(broke, stock)
 	if err == nil {
@@ -1313,18 +1322,19 @@ func TestCreateLimitedSourceNeedsStock(t *testing.T) {
 	creator := User{"creator"}
 
 	fund(t, e, creator)
+
 	if _, _, err := e.CreateLimitedSource(creator, 0); err != ErrNoStock {
 		t.Fatalf("expected ErrNoStock, got %v", err)
 	}
 }
 
 func TestCreateLimitedSourceStocks(t *testing.T) {
+	const stock = 5
+
 	_, e := newTestEconomy(t)
 	creator := User{"creator"}
 
 	fund(t, e, creator)
-
-	const stock = 5
 
 	src, _, err := e.CreateLimitedSource(creator, stock)
 	if err != nil {
@@ -1415,6 +1425,7 @@ func TestCreatePackageSourceFailureKeepsComponents(t *testing.T) {
 	if err != nil {
 		t.Fatalf("TransferHistory: %v", err)
 	}
+
 	// 1 mint + 2 component sources = 3 successful transfers
 	if len(history) != 3 {
 		t.Fatalf("expected only the 3 successful transfers, got %d", len(history))
@@ -1427,6 +1438,7 @@ func TestCreatePackageSourceNeedsContents(t *testing.T) {
 	creator := User{"creator"}
 
 	fund(t, e, creator)
+
 	if _, _, err := e.CreatePackageSource(creator, nil); err != ErrEmptyPackage {
 		t.Fatalf("expected ErrEmptyPackage, got %v", err)
 	}
@@ -1460,12 +1472,12 @@ func TestCreatePackageSourceRejectsLimitedSource(t *testing.T) {
 
 // stock has to survive a restart, since it arrives via a mint that replay has to accept
 func TestLimitedStockSurvivesReopen(t *testing.T) {
+	const stock = 7
+
 	l, e := newTestEconomy(t)
 	creator := User{"creator"}
 
 	fund(t, e, creator)
-
-	const stock = 7
 
 	src, _, err := e.CreateLimitedSource(creator, stock)
 	if err != nil {
@@ -1477,6 +1489,7 @@ func TestLimitedStockSurvivesReopen(t *testing.T) {
 	}
 
 	name := os.TempDir() + "/ledger_test.db"
+
 	reopened, err := NewLedger(name)
 	if err != nil {
 		t.Fatalf("reopen ledger: %v", err)
@@ -1520,6 +1533,7 @@ func TestPackageContents(t *testing.T) {
 	fund(t, e, creator)
 
 	pkgSrc, comps := createPackageFixture(t, e, creator, 3)
+
 	contents := e.PackageContents(pkgSrc)
 	if !contents.Has(pkgSrc.Create()) {
 		t.Fatalf("expected contents to include the package itself")
@@ -1693,6 +1707,7 @@ func TestPackageSurvivesReopen(t *testing.T) {
 	}
 
 	name := os.TempDir() + "/ledger_test.db"
+
 	reopened, err := NewLedger(name)
 	if err != nil {
 		t.Fatalf("reopen ledger: %v", err)

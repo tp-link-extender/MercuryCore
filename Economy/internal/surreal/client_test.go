@@ -14,10 +14,13 @@ func TestAuth(t *testing.T) {
 
 func TestDefaultUser(t *testing.T) {
 	t.Setenv("DATABASE_USER", "")
+
 	if got := DefaultUser(); got != "site" {
 		t.Fatalf("got %q, want site", got)
 	}
+
 	t.Setenv("DATABASE_USER", "web")
+
 	if got := DefaultUser(); got != "web" {
 		t.Fatalf("got %q, want web", got)
 	}
@@ -26,6 +29,7 @@ func TestDefaultUser(t *testing.T) {
 func TestPassword(t *testing.T) {
 	t.Setenv("DATABASE_PASSWORD", "site-pass")
 	t.Setenv("DATABASE_ROOT_PASSWORD", "root-pass")
+
 	if got := Password("site", "flag"); got != "flag" {
 		t.Fatalf("an explicit password should win, got %q", got)
 	}

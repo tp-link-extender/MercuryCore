@@ -65,7 +65,9 @@ func sortedStringKeys[V any](m map[string]V) []string {
 	for key := range m {
 		out = append(out, key)
 	}
+
 	sort.Strings(out)
+
 	return out
 }
 

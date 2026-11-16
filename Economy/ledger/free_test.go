@@ -129,15 +129,20 @@ func newFreeEconomy(t *testing.T) *Economy {
 	if err != nil {
 		t.Fatalf("create ledger: %v", err)
 	}
+
 	t.Cleanup(func() {
 		l.Close()
 	})
+
 	return NewEconomy(l, 0, 0, 0, 0, 0, 10, time.Hour*12)
 }
 
 func TestZeroPriceCreations(t *testing.T) {
+	const stock = 3
+
 	e := newFreeEconomy(t)
 	user := User{"user"}
+
 	unlimited, _, err := e.CreateUnlimitedSource(user)
 	if err != nil {
 		t.Fatalf("CreateUnlimitedSource: %v", err)
@@ -146,8 +151,6 @@ func TestZeroPriceCreations(t *testing.T) {
 	if !e.OwnsOne(user, unlimited) {
 		t.Fatalf("expected %v to own %v", user, unlimited)
 	}
-
-	const stock = 3
 
 	limited, _, err := e.CreateLimitedSource(user, stock)
 	if err != nil {

@@ -78,6 +78,7 @@ func Exec(c *Client, sql string, vars map[string]any) error {
 // A zero timeout disables the per-request timeout.
 func NewWithTimeout(endpoint, namespace, database, user, pass string, timeout time.Duration) (*Client, error) {
 	ctx := context.Background()
+
 	u, err := url.ParseRequestURI(endpoint)
 	if err != nil {
 		return nil, fmt.Errorf("parse surreal endpoint: %w", err)

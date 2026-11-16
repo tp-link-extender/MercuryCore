@@ -53,7 +53,9 @@ func (d *migrationData) packageOrder() ([]uint32, error) {
 			packages = append(packages, id)
 		}
 	}
+
 	slices.Sort(packages)
+
 	for pkg, children := range d.children {
 		for _, child := range children {
 			if d.assets[child].Type == 32 {
@@ -124,7 +126,9 @@ func (d *migrationData) sortedAssetIDs() []uint32 {
 	for id := range d.assets {
 		ids = append(ids, id)
 	}
+
 	slices.Sort(ids)
+
 	return ids
 }
 
@@ -134,7 +138,9 @@ func (d *migrationData) sortedBalanceUsers() []string {
 	for user := range d.balancesMicro {
 		users = append(users, user)
 	}
+
 	sort.Strings(users)
+
 	return users
 }
 
@@ -144,7 +150,9 @@ func (d *migrationData) sortedGroupIDs() []string {
 	for id := range d.groups {
 		ids = append(ids, id)
 	}
+
 	sort.Strings(ids)
+
 	return ids
 }
 
@@ -154,7 +162,9 @@ func (d *migrationData) sortedPlaceIDs() []uint32 {
 	for id := range d.places {
 		ids = append(ids, id)
 	}
+
 	slices.Sort(ids)
+
 	return ids
 }
 
@@ -186,6 +196,7 @@ func (d *migrationData) warnf(format string, args ...any) {
 
 func (d *migrationData) checkUser(id, what string) bool {
 	d.validateUserID(id, what)
+
 	if id == "" {
 		return false
 	}
@@ -198,7 +209,9 @@ func (d *migrationData) checkUser(id, what string) bool {
 		d.warnf("ignoring %s with missing user %s", what, id)
 		return false
 	}
+
 	d.errorf("%s references missing user %s", what, id)
+
 	return false
 }
 
@@ -208,7 +221,9 @@ func sortedAmountUsers(amounts map[string]uint64) []string {
 	for user := range amounts {
 		users = append(users, user)
 	}
+
 	sort.Strings(users)
+
 	return users
 }
 
@@ -218,7 +233,9 @@ func sortedUsers(set map[string]struct{}) []string {
 	for user := range set {
 		users = append(users, user)
 	}
+
 	sort.Strings(users)
+
 	return users
 }
 
@@ -254,6 +271,7 @@ func (d *migrationData) detectConflicts() {
 			for parent := range parents {
 				list = append(list, fmt.Sprintf("%d", parent))
 			}
+
 			sort.Strings(list)
 			d.errorf("asset %d is contained by multiple packages (%s); resolve this before migrating (2E)", child, strings.Join(list, ", "))
 		}
@@ -293,6 +311,7 @@ func (d *migrationData) detectUnresolvedSources() {
 			d.warnf("%s %d has no creator or owner; using fallback user %s", kind, id, d.fallbackUser)
 			continue
 		}
+
 		d.errorf("%s %d has no creator, owner, or fallback user", kind, id)
 	}
 
@@ -305,6 +324,7 @@ func (d *migrationData) detectUnresolvedSources() {
 			d.warnf("place %d has no owner; using fallback user %s", id, d.fallbackUser)
 			continue
 		}
+
 		d.errorf("place %d has no owner or fallback user", id)
 	}
 
@@ -317,6 +337,7 @@ func (d *migrationData) detectUnresolvedSources() {
 			d.warnf("group %q has no owner; using fallback user %s", id, d.fallbackUser)
 			continue
 		}
+
 		d.errorf("group %q has no owner or fallback user", id)
 	}
 }
@@ -341,6 +362,7 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 
 	for _, id := range s.Users {
 		d.validateUserID(id, "user")
+
 		if id != "" {
 			d.users[id] = struct{}{}
 		}
@@ -348,6 +370,7 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 
 	if fallbackUser != "" {
 		d.validateUserID(fallbackUser, "fallback user")
+
 		if _, ok := d.users[fallbackUser]; !ok {
 			d.errorf("fallback user %q is not a known user", fallbackUser)
 
@@ -377,6 +400,7 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 
 	for _, g := range s.Groups {
 		d.validateStringID(g.ID, fmt.Sprintf("group %q", g.ID))
+
 		if _, ok := d.groups[g.ID]; ok {
 			d.errorf("duplicate group id %q", g.ID)
 			continue
@@ -391,7 +415,9 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 				d.warnf("ignoring creator relation for missing asset %d", c.AssetID)
 				continue
 			}
+
 			d.errorf("creator relation points to missing asset %d", c.AssetID)
+
 			continue
 		}
 
@@ -408,7 +434,9 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 				d.warnf("ignoring asset owner relation for missing asset %d", o.AssetID)
 				continue
 			}
+
 			d.errorf("asset owner relation points to missing asset %d", o.AssetID)
+
 			continue
 		}
 
@@ -430,7 +458,9 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 				d.warnf("ignoring package relation for missing package %d", child.PackageID)
 				continue
 			}
+
 			d.errorf("package relation points to missing package %d", child.PackageID)
+
 			continue
 		}
 
@@ -444,7 +474,9 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 				d.warnf("ignoring package %d relation to missing asset %d", child.PackageID, child.ChildID)
 				continue
 			}
+
 			d.errorf("package %d contains missing asset %d", child.PackageID, child.ChildID)
+
 			continue
 		}
 
@@ -463,7 +495,9 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 				d.warnf("ignoring place owner relation for missing place %d", o.PlaceID)
 				continue
 			}
+
 			d.errorf("place owner relation points to missing place %d", o.PlaceID)
+
 			continue
 		}
 
@@ -484,7 +518,9 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 				d.warnf("ignoring group owner relation for missing group %q", o.GroupID)
 				continue
 			}
+
 			d.errorf("group owner relation points to missing group %q", o.GroupID)
+
 			continue
 		}
 
@@ -514,8 +550,10 @@ func buildMigrationData(s *legacySnapshot, fallbackUser string, skipOrphans bool
 			d.dust[user] = micro
 		}
 	}
+
 	d.detectConflicts()
 	d.detectUnresolvedSources()
+
 	return d
 }
 

@@ -227,6 +227,7 @@ func (p *planner) plan(d *migrationData) error {
 		children := append([]uint32(nil), d.children[pkg]...)
 
 		slices.Sort(children)
+
 		for _, child := range children {
 			if d.assets[child].Type == 32 {
 				continue
@@ -317,6 +318,7 @@ func (p *planner) plan(d *migrationData) error {
 		children := append([]uint32(nil), d.children[pkg]...)
 
 		slices.Sort(children)
+
 		for _, child := range children {
 			if d.assets[child].Type == 32 {
 				continue

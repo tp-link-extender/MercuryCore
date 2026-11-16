@@ -23,6 +23,7 @@ import (
 type (
 	CustomResponseWriter struct {
 		http.ResponseWriter
+
 		log []byte
 		statusCode int
 	}
@@ -238,6 +239,7 @@ func (e *EconomyServer) pricesRoute(w http.ResponseWriter, r *http.Request) {
 	for i, p := range prices {
 		binary.BigEndian.PutUint64(buf[i*8:], uint64(p))
 	}
+
 	w.Write(buf)
 }
 
@@ -290,6 +292,7 @@ func (e *EconomyServer) balanceRoute(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
+
 	fmt.Fprintf(w, "%d", e.Balance(o))
 }
 
@@ -320,6 +323,7 @@ func (e *EconomyServer) buyLimitedAssetRoute(w http.ResponseWriter, r *http.Requ
 		http.Error(w, fmt.Sprintf("buy limited asset error: %v", err.Error()), http.StatusBadRequest)
 		return
 	}
+
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -344,6 +348,7 @@ func (e *EconomyServer) buyPackageRoute(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, fmt.Sprintf("buy package error: %v", err.Error()), http.StatusBadRequest)
 		return
 	}
+
 	w.WriteHeader(http.StatusNoContent)
 }
 
@@ -378,6 +383,7 @@ func (e *EconomyServer) countOwnersManyRoute(w http.ResponseWriter, r *http.Requ
 	if !ok {
 		return
 	}
+
 	fmt.Fprintf(w, "%d", e.CountOwnersMany(com))
 }
 
@@ -386,6 +392,7 @@ func (e *EconomyServer) countOwnersOneRoute(w http.ResponseWriter, r *http.Reque
 	if !ok {
 		return
 	}
+
 	fmt.Fprintf(w, "%d", e.CountOwnersOne(coo))
 }
 
@@ -400,6 +407,7 @@ func (e *EconomyServer) createGroupRoute(w http.ResponseWriter, r *http.Request)
 		http.Error(w, fmt.Sprintf("create group error: %v", err.Error()), http.StatusBadRequest)
 		return
 	}
+
 	SerialiseString(g, w)
 }
 
@@ -421,6 +429,7 @@ func (e *EconomyServer) createLimitedSourceRoute(w http.ResponseWriter, r *http.
 		http.Error(w, fmt.Sprintf("create limited source error: %v", err.Error()), http.StatusBadRequest)
 		return
 	}
+
 	SerialiseNumeric(src, w)
 }
 
@@ -464,6 +473,7 @@ func (e *EconomyServer) createPackageSourceRoute(w http.ResponseWriter, r *http.
 		http.Error(w, fmt.Sprintf("create package source error: %v", err.Error()), http.StatusBadRequest)
 		return
 	}
+
 	SerialiseNumeric(src, w)
 }
 
@@ -478,6 +488,7 @@ func (e *EconomyServer) createPlaceRoute(w http.ResponseWriter, r *http.Request)
 		http.Error(w, fmt.Sprintf("create place error: %v", err.Error()), http.StatusBadRequest)
 		return
 	}
+
 	SerialiseNumeric(p, w)
 }
 
@@ -492,6 +503,7 @@ func (e *EconomyServer) createUnlimitedSourceRoute(w http.ResponseWriter, r *htt
 		http.Error(w, fmt.Sprintf("create unlimited source error: %v", err.Error()), http.StatusBadRequest)
 		return
 	}
+
 	SerialiseNumeric(src, w)
 }
 
@@ -572,6 +584,7 @@ func (e *EconomyServer) ownsManyRoute(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
+
 	fmt.Fprintf(w, "%d", e.OwnsMany(o, com))
 }
 
@@ -585,6 +598,7 @@ func (e *EconomyServer) ownsOneRoute(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
+
 	w.Write([]byte{b2i(e.OwnsOne(o, coo))})
 }
 
@@ -602,15 +616,19 @@ func (e *EconomyServer) stipendRoute(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, ErrStipendNotReady.Error(), http.StatusTooManyRequests) // we're not using 425
 			return
 		}
+
 		http.Error(w, fmt.Sprintf("stipend error: %v", err.Error()), http.StatusBadRequest)
+
 		return
 	}
+
 	w.WriteHeader(http.StatusNoContent)
 }
 
 func loggingHandler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		t := time.Now().Format("2006-01-02 15:04:05")
+
 		bodyBytes, err := io.ReadAll(http.MaxBytesReader(w, r.Body, maxRequestBodyBytes))
 		if err != nil {
 			status := http.StatusBadRequest
@@ -628,6 +646,7 @@ func loggingHandler(next http.Handler) http.Handler {
 			fmt.Printf("%s %s %s\n", c.InGray(t), colourCode(status), c.InBlue(r.URL.Path))
 			fmt.Println(c.InRed(fmt.Sprintf("Failed to read request body: %v", err)))
 			fmt.Println(c.InPurple(string(crw.log)))
+
 			return
 		}
 
@@ -673,8 +692,10 @@ func requireEconomyKey(key string, next http.Handler) http.Handler {
 		if !ok {
 			w.Header().Set("WWW-Authenticate", `Bearer realm="economy"`)
 			http.Error(w, "Unauthorised", http.StatusUnauthorized)
+
 			return
 		}
+
 		next.ServeHTTP(w, r)
 	})
 }
@@ -705,15 +726,19 @@ func main() {
 
 	if history, err := e.TransferHistory(10); err == nil {
 		fmt.Println("Recent transfer history:")
+
 		for _, t := range history {
 			fmt.Printf("- %s\n", t.Transfer)
 		}
+
 		fmt.Println()
 	} else {
 		fmt.Printf("Error fetching transfer history: %v\n", err)
 	}
+
 	registerRoutes(http.DefaultServeMux, &EconomyServer{e})
 	fmt.Printf("%s\n", c.InGreen(fmt.Sprintf("~ Economy service is up on %s (ledger %s) ~", *addr, *dbPath))) // 03/Jan/2009 Chancellor on brink of second bailout for banks
+
 	if err := http.ListenAndServe(*addr, requireEconomyKey(key, loggingHandler(http.DefaultServeMux))); err != nil {
 		fmt.Println(c.InRed("Failed to start server: " + err.Error()))
 		os.Exit(1)
