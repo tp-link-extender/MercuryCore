@@ -443,7 +443,7 @@ func (e *EconomyServer) createPackageSourceRoute(w http.ResponseWriter, r *http.
 
 	comps := make([]PackageComponent, 0, count)
 
-	for i := uint32(0); i < count; i++ {
+	for range count {
 		i, err := DeserialiseItem(r.Body)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("decode component %d: %v", i, err.Error()), http.StatusBadRequest)
@@ -615,8 +615,7 @@ func loggingHandler(next http.Handler) http.Handler {
 		if err != nil {
 			status := http.StatusBadRequest
 
-			var maxErr *http.MaxBytesError
-			if errors.As(err, &maxErr) {
+			if _, ok := errors.AsType[*http.MaxBytesError](err); ok {
 				status = http.StatusRequestEntityTooLarge
 			}
 

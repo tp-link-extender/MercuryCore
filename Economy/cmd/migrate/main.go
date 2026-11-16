@@ -5,6 +5,7 @@ import (
 	"Economy/ledger"
 	"flag"
 	"fmt"
+	"maps"
 	"os"
 	"time"
 )
@@ -249,10 +250,7 @@ func runMigrate(o options, rep *report) error {
 
 		return closeErr
 	}
-
-	for category, count := range planner.counts {
-		rep.Counts[category] = count
-	}
+	maps.Copy(rep.Counts, planner.counts)
 
 	transfers := totalCount(planner.counts)
 	rep.Counts["transfers"] = transfers

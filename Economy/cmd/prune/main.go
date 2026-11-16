@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"maps"
 	"os"
 	"path/filepath"
 	"sort"
@@ -41,7 +42,7 @@ func fail(err error) {
 func parseTypes(value string) (map[int]struct{}, error) {
 	out := make(map[int]struct{})
 
-	for _, part := range strings.Split(value, ",") {
+	for part := range strings.SplitSeq(value, ",") {
 		part = strings.TrimSpace(part)
 
 		if part == "" {
@@ -240,10 +241,7 @@ func run(o options, removeTypes map[int]struct{}, rep *report) error {
 
 			return closeErr
 		}
-
-		for category, count := range p.counts {
-			rep.Ledger.Counts[category] = count
-		}
+		maps.Copy(rep.Ledger.Counts, p.counts)
 
 		rep.Ledger.Transfers = totalCount(p.counts)
 		verification := verifyPlan(out, plan)

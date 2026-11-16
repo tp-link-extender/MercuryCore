@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"slices"
 	"sort"
 	"strings"
 )
@@ -26,10 +27,8 @@ type migrationData struct {
 const microPerUnit = 1_000_000
 
 func appendUnique(list []uint32, v uint32) []uint32 {
-	for _, existing := range list {
-		if existing == v {
-			return list
-		}
+	if slices.Contains(list, v) {
+		return list
 	}
 
 	return append(list, v)
@@ -54,9 +53,7 @@ func (d *migrationData) packageOrder() ([]uint32, error) {
 			packages = append(packages, id)
 		}
 	}
-	sort.Slice(packages, func(i, j int) bool {
-		return packages[i] < packages[j]
-	})
+	slices.Sort(packages)
 	for pkg, children := range d.children {
 		for _, child := range children {
 			if d.assets[child].Type == 32 {
@@ -66,9 +63,7 @@ func (d *migrationData) packageOrder() ([]uint32, error) {
 	}
 
 	for pkg := range childPackages {
-		sort.Slice(childPackages[pkg], func(i, j int) bool {
-			return childPackages[pkg][i] < childPackages[pkg][j]
-		})
+		slices.Sort(childPackages[pkg])
 	}
 
 	state := make(map[uint32]uint8, len(packages))
@@ -129,9 +124,7 @@ func (d *migrationData) sortedAssetIDs() []uint32 {
 	for id := range d.assets {
 		ids = append(ids, id)
 	}
-	sort.Slice(ids, func(i, j int) bool {
-		return ids[i] < ids[j]
-	})
+	slices.Sort(ids)
 	return ids
 }
 
@@ -161,9 +154,7 @@ func (d *migrationData) sortedPlaceIDs() []uint32 {
 	for id := range d.places {
 		ids = append(ids, id)
 	}
-	sort.Slice(ids, func(i, j int) bool {
-		return ids[i] < ids[j]
-	})
+	slices.Sort(ids)
 	return ids
 }
 

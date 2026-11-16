@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"sort"
+	"slices"
 	"strings"
 )
 
@@ -161,9 +161,7 @@ func loadOrphanImages(c *sdb.Client, tables map[string]bool, primary []uint32) (
 		seen[id] = struct{}{}
 		orphans = append(orphans, id)
 	}
-	sort.Slice(orphans, func(i, j int) bool {
-		return orphans[i] < orphans[j]
-	})
+	slices.Sort(orphans)
 	return orphans, nil
 }
 
