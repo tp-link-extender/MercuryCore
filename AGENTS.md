@@ -59,6 +59,12 @@ None of this should conflict with the formatting or linting rules of Biome.
 - If something is only intended to run once, prefer onMount() over $effect()
 	- Prefer onDestroy() over $effect(() => (() => { ... })())
 
+## SvelteKit – Imports and env
+
+- Local modules are imported with `#lib/...` or `#components/...` and the full file extension, such as `#lib/server/auth.ts`, because subpath imports do not resolve extensions. `$lib` and `$components` no longer exist
+- Environment variables are declared in `Site/src/env.ts` and imported from `$app/env/private` or `$app/env/public`, not `$env/*`
+- Form controls take their name from `field.as(...)`, so never set `name` on the element too
+
 ## SvelteKit – Remote forms
 
 - Forms are remote functions (`form()` from `$app/server`) in a `*.remote.ts` module next to the route, not page actions
@@ -66,8 +72,8 @@ None of this should conflict with the formatting or linting rules of Biome.
 - Validation happens before the handler, so a field that can be absent from the submitted data needs an optional key (`"description?": "string"`), not an `| undefined` union
 	- Checkboxes and unselected files are absent, not `undefined`
 - Use `.for(id)` for forms repeated per row; the key is injected into the data as `id` as-is, so a numeric id needs a schema that accepts a number
-- File fields must use `formFile` from `$lib/server/formFile`: SvelteKit hands uploads over as Blob-backed objects that arktype's `File` check and `Bun.Image` reject, so `imageAsset.ts` and `fileType.ts` read the bytes before handing them over
-- Send user-facing validation failures through `issues.field("message")`; the `Form` component shows form-level issues and `result.success` itself
+- File fields must use `formFile` from `#lib/server/formFile.ts`: SvelteKit hands uploads over as Blob-backed objects that arktype's `File` check and `Bun.Image` reject, so `imageAsset.ts` and `fileType.ts` read the bytes before handing them over
+- Send user-facing validation failures through `issues.field("message")`; the `Form` component shows form-level issues and `successOf(result)` reads the success message
 
 ## CSS
 
