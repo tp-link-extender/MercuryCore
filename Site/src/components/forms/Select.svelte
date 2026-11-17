@@ -25,7 +25,7 @@
 		// multiple?: boolean
 		options: readonly string[]
 		selected?: string
-		formData: ClientForm<T>
+		formData: Omit<ClientForm<T>, "for">
 	} = $props()
 
 	let issues = $derived(formData.fields[name]?.issues() || [])

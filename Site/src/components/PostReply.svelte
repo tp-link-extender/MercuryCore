@@ -1,7 +1,7 @@
 <script lang="ts" generics="T extends RemoteFormInput">
 	import type { ClientForm } from "#lib/validate.ts"
 
-	const { formData }: { formData: ClientForm<T> } = $props()
+	const { formData }: { formData: Omit<ClientForm<T>, "for"> } = $props()
 
 	let issues = $derived(formData.fields.allIssues() || [])
 	let pending = $derived(formData.pending > 0)

@@ -6,7 +6,6 @@ import {
 	UnlimitedAsset as EconUnlimitedAsset,
 	User as EconUser,
 } from "economy/types"
-import { form, getRequestEvent } from "$app/server"
 import { brickColours } from "#lib/brickColours.ts"
 import {
 	allowedTypes,
@@ -22,6 +21,7 @@ import { packageItems } from "#lib/server/packageItems.ts"
 import { ratelimited, tooManyRequests } from "#lib/server/ratelimit.ts"
 import requestRender from "#lib/server/requestRender.ts"
 import { db, Record } from "#lib/server/surreal.ts"
+import { form, getRequestEvent } from "$app/server"
 import equipQuery from "./equip.surql"
 import equipDataQuery from "./equipData.surql"
 import equipPackageQuery from "./equipPackage.surql"

@@ -9,7 +9,12 @@ import {
 	UnlimitedSource,
 	User,
 } from "economy/types"
-import type { GroupData, OwnerData, SourceData, UserData } from "#lib/economy.ts"
+import type {
+	GroupData,
+	OwnerData,
+	SourceData,
+	UserData,
+} from "#lib/economy.ts"
 import ownersQuery from "#lib/server/owners.surql"
 import ownerUserQuery from "#lib/server/ownerUser.surql"
 import { db, Record } from "#lib/server/surreal.ts"

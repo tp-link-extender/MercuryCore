@@ -1,11 +1,11 @@
 import { type } from "arktype"
-import { form, getRequestEvent } from "$app/server"
 import { authorise } from "#lib/server/auth.ts"
 import { hashPassword } from "#lib/server/password.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
 import { db, Record } from "#lib/server/surreal.ts"
 import { usernameTest } from "#lib/typeTests.ts"
 import type { ClientForm } from "#lib/validate.ts"
+import { form, getRequestEvent } from "$app/server"
 import updatePasswordQuery from "./updatePassword.surql"
 
 const schema = type({

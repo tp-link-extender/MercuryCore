@@ -1,4 +1,3 @@
-
 export function GET() {
 	// get bearer token from header instead of insecure url (temporarily disabled)
 	// const auth = request.headers.get("Authorization")

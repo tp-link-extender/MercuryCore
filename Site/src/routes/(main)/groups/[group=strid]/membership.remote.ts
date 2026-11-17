@@ -1,9 +1,9 @@
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
-import { form, getRequestEvent } from "$app/server"
 import { authorise } from "#lib/server/auth.ts"
 import exclude from "#lib/server/exclude.ts"
 import { db, find, Record } from "#lib/server/surreal.ts"
+import { form, getRequestEvent } from "$app/server"
 import joinQuery from "./join.surql"
 import leaveQuery from "./leave.surql"
 

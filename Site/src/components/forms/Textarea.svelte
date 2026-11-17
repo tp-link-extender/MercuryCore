@@ -20,7 +20,7 @@
 		rows?: number
 		lowpad?: boolean
 		defaultValue?: string
-		formData: ClientForm<T>
+		formData: Omit<ClientForm<T>, "for">
 	} & HTMLTextareaAttributes = $props()
 
 	let issues = $derived(formData.fields[name]?.issues() || [])

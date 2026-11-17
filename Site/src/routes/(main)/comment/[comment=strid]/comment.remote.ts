@@ -1,10 +1,10 @@
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
-import { getRequestEvent, query } from "$app/server"
 import type { Comment } from "#lib/comment.ts"
 import { authorise } from "#lib/server/auth.ts"
 import { db, Record } from "#lib/server/surreal.ts"
 import { encode } from "#lib/urlName.ts"
+import { getRequestEvent, query } from "$app/server"
 
 const schema = type("string")
 

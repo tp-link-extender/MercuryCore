@@ -1,10 +1,4 @@
 import { Surreal, RecordId as SurrealRecordId, Table } from "surrealdb"
-import { building } from "$app/env"
-import {
-	DATABASE_PASSWORD,
-	DATABASE_ROOT_PASSWORD,
-	DATABASE_USER,
-} from "$app/env/private"
 import config from "#lib/server/config.ts"
 import {
 	type DatabaseCredentials,
@@ -16,6 +10,12 @@ import initQuery from "#lib/server/init.surql"
 import logo from "#lib/server/logo.ts" // because this is usually one of the first files loaded
 import startEconomy from "#lib/server/process/economy.ts"
 import startSurreal from "#lib/server/process/surreal.ts"
+import { building } from "$app/env"
+import {
+	DATABASE_PASSWORD,
+	DATABASE_ROOT_PASSWORD,
+	DATABASE_USER,
+} from "$app/env/private"
 
 function credentials(): DatabaseCredentials {
 	try {

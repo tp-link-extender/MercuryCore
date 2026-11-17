@@ -1,11 +1,11 @@
 import { error } from "@sveltejs/kit"
-import { GAMESERVER_KEY } from "$app/env/private"
 import { bearerMatches } from "#lib/server/bearer.ts"
 import config from "#lib/server/config.ts"
 import idToPort from "#lib/server/idToPort.ts"
 import { buildLoadscript } from "#lib/server/loadscript.ts"
 import { SignScript } from "#lib/server/sign.ts"
 import { db, Record } from "#lib/server/surreal.ts"
+import { GAMESERVER_KEY } from "$app/env/private"
 import type { RequestEvent } from "./$types"
 import placeQuery from "./place.surql"
 

@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { page } from "$app/state"
+	
 	import Group from "#components/Group.svelte"
 	import Head from "#components/Head.svelte"
 	import Pagination from "#components/Pagination.svelte"
+import { page } from "$app/state"
 
 	let { data } = $props()
 </script>

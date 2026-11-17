@@ -5,7 +5,7 @@
 	const { totalPages }: { totalPages: number } = $props()
 
 	function getNewUrl(p: number) {
-		const url = new URL(page.url) // clone?
+		const url = new URL(page.url.href) // clone?
 		url.searchParams.set("p", p.toString())
 		return url.pathname + url.search
 	}

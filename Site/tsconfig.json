@@ -10,10 +10,9 @@
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"strict": true,
-		"strictPropertyInitialization": false,
-		"typeRoots": ["./src/app.d.ts"]
+		"strictPropertyInitialization": false
 	},
+	"exclude": ["node_modules", "build"],
 	"extends": "$app/tsconfig",
-	"include": ["src", "*.ts"],
-	"exclude": ["node_modules", "build"]
+	"include": ["src", "*.ts"]
 }

@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { page } from "$app/state"
+	
 	import Head from "#components/Head.svelte"
 	import Pagination from "#components/Pagination.svelte"
+import { page } from "$app/state"
 	import PlaceCard from "./PlaceCard.svelte"
 
 	const { data } = $props()

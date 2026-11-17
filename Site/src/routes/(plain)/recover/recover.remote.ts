@@ -1,5 +1,4 @@
 import { type } from "arktype"
-import { form, getRequestEvent } from "$app/server"
 import config from "#lib/server/config.ts"
 import { sendEmail } from "#lib/server/email.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
@@ -9,6 +8,7 @@ import {
 } from "#lib/server/recoveryToken.ts"
 import { db } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
+import { form, getRequestEvent } from "$app/server"
 import recoveryQuery from "./recovery.surql"
 
 const schema = type({

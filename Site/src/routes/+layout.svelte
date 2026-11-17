@@ -2,11 +2,11 @@
 	
 	import nprogress from "nprogress"
 	import { onMount } from "svelte"
-	import { enhance } from "$app/forms"
-	import { navigating } from "$app/state"
 	import User from "#components/User.svelte"
 import { dismissForm } from "#lib/notifications.remote.ts"
 	import { statusPing } from "#lib/session.remote.ts"
+	import { enhance } from "$app/forms"
+	import { navigating } from "$app/state"
 
 	import "../nprogress.css"
 	import "../global.css"

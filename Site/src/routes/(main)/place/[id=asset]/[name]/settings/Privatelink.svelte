@@ -1,5 +1,7 @@
 <script lang="ts">
+	
 	import fade from "#lib/fade.ts"
+import { successOf } from "#lib/validate.ts"
 	import { privatelinkForm } from "./settings.remote.js"
 
 	const { data }: { data: import("./$types").PageData } = $props()
@@ -35,14 +37,14 @@
 					<fa fa-copy></fa>
 				</button>
 				<button
-					class="btn btn-{privatelinkFormFor.result?.success
+					class="btn btn-{successOf(privatelinkFormFor.result)
 						? 'success'
 						: 'secondary'}">
 					<fa fa-rotate></fa>
 					{#if privatelinkFormFor.pending > 0}
 						Working...
 					{:else}
-						{privatelinkFormFor.result?.success || "Regenerate"}
+						{successOf(privatelinkFormFor.result) || "Regenerate"}
 					{/if}
 				</button>
 			</div>

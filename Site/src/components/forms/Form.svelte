@@ -1,7 +1,7 @@
 <script lang="ts" generics="T extends RemoteFormInput">
 	import type { Snippet } from "svelte"
 	import type { HTMLFormAttributes } from "svelte/elements"
-	import type { ClientForm } from "#lib/validate.ts"
+	import { type ClientForm, successOf } from "#lib/validate.ts"
 
 	const {
 		working = "Working...",
@@ -18,11 +18,11 @@
 		inline?: boolean
 		nopad?: boolean // Don't pad the icon on the submit button
 		// method?: HTMLFormAttributes["method"]
-		formData: ClientForm<T>
+		formData: Omit<ClientForm<T>, "for">
 		children: Snippet
 	} & HTMLFormAttributes = $props()
 
-	let valid: string | undefined = $derived(formData.result?.success)
+	let valid: string | undefined = $derived(successOf(formData.result))
 	let issues = $derived(formData.fields.allIssues() || [])
 	let pending = $derived(formData.pending > 0)
 </script>

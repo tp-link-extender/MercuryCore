@@ -1,10 +1,10 @@
 import { error } from "@sveltejs/kit"
 import { Place } from "economy/types"
-import { GAMESERVER_KEY } from "$app/env/private"
 import { bearerMatches } from "#lib/server/bearer.ts"
 import constantTimeEqual from "#lib/server/constantTimeEqual.ts"
 import { economyConnFailed, ownsItem } from "#lib/server/economy.ts"
 import { db, Record } from "#lib/server/surreal.ts"
+import { GAMESERVER_KEY } from "$app/env/private"
 import type { RequestEvent } from "./$types"
 
 const placeAccessQuery = `

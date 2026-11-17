@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
+	
 	import Form from "#components/forms/Form.svelte"
 	import Input from "#components/forms/Input.svelte"
 	import Head from "#components/Head.svelte"
@@ -8,6 +8,7 @@
 	import TabData from "#components/TabData.ts"
 	import User from "#components/User.svelte"
 	import fade from "#lib/fade.ts"
+import { enhance } from "$app/forms"
 
 	const { data } = $props()
 

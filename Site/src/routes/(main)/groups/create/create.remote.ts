@@ -2,11 +2,11 @@ import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { createGroup } from "economy/api"
 import { User } from "economy/types"
-import { form, getRequestEvent } from "$app/server"
 import { authorise } from "#lib/server/auth.ts"
 import exclude from "#lib/server/exclude.ts"
 import { db, findWhere, Record } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
+import { form, getRequestEvent } from "$app/server"
 import createQuery from "./create.surql"
 
 const schema = type({

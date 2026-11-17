@@ -2,8 +2,8 @@
 
 /// <reference types="@types/bun" />
 
-import type { RemoteFormInput as RFI } from "$app/server"
 import type { AttributifyAttributes } from "@unocss/preset-attributify"
+import type { RemoteFormInput as RFI } from "$app/server"
 
 declare global {
 	namespace svelteHTML {

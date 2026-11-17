@@ -34,10 +34,10 @@ export default defineConfig({
 			experimental: {
 				remoteFunctions: true,
 			},
+			inspector: { toggleKeyCombo: "control-i" },
 
 			// Consult https://github.com/sveltejs/svelte-preprocess for more information about preprocessors
 			preprocess: vitePreprocess(),
-			inspector: { toggleKeyCombo: "control-i" },
 		}),
 		devtoolsJson(),
 	],

@@ -19,7 +19,7 @@
 		defaultValue?: boolean | string
 		// type: HTMLInputTypeAttribute
 		type: "text" | "number" | "color" | "date" | "checkbox" | "file" | "password"
-		formData: ClientForm<T>
+		formData: Omit<ClientForm<T>, "for">
 	} & HTMLInputAttributes = $props()
 </script>
 

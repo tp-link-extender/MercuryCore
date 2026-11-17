@@ -2,8 +2,8 @@
 
 // Types for the remote form functions used across the Site
 
-import type { RemoteForm, RemoteFormInput } from "$app/server"
 import type { ValidationError } from "@sveltejs/kit"
+import type { RemoteForm, RemoteFormInput } from "$app/server"
 
 type Issue = ValidationError["issues"][number]
 
@@ -19,3 +19,12 @@ export type ExtractId<Input> = Input extends { id: infer Id }
 		? Id
 		: string | number
 	: string | number
+
+// A form's result is its success message or a validation issue, so only read success from a result that has one
+export const successOf = (result: unknown): string | undefined =>
+	typeof result === "object" &&
+	result !== null &&
+	"success" in result &&
+	typeof result.success === "string"
+		? result.success
+		: undefined

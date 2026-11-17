@@ -1,11 +1,12 @@
 <script lang="ts">
-	import type { ActionResult } from "$app/forms"
-	import { invalidateAll } from "$app/navigation"
+	
 	import Breadcrumbs from "#components/Breadcrumbs.svelte"
 	import Comment from "#components/Comment.svelte"
 	import Head from "#components/Head.svelte"
 	import PostReply from "#components/PostReply.svelte"
 	import { replyForm } from "#lib/commentActions.remote.ts"
+import type { ActionResult } from "$app/forms"
+	import { refreshAll } from "$app/navigation"
 	import { likeForm } from "../../like.remote"
 	import { getComment } from "./comment.remote"
 	import ForumPost from "./ForumPost.svelte"
@@ -20,7 +21,7 @@
 	let { user } = $derived(data)
 
 	async function onResult({ result }: { result: ActionResult }) {
-		if (result.type === "success") await invalidateAll()
+		if (result.type === "success") await refreshAll()
 	}
 	const formData = replyForm.for(data.commentId)
 

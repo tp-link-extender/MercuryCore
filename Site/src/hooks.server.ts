@@ -148,7 +148,10 @@ export async function handle(e: Parameters<Handle>[0]) {
 	return finish(e)
 }
 
-export function handleError({ error }: Parameters<HandleServerError>[0]) {
+export function handleError({ kind, error }: Parameters<HandleServerError>[0]) {
+	// Expected errors, thrown with error(), were never passed to handleError before SvelteKit 3, so they stay out of the logs
+	if (kind === "app") return
+
 	if (typeof error === "object" && error != null) {
 		const { status } = error as { status?: number }
 		if (status) {

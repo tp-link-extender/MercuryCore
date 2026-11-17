@@ -1,6 +1,5 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { form, getRequestEvent } from "$app/server"
 import {
 	authorise,
 	cookieName,
@@ -13,6 +12,7 @@ import { hashPassword, verifyPassword } from "#lib/server/password.ts"
 import { ratelimitRemoteKey } from "#lib/server/ratelimit.ts"
 import { db, Record } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
+import { form, getRequestEvent } from "$app/server"
 import changePasswordQuery from "./changePassword.surql"
 import passwordQuery from "./password.surql"
 import updateProfileQuery from "./updateProfile.surql"

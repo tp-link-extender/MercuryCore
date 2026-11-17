@@ -1,7 +1,7 @@
 import { error } from "@sveltejs/kit"
-import { RCC_KEY } from "$app/env/private"
 import { bearerMatches } from "#lib/server/bearer.ts"
 import { db, Record } from "#lib/server/surreal.ts"
+import { RCC_KEY } from "$app/env/private"
 import type { RequestEvent } from "./$types"
 import completeQuery from "./complete.surql"
 import renderQuery from "./render.surql"

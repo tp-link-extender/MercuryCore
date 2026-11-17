@@ -1,12 +1,12 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { form, getRequestEvent } from "$app/server"
 import { cookieName, cookieOptions, createSession } from "#lib/server/auth.ts"
 import { verifyPassword } from "#lib/server/password.ts"
 import { ratelimitRemote, ratelimitRemoteKey } from "#lib/server/ratelimit.ts"
 import { db, type RecordId } from "#lib/server/surreal.ts"
 import { usernameTest } from "#lib/typeTests.ts"
 import type { ClientForm } from "#lib/validate.ts"
+import { form, getRequestEvent } from "$app/server"
 import userQuery from "./user.surql"
 
 const schema = type({

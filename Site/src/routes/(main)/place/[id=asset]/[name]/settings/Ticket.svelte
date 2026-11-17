@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { successOf } from "#lib/validate.ts"
 	import { ticketForm } from "./settings.remote.js"
 
 	const { data }: { data: import("./$types").PageData } = $props()
@@ -17,14 +18,14 @@
 					value={data.serverTicket}
 					disabled />
 				<button
-					class="btn btn-{ticketFormFor.result?.success
+					class="btn btn-{successOf(ticketFormFor.result)
 						? 'success'
 						: 'secondary'}">
 					<fa fa-rotate></fa>
 					{#if ticketFormFor.pending > 0}
 						Working...
 					{:else}
-						{ticketFormFor.result?.success || "Regenerate"}
+						{successOf(ticketFormFor.result) || "Regenerate"}
 					{/if}
 				</button>
 			</div>

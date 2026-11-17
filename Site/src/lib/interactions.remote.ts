@@ -1,6 +1,5 @@
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
-import { form, getRequestEvent } from "$app/server"
 import { authorise } from "#lib/server/auth.ts"
 import acceptExistingQuery from "#lib/server/interactions/acceptExisting.surql"
 import alreadyFriendsQuery from "#lib/server/interactions/alreadyFriends.surql"
@@ -15,6 +14,7 @@ import unfriendQuery from "#lib/server/interactions/unfriend.surql"
 import { ratelimitRemoteKey } from "#lib/server/ratelimit.ts"
 import requestRender from "#lib/server/requestRender.ts"
 import { db, Record, type RecordId } from "#lib/server/surreal.ts"
+import { form, getRequestEvent } from "$app/server"
 
 // Friend and follow buttons are repeated per profile, so each is a `.for(username)` instance; the key arrives as `id`
 

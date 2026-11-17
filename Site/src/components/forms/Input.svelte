@@ -29,7 +29,7 @@
 		inline?: boolean
 		column?: boolean
 		disabled?: boolean
-		formData: ClientForm<T>
+		formData: Omit<ClientForm<T>, "for">
 	} & HTMLInputAttributes = $props()
 
 	let issues = $derived(formData.fields[name]?.issues() || [])

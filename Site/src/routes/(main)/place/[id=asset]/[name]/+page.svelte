@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
+	
 	import Head from "#components/Head.svelte"
 	import ReportButton from "#components/ReportButton.svelte"
 	import Tab from "#components/Tab.svelte"
@@ -8,6 +8,7 @@
 	import User from "#components/User.svelte"
 	import fade from "#lib/fade.ts"
 	import { likeEnhance } from "#lib/like.ts"
+import { enhance } from "$app/forms"
 	import Autopilot from "./Autopilot.svelte"
 	import customProtocol from "./customprotocol"
 	import { closeForm, join, start } from "./play.remote"

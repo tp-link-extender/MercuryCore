@@ -1,4 +1,5 @@
 <script lang="ts">
+	
 	import Form from "#components/forms/Form.svelte"
 	import Input from "#components/forms/Input.svelte"
 	import Textarea from "#components/forms/Textarea.svelte"
@@ -7,6 +8,7 @@
 	import Tab from "#components/Tab.svelte"
 	import TabData from "#components/TabData.ts"
 	import User from "#components/User.svelte"
+import { successOf } from "#lib/validate.ts"
 	import {
 		bodyForm,
 		deleteForm,
@@ -140,7 +142,7 @@
 			</tbody>
 		</table>
 		<p class="text-emerald-600">
-			{formData.result?.success || ""}
+			{successOf(formData.result) || ""}
 		</p>
 	</Tab>
 </SidebarShell>
