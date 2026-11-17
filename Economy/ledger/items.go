@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"maps"
 	"strings"
 )
 
@@ -74,6 +75,7 @@ func (is Items) String() string {
 	var b strings.Builder
 
 	b.WriteString("Items {")
+
 	if len(is.One) > 0 {
 		b.WriteString("\n\tOne ")
 		b.WriteString(is.One.String())
@@ -83,7 +85,9 @@ func (is Items) String() string {
 		b.WriteString("\n\tMany ")
 		b.WriteString(is.Many.String())
 	}
+
 	b.WriteString("\n}")
+
 	return b.String()
 }
 
@@ -120,9 +124,7 @@ func (im ItemsMany) clone() ItemsMany {
 
 	out := make(ItemsMany, len(im))
 
-	for i, qty := range im {
-		out[i] = qty
-	}
+	maps.Copy(out, im)
 
 	return out
 }
@@ -252,6 +254,7 @@ func (im ItemsMany) Serialise(w io.Writer) error {
 
 	binary.BigEndian.PutUint32(lbuf[:], uint32(len(im)))
 	w.Write(lbuf[:])
+
 	for i, qty := range im {
 		if !SerialiseItem(i, w) {
 			return fmt.Errorf("unknown CanOwnMany type: %T", i)
@@ -268,9 +271,11 @@ func (im ItemsMany) Serialise(w io.Writer) error {
 
 func (io ItemsOne) Serialise(w io.Writer) error {
 	var lbuf [4]byte
+
 	// watch out don't have more than 4 billion inventory items lolll
 	binary.BigEndian.PutUint32(lbuf[:], uint32(len(io)))
 	w.Write(lbuf[:])
+
 	for i := range io {
 		if !SerialiseItem(i, w) {
 			return fmt.Errorf("unknown CanOwnOne type: %T", i)

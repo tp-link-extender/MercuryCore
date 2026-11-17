@@ -8,6 +8,7 @@ import { FixedWindow } from "$lib/server/fixedWindow"
 import { readLimited, TooLargeError } from "$lib/server/readLimited"
 import { db, Record } from "$lib/server/surreal"
 import { isXML } from "$lib/server/xml"
+import { substituteRobloxAssetUrls } from "$lib/server/xmlTemplate"
 import type { RequestEvent } from "./$types"
 import assetQuery from "./asset.surql"
 
@@ -39,10 +40,7 @@ async function substituteURLs(file: Bun.BunFile | Response) {
 	if (!isXML(buf)) return new Uint8Array(buf)
 
 	const rep = `${config.Domain}/asset`
-	return new TextDecoder()
-		.decode(buf)
-		.replaceAll("www.roblox.com/asset", rep)
-		.replaceAll("roblox.com/asset", rep)
+	return substituteRobloxAssetUrls(new TextDecoder().decode(buf), rep)
 }
 
 async function loadPrivilegedAsset(id: number) {

@@ -51,6 +51,7 @@ func TestCollectionLengthLimits(t *testing.T) {
 	var lenBuf [4]byte
 
 	binary.BigEndian.PutUint32(lenBuf[:], uint32(MaxCollectionEntries)+1)
+
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			err := c.read(bytes.NewReader(lenBuf[:]))

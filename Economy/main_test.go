@@ -23,6 +23,7 @@ func TestResponseLogIsCapped(t *testing.T) {
 		statusCode: http.StatusOK,
 	}
 	payload := bytes.Repeat([]byte("a"), maxResponseLogBytes+100)
+
 	n, err := crw.Write(payload)
 	if err != nil {
 		t.Fatalf("Write: %v", err)
@@ -45,9 +46,10 @@ func TestResponseLogIsCapped(t *testing.T) {
 func createdSrc(t *testing.T, body io.Reader) PackageSource {
 	t.Helper()
 
-	buf := new(bytes.Buffer)
+	buf := &bytes.Buffer{}
 
 	buf.ReadFrom(body)
+
 	if buf.Len() != 5 {
 		t.Fatalf("expected a 5 byte source id, got %d bytes", buf.Len())
 	}
@@ -62,7 +64,9 @@ func newPostRequest(srv *httptest.Server, route string, body *bytes.Buffer, key 
 	if err != nil {
 		return nil, err
 	}
+
 	req.Header.Set("Content-Type", "application/octet-stream")
+
 	if key != "" {
 		req.Header.Set("Authorization", bearerPrefix+key)
 	}
@@ -112,6 +116,7 @@ func registerRoutesMux(l *Ledger, e *Economy) *http.ServeMux {
 	mux := http.NewServeMux()
 
 	registerRoutes(mux, &EconomyServer{e})
+
 	return mux
 }
 
@@ -150,6 +155,7 @@ func testServer(t *testing.T) (*httptest.Server, *Economy) {
 	if err != nil {
 		t.Fatalf("create ledger: %v", err)
 	}
+
 	t.Cleanup(func() {
 		l.Close()
 		os.Remove(name)
@@ -198,6 +204,7 @@ func TestAllRoutesRegistered(t *testing.T) {
 		res := post(t, srv, route, bytes.NewBuffer(nil))
 
 		res.Body.Close()
+
 		if res.StatusCode == http.StatusNotFound {
 			t.Errorf("route %s is not registered", route)
 		}
@@ -242,7 +249,7 @@ func TestBuyFreeAssetOverHTTP(t *testing.T) {
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusNoContent {
-		buf := new(bytes.Buffer)
+		buf := &bytes.Buffer{}
 
 		buf.ReadFrom(res.Body)
 		t.Fatalf("expected 204, got %d: %s", res.StatusCode, buf.String())
@@ -358,6 +365,7 @@ func TestBuyUnlimitedAssetOverHTTP(t *testing.T) {
 	if got := e.Balance(buyer); got != 200-25 {
 		t.Fatalf("expected buyer balance %d, got %d", 200-25, got)
 	}
+
 	// creator paid the 10 UnlimitedSourcePrice up front, then earned the 25 sale price
 	if got := e.Balance(creator); got != 200-10+25 {
 		t.Fatalf("expected creator balance %d, got %d", 200-10+25, got)
@@ -366,6 +374,11 @@ func TestBuyUnlimitedAssetOverHTTP(t *testing.T) {
 
 // Concurrent HTTP purchases must be serialised, or they can all validate against the same stock and oversell.
 func TestConcurrentBuyLimitedAssetOverHTTP(t *testing.T) {
+	const (
+		stock = 5
+		buyers = 20
+	)
+
 	srv, e := testServer(t)
 
 	defer srv.Close()
@@ -378,14 +391,10 @@ func TestConcurrentBuyLimitedAssetOverHTTP(t *testing.T) {
 		t.Fatalf("MintCurrency creator: %v", err)
 	}
 
-	const stock = 5
-
 	src, _, err := e.CreateLimitedSource(creator, stock)
 	if err != nil {
 		t.Fatalf("CreateLimitedSource: %v", err)
 	}
-
-	const buyers = 20
 
 	bodies := make([]*bytes.Buffer, buyers)
 
@@ -420,6 +429,7 @@ func TestConcurrentBuyLimitedAssetOverHTTP(t *testing.T) {
 			defer wg.Done()
 
 			<-start
+
 			req, err := newPostRequest(srv, "buyLimitedAsset", body, testEconomyKey)
 			if err != nil {
 				statuses <- 0
@@ -433,10 +443,13 @@ func TestConcurrentBuyLimitedAssetOverHTTP(t *testing.T) {
 
 				return
 			}
+
 			res.Body.Close()
+
 			statuses <- res.StatusCode
 		}(body)
 	}
+
 	close(start)
 	wg.Wait()
 	close(statuses)
@@ -502,9 +515,10 @@ func TestCreatePackageSourceRejectsLimitedOverHTTP(t *testing.T) {
 		t.Fatalf("expected 400 for a limited component, got %d", res.StatusCode)
 	}
 
-	buf := new(bytes.Buffer)
+	buf := &bytes.Buffer{}
 
 	buf.ReadFrom(res.Body)
+
 	if !bytes.Contains(buf.Bytes(), []byte("limited")) {
 		t.Fatalf("expected the response to name the problem, got %q", buf.String())
 	}
@@ -630,6 +644,7 @@ func TestPackageContentsOverHTTP(t *testing.T) {
 
 	serialiseItem(creator, body)
 	putUint32(body, uint32(len(sources)))
+
 	for _, c := range comps {
 		serialiseItem(c, body)
 	}
@@ -653,7 +668,7 @@ func TestPackageContentsOverHTTP(t *testing.T) {
 		t.Fatalf("packageContents: %d", res.StatusCode)
 	}
 
-	buf := new(bytes.Buffer)
+	buf := &bytes.Buffer{}
 
 	buf.ReadFrom(res.Body)
 
@@ -679,7 +694,7 @@ func TestPackageContentsOverHTTP(t *testing.T) {
 		t.Fatalf("packageItems: %d", res.StatusCode)
 	}
 
-	buf = new(bytes.Buffer)
+	buf = &bytes.Buffer{}
 
 	buf.ReadFrom(res.Body)
 
@@ -735,6 +750,7 @@ func TestPackageOverHTTP(t *testing.T) {
 
 	serialiseItem(creator, body)
 	putUint32(body, uint32(len(comps)))
+
 	for _, c := range comps {
 		serialiseItem(c, body)
 	}
@@ -747,7 +763,7 @@ func TestPackageOverHTTP(t *testing.T) {
 		t.Fatalf("expected 200 from createPackageSource, got %d", res.StatusCode)
 	}
 
-	buf := new(bytes.Buffer)
+	buf := &bytes.Buffer{}
 
 	buf.ReadFrom(res.Body)
 
@@ -816,9 +832,10 @@ func TestRegisterRoutesDispatchesIndependently(t *testing.T) {
 		t.Fatalf("expected 200 from balance, got %d", res.StatusCode)
 	}
 
-	buf := new(bytes.Buffer)
+	buf := &bytes.Buffer{}
 
 	buf.ReadFrom(res.Body)
+
 	if buf.Len() == 0 {
 		t.Fatalf("expected balance to write a value")
 	}

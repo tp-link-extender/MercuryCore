@@ -32,6 +32,7 @@ func TestConcurrentCreatePackageSourceSameComponentsIsAtomic(t *testing.T) {
 		src PackageSource
 		err error
 	}
+
 	const attempts = 2
 
 	results := make(chan result, attempts)
@@ -46,10 +47,12 @@ func TestConcurrentCreatePackageSourceSameComponentsIsAtomic(t *testing.T) {
 			defer wg.Done()
 
 			<-start
+
 			src, _, err := e.CreatePackageSource(creator, sources)
 			results <- result{src, err}
 		}()
 	}
+
 	close(start)
 	wg.Wait()
 	close(results)
@@ -99,14 +102,16 @@ func TestConcurrentLimitedSourceCreationIsAtomic(t *testing.T) {
 		t.Fatalf("MintCurrency: %v", err)
 	}
 
-	const (
-		attempts = 10
-		stock = 5
-	)
 	type result struct {
 		src LimitedSource
 		err error
 	}
+
+	const (
+		attempts = 10
+		stock = 5
+	)
+
 	results := make(chan result, attempts)
 	start := make(chan struct{})
 
@@ -119,10 +124,12 @@ func TestConcurrentLimitedSourceCreationIsAtomic(t *testing.T) {
 			defer wg.Done()
 
 			<-start
+
 			src, _, err := e.CreateLimitedSource(creator, stock)
 			results <- result{src, err}
 		}()
 	}
+
 	close(start)
 	wg.Wait()
 	close(results)
@@ -186,6 +193,7 @@ func TestCreatePackageSourceUnownedComponentIsClean(t *testing.T) {
 	}
 
 	before := e.Balance(creator)
+
 	beforeHistory, err := e.TransferHistory(100)
 	if err != nil {
 		t.Fatalf("TransferHistory: %v", err)

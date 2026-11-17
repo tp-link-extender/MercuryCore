@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"sort"
+	"slices"
 	"strings"
 )
 
@@ -58,9 +58,7 @@ func applySite(c *sdb.Client, tables map[string]bool, removedIDs []uint32, remov
 	})
 }
 
-func deleteFiles(ids []uint32, assetsDir, thumbnailsDir string, dryRun bool) fileReport {
-	var report fileReport
-
+func deleteFiles(ids []uint32, assetsDir, thumbnailsDir string, dryRun bool) (report fileReport) {
 	seen := make(map[uint32]struct{}, len(ids))
 
 	for _, id := range ids {
@@ -104,7 +102,7 @@ func deleteFiles(ids []uint32, assetsDir, thumbnailsDir string, dryRun bool) fil
 		}
 	}
 
-	return report
+	return
 }
 
 func loadAssets(c *sdb.Client) ([]dbAsset, error) {
@@ -161,9 +159,9 @@ func loadOrphanImages(c *sdb.Client, tables map[string]bool, primary []uint32) (
 		seen[id] = struct{}{}
 		orphans = append(orphans, id)
 	}
-	sort.Slice(orphans, func(i, j int) bool {
-		return orphans[i] < orphans[j]
-	})
+
+	slices.Sort(orphans)
+
 	return orphans, nil
 }
 

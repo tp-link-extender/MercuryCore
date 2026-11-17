@@ -68,9 +68,11 @@ func newTestLedger(t *testing.T) *testLedger {
 	if err != nil {
 		t.Fatalf("NewLedger: %v", err)
 	}
+
 	t.Cleanup(func() {
 		l.Close()
 	})
+
 	return &testLedger{
 		l: l,
 	}
@@ -119,6 +121,7 @@ func mintOne(t *testing.T, tl *testLedger, user string, items ...ledger.CanOwnOn
 	for _, item := range items {
 		one[item] = struct{}{}
 	}
+
 	tl.apply(t, ledger.Transfer{
 		{
 			Owner: ledger.User{
@@ -201,8 +204,6 @@ func moveOne(t *testing.T, tl *testLedger, from, to ledger.Owner, item ledger.Ca
 func fixturePlan(t *testing.T) (*testLedger, []dbAsset, *prunePlan) {
 	t.Helper()
 
-	tl := newTestLedger(t)
-
 	const (
 		userA = "userA"
 		userB = "userB"
@@ -215,6 +216,8 @@ func fixturePlan(t *testing.T) (*testLedger, []dbAsset, *prunePlan) {
 		imageAsset uint32 = 4000
 		limited uint32 = 5000
 	)
+
+	tl := newTestLedger(t)
 
 	mintCurrency(t, tl, userA, 100)
 	mintCurrency(t, tl, userB, 50)
@@ -390,6 +393,7 @@ func fixturePlan(t *testing.T) (*testLedger, []dbAsset, *prunePlan) {
 		},
 	}
 	removeTypes := map[int]struct{}{8: {}, 18: {}, 19: {}, 32: {}}
+
 	plan, err := buildPlan(tl.l, assets, nil, removeTypes, false, func([]uint32) ([]uint32, error) {
 		return []uint32{imageAsset}, nil
 	})
@@ -403,6 +407,7 @@ func fixturePlan(t *testing.T) (*testLedger, []dbAsset, *prunePlan) {
 func TestPruneBuildsVerifiedLedger(t *testing.T) {
 	_, _, plan := fixturePlan(t)
 	out := filepath.Join(t.TempDir(), "pruned.db")
+
 	l, err := ledger.NewLedger(out)
 	if err != nil {
 		t.Fatalf("NewLedger: %v", err)
@@ -505,6 +510,7 @@ func TestPrunePlanRemovesPackagesAndChildren(t *testing.T) {
 func TestPruneRemovesDatabasePackageChildren(t *testing.T) {
 	tl, assets, _ := fixturePlan(t)
 	removeTypes := map[int]struct{}{8: {}, 18: {}, 19: {}, 32: {}}
+
 	plan, err := buildPlan(tl.l, assets, []dbPackageChild{
 		{
 			PackageID: 3000,

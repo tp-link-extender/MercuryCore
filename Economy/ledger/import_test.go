@@ -7,6 +7,7 @@ import (
 
 func TestImportAllowsStipendAndDependencies(t *testing.T) {
 	name := t.TempDir() + "/import.db"
+
 	l, err := NewLedger(name)
 	if err != nil {
 		t.Fatalf("create ledger: %v", err)

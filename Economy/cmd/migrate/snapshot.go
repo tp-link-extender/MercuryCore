@@ -194,6 +194,7 @@ func (c *surrealClient) Close() error {
 
 func newSurrealClient(url, namespace, database, user, pass string) (*surrealClient, error) {
 	ctx := context.Background()
+
 	db, err := surrealdb.FromEndpointURLString(ctx, url)
 	if err != nil {
 		return nil, fmt.Errorf("connect surreal: %w", err)
@@ -216,6 +217,8 @@ func newSurrealClient(url, namespace, database, user, pass string) (*surrealClie
 }
 
 func parseOldLedger(path string, s *legacySnapshot) error {
+	const microPerUnit = 1_000_000
+
 	if s.BalancesMicro == nil {
 		s.BalancesMicro = make(map[string]uint64)
 	}
@@ -235,17 +238,14 @@ func parseOldLedger(path string, s *legacySnapshot) error {
 
 	defer f.Close()
 
-	const microPerUnit = 1_000_000
-
 	raw := make(map[string]uint64)
 	scanner := bufio.NewScanner(f)
 
 	scanner.Buffer(make([]byte, 0, 64<<10), 4<<20)
 
-	var lineNo int
-
-	for scanner.Scan() {
+	for lineNo := 0; scanner.Scan(); {
 		lineNo++
+
 		line := strings.TrimSpace(scanner.Text())
 		if line == "" {
 			continue
@@ -322,6 +322,7 @@ func parseOldLedger(path string, s *legacySnapshot) error {
 
 	for user, micro := range raw {
 		dust := micro % microPerUnit
+
 		units := micro / microPerUnit
 		if units > 0 {
 			s.BalancesMicro[user] = micro // conversion happens in the planner
@@ -408,7 +409,9 @@ func exportSnapshot(c *surrealClient, oldLedger string) (*legacySnapshot, error)
 			return nil, err
 		}
 	}
+
 	sortSnapshot(s)
+
 	return s, nil
 }
 

@@ -28,6 +28,7 @@ func verifyLedger(path string, d *migrationData) []string {
 			}
 
 			checkSource("package source", src)
+
 			for _, owner := range sortedUsers(d.owners[id]) {
 				if !l.OwnsOne(ledger.User{
 					Id: owner,
@@ -90,6 +91,7 @@ func verifyLedger(path string, d *migrationData) []string {
 		}
 
 		checkSource("asset source", src)
+
 		for _, owner := range sortedUsers(d.owners[id]) {
 			if !l.OwnsOne(ledger.User{
 				Id: owner,

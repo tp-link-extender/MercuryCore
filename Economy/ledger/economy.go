@@ -48,6 +48,12 @@ type (
 
 const idchars = "0123456789abcdefghijklmnopqrstuvwxyz"
 
+var (
+	ErrInvalidTransferID = errors.New("invalid TransferID")
+	ErrNoSourceOrDestination = errors.New("transfer has no source or destination")
+	ErrNoItems = errors.New("transfer has no items")
+)
+
 func DeserialiseOwnersMany(r io.Reader) (OwnersMany, error) {
 	var lbuf [4]byte
 
@@ -139,7 +145,6 @@ func DeserialiseSend(r io.Reader) (Send, error) {
 
 	// decode Items
 	s.Items, err = DeserialiseItems(r)
-
 	if err != nil {
 		return s, fmt.Errorf("decode items: %w", err)
 	}
@@ -178,8 +183,6 @@ func NewTransferID(timestamp uint64, id string) TransferID {
 	}
 }
 
-var ErrInvalidTransferID = errors.New("invalid TransferID")
-
 func (om *OwnersMany) Add(o Owner, qty Quantity) {
 	if *om == nil {
 		*om = OwnersMany{
@@ -197,6 +200,7 @@ func (om OwnersMany) Serialise(w io.Writer) error {
 
 	binary.BigEndian.PutUint32(lbuf[:], uint32(len(om)))
 	w.Write(lbuf[:])
+
 	for o, qty := range om {
 		if !SerialiseItem(o, w) {
 			return fmt.Errorf("unknown Owner type: %T", o)
@@ -228,6 +232,7 @@ func (oo OwnersOne) Serialise(w io.Writer) error {
 
 	binary.BigEndian.PutUint32(lbuf[:], uint32(len(oo)))
 	w.Write(lbuf[:])
+
 	for o := range oo {
 		if !SerialiseItem(o, w) {
 			return fmt.Errorf("unknown Owner type: %T", o)
@@ -243,6 +248,7 @@ func RandNumericId() (id uint32) {
 
 func RandStringId() (id string) {
 	id, _ = gonanoid.Generate(idchars, 20) // doesn't error at runtime, really
+
 	return
 }
 
@@ -264,11 +270,6 @@ func (s Send) Equal(other Send) bool {
 func (t Transfer) Equal(other Transfer) bool {
 	return t[0].Equal(other[0]) && t[1].Equal(other[1])
 }
-
-var (
-	ErrNoSourceOrDestination = errors.New("transfer has no source or destination")
-	ErrNoItems = errors.New("transfer has no items")
-)
 
 func (s Send) String() string {
 	if s.Owner == nil {
@@ -378,6 +379,7 @@ func (t TransferID) Serialise() []byte {
 
 	binary.BigEndian.PutUint64(bs[:8], t.timestamp)
 	copy(bs[8:], t.id)
+
 	return bs
 }
 
@@ -400,6 +402,7 @@ func (t TransferWithID) Serialise(w io.Writer) error {
 
 	w.Write([]byte{byte(len(idBytes))})
 	w.Write(idBytes)
+
 	return t.Transfer.Serialise(w)
 }
 

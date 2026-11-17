@@ -1,4 +1,5 @@
 import config from "$lib/server/config"
+import { fillXmlTemplate } from "$lib/server/xmlTemplate"
 
 const strings = Object.freeze({
 	Decal: ["Decal", "Texture", "Decal"],
@@ -28,11 +29,13 @@ export async function graphicAsset(
 	const assetUrl = `http://${config.Domain}/asset?id=${imageAssetId}`
 
 	const assetFile = Bun.file(`xml/graphicAsset${assetType}.xml`)
-	const asset = (await assetFile.text())
-		.replaceAll("_CLASS", stringType[0])
-		.replaceAll("_CONTENT_NAME", stringType[1]) // Unused at the moment
-		.replaceAll("_STRING_NAME", stringType[2])
-		.replaceAll("_ASSET_URL", assetUrl)
+	const asset = fillXmlTemplate(await assetFile.text(), {
+		ASSET_URL: assetUrl,
+		CLASS: stringType[0],
+		// The image template hardcodes its content name, so only the other one takes a value
+		...(assetType === "Other" ? { CONTENT_NAME: stringType[1] } : {}),
+		STRING_NAME: stringType[2],
+	})
 
 	await Bun.write(`../data/assets/${graphicAssetId}`, asset)
 }

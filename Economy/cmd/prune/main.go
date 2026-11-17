@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"maps"
 	"os"
 	"path/filepath"
 	"sort"
@@ -21,16 +22,14 @@ type options struct {
 	batchSize int
 }
 
-func countReason(assets []removedAsset, reason string) int {
-	var n int
-
+func countReason(assets []removedAsset, reason string) (n int) {
 	for _, asset := range assets {
 		if asset.Reason == reason {
 			n++
 		}
 	}
 
-	return n
+	return
 }
 
 func fail(err error) {
@@ -41,7 +40,7 @@ func fail(err error) {
 func parseTypes(value string) (map[int]struct{}, error) {
 	out := make(map[int]struct{})
 
-	for _, part := range strings.Split(value, ",") {
+	for part := range strings.SplitSeq(value, ",") {
 		part = strings.TrimSpace(part)
 
 		if part == "" {
@@ -66,6 +65,7 @@ func parseTypes(value string) (map[int]struct{}, error) {
 func printSummary(rep *report, o options) {
 	fmt.Printf("removed %d assets (%d packages, %d package children, %d orphan images)\n", rep.Counts["removed"], countReason(rep.Removed, "package"), rep.Counts["packageChildren"], len(rep.OrphanImages))
 	fmt.Printf("retained %d assets; ledger balances %d -> %d (burned %d, moved %d)\n", rep.Counts["retainedAssets"], rep.Ledger.BalancesBefore, rep.Ledger.BalancesAfter, rep.Ledger.PackageCurrencyBurned, rep.Ledger.SourceCurrencyMoved)
+
 	if rep.Ledger.Transfers > 0 {
 		fmt.Printf("pruned ledger: %d transfers\n", rep.Ledger.Transfers)
 	}
@@ -91,18 +91,18 @@ func sortedInts(set map[int]struct{}) []int {
 	for n := range set {
 		out = append(out, n)
 	}
+
 	sort.Ints(out)
+
 	return out
 }
 
-func totalCount(counts map[string]int) int {
-	var total int
-
+func totalCount(counts map[string]int) (total int) {
 	for _, count := range counts {
 		total += count
 	}
 
-	return total
+	return
 }
 
 func run(o options, removeTypes map[int]struct{}, rep *report) error {
@@ -173,9 +173,11 @@ func run(o options, removeTypes map[int]struct{}, rep *report) error {
 		asset := plan.removed[id]
 		rep.Removed = append(rep.Removed, asset)
 	}
+
 	sort.Slice(rep.Removed, func(i, j int) bool {
 		return rep.Removed[i].ID < rep.Removed[j].ID
 	})
+
 	if len(plan.removed) == 0 {
 		rep.Warnings = append(rep.Warnings, "no matching assets found; nothing to prune")
 
@@ -241,9 +243,7 @@ func run(o options, removeTypes map[int]struct{}, rep *report) error {
 			return closeErr
 		}
 
-		for category, count := range p.counts {
-			rep.Ledger.Counts[category] = count
-		}
+		maps.Copy(rep.Ledger.Counts, p.counts)
 
 		rep.Ledger.Transfers = totalCount(p.counts)
 		verification := verifyPlan(out, plan)
@@ -276,6 +276,7 @@ func run(o options, removeTypes map[int]struct{}, rep *report) error {
 
 	removedIDs := plan.removedIDs()
 	removedIDStrings := plan.removedIDStrings()
+
 	commentIDs, err := loadCommentIDs(client, removedIDs, removedIDStrings)
 	if err != nil {
 		rep.Errors = append(rep.Errors, err.Error())
@@ -305,6 +306,7 @@ func run(o options, removeTypes map[int]struct{}, rep *report) error {
 	}
 
 	rep.Site.Committed = true
+
 	after, err := siteCounts(client, tables, removedIDs, removedIDStrings, commentIDs, plan.orphanImages)
 	if err != nil {
 		rep.Errors = append(rep.Errors, err.Error())
@@ -366,6 +368,7 @@ func main() {
 	flag.Parse()
 
 	o.surrealPass = sdb.Password(o.surrealUser, o.surrealPass)
+
 	removeTypes, err := parseTypes(o.removeTypes)
 	if err != nil {
 		fail(err)
@@ -441,5 +444,6 @@ func main() {
 		fmt.Fprintf(os.Stderr, "prune failed: %v\n", err)
 		os.Exit(1)
 	}
+
 	printSummary(rep, o)
 }

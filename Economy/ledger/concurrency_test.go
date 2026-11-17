@@ -16,14 +16,21 @@ func newConcurrentEconomy(t *testing.T) *Economy {
 	if err != nil {
 		t.Fatalf("create ledger: %v", err)
 	}
+
 	t.Cleanup(func() {
 		l.Close()
 	})
+
 	return NewEconomy(l, 10, 10, 100, 10, 10, 10, time.Hour*12)
 }
 
 // Concurrent buyers must not all validate against the same stock, and reads must not race with the transfer applying.
 func TestConcurrentLimitedPurchasesDoNotOversell(t *testing.T) {
+	const (
+		stock = 5
+		buyers = 20
+	)
+
 	e := newConcurrentEconomy(t)
 	creator := User{"creator"}
 
@@ -31,14 +38,10 @@ func TestConcurrentLimitedPurchasesDoNotOversell(t *testing.T) {
 		t.Fatalf("MintCurrency creator: %v", err)
 	}
 
-	const stock = 5
-
 	src, _, err := e.CreateLimitedSource(creator, stock)
 	if err != nil {
 		t.Fatalf("CreateLimitedSource: %v", err)
 	}
-
-	const buyers = 20
 
 	users := make([]User, buyers)
 
@@ -83,10 +86,12 @@ func TestConcurrentLimitedPurchasesDoNotOversell(t *testing.T) {
 			defer wg.Done()
 
 			<-start
+
 			_, _, err := e.BuyLimitedAsset(u, src, 10, 1)
 			results <- err
 		}(u)
 	}
+
 	close(start)
 	wg.Wait()
 	close(done)
@@ -122,6 +127,8 @@ func TestConcurrentLimitedPurchasesDoNotOversell(t *testing.T) {
 
 // Package contents are read while other buyers are purchasing, so the contents walk must not race with sales.
 func TestConcurrentPackagePurchases(t *testing.T) {
+	const buyers = 10
+
 	e := newConcurrentEconomy(t)
 	creator := User{"creator"}
 
@@ -146,8 +153,6 @@ func TestConcurrentPackagePurchases(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreatePackageSource: %v", err)
 	}
-
-	const buyers = 10
 
 	users := make([]User, buyers)
 
@@ -191,15 +196,18 @@ func TestConcurrentPackagePurchases(t *testing.T) {
 			defer wg.Done()
 
 			<-start
+
 			_, _, err := e.BuyPackage(u, pkgSrc, 10)
 			results <- err
 		}(u)
 	}
+
 	close(start)
 	wg.Wait()
 	close(done)
 	<-readerDone
 	close(results)
+
 	for err := range results {
 		if err != nil {
 			t.Fatalf("BuyPackage: %v", err)
@@ -221,13 +229,12 @@ func TestConcurrentPackagePurchases(t *testing.T) {
 
 // Two simultaneous stipend requests must not both pass the cooldown check.
 func TestConcurrentStipendsOnlyMintOnce(t *testing.T) {
-	e := newConcurrentEconomy(t)
-	user := User{"stipend-user"}
-
 	const requests = 20
 
+	e := newConcurrentEconomy(t)
 	results := make(chan error, requests)
 	start := make(chan struct{})
+	user := User{"stipend-user"}
 
 	var wg sync.WaitGroup
 
@@ -238,10 +245,12 @@ func TestConcurrentStipendsOnlyMintOnce(t *testing.T) {
 			defer wg.Done()
 
 			<-start
+
 			_, err := e.Stipend(user)
 			results <- err
 		}()
 	}
+
 	close(start)
 	wg.Wait()
 	close(results)

@@ -65,7 +65,9 @@ func sortedStringKeys[V any](m map[string]V) []string {
 	for key := range m {
 		out = append(out, key)
 	}
+
 	sort.Strings(out)
+
 	return out
 }
 
@@ -139,9 +141,7 @@ func (p *planner) plan(plan *prunePlan) error {
 	}
 
 	for _, id := range sortedUint32Keys(plan.sources) {
-		source := plan.sources[id]
-
-		switch source.Kind {
+		switch source := plan.sources[id]; source.Kind {
 		case sourceUnlimited:
 			if err := p.emit("unlimitedSource", ledger.Transfer{
 				{

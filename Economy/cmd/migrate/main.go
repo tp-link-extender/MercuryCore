@@ -5,6 +5,7 @@ import (
 	"Economy/ledger"
 	"flag"
 	"fmt"
+	"maps"
 	"os"
 	"time"
 )
@@ -39,19 +40,15 @@ type (
 	}
 )
 
-func countOwners[K comparable](m map[K]map[string]struct{}) int {
-	var n int
-
+func countOwners[K comparable](m map[K]map[string]struct{}) (n int) {
 	for _, owners := range m {
 		n += len(owners)
 	}
 
-	return n
+	return
 }
 
-func summarizeBalances(micro, dust map[string]uint64) balanceReport {
-	var r balanceReport
-
+func summarizeBalances(micro, dust map[string]uint64) (r balanceReport) {
 	for _, amount := range micro {
 		r.Users++
 		r.TotalUnits += amount / microPerUnit
@@ -62,7 +59,7 @@ func summarizeBalances(micro, dust map[string]uint64) balanceReport {
 		r.DustTotal += amount
 	}
 
-	return r
+	return
 }
 
 func runExport(o options, rep *report) error {
@@ -105,17 +102,16 @@ func runExport(o options, rep *report) error {
 	rep.Balances = summarizeBalances(s.BalancesMicro, s.DustMicro)
 
 	fmt.Printf("wrote legacy snapshot %s\n", o.export)
+
 	return nil
 }
 
-func totalCount(counts map[string]int) int {
-	var n int
-
+func totalCount(counts map[string]int) (n int) {
 	for _, count := range counts {
 		n += count
 	}
 
-	return n
+	return
 }
 
 func runMigrate(o options, rep *report) error {
@@ -126,7 +122,6 @@ func runMigrate(o options, rep *report) error {
 
 	if o.input != "" {
 		s, err = readSnapshot(o.input)
-
 		if err != nil {
 			rep.Errors = append(rep.Errors, err.Error())
 
@@ -149,7 +144,6 @@ func runMigrate(o options, rep *report) error {
 		defer c.Close()
 
 		s, err = exportSnapshot(c, o.oldLedger)
-
 		if err != nil {
 			rep.Errors = append(rep.Errors, err.Error())
 
@@ -250,9 +244,7 @@ func runMigrate(o options, rep *report) error {
 		return closeErr
 	}
 
-	for category, count := range planner.counts {
-		rep.Counts[category] = count
-	}
+	maps.Copy(rep.Counts, planner.counts)
 
 	transfers := totalCount(planner.counts)
 	rep.Counts["transfers"] = transfers
@@ -263,6 +255,7 @@ func runMigrate(o options, rep *report) error {
 		rep.Errors = append(rep.Errors, verification...)
 
 		os.Remove(out)
+
 		return fmt.Errorf("migration verification failed with %d errors", len(verification))
 	}
 
@@ -345,7 +338,9 @@ func main() {
 		fmt.Fprintf(os.Stderr, "migration failed: %v\n", err)
 		os.Exit(1)
 	}
+
 	fmt.Printf("migration report: %s\n", o.report)
+
 	if !o.dryRun && o.out != "" {
 		fmt.Printf("new ledger: %s\n", o.out)
 	}

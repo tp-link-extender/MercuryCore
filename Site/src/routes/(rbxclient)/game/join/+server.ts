@@ -3,8 +3,7 @@ import { membershipType } from "$lib/permissionLevels"
 import config from "$lib/server/config"
 import { usesDedicated } from "$lib/server/dedicated"
 import idToPort, { proxyOffset } from "$lib/server/idToPort"
-import { buildLoadscript, luaRaw } from "$lib/server/loadscript"
-import { toRawId } from "$lib/server/recordId"
+import { buildLoadscript, luaId, luaName } from "$lib/server/loadscript"
 import { SignScript } from "$lib/server/sign"
 import { db, findWhere, Record } from "$lib/server/surreal"
 import type { RequestEvent } from "./$types"
@@ -51,7 +50,7 @@ export async function GET({ url }: RequestEvent) {
 		const script = buildLoadscript(await scriptFile.text(), {
 			CHAR_APPEARANCE: "",
 			CREATOR_ID: 0,
-			MEMBERSHIP_TYPE: luaRaw(membershipType(0)),
+			MEMBERSHIP_TYPE: luaName(membershipType(0)),
 			PING_URL: "",
 			PLACE_ID: 0,
 			SERVER_ADDRESS: "localhost",
@@ -90,9 +89,9 @@ export async function GET({ url }: RequestEvent) {
 	const script = buildLoadscript(await scriptFile.text(), {
 		CHAR_APPEARANCE: charApp,
 		CREATOR_ID: 0, // todo: the place's creator
-		MEMBERSHIP_TYPE: luaRaw(membershipType(user.permissionLevel)),
+		MEMBERSHIP_TYPE: luaName(membershipType(user.permissionLevel)),
 		PING_URL: pingUrl,
-		PLACE_ID: luaRaw(toRawId(place.id)),
+		PLACE_ID: luaId(place.id),
 		SERVER_ADDRESS: serverAddress,
 		SERVER_PORT: serverPort,
 		USER_ID: Math.floor(Math.random() * 1e9), // todo: tho not rly used 4 much atm

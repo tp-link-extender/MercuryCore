@@ -1,5 +1,6 @@
 import { error } from "@sveltejs/kit"
 import { db } from "$lib/server/surreal"
+import { fillXmlTemplate } from "$lib/server/xmlTemplate"
 import type { RequestEvent } from "./$types"
 import bodyColoursQuery from "./bodyColours.surql"
 
@@ -26,13 +27,14 @@ export async function GET({ url }: RequestEvent) {
 
 	if (!username)
 		return new Response(
-			bodyColoursXml
-				.replace("_HEAD", "1")
-				.replace("_LEFT_ARM", "1")
-				.replace("_LEFT_LEG", "1")
-				.replace("_RIGHT_ARM", "1")
-				.replace("_RIGHT_LEG", "1")
-				.replace("_TORSO", "1"),
+			fillXmlTemplate(bodyColoursXml, {
+				HEAD: 1,
+				LEFT_ARM: 1,
+				LEFT_LEG: 1,
+				RIGHT_ARM: 1,
+				RIGHT_LEG: 1,
+				TORSO: 1,
+			}),
 			{ headers: xmlHeaders }
 		)
 
@@ -40,13 +42,14 @@ export async function GET({ url }: RequestEvent) {
 	if (!user) error(404, "User not found")
 
 	const colours = user.bodyColours
-	const res = bodyColoursXml
-		.replace("_HEAD", colours.Head.toString())
-		.replace("_LEFT_ARM", colours.LeftArm.toString())
-		.replace("_LEFT_LEG", colours.LeftLeg.toString())
-		.replace("_RIGHT_ARM", colours.RightArm.toString())
-		.replace("_RIGHT_LEG", colours.RightLeg.toString())
-		.replace("_TORSO", colours.Torso.toString())
+	const res = fillXmlTemplate(bodyColoursXml, {
+		HEAD: colours.Head,
+		LEFT_ARM: colours.LeftArm,
+		LEFT_LEG: colours.LeftLeg,
+		RIGHT_ARM: colours.RightArm,
+		RIGHT_LEG: colours.RightLeg,
+		TORSO: colours.Torso,
+	})
 
 	return new Response(res, {
 		headers: {

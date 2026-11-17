@@ -24,6 +24,7 @@ func TestDeserialiseNumbersFromPartialReads(t *testing.T) {
 		7, // uint64
 	}
 	reader := iotest.OneByteReader(bytes.NewReader(data))
+
 	n32, err := DeserialiseUint32(reader)
 	if err != nil {
 		t.Fatalf("DeserialiseUint32 with partial reads: %v", err)

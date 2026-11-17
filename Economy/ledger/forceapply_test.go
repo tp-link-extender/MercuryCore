@@ -15,6 +15,7 @@ func TestCanIssueOnlyCoversUnlimitedAssets(t *testing.T) {
 	}
 
 	s.GetOwnersOne(holder).Add(User{"holder"})
+
 	if !s.canIssue(holder, UnlimitedAsset{42}) {
 		t.Fatalf("expected %v to be able to issue %v it holds the source for", holder, UnlimitedAsset{42})
 	}
@@ -40,6 +41,7 @@ func TestPackageSourceCanIssue(t *testing.T) {
 	}
 
 	s.GetOwnersOne(pkgSrc).Add(User{"creator"})
+
 	if !s.canIssue(pkgSrc, pkgSrc.Create()) {
 		t.Fatalf("expected %v to be able to issue its own %v", pkgSrc, pkgSrc.Create())
 	}
@@ -67,6 +69,7 @@ func TestPackageSourceCanIssueNestedPackage(t *testing.T) {
 	}
 
 	s.GetOwnersOne(outer).Add(User{"creator"})
+
 	if !s.canIssue(outer, inner.Create()) {
 		t.Fatalf("expected %v to be able to issue nested %v", outer, inner.Create())
 	}
@@ -74,9 +77,11 @@ func TestPackageSourceCanIssueNestedPackage(t *testing.T) {
 
 func apply(t *testing.T, s *State, tf Transfer) {
 	t.Helper()
+
 	if err := s.CanApply(tf); err != nil {
 		t.Fatalf("CanApply: %v", err)
 	}
+
 	s.ForceApply(tf)
 }
 
@@ -128,6 +133,7 @@ func TestForceApplyDeliversManyToBuyerOnSale(t *testing.T) {
 			},
 		},
 	})
+
 	if got := s.GetInventory(buyer).Many[currency]; got != 70 {
 		t.Fatalf("expected buyer to have 70 currency left, got %d", got)
 	}
@@ -184,6 +190,7 @@ func TestForceApplyManyNonSale(t *testing.T) {
 			Items: Items{},
 		},
 	})
+
 	if got := s.GetInventory(sender).Many[currency]; got != 60 {
 		t.Fatalf("expected sender to have 60 currency left, got %d", got)
 	}
@@ -238,6 +245,7 @@ func TestForceApplySaleCurrencyGoesToSourceOwner(t *testing.T) {
 			},
 		},
 	})
+
 	if got := s.GetInventory(src).Many[currency]; got != 0 {
 		t.Fatalf("expected source to hold no currency, got %d", got)
 	}
@@ -274,6 +282,7 @@ func TestForceApplySaleCurrencyReachesUser(t *testing.T) {
 			Items: Items{},
 		},
 	})
+
 	if got := s.GetInventory(src).Many[currency]; got != 30 {
 		t.Fatalf("expected source to have 30 currency left, got %d", got)
 	}
