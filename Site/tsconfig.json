@@ -13,5 +13,7 @@
 		"strictPropertyInitialization": false,
 		"typeRoots": ["./src/app.d.ts"]
 	},
-	"extends": "./.svelte-kit/tsconfig.json"
+	"extends": "$app/tsconfig",
+	"include": ["src", "*.ts"],
+	"exclude": ["node_modules", "build"]
 }
