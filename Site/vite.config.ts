@@ -1,4 +1,4 @@
-import adapter from "@sveltejs/adapter-node"
+import adapter from "@sveltejs/adapter-bun"
 import { sveltekit } from "@sveltejs/kit/vite"
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte"
 import extractorSvelte from "@unocss/extractor-svelte"
@@ -16,7 +16,8 @@ export default defineConfig({
 		},
 		UnoCSS({ extractors: [extractorSvelte] }),
 		sveltekit({
-			adapter: adapter(),
+			// precompress writes .br and .gz variants of client and prerendered assets, which are negotiated per request
+			adapter: adapter({ precompress: true }),
 
 			// shorter hashes (normal hashes are svelte-{hash}). This doesn't work in development so expect a warning from vite-plugin-svelte, though works fine in production builds.
 			compilerOptions: {
