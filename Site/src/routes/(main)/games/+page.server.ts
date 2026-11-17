@@ -4,6 +4,7 @@ import type { PageServerLoadEvent } from "./$types"
 import gamesQuery from "./games.surql"
 
 interface Place {
+	clientVersion: number
 	dislikeCount: number
 	id: number
 	likeCount: number

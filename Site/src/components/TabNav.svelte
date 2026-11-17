@@ -60,7 +60,7 @@
 		return out
 	})
 
-	const tabHref = tab => {
+	const tabHref = (tab: string) => {
 		const currentSearch = new URL(tabData.url).searchParams
 		currentSearch.set(tabData.name, tab)
 		return `?${currentSearch.toString()}`

@@ -29,7 +29,7 @@ import { dismissForm } from "#lib/notifications.remote.ts"
 		timeout = null
 	}
 	// 100ms is the minimum time the loading bar will be shown
-	$effect(async () => {
+	$effect(() => {
 		if (!navigating || navigating.willUnload == null) return
 		stopTimeout()
 		if (navigating.type === "goto") {
@@ -39,9 +39,10 @@ import { dismissForm } from "#lib/notifications.remote.ts"
 		}
 
 		timeout = setTimeout(nprogress.start, 100)
-		await navigating.complete
-		stopTimeout()
-		nprogress.done()
+		void navigating.complete.then(() => {
+			stopTimeout()
+			nprogress.done()
+		})
 	})
 
 	async function ping() {

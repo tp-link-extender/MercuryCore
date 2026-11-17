@@ -3,6 +3,7 @@
 // Types for the remote form functions used across the Site
 
 import type { ValidationError } from "@sveltejs/kit"
+import type { HTMLInputAttributes } from "svelte/elements"
 import type { RemoteForm, RemoteFormInput } from "$app/server"
 
 type Issue = ValidationError["issues"][number]
@@ -28,3 +29,11 @@ export const successOf = (result: unknown): string | undefined =>
 	typeof result.success === "string"
 		? result.success
 		: undefined
+
+// Svelte allows null in input attributes, which the input elements reject
+export type InputAttributes = {
+	[K in keyof Omit<HTMLInputAttributes, "children" | "size">]?: Exclude<
+		HTMLInputAttributes[K],
+		null
+	>
+}

@@ -13,7 +13,7 @@
 	<Select
 		formData={profileForm}
 		options={Object.values(data.themes)}
-		selected={data.themes[user.theme.toString()]}
+		selected={data.themes[user.theme]}
 		name="theme"
 		label="Theme" />
 
@@ -22,7 +22,7 @@
 	<Textarea
 		formData={profileForm}
 		name="description"
-		defaultValue={user.description?.text || ""}
+		defaultValue={user.description || ""}
 		label="Description"
 		placeholder="Maximum 1000 characters"
 		help="Your description will appear on your profile and allow other users to know who you are.<br />Don't put any personally identifiable information here. It's the internet, and the ORC no less. You know the deal."

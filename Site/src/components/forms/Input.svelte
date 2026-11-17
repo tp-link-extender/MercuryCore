@@ -1,10 +1,6 @@
 <script lang="ts" generics="T extends RemoteFormInput">
-	import type {
-		HTMLInputAttributes,
-		HTMLInputTypeAttribute
-	} from "svelte/elements"
-	import SubInput from "#components/forms/SubInput.svelte"
-	import type { ClientForm, ExtractId } from "#lib/validate.ts"
+		import SubInput from "#components/forms/SubInput.svelte"
+	import type { ClientForm, ExtractId, InputAttributes } from "#lib/validate.ts"
 
 	const {
 		name,
@@ -25,12 +21,12 @@
 		after?: string
 		defaultValue?: boolean | string
 		// type?: HTMLInputTypeAttribute
-		type?: "text" | "number" | "color" | "date" | "checkbox" | "file" | "password"
+		type?: "text" | "number" | "color" | "date" | "checkbox" | "file" | "password" | "email"
 		inline?: boolean
 		column?: boolean
 		disabled?: boolean
 		formData: Omit<ClientForm<T>, "for">
-	} & HTMLInputAttributes = $props()
+	} & InputAttributes = $props()
 
 	let issues = $derived(formData.fields[name]?.issues() || [])
 </script>

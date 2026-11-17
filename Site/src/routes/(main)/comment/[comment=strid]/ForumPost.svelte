@@ -10,18 +10,12 @@
 	const {
 		comment,
 		likeForm,
-		onResult,
 		user
 	}: {
 		comment: Awaited<ReturnType<typeof getComment>>
 		likeForm: Omit<LikeForm, "for">
-		onResult(result: {
-			result: import("$app/forms").ActionResult
-		}): Promise<void>
 		user: import("./$types").PageData["user"]
 	} = $props()
-
-	const refreshComments = () => onResult
 </script>
 
 <div
@@ -55,7 +49,6 @@
 						{#if user.permissionLevel >= 4 && (comment.type.length !== 1 || comment.type[0] !== "status")}
 							<PinButton
 								id={comment.id}
-								{refreshComments}
 								pinned={comment.pinned} />
 						{/if}
 					</ul>

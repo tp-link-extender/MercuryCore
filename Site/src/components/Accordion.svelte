@@ -8,7 +8,7 @@
 		...rest
 	}: {
 		children: Snippet<[Accordion]>
-	} & HTMLAttributes<HTMLDivElement> = $props()
+	} & Omit<HTMLAttributes<HTMLDivElement>, "children"> = $props()
 
 	const accordion = new Accordion()
 </script>

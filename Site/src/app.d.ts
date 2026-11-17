@@ -29,10 +29,8 @@ declare global {
 		}
 		created: string
 		css: string
-		description: {
-			text: string
-			updated: Date
-		}[]
+		// The current text of the description, or null if there isn't one
+		description: string | null
 		email: string
 		id: string
 		lastOnline: Date

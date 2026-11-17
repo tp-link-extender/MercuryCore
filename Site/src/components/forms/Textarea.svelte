@@ -21,7 +21,7 @@
 		lowpad?: boolean
 		defaultValue?: string
 		formData: Omit<ClientForm<T>, "for">
-	} & HTMLTextareaAttributes = $props()
+	} & Omit<HTMLTextareaAttributes, "children" | "disabled"> & { disabled?: boolean } = $props()
 
 	let issues = $derived(formData.fields[name]?.issues() || [])
 </script>

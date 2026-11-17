@@ -70,7 +70,7 @@
 				? true
 				: tabData.currentTab === "Body Parts"
 					? // all body part types at once
-						Object.values(bodyPartTabs).includes(a.type)
+						(Object.values(bodyPartTabs) as number[]).includes(a.type)
 					: a.type === tabTypes[tabData.currentTab]
 		)
 	)

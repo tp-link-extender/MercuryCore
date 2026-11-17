@@ -1,9 +1,5 @@
 <script lang="ts" generics="T extends RemoteFormInput">
-	import type {
-		HTMLInputAttributes,
-		HTMLInputTypeAttribute
-	} from "svelte/elements"
-	import type { ClientForm, ExtractId } from "#lib/validate.ts"
+		import type { ClientForm, ExtractId, InputAttributes } from "#lib/validate.ts"
 
 	const {
 		name,
@@ -17,22 +13,44 @@
 		name: ExtractId<T>
 		disabled: boolean
 		defaultValue?: boolean | string
-		// type: HTMLInputTypeAttribute
-		type: "text" | "number" | "color" | "date" | "checkbox" | "file" | "password"
+		type:
+			| "text"
+			| "number"
+			| "color"
+			| "date"
+			| "checkbox"
+			| "file"
+			| "password"
+			| "email"
 		formData: Omit<ClientForm<T>, "for">
-	} & HTMLInputAttributes = $props()
+	} & InputAttributes = $props()
+
+	type AsField = (
+		type: string,
+		value?: boolean | string
+	) => InputAttributes
+
+	const field = $derived(formData.fields[name])
+	// as() takes a literal input type, and this component's type is a union, so the call is typed loosely here. Email fields are text to the form, and the type attribute is set below
+	const attrs = $derived(
+		(field.as as AsField).call(
+			field,
+			type === "email" ? "text" : type,
+			defaultValue
+		)
+	)
 </script>
 
 {#if type === "checkbox"}
 	<input
-		{...formData.fields[name].as("checkbox", defaultValue)}
+		{...attrs}
 		{...rest}
 		id={name}
 		type="checkbox"
 		{disabled} />
 {:else}
 	<input
-		{...formData.fields[name].as(type, defaultValue)}
+		{...attrs}
 		{...rest}
 		id={name}
 		{type}

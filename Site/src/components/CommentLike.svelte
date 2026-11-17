@@ -20,7 +20,7 @@
 <form
 	{...likeForm.enhance(instance => {
 		const { action } = instance.fields.value()
-		likeFns[action](comment)
+		if (action) likeFns[action](comment)
 		comment = comment
 		instance.submit()
 	})}

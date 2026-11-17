@@ -5,8 +5,6 @@
 	import Head from "#components/Head.svelte"
 	import PostReply from "#components/PostReply.svelte"
 	import { replyForm } from "#lib/commentActions.remote.ts"
-import type { ActionResult } from "$app/forms"
-	import { refreshAll } from "$app/navigation"
 	import { likeForm } from "../../like.remote"
 	import { getComment } from "./comment.remote"
 	import ForumPost from "./ForumPost.svelte"
@@ -20,9 +18,6 @@ import type { ActionResult } from "$app/forms"
 
 	let { user } = $derived(data)
 
-	async function onResult({ result }: { result: ActionResult }) {
-		if (result.type === "success") await refreshAll()
-	}
 	const formData = replyForm.for(data.commentId)
 
 	const elide = (c: string) => (c.length > 50 ? `${c.slice(0, 50)}...` : c)
@@ -82,15 +77,15 @@ import type { ActionResult } from "$app/forms"
 		<!-- These are just different ways of displaying exactly the same information -->
 		{#if type[0] === "forum"}
 			{#if type.length === 2}
-				<ForumPost comment={c} {likeForm} {onResult} {user} />
+				<ForumPost comment={c} {likeForm} {user} />
 			{:else}
-				<ForumReply comment={c} {likeForm} {onResult} {user} />
+				<ForumReply comment={c} {likeForm} {user} />
 			{/if}
 		{:else if type[0] === "status"}
 			{#if type.length === 1}
-				<ForumPost comment={c} {likeForm} {onResult} {user} />
+				<ForumPost comment={c} {likeForm} {user} />
 			{:else}
-				<ForumReply comment={c} {likeForm} {onResult} {user} />
+				<ForumReply comment={c} {likeForm} {user} />
 			{/if}
 		{/if}
 

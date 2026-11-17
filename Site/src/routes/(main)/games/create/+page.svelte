@@ -47,7 +47,6 @@
 		{formData}
 		options={clientVersions}
 		name="clientVersion"
-		selected={data.clientVersion}
 		label="Client version " />
 	<Input
 		{formData}

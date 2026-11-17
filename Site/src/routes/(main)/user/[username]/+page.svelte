@@ -194,7 +194,7 @@
 							{#each data.places as place, id}
 								<AccordionItem
 									{accordion}
-									ai={{ id, title: place.name }}>
+									ai={{ id: String(id), title: place.name }}>
 									<ProfilePlace {place} />
 								</AccordionItem>
 							{/each}

@@ -1,4 +1,4 @@
-import type { RemoteForm, RemoteFormInput } from "$app/server"
+import type { RemoteForm } from "$app/server"
 
 export interface Scored {
 	dislikeCount?: number
@@ -38,7 +38,9 @@ export const likeFns: { [_: string]: (t: Scored) => void } = Object.freeze({
 	unlike,
 })
 
-interface Data extends RemoteFormInput {
+// A type alias rather than an interface: the forms on the pages infer object literal types, which only assign to LikeForm when this is one too
+// oxlint-disable-next-line typescript/consistent-type-definitions
+type Data = {
 	action: "like" | "unlike" | "dislike" | "undislike"
 	id: string
 }
