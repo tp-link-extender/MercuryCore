@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Form from "$components/forms/Form.svelte"
-	import Input from "$components/forms/Input.svelte"
+	import Form from "#components/forms/Form.svelte"
+	import Input from "#components/forms/Input.svelte"
 	import { passwordForm, sessionForm } from "./settings.remote.js"
 
 	const { data }: { data: import("./$types").PageData } = $props()

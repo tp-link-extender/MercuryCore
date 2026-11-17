@@ -1,8 +1,8 @@
 import { error } from "@sveltejs/kit"
 import { balance, historyOwner } from "economy/api"
 import { User } from "economy/types"
-import { authorise } from "$lib/server/auth"
-import { economyConnFailed, ownerData } from "$lib/server/economy"
+import { authorise } from "#lib/server/auth.ts"
+import { economyConnFailed, ownerData } from "#lib/server/economy.ts"
 import type { PageServerLoadEvent } from "./$types"
 
 export async function load({ fetch: f, locals }: PageServerLoadEvent) {

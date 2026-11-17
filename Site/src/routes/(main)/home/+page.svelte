@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Form from "$components/forms/Form.svelte"
-	import Input from "$components/forms/Input.svelte"
-	import Head from "$components/Head.svelte"
-	import Place from "$components/Place.svelte"
-	import User from "$components/User.svelte"
-	import fade from "$lib/fade"
+	import Form from "#components/forms/Form.svelte"
+	import Input from "#components/forms/Input.svelte"
+	import Head from "#components/Head.svelte"
+	import Place from "#components/Place.svelte"
+	import User from "#components/User.svelte"
+	import fade from "#lib/fade.ts"
 	import { formData } from "./home.remote"
 	import Status from "./Status.svelte"
 

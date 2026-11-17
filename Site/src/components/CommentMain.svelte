@@ -1,11 +1,11 @@
 <script lang="ts">
-	import Comment, { type UserType } from "$components/Comment.svelte"
-	import DeleteButton from "$components/DeleteButton.svelte"
-	import PinButton from "$components/PinButton.svelte"
-	import ReportButton from "$components/ReportButton.svelte"
-	import type { Comment as CommentType } from "$lib/comment"
-	import { replyForm } from "$lib/commentActions.remote"
-	import type { LikeForm } from "$lib/like2"
+	import Comment, { type UserType } from "#components/Comment.svelte"
+	import DeleteButton from "#components/DeleteButton.svelte"
+	import PinButton from "#components/PinButton.svelte"
+	import ReportButton from "#components/ReportButton.svelte"
+	import type { Comment as CommentType } from "#lib/comment.ts"
+	import { replyForm } from "#lib/commentActions.remote.ts"
+	import type { LikeForm } from "#lib/like2.ts"
 	import CommentLike from "./CommentLike.svelte"
 
 	let {

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Codearea from "$components/forms/Codearea.svelte"
-	import Form from "$components/forms/Form.svelte"
+	import Codearea from "#components/forms/Codearea.svelte"
+	import Form from "#components/forms/Form.svelte"
 	import { stylingForm } from "./settings.remote.js"
 
 	const { data }: { data: import("./$types").PageData } = $props()

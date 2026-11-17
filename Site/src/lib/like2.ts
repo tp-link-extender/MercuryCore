@@ -1,4 +1,4 @@
-import type { RemoteForm, RemoteFormInput } from "@sveltejs/kit"
+import type { RemoteForm, RemoteFormInput } from "$app/server"
 
 export interface Scored {
 	dislikeCount?: number

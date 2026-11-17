@@ -2,9 +2,9 @@
 	// could make forms based on a js object or something instead of components but concerns with forms that require more interactivity/customisation
 
 	import { Select } from "melt/builders"
-	import NoScript from "$components/NoScript.svelte"
-	import YesScript from "$components/YesScript.svelte"
-	import type { ClientForm, ExtractId } from "$lib/validate"
+	import NoScript from "#components/NoScript.svelte"
+	import YesScript from "#components/YesScript.svelte"
+	import type { ClientForm, ExtractId } from "#lib/validate.ts"
 
 	const {
 		name,

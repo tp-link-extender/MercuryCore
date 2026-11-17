@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit"
-import { db } from "$lib/server/surreal"
-import { fillXmlTemplate } from "$lib/server/xmlTemplate"
+import { db } from "#lib/server/surreal.ts"
+import { fillXmlTemplate } from "#lib/server/xmlTemplate.ts"
 import type { RequestEvent } from "./$types"
 import bodyColoursQuery from "./bodyColours.surql"
 

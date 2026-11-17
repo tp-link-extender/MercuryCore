@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { untrack } from "svelte"
-	import AdminLink from "$components/AdminLink.svelte"
-	import Head from "$components/Head.svelte"
-	import SidebarShell from "$components/SidebarShell.svelte"
-	import Tab from "$components/Tab.svelte"
-	import TabData from "$components/TabData"
-	import permissionLevels from "$lib/permissionLevels"
+	import AdminLink from "#components/AdminLink.svelte"
+	import Head from "#components/Head.svelte"
+	import SidebarShell from "#components/SidebarShell.svelte"
+	import Tab from "#components/Tab.svelte"
+	import TabData from "#components/TabData.ts"
+	import permissionLevels from "#lib/permissionLevels.ts"
 
 	const { data } = $props()
 

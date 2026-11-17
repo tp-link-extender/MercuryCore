@@ -1,5 +1,5 @@
 import { error } from "@sveltejs/kit"
-import { db } from "$lib/server/surreal"
+import { db } from "#lib/server/surreal.ts"
 import type { RequestEvent } from "./$types"
 import pingQuery from "./ping.surql"
 

@@ -1,7 +1,7 @@
 <script lang="ts" generics="T extends RemoteFormInput">
 	import type { Snippet } from "svelte"
 	import type { HTMLFormAttributes } from "svelte/elements"
-	import type { ClientForm } from "$lib/validate"
+	import type { ClientForm } from "#lib/validate.ts"
 
 	const {
 		working = "Working...",

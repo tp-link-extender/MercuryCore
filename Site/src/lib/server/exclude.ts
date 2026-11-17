@@ -1,5 +1,5 @@
 import { error } from "@sveltejs/kit"
-import config, { type OptionalPage } from "$lib/server/config"
+import config, { type OptionalPage } from "#lib/server/config.ts"
 
 // This is the kind of thing that hooks don't work well for
 const exclude = (page: OptionalPage) => {

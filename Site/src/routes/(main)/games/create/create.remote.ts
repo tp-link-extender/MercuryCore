@@ -3,16 +3,16 @@ import { type } from "arktype"
 import { createPlace } from "economy/api"
 import { User } from "economy/types"
 import { form, getRequestEvent } from "$app/server"
-import { authorise } from "$lib/server/auth"
-import filter from "$lib/server/filter"
-import { db } from "$lib/server/surreal"
+import { authorise } from "#lib/server/auth.ts"
+import filter from "#lib/server/filter.ts"
+import { db } from "#lib/server/surreal.ts"
 import {
 	maxPlayersTest,
 	serverAddressTest,
 	serverPortTest,
-} from "$lib/typeTests"
-import { encode } from "$lib/urlName"
-import type { ClientForm } from "$lib/validate"
+} from "#lib/typeTests.ts"
+import { encode } from "#lib/urlName.ts"
+import type { ClientForm } from "#lib/validate.ts"
 import clientVersions from "./clientVersions"
 import createQuery from "./create.surql"
 

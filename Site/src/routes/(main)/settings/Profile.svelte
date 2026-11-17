@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Form from "$components/forms/Form.svelte"
-	import Select from "$components/forms/Select.svelte"
-	import Textarea from "$components/forms/Textarea.svelte"
+	import Form from "#components/forms/Form.svelte"
+	import Select from "#components/forms/Select.svelte"
+	import Textarea from "#components/forms/Textarea.svelte"
 	import { profileForm } from "./settings.remote.js"
 
 	const { data }: { data: import("./$types").PageData } = $props()

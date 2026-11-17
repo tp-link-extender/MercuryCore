@@ -1,7 +1,7 @@
 import { error } from "@sveltejs/kit"
-import { authorise } from "$lib/server/auth"
-import config from "$lib/server/config"
-import { db } from "$lib/server/surreal"
+import { authorise } from "#lib/server/auth.ts"
+import config from "#lib/server/config.ts"
+import { db } from "#lib/server/surreal.ts"
 import type { RequestEvent } from "./$types"
 import regkeysQuery from "./regkeys.surql"
 

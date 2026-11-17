@@ -3,8 +3,8 @@
 		HTMLInputAttributes,
 		HTMLInputTypeAttribute
 	} from "svelte/elements"
-	import SubInput from "$components/forms/SubInput.svelte"
-	import type { ClientForm, ExtractId } from "$lib/validate"
+	import SubInput from "#components/forms/SubInput.svelte"
+	import type { ClientForm, ExtractId } from "#lib/validate.ts"
 
 	const {
 		name,

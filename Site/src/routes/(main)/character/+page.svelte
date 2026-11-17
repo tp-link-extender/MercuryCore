@@ -1,7 +1,7 @@
 <script lang="ts">
-	import TabData from "$components/TabData"
-	import TabNav from "$components/TabNav.svelte"
-	import { brickColours, brickToHex } from "$lib/brickColours"
+	import TabData from "#components/TabData.ts"
+	import TabNav from "#components/TabNav.svelte"
+	import { brickColours, brickToHex } from "#lib/brickColours.ts"
 	import AvatarItem from "./AvatarItem.svelte"
 	import { paintForm, regenForm } from "./character.remote"
 

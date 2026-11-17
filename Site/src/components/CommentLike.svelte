@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ClassValue } from "svelte/elements"
-	import { type LikeForm, likeFns, type Scored } from "$lib/like2"
+	import { type LikeForm, likeFns, type Scored } from "#lib/like2.ts"
 
 	let {
 		comment = $bindable(),

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import fade from "$lib/fade"
+	import fade from "#lib/fade.ts"
 	import {
 		acceptForm,
 		cancelForm,
@@ -8,7 +8,7 @@
 		requestForm,
 		unfollowForm,
 		unfriendForm,
-	} from "$lib/interactions.remote"
+	} from "#lib/interactions.remote.ts"
 
 	const { data }: { data: import("./$types").PageData } = $props()
 

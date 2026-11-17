@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { isValidMapName, mapNamePattern } from "$lib/mapName"
+	import { isValidMapName, mapNamePattern } from "#lib/mapName.ts"
 
 	const {
 		beginJoining,

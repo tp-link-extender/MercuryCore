@@ -1,7 +1,7 @@
 import { error } from "@sveltejs/kit"
-import { reportPath } from "$lib/reportUrl"
-import { authorise } from "$lib/server/auth"
-import { db, type RecordId } from "$lib/server/surreal"
+import { reportPath } from "#lib/reportUrl.ts"
+import { authorise } from "#lib/server/auth.ts"
+import { db, type RecordId } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import getReporteeQuery from "./getReportee.surql"
 

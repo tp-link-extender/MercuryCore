@@ -1,7 +1,7 @@
 import { error, redirect } from "@sveltejs/kit"
-import { authorise } from "$lib/server/auth"
-import { thumbnail, tShirtThumbnail } from "$lib/server/imageAsset"
-import { db, Record } from "$lib/server/surreal"
+import { authorise } from "#lib/server/auth.ts"
+import { thumbnail, tShirtThumbnail } from "#lib/server/imageAsset.ts"
+import { db, Record } from "#lib/server/surreal.ts"
 import type { RequestEvent } from "./$types"
 import assetQuery from "./asset.surql"
 

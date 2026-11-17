@@ -2,9 +2,9 @@
 	// If an error happens in any +page or +layout file, this page will be rendered instead.
 
 	import { page } from "$app/state"
-	import Footer from "$components/Footer.svelte"
-	import Head from "$components/Head.svelte"
-	import Navbar from "$components/Navbar.svelte"
+	import Footer from "#components/Footer.svelte"
+	import Head from "#components/Head.svelte"
+	import Navbar from "#components/Navbar.svelte"
 
 	const {
 		data

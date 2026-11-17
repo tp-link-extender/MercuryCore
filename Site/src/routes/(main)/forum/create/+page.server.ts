@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit"
-import exclude from "$lib/server/exclude"
-import { db } from "$lib/server/surreal"
+import exclude from "#lib/server/exclude.ts"
+import { db } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 
 export async function load({ url }: PageServerLoadEvent) {

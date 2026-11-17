@@ -2,22 +2,22 @@ import fs from "node:fs"
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
 import { form, getRequestEvent } from "$app/server"
-import { authorise } from "$lib/server/auth"
-import { assetOwner, economyConnFailed } from "$lib/server/economy"
-import { isAudio, isImage, isMesh, isRobloxModel } from "$lib/server/fileType"
-import filter from "$lib/server/filter"
-import { formFile } from "$lib/server/formFile"
+import { authorise } from "#lib/server/auth.ts"
+import { assetOwner, economyConnFailed } from "#lib/server/economy.ts"
+import { isAudio, isImage, isMesh, isRobloxModel } from "#lib/server/fileType.ts"
+import filter from "#lib/server/filter.ts"
+import { formFile } from "#lib/server/formFile.ts"
 import {
 	clothingAsset,
 	imageAsset,
 	thumbnail,
 	tShirt,
 	tShirtThumbnail,
-} from "$lib/server/imageAsset"
-import { ratelimitRemote } from "$lib/server/ratelimit"
-import requestRender from "$lib/server/requestRender"
-import { db, Record } from "$lib/server/surreal"
-import type { ClientForm } from "$lib/validate"
+} from "#lib/server/imageAsset.ts"
+import { ratelimitRemote } from "#lib/server/ratelimit.ts"
+import requestRender from "#lib/server/requestRender.ts"
+import { db, Record } from "#lib/server/surreal.ts"
+import type { ClientForm } from "#lib/validate.ts"
 import assetCheckQuery from "./assetCheck.surql"
 import reuploadQuery from "./reupload.surql"
 import updateAssetQuery from "./updateAsset.surql"

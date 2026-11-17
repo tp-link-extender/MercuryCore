@@ -1,5 +1,5 @@
-import { hashRecoveryToken } from "$lib/server/recoveryToken"
-import { db } from "$lib/server/surreal"
+import { hashRecoveryToken } from "#lib/server/recoveryToken.ts"
+import { db } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import checkQuery from "./check.surql"
 

@@ -1,6 +1,6 @@
 import { createTransport } from "nodemailer"
 import type Mail from "nodemailer/lib/mailer"
-import { building } from "$app/environment"
+import { building } from "$app/env"
 import config from "./config"
 
 let transport: Promise<Mail> | null = null

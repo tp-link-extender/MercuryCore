@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Form from "$components/forms/Form.svelte"
-	import Input from "$components/forms/Input.svelte"
-	import Head from "$components/Head.svelte"
+	import Form from "#components/forms/Form.svelte"
+	import Input from "#components/forms/Input.svelte"
+	import Head from "#components/Head.svelte"
 	import LoginShell from "../LoginShell.svelte"
 	import Waves from "../Waves.svelte"
 	import { formData } from "./login.remote.js"

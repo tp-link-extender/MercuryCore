@@ -1,11 +1,11 @@
 <script lang="ts">
 	
 	import { page } from "$app/state"
-	import Head from "$components/Head.svelte"
-	import Pagination from "$components/Pagination.svelte"
-	import User from "$components/User.svelte"
-	import fade from "$lib/fade"
-import { acceptForm, declineForm } from "$lib/interactions.remote"
+	import Head from "#components/Head.svelte"
+	import Pagination from "#components/Pagination.svelte"
+	import User from "#components/User.svelte"
+	import fade from "#lib/fade.ts"
+import { acceptForm, declineForm } from "#lib/interactions.remote.ts"
 
 	const { data } = $props()
 </script>

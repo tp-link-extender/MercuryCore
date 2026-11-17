@@ -1,9 +1,9 @@
 import { type } from "arktype"
 import { form, getRequestEvent } from "$app/server"
-import { authorise } from "$lib/server/auth"
-import { ratelimitRemote } from "$lib/server/ratelimit"
-import { Banner, db, Record } from "$lib/server/surreal"
-import type { ClientForm } from "$lib/validate"
+import { authorise } from "#lib/server/auth.ts"
+import { ratelimitRemote } from "#lib/server/ratelimit.ts"
+import { Banner, db, Record } from "#lib/server/surreal.ts"
+import type { ClientForm } from "#lib/validate.ts"
 import activeCountQuery from "./activeCount.surql"
 import updateQuery from "./update.surql"
 

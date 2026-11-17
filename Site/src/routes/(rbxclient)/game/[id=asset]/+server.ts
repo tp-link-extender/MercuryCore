@@ -1,10 +1,10 @@
 import { error } from "@sveltejs/kit"
 import { Place } from "economy/types"
-import { env } from "$env/dynamic/private"
-import { bearerMatches } from "$lib/server/bearer"
-import constantTimeEqual from "$lib/server/constantTimeEqual"
-import { economyConnFailed, ownsItem } from "$lib/server/economy"
-import { db, Record } from "$lib/server/surreal"
+import { GAMESERVER_KEY } from "$app/env/private"
+import { bearerMatches } from "#lib/server/bearer.ts"
+import constantTimeEqual from "#lib/server/constantTimeEqual.ts"
+import { economyConnFailed, ownsItem } from "#lib/server/economy.ts"
+import { db, Record } from "#lib/server/surreal.ts"
 import type { RequestEvent } from "./$types"
 
 const placeAccessQuery = `
@@ -37,7 +37,7 @@ export async function GET({
 	const privateTicket = url.searchParams.get("privateTicket")
 
 	let authorised =
-		bearerMatches(request, env.GAMESERVER_KEY, "GAMESERVER_KEY") ||
+		bearerMatches(request, GAMESERVER_KEY, "GAMESERVER_KEY") ||
 		(ticket != null && constantTimeEqual(ticket, place.serverTicket))
 
 	if (!authorised && locals.user)

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { pinForm } from "$lib/commentActions.remote"
+	import { pinForm } from "#lib/commentActions.remote.ts"
 
 	let {
 		id,

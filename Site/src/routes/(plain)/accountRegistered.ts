@@ -1,4 +1,4 @@
-import { db } from "$lib/server/surreal"
+import { db } from "#lib/server/surreal.ts"
 import accountRegisteredQuery from "./accountRegistered.surql"
 
 const accountRegistered = async () => {

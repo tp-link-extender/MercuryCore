@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Head from "$components/Head.svelte"
-	import User from "$components/User.svelte"
+	import Head from "#components/Head.svelte"
+	import User from "#components/User.svelte"
 
 	const { data } = $props()
 

@@ -1,17 +1,18 @@
 import fs from "node:fs"
-import { type InvalidField, redirect } from "@sveltejs/kit"
+import { redirect } from "@sveltejs/kit"
+import type { RemoteFormInvalidField } from "$app/server"
 import { type } from "arktype"
 import { createPackageSource, createUnlimitedSource } from "economy/api"
 import { User as EconUser, type UnlimitedSource } from "economy/types"
 import { form, getRequestEvent } from "$app/server"
-import types, { typeToNumber } from "$lib/assetTypes"
-import { authorise } from "$lib/server/auth"
-import { formFile } from "$lib/server/formFile"
-import requestRender from "$lib/server/requestRender"
-import { db } from "$lib/server/surreal"
-import { isXML } from "$lib/server/xml"
-import { encode } from "$lib/urlName"
-import type { ClientForm } from "$lib/validate"
+import types, { typeToNumber } from "#lib/assetTypes.ts"
+import { authorise } from "#lib/server/auth.ts"
+import { formFile } from "#lib/server/formFile.ts"
+import requestRender from "#lib/server/requestRender.ts"
+import { db } from "#lib/server/surreal.ts"
+import { isXML } from "#lib/server/xml.ts"
+import { encode } from "#lib/urlName.ts"
+import type { ClientForm } from "#lib/validate.ts"
 import createQuery from "./create.surql"
 import createPackageQuery from "./createPackage.surql"
 
@@ -142,7 +143,7 @@ async function createPackage(
 	},
 	user: { id: string },
 	f: typeof globalThis.fetch,
-	issues: InvalidField<typeof schema.inferIn>
+	issues: RemoteFormInvalidField<typeof schema.inferIn>
 ) {
 	const fail = (msg: string) => issues(msg)
 

@@ -1,6 +1,6 @@
-import { authorise } from "$lib/server/auth"
-import type { RenderType, Status } from "$lib/server/requestRender"
-import { db } from "$lib/server/surreal"
+import { authorise } from "#lib/server/auth.ts"
+import type { RenderType, Status } from "#lib/server/requestRender.ts"
+import { db } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import renderQueueQuery from "./renderqueue.surql"
 

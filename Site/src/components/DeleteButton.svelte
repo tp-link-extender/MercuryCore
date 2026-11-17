@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { deleteForm } from "$lib/commentActions.remote"
+	import { deleteForm } from "#lib/commentActions.remote.ts"
 
 	const {
 		id,

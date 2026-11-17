@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Head from "$components/Head.svelte"
-	import SidebarShell from "$components/SidebarShell.svelte"
-	import TabData from "$components/TabData"
+	import Head from "#components/Head.svelte"
+	import SidebarShell from "#components/SidebarShell.svelte"
+	import TabData from "#components/TabData.ts"
 
 	const { data } = $props()
 

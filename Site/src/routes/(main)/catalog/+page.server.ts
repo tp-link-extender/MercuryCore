@@ -1,9 +1,9 @@
 import { error } from "@sveltejs/kit"
 import { packageItems as ledgerPackageItems } from "economy/api"
 import { UnlimitedAsset } from "economy/types"
-import { economyConnFailed } from "$lib/server/economy"
-import pageQuery from "$lib/server/pageQuery"
-import { db } from "$lib/server/surreal"
+import { economyConnFailed } from "#lib/server/economy.ts"
+import pageQuery from "#lib/server/pageQuery.ts"
+import { db } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import catalogQuery from "./catalog.surql"
 

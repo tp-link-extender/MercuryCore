@@ -1,4 +1,4 @@
-import { SignScript } from "$lib/server/sign"
+import { SignScript } from "#lib/server/sign.ts"
 
 export async function GET() {
 	const script = await Bun.file(

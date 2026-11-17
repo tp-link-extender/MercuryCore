@@ -1,4 +1,4 @@
-import { authorise } from "$lib/server/auth"
+import { authorise } from "#lib/server/auth.ts"
 import type { LayoutServerLoadEvent } from "./$types"
 
 // Most pages on the site require a user to be logged in.

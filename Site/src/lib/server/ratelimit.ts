@@ -1,7 +1,7 @@
 // TODO: Possibly move this to the database instead of server state
 
 import { fail } from "@sveltejs/kit"
-import type { Issues } from "$lib/validate"
+import type { Issues } from "#lib/validate.ts"
 import { FixedWindow } from "./fixedWindow"
 
 const windows = new FixedWindow()

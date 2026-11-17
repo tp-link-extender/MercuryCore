@@ -1,5 +1,5 @@
-import { authorise } from "$lib/server/auth"
-import exclude from "$lib/server/exclude"
+import { authorise } from "#lib/server/auth.ts"
+import exclude from "#lib/server/exclude.ts"
 import type { PageServerLoadEvent } from "./$types"
 
 export async function load({ locals }: PageServerLoadEvent) {

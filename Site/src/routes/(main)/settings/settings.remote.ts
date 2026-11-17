@@ -7,12 +7,12 @@ import {
 	cookieOptions,
 	createSession,
 	invalidateAllSessions,
-} from "$lib/server/auth"
-import config from "$lib/server/config"
-import { hashPassword, verifyPassword } from "$lib/server/password"
-import { ratelimitRemoteKey } from "$lib/server/ratelimit"
-import { db, Record } from "$lib/server/surreal"
-import type { ClientForm } from "$lib/validate"
+} from "#lib/server/auth.ts"
+import config from "#lib/server/config.ts"
+import { hashPassword, verifyPassword } from "#lib/server/password.ts"
+import { ratelimitRemoteKey } from "#lib/server/ratelimit.ts"
+import { db, Record } from "#lib/server/surreal.ts"
+import type { ClientForm } from "#lib/validate.ts"
 import changePasswordQuery from "./changePassword.surql"
 import passwordQuery from "./password.surql"
 import updateProfileQuery from "./updateProfile.surql"

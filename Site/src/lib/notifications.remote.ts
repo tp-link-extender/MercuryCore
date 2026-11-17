@@ -1,9 +1,9 @@
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
 import { form, getRequestEvent } from "$app/server"
-import { authorise } from "$lib/server/auth"
-import readQuery from "$lib/server/readNotification.surql"
-import { db, Record } from "$lib/server/surreal"
+import { authorise } from "#lib/server/auth.ts"
+import readQuery from "#lib/server/readNotification.surql"
+import { db, Record } from "#lib/server/surreal.ts"
 
 const schema = type({
 	id: "string",

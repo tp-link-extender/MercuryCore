@@ -1,5 +1,5 @@
 import { prices } from "economy/api"
-import exclude from "$lib/server/exclude"
+import exclude from "#lib/server/exclude.ts"
 import type { PageServerLoadEvent } from "./$types"
 
 export async function load({ fetch: f }: PageServerLoadEvent) {

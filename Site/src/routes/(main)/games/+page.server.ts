@@ -1,5 +1,5 @@
-import pageQuery from "$lib/server/pageQuery"
-import { db } from "$lib/server/surreal"
+import pageQuery from "#lib/server/pageQuery.ts"
+import { db } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import gamesQuery from "./games.surql"
 

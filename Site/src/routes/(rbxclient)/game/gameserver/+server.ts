@@ -1,6 +1,6 @@
-import config from "$lib/server/config"
-import { buildLoadscript } from "$lib/server/loadscript"
-import { SignScript } from "$lib/server/sign"
+import config from "#lib/server/config.ts"
+import { buildLoadscript } from "#lib/server/loadscript.ts"
+import { SignScript } from "#lib/server/sign.ts"
 
 const port = 53640
 

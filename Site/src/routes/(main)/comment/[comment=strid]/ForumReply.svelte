@@ -1,9 +1,9 @@
 <script lang="ts">
-	import CommentLike from "$components/CommentLike.svelte"
-	import PinButton from "$components/PinButton.svelte"
-	import ReportButton from "$components/ReportButton.svelte"
-	import User from "$components/User.svelte"
-	import type { LikeForm } from "$lib/like2"
+	import CommentLike from "#components/CommentLike.svelte"
+	import PinButton from "#components/PinButton.svelte"
+	import ReportButton from "#components/ReportButton.svelte"
+	import User from "#components/User.svelte"
+	import type { LikeForm } from "#lib/like2.ts"
 	import type { getComment } from "./comment.remote"
 
 	let {
@@ -15,7 +15,7 @@
 		comment: Awaited<ReturnType<typeof getComment>>["comments"][number]
 		likeForm: Omit<LikeForm, "for">
 		onResult(result: {
-			result: import("@sveltejs/kit").ActionResult
+			result: import("$app/forms").ActionResult
 		}): Promise<void>
 		user: import("./$types").PageData["user"]
 	} = $props()

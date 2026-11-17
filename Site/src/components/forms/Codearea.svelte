@@ -1,6 +1,6 @@
 <script lang="ts" generics="T extends RemoteFormInput">
 	import type { HTMLTextareaAttributes } from "svelte/elements"
-	import type { ClientForm, ExtractId } from "$lib/validate"
+	import type { ClientForm, ExtractId } from "#lib/validate.ts"
 
 	const {
 		name,
@@ -34,7 +34,6 @@
 		<textarea
 			{...formData.fields[name].as("text", defaultValue)}
 			{...rest}
-			{name}
 			id={name}
 			{rows}
 			placeholder={placeholder || null}>

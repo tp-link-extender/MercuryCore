@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Form from "$components/forms/Form.svelte"
-	import Textarea from "$components/forms/Textarea.svelte"
-	import Head from "$components/Head.svelte"
+	import Form from "#components/forms/Form.svelte"
+	import Textarea from "#components/forms/Textarea.svelte"
+	import Head from "#components/Head.svelte"
 	import { formData } from "./create.remote"
 
 	const { data } = $props()

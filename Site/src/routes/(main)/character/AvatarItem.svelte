@@ -1,7 +1,7 @@
 <script lang="ts">
 	// An equippable avatar item component
 
-	import fade from "$lib/fade"
+	import fade from "#lib/fade.ts"
 	import { equipForm, unequipForm } from "./character.remote"
 
 	const {

@@ -1,8 +1,8 @@
 <script lang="ts">
 	// The friends, followers, and following pages for a user.
 
-	import Head from "$components/Head.svelte"
-	import UserCard from "$components/UserCard.svelte"
+	import Head from "#components/Head.svelte"
+	import UserCard from "#components/UserCard.svelte"
 
 	const { data } = $props()
 

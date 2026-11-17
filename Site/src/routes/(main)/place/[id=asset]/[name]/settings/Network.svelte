@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Form from "$components/forms/Form.svelte"
-	import Input from "$components/forms/Input.svelte"
-	import Select from "$components/forms/Select.svelte"
+	import Form from "#components/forms/Form.svelte"
+	import Input from "#components/forms/Input.svelte"
+	import Select from "#components/forms/Select.svelte"
 	import { networkForm } from "./settings.remote.js"
 
 	const { data }: { data: import("./$types").PageData } = $props()

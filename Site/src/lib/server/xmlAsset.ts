@@ -1,5 +1,5 @@
-import config from "$lib/server/config"
-import { fillXmlTemplate } from "$lib/server/xmlTemplate"
+import config from "#lib/server/config.ts"
+import { fillXmlTemplate } from "#lib/server/xmlTemplate.ts"
 
 const strings = Object.freeze({
 	Decal: ["Decal", "Texture", "Decal"],

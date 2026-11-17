@@ -2,7 +2,7 @@
 
 /// <reference types="@types/bun" />
 
-import type { RemoteFormInput as RFI } from "@sveltejs/kit"
+import type { RemoteFormInput as RFI } from "$app/server"
 import type { AttributifyAttributes } from "@unocss/preset-attributify"
 
 declare global {

@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { TransferWithID } from "economy/economy"
 	import { Buf, BufReader } from "economy/items"
-	import Head from "$components/Head.svelte"
-	import SidebarShell from "$components/SidebarShell.svelte"
-	import TabData from "$components/TabData"
-	import Transaction from "$components/Transaction.svelte"
-	import fade from "$lib/fade"
+	import Head from "#components/Head.svelte"
+	import SidebarShell from "#components/SidebarShell.svelte"
+	import TabData from "#components/TabData.ts"
+	import Transaction from "#components/Transaction.svelte"
+	import fade from "#lib/fade.ts"
 
 	const { data } = $props()
 

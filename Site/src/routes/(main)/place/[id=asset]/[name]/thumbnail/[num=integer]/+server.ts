@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit"
-import config from "$lib/server/config"
-import { find } from "$lib/server/surreal"
+import config from "#lib/server/config.ts"
+import { find } from "#lib/server/surreal.ts"
 import type { RequestEvent } from "./$types"
 
 const thumbnails = config.Images.DefaultPlaceThumbnails

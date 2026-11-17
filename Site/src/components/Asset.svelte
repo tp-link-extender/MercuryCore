@@ -1,7 +1,7 @@
 <script lang="ts">
 	// A catalog item component, used in the catalog and inventory pages.
 
-	import fade from "$lib/fade"
+	import fade from "#lib/fade.ts"
 
 	const {
 		asset,

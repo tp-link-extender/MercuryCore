@@ -1,4 +1,4 @@
-import config from "$lib/server/config"
+import config from "#lib/server/config.ts"
 
 // TODO: imports would be nice
 export const GET = () =>

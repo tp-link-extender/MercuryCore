@@ -1,5 +1,5 @@
-import config from "$lib/server/config"
-import { db } from "$lib/server/surreal"
+import config from "#lib/server/config.ts"
+import { db } from "#lib/server/surreal.ts"
 import type { LayoutServerLoadEvent } from "./$types"
 import bannersQuery from "./banners.surql"
 import getNotifications from "./notifications"

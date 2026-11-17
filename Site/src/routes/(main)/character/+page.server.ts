@@ -6,11 +6,11 @@ import {
 	UnlimitedAsset as EconUnlimitedAsset,
 	User as EconUser,
 } from "economy/types"
-import { allowedTypes, packageWearable } from "$lib/character"
-import { authorise } from "$lib/server/auth"
-import { economyConnFailed } from "$lib/server/economy"
-import { packageItems } from "$lib/server/packageItems"
-import { db, Record } from "$lib/server/surreal"
+import { allowedTypes, packageWearable } from "#lib/character.ts"
+import { authorise } from "#lib/server/auth.ts"
+import { economyConnFailed } from "#lib/server/economy.ts"
+import { packageItems } from "#lib/server/packageItems.ts"
+import { db, Record } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import assetsQuery from "./assets.surql"
 import wornQuery from "./worn.surql"

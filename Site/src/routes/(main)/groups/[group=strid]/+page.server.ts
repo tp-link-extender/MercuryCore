@@ -1,13 +1,13 @@
 import { error } from "@sveltejs/kit"
 import { Group as EconGroup } from "economy/types"
-import { authorise } from "$lib/server/auth"
+import { authorise } from "#lib/server/auth.ts"
 import {
 	economyConnFailed,
 	itemOwner,
 	type OwnedUser,
-} from "$lib/server/economy"
-import exclude from "$lib/server/exclude"
-import { db, Record } from "$lib/server/surreal"
+} from "#lib/server/economy.ts"
+import exclude from "#lib/server/exclude.ts"
+import { db, Record } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import groupQuery from "./group.surql"
 

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from "$app/state"
-	import Breadcrumbs from "$components/Breadcrumbs.svelte"
-	import Head from "$components/Head.svelte"
-	import Pagination from "$components/Pagination.svelte"
+	import Breadcrumbs from "#components/Breadcrumbs.svelte"
+	import Head from "#components/Head.svelte"
+	import Pagination from "#components/Pagination.svelte"
 	import { likeForm } from "../../like.remote"
 	import { getCategory } from "./category.remote"
 	import ForumPost from "./ForumPost.svelte"

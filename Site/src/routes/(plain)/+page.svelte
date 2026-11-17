@@ -2,7 +2,7 @@
 	import { Canvas } from "@threlte/core"
 	import { Gradient } from "stripe-gradient"
 	import { onMount } from "svelte"
-	import Head from "$components/Head.svelte"
+	import Head from "#components/Head.svelte"
 	import Thing3D from "./Thing3D.svelte"
 	import Waves from "./Waves.svelte"
 

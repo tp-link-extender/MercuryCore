@@ -1,15 +1,15 @@
 import { error, redirect } from "@sveltejs/kit"
 import { Place as EconPlace } from "economy/types"
-import { authorise } from "$lib/server/auth"
-import config from "$lib/server/config"
-import constantTimeEqual from "$lib/server/constantTimeEqual"
+import { authorise } from "#lib/server/auth.ts"
+import config from "#lib/server/config.ts"
+import constantTimeEqual from "#lib/server/constantTimeEqual.ts"
 import {
 	economyConnFailed,
 	itemOwner,
 	type OwnedUser,
-} from "$lib/server/economy"
-import { db, Record } from "$lib/server/surreal"
-import { couldMatch, encode } from "$lib/urlName"
+} from "#lib/server/economy.ts"
+import { db, Record } from "#lib/server/surreal.ts"
+import { couldMatch, encode } from "#lib/urlName.ts"
 import type { PageServerLoadEvent } from "./$types"
 import placeQuery from "./place.surql"
 

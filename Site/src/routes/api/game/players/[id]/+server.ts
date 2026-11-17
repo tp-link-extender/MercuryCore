@@ -1,4 +1,3 @@
-import { json } from "@sveltejs/kit"
 
 export function GET() {
 	// get bearer token from header instead of insecure url (temporarily disabled)
@@ -6,7 +5,7 @@ export function GET() {
 	// if (!auth || !auth.startsWith("Bearer ") || auth.slice(7) !== GAMESERVER_KEY)
 	// 	error(403, "Unauthorised")
 
-	return json({
+	return Response.json({
 		ChatFilter: "whitelist",
 	})
 }

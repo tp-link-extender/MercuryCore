@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Head from "$components/Head.svelte"
-	import User from "$components/User.svelte"
-	import fade from "$lib/fade"
+	import Head from "#components/Head.svelte"
+	import User from "#components/User.svelte"
+	import fade from "#lib/fade.ts"
 
 	const { data } = $props()
 

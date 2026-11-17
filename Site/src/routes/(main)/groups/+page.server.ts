@@ -1,6 +1,6 @@
-import exclude from "$lib/server/exclude"
-import pageQuery from "$lib/server/pageQuery"
-import { db } from "$lib/server/surreal"
+import exclude from "#lib/server/exclude.ts"
+import pageQuery from "#lib/server/pageQuery.ts"
+import { db } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import groupsQuery from "./groups.surql"
 

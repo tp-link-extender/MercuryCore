@@ -1,13 +1,13 @@
 <script lang="ts">
 
-	import Accordion from "$components/Accordion.svelte"
-	import AccordionItem from "$components/AccordionItem.svelte"
-	import Head from "$components/Head.svelte"
-	import ReportButton from "$components/ReportButton.svelte"
-	import User from "$components/User.svelte"
-	import fade from "$lib/fade"
-	import { rerenderForm } from "$lib/interactions.remote"
-	import permissionLevels from "$lib/permissionLevels"
+	import Accordion from "#components/Accordion.svelte"
+	import AccordionItem from "#components/AccordionItem.svelte"
+	import Head from "#components/Head.svelte"
+	import ReportButton from "#components/ReportButton.svelte"
+	import User from "#components/User.svelte"
+	import fade from "#lib/fade.ts"
+	import { rerenderForm } from "#lib/interactions.remote.ts"
+	import permissionLevels from "#lib/permissionLevels.ts"
 	import Interactions from "./Interactions.svelte"
 	import ProfilePlace from "./ProfilePlace.svelte"
 

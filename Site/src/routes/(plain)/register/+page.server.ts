@@ -1,4 +1,4 @@
-import config from "$lib/server/config"
+import config from "#lib/server/config.ts"
 import accountRegistered from "../accountRegistered"
 
 const prefix = config.Registration.Keys.Prefix

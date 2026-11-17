@@ -3,7 +3,7 @@
 		HTMLInputAttributes,
 		HTMLInputTypeAttribute
 	} from "svelte/elements"
-	import type { ClientForm, ExtractId } from "$lib/validate"
+	import type { ClientForm, ExtractId } from "#lib/validate.ts"
 
 	const {
 		name,
@@ -27,7 +27,6 @@
 	<input
 		{...formData.fields[name].as("checkbox", defaultValue)}
 		{...rest}
-		{name}
 		id={name}
 		type="checkbox"
 		{disabled} />
@@ -35,7 +34,6 @@
 	<input
 		{...formData.fields[name].as(type, defaultValue)}
 		{...rest}
-		{name}
 		id={name}
 		{type}
 		style={type === "number"

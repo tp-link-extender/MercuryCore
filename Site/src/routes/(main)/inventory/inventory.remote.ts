@@ -12,8 +12,8 @@ import {
 	User,
 } from "economy/types"
 import { getRequestEvent, query } from "$app/server"
-import { authorise } from "$lib/server/auth"
-import { db, Record } from "$lib/server/surreal"
+import { authorise } from "#lib/server/auth.ts"
+import { db, Record } from "#lib/server/surreal.ts"
 import queryGroups from "./groups.surql"
 import queryPlaces from "./places.surql"
 import queryUnlimitedAssets from "./unlimitedAssets.surql"

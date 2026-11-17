@@ -1,6 +1,6 @@
 import { redirect } from "@sveltejs/kit"
 import { command, form, getRequestEvent } from "$app/server"
-import { authorise, cookieName, invalidateSession } from "$lib/server/auth"
+import { authorise, cookieName, invalidateSession } from "#lib/server/auth.ts"
 
 export const logoutForm = form(async () => {
 	const { cookies, locals } = getRequestEvent()

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import fade from "$lib/fade"
+	import fade from "#lib/fade.ts"
 
 	const {
 		thumbnails,

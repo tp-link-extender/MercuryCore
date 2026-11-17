@@ -1,5 +1,5 @@
 <script lang="ts" generics="T extends RemoteFormInput">
-	import type { ClientForm } from "$lib/validate"
+	import type { ClientForm } from "#lib/validate.ts"
 
 	const { formData }: { formData: ClientForm<T> } = $props()
 

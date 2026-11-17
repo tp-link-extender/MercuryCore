@@ -7,12 +7,12 @@
 </script>
 
 <script lang="ts">
-	import CommentMain from "$components/CommentMain.svelte"
-	import User from "$components/User.svelte"
+	import CommentMain from "#components/CommentMain.svelte"
+	import User from "#components/User.svelte"
 	import { slide } from "svelte/transition"
-	import fade from "$lib/fade"
-	import type { Comment } from "$lib/comment"
-	import type { LikeForm } from "$lib/like2"
+	import fade from "#lib/fade.ts"
+	import type { Comment } from "#lib/comment.ts"
+	import type { LikeForm } from "#lib/like2.ts"
 
 	// Some have to be bindable to allow them to keep state, either on element/component destroy or on page change
 	let {

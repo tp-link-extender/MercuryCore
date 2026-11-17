@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Asset from "$components/Asset.svelte"
-	import Group from "$components/Group.svelte"
-	import Head from "$components/Head.svelte"
-	import Place from "$components/Place.svelte"
-	import User from "$components/User.svelte"
-	import fade from "$lib/fade"
+	import Asset from "#components/Asset.svelte"
+	import Group from "#components/Group.svelte"
+	import Head from "#components/Head.svelte"
+	import Place from "#components/Place.svelte"
+	import User from "#components/User.svelte"
+	import fade from "#lib/fade.ts"
 
 	const { data } = $props()
 </script>

@@ -1,21 +1,25 @@
 import { Surreal, RecordId as SurrealRecordId, Table } from "surrealdb"
-import { building } from "$app/environment"
-import { env } from "$env/dynamic/private"
-import config from "$lib/server/config"
+import { building } from "$app/env"
+import {
+	DATABASE_PASSWORD,
+	DATABASE_ROOT_PASSWORD,
+	DATABASE_USER,
+} from "$app/env/private"
+import config from "#lib/server/config.ts"
 import {
 	type DatabaseCredentials,
 	databaseCredentials,
 	rootPassword,
-} from "$lib/server/dbCredentials"
-import { setupDatabase } from "$lib/server/dbSetup"
-import initQuery from "$lib/server/init.surql"
-import logo from "$lib/server/logo" // because this is usually one of the first files loaded
-import startEconomy from "$lib/server/process/economy"
-import startSurreal from "$lib/server/process/surreal"
+} from "#lib/server/dbCredentials.ts"
+import { setupDatabase } from "#lib/server/dbSetup.ts"
+import initQuery from "#lib/server/init.surql"
+import logo from "#lib/server/logo.ts" // because this is usually one of the first files loaded
+import startEconomy from "#lib/server/process/economy.ts"
+import startSurreal from "#lib/server/process/surreal.ts"
 
 function credentials(): DatabaseCredentials {
 	try {
-		return databaseCredentials(env)
+		return databaseCredentials({ DATABASE_PASSWORD, DATABASE_USER })
 	} catch (err) {
 		console.error(err instanceof Error ? err.message : err)
 		console.error(
@@ -31,7 +35,7 @@ const url = new URL(`ws://${config.Database.Domain}`) // must be ws:// to preven
 if (site) {
 	if (config.Database.AutoStart)
 		try {
-			const root = rootPassword(env)
+			const root = rootPassword({ DATABASE_ROOT_PASSWORD })
 			startSurreal(root)
 			// The Site owns this instance, so it sets up its own user too
 			await setupDatabase({

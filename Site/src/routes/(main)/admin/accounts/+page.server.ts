@@ -1,5 +1,5 @@
-import { authorise } from "$lib/server/auth"
-import { db } from "$lib/server/surreal"
+import { authorise } from "#lib/server/auth.ts"
+import { db } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import usersQuery from "./users.surql"
 

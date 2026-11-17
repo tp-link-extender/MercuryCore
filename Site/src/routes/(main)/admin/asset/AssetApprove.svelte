@@ -1,6 +1,6 @@
 <script lang="ts">
-	import User from "$components/User.svelte"
-	import fade from "$lib/fade"
+	import User from "#components/User.svelte"
+	import fade from "#lib/fade.ts"
 	import {
 		approveForm,
 		denyForm,

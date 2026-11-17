@@ -1,11 +1,11 @@
 import { error } from "@sveltejs/kit"
-import { authorise } from "$lib/server/auth"
+import { authorise } from "#lib/server/auth.ts"
 import {
 	assetOwner,
 	economyConnFailed,
 	type OwnedUser,
-} from "$lib/server/economy"
-import { db } from "$lib/server/surreal"
+} from "#lib/server/economy.ts"
+import { db } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import assetsQuery from "./asset.surql"
 

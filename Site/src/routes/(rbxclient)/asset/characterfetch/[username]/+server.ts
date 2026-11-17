@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit"
-import config from "$lib/server/config"
-import { db } from "$lib/server/surreal"
+import config from "#lib/server/config.ts"
+import { db } from "#lib/server/surreal.ts"
 import type { RequestEvent } from "./$types"
 import userQuery from "./user.surql"
 

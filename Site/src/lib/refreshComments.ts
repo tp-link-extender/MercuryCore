@@ -1,4 +1,4 @@
-import type { SubmitFunction } from "@sveltejs/kit"
+import type { SubmitFunction } from "$app/forms"
 import { invalidateAll } from "$app/navigation"
 
 export const refreshComments =

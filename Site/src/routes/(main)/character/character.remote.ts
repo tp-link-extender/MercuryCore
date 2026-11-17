@@ -7,21 +7,21 @@ import {
 	User as EconUser,
 } from "economy/types"
 import { form, getRequestEvent } from "$app/server"
-import { brickColours } from "$lib/brickColours"
+import { brickColours } from "#lib/brickColours.ts"
 import {
 	allowedTypes,
 	isBodyPart,
 	oneEquippable,
 	packageConflicting,
 	packageWearable,
-} from "$lib/character"
-import { assetRegex } from "$lib/paramTests"
-import { authorise } from "$lib/server/auth"
-import { economyConnFailed } from "$lib/server/economy"
-import { packageItems } from "$lib/server/packageItems"
-import { ratelimited, tooManyRequests } from "$lib/server/ratelimit"
-import requestRender from "$lib/server/requestRender"
-import { db, Record } from "$lib/server/surreal"
+} from "#lib/character.ts"
+import { assetRegex } from "#lib/paramTests.ts"
+import { authorise } from "#lib/server/auth.ts"
+import { economyConnFailed } from "#lib/server/economy.ts"
+import { packageItems } from "#lib/server/packageItems.ts"
+import { ratelimited, tooManyRequests } from "#lib/server/ratelimit.ts"
+import requestRender from "#lib/server/requestRender.ts"
+import { db, Record } from "#lib/server/surreal.ts"
 import equipQuery from "./equip.surql"
 import equipDataQuery from "./equipData.surql"
 import equipPackageQuery from "./equipPackage.surql"

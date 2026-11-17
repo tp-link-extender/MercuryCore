@@ -1,5 +1,5 @@
 <script lang="ts">
-	import fade from "$lib/fade"
+	import fade from "#lib/fade.ts"
 	import { privatelinkForm } from "./settings.remote.js"
 
 	const { data }: { data: import("./$types").PageData } = $props()

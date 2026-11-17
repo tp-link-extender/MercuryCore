@@ -1,14 +1,14 @@
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
 import { form, getRequestEvent } from "$app/server"
-import { authorise } from "$lib/server/auth"
-import commentType from "$lib/server/commentType"
-import createCommentQuery from "$lib/server/createComment.surql"
-import filter from "$lib/server/filter"
-import { ratelimitRemote } from "$lib/server/ratelimit"
-import removeCommentQuery from "$lib/server/removeComment.surql"
-import { db, Record } from "$lib/server/surreal"
-import type { ClientForm } from "$lib/validate"
+import { authorise } from "#lib/server/auth.ts"
+import commentType from "#lib/server/commentType.ts"
+import createCommentQuery from "#lib/server/createComment.surql"
+import filter from "#lib/server/filter.ts"
+import { ratelimitRemote } from "#lib/server/ratelimit.ts"
+import removeCommentQuery from "#lib/server/removeComment.surql"
+import { db, Record } from "#lib/server/surreal.ts"
+import type { ClientForm } from "#lib/validate.ts"
 
 // Comment reply, pin and delete forms, shared by the comment page and the comment lists on asset and forum pages
 

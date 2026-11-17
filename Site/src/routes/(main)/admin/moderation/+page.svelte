@@ -1,15 +1,15 @@
 <script lang="ts">
 	// TODO: doesn't work without clientside JS because of the date input, fix
 
-	import Form from "$components/forms/Form.svelte"
-	import Input from "$components/forms/Input.svelte"
-	import Select from "$components/forms/Select.svelte"
-	import Textarea from "$components/forms/Textarea.svelte"
-	import Head from "$components/Head.svelte"
-	import SidebarShell from "$components/SidebarShell.svelte"
-	import Tab from "$components/Tab.svelte"
-	import TabData from "$components/TabData"
-	import fade from "$lib/fade"
+	import Form from "#components/forms/Form.svelte"
+	import Input from "#components/forms/Input.svelte"
+	import Select from "#components/forms/Select.svelte"
+	import Textarea from "#components/forms/Textarea.svelte"
+	import Head from "#components/Head.svelte"
+	import SidebarShell from "#components/SidebarShell.svelte"
+	import Tab from "#components/Tab.svelte"
+	import TabData from "#components/TabData.ts"
+	import fade from "#lib/fade.ts"
 	import { formData } from "./moderation.remote.js"
 	import moderationOptions from "./moderationOptions"
 

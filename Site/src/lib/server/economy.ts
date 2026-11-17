@@ -9,10 +9,10 @@ import {
 	UnlimitedSource,
 	User,
 } from "economy/types"
-import type { GroupData, OwnerData, SourceData, UserData } from "$lib/economy"
-import ownersQuery from "$lib/server/owners.surql"
-import ownerUserQuery from "$lib/server/ownerUser.surql"
-import { db, Record } from "$lib/server/surreal"
+import type { GroupData, OwnerData, SourceData, UserData } from "#lib/economy.ts"
+import ownersQuery from "#lib/server/owners.surql"
+import ownerUserQuery from "#lib/server/ownerUser.surql"
+import { db, Record } from "#lib/server/surreal.ts"
 
 export const economyConnFailed = "Cannot connect to Economy service"
 

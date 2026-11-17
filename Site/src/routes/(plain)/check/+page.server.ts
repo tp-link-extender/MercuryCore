@@ -1,8 +1,8 @@
 import { redirect } from "@sveltejs/kit"
 import { balance } from "economy/api"
 import { User } from "economy/types"
-import { dev } from "$app/environment"
-import { version } from "$lib/server/surreal"
+import { dev } from "$app/env"
+import { version } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 
 export async function load({ fetch: f }: PageServerLoadEvent) {

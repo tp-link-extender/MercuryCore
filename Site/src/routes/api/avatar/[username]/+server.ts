@@ -1,7 +1,7 @@
 import { error } from "@sveltejs/kit"
-import { toRawId } from "$lib/server/recordId"
-import { db, type RecordId } from "$lib/server/surreal"
-import { waitForChange } from "$lib/server/waitForChange"
+import { toRawId } from "#lib/server/recordId.ts"
+import { db, type RecordId } from "#lib/server/surreal.ts"
+import { waitForChange } from "#lib/server/waitForChange.ts"
 import type { RequestEvent } from "./$types"
 
 const timeout = 10 // seconds

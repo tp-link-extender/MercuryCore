@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/state"
-	import Asset from "$components/Asset.svelte"
-	import Pagination from "$components/Pagination.svelte"
+	import Asset from "#components/Asset.svelte"
+	import Pagination from "#components/Pagination.svelte"
 	import { getAssets } from "./data.remote"
 
 	let { data, tabTypes, tabData } = $props()

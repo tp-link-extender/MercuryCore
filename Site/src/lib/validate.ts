@@ -2,11 +2,8 @@
 
 // Types for the remote form functions used across the Site
 
-import type {
-	RemoteForm,
-	RemoteFormInput,
-	ValidationError,
-} from "@sveltejs/kit"
+import type { RemoteForm, RemoteFormInput } from "$app/server"
+import type { ValidationError } from "@sveltejs/kit"
 
 type Issue = ValidationError["issues"][number]
 

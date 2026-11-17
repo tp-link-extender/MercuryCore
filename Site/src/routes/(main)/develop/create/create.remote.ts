@@ -4,22 +4,22 @@ import { type } from "arktype"
 import { createUnlimitedSource } from "economy/api"
 import { User } from "economy/types"
 import { form, getRequestEvent } from "$app/server"
-import { typeToNumber } from "$lib/assetTypes"
-import { authorise } from "$lib/server/auth"
-import { formFile } from "$lib/server/formFile"
+import { typeToNumber } from "#lib/assetTypes.ts"
+import { authorise } from "#lib/server/auth.ts"
+import { formFile } from "#lib/server/formFile.ts"
 import {
 	clothingAsset,
 	imageAsset,
 	thumbnail,
 	tShirt,
 	tShirtThumbnail,
-} from "$lib/server/imageAsset"
-import { ratelimitRemote } from "$lib/server/ratelimit"
-import requestRender from "$lib/server/requestRender"
-import { db } from "$lib/server/surreal"
-import { graphicAsset } from "$lib/server/xmlAsset"
-import { encode } from "$lib/urlName"
-import type { ClientForm } from "$lib/validate"
+} from "#lib/server/imageAsset.ts"
+import { ratelimitRemote } from "#lib/server/ratelimit.ts"
+import requestRender from "#lib/server/requestRender.ts"
+import { db } from "#lib/server/surreal.ts"
+import { graphicAsset } from "#lib/server/xmlAsset.ts"
+import { encode } from "#lib/urlName.ts"
+import type { ClientForm } from "#lib/validate.ts"
 import assetTypes from "./assetTypes"
 import createAssetQuery from "./createAsset.surql"
 
