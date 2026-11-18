@@ -1,7 +1,7 @@
 import fs from "node:fs"
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { createPackageSource, createUnlimitedSource } from "economy/api"
+import { createPackageSourceFree, createUnlimitedSourceFree } from "economy/api"
 import { User as EconUser, type UnlimitedSource } from "economy/types"
 import types, { typeToNumber } from "#lib/assetTypes.ts"
 import { authorise } from "#lib/server/auth.ts"
@@ -75,8 +75,8 @@ const renderTypeFromType: Readonly<{ [_: number]: RenderType }> = Object.freeze(
 )
 
 interface PackageChild {
+	bytes: ArrayBuffer
 	description: string
-	file: File
 	id: number
 	name: string
 	type: number
@@ -112,22 +112,33 @@ export const formData: ClientForm<typeof schema.inferIn> = form(
 			return issues.asset("Face assets must be in XML format")
 
 		const u = new EconUser(user.id)
-		// TODO: allow without requiring currency
-		// The Economy service has no free source variant, so this charges the configured price. The form shows that cost until the service can create a source without a currency leg
-		const created = await createUnlimitedSource(f, u)
+		// The route is staff-only, so creation is free; the Economy has no permission model of its own. A failure after this point leaves the source owned by the user, with no way to refund it yet: a refund route in the Economy is the proper fix.
+		const created = await createUnlimitedSourceFree(f, u)
 		if (!created.ok) return issues("Failed to create asset source")
 
 		const id = created.value.ID
 
-		await db.query<string[]>(createQuery, {
-			assetType,
-			description,
-			id,
-			name,
-			price,
-		})
+		let stored = false
+		try {
+			const results = await db.query<unknown[]>(createQuery, {
+				assetType,
+				description,
+				id,
+				name,
+				price,
+			})
+			stored = Boolean(results.at(-1))
+		} catch (e) {
+			console.error(e)
+		}
+		if (!stored) return issues("Failed to create asset")
 
-		await Bun.write(`../data/assets/${id}`, buf)
+		try {
+			await Bun.write(`../data/assets/${id}`, buf)
+		} catch (e) {
+			console.error(e)
+			return issues("Failed to save the asset")
+		}
 
 		// hats are rendered as models, clothing as clothing, and body parts as close-ups of the part, like the manual rerender button does
 		const renderType = renderTypeFromType[assetType]
@@ -187,14 +198,14 @@ async function createPackage(
 		if (file.size > 20e6)
 			return fail(`Asset #${num + 1} must be less than 20MB in size`)
 
-		// to prevent faces being uploaded as images
+		// read into memory before charging, and to prevent faces being uploaded as images
 		const buf = await file.arrayBuffer()
 		if (assetType === 18 && !isXML(buf))
 			return fail("Face assets must be in XML format")
 
 		validChildren.push({
+			bytes: buf,
 			description: child.description ?? "",
-			file,
 			id: 0, // assigned below, from the Economy service
 			name: child.name,
 			type: assetType,
@@ -214,11 +225,15 @@ async function createPackage(
 			)
 	}
 
+	if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
+	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
+
 	// Asset ids come from the Economy service, so a package's contents are owned there and can only ever be sold as part of the bundle. Every child needs its own unlimited source, and the package needs a package source holding all of them.
+	// The route is staff-only, so creation is free; the Economy has no permission model of its own. A failure after this point leaves the sources owned by the user, with no way to refund them yet: a refund route in the Economy is the proper fix.
 	const u = new EconUser(user.id)
 	const comps: UnlimitedSource[] = []
 	for (const [num, child] of validChildren.entries()) {
-		const created = await createUnlimitedSource(f, u)
+		const created = await createUnlimitedSourceFree(f, u)
 		if (!created.ok)
 			return fail(`Failed to create a source for asset #${num + 1}`)
 
@@ -226,34 +241,43 @@ async function createPackage(
 		child.id = created.value.ID
 	}
 
-	const createdPackage = await createPackageSource(f, u, comps)
+	const createdPackage = await createPackageSourceFree(f, u, comps)
 	if (!createdPackage.ok)
 		return fail("Failed to create a source for the package")
 
 	const id = createdPackage.value.ID
 
-	if (!fs.existsSync("../data/assets")) fs.mkdirSync("../data/assets")
-	if (!fs.existsSync("../data/thumbnails")) fs.mkdirSync("../data/thumbnails")
+	let stored = false
+	try {
+		const results = await db.query<unknown[]>(createPackageQuery, {
+			childRows: validChildren.map(c => ({
+				description: [{ text: c.description }],
+				forSale: false, // package items are offsale by default
+				id: c.id,
+				name: c.name,
+				price: 0,
+				type: c.type,
+				visibility: "Visible", // created by catalog managers, immediately visible
+			})),
+			description,
+			id,
+			name,
+			price,
+		})
+		stored = results.at(-1) === true
+	} catch (e) {
+		console.error(e)
+	}
+	if (!stored) return fail("Failed to create the package")
 
-	await db.query(createPackageQuery, {
-		childRows: validChildren.map(c => ({
-			description: [{ text: c.description }],
-			forSale: false, // package items are offsale by default
-			id: c.id,
-			name: c.name,
-			price: 0,
-			type: c.type,
-			visibility: "Visible", // created by catalog managers, immediately visible
-		})),
-		description,
-		id,
-		name,
-		price,
-	})
-
-	await Promise.all(
-		validChildren.map(c => Bun.write(`../data/assets/${c.id}`, c.file))
-	)
+	try {
+		await Promise.all(
+			validChildren.map(c => Bun.write(`../data/assets/${c.id}`, c.bytes))
+		)
+	} catch (e) {
+		console.error(e)
+		return fail("Failed to save the package's assets")
+	}
 
 	// only the package itself gets a render; it equips all its children
 	// (via api/render/package), same as the manual rerender button

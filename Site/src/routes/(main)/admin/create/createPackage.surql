@@ -1,7 +1,7 @@
 # Creates a package asset record and the asset records for everything inside it.
 # Ownership resolution lives in the Economy service, so there are no relation writes here.
 
-CREATE ONLY asset CONTENT {
+LET $package = CREATE ONLY asset CONTENT {
 	id: $id,
 	description: [{
 		text: $description,
@@ -13,3 +13,6 @@ CREATE ONLY asset CONTENT {
 };
 
 INSERT INTO asset $childRows;
+
+# Lets the caller check that the package was actually created
+RETURN $package != NONE;
