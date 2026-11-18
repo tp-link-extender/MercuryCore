@@ -106,6 +106,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 		const u = new User(user.id)
 
 		// TODO: make creating image assets (only image assets) free
+		// Staff creation is charged too: the Economy service only offers createUnlimitedSource, which always adds the configured price as a currency leg, so there is no free source variant to call here
 		const createdImageAsset = await createUnlimitedSource(f, u)
 		if (!createdImageAsset.ok)
 			return issues("Failed to create image asset source")

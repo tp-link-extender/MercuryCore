@@ -9,8 +9,6 @@
 
 	const { data } = $props()
 
-	let { user } = $derived(data)
-
 	let currency = $derived(` (${data.currencySymbol}${data.price})`)
 </script>
 
@@ -28,7 +26,7 @@
 	formData={formData}
 	nopad
 	enctype="multipart/form-data"
-	submit="Create{user.permissionLevel < 3 ? currency : ''}"
+	submit="Create{currency}"
 	class="ctnr pt-8 max-w-200 light-text">
 	<Select
 		formData={formData}

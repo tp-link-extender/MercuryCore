@@ -113,6 +113,7 @@ export const formData: ClientForm<typeof schema.inferIn> = form(
 
 		const u = new EconUser(user.id)
 		// TODO: allow without requiring currency
+		// The Economy service has no free source variant, so this charges the configured price. The form shows that cost until the service can create a source without a currency leg
 		const created = await createUnlimitedSource(f, u)
 		if (!created.ok) return issues("Failed to create asset source")
 

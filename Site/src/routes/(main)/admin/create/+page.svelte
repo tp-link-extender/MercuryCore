@@ -32,6 +32,18 @@
 	let assets = $state<AssetEntry[]>([])
 	let isPackage = $derived(formData.fields.type.value() === "Package")
 
+	// each package child gets its own unlimited source, and the package gets a package source
+	let cost = $derived(
+		isPackage
+			? data.unlimitedSourcePrice * BigInt(assets.length) +
+					data.packageSourcePrice
+			: data.unlimitedSourcePrice
+	)
+
+	let submitLabel = $derived(
+		`${isPackage ? "Create package" : "Create"} (${data.currencySymbol}${cost})`
+	)
+
 	const addAsset = () => assets.push({ description: "", file: undefined, name: "", type: "Hat" })
 	const removeAsset = (num: number) => assets.splice(num, 1)
 </script>
@@ -52,7 +64,7 @@
 			formData={formData}
 			nopad
 			enctype="multipart/form-data"
-			submit={isPackage ? "Create package" : "Create"}>
+			submit={submitLabel}>
 			<Select
 				formData={formData}
 				options={Object.values(types)}
