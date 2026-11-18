@@ -47,7 +47,7 @@ interface AssetData {
 	visibility: string
 }
 
-async function getEquipData(id: string) {
+async function getEquipData(id: string, requireVisible = true) {
 	const { fetch: f, locals } = getRequestEvent()
 	const { user } = await authorise(locals)
 
@@ -74,7 +74,7 @@ async function getEquipData(id: string) {
 
 	if (!allowedTypes.includes(asset.type))
 		error(400, "Can't equip this type of item")
-	if (asset.visibility !== "Visible")
+	if (requireVisible && asset.visibility !== "Visible")
 		error(400, "This item hasn't been approved yet")
 
 	return { asset, id: assetId, user }
@@ -142,7 +142,8 @@ export const equipForm = form(equipSchema, async ({ id }, issues) => {
 })
 
 export const unequipForm = form(equipSchema, async ({ id }) => {
-	const { user, asset, id: assetId } = await getEquipData(id)
+	// a worn item can always be removed, even if it was re-uploaded and is awaiting approval again
+	const { user, asset, id: assetId } = await getEquipData(id, false)
 
 	// Unequipping a package unequips everything inside it
 	if (asset.type === 32) {

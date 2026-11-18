@@ -176,6 +176,9 @@ async function createPackage(
 		const assetType = typeToNumber[child.type]
 		if (!assetType)
 			return fail(`Asset #${num + 1} must have a valid asset type`)
+		// a child would need its own contents to open as a real package
+		if (assetType === typeToNumber.Package)
+			return fail(`Asset #${num + 1} can't be a package`)
 
 		const file = child.asset
 		if (!file || file.size === 0)

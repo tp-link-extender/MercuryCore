@@ -23,6 +23,11 @@
 		type: string
 	}
 
+	// a package can't contain another package, matching the server handler
+	const packageChildTypes = Object.freeze(
+		Object.values(types).filter(type => type !== "Package")
+	)
+
 	// for packages: uploads to include in the package
 	let assets = $state<AssetEntry[]>([])
 	let isPackage = $derived(formData.fields.type.value() === "Package")
@@ -121,7 +126,7 @@
 									name={"children[" + num + "].type"}
 									id={"childType-" + num}
 									bind:value={asset.type}>
-									{#each Object.values(types) as option}
+									{#each packageChildTypes as option}
 										<option value={option}>{option}</option>
 									{/each}
 								</select>
