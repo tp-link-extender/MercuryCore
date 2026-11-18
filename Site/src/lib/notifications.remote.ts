@@ -13,12 +13,15 @@ export const dismissForm = form(schema, async ({ id }) => {
 	const { locals } = getRequestEvent()
 	const { user } = await authorise(locals)
 
+	let updated: unknown[]
 	try {
-		await db.query(readQuery, {
+		const [rows] = await db.query<unknown[][]>(readQuery, {
 			notification: Record("notification", id),
 			user: Record("user", user.id),
 		})
+		updated = rows
 	} catch {
 		error(400)
 	}
+	if (!updated.length) error(404, "Notification not found")
 })
