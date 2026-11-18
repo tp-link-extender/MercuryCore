@@ -19,9 +19,12 @@
 
 	let tabData = $state(TabData(data.url, Object.keys(tabTypes)))
 
-	const assets = $derived(
-		await getAsset(tabTypes[tabData.currentTab as keyof typeof tabTypes])
+	// an unknown ?tab= value has no type, so fall back to the first tab rather than querying with undefined
+	const tabType = $derived(
+		tabTypes[tabData.currentTab as keyof typeof tabTypes] ?? tabTypes.Decals
 	)
+
+	const assets = $derived(await getAsset(tabType))
 </script>
 
 <Head name={data.siteName} title="Inventory" />
