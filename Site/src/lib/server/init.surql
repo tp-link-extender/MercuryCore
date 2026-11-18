@@ -237,7 +237,18 @@ IF array::len($usernameCollisions.filter(|$c| $c.n > 1)) > 0 {
 };
 UPDATE user SET usernameLower = string::lowercase(username) WHERE usernameLower = "";
 DEFINE INDEX IF NOT EXISTS usernameLowerI ON user COLUMNS usernameLower UNIQUE;
-# DEFINE INDEX IF NOT EXISTS emailI ON user COLUMNS email UNIQUE; # doesn't work with empty strings
+# SurrealDB won't redefine a field while an index reads it, so the index is rebuilt each time
+REMOVE INDEX IF EXISTS emailLowerI ON user;
+	# Lowercased, trimmed copy of email, or NONE when the address is empty. Unique indexes ignore NONE, so accounts without an email never collide while real addresses stay unique.
+	DEFINE FIELD OVERWRITE emailLower ON user TYPE option<string> VALUE IF string::trim(email ?? "") == "" { NONE } ELSE { string::lowercase(string::trim(email)) }
+		MIGRATE EXISTING ROWS AS userEmailLower USING $value ?? "" FALLBACK "";
+# Accounts whose emails differ only in case or surrounding whitespace must be changed or removed by hand before the site can start
+LET $emailCollisions = SELECT string::lowercase(string::trim(email ?? "")) AS address, count() AS n FROM user WHERE string::trim(email ?? "") != "" GROUP BY address;
+IF array::len($emailCollisions.filter(|$c| $c.n > 1)) > 0 {
+	THROW "Several users have emails that differ only in case or surrounding whitespace: " + <string> $emailCollisions.filter(|$c| $c.n > 1).map(|$c| $c.address) + ". Change or remove all but one of each before starting the site.";
+};
+UPDATE user SET emailLower = IF string::trim(email ?? "") == "" { NONE } ELSE { string::lowercase(string::trim(email)) } WHERE emailLower = "";
+DEFINE INDEX IF NOT EXISTS emailLowerI ON user COLUMNS emailLower UNIQUE;
 
 DEFINE TABLE OVERWRITE used SCHEMAFULL TYPE RELATION FROM user TO regKey ENFORCED;
 	DEFINE FIELD OVERWRITE id ON used TYPE string;
@@ -343,6 +354,8 @@ DEFINE FUNCTION OVERWRITE fn::filterGames($thing: object) {
 };
 
 # remember to get ya parameters in the right order here
+# A bare fuzzy score also matches scattered letters ("the" scores 50 against "Something Else Entirely"), so substrings match directly and anything else needs a score above the measured noise
 DEFINE FUNCTION OVERWRITE fn::search($query: string, $match: string) {
-	RETURN string::similarity::fuzzy($query, $match) > 0;
+	LET $needle = string::trim($match);
+	RETURN string::len($needle) > 0 AND (string::contains(string::lowercase($query), string::lowercase($needle)) OR string::similarity::fuzzy($query, $needle) > 60);
 };

@@ -66,9 +66,13 @@ export const register: ClientForm<typeof schema.infer> = form(
 		if (userCheck) return issues.username("This username is already in use")
 
 		if (config.Registration.Emails) {
-			const emailCheck = await findWhere("user", "email = $email", {
-				email,
-			})
+			const emailCheck = await findWhere(
+				"user",
+				"emailLower = string::lowercase(string::trim($email))",
+				{
+					email,
+				}
+			)
 			if (emailCheck) return issues.email("This email is already in use")
 		}
 
@@ -96,15 +100,23 @@ export const register: ClientForm<typeof schema.infer> = form(
 				)
 		}
 
-		const results = await db.query<RecordId<"user">[]>(createUserQuery, {
-			bodyColours: config.DefaultBodyColors,
-			email: email || "",
-			// I still love scrypt, though argon2 is better supported
-			hashedPassword: await hashPassword(_password),
-			key,
-			permissionLevel: 1,
-			username,
-		})
+		let results: RecordId<"user">[]
+		try {
+			results = await db.query<RecordId<"user">[]>(createUserQuery, {
+				bodyColours: config.DefaultBodyColors,
+				email: email || "",
+				// I still love scrypt, though argon2 is better supported
+				hashedPassword: await hashPassword(_password),
+				key,
+				permissionLevel: 1,
+				username,
+			})
+		} catch (err) {
+			// Another request registered this email address first
+			if (err instanceof Error && err.message.includes("emailLowerI"))
+				return issues.email("This email is already in use")
+			throw err
+		}
 		const user = results.at(-1)
 		if (!user) {
 			if (key)

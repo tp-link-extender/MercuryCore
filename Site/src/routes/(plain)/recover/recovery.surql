@@ -1,4 +1,4 @@
-LET $u = (SELECT id FROM user WHERE email = $email)[0].id; # remember, email addresses ARE case-sensitive
+LET $u = (SELECT id FROM user WHERE emailLower = string::lowercase(string::trim($email)))[0].id; # email addresses match case-insensitively, like registration
 IF $u {
 	# Only one token per user can be valid at a time
 	DELETE recoveryCode WHERE user = $u;

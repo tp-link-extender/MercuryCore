@@ -11,7 +11,7 @@ LET $u = IF $key AND array::len($keyUpdate) = 0 {
 } ELSE {
 	CREATE ONLY user CONTENT {
 		bodyColours: $bodyColours,
-		email: $email,
+		email: string::lowercase(string::trim($email)),
 		hashedPassword: $hashedPassword,
 		permissionLevel: $permissionLevel,
 		username: $username,
