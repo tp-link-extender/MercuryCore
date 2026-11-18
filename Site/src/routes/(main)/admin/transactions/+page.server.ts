@@ -1,7 +1,7 @@
 import { error } from "@sveltejs/kit"
 import { history } from "economy/api"
-import { authorise } from "$lib/server/auth"
-import { economyConnFailed, ownerData } from "$lib/server/economy"
+import { authorise } from "#lib/server/auth.ts"
+import { economyConnFailed, ownerData } from "#lib/server/economy.ts"
 import type { PageServerLoadEvent } from "./$types"
 
 export async function load({ fetch: f, locals }: PageServerLoadEvent) {

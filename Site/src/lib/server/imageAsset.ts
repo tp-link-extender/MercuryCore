@@ -11,10 +11,9 @@ import sharp from "sharp"
  * save(id)
  */
 // Async by contract: callers await the returned save function
-// oxlint-disable-next-line typescript/require-await, eslint/require-await
 export async function imageAsset(file: File) {
 	try {
-		const img = new Bun.Image(file)
+		const img = new Bun.Image(await file.arrayBuffer())
 			.resize(256, 256, { fit: "inside" })
 			.png()
 		return (id: number) => img.write(`../data/assets/${id}`)
@@ -35,10 +34,11 @@ export async function imageAsset(file: File) {
  * save(id)
  */
 // Async by contract: callers await the returned save function
-// oxlint-disable-next-line typescript/require-await, eslint/require-await
 export async function clothingAsset(file: File) {
 	try {
-		const img = new Bun.Image(file).resize(585, 559, { fit: "fill" }).png()
+		const img = new Bun.Image(await file.arrayBuffer())
+			.resize(585, 559, { fit: "fill" })
+			.png()
 		return (id: number) => img.write(`../data/assets/${id}`)
 	} catch (err) {
 		console.error(err)

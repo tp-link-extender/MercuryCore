@@ -1,16 +1,21 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
-	import { invalidate } from "$app/navigation"
-	import { page } from "$app/state"
-	import Form from "$components/forms/Form.svelte"
-	import Input from "$components/forms/Input.svelte"
-	import Textarea from "$components/forms/Textarea.svelte"
-	import Head from "$components/Head.svelte"
-	import SidebarShell from "$components/SidebarShell.svelte"
-	import Tab from "$components/Tab.svelte"
-	import TabData from "$components/TabData"
-	import User from "$components/User.svelte"
-	import { superForm } from "$lib/validate"
+	
+	import Form from "#components/forms/Form.svelte"
+	import Input from "#components/forms/Input.svelte"
+	import Textarea from "#components/forms/Textarea.svelte"
+	import Head from "#components/Head.svelte"
+	import SidebarShell from "#components/SidebarShell.svelte"
+	import Tab from "#components/Tab.svelte"
+	import TabData from "#components/TabData.ts"
+	import User from "#components/User.svelte"
+import { successOf } from "#lib/validate.ts"
+	import {
+		bodyForm,
+		deleteForm,
+		formData,
+		textLightForm,
+		visibilityForm,
+	} from "./banners.remote.js"
 
 	const { data } = $props()
 
@@ -21,11 +26,6 @@
 			["fa-plus", "fa-list"]
 		)
 	)
-	let textLightForms: { [_: string]: HTMLFormElement } = $state({})
-
-	let formData = $derived(superForm(data.form))
-	export const snapshot = formData
-	const { message } = formData
 </script>
 
 <Head name={data.siteName} title="Banners - Admin" />
@@ -40,7 +40,7 @@
 
 <SidebarShell bind:tabData class="max-w-280">
 	<Tab bind:tabData>
-		<Form {formData} submit="<fa fa-plus></fa> Create" action="?/create">
+		<Form {formData} submit="<fa fa-plus></fa> Create">
 			<Textarea
 				{formData}
 				name="bannerText"
@@ -73,24 +73,24 @@
 			</thead>
 			<tbody>
 				{#each data.banners as banner}
+					{const remove = deleteForm.for(banner.id)}
+					{const visibility = visibilityForm.for(banner.id)}
+					{const textLight = textLightForm.for(banner.id)}
 					<tr>
 						<td>
-							<form
-								use:enhance
-								method="post"
-								action="?/delete&id={banner.id}">
+							<form {...remove}>
 								<button
 									class="btn py-0 no-underline text-red-500">
 									<fa fa-trash class="pr-1"></fa>
 									Delete Banner
 								</button>
 							</form>
-							<form
-								use:enhance
-								method="post"
-								action="?/{banner.active
-									? 'hide'
-									: 'show'}&id={banner.id}">
+							<form {...visibility}>
+								<input
+									{...visibility.fields.action.as(
+										"hidden",
+										banner.active ? "hide" : "show"
+									)} />
 								<button
 									class="btn py-0 no-underline {banner.active
 										? 'text-yellow-500'
@@ -121,23 +121,14 @@
 								class="valid" />
 						</td>
 						<td class="flex items-center">
-							<form
-								use:enhance
-								bind:this={textLightForms[banner.id]}
-								method="post"
-								action="?/updateTextLight&id={banner.id}"
-								class="px-2">
+							<form {...textLight} class="px-2">
 								<input
-									onchange={async () => {
-										textLightForms[
-											banner.id
-										].requestSubmit()
-										await invalidate(window.location.href)
-									}}
+									{...textLight.fields.bannerTextLight.as(
+										"checkbox"
+									)}
 									checked={banner.textLight}
-									type="checkbox"
-									name="bannerTextLight"
-									value="true"
+									onchange={e =>
+										e.currentTarget.form?.requestSubmit()}
 									id="bannerTextLight"
 									class="valid" />
 							</form>
@@ -150,32 +141,20 @@
 				{/each}
 			</tbody>
 		</table>
-		<p
-			class={{
-				"text-emerald-600": page.status === 200,
-				"text-red-500": page.status >= 400
-			}}>
-			{$message || ""}
+		<p class="text-emerald-600">
+			{successOf(formData.result) || ""}
 		</p>
 	</Tab>
 </SidebarShell>
 
 {#each data.banners as banner}
+	{const body = bodyForm.for(banner.id)}
 	<div id={banner.id} popover="auto" class="light-text p-4 pb-2 w-100">
 		<h1 class="text-lg pb-2">Banner #{banner.id}</h1>
 
-		<Form
-			{formData}
-			submit="<fa fa-save></fa> Save changes"
-			action="?/updateBody&id={banner.id}">
-			<!-- <div class="py-1 text-center" style="background: {banner.bgColour}">
-				<p class="p-0 {banner.textLight ? 'text-white' : 'text-black'}">
-					{banner.body}
-				</p>
-			</div> -->
-
+		<form {...body}>
 			<Textarea
-				{formData}
+				formData={body}
 				name="bannerBody"
 				rows={1}
 				placeholder="3-100 characters"
@@ -183,7 +162,11 @@
 				defaultValue={banner.body}
 				class="text-{banner.textLight ? 'light' : 'dark'}"
 				style="background: {banner.bgColour} !important" />
-		</Form>
+			<button class="btn btn-primary">
+				<fa fa-save></fa>
+				Save changes
+			</button>
+		</form>
 	</div>
 {/each}
 

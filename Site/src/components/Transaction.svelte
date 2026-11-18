@@ -16,8 +16,8 @@
 		User as EconUser,
 		PackageSource,
 	} from "economy/types"
-	import User from "$components/User.svelte"
-	import type { OwnerData } from "$lib/economy"
+	import User from "#components/User.svelte"
+	import type { OwnerData } from "#lib/economy.ts"
 
 	const {
 		transfer: transaction,

@@ -3,6 +3,7 @@
 /// <reference types="@types/bun" />
 
 import type { AttributifyAttributes } from "@unocss/preset-attributify"
+import type { RemoteFormInput as RFI } from "$app/server"
 
 declare global {
 	namespace svelteHTML {
@@ -28,16 +29,18 @@ declare global {
 		}
 		created: string
 		css: string
-		description: {
-			text: string
-			updated: Date
-		}[]
+		// The current text of the description, or null if there isn't one
+		description: string | null
 		email: string
 		id: string
 		lastOnline: Date
 		permissionLevel: number
 		theme: number
 	}
+
+	// just useful in form component generics
+	// can't export straight from the package right here, it'll cause the other types (such as Locals) to not be global
+	type RemoteFormInput = RFI
 
 	namespace App {
 		interface Locals {

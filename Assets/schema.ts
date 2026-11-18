@@ -1,4 +1,4 @@
-import type { BrickColour } from "$lib/brickColours" // actually works!?!
+import type { BrickColour } from "../Site/src/lib/brickColours.ts"
 
 export type Config = {
 	/**

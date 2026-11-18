@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Footer from "$components/Footer.svelte"
-	import Navbar from "$components/Navbar.svelte"
+	import Footer from "#components/Footer.svelte"
+	import Navbar from "#components/Navbar.svelte"
 
 	const { data, children } = $props()
 </script>

@@ -1,20 +1,19 @@
 <script lang="ts">
-	import Form from "$components/forms/Form.svelte"
-	import Input from "$components/forms/Input.svelte"
-	import { superForm } from "$lib/validate"
+	import Form from "#components/forms/Form.svelte"
+	import Input from "#components/forms/Input.svelte"
+	import { dataForm } from "./settings.remote.js"
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	let formData = $derived(superForm(data.viewForm))
+	const dataFormFor = dataForm.for(data.id)
 </script>
 
 <Form
-	{formData}
+	formData={dataFormFor}
 	enctype="multipart/form-data"
-	submit=" <fa fa-save></fa> Save changes"
-	action="?/data&tab=Data">
+	submit=" <fa fa-save></fa> Save changes">
 	<Input
-		{formData}
+		formData={dataFormFor}
 		name="file"
 		label="Place file"
 		type="file"

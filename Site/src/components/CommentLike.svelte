@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ClassValue } from "svelte/elements"
-	import { type LikeForm, likeFns, type Scored } from "$lib/like2"
+	import { type LikeForm, likeFns, type Scored } from "#lib/like2.ts"
 
 	let {
 		comment = $bindable(),
@@ -20,7 +20,7 @@
 <form
 	{...likeForm.enhance(instance => {
 		const { action } = instance.fields.value()
-		likeFns[action](comment)
+		if (action) likeFns[action](comment)
 		comment = comment
 		instance.submit()
 	})}

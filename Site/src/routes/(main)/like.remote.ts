@@ -1,8 +1,8 @@
 import { type } from "arktype"
+import { authorise } from "#lib/server/auth.ts"
+import like from "#lib/server/like/index.ts"
+import { Record } from "#lib/server/surreal.ts"
 import { form, getRequestEvent } from "$app/server"
-import { authorise } from "$lib/server/auth"
-import like from "$lib/server/like"
-import { Record } from "$lib/server/surreal"
 
 const schema = type({
 	action: type.enumerated("like", "unlike", "dislike", "undislike"),

@@ -1,7 +1,7 @@
 <script lang="ts">
 	// Component for a group, used on the groups and search pages.
 
-	import fade from "$lib/fade"
+	import fade from "#lib/fade.ts"
 
 	const {
 		group,

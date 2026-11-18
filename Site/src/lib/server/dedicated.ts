@@ -1,4 +1,4 @@
-import config from "$lib/server/config"
+import config from "#lib/server/config.ts"
 
 /** Whether a place runs on a dedicated server, given the site's hosting mode and the place's own setting. */
 export const usesDedicated = (dedicated: boolean): boolean =>

@@ -10,8 +10,9 @@
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"strict": true,
-		"strictPropertyInitialization": false,
-		"typeRoots": ["./src/app.d.ts"]
+		"strictPropertyInitialization": false
 	},
-	"extends": "./.svelte-kit/tsconfig.json"
+	"exclude": ["node_modules", "build"],
+	"extends": "$app/tsconfig",
+	"include": ["src", "*.ts"]
 }

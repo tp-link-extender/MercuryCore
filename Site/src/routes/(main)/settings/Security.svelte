@@ -1,38 +1,32 @@
 <script lang="ts">
-	import Form from "$components/forms/Form.svelte"
-	import Input from "$components/forms/Input.svelte"
-	import { superForm } from "$lib/validate"
+	import Form from "#components/forms/Form.svelte"
+	import Input from "#components/forms/Input.svelte"
+	import { passwordForm, sessionForm } from "./settings.remote.js"
 
 	const { data }: { data: import("./$types").PageData } = $props()
-
-	let formDataPassword = $derived(superForm(data.passwordForm))
-	let formDataSession = $derived(superForm(data.sessionForm))
 </script>
 
 <h3 class="text-base pb-4 pt-2">Change password</h3>
 
-<Form
-	formData={formDataPassword}
-	action="?/password"
-	submit="<fa fa-key></fa> Change password">
+<Form formData={passwordForm} submit="<fa fa-key></fa> Change password">
 	<div class="hidden">
 		<!-- for accessibility, allows password managers to better autofill etc -->
 		<Input
-			formData={formDataPassword}
+			formData={passwordForm}
 			name="username"
 			label="Username"
 			type="text"
 			autocomplete="username" />
 	</div>
 	<Input
-		formData={formDataPassword}
+		formData={passwordForm}
 		name="cpassword"
 		label="Current password"
 		type="password"
 		placeholder={"•".repeat(18)}
 		autocomplete="current-password" />
 	<Input
-		formData={formDataPassword}
+		formData={passwordForm}
 		name="npassword"
 		label="New password"
 		type="password"
@@ -40,7 +34,7 @@
 		placeholder={"•".repeat(23)}
 		help="Make sure your password is unique." />
 	<Input
-		formData={formDataPassword}
+		formData={passwordForm}
 		name="cnpassword"
 		label="Confirm new password"
 		type="password"
@@ -58,20 +52,19 @@
 </p>
 
 <Form
-	formData={formDataSession}
-	action="?/sessions"
+	formData={sessionForm}
 	submit="<fa fa-explosion></fa> Invalidate all sessions">
 	<div class="hidden">
 		<!-- for accessibility, allows password managers to better autofill etc -->
 		<Input
-			formData={formDataSession}
+			formData={sessionForm}
 			name="username"
 			label="Username"
 			type="text"
 			autocomplete="username" />
 	</div>
 	<Input
-		formData={formDataSession}
+		formData={sessionForm}
 		name="password"
 		label="Password"
 		type="password"

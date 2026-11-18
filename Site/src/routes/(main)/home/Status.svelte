@@ -1,5 +1,5 @@
 <script lang="ts">
-	import User from "$components/User.svelte"
+	import User from "#components/User.svelte"
 
 	const { status }: { status: import("./$types").PageData["feed"][number] } =
 		$props()

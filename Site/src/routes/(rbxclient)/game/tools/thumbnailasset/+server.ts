@@ -1,7 +1,7 @@
 // This should be moved to asset thumbnails for every asset on Mercury, but for now we'll use it for the stamper tool (and other games which require it)
 
 import { error, redirect } from "@sveltejs/kit"
-import { db, Record } from "$lib/server/surreal"
+import { db, Record } from "#lib/server/surreal.ts"
 import type { RequestEvent } from "./$types"
 import cachedAssetQuery from "./cache.surql"
 
@@ -33,7 +33,7 @@ export async function GET({ fetch: f, url }: RequestEvent) {
 	const [[cache]] = await db.query<{ url: string }[][]>(cachedAssetQuery, {
 		cachedAsset,
 	})
-	if (cache) redirect(302, cache.url)
+	if (cache) redirect(302, cache.url, { external: true })
 
 	const params = new URLSearchParams({
 		assetIds: stringAssetId,
@@ -51,5 +51,5 @@ export async function GET({ fetch: f, url }: RequestEvent) {
 	const [{ imageUrl }] = body.data
 	await db.update(cachedAsset).merge({ url: imageUrl })
 
-	redirect(302, imageUrl)
+	redirect(302, imageUrl, { external: true })
 }

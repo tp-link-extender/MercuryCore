@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Head from "$components/Head.svelte"
-	import TabData from "$components/TabData"
-	import TabNav from "$components/TabNav.svelte"
+	import Head from "#components/Head.svelte"
+	import TabData from "#components/TabData.ts"
+	import TabNav from "#components/TabNav.svelte"
 	import Assets from "./Assets.svelte"
 
 	const tabTypes = Object.freeze({

@@ -10,8 +10,8 @@ import {
 	UnlimitedAsset,
 	User,
 } from "economy/types"
-import { economyConnFailed } from "$lib/server/economy"
-import { db, Record } from "$lib/server/surreal"
+import { economyConnFailed } from "#lib/server/economy.ts"
+import { db, Record } from "#lib/server/surreal.ts"
 import query from "./packageItems.surql"
 
 export interface PackageItem {

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from "svelte"
-	import { dev } from "$app/environment"
+	import { dev } from "$app/env"
 
 	const {
 		name,

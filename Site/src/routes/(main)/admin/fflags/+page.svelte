@@ -1,21 +1,16 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
-	import Form from "$components/forms/Form.svelte"
-	import Input from "$components/forms/Input.svelte"
-	import Head from "$components/Head.svelte"
-	import SidebarShell from "$components/SidebarShell.svelte"
-	import Tab from "$components/Tab.svelte"
-	import TabData from "$components/TabData"
-	import User from "$components/User.svelte"
-	import fade from "$lib/fade"
-
-	//import { superForm } from "$lib/validate"
+	
+	import Form from "#components/forms/Form.svelte"
+	import Input from "#components/forms/Input.svelte"
+	import Head from "#components/Head.svelte"
+	import SidebarShell from "#components/SidebarShell.svelte"
+	import Tab from "#components/Tab.svelte"
+	import TabData from "#components/TabData.ts"
+	import User from "#components/User.svelte"
+	import fade from "#lib/fade.ts"
+import { enhance } from "$app/forms"
 
 	const { data } = $props()
-
-	//let formData = $derived(superForm(data.form))
-	//export const snapshot = formData
-	//let { form } = $derived(formData)
 
 	const tomorrow = new Date(Date.now() + 86400e3).toISOString().slice(0, 10)
 

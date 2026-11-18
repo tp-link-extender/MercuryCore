@@ -23,7 +23,7 @@ jobs:
             run:
                 working-directory: Site
         env:
-            # `.env` is gitignored, so these are supplied as placeholders. SvelteKit needs them when generating types and building, because the Site imports them from `$env/static/private`. Nothing here ever uses them to reach a real service.
+            # `.env` is gitignored, so these are supplied as placeholders. SvelteKit needs them when generating types and building, because the Site reads them through `$app/env/private`. Nothing here ever uses them to reach a real service.
             RCC_KEY: ci-placeholder
             OPEN_CLOUD_KEY: ci-placeholder
         steps:
@@ -43,7 +43,7 @@ jobs:
             # The Site depends on ../Economy/client through a file: dependency, so the whole repository has to be checked out, which the checkout above does.
             - run: bun install --frozen-lockfile
 
-            # Generates `.svelte-kit/` (route types and `$env` declarations). It is gitignored, but the typecheck and Oxlint's type-aware rules both need it to resolve imports.
+            # Generates `.svelte-kit/` (route types and `$app/env` declarations). It is gitignored, but the typecheck and Oxlint's type-aware rules both need it to resolve imports.
             - run: bunx svelte-kit sync
 
             # `bun check` is Bun's built-in typecheck over the Site's tsconfig. `svelte-check` is not used: svelte-check 4.x refuses to run with TypeScript 7 without the tsgo flag, so it cannot gate CI yet.

@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { applyAction, enhance } from "$app/forms"
-	import { invalidateAll } from "$app/navigation"
-	import Accordion from "$components/Accordion.svelte"
-	import AccordionItem from "$components/AccordionItem.svelte"
-	import Head from "$components/Head.svelte"
-	import ReportButton from "$components/ReportButton.svelte"
-	import User from "$components/User.svelte"
-	import fade from "$lib/fade"
-	import permissionLevels from "$lib/permissionLevels"
+
+	import Accordion from "#components/Accordion.svelte"
+	import AccordionItem from "#components/AccordionItem.svelte"
+	import Head from "#components/Head.svelte"
+	import ReportButton from "#components/ReportButton.svelte"
+	import User from "#components/User.svelte"
+	import fade from "#lib/fade.ts"
+	import { rerenderForm } from "#lib/interactions.remote.ts"
+	import permissionLevels from "#lib/permissionLevels.ts"
 	import Interactions from "./Interactions.svelte"
 	import ProfilePlace from "./ProfilePlace.svelte"
 
-	const { data, form } = $props()
+	const { data } = $props()
 
 	let { user } = $derived(data)
 
@@ -23,16 +23,11 @@
 	// (for unocss)
 	// fa-user fa-check fa-hammer fa-shield-alt fa-scale-balanced
 
-	let regenerating = $state(false)
-
-	const enhanceRegen: import("./$types").SubmitFunction = () => {
-		regenerating = true
-		return async ({ result }) => {
-			if (result.type === "success") await invalidateAll()
-			await applyAction(result)
-			regenerating = false
-		}
-	}
+	const rerenderFormFor = rerenderForm.for(data.username)
+	const rerenderState = $derived({
+		avatar: rerenderFormFor.result?.avatar,
+		pending: rerenderFormFor.pending > 0,
+	})
 </script>
 
 <Head name={data.siteName} title={data.username} />
@@ -46,7 +41,7 @@
 					size="7rem"
 					bg="accent"
 					image
-					rerender={{ form, regenerating }} />
+					rerender={rerenderState} />
 			</span>
 			<span class="lg:hidden pr-4">
 				<User
@@ -54,7 +49,7 @@
 					size="6rem"
 					bg="accent"
 					image
-					rerender={{ form, regenerating }} />
+					rerender={rerenderState} />
 			</span>
 			<div class="w-full">
 				<div class="flex mb-2 justify-between">
@@ -171,25 +166,20 @@
 					<img
 						class={[
 							"transition-opacity duration-300",
-							{ "opacity-50": regenerating }
+							{ "opacity-50": rerenderFormFor.pending > 0 }
 						]}
-						src={form?.avatarBody ||
+						src={rerenderFormFor.result?.avatarBody ||
 							`/api/avatar/${data.username}-body`}
 						alt={data.username} />
 					{#if user?.permissionLevel >= 5}
 						<form
-							use:enhance={enhanceRegen}
+							{...rerenderFormFor}
 							in:fade
-							method="post"
-							action="?/rerender"
 							class="absolute text-right end-0 pr-4">
 							<button class="btn btn-sm btn-tertiary">
 								<fa fa-arrows-rotate></fa>
 								Rerender
 							</button>
-							<small class="text-red-500 block">
-								{form?.msg || ""}
-							</small>
 						</form>
 					{/if}
 				</div>
@@ -204,7 +194,7 @@
 							{#each data.places as place, id}
 								<AccordionItem
 									{accordion}
-									ai={{ id, title: place.name }}>
+									ai={{ id: String(id), title: place.name }}>
 									<ProfilePlace {place} />
 								</AccordionItem>
 							{/each}

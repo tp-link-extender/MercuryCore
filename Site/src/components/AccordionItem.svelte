@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { Accordion, AccordionItem } from "melt/builders"
+	import type { Accordion, AccordionItemMeta } from "melt/builders"
 	import type { Snippet } from "svelte"
 	import { slide } from "svelte/transition"
-	import NoScript from "$components/NoScript.svelte"
-	import YesScript from "$components/YesScript.svelte"
+	import NoScript from "#components/NoScript.svelte"
+	import YesScript from "#components/YesScript.svelte"
 
 	const {
 		accordion,
@@ -11,7 +11,7 @@
 		children
 	}: {
 		accordion: Accordion
-		ai: AccordionItem<{
+		ai: AccordionItemMeta<{
 			title: string
 		}>
 		children: Snippet

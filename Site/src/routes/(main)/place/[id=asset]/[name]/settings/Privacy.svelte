@@ -1,23 +1,18 @@
 <script lang="ts">
-	import Form from "$components/forms/Form.svelte"
-	import Input from "$components/forms/Input.svelte"
-	import { superForm } from "$lib/validate"
+	import Form from "#components/forms/Form.svelte"
+	import Input from "#components/forms/Input.svelte"
+	import { privacyForm } from "./settings.remote.js"
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	let formData = $derived(superForm(data.privacyForm))
-	let { form } = $derived(formData)
-
-	if (data.privateServer) $form.privateServer = data.privateServer
+	const privacyFormFor = privacyForm.for(data.id)
 </script>
 
-<Form
-	{formData}
-	submit=" <fa fa-save></fa> Save changes"
-	action="?/privacy&tab=Privacy">
+<Form formData={privacyFormFor} submit=" <fa fa-save></fa> Save changes">
 	<Input
-		{formData}
+		formData={privacyFormFor}
 		name="privateServer"
 		label="Private server"
-		type="checkbox" />
+		type="checkbox"
+		defaultValue={data.privateServer} />
 </Form>

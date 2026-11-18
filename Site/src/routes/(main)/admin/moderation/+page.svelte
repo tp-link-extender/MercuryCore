@@ -1,27 +1,19 @@
 <script lang="ts">
 	// TODO: doesn't work without clientside JS because of the date input, fix
 
-	import Form from "$components/forms/Form.svelte"
-	import Input from "$components/forms/Input.svelte"
-	import Select from "$components/forms/Select.svelte"
-	import Textarea from "$components/forms/Textarea.svelte"
-	import Head from "$components/Head.svelte"
-	import SidebarShell from "$components/SidebarShell.svelte"
-	import Tab from "$components/Tab.svelte"
-	import TabData from "$components/TabData"
-	import fade from "$lib/fade"
-	import { superForm } from "$lib/validate"
+	import Form from "#components/forms/Form.svelte"
+	import Input from "#components/forms/Input.svelte"
+	import Select from "#components/forms/Select.svelte"
+	import Textarea from "#components/forms/Textarea.svelte"
+	import Head from "#components/Head.svelte"
+	import SidebarShell from "#components/SidebarShell.svelte"
+	import Tab from "#components/Tab.svelte"
+	import TabData from "#components/TabData.ts"
+	import fade from "#lib/fade.ts"
+	import { formData } from "./moderation.remote.js"
 	import moderationOptions from "./moderationOptions"
 
 	const { data } = $props()
-
-	let formData = $derived(superForm(data.form))
-	export const snapshot = formData
-	let { form } = $derived(formData)
-
-	$effect(() => {
-		if (data.report) $form.reason = data.report.note
-	})
 
 	const tomorrow = new Date(Date.now() + 86400e3).toISOString().slice(0, 10)
 
@@ -42,18 +34,22 @@
 	<Tab bind:tabData>
 		<Form
 			{formData}
-			submit={$form.action === "Termination" // 5:53 am and im bored as shit
+			submit={formData.fields.action.value() === "Termination" // 5:53 am and im bored as shit
 				? "<fa fa-explosion></fa> Nuke from orbit"
-				: $form.action === "Unban"
+				: formData.fields.action.value() === "Unban"
 					? "<fa fa-unlock></fa> Unban"
 					: "<fa fa-hammer-crash></fa> Moderate"}>
-			<Input {formData} name="username" label="Username" />
+			<Input
+				{formData}
+				name="username"
+				label="Username"
+				defaultValue={data.report?.reportee} />
 			<Select
 				{formData}
 				options={moderationOptions}
 				name="action"
 				label="Action" />
-			{#if $form.action === "Ban"}
+			{#if formData.fields.action.value() === "Ban"}
 				<div transition:fade>
 					<Input
 						{formData}
@@ -64,7 +60,11 @@
 						required />
 				</div>
 			{/if}
-			<Textarea {formData} name="reason" label="Reason" />
+			<Textarea
+				{formData}
+				name="reason"
+				label="Reason"
+				defaultValue={data.report?.note} />
 		</Form>
 	</Tab>
 </SidebarShell>

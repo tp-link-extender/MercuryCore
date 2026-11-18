@@ -1,43 +1,59 @@
-<script lang="ts">
-	import type {
-		HTMLInputAttributes,
-		HTMLInputTypeAttribute
-	} from "svelte/elements"
+<script lang="ts" generics="T extends RemoteFormInput">
+		import type { ClientForm, ExtractId, InputAttributes } from "#lib/validate.ts"
 
 	const {
 		name,
 		disabled = false,
 		type,
+		defaultValue,
 		formData,
 		...rest
 	}: {
 		// Imported into Input.svelte to prevent code duplication
-		name: string
+		name: ExtractId<T>
 		disabled: boolean
-		type: HTMLInputTypeAttribute
-		formData: import("$lib/validate").DynamicSuperForm
-	} & HTMLInputAttributes = $props()
+		defaultValue?: boolean | string
+		type:
+			| "text"
+			| "number"
+			| "color"
+			| "date"
+			| "checkbox"
+			| "file"
+			| "password"
+			| "email"
+		formData: Omit<ClientForm<T>, "for">
+	} & InputAttributes = $props()
 
-	let { form, errors, constraints } = $derived(formData)
+	type AsField = (
+		type: string,
+		value?: boolean | string
+	) => InputAttributes
+
+	const field = $derived(formData.fields[name])
+	// as() takes a literal input type, and this component's type is a union, so the call is typed loosely here. Email fields are text to the form, and the type attribute is set below
+	const attrs = $derived(
+		(field.as as AsField).call(
+			field,
+			type === "email" ? "text" : type,
+			defaultValue
+		)
+	)
 </script>
 
 {#if type === "checkbox"}
 	<input
+		{...attrs}
 		{...rest}
-		bind:checked={$form[name]}
-		{name}
 		id={name}
 		type="checkbox"
 		{disabled} />
 {:else}
 	<input
+		{...attrs}
 		{...rest}
-		bind:value={$form[name]}
-		{...$constraints[name]}
-		{name}
 		id={name}
 		{type}
-		class={[rest.class, { "is-invalid": $errors[name] }]}
 		style={type === "number"
 			? "width: 9rem"
 			: type === "color"

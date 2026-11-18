@@ -1,12 +1,18 @@
 import { createTransport } from "nodemailer"
 import type Mail from "nodemailer/lib/mailer"
-import { building } from "$app/environment"
+import { building } from "$app/env"
 import config from "./config"
 
-let transport: Mail | null = null
-if (!building)
-	try {
-		transport = createTransport({
+let transport: Promise<Mail> | null = null
+
+// Created on first use, not at import time: pages import the modules that send email (through remote functions), and a failed SMTP connection shouldn't break rendering them
+const getTransport = () => {
+	if (transport) return transport
+	if (building)
+		throw new Error("SMTP transport is not available while building")
+
+	transport = (async () => {
+		const t = createTransport({
 			auth: {
 				pass: process.env.EMAIL_PASSWORD,
 				user: config.Email.Username,
@@ -15,32 +21,37 @@ if (!building)
 			port: config.Email.Port,
 			secure: config.Email.Secure,
 		})
-		transport.on("error", err =>
-			console.error("SMTP Transport Error:", err)
-		)
-		transport.on("idle", () => console.log("SMTP Transport is idle"))
-		transport.on("token", () => console.log("SMTP Transport token event"))
+		t.on("error", err => console.error("SMTP Transport Error:", err))
+		t.on("idle", () => console.log("SMTP Transport is idle"))
+		t.on("token", () => console.log("SMTP Transport token event"))
 
 		console.log("Verifying SMTP transport...")
-		await transport.verify()
+		await t.verify()
 		console.log("SMTP transport verified successfully.")
 
-		transport.use("stream", (mail, callback) => {
+		t.use("stream", (mail, callback) => {
 			console.log("Preparing to send email:")
 			console.log("From:", mail.data.from)
 			console.log(`Subject: ${mail.data.subject}`)
 			callback()
 		})
-	} catch (error) {
-		console.error("Error creating SMTP transport:", error)
-		throw error
-	}
+
+		return t
+	})()
+
+	// A failed connection shouldn't be cached, so the next attempt starts over
+	transport.catch(() => {
+		transport = null
+	})
+
+	return transport
+}
 
 // Recipient addresses are never logged, so the logs don't reveal who has an account or asked to recover one
 export async function sendEmail(to: string, subject: string, text: string) {
-	if (!transport) throw new Error("SMTP transport is not initialised")
+	const t = await getTransport()
 	console.log(`Queuing email "${subject}"`)
-	const result = await transport.sendMail({
+	const result = await t.sendMail({
 		from: `${config.Name} <noreply@${config.Domain}>`,
 		subject,
 		text,

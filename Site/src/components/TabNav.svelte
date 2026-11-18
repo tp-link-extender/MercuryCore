@@ -60,7 +60,7 @@
 		return out
 	})
 
-	const tabHref = tab => {
+	const tabHref = (tab: string) => {
 		const currentSearch = new URL(tabData.url).searchParams
 		currentSearch.set(tabData.name, tab)
 		return `?${currentSearch.toString()}`
@@ -92,7 +92,7 @@
 			<li
 				class={["item", vertical ? "rounded-2" : "p-1", { active: groupActive }]}
 				style="border-bottom-color: {colour.current}"
-				data-sveltekit-preload-data="off">
+				data-sveltekit-preload-data="false">
 				<span class="dropdown">
 					<a
 						class={[
@@ -141,7 +141,7 @@
 					}
 				]}
 				style="border-bottom-color: {colour.current}"
-				data-sveltekit-preload-data="off">
+				data-sveltekit-preload-data="false">
 				<a
 					class={[
 						"block tab no-underline rounded-2",

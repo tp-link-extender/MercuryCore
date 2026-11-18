@@ -436,6 +436,7 @@ details[open] summary {
 	@apply rounded-b-0;
 }
 
+[aria-invalid="true"],
 .is-invalid {
 	padding-right: 2.2rem;
 	background-image: url(/invalid.svg);
@@ -444,6 +445,10 @@ details[open] summary {
 	background-size: 1.2rem;
 	/* biome-ignore lint/complexity/noImportantStyles: overrides UnoCSS border utilities */
 	border-color: hsl(354 70 55) !important;
+}
+
+[aria-invalid="true"] {
+	--un-ring-color: hsl(354 70 45);
 }
 
 @keyframes checkmark {

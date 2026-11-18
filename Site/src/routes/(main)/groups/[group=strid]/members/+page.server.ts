@@ -1,8 +1,8 @@
 // The members page for a group.
 
 import { error } from "@sveltejs/kit"
-import exclude from "$lib/server/exclude"
-import { db, Record } from "$lib/server/surreal"
+import exclude from "#lib/server/exclude.ts"
+import { db, Record } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import membersQuery from "./members.surql"
 

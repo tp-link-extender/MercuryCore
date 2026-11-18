@@ -1,9 +1,9 @@
 <script lang="ts">
-	import AdminLink from "$components/AdminLink.svelte"
-	import Head from "$components/Head.svelte"
-	import SidebarShell from "$components/SidebarShell.svelte"
-	import Tab from "$components/Tab.svelte"
-	import TabData from "$components/TabData"
+	import AdminLink from "#components/AdminLink.svelte"
+	import Head from "#components/Head.svelte"
+	import SidebarShell from "#components/SidebarShell.svelte"
+	import Tab from "#components/Tab.svelte"
+	import TabData from "#components/TabData.ts"
 
 	const { data } = $props()
 

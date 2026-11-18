@@ -1,17 +1,14 @@
 <script lang="ts">
-	import Form from "$components/forms/Form.svelte"
-	import Input from "$components/forms/Input.svelte"
-	import Head from "$components/Head.svelte"
-	import SidebarShell from "$components/SidebarShell.svelte"
-	import Tab from "$components/Tab.svelte"
-	import TabData from "$components/TabData"
-	import User from "$components/User.svelte"
-	import { superForm } from "$lib/validate"
+	import Form from "#components/forms/Form.svelte"
+	import Input from "#components/forms/Input.svelte"
+	import Head from "#components/Head.svelte"
+	import SidebarShell from "#components/SidebarShell.svelte"
+	import Tab from "#components/Tab.svelte"
+	import TabData from "#components/TabData.ts"
+	import User from "#components/User.svelte"
+	import { formData } from "./accounts.remote.js"
 
 	const { data } = $props()
-
-	let formData = $derived(superForm(data.form))
-	export const snapshot = formData
 
 	let tabData = $state(
 		TabData(
@@ -34,10 +31,7 @@
 
 <SidebarShell bind:tabData>
 	<Tab bind:tabData>
-		<Form
-			{formData}
-			submit="<fa fa-key></fa> Change password"
-			action="?/changePassword">
+		<Form {formData} submit="<fa fa-key></fa> Change password">
 			<Input {formData} name="username" label="Username" />
 			<Input
 				{formData}

@@ -1,6 +1,6 @@
 import { type } from "arktype"
+import { db } from "#lib/server/surreal.ts"
 import { query } from "$app/server"
-import { db } from "$lib/server/surreal"
 import type { Asset } from "./+page.server"
 import catalogQuery from "./catalog.surql"
 

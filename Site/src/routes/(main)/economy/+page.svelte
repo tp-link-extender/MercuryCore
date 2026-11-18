@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { TransferWithID } from "economy/economy"
 	import { Buf, BufReader } from "economy/items"
-	import Head from "$components/Head.svelte"
-	import Transaction from "$components/Transaction.svelte"
-	import fade from "$lib/fade"
+	import Head from "#components/Head.svelte"
+	import Transaction from "#components/Transaction.svelte"
+	import fade from "#lib/fade.ts"
 
 	const { data } = $props()
 </script>

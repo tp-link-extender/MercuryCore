@@ -1,5 +1,4 @@
-import { json } from "@sveltejs/kit"
-import { db } from "$lib/server/surreal"
+import { db } from "#lib/server/surreal.ts"
 import type { Asset } from "../+page.server"
 import catalogQuery from "../catalog.surql"
 import type { RequestEvent } from "./$types"
@@ -12,5 +11,5 @@ export async function GET({ url }: RequestEvent) {
 		: Math.max(1, Math.round(Number(pageQ)))
 
 	const [assets] = await db.query<Asset[][]>(catalogQuery, { page, query })
-	return json(assets)
+	return Response.json(assets)
 }

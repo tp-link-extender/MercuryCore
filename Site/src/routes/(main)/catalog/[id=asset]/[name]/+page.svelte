@@ -1,40 +1,29 @@
 <script lang="ts">
-	import { applyAction, enhance } from "$app/forms"
-	import { invalidateAll } from "$app/navigation"
-	import Comment from "$components/Comment.svelte"
-	import Head from "$components/Head.svelte"
-	import PostReply from "$components/PostReply.svelte"
-	import Tab from "$components/Tab.svelte"
-	import TabData from "$components/TabData"
-	import TabNav from "$components/TabNav.svelte"
-	import User from "$components/User.svelte"
-	import types from "$lib/assetTypes"
-	import { superForm } from "$lib/validate"
+	import Comment from "#components/Comment.svelte"
+	import Head from "#components/Head.svelte"
+	import PostReply from "#components/PostReply.svelte"
+	import Tab from "#components/Tab.svelte"
+	import TabData from "#components/TabData.ts"
+	import TabNav from "#components/TabNav.svelte"
+	import User from "#components/User.svelte"
+	import types from "#lib/assetTypes.ts"
 	import { likeForm } from "../../../like.remote"
+	import { buyForm, commentForm, rerenderForm } from "./comments.remote"
 
 	let replyingTo = $state("")
 	let commentsCollapsed = $state({})
 
-	const { data, form } = $props()
+	const { data } = $props()
 
 	let { user } = $derived(data)
 	let totalPrice = $derived(data.asset.price)
 	let itsFree = $derived(totalPrice === 0n) // IT'S FREEEEEEEEEEEEEE
 
-	let regenerating = $state(false)
-
-	const enhanceRegen: import("./$types").SubmitFunction = () => {
-		regenerating = true
-		return async ({ result }) => {
-			if (result.type === "success") await invalidateAll()
-			await applyAction(result)
-			regenerating = false
-		}
-	}
-
 	let comments = $derived(data.asset.comments)
 
-	let formData = $derived(superForm(data.form))
+	const commentFormFor = commentForm.for(data.asset.id)
+	const buyFormFor = buyForm.for(data.asset.id)
+	const rerenderFormFor = rerenderForm.for(data.asset.id)
 
 	let tabData = $state(
 		TabData(data.url, [
@@ -54,9 +43,9 @@
 			<img
 				class={[
 					"image transition-opacity duration-300 aspect-1 w-80vw max-w-100",
-					{ "opacity-50": regenerating }
+					{ "opacity-50": rerenderFormFor.pending > 0 }
 				]}
-				src={form?.icon ||
+				src={rerenderFormFor.result?.icon ||
 					`/catalog/${data.asset.id}/${data.slug}/icon`}
 				alt={data.asset.name} />
 		</div>
@@ -82,10 +71,7 @@
 							<div class="dropdown-content">
 								<ul class="p-2 rounded-3">
 									<li class="rounded-2">
-										<form
-											use:enhance={enhanceRegen}
-											method="post"
-											action="?/rerender">
+										<form {...rerenderFormFor}>
 											<button
 												class="btn accent-text pl-4 pr-0 text-start">
 												<fa
@@ -169,7 +155,7 @@
 	<TabNav bind:tabData justify />
 
 	<Tab bind:tabData class={{ "pb-32": comments.length > 0 }}>
-		<PostReply {formData} />
+		<PostReply formData={commentFormFor} />
 		{#if comments.length > 0}
 			{#each comments as _, num}
 				<Comment
@@ -227,8 +213,12 @@
 			{/if}
 		</p>
 
-		<form method="post" action="?/buy" class="inline">
-			<input type="hidden" name="price" value={data.asset.price} />
+		<form {...buyFormFor} class="inline">
+			<input
+				{...buyFormFor.fields.price.as(
+					"hidden",
+					data.asset.price.toString()
+				)} />
 			<button class="btn btn-success">
 				{itsFree ? "Get" : "Buy now"}
 			</button>

@@ -1,11 +1,10 @@
 <script lang="ts">
-	import type { ActionResult } from "@sveltejs/kit"
-	import { invalidateAll } from "$app/navigation"
-	import Breadcrumbs from "$components/Breadcrumbs.svelte"
-	import Comment from "$components/Comment.svelte"
-	import Head from "$components/Head.svelte"
-	import PostReply from "$components/PostReply.svelte"
-	import { superForm } from "$lib/validate"
+	
+	import Breadcrumbs from "#components/Breadcrumbs.svelte"
+	import Comment from "#components/Comment.svelte"
+	import Head from "#components/Head.svelte"
+	import PostReply from "#components/PostReply.svelte"
+	import { replyForm } from "#lib/commentActions.remote.ts"
 	import { likeForm } from "../../like.remote"
 	import { getComment } from "./comment.remote"
 	import ForumPost from "./ForumPost.svelte"
@@ -19,10 +18,7 @@
 
 	let { user } = $derived(data)
 
-	async function onResult({ result }: { result: ActionResult }) {
-		if (result.type === "success") await invalidateAll()
-	}
-	let formData = $derived(superForm(data.form))
+	const formData = replyForm.for(data.commentId)
 
 	const elide = (c: string) => (c.length > 50 ? `${c.slice(0, 50)}...` : c)
 
@@ -81,15 +77,15 @@
 		<!-- These are just different ways of displaying exactly the same information -->
 		{#if type[0] === "forum"}
 			{#if type.length === 2}
-				<ForumPost comment={c} {likeForm} {onResult} {user} />
+				<ForumPost comment={c} {likeForm} {user} />
 			{:else}
-				<ForumReply comment={c} {likeForm} {onResult} {user} />
+				<ForumReply comment={c} {likeForm} {user} />
 			{/if}
 		{:else if type[0] === "status"}
 			{#if type.length === 1}
-				<ForumPost comment={c} {likeForm} {onResult} {user} />
+				<ForumPost comment={c} {likeForm} {user} />
 			{:else}
-				<ForumReply comment={c} {likeForm} {onResult} {user} />
+				<ForumReply comment={c} {likeForm} {user} />
 			{/if}
 		{/if}
 

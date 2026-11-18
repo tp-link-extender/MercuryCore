@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { untrack } from "svelte"
-	import { browser } from "$app/environment"
+	import { browser } from "$app/env"
 	import { goto } from "$app/navigation"
 
 	const { pages }: { pages: string[] } = $props()

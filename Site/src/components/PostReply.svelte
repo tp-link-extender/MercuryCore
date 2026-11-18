@@ -1,39 +1,30 @@
-<script lang="ts">
-	import { page } from "$app/state"
+<script lang="ts" generics="T extends RemoteFormInput">
+	import type { ClientForm } from "#lib/validate.ts"
 
-	const { formData }: { formData: import("$lib/validate").DynamicSuperForm } =
-		$props()
+	const { formData }: { formData: Omit<ClientForm<T>, "for"> } = $props()
 
-	const { form, errors, message, constraints, enhance, delayed } = formData
+	let issues = $derived(formData.fields.allIssues() || [])
+	let pending = $derived(formData.pending > 0)
 </script>
 
-<form use:enhance method="post" action="?/comment" class="py-2">
+<form {...formData} class="py-2">
 	<label for="content" class="light-text py-2">Post a comment</label>
 	<fieldset class="max-w-140 flex gap-4 items-end">
 		<textarea
-			bind:value={$form.content}
-			{...$constraints.content}
-			class={{ "is-invalid": $errors.content }}
+			{...formData.fields.content.as("text")}
 			name="content"
 			placeholder="What are your thoughts?"
 			rows="4">
 		</textarea>
-		<button class="btn btn-secondary">
-			{#if $delayed}
+		<button class="btn btn-secondary" disabled={pending}>
+			{#if pending}
 				Working...
 			{:else}
 				Comment
 			{/if}
 		</button>
 	</fieldset>
-	<p
-		class={[
-			"pb-4",
-			{
-				"text-emerald-600": page.status === 200,
-				"text-red-500": page.status >= 400
-			}
-		]}>
-		{$message || $errors.content || ""}
-	</p>
+	{#each issues as issue}
+		<p class="pb-4 text-red-500">{issue.message}</p>
+	{/each}
 </form>

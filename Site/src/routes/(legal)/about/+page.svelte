@@ -1,7 +1,7 @@
 <script lang="ts">
 	// import { Canvas } from "@threlte/core"
-	import Head from "$components/Head.svelte"
-	import fade from "$lib/fade"
+	import Head from "#components/Head.svelte"
+	import fade from "#lib/fade.ts"
 	// import Cubes from "./Cubes.svelte"
 	import Libraries from "./Libraries.svelte"
 	import Padlock from "./Padlock.svelte"

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import User from "$components/User.svelte"
-	import { reportPath } from "$lib/reportUrl"
+	import User from "#components/User.svelte"
+	import { reportPath } from "#lib/reportUrl.ts"
 
 	const {
 		report

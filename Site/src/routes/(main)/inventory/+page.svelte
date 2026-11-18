@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Asset from "$components/Asset.svelte"
-	import Head from "$components/Head.svelte"
-	import SidebarShell from "$components/SidebarShell.svelte"
-	import TabData from "$components/TabData"
+	import Asset from "#components/Asset.svelte"
+	import Head from "#components/Head.svelte"
+	import SidebarShell from "#components/SidebarShell.svelte"
+	import TabData from "#components/TabData.ts"
 	import { getAsset } from "./inventory.remote"
 
 	const { data } = $props()

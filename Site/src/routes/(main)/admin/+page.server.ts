@@ -1,5 +1,5 @@
 import os from "node:os"
-import { authorise } from "$lib/server/auth"
+import { authorise } from "#lib/server/auth.ts"
 import type { PageServerLoadEvent } from "./$types"
 
 // Admin pages on the site require a user to have at least permissionLevel 3

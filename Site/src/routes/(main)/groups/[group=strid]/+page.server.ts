@@ -1,18 +1,15 @@
 import { error } from "@sveltejs/kit"
 import { Group as EconGroup } from "economy/types"
-import { authorise } from "$lib/server/auth"
+import { authorise } from "#lib/server/auth.ts"
 import {
 	economyConnFailed,
 	itemOwner,
 	type OwnedUser,
-} from "$lib/server/economy"
-import exclude from "$lib/server/exclude"
-import { db, find, Record } from "$lib/server/surreal"
-import type { Actions, PageServerLoadEvent } from "./$types"
-import type { RequestEvent } from "./$types.d"
+} from "#lib/server/economy.ts"
+import exclude from "#lib/server/exclude.ts"
+import { db, Record } from "#lib/server/surreal.ts"
+import type { PageServerLoadEvent } from "./$types"
 import groupQuery from "./group.surql"
-import joinQuery from "./join.surql"
-import leaveQuery from "./leave.surql"
 
 interface Group {
 	id: string
@@ -36,25 +33,4 @@ export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	if (!owner.ok) error(500, economyConnFailed)
 
 	return { ...group, owner: owner.value }
-}
-
-async function getData({ locals, params }: RequestEvent) {
-	exclude("Groups")
-	const { user } = await authorise(locals)
-
-	const groupExists = await find("group", params.group)
-	if (!groupExists) error(404, "Group not found")
-
-	return {
-		group: Record("group", params.group),
-		user: Record("user", user.id),
-	}
-}
-
-export const actions: Actions = {}
-actions.join = async e => {
-	await db.query(joinQuery, await getData(e))
-}
-actions.leave = async e => {
-	await db.query(leaveQuery, await getData(e))
 }

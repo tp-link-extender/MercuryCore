@@ -1,8 +1,8 @@
 import { error } from "@sveltejs/kit"
-import config from "$lib/server/config"
-import { buildLoadscript, luaId } from "$lib/server/loadscript"
-import { SignScript } from "$lib/server/sign"
-import { db } from "$lib/server/surreal"
+import config from "#lib/server/config.ts"
+import { buildLoadscript, luaId } from "#lib/server/loadscript.ts"
+import { SignScript } from "#lib/server/sign.ts"
+import { db } from "#lib/server/surreal.ts"
 import placeQuery from "../place.surql"
 import type { RequestEvent } from "./$types"
 

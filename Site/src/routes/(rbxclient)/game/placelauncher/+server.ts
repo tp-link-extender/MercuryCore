@@ -1,5 +1,5 @@
-import { buildLoadscript } from "$lib/server/loadscript"
-import { SignScript } from "$lib/server/sign"
+import { buildLoadscript } from "#lib/server/loadscript.ts"
+import { SignScript } from "#lib/server/sign.ts"
 
 export async function GET() {
 	const scriptFile = Bun.file("../data/server/loadscripts/visit.lua")

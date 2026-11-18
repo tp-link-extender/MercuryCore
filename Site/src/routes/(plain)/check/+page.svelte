@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { VERSION } from "@sveltejs/kit"
-	import Head from "$components/Head.svelte"
+	import Head from "#components/Head.svelte"
 	import Waves from "../Waves.svelte"
 
 	const { data } = $props()

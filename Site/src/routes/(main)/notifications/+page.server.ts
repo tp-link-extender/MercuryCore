@@ -1,8 +1,6 @@
-import { error } from "@sveltejs/kit"
-import { authorise } from "$lib/server/auth"
-import { db, Record } from "$lib/server/surreal"
-import type { Actions, PageServerLoadEvent } from "./$types"
-import readQuery from "./read.surql"
+import { authorise } from "#lib/server/auth.ts"
+import { db, Record } from "#lib/server/surreal.ts"
+import type { PageServerLoadEvent } from "./$types"
 import readAllQuery from "./readAll.surql"
 
 export async function load({ locals }: PageServerLoadEvent) {
@@ -11,20 +9,4 @@ export async function load({ locals }: PageServerLoadEvent) {
 	await db.query(readAllQuery, {
 		user: Record("user", user.id),
 	})
-}
-
-export const actions: Actions = {}
-actions.default = async ({ locals, url }) => {
-	const { user } = await authorise(locals)
-	const id = url.searchParams.get("s")
-	if (!id) error(400)
-
-	try {
-		await db.query(readQuery, {
-			notification: Record("notification", id),
-			user: Record("user", user.id),
-		})
-	} catch {
-		error(400)
-	}
 }

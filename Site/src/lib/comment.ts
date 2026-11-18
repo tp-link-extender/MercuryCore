@@ -1,4 +1,4 @@
-import type { Scored } from "$lib/like2"
+import type { Scored } from "#lib/like2.ts"
 
 export interface Comment extends Scored {
 	author: BasicUser

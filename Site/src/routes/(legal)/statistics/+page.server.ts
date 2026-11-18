@@ -1,6 +1,6 @@
-import { authorise } from "$lib/server/auth"
-import exclude from "$lib/server/exclude"
-import { db } from "$lib/server/surreal"
+import { authorise } from "#lib/server/auth.ts"
+import exclude from "#lib/server/exclude.ts"
+import { db } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import statisticsQuery from "./statistics.surql"
 

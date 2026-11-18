@@ -1,7 +1,8 @@
 // "'Hooks' are app-wide functions you declare that SvelteKit will call in response to specific events, giving you fine-grained control over the framework's behaviour."
-// See https://kit.svelte.dev/docs/hooks/ for more info.
+// See https://svelte.dev/docs/kit/hooks for more info.
 
-import { type Handle, type HandleServerError, redirect } from "@sveltejs/kit"
+import { redirect } from "@sveltejs/kit"
+import type { Handle, HandleServerError } from "@sveltejs/kit/hooks"
 import { stipend } from "economy/api"
 import { User as EconUser } from "economy/types"
 import pc from "picocolors"
@@ -9,11 +10,11 @@ import {
 	cookieName,
 	cookieOptions,
 	validateSessionToken,
-} from "$lib/server/auth"
-import config from "$lib/server/config"
-import { redactSearch } from "$lib/server/redact"
-import { styleText } from "$lib/server/styleText"
-import { db, Record } from "$lib/server/surreal"
+} from "#lib/server/auth.ts"
+import config from "#lib/server/config.ts"
+import { redactSearch } from "#lib/server/redact.ts"
+import { styleText } from "#lib/server/styleText.ts"
+import { db, Record } from "#lib/server/surreal.ts"
 import moderatedQuery from "./moderated.surql"
 
 const { magenta, red, yellow, green, blue, gray } = pc
@@ -147,7 +148,10 @@ export async function handle(e: Parameters<Handle>[0]) {
 	return finish(e)
 }
 
-export function handleError({ error }: Parameters<HandleServerError>[0]) {
+export function handleError({ kind, error }: Parameters<HandleServerError>[0]) {
+	// Expected errors, thrown with error(), were never passed to handleError before SvelteKit 3, so they stay out of the logs
+	if (kind === "app") return
+
 	if (typeof error === "object" && error != null) {
 		const { status } = error as { status?: number }
 		if (status) {

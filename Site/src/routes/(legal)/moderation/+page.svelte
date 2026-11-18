@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
-	import Head from "$components/Head.svelte"
+	
+	import Head from "#components/Head.svelte"
+import { reactivateForm } from "./reactivate.remote"
 
 	const { data } = $props()
 
@@ -62,7 +63,7 @@
 					You may reactivate your account if you agree to follow our
 					Terms of Service.
 				</p>
-				<form use:enhance method="post">
+				<form {...reactivateForm}>
 					<button class={["btn btn-primary"]}>Reactivate</button>
 				</form>
 			{:else if actionType === "Ban"}
@@ -76,7 +77,7 @@
 						new Date(data.timeEnds).getTime()
 					)} if you agree to follow our Terms of Service.
 				</p>
-				<form use:enhance method="post">
+				<form {...reactivateForm}>
 					<button
 						class={[
 							"btn btn-primary",

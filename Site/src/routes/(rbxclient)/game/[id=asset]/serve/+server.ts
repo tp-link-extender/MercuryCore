@@ -1,11 +1,11 @@
 import { error } from "@sveltejs/kit"
-import { env } from "$env/dynamic/private"
-import { bearerMatches } from "$lib/server/bearer"
-import config from "$lib/server/config"
-import idToPort from "$lib/server/idToPort"
-import { buildLoadscript } from "$lib/server/loadscript"
-import { SignScript } from "$lib/server/sign"
-import { db, Record } from "$lib/server/surreal"
+import { bearerMatches } from "#lib/server/bearer.ts"
+import config from "#lib/server/config.ts"
+import idToPort from "#lib/server/idToPort.ts"
+import { buildLoadscript } from "#lib/server/loadscript.ts"
+import { SignScript } from "#lib/server/sign.ts"
+import { db, Record } from "#lib/server/surreal.ts"
+import { GAMESERVER_KEY } from "$app/env/private"
 import type { RequestEvent } from "./$types"
 import placeQuery from "./place.surql"
 
@@ -19,7 +19,7 @@ export async function GET({ params, request }: RequestEvent) {
 	if (config.Gameservers.Hosting === "Selfhosted")
 		error(400, "Dedicated servers are not supported")
 
-	if (!bearerMatches(request, env.GAMESERVER_KEY, "GAMESERVER_KEY"))
+	if (!bearerMatches(request, GAMESERVER_KEY, "GAMESERVER_KEY"))
 		error(403, "Unauthorised")
 
 	const id = Number(params.id)

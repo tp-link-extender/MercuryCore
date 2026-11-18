@@ -1,22 +1,13 @@
 <script lang="ts">
-	import { get } from "svelte/store"
-	import Form from "$components/forms/Form.svelte"
-	import Input from "$components/forms/Input.svelte"
-	import Textarea from "$components/forms/Textarea.svelte"
-	import Head from "$components/Head.svelte"
-	import { superForm } from "$lib/validate"
+	import Form from "#components/forms/Form.svelte"
+	import Input from "#components/forms/Input.svelte"
+	import Textarea from "#components/forms/Textarea.svelte"
+	import Head from "#components/Head.svelte"
+	import { reuploadForm, settingsForm } from "./settings.remote.js"
 
 	const { data } = $props()
 
-	let formData = $derived(superForm(data.settingsForm))
-	let reuploadData = $derived(superForm(data.reuploadForm))
-	let { form } = $derived(formData)
 	let { user } = $derived(data)
-
-	$effect(() => {
-		if (data.description && !get(formData.form).description)
-			$form.description = data.description
-	})
 </script>
 
 <Head name={data.siteName} title="{data.name} Settings" />
@@ -31,22 +22,34 @@
 	</div>
 
 	<Form
-		{formData}
+		formData={settingsForm}
 		enctype="multipart/form-data"
-		action="?/settings"
 		submit=" <fa fa-save></fa> Save changes">
+		<input {...settingsForm.fields.id.as("hidden", data.id)} />
 		<Input
-			{formData}
+			formData={settingsForm}
 			name="name"
 			label="Name"
+			defaultValue={data.name}
 			placeholder="Make sure to make it accurate" />
 		<Textarea
-			{formData}
+			formData={settingsForm}
 			name="description"
 			label="Description"
+			defaultValue={data.description}
 			placeholder="Up to 1000 characters" />
-		<Input {formData} type="number" name="price" label="Price" />
-		<Input {formData} type="checkbox" name="forSale" label="For sale" />
+		<Input
+			formData={settingsForm}
+			type="number"
+			name="price"
+			label="Price"
+			defaultValue={data.price.toString()} />
+		<Input
+			formData={settingsForm}
+			type="checkbox"
+			name="forSale"
+			label="For sale"
+			defaultValue={data.forSale} />
 	</Form>
 
 	<hr />
@@ -70,12 +73,12 @@
 
 	{#if data.type !== 32}
 		<Form
-			formData={reuploadData}
+			formData={reuploadForm}
 			enctype="multipart/form-data"
-			action="?/reupload"
 			submit=" <fa fa-upload></fa> Upload file">
+			<input {...reuploadForm.fields.id.as("hidden", data.id)} />
 			<Input
-				formData={reuploadData}
+				formData={reuploadForm}
 				type="file"
 				name="asset"
 				label="New asset file"

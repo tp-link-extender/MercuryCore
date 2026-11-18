@@ -1,4 +1,4 @@
-import { db, type RecordId } from "$lib/server/surreal"
+import { db, type RecordId } from "#lib/server/surreal.ts"
 import dislikeQuery from "./dislike.surql"
 import likeQuery from "./like.surql"
 import undislikeQuery from "./undislike.surql"

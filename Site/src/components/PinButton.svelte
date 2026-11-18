@@ -1,29 +1,23 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
+	import { pinForm } from "#lib/commentActions.remote.ts"
 
 	let {
 		id,
-		pinned = $bindable(false),
-		refreshComments
+		pinned = false
 	}: {
 		id: string
 		pinned?: boolean
-		// Replies need to be re-ordered after a reply is pinned or unpinned
-		refreshComments: import("@sveltejs/kit").SubmitFunction
 	} = $props()
+
+	const pinFormFor = pinForm.for(id)
 
 	let text = $derived(pinned ? "unpin" : "pin")
 </script>
 
 <li class="rounded-2">
-	<form
-		use:enhance={e => {
-			pinned = !pinned
-			return refreshComments(e)
-		}}
-		method="post"
-		action="/comment/{id}?/pin&set={!pinned}"
-		class="inline">
+	<form {...pinFormFor} onsubmit={() => (pinned = !pinned)} class="inline">
+		<input
+			{...pinFormFor.fields.set.as("hidden", pinned ? "false" : "true")} />
 		<button
 			class={[
 				"btn pl-4 pr-2",

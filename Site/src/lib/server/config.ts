@@ -1,5 +1,5 @@
 import { type } from "arktype"
-import { brickColoursStrings } from "$lib/brickColours"
+import { brickColoursStrings } from "#lib/brickColours.ts"
 import type { Config } from "../../../../Assets/schema"
 import rawconfig from "../../../../mercury.core"
 

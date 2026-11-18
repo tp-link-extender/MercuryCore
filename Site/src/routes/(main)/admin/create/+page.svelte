@@ -1,19 +1,16 @@
 <script lang="ts">
-	import Form from "$components/forms/Form.svelte"
-	import Input from "$components/forms/Input.svelte"
-	import Select from "$components/forms/Select.svelte"
-	import Textarea from "$components/forms/Textarea.svelte"
-	import Head from "$components/Head.svelte"
-	import SidebarShell from "$components/SidebarShell.svelte"
-	import Tab from "$components/Tab.svelte"
-	import TabData from "$components/TabData"
-	import types from "$lib/assetTypes"
-	import { superForm } from "$lib/validate"
+	import Form from "#components/forms/Form.svelte"
+	import Input from "#components/forms/Input.svelte"
+	import Select from "#components/forms/Select.svelte"
+	import Textarea from "#components/forms/Textarea.svelte"
+	import Head from "#components/Head.svelte"
+	import SidebarShell from "#components/SidebarShell.svelte"
+	import Tab from "#components/Tab.svelte"
+	import TabData from "#components/TabData.ts"
+	import types from "#lib/assetTypes.ts"
+	import { formData } from "./create.remote.js"
 
 	const { data } = $props()
-
-	let formDataManual = $derived(superForm(data.form))
-	let { form } = $derived(formDataManual)
 
 	let tabData = $state(
 		TabData(data.url, ["Asset creation"], ["fa-file-circle-plus"])
@@ -28,9 +25,9 @@
 
 	// for packages: uploads to include in the package
 	let assets = $state<AssetEntry[]>([])
-	let isPackage = $derived($form.type === "Package")
+	let isPackage = $derived(formData.fields.type.value() === "Package")
 
-	const addAsset = () => assets.push({ description: "", name: "", type: "Hat" })
+	const addAsset = () => assets.push({ description: "", file: undefined, name: "", type: "Hat" })
 	const removeAsset = (num: number) => assets.splice(num, 1)
 </script>
 
@@ -47,27 +44,27 @@
 <SidebarShell bind:tabData class="max-w-280">
 	<Tab bind:tabData>
 		<Form
-			formData={formDataManual}
+			formData={formData}
 			nopad
 			enctype="multipart/form-data"
 			submit={isPackage ? "Create package" : "Create"}>
 			<Select
-				formData={formDataManual}
+				formData={formData}
 				options={Object.values(types)}
 				name="type"
 				label="Asset type" />
 			<Input
-				formData={formDataManual}
+				formData={formData}
 				name="name"
 				label="Asset name"
 				placeholder="Make sure to make it accurate" />
 			<Textarea
-				formData={formDataManual}
+				formData={formData}
 				name="description"
 				label="Asset description"
 				placeholder="Up to 1000 characters" />
 			<Input
-				formData={formDataManual}
+				formData={formData}
 				name="price"
 				label="Asset price"
 				type="number" />
@@ -99,7 +96,7 @@
 									Asset name
 								</label>
 								<input
-									name="childName"
+									name={"children[" + num + "].name"}
 									id={"childName-" + num}
 									maxlength="50"
 									bind:value={asset.name} />
@@ -111,7 +108,7 @@
 									Asset description
 								</label>
 								<textarea
-									name="childDescription"
+									name={"children[" + num + "].description"}
 									id={"childDescription-" + num}
 									maxlength="1000"
 									bind:value={asset.description} />
@@ -120,7 +117,9 @@
 								<label for={"childType-" + num} class="w-full">
 									Asset type
 								</label>
-								<select name="childType" id={"childType-" + num}>
+								<select
+									name={"children[" + num + "].type"}
+									id={"childType-" + num}>
 									{#each Object.values(types) as option}
 										<option value={option}>{option}</option>
 									{/each}
@@ -132,7 +131,7 @@
 								</label>
 								<input
 									type="file"
-									name="childAsset"
+									name={"children[" + num + "].asset"}
 									id={"childAsset-" + num}
 									accept=".png,.jpg,.bmp,.rbxm,.xml" />
 							</div>
@@ -151,7 +150,7 @@
 				</div>
 			{:else}
 				<Input
-					formData={formDataManual}
+					formData={formData}
 					type="file"
 					name="asset"
 					label="Asset"

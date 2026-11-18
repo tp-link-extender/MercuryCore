@@ -1,8 +1,8 @@
 import fs from "node:fs"
-import config from "$lib/server/config"
-import { buildLoadscript } from "$lib/server/loadscript"
-import { db, Record } from "$lib/server/surreal"
-import { waitForChange } from "$lib/server/waitForChange"
+import config from "#lib/server/config.ts"
+import { buildLoadscript } from "#lib/server/loadscript.ts"
+import { db, Record } from "#lib/server/surreal.ts"
+import { waitForChange } from "#lib/server/waitForChange.ts"
 import createRenderQuery from "./createRender.surql"
 import renderQuery from "./render.surql"
 

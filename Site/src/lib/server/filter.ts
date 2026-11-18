@@ -1,4 +1,4 @@
-import config from "$lib/server/config"
+import config from "#lib/server/config.ts"
 
 const { FilteredWords, ReplaceType, ReplaceWith } = config.Filtering
 const replaceChar = ReplaceType === "Character"

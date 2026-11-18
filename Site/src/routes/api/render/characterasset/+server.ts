@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit"
-import { assetRegex } from "$lib/paramTests"
-import config from "$lib/server/config"
+import { assetRegex } from "#lib/paramTests.ts"
+import config from "#lib/server/config.ts"
 import type { RequestEvent } from "./$types"
 
 export function GET({ url }: RequestEvent) {

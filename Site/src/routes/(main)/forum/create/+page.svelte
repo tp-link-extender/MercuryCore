@@ -1,13 +1,10 @@
 <script lang="ts">
-	import Form from "$components/forms/Form.svelte"
-	import Textarea from "$components/forms/Textarea.svelte"
-	import Head from "$components/Head.svelte"
-	import { superForm } from "$lib/validate"
+	import Form from "#components/forms/Form.svelte"
+	import Textarea from "#components/forms/Textarea.svelte"
+	import Head from "#components/Head.svelte"
+	import { formData } from "./create.remote"
 
 	const { data } = $props()
-
-	let formData = $derived(superForm(data.form))
-	export const snapshot = formData
 </script>
 
 <Head name={data.siteName} title="Create a post in {data.categoryName}" />

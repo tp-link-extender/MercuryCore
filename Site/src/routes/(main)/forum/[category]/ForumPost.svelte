@@ -1,8 +1,8 @@
 <script lang="ts">
-	import CommentLike from "$components/CommentLike.svelte"
-	import User from "$components/User.svelte"
-	import fade from "$lib/fade"
-	import type { LikeForm } from "$lib/like2"
+	import CommentLike from "#components/CommentLike.svelte"
+	import User from "#components/User.svelte"
+	import fade from "#lib/fade.ts"
+	import type { LikeForm } from "#lib/like2.ts"
 	import type { getCategory } from "./category.remote"
 
 	const {

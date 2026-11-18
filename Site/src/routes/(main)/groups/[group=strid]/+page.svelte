@@ -1,9 +1,11 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
-	import Head from "$components/Head.svelte"
-	import User from "$components/User.svelte"
+	import Head from "#components/Head.svelte"
+	import User from "#components/User.svelte"
+	import { joinForm, leaveForm } from "./membership.remote"
 
 	const { data } = $props()
+
+	const membershipForm = (data.in ? leaveForm : joinForm).for(data.id)
 </script>
 
 <Head name={data.siteName} title={data.name} />
@@ -28,11 +30,7 @@
 					{data.memberCount}
 				</h3>
 			</a>
-			<form
-				use:enhance
-				method="post"
-				action="?/{data.in ? 'leave' : 'join'}"
-				class="self-center">
+			<form {...membershipForm} class="self-center">
 				<button
 					class={[
 						"btn",

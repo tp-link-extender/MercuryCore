@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit"
-import { authorise } from "$lib/server/auth"
-import { listGameservers } from "$lib/server/orbiter"
+import { authorise } from "#lib/server/auth.ts"
+import { listGameservers } from "#lib/server/orbiter.ts"
 import type { PageServerLoadEvent } from "./$types"
 
 export async function load({ fetch: f, locals }: PageServerLoadEvent) {

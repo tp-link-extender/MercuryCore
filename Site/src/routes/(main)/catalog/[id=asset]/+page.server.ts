@@ -1,6 +1,6 @@
 import { error, redirect } from "@sveltejs/kit"
-import { db, Record } from "$lib/server/surreal"
-import { encode } from "$lib/urlName"
+import { db, Record } from "#lib/server/surreal.ts"
+import { encode } from "#lib/urlName.ts"
 import type { PageServerLoadEvent } from "./$types"
 import assetQuery from "./asset.surql"
 

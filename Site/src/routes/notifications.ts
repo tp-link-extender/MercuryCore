@@ -1,4 +1,4 @@
-import { db, Record } from "$lib/server/surreal"
+import { db, Record } from "#lib/server/surreal.ts"
 import notificationsQuery from "./notifications.surql"
 
 interface Notification {

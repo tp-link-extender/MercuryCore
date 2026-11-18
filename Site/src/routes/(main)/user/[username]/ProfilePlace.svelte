@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { encode } from "$lib/urlName"
+	import { encode } from "#lib/urlName.ts"
 
 	const { place }: { place: import("./$types").PageData["places"][0] } =
 		$props()

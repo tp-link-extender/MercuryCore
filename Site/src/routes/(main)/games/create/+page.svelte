@@ -1,16 +1,13 @@
 <script lang="ts">
-	import Form from "$components/forms/Form.svelte"
-	import Input from "$components/forms/Input.svelte"
-	import Select from "$components/forms/Select.svelte"
-	import Textarea from "$components/forms/Textarea.svelte"
-	import Head from "$components/Head.svelte"
-	import { superForm } from "$lib/validate"
+	import Form from "#components/forms/Form.svelte"
+	import Input from "#components/forms/Input.svelte"
+	import Select from "#components/forms/Select.svelte"
+	import Textarea from "#components/forms/Textarea.svelte"
+	import Head from "#components/Head.svelte"
 	import clientVersions from "./clientVersions"
+	import { formData } from "./create.remote"
 
 	const { data } = $props()
-
-	let formData = $derived(superForm(data.form))
-	export const snapshot = formData
 </script>
 
 <Head name={data.siteName} title="Create a place" />
@@ -50,7 +47,6 @@
 		{formData}
 		options={clientVersions}
 		name="clientVersion"
-		selected={data.clientVersion}
 		label="Client version " />
 	<Input
 		{formData}

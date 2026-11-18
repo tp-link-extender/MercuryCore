@@ -1,5 +1,5 @@
-import exclude from "$lib/server/exclude"
-import { db } from "$lib/server/surreal"
+import exclude from "#lib/server/exclude.ts"
+import { db } from "#lib/server/surreal.ts"
 import forumQuery from "./forum.surql"
 
 export interface PreviewPost {

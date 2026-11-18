@@ -1,29 +1,25 @@
 <script lang="ts">
-	import { get } from "svelte/store"
-	import Form from "$components/forms/Form.svelte"
-	import Input from "$components/forms/Input.svelte"
-	import Textarea from "$components/forms/Textarea.svelte"
-	import { superForm } from "$lib/validate"
+	import Form from "#components/forms/Form.svelte"
+	import Input from "#components/forms/Input.svelte"
+	import Textarea from "#components/forms/Textarea.svelte"
+	import { viewForm } from "./settings.remote.js"
 
 	const { data }: { data: import("./$types").PageData } = $props()
 
-	let formData = $derived(superForm(data.viewForm))
-	let { form } = $derived(formData)
-
-	$effect(() => {
-		if (data.description && !get(formData.form).description)
-			$form.description = data.description
-	})
+	const viewFormFor = viewForm.for(data.id)
 </script>
 
 <Form
-	{formData}
+	formData={viewFormFor}
 	enctype="multipart/form-data"
-	submit=" <fa fa-save></fa> Save changes"
-	action="?/view&tab=View">
-	<Input {formData} name="name" label="Name" />
+	submit=" <fa fa-save></fa> Save changes">
 	<Input
-		{formData}
+		formData={viewFormFor}
+		name="name"
+		label="Name"
+		defaultValue={data.name} />
+	<Input
+		formData={viewFormFor}
 		name="icon"
 		label="Place icon"
 		type="file"
@@ -32,9 +28,10 @@
 	<hr class="grey-text pb-6" />
 
 	<Textarea
-		{formData}
+		formData={viewFormFor}
 		name="description"
 		label="Description"
+		defaultValue={data.description}
 		placeholder="Up to 1000 characters"
 		rows={3} />
 </Form>

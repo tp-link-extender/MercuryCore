@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
-	import { page } from "$app/state"
-	import Head from "$components/Head.svelte"
-	import Pagination from "$components/Pagination.svelte"
-	import User from "$components/User.svelte"
-	import fade from "$lib/fade"
+	
+	
+	import Head from "#components/Head.svelte"
+	import Pagination from "#components/Pagination.svelte"
+	import User from "#components/User.svelte"
+	import fade from "#lib/fade.ts"
+import { acceptForm, declineForm } from "#lib/interactions.remote.ts"
+import { page } from "$app/state"
 
 	const { data } = $props()
 </script>
@@ -30,18 +32,14 @@
 					</div>
 					<div class="flex gap-2 px-2">
 						<form
-							use:enhance
-							method="post"
-							action="/user/{user.username}?/accept"
+							{...acceptForm.for(user.username)}
 							class="w-full">
 							<button class="btn btn-secondary w-full">
 								Accept
 							</button>
 						</form>
 						<form
-							use:enhance
-							method="post"
-							action="/user/{user.username}?/decline"
+							{...declineForm.for(user.username)}
 							class="w-full">
 							<button class="btn btn-red-secondary w-full">
 								Decline

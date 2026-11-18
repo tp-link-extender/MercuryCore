@@ -1,7 +1,7 @@
 import { error } from "@sveltejs/kit"
-import { assetRegex } from "$lib/paramTests"
-import config from "$lib/server/config"
-import { packageItems } from "$lib/server/packageItems"
+import { assetRegex } from "#lib/paramTests.ts"
+import config from "#lib/server/config.ts"
+import { packageItems } from "#lib/server/packageItems.ts"
 import type { RequestEvent } from "./$types"
 
 export async function GET({ fetch: f, url }: RequestEvent) {

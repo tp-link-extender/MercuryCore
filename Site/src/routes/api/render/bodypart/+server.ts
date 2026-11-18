@@ -1,7 +1,7 @@
 import { error } from "@sveltejs/kit"
-import { assetRegex } from "$lib/paramTests"
-import config from "$lib/server/config"
-import { db, Record } from "$lib/server/surreal"
+import { assetRegex } from "#lib/paramTests.ts"
+import config from "#lib/server/config.ts"
+import { db, Record } from "#lib/server/surreal.ts"
 import type { RequestEvent } from "./$types"
 import typeQuery from "./type.surql"
 

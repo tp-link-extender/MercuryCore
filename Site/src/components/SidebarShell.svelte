@@ -1,8 +1,8 @@
 <script lang="ts">
 	
 	import type { ClassValue } from "svelte/elements"
-import type TabData from "$components/TabData"
-	import TabNav from "$components/TabNav.svelte"
+import type TabData from "#components/TabData.ts"
+	import TabNav from "#components/TabNav.svelte"
 
 	let {
 		tabData = $bindable(),

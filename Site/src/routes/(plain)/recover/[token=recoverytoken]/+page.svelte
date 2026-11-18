@@ -1,15 +1,12 @@
 <script lang="ts">
-	import Form from "$components/forms/Form.svelte"
-	import Input from "$components/forms/Input.svelte"
-	import Head from "$components/Head.svelte"
-	import { superForm } from "$lib/validate"
+	import Form from "#components/forms/Form.svelte"
+	import Input from "#components/forms/Input.svelte"
+	import Head from "#components/Head.svelte"
 	import LoginShell from "../../LoginShell.svelte"
 	import Waves from "../../Waves.svelte"
+	import { formData } from "./reset.remote.js"
 
 	const { data } = $props()
-
-	let formData = $derived(superForm(data.form))
-	export const snapshot = formData
 
 	const descriptions: [string, string][] = [
 		[
@@ -39,6 +36,7 @@
 		</p>
 
 		<Form {formData} class="pt-6" submit="Reset password and log in">
+			<input {...formData.fields.token.as("hidden", data.token)} />
 			<Input
 				{formData}
 				column

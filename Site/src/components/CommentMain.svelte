@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { enhance } from "$app/forms"
-	import Comment, { type UserType } from "$components/Comment.svelte"
-	import DeleteButton from "$components/DeleteButton.svelte"
-	import PinButton from "$components/PinButton.svelte"
-	import ReportButton from "$components/ReportButton.svelte"
-	import type { Comment as CommentType } from "$lib/comment"
-	import type { LikeForm } from "$lib/like2"
-	import { refreshComments } from "$lib/refreshComments"
+	import Comment, { type UserType } from "#components/Comment.svelte"
+	import DeleteButton from "#components/DeleteButton.svelte"
+	import PinButton from "#components/PinButton.svelte"
+	import ReportButton from "#components/ReportButton.svelte"
+	import type { Comment as CommentType } from "#lib/comment.ts"
+	import { replyForm } from "#lib/commentActions.remote.ts"
+	import type { LikeForm } from "#lib/like2.ts"
 	import CommentLike from "./CommentLike.svelte"
 
 	let {
@@ -28,8 +27,7 @@
 	} = $props()
 
 	const likeFormFor = likeForm.for(comment.id)
-
-	let content = $state("") // Allows current reply to not be lost on clicking to another reply
+	const replyFormFor = replyForm.for(comment.id)
 
 	let hidden = $derived(comment.visibility !== "Visible")
 </script>
@@ -101,7 +99,6 @@
 						{#if user.permissionLevel >= 4}
 							<PinButton
 								id={comment.id}
-								{refreshComments}
 								pinned={comment.pinned} />
 						{/if}
 						<li class="rounded-2">
@@ -119,21 +116,16 @@
 	{:else}
 		<div class="card reply bg-darker p-4 pt-2 max-w-3/4">
 			<form
-				use:enhance={e => {
+				{...replyFormFor}
+				onsubmit={() => {
 					replyingTo = ""
-					return refreshComments()
-				}}
-				method="post"
-				action="/comment/{comment.id}?/comment">
+				}}>
 				<label for="content" class="light-text pb-2">
 					Post a Reply
 				</label>
 				<fieldset class="flex flex-col gap-3">
 					<textarea
-						bind:value={content}
-						required
-						minlength="1"
-						maxlength="1000"
+						{...replyFormFor.fields.content.as("text")}
 						name="content"
 						placeholder="What are your thoughts?"
 						rows="4">

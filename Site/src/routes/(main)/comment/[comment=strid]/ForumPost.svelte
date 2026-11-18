@@ -1,27 +1,21 @@
 <script lang="ts">
-	import CommentLike from "$components/CommentLike.svelte"
-	import DeleteButton from "$components/DeleteButton.svelte"
-	import PinButton from "$components/PinButton.svelte"
-	import ReportButton from "$components/ReportButton.svelte"
-	import User from "$components/User.svelte"
-	import type { LikeForm } from "$lib/like2"
+	import CommentLike from "#components/CommentLike.svelte"
+	import DeleteButton from "#components/DeleteButton.svelte"
+	import PinButton from "#components/PinButton.svelte"
+	import ReportButton from "#components/ReportButton.svelte"
+	import User from "#components/User.svelte"
+	import type { LikeForm } from "#lib/like2.ts"
 	import type { getComment } from "./comment.remote"
 
 	const {
 		comment,
 		likeForm,
-		onResult,
 		user
 	}: {
 		comment: Awaited<ReturnType<typeof getComment>>
 		likeForm: Omit<LikeForm, "for">
-		onResult(result: {
-			result: import("@sveltejs/kit").ActionResult
-		}): Promise<void>
 		user: import("./$types").PageData["user"]
 	} = $props()
-
-	const refreshComments = () => onResult
 </script>
 
 <div
@@ -55,7 +49,6 @@
 						{#if user.permissionLevel >= 4 && (comment.type.length !== 1 || comment.type[0] !== "status")}
 							<PinButton
 								id={comment.id}
-								{refreshComments}
 								pinned={comment.pinned} />
 						{/if}
 					</ul>

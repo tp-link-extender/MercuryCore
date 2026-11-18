@@ -1,8 +1,8 @@
 <script lang="ts">
 	// Link to a place used on Games page.
 
-	import fade from "$lib/fade"
-	import { encode } from "$lib/urlName"
+	import fade from "#lib/fade.ts"
+	import { encode } from "#lib/urlName.ts"
 
 	const {
 		place,

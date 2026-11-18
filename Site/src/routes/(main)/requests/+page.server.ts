@@ -1,6 +1,6 @@
-import { authorise } from "$lib/server/auth"
-import pageQuery from "$lib/server/pageQuery"
-import { db, Record } from "$lib/server/surreal"
+import { authorise } from "#lib/server/auth.ts"
+import pageQuery from "#lib/server/pageQuery.ts"
+import { db, Record } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import requestsQuery from "./requests.surql"
 
