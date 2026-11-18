@@ -15,7 +15,7 @@ const schema = type({
 	"enableRegKeyExpiry?": "boolean",
 	regKeyCustom: "(3 <= string <= 50 | undefined)?",
 	"regKeyExpiry?": "string",
-	regKeyUses: type("1 <= number <= 100").default(1),
+	regKeyUses: type("1 <= number.integer <= 100").default(1),
 })
 
 const restricted = () => {
