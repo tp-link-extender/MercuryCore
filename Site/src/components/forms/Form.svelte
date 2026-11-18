@@ -22,8 +22,22 @@
 		children: Snippet
 	} & HTMLFormAttributes = $props()
 
+	// A handler can report a failure by returning an issue, which arrives as the result rather than in `fields`
+	const failureOf = (result: unknown): string | undefined =>
+		typeof result === "object" &&
+		result !== null &&
+		"message" in result &&
+		typeof result.message === "string"
+			? result.message
+			: undefined
+
 	let valid: string | undefined = $derived(successOf(formData.result))
-	let issues = $derived(formData.fields.allIssues() || [])
+	let failure: string | undefined = $derived(failureOf(formData.result))
+	let issues = $derived(
+		(formData.fields.allIssues() || []).filter(
+			issue => issue.message !== failure
+		)
+	)
 	let pending = $derived(formData.pending > 0)
 </script>
 
@@ -43,6 +57,11 @@
 {#if valid}
 	<p class={["text-emerald-600", { "pb-0": inline }]}>
 		{valid}
+	</p>
+{/if}
+{#if failure}
+	<p class={["text-red-500", { "pb-0": inline }]}>
+		{failure}
 	</p>
 {/if}
 {#each issues as issue}
