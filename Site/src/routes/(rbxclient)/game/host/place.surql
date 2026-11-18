@@ -1,1 +1,1 @@
-SELECT serverPort, id FROM place WHERE serverTicket = $ticket;
+SELECT record::id(id) AS id, serverPort FROM place WHERE serverTicket = $ticket;
