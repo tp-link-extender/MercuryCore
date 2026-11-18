@@ -23,7 +23,7 @@ const visibilitySchema = type({
 })
 
 const bodySchema = type({
-	bannerBody: "string",
+	bannerBody: "string <= 100",
 	id: "string",
 })
 
