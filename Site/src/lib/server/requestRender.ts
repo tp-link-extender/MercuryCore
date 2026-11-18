@@ -5,6 +5,7 @@ import { db, Record } from "#lib/server/surreal.ts"
 import { waitForChange } from "#lib/server/waitForChange.ts"
 import createRenderQuery from "./createRender.surql"
 import renderQuery from "./render.surql"
+import { renderFileMatcher } from "./renderFileMatch.ts"
 
 export type RenderType =
 	| "Clothing"
@@ -68,8 +69,10 @@ export default async function requestRender(
 	// Wait for the render's file to be created or modified, but not forever
 	const waiter =
 		wait &&
-		waitForChange(path, renderTimeout, filename =>
-			Boolean(filename?.startsWith(relativeId.toString()))
+		waitForChange(
+			path,
+			renderTimeout,
+			renderFileMatcher(renderType, relativeId)
 		)
 
 	// Send the script to the RCCService proxy
