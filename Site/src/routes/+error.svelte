@@ -21,9 +21,11 @@
 	}
 </script>
 
-<Head name={data.siteName} title="Error {status}" />
+{#if data.siteName}
+	<Head name={data.siteName} title="Error {status}" />
 
-<Navbar {data} />
+	<Navbar {data} />
+{/if}
 
 <main class="flex-1 flex justify-center items-center py-4">
 	<div class="ctnr bg-a flex flex-col items-center rounded-4 px-20 py-8">
@@ -46,4 +48,6 @@
 	</div>
 </main>
 
-<Footer {data} />
+{#if data.siteName}
+	<Footer {data} />
+{/if}
