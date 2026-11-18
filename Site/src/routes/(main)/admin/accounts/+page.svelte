@@ -35,7 +35,7 @@
 			<Input {formData} name="username" label="Username" />
 			<Input
 				{formData}
-				name="password"
+				name="_password"
 				label="New password"
 				type="password"
 				placeholder={"•".repeat(20)} />

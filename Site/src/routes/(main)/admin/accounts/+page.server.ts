@@ -4,7 +4,7 @@ import type { PageServerLoadEvent } from "./$types"
 import usersQuery from "./users.surql"
 
 export async function load({ locals }: PageServerLoadEvent) {
-	await authorise(locals, 4)
+	await authorise(locals, 5)
 
 	const [users] = await db.query<BasicUser[][]>(usersQuery)
 

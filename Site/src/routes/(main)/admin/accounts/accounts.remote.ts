@@ -9,13 +9,13 @@ import { form, getRequestEvent } from "$app/server"
 import updatePasswordQuery from "./updatePassword.surql"
 
 const schema = type({
-	password: "16 <= string <= 6969",
+	_password: "16 <= string <= 6969",
 	username: usernameTest,
 })
 
 export const formData: ClientForm<typeof schema.infer> = form(
 	schema,
-	async ({ username, password }, issues) => {
+	async ({ username, _password }, issues) => {
 		const { locals, getClientAddress } = getRequestEvent()
 		const { user } = await authorise(locals, 5)
 
@@ -30,7 +30,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 		try {
 			// oxlint-disable-next-line unicorn/no-unreadable-array-destructuring -- the query returns [result, loop result, ok]
 			const [, , ok] = await db.query<boolean[]>(updatePasswordQuery, {
-				npassword: await hashPassword(password),
+				npassword: await hashPassword(_password),
 				username,
 			})
 			if (!ok) return issues("No user found with given username")
