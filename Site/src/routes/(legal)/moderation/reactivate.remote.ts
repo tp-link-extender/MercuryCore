@@ -23,7 +23,7 @@ async function getModeration(id: string) {
 
 export const reactivateForm = form(async () => {
 	const { locals } = getRequestEvent()
-	const { user } = await authorise(locals)
+	const { user } = await authorise(locals, undefined, true)
 	const userModeration = await getModeration(user.id)
 	if (new Date(userModeration.timeEnds).getTime() > Date.now())
 		error(400, "Your moderation action has not yet ended")

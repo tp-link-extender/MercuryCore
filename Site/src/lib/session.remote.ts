@@ -4,7 +4,8 @@ import { command, form, getRequestEvent } from "$app/server"
 
 export const logoutForm = form(async () => {
 	const { cookies, locals } = getRequestEvent()
-	const { session } = await authorise(locals)
+	// Moderated users must still be able to log out.
+	const { session } = await authorise(locals, undefined, true)
 
 	await invalidateSession(session)
 	cookies.delete(cookieName, { path: "/" })

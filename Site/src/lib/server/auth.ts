@@ -5,7 +5,7 @@ import deleteSessionsQuery from "#lib/server/deleteSessions.surql"
 import deleteUserSessionsQuery from "#lib/server/deleteUserSessions.surql"
 import getSessionAndUserQuery from "#lib/server/getSessionAndUser.surql"
 import setSessionQuery from "#lib/server/setSession.surql"
-import { db, Record, type RecordId } from "#lib/server/surreal.ts"
+import { db, findWhere, Record, type RecordId } from "#lib/server/surreal.ts"
 import { dev } from "$app/env"
 
 export async function createSession(user: RecordId<"user">): Promise<string> {
@@ -51,8 +51,10 @@ export const cookieOptions = Object.freeze({
 
 /**
  * Authorises a user and returns their session and user data, or redirects them to the login page.
+ * Moderated users are redirected to /moderation, as the page path of a remote call is client-controlled and can't be trusted.
  * @param locals the locals object, containing the user and their session.
  * @param level The permission level that is required.
+ * @param allowModerated Whether a moderated user may proceed, for the moderation page and its own actions.
  * @returns An object containing the session and user data. If the authorisation fails, it will redirect the user to /login.
  * @example
  * const { session, user } = await authorise(locals)
@@ -61,11 +63,20 @@ export const cookieOptions = Object.freeze({
 // oxlint-disable-next-line typescript/require-await, eslint/require-await
 export async function authorise(
 	{ session, user }: { session: string | null; user: User | null },
-	level?: number
+	level?: number,
+	allowModerated = false
 ) {
 	if (!session || !user)
 		// TODO: get session and user from getRequestEvent() locals
 		redirect(302, "/login")
+	if (!allowModerated) {
+		const moderated = await findWhere(
+			"moderation",
+			"out = $user AND active = true",
+			{ user: Record("user", user.id) }
+		)
+		if (moderated) redirect(302, "/moderation")
+	}
 	if (level && user.permissionLevel < level)
 		error(403, "You do not have permission to access this page.")
 
