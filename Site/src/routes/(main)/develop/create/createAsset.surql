@@ -18,3 +18,6 @@ LET $asset = CREATE ONLY asset CONTENT {
 	visibility: $visibility,
 };
 RELATE $asset->imageAsset->$imageAsset;
+
+# Lets the caller check that the asset was actually created
+RETURN $asset != NONE;

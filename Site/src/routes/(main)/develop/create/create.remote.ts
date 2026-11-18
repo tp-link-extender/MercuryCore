@@ -1,7 +1,7 @@
 import fs from "node:fs"
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { createUnlimitedSource } from "economy/api"
+import { createUnlimitedSource, createUnlimitedSourceFree } from "economy/api"
 import { User } from "economy/types"
 import { typeToNumber } from "#lib/assetTypes.ts"
 import { authorise } from "#lib/server/auth.ts"
@@ -61,28 +61,37 @@ export const formData: ClientForm<typeof schema.infer> = form(
 		if (!fs.existsSync("../data/thumbnails"))
 			fs.mkdirSync("../data/thumbnails")
 
+		// Read the upload into memory before charging, so a failed read leaves the user uncharged
+		let buf: ArrayBuffer
+		try {
+			buf = await asset.arrayBuffer()
+		} catch (e) {
+			console.error(e)
+			return issues.asset("Asset failed to upload")
+		}
+
 		let saveImages: ((id: number) => Promise<number> | Promise<void>)[] = []
+		let render: ((id: number) => Promise<void>) | undefined
 
 		try {
 			switch (assetType) {
 				case "T-Shirt":
 					saveImages = await Promise.all([
 						tShirt(asset),
-						tShirtThumbnail(await asset.arrayBuffer()),
+						tShirtThumbnail(buf),
 					])
 					break
 
 				case "Shirt":
 				case "Pants":
 					saveImages[0] = await clothingAsset(asset)
-					saveImages[1] = (id: number) =>
-						requestRender(f, "Clothing", id)
+					render = id => requestRender(f, "Clothing", id)
 					break
 
 				case "Decal":
 					saveImages = await Promise.all([
 						imageAsset(asset),
-						thumbnail(await asset.arrayBuffer()),
+						thumbnail(buf),
 					])
 					break
 
@@ -93,7 +102,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 						)
 					saveImages = await Promise.all([
 						imageAsset(asset),
-						thumbnail(await asset.arrayBuffer()),
+						thumbnail(buf),
 					])
 					break
 				default:
@@ -105,36 +114,60 @@ export const formData: ClientForm<typeof schema.infer> = form(
 
 		const u = new User(user.id)
 
-		// TODO: make creating image assets (only image assets) free
-		// Staff creation is charged too: the Economy service only offers createUnlimitedSource, which always adds the configured price as a currency leg, so there is no free source variant to call here
-		const createdImageAsset = await createUnlimitedSource(f, u)
+		// Staff creation is free, since the Economy has no permission model of its own
+		const createSource =
+			user.permissionLevel >= 3
+				? createUnlimitedSourceFree
+				: createUnlimitedSource
+
+		// A failure after this point leaves the sources owned by the user, with no way to refund them yet. A refund route in the Economy is the proper fix.
+		const createdImageAsset = await createSource(f, u)
 		if (!createdImageAsset.ok)
 			return issues("Failed to create image asset source")
 
-		const createdAsset = await createUnlimitedSource(f, u)
+		const createdAsset = await createSource(f, u)
 		if (!createdAsset.ok) return issues("Failed to create asset source")
 
 		const imageAssetId = createdImageAsset.value.ID
 		const id = createdAsset.value.ID
 
-		await db.query(createAssetQuery, {
-			assetType: typeToNumber[assetType],
-			description,
-			id,
-			imageAssetId,
-			name,
-			price,
-			visibility: user.permissionLevel < 3 ? "Pending" : "Visible",
-		})
-
-		await graphicAsset(assetType, imageAssetId, id)
-
+		let stored = false
 		try {
-			await Promise.all([saveImages[0](imageAssetId), saveImages[1](id)])
+			const results = await db.query<boolean[]>(createAssetQuery, {
+				assetType: typeToNumber[assetType],
+				description,
+				id,
+				imageAssetId,
+				name,
+				price,
+				visibility: user.permissionLevel < 3 ? "Pending" : "Visible",
+			})
+			stored = results.at(-1) === true
 		} catch (e) {
-			console.error("Rendering images failed!")
 			console.error(e)
 		}
+		if (!stored) return issues("Failed to create asset")
+
+		try {
+			await graphicAsset(assetType, imageAssetId, id)
+			await Promise.all([
+				saveImages[0](imageAssetId),
+				saveImages[1]?.(id),
+			])
+		} catch (e) {
+			console.error("Saving asset files failed")
+			console.error(e)
+			return issues("Failed to save asset files")
+		}
+
+		// A render request is best effort, as the asset is already usable without it
+		if (render)
+			try {
+				await render(id)
+			} catch (e) {
+				console.error("Rendering images failed!")
+				console.error(e)
+			}
 
 		redirect(302, `/catalog/${id}/${encode(name)}`)
 	}
