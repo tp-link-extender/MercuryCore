@@ -35,7 +35,6 @@ const schema = type({
 })
 
 const prefix = config.Registration.Keys.Prefix
-const prefixRegex = new RegExp(`^${prefix}(.+)$`)
 
 export const register: ClientForm<typeof schema.infer> = form(
 	schema,
@@ -75,10 +74,13 @@ export const register: ClientForm<typeof schema.infer> = form(
 
 		let key: RecordId<"regKey"> | undefined
 		if (config.Registration.Keys.Enabled) {
-			const matched = regkey.match(prefixRegex)
-			if (!matched) return issues.regkey("Registration key is invalid")
+			// The prefix is plain config, so metacharacters in it must stay literal instead of being read as a pattern
+			const keyId = regkey.startsWith(prefix)
+				? regkey.slice(prefix.length)
+				: ""
+			if (!keyId) return issues.regkey("Registration key is invalid")
 
-			key = Record("regKey", matched[1])
+			key = Record("regKey", keyId)
 
 			const [[regkeyCheck]] = await db.query<{ usesLeft: number }[][]>(
 				regkeyCheckQuery,
