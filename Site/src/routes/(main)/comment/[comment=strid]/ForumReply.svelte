@@ -1,5 +1,6 @@
 <script lang="ts">
 	import CommentLike from "#components/CommentLike.svelte"
+	import DeleteButton from "#components/DeleteButton.svelte"
 	import PinButton from "#components/PinButton.svelte"
 	import ReportButton from "#components/ReportButton.svelte"
 	import User from "#components/User.svelte"
@@ -44,14 +45,21 @@
 			<fa fa-ellipsis-h class="dropdown-ellipsis"></fa>
 			<div class="dropdown-content pt-2">
 				<ul class="p-2 rounded-3">
+					{#if comment.author.username === user.username}
+						<DeleteButton id={comment.id} />
+					{:else}
+						<ReportButton
+							user={comment.author.username}
+							url="/comment/{comment.id}" />
+						{#if user.permissionLevel >= 4}
+							<DeleteButton id={comment.id} moderate />
+						{/if}
+					{/if}
 					{#if user.permissionLevel >= 4}
 						<PinButton
 							id={comment.id}
 							pinned={comment.pinned} />
 					{/if}
-					<ReportButton
-						user={comment.author.username}
-						url="/comment/{comment.id}" />
 				</ul>
 			</div>
 		</span>
