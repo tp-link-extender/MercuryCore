@@ -12,7 +12,7 @@ interface Banner {
 	textLight: boolean
 }
 
-export async function load({ locals, request }: LayoutServerLoadEvent) {
+export async function load({ locals, url }: LayoutServerLoadEvent) {
 	const { user } = locals
 	// No authorise() function call, as we don't want to redirect to login page if not logged in
 
@@ -26,7 +26,8 @@ export async function load({ locals, request }: LayoutServerLoadEvent) {
 		pages: config.Pages,
 		siteName: config.Name,
 		tagline: config.Branding.Tagline,
-		url: request.url,
+		// event.url, not request.url: data requests for client-side navigations end in __data.json and carry x-sveltekit-invalidated, which would end up in the links built from this
+		url: url.href,
 		user,
 	}
 }
