@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { untrack } from "svelte"
 	import AdminLink from "#components/AdminLink.svelte"
 	import Head from "#components/Head.svelte"
 	import SidebarShell from "#components/SidebarShell.svelte"
@@ -20,47 +19,73 @@
 		"fa-scale-balanced"
 	]
 
-	let panel: { [_: string]: [string, string, string][] } = $state({})
-	let tabNames: string[] = $state([])
-
-	function updPanel() {
-		panel = {
-			Catalog: [["Asset creation", "create", "fa-file-circle-plus"]],
-			Economy: [
-				["Transactions", "transactions", "fa-money-bill-transfer"]
-			], 
-			Moderation: [
-				["User moderation", "moderation", "fa-user-slash"],
-				["Abuse reports", "reports", "fa-flag"],
-				["Asset approval", "asset", "fa-file-circle-check"],
-				["Render queue", "renderqueue", "fa-file-image"]
-			]
-		}
-		tabNames = ["Moderation", "Catalog", "Economy", "Statistics"]
-		if (user.permissionLevel !== 5) return
-		untrack(() => {
-			panel.Administration = [
-				["Banners", "banners", "fa-bullhorn"],
-				["Accounts", "accounts", "fa-user"],
-				["Audit logs", "audit", "fa-book"],
-				["Registration keys", "regkeys", "fa-key"],
-				["Gameservers", "gameservers", "fa-server"],
-				["FFlags", "fflags", "fa-flag"],
-			]
-			tabNames.unshift("Administration")
-		})
+	interface PanelLink {
+		icon: string
+		level: number
+		name: string
+		slug: string
 	}
-	updPanel()
-	$effect(updPanel)
+
+	interface PanelCategory {
+		icon: string
+		links: PanelLink[]
+		name: string
+	}
+
+	// Each link is shown only when the user meets the level its target page authorises with
+	const panelCategories: PanelCategory[] = [
+		{
+			icon: "fa-diamond-half-stroke",
+			links: [
+				{ icon: "fa-bullhorn", level: 5, name: "Banners", slug: "banners" },
+				{ icon: "fa-user", level: 5, name: "Accounts", slug: "accounts" },
+				{ icon: "fa-book", level: 5, name: "Audit logs", slug: "audit" },
+				{ icon: "fa-key", level: 5, name: "Registration keys", slug: "regkeys" },
+				{ icon: "fa-server", level: 5, name: "Gameservers", slug: "gameservers" },
+				// FFlags has no server load yet, so it stays admin-only with the rest of this section
+				{ icon: "fa-flag", level: 5, name: "FFlags", slug: "fflags" }
+			],
+			name: "Administration"
+		},
+		{
+			icon: "fa-stamp",
+			links: [
+				{ icon: "fa-user-slash", level: 4, name: "User moderation", slug: "moderation" },
+				{ icon: "fa-flag", level: 5, name: "Abuse reports", slug: "reports" },
+				{ icon: "fa-file-circle-check", level: 3, name: "Asset approval", slug: "asset" },
+				{ icon: "fa-file-image", level: 3, name: "Render queue", slug: "renderqueue" }
+			],
+			name: "Moderation"
+		},
+		{
+			icon: "fa-basket-shopping",
+			links: [
+				{ icon: "fa-file-circle-plus", level: 3, name: "Asset creation", slug: "create" }
+			],
+			name: "Catalog"
+		},
+		{
+			icon: "fa-coins",
+			links: [
+				{ icon: "fa-money-bill-transfer", level: 5, name: "Transactions", slug: "transactions" }
+			],
+			name: "Economy"
+		}
+	]
+
+	const visibleCategories = panelCategories
+		.map(category => ({
+			...category,
+			links: category.links.filter(link => user.permissionLevel >= link.level)
+		}))
+		.filter(category => category.links.length > 0)
 
 	let tabData = $state(
-		TabData(data.url, tabNames, [
-			"fa-diamond-half-stroke",
-			"fa-stamp",
-			"fa-basket-shopping",
-			"fa-coins",
-			"fa-chart-mixed"
-		])
+		TabData(
+			data.url,
+			[...visibleCategories.map(category => category.name), "Statistics"],
+			[...visibleCategories.map(category => category.icon), "fa-chart-mixed"]
+		)
 	)
 
 	let mbUsed = $derived((totalmem - freemem) / 1e3 ** 2)
@@ -83,15 +108,15 @@
 </div>
 
 <SidebarShell bind:tabData space class="max-w-340">
-	{#each tabNames.slice(0, -1) as key}
+	{#each visibleCategories as category}
 		<Tab bind:tabData class="grid lg:grid-cols-4 gap-4">
-			{#each panel[key] as i, num}
+			{#each category.links as link, num}
 				<AdminLink
-					href="/admin/{i[1]}"
-					iconClass={i[2]}
+					href="/admin/{link.slug}"
+					iconClass={link.icon}
 					{num}
-					total={panel[key].length}
-					name={i[0]} />
+					total={category.links.length}
+					name={link.name} />
 			{/each}
 		</Tab>
 	{/each}
