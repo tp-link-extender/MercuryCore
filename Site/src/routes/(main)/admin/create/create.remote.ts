@@ -6,7 +6,7 @@ import { User as EconUser, type UnlimitedSource } from "economy/types"
 import types, { typeToNumber } from "#lib/assetTypes.ts"
 import { authorise } from "#lib/server/auth.ts"
 import { formFile } from "#lib/server/formFile.ts"
-import requestRender from "#lib/server/requestRender.ts"
+import requestRender, { type RenderType } from "#lib/server/requestRender.ts"
 import { db } from "#lib/server/surreal.ts"
 import { isXML } from "#lib/server/xml.ts"
 import { encode } from "#lib/urlName.ts"
@@ -59,6 +59,21 @@ const slotLimits: Readonly<{ [_: number]: number }> = Object.freeze({
 	31: 1,
 })
 
+// created staff assets that need an RCC render, using the same render types as the manual rerender button.
+// packages are rendered separately when created
+const renderTypeFromType: Readonly<{ [_: number]: RenderType }> = Object.freeze(
+	{
+		8: "Model",
+		11: "Clothing",
+		12: "Clothing",
+		27: "Torso",
+		28: "RightArm",
+		29: "LeftArm",
+		30: "LeftLeg",
+		31: "RightLeg",
+	}
+)
+
 interface PackageChild {
 	description: string
 	file: File
@@ -88,6 +103,8 @@ export const formData: ClientForm<typeof schema.inferIn> = form(
 
 		if (!asset || asset.size === 0)
 			return issues.asset("You must upload an asset")
+		if (asset.size > 20e6)
+			return issues.asset("Asset must be less than 20MB in size")
 
 		// to prevent faces being uploaded as images
 		const buf = await asset.arrayBuffer()
@@ -111,11 +128,11 @@ export const formData: ClientForm<typeof schema.inferIn> = form(
 
 		await Bun.write(`../data/assets/${id}`, buf)
 
-		// hats are the only type created here that needs an RCC render, and are
-		// rendered as models (same as the manual rerender button)
-		if (assetType === 8)
+		// hats are rendered as models, clothing as clothing, and body parts as close-ups of the part, like the manual rerender button does
+		const renderType = renderTypeFromType[assetType]
+		if (renderType)
 			try {
-				await requestRender(f, "Model", id)
+				await requestRender(f, renderType, id)
 			} catch (e) {
 				console.error(e)
 			}

@@ -119,7 +119,8 @@
 								</label>
 								<select
 									name={"children[" + num + "].type"}
-									id={"childType-" + num}>
+									id={"childType-" + num}
+									bind:value={asset.type}>
 									{#each Object.values(types) as option}
 										<option value={option}>{option}</option>
 									{/each}
