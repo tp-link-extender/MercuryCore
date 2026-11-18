@@ -23,12 +23,14 @@ function unlike(t: Scored) {
 
 export const likeFns: { [_: string]: (t: Scored) => void } = Object.freeze({
 	dislike: t => {
+		if (t.dislikes) return
 		unlike(t)
 		if (t.score != null) t.score--
 		if (t.dislikeCount != null) t.dislikeCount++
 		t.dislikes = true
 	},
 	like: t => {
+		if (t.likes) return
 		undislike(t)
 		if (t.score != null) t.score++
 		if (t.likeCount != null) t.likeCount++

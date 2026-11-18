@@ -23,12 +23,14 @@ function unlike(t: Scored) {
 
 const fns: { [_: string]: (t: Scored) => void } = Object.freeze({
 	dislike: t => {
+		if (t.dislikes) return
 		if (t.score != null) t.score--
 		if (t.dislikeCount != null) t.dislikeCount++
 		unlike(t)
 		t.dislikes = true
 	},
 	like: t => {
+		if (t.likes) return
 		if (t.score != null) t.score++
 		if (t.likeCount != null) t.likeCount++
 		undislike(t)
@@ -43,7 +45,7 @@ export const likeEnhance =
 	<T extends Scored>(t: T, set: (t: T) => void): SubmitFunction =>
 	({ formData }) => {
 		const action = formData.get("action")
-		fns[typeof action === "string" ? action : ""](t)
+		if (typeof action === "string" && action in fns) fns[action](t)
 
 		set(t)
 		return () => {} // yes, very necessary
