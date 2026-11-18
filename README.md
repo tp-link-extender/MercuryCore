@@ -122,7 +122,7 @@ Different client versions may try to access different endpoints on Mercury Core,
 
 # Mercury Core's stack
 
-Mercury's frontend is built with [Svelte](https://svelte.dev), a UI framework that compiles to vanilla JS, and [SvelteKit](https://kit.svelte.dev), a powerful full-stack framework for building transitional apps.
+Mercury's frontend is built with [Svelte](https://svelte.dev), a UI framework that compiles to vanilla JS, and [SvelteKit](https://svelte.dev/docs/kit), a powerful full-stack framework for building transitional apps.
 
 The site uses [Typescript](https://typescripts.org) throughout, a language that adds type extensions ontop of Javascript. Intellisense and type checking are used as well, as they help to prevent bugs and improve understanding of the codebase.
 
@@ -136,7 +136,7 @@ The site uses [Typescript](https://typescripts.org) throughout, a language that 
 
 Actual pages for the site are stored in **Site/src/routes**. The structure for them might look crazy at first if you're not familiar with SvelteKit, but it makes it very simple to differentiate between clientside and serverside code, and layout groups help to heavily reduce boilerplate and code duplication.
 
-See the [SvelteKit Routing docs](https://kit.svelte.dev/docs/routing) for more information.
+See the [SvelteKit Routing docs](https://svelte.dev/docs/kit/routing) for more information.
 
 The markup for pages is enhanced with HTMLx templating, which adds extra features such as adding variables, reactivity, and logic blocks such as {#if} and {#each}.
 

@@ -21,7 +21,7 @@ jobs:
         runs-on: ubuntu-latest
         timeout-minutes: 10
         env:
-            # Placeholders for the `$env/static/private` keys, which `svelte-kit sync` needs to generate types. Same as the CI workflow.
+            # Placeholders for the keys that `src/env.ts` requires without a default, which `svelte-kit sync` checks. Same as the CI workflow.
             RCC_KEY: ci-placeholder
             OPEN_CLOUD_KEY: ci-placeholder
         steps:

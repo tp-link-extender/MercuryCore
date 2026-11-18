@@ -1,5 +1,5 @@
 // "'Hooks' are app-wide functions you declare that SvelteKit will call in response to specific events, giving you fine-grained control over the framework's behaviour."
-// See https://kit.svelte.dev/docs/hooks/ for more info.
+// See https://svelte.dev/docs/kit/hooks for more info.
 
 import { redirect } from "@sveltejs/kit"
 import type { Handle, HandleServerError } from "@sveltejs/kit/hooks"
