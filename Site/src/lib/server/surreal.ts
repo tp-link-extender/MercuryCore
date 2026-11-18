@@ -53,7 +53,7 @@ if (site) {
 		}
 	if (config.Economy.AutoStart)
 		try {
-			void startEconomy()
+			await startEconomy()
 		} catch (e) {
 			console.log(e)
 			console.error(
