@@ -6,12 +6,12 @@ SELECT
 	completed,
 	relativeId,
 	IF $parent.type = "Avatar" {
-		SELECT status, username FROM user WHERE number = $parent.relativeId
+		SELECT status, username FROM user WHERE record::id(id) = $parent.relativeId
 	}[0] AS user,
-	IF $parent.type = "Clothing" {
+	IF $parent.type != "Avatar" {
 		SELECT
 			record::id(id) AS id,
 			name
-		FROM asset WHERE id = $parent.relativeId
+		FROM asset WHERE record::id(id) = $parent.relativeId
 	}[0] AS asset
 FROM render ORDER BY created DESC;

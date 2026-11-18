@@ -15,7 +15,10 @@
 		)
 	)
 
-	const [current] = data.queue
+	// the queue is newest first, so the current task is the newest one still being worked on rather than the newest overall
+	const current =
+		data.queue.find((task: { status: string }) => task.status === "Rendering") ??
+		data.queue.find((task: { status: string }) => task.status === "Pending")
 </script>
 
 <Head name={data.siteName} title="Render queue - Admin" />
