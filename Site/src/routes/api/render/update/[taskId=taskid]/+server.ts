@@ -1,5 +1,6 @@
 import { error } from "@sveltejs/kit"
 import { bearerMatches } from "#lib/server/bearer.ts"
+import { parseRenderUpdate } from "#lib/server/renderUpdate.ts"
 import { db, Record } from "#lib/server/surreal.ts"
 import { RCC_KEY } from "$app/env/private"
 import type { RequestEvent } from "./$types"
@@ -28,30 +29,14 @@ export async function POST({ params, request }: RequestEvent) {
 	if (!task) error(404, "Task not found")
 
 	// More stuff is done with the proxy now, so we don't need to gunzip it
-
 	// content has the following format:
 	// {status}
 	// {bodylen [4]}{headlen [4]}{body}{head}
-	const content = new Uint8Array(await request.bytes())
-	// console.log("Request size", content.length)
-
-	const statusEnd = content.indexOf(10) // 10 is the ASCII code for newline
-	const status = new TextDecoder().decode(content.slice(0, statusEnd))
-	// console.log("Status:", status)
-
-	let clickHead: Uint8Array | undefined
-	let clickBody: Uint8Array | undefined
-
-	const rest = content.slice(statusEnd + 1)
-	if (rest.length > 8) {
-		const dv = new DataView(rest.buffer, 0, 8)
-		const bodylen = dv.getUint32(0)
-		const headlen = dv.getUint32(4)
-		// console.log("Body length", bodylen, "Head length", headlen)
-
-		if (bodylen > 0) clickBody = rest.slice(8, bodylen)
-		if (headlen > 0) clickHead = rest.slice(8 + bodylen, bodylen + headlen)
-	}
+	const {
+		body: clickBody,
+		head: clickHead,
+		status,
+	} = parseRenderUpdate(new Uint8Array(await request.bytes()))
 
 	if (status === "Rendering") {
 		await db.update(render).merge({ status: "Rendering" })
