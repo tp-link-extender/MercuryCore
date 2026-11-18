@@ -36,11 +36,13 @@ type Route =
 	| "stipend"
 	| "createLimitedSource"
 	| "createUnlimitedSource"
+	| "createUnlimitedSourceFree"
 	| "createPlace"
 	| "createGroup"
 	| "buyUnlimitedAsset"
 	| "buyLimitedAsset"
 	| "createPackageSource"
+	| "createPackageSourceFree"
 	| "buyPackage"
 	| "packageContents"
 	| "packageItems"
@@ -285,6 +287,26 @@ export async function createUnlimitedSource(
 	return { ok: true, value: i }
 }
 
+// Creates an unlimited source without charging. The caller must have authorised a staff member, since the Economy has no permission model.
+export async function createUnlimitedSourceFree(
+	f: Fetch,
+	u: User
+): ReturnValue<UnlimitedSource> {
+	let res: Response
+	try {
+		res = await request(f, "createUnlimitedSourceFree", SerialiseItem(u))
+	} catch {
+		return { ok: false }
+	}
+	if (res.status !== 200) return { ok: false }
+
+	const i = await resToItem(res)
+	if (!(i instanceof UnlimitedSource))
+		throw new Error(`item is not UnlimitedSource: ${JSON.stringify(i)}`)
+
+	return { ok: true, value: i }
+}
+
 export async function createPlace(f: Fetch, u: User): ReturnValue<Place> {
 	let res: Response
 	try {
@@ -334,6 +356,35 @@ export async function createPackageSource(
 	let res: Response
 	try {
 		res = await request(f, "createPackageSource", Buf.concat(parts))
+	} catch {
+		return { ok: false }
+	}
+	if (res.status !== 200) return { ok: false }
+
+	const i = await resToItem(res)
+	if (!(i instanceof PackageSource))
+		throw new Error(`item is not PackageSource: ${JSON.stringify(i)}`)
+
+	return { ok: true, value: i }
+}
+
+/**
+ * Creates a package source holding the given component sources without charging. The caller must have authorised a staff member, since the Economy has no permission model.
+ */
+export async function createPackageSourceFree(
+	f: Fetch,
+	u: User,
+	comps: (UnlimitedSource | PackageSource)[]
+): ReturnValue<PackageSource> {
+	const count = Buf.alloc(4)
+	count.writeUInt32BE(comps.length, 0)
+
+	const parts: Buf[] = [SerialiseItem(u), count]
+	for (const c of comps) parts.push(SerialiseItem(c))
+
+	let res: Response
+	try {
+		res = await request(f, "createPackageSourceFree", Buf.concat(parts))
 	} catch {
 		return { ok: false }
 	}

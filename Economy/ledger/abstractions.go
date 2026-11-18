@@ -338,13 +338,14 @@ func (e *Economy) CreatePlace(u User) (p Place, tid TransferID, err error) {
 	return p, tid, nil
 }
 
-func (e *Economy) CreateUnlimitedSource(u User) (src UnlimitedSource, tid TransferID, err error) {
+// createUnlimitedSourceWithPrice mints an unlimited source and charges price for it. A zero price is free, since currencyItems returns no currency entry at zero.
+func (e *Economy) createUnlimitedSourceWithPrice(u User, price Quantity) (src UnlimitedSource, tid TransferID, err error) {
 	src = RandUnlimitedSource()
 	tf := Transfer{
 		{
 			Owner: u,
 			Items: Items{
-				Many: currencyItems(e.defaultCurrency, e.UnlimitedSourcePrice),
+				Many: currencyItems(e.defaultCurrency, price),
 			},
 		},
 		{
@@ -362,6 +363,15 @@ func (e *Economy) CreateUnlimitedSource(u User) (src UnlimitedSource, tid Transf
 	}
 
 	return src, tid, nil
+}
+
+func (e *Economy) CreateUnlimitedSource(u User) (src UnlimitedSource, tid TransferID, err error) {
+	return e.createUnlimitedSourceWithPrice(u, e.UnlimitedSourcePrice)
+}
+
+// CreateUnlimitedSourceFree mints an unlimited source without charging the user. The caller must have authorised a staff member (permission level 3+), since the Economy has no permission model.
+func (e *Economy) CreateUnlimitedSourceFree(u User) (src UnlimitedSource, tid TransferID, err error) {
+	return e.createUnlimitedSourceWithPrice(u, 0)
 }
 
 func (e *Economy) MintCurrency(u User, qty Quantity) (tid TransferID, err error) {
@@ -510,9 +520,8 @@ func (e *Economy) AddPackageComponent(u User, src, inner PackageSource) ([]Trans
 	return e.AddPackageComponents(u, src, []PackageComponent{inner})
 }
 
-// CreatePackageSource mints a package source and hands it ownership of the given component sources. The package source holding the sources (rather than the assets) is what lets it reissue the whole bundle indefinitely, because holding a source entitles its holder to issue what that source creates.
-// The handover and the component transfer go in one batch, so a user who can't afford the package or doesn't own a component is charged nothing and left with nothing.
-func (e *Economy) CreatePackageSource(u User, comps []PackageComponent) (src PackageSource, tid TransferID, err error) {
+// createPackageSourceWithPrice mints a package source and charges price for it. A zero price is free, since currencyItems returns no currency entry at zero.
+func (e *Economy) createPackageSourceWithPrice(u User, comps []PackageComponent, price Quantity) (src PackageSource, tid TransferID, err error) {
 	if len(comps) == 0 {
 		return src, tid, ErrEmptyPackage
 	}
@@ -527,7 +536,7 @@ func (e *Economy) CreatePackageSource(u User, comps []PackageComponent) (src Pac
 		{
 			Owner: u,
 			Items: Items{
-				Many: currencyItems(e.defaultCurrency, e.PackageSourcePrice),
+				Many: currencyItems(e.defaultCurrency, price),
 			},
 		},
 		{
@@ -558,4 +567,15 @@ func (e *Economy) CreatePackageSource(u User, comps []PackageComponent) (src Pac
 	}
 
 	return src, tid, nil
+}
+
+// CreatePackageSource mints a package source and hands it ownership of the given component sources. The package source holding the sources (rather than the assets) is what lets it reissue the whole bundle indefinitely, because holding a source entitles its holder to issue what that source creates.
+// The handover and the component transfer go in one batch, so a user who can't afford the package or doesn't own a component is charged nothing and left with nothing.
+func (e *Economy) CreatePackageSource(u User, comps []PackageComponent) (src PackageSource, tid TransferID, err error) {
+	return e.createPackageSourceWithPrice(u, comps, e.PackageSourcePrice)
+}
+
+// CreatePackageSourceFree mints a package source without charging the user. The caller must have authorised a staff member (permission level 3+), since the Economy has no permission model.
+func (e *Economy) CreatePackageSourceFree(u User, comps []PackageComponent) (src PackageSource, tid TransferID, err error) {
+	return e.createPackageSourceWithPrice(u, comps, 0)
 }

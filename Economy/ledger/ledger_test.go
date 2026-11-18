@@ -2072,3 +2072,104 @@ func TestStipendOverflowRejected(t *testing.T) {
 		t.Fatalf("expected the balance to be unchanged at %d, got %d", want, got)
 	}
 }
+
+// A staff creation costs nothing: the free unlimited source is handed over with the balance untouched, while the configured price still charges.
+func TestCreateUnlimitedSourceFree(t *testing.T) {
+	_, e := newTestEconomy(t)
+	staff := User{"staff"}
+
+	// no funding at all, so any charge would fail instead of going unnoticed
+	src, _, err := e.CreateUnlimitedSourceFree(staff)
+	if err != nil {
+		t.Fatalf("CreateUnlimitedSourceFree: %v", err)
+	}
+
+	if !e.OwnsOne(staff, src) {
+		t.Fatalf("expected staff to own %v", src)
+	}
+
+	if got := e.Balance(staff); got != 0 {
+		t.Fatalf("expected a free source to cost nothing, got balance %d", got)
+	}
+
+	// the configured price still charges
+	payer := User{"payer"}
+
+	fund(t, e, payer)
+
+	before := e.Balance(payer)
+
+	if _, _, err := e.CreateUnlimitedSource(payer); err != nil {
+		t.Fatalf("CreateUnlimitedSource: %v", err)
+	}
+
+	if got, want := e.Balance(payer), before-e.UnlimitedSourcePrice; got != want {
+		t.Fatalf("expected a paid source to charge %d, balance went %d -> %d", e.UnlimitedSourcePrice, before, got)
+	}
+}
+
+// A staff bundle costs nothing beyond the components: the free package source is handed over with the balance untouched, while the configured price still charges.
+func TestCreatePackageSourceFree(t *testing.T) {
+	_, e := newTestEconomy(t)
+	staff := User{"staff"}
+
+	comps := make([]UnlimitedSource, 2)
+	sources := make([]PackageComponent, 2)
+
+	for i := range comps {
+		c, _, err := e.CreateUnlimitedSourceFree(staff)
+		if err != nil {
+			t.Fatalf("CreateUnlimitedSourceFree for component %d: %v", i, err)
+		}
+
+		comps[i] = c
+		sources[i] = c
+	}
+
+	pkgSrc, _, err := e.CreatePackageSourceFree(staff, sources)
+	if err != nil {
+		t.Fatalf("CreatePackageSourceFree: %v", err)
+	}
+
+	if !e.OwnsOne(staff, pkgSrc) {
+		t.Fatalf("expected staff to own %v", pkgSrc)
+	}
+
+	for _, c := range comps {
+		if !e.OwnsOne(pkgSrc, c) {
+			t.Fatalf("expected %v to hold %v", pkgSrc, c)
+		}
+	}
+
+	if got := e.Balance(staff); got != 0 {
+		t.Fatalf("expected a free package to cost nothing, got balance %d", got)
+	}
+
+	// the configured price still charges
+	payer := User{"payer"}
+
+	fund(t, e, payer)
+
+	before := e.Balance(payer)
+
+	paidComps := make([]UnlimitedSource, 1)
+	paidSources := make([]PackageComponent, 1)
+
+	for i := range paidComps {
+		c, _, err := e.CreateUnlimitedSource(payer)
+		if err != nil {
+			t.Fatalf("CreateUnlimitedSource for component %d: %v", i, err)
+		}
+
+		paidComps[i] = c
+		paidSources[i] = c
+	}
+
+	if _, _, err := e.CreatePackageSource(payer, paidSources); err != nil {
+		t.Fatalf("CreatePackageSource: %v", err)
+	}
+
+	if got, want := e.Balance(payer), before-e.UnlimitedSourcePrice-e.PackageSourcePrice; got != want {
+		t.Fatalf("expected a paid package to charge %d, balance went %d -> %d", e.UnlimitedSourcePrice+e.PackageSourcePrice, before, got)
+	}
+}
