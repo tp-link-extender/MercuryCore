@@ -20,14 +20,14 @@
 	</div>
 	<Input
 		formData={passwordForm}
-		name="cpassword"
+		name="_cpassword"
 		label="Current password"
 		type="password"
 		placeholder={"•".repeat(18)}
 		autocomplete="current-password" />
 	<Input
 		formData={passwordForm}
-		name="npassword"
+		name="_npassword"
 		label="New password"
 		type="password"
 		autocomplete="new-password"
@@ -35,7 +35,7 @@
 		help="Make sure your password is unique." />
 	<Input
 		formData={passwordForm}
-		name="cnpassword"
+		name="_cnpassword"
 		label="Confirm new password"
 		type="password"
 		placeholder={"•".repeat(23)}
@@ -65,7 +65,7 @@
 	</div>
 	<Input
 		formData={sessionForm}
-		name="password"
+		name="_password"
 		label="Password"
 		type="password"
 		placeholder={"•".repeat(18)}

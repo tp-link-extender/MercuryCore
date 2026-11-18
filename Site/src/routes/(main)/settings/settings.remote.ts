@@ -29,12 +29,12 @@ const profileSchema = type({
 })
 // The current password may predate the 16-character minimum, so only new passwords are held to it
 const passwordSchema = type({
-	cnpassword: "16 <= string <= 6969",
-	cpassword: "1 <= string <= 6969",
-	npassword: "16 <= string <= 6969",
+	_cnpassword: "16 <= string <= 6969",
+	_cpassword: "1 <= string <= 6969",
+	_npassword: "16 <= string <= 6969",
 })
 const sessionSchema = type({
-	password: "string >= 1",
+	_password: "string >= 1",
 })
 const stylingSchema = type({
 	"css?": "string <= 10000",
@@ -58,14 +58,14 @@ export const profileForm: ClientForm<typeof profileSchema.inferIn> = form(
 
 export const passwordForm: ClientForm<typeof passwordSchema.infer> = form(
 	passwordSchema,
-	async ({ cpassword, npassword, cnpassword }, issues) => {
+	async ({ _cpassword, _npassword, _cnpassword }, issues) => {
 		const { cookies, locals } = getRequestEvent()
 		const { user } = await authorise(locals)
 
-		if (npassword !== cnpassword)
-			return issues.cnpassword("Passwords do not match")
-		if (npassword === cpassword)
-			return issues.npassword(
+		if (_npassword !== _cnpassword)
+			return issues._cnpassword("Passwords do not match")
+		if (_npassword === _cpassword)
+			return issues._npassword(
 				"New password cannot be the same as the current password"
 			)
 
@@ -83,11 +83,11 @@ export const passwordForm: ClientForm<typeof passwordSchema.infer> = form(
 		const [[{ hashedPassword }]] = await db.query<
 			{ hashedPassword: string }[][]
 		>(passwordQuery, { user: userR })
-		if (!(await verifyPassword(cpassword, hashedPassword)))
-			return issues.cpassword("Incorrect password")
+		if (!(await verifyPassword(_cpassword, hashedPassword)))
+			return issues._cpassword("Incorrect password")
 
 		await db.query(changePasswordQuery, {
-			hashedPassword: await hashPassword(npassword),
+			hashedPassword: await hashPassword(_npassword),
 			user: userR,
 		})
 		// All sessions, including this one, were just ended
@@ -99,7 +99,7 @@ export const passwordForm: ClientForm<typeof passwordSchema.infer> = form(
 
 export const sessionForm: ClientForm<typeof sessionSchema.infer> = form(
 	sessionSchema,
-	async ({ password }, issues) => {
+	async ({ _password }, issues) => {
 		const { cookies, locals } = getRequestEvent()
 		const { user } = await authorise(locals)
 
@@ -115,8 +115,8 @@ export const sessionForm: ClientForm<typeof sessionSchema.infer> = form(
 		const [[{ hashedPassword }]] = await db.query<
 			{ hashedPassword: string }[][]
 		>(passwordQuery, { user: Record("user", user.id) })
-		if (!(await verifyPassword(password, hashedPassword)))
-			return issues.password("Incorrect password")
+		if (!(await verifyPassword(_password, hashedPassword)))
+			return issues._password("Incorrect password")
 
 		await invalidateAllSessions(user.id)
 		cookies.delete(cookieName, { path: "/" })

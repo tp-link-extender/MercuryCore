@@ -10,13 +10,13 @@ import { form, getRequestEvent } from "$app/server"
 import userQuery from "./user.surql"
 
 const schema = type({
-	password: "1 <= string <= 6969",
+	_password: "1 <= string <= 6969",
 	username: usernameTest,
 })
 
 export const formData: ClientForm<typeof schema.infer> = form(
 	schema,
-	async ({ username, password }, issues) => {
+	async ({ username, _password }, issues) => {
 		const { cookies, locals, getClientAddress } = getRequestEvent()
 		if (locals.session) redirect(302, "/home")
 
@@ -40,7 +40,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 		>(userQuery, { username })
 
 		// Checked even when the user doesn't exist, so the response time doesn't reveal which usernames are registered
-		const valid = await verifyPassword(password, user?.hashedPassword)
+		const valid = await verifyPassword(_password, user?.hashedPassword)
 		// remove this statement and we'll end up like Mercury 1 💀
 		if (!user || !valid)
 			// Don't give any extra information which may be useful to attackers

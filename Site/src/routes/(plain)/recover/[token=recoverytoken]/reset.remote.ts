@@ -9,18 +9,18 @@ import consumeQuery from "./consume.surql"
 import resetQuery from "./reset.surql"
 
 const schema = type({
-	cnpassword: "16 <= string <= 6969",
-	npassword: "16 <= string <= 6969",
+	_cnpassword: "16 <= string <= 6969",
+	_npassword: "16 <= string <= 6969",
 	token: "string >= 1",
 })
 
 export const formData: ClientForm<typeof schema.infer> = form(
 	schema,
-	async ({ token, npassword, cnpassword }, issues) => {
+	async ({ token, _npassword, _cnpassword }, issues) => {
 		const { cookies } = getRequestEvent()
 
-		if (npassword !== cnpassword)
-			return issues.cnpassword("Passwords do not match")
+		if (_npassword !== _cnpassword)
+			return issues._cnpassword("Passwords do not match")
 
 		// Use up the token before hashing the password, so requests without a valid token can't make the server do expensive work
 		const [user] = await db.query<(RecordId<"user"> | undefined)[]>(
@@ -33,7 +33,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 			)
 
 		await db.query(resetQuery, {
-			hashedPassword: await Bun.password.hash(npassword),
+			hashedPassword: await Bun.password.hash(_npassword),
 			user,
 		})
 		cookies.set(cookieName, await createSession(user), cookieOptions)

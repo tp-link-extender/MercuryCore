@@ -62,7 +62,7 @@
 				formData={register}
 				column
 				autocomplete="new-password"
-				name="password"
+				name="_password"
 				label="Password"
 				type="password"
 				placeholder={"•".repeat(18)} />
@@ -70,7 +70,7 @@
 				formData={register}
 				column
 				autocomplete="new-password"
-				name="cpassword"
+				name="_cpassword"
 				label="Confirm password"
 				type="password"
 				placeholder={"•".repeat(18)} />
@@ -109,14 +109,14 @@
 			<Input
 				formData={initialAccount}
 				column
-				name="password"
+				name="_password"
 				label="Password"
 				type="password"
 				placeholder={"•".repeat(18)} />
 			<Input
 				formData={initialAccount}
 				column
-				name="cpassword"
+				name="_cpassword"
 				label="Confirm Password"
 				type="password"
 				placeholder={"•".repeat(18)} />

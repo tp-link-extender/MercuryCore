@@ -16,8 +16,8 @@ import initialAccountQuery from "./initialAccount.surql"
 import regkeyCheckQuery from "./regkeyCheck.surql"
 
 const schemaInitial = type({
-	cpassword: "16 <= string <= 6969",
-	password: "16 <= string <= 6969",
+	_cpassword: "16 <= string <= 6969",
+	_password: "16 <= string <= 6969",
 	username: usernameTest,
 })
 const schema = type({
@@ -27,8 +27,8 @@ const schema = type({
 			problem: "must be a valid RFC-5321 email address",
 		}),
 	}), // https://youtu.be/mrGfahzt-4Q?t=1563
-	cpassword: "16 <= string <= 6969",
-	password: "16 <= string <= 6969",
+	_cpassword: "16 <= string <= 6969",
+	_password: "16 <= string <= 6969",
 	...(config.Registration.Keys.Enabled && {
 		regkey: "1 <= string <= 6969",
 	}),
@@ -38,7 +38,7 @@ const prefix = config.Registration.Keys.Prefix
 
 export const register: ClientForm<typeof schema.infer> = form(
 	schema,
-	async ({ username, email, password, cpassword, regkey }, issues) => {
+	async ({ username, email, _password, _cpassword, regkey }, issues) => {
 		const {
 			fetch: f,
 			cookies,
@@ -56,7 +56,7 @@ export const register: ClientForm<typeof schema.infer> = form(
 		)
 		if (limit) return limit
 
-		if (cpassword !== password) return issues("Passwords do not match")
+		if (_cpassword !== _password) return issues("Passwords do not match")
 
 		const userCheck = await findWhere(
 			"user",
@@ -100,7 +100,7 @@ export const register: ClientForm<typeof schema.infer> = form(
 			bodyColours: config.DefaultBodyColors,
 			email: email || "",
 			// I still love scrypt, though argon2 is better supported
-			hashedPassword: await hashPassword(password),
+			hashedPassword: await hashPassword(_password),
 			key,
 			permissionLevel: 1,
 			username,
@@ -126,17 +126,17 @@ export const register: ClientForm<typeof schema.infer> = form(
 // This is the initial account creation, which is only allowed if there are no existing users.
 export const initialAccount: ClientForm<typeof schemaInitial.infer> = form(
 	schemaInitial,
-	async ({ username, password, cpassword }, issues) => {
+	async ({ username, _password, _cpassword }, issues) => {
 		const { fetch: f, cookies, locals } = getRequestEvent()
 		if (locals.session) return redirect(302, "/home")
 
-		if (cpassword !== password) return issues("Passwords do not match")
+		if (_cpassword !== _password) return issues("Passwords do not match")
 		if (await accountRegistered())
 			return issues("There's already an account registered")
 
 		// This is the kind of stuff that always breaks due to never getting tested
 		// Remember: untested === unworking
-		const hashedPassword = await hashPassword(password)
+		const hashedPassword = await hashPassword(_password)
 		let user: RecordId<"user"> | undefined
 		try {
 			const results = await db.query<RecordId<"user">[]>(

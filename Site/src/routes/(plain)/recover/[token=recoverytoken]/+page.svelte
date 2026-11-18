@@ -40,7 +40,7 @@
 			<Input
 				{formData}
 				column
-				name="npassword"
+				name="_npassword"
 				label="New password"
 				type="password"
 				autocomplete="new-password"
@@ -49,7 +49,7 @@
 			<Input
 				{formData}
 				column
-				name="cnpassword"
+				name="_cnpassword"
 				label="Confirm new password"
 				type="password"
 				placeholder={"•".repeat(23)}
