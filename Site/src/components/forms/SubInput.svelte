@@ -31,14 +31,8 @@
 	) => InputAttributes
 
 	const field = $derived(formData.fields[name])
-	// as() takes a literal input type, and this component's type is a union, so the call is typed loosely here. Email fields are text to the form, and the type attribute is set below
-	const attrs = $derived(
-		(field.as as AsField).call(
-			field,
-			type === "email" ? "text" : type,
-			defaultValue
-		)
-	)
+	// as() takes a literal input type, and this component's type is a union, so it is cast here. Email fields are text to the form, and the type attribute is set below
+	const attrs = $derived((field.as as AsField)(type === "email" ? "text" : type, defaultValue))
 </script>
 
 {#if type === "checkbox"}
