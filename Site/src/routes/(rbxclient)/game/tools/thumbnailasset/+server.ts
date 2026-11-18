@@ -30,10 +30,12 @@ export async function GET({ fetch: f, url }: RequestEvent) {
 	if (!assetId || !width || !height) error(404, "Asset not found")
 
 	const cachedAsset = Record("thumbnailCache", assetId)
-	const [[cache]] = await db.query<{ url: string }[][]>(cachedAssetQuery, {
-		cachedAsset,
-	})
-	if (cache) redirect(302, cache.url, { external: true })
+	const [[cache]] = await db.query<
+		{ height?: number; url: string; width?: number }[][]
+	>(cachedAssetQuery, { cachedAsset })
+	// The cached URL is for one size, so it can only answer a request for the same size
+	if (cache && cache.width === width && cache.height === height)
+		redirect(302, cache.url, { external: true })
 
 	const params = new URLSearchParams({
 		assetIds: stringAssetId,
@@ -49,7 +51,9 @@ export async function GET({ fetch: f, url }: RequestEvent) {
 	const body: unknown = JSON.parse(await thumb.text())
 	if (!isThumbnailResponse(body)) error(400, "Invalid asset")
 	const [{ imageUrl }] = body.data
-	await db.update(cachedAsset).merge({ url: imageUrl })
+	// Stored with the size, so a later request for another size doesn't get this URL
+	// UPSERT, since the cache record is new on the first fetch
+	await db.upsert(cachedAsset).merge({ height, url: imageUrl, width })
 
 	redirect(302, imageUrl, { external: true })
 }

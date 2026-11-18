@@ -1,1 +1,1 @@
-SELECT url FROM $cachedAsset;
+SELECT url, width, height FROM $cachedAsset;
