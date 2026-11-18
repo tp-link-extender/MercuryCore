@@ -74,12 +74,14 @@
 				alt={asset.imageAsset.name} />
 		</div>
 
-		<form {...rerenderFormFor} class="w-full pb-3">
-			<button class="btn btn-lg btn-primary w-full">
-				<fa fa-arrows-rotate class="pr-1"></fa>
-				Rerender
-			</button>
-		</form>
+		{#if [11, 12].includes(asset.type)}
+			<form {...rerenderFormFor} class="w-full pb-3">
+				<button class="btn btn-lg btn-primary w-full">
+					<fa fa-arrows-rotate class="pr-1"></fa>
+					Rerender
+				</button>
+			</form>
+		{/if}
 		<button
 			popovertarget="purge{asset.id}"
 			class="btn btn-lg btn-red-tertiary w-full">
