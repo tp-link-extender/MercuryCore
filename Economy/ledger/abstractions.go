@@ -24,6 +24,7 @@ var (
 	ErrStipendNotReady = errors.New("stipend not available yet")
 	ErrNoStock = errors.New("limited source needs a stock of at least one")
 	ErrPriceOverflow = errors.New("total price overflows")
+	ErrBalanceOverflow = errors.New("mint would overflow balance")
 	ErrEmptyPackage = errors.New("package needs at least one component")
 	ErrSelfNestedPackage = errors.New("package cannot contain itself")
 
@@ -376,7 +377,19 @@ func (e *Economy) MintCurrency(u User, qty Quantity) (tid TransferID, err error)
 	}
 	tid = MakeTransferID()
 
-	if err := e.ledger.Transfer(tid, tf); err != nil {
+	// The overflow check runs inside the ledger lock, so two concurrent mints can't both pass it and wrap the balance.
+	if err := e.ledger.transferWithCheck(tid, tf, func(s *State) error {
+		// Currency is created from nothing here, so a mint that wraps around would silently destroy the recipient's balance.
+		if qty > ^Quantity(0)-s.GetInventory(u).Many[e.defaultCurrency] {
+			return ErrBalanceOverflow
+		}
+
+		return nil
+	}); err != nil {
+		if errors.Is(err, ErrBalanceOverflow) {
+			return tid, ErrBalanceOverflow
+		}
+
 		return tid, fmt.Errorf("mint currency transfer %v: %w", tid, err)
 	}
 
@@ -408,10 +421,18 @@ func (e *Economy) Stipend(user User) (tid TransferID, err error) {
 			return ErrStipendNotReady
 		}
 
+		if e.StipendAmount > ^Quantity(0)-s.GetInventory(user).Many[e.defaultCurrency] {
+			return ErrBalanceOverflow
+		}
+
 		return nil
 	}); err != nil {
 		if errors.Is(err, ErrStipendNotReady) {
 			return tid, ErrStipendNotReady
+		}
+
+		if errors.Is(err, ErrBalanceOverflow) {
+			return tid, ErrBalanceOverflow
 		}
 
 		return tid, fmt.Errorf("stipend transfer %v: %w", tid, err)

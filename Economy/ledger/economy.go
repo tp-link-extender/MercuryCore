@@ -50,6 +50,7 @@ const idchars = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 var (
 	ErrInvalidTransferID = errors.New("invalid TransferID")
+	ErrDuplicateTransferID = errors.New("duplicate transfer ID")
 	ErrNoSourceOrDestination = errors.New("transfer has no source or destination")
 	ErrNoItems = errors.New("transfer has no items")
 )
@@ -279,7 +280,31 @@ func (s Send) String() string {
 	return fmt.Sprintf("%s -> %v", s.Owner, s.Items)
 }
 
+// stringIDTooLong reports whether i carries a string ID the wire format cannot round-trip.
+// String IDs are length-prefixed with a single byte, so anything over 255 bytes would be truncated on write and corrupt every transfer after it.
+func stringIDTooLong(i Item) bool {
+	si, ok := i.(StringItem)
+
+	return ok && len(si.ID()) > MaxStringIDBytes
+}
+
 func (s Send) Valid() error {
+	if stringIDTooLong(s.Owner) {
+		return fmt.Errorf("owner string id is longer than %d bytes", MaxStringIDBytes)
+	}
+
+	for i := range s.Items.One {
+		if stringIDTooLong(i) {
+			return fmt.Errorf("CanOwnOne %v has a string id longer than %d bytes", i, MaxStringIDBytes)
+		}
+	}
+
+	for i := range s.Items.Many {
+		if stringIDTooLong(i) {
+			return fmt.Errorf("CanOwnMany %v has a string id longer than %d bytes", i, MaxStringIDBytes)
+		}
+	}
+
 	for i := range s.Items.One {
 		if s.Owner == nil && !IsMintable(i) {
 			return fmt.Errorf("CanOwnOne %v cannot be minted", i)

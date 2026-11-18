@@ -19,6 +19,9 @@ type (
 	}
 )
 
+// MaxStringIDBytes caps string item IDs. The wire format length-prefixes them with a single byte, so this is structural, not a policy choice.
+const MaxStringIDBytes = 255
+
 // MaxCollectionEntries caps how many entries a single deserialised collection may claim.
 // It is checked before allocating, so a forged length prefix cannot force a huge allocation.
 const MaxCollectionEntries = 100_000

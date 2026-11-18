@@ -594,13 +594,20 @@ func (l *Ledger) applyLocked(tid TransferID, t Transfer) error {
 			return fmt.Errorf("create bucket: %w", err)
 		}
 
+		key := tid.Serialise()
+
+		// The key is the idempotency guard: reapplying a transfer ID must fail rather than overwrite the stored transfer and apply its effects twice.
+		if bucket.Get(key) != nil {
+			return fmt.Errorf("%w: %v", ErrDuplicateTransferID, tid)
+		}
+
 		buf := &bytes.Buffer{}
 
 		if err := t.Serialise(buf); err != nil {
 			return fmt.Errorf("serialise transfer: %w", err)
 		}
 
-		if err := bucket.Put(tid.Serialise(), buf.Bytes()); err != nil {
+		if err := bucket.Put(key, buf.Bytes()); err != nil {
 			return fmt.Errorf("put transfer: %w", err)
 		}
 
@@ -779,7 +786,7 @@ func (l *Ledger) transferBatchWithOptions(tids []TransferID, transfers []Transfe
 
 	for _, tid := range tids {
 		if _, ok := seen[tid]; ok {
-			return fmt.Errorf("duplicate transfer ID %v", tid)
+			return fmt.Errorf("%w: %v", ErrDuplicateTransferID, tid)
 		}
 
 		seen[tid] = struct{}{}
@@ -807,6 +814,13 @@ func (l *Ledger) transferBatchWithOptions(tids []TransferID, transfers []Transfe
 		bucket, err := tx.CreateBucketIfNotExists(bucketNameBytes)
 		if err != nil {
 			return fmt.Errorf("create bucket: %w", err)
+		}
+
+		// Check every key before writing any, so a duplicate aborts the batch with nothing persisted.
+		for _, tid := range tids {
+			if bucket.Get(tid.Serialise()) != nil {
+				return fmt.Errorf("%w: %v", ErrDuplicateTransferID, tid)
+			}
 		}
 
 		for i, t := range transfers {

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 	"time"
 )
@@ -1899,4 +1900,175 @@ func ownerOf(t *testing.T, e *Economy, u User) PackageSource {
 	}
 
 	return found[0]
+}
+
+// Reapplying a transfer ID must fail rather than apply its effects twice.
+func TestDuplicateTransferIDRejected(t *testing.T) {
+	l, e := newTestEconomy(t)
+	user := User{"dup-user"}
+
+	if _, err := e.MintCurrency(user, 100); err != nil {
+		t.Fatalf("MintCurrency: %v", err)
+	}
+
+	tid := MakeTransferID()
+	tf := Transfer{
+		{
+			Owner: user,
+		},
+		{
+			Items: Items{
+				Many: ItemsMany{
+					Currency{0}: 10,
+				},
+			},
+		},
+	}
+
+	if err := l.Transfer(tid, tf); err != nil {
+		t.Fatalf("Transfer: %v", err)
+	}
+
+	if err := l.Transfer(tid, tf); !errors.Is(err, ErrDuplicateTransferID) {
+		t.Fatalf("expected ErrDuplicateTransferID, got %v", err)
+	}
+
+	if got := e.Balance(user); got != 110 {
+		t.Fatalf("expected a rejected replay to leave the balance at 110, got %d", got)
+	}
+
+	history, err := e.TransferHistory(10)
+	if err != nil {
+		t.Fatalf("TransferHistory: %v", err)
+	}
+
+	if len(history) != 2 {
+		t.Fatalf("expected 2 transfers, got %d", len(history))
+	}
+}
+
+// Reimporting a batch must fail with nothing applied twice.
+func TestDuplicateTransferIDBatchRejected(t *testing.T) {
+	l, _ := newTestEconomy(t)
+	user := User{"batch-dup-user"}
+	tf := Transfer{
+		{
+			Owner: user,
+		},
+		{
+			Items: Items{
+				Many: ItemsMany{
+					Currency{0}: 10,
+				},
+			},
+		},
+	}
+	tids := []TransferID{MakeTransferID()}
+
+	if err := l.Import(tids, []Transfer{tf}); err != nil {
+		t.Fatalf("Import: %v", err)
+	}
+
+	if err := l.Import(tids, []Transfer{tf}); !errors.Is(err, ErrDuplicateTransferID) {
+		t.Fatalf("expected ErrDuplicateTransferID, got %v", err)
+	}
+
+	if got := l.OwnsMany(user, Currency{0}); got != 10 {
+		t.Fatalf("expected the balance to be unchanged at 10, got %d", got)
+	}
+}
+
+// String IDs longer than a length byte must be rejected before they can corrupt the transfer stream.
+func TestTransferRejectsLongStringID(t *testing.T) {
+	l, _ := newTestEconomy(t)
+	user := User{"long-id-user"}
+
+	if err := l.Transfer(MakeTransferID(), Transfer{
+		{
+			Owner: User{strings.Repeat("x", MaxStringIDBytes+1)},
+		},
+		{
+			Items: Items{
+				Many: ItemsMany{
+					Currency{0}: 10,
+				},
+			},
+		},
+	}); err == nil || !strings.Contains(err.Error(), "longer than") {
+		t.Fatalf("expected an overlong user id to be rejected, got %v", err)
+	}
+
+	if err := l.Transfer(MakeTransferID(), Transfer{
+		{
+			Owner: user,
+		},
+		{
+			Items: Items{
+				One: ItemsOne{
+					NewGroup(strings.Repeat("g", MaxStringIDBytes+1)): {},
+				},
+			},
+		},
+	}); err == nil || !strings.Contains(err.Error(), "longer than") {
+		t.Fatalf("expected an overlong group id to be rejected, got %v", err)
+	}
+
+	history, err := l.TransferHistory(10)
+	if err != nil {
+		t.Fatalf("TransferHistory: %v", err)
+	}
+
+	if len(history) != 0 {
+		t.Fatalf("expected rejected transfers to write nothing, got %d", len(history))
+	}
+}
+
+// A mint that would wrap the balance must be refused.
+func TestMintCurrencyOverflowRejected(t *testing.T) {
+	_, e := newTestEconomy(t)
+	user := User{"overflow-user"}
+
+	if _, err := e.MintCurrency(user, ^Quantity(0)-5); err != nil {
+		t.Fatalf("MintCurrency: %v", err)
+	}
+
+	if _, err := e.MintCurrency(user, 10); !errors.Is(err, ErrBalanceOverflow) {
+		t.Fatalf("expected ErrBalanceOverflow, got %v", err)
+	}
+
+	if got, want := e.Balance(user), ^Quantity(0)-5; got != want {
+		t.Fatalf("expected the balance to be unchanged at %d, got %d", want, got)
+	}
+}
+
+// A stipend that would wrap the balance must be refused.
+func TestStipendOverflowRejected(t *testing.T) {
+	name := os.TempDir() + "/ledger_test.db"
+
+	os.Remove(name)
+
+	defer os.Remove(name)
+
+	l, err := NewLedger(name)
+	if err != nil {
+		t.Fatalf("create ledger: %v", err)
+	}
+
+	defer l.Close()
+
+	// no cooldown, so only the overflow check can reject the stipend
+	e := NewEconomy(l, 10, 10, 100, 10, 10, 10, 0)
+	user := User{"stipend-overflow-user"}
+
+	if _, err := e.MintCurrency(user, ^Quantity(0)-5); err != nil {
+		t.Fatalf("MintCurrency: %v", err)
+	}
+
+	if _, err := e.Stipend(user); !errors.Is(err, ErrBalanceOverflow) {
+		t.Fatalf("expected ErrBalanceOverflow, got %v", err)
+	}
+
+	if got, want := e.Balance(user), ^Quantity(0)-5; got != want {
+		t.Fatalf("expected the balance to be unchanged at %d, got %d", want, got)
+	}
 }
