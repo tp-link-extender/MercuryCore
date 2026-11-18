@@ -84,7 +84,9 @@ async function finish({ event, resolve }: Parameters<Handle>[0]) {
 	if (!res.headers.get("content-type")?.includes("text/html")) return res
 
 	// if it's html, add the user's theme and custom CSS before the </body> tag
-	const file = Bun.file(`../Assets/${config.Themes[user?.theme || 0].Path}`)
+	// A theme removed from the config leaves users with a stored index that no longer exists, so fall back to the first theme rather than failing every page they request
+	const theme = config.Themes[user?.theme ?? 0] ?? config.Themes[0]
+	const file = Bun.file(`../Assets/${theme.Path}`)
 	const themecss = await file.text()
 	const customcss = user?.css
 		? `<style id="custom-css">${styleText(user.css)}</style>`
@@ -121,7 +123,14 @@ export async function handle(e: Parameters<Handle>[0]) {
 	}
 
 	const { session, user } = await validateSessionToken(token)
-	if (!session || !user) return finish(e)
+	if (!session || !user) {
+		// Stop the browser sending a token that can never work again, and keep locals matching their declared types
+		event.locals.session = null
+		event.locals.user = null
+		event.cookies.delete(cookieName, { path: "/" })
+
+		return finish(e)
+	}
 
 	event.locals.session = session
 	event.locals.user = user
