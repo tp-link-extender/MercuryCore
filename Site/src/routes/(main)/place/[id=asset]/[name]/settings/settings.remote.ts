@@ -99,6 +99,10 @@ export const viewForm: ClientForm<typeof viewSchema.inferIn> = form(
 	async ({ id, name, icon, description }, issues) => {
 		const placeId = await getData(id)
 
+		// An empty name would leave the place with no page URL to open
+		const nname = name.trim()
+		if (!nname) return issues.name("Place must have a name")
+
 		if (icon && icon.size > 0) {
 			if (icon.size > 1e6)
 				return issues.icon("Icon must be less than 1MB in size")
@@ -107,12 +111,19 @@ export const viewForm: ClientForm<typeof viewSchema.inferIn> = form(
 			void sharp(await icon.arrayBuffer())
 				.resize(270, 270)
 				.avif({ effort: 9 }) // not awaited, so this'll happen in the background (takes a sec or 2)
-				.toFile(`../data/icons/${placeId}.avif`) // also errors aren't caught but whatever
+				.toFile(`../data/icons/${placeId}.avif`)
+				// An unhandled rejection would end the process, and the icon can fail to decode
+				.catch(error =>
+					console.error(
+						`Failed to save icon for place ${placeId}`,
+						error
+					)
+				)
 		}
 
 		await db.query(updateSettingsQuery, {
 			description: filter(description || ""),
-			name: filter(name),
+			name: filter(nname),
 			place: Record("place", placeId),
 		})
 		return { success: "View settings updated successfully!" }
@@ -147,8 +158,9 @@ export const networkForm: ClientForm<typeof networkSchema.inferIn> = form(
 			clientVersion,
 			dedicated: Boolean(dedicated),
 			maxPlayers,
-			serverAddress,
-			serverPort,
+			// The address fields are disabled while dedicated, so they aren't submitted and must keep their values
+			...(serverAddress === undefined ? {} : { serverAddress }),
+			...(serverPort === undefined ? {} : { serverPort }),
 		})
 
 		// engine / port settings changed, so any running server for this place is now
