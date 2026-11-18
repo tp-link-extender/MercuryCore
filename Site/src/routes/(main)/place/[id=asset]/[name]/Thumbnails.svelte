@@ -29,7 +29,7 @@
 				{ active: !i }
 			]}>
 			<img
-				src="/place/{id}/{slug}/thumbnail/{i + 1}"
+				src="/place/{id}/{slug}/thumbnail/{thumbnails[i]}"
 				class="w-full"
 				alt="Placeholder place thumbnail" />
 			{#if thumbs > 1}
