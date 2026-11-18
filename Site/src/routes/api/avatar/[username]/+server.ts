@@ -30,7 +30,9 @@ export async function GET({ params, url }: RequestEvent) {
 		if (wait)
 			// If the file doesn't exist, this returns at once; if it does, wait for it to be modified, but not forever
 			await waitForChange(path, timeout * 1000)
-		else if (!(await Bun.file(path).exists()))
+
+		// The file may still be missing after a wait, such as when it was never created, and reading it would fail
+		if (!(await Bun.file(path).exists()))
 			throw new Error("File does not exist")
 
 		return new Response(Bun.file(path))
