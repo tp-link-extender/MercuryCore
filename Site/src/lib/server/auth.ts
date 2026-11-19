@@ -5,7 +5,7 @@ import deleteSessionsQuery from "#lib/server/deleteSessions.surql"
 import deleteUserSessionsQuery from "#lib/server/deleteUserSessions.surql"
 import getSessionAndUserQuery from "#lib/server/getSessionAndUser.surql"
 import setSessionQuery from "#lib/server/setSession.surql"
-import { db, findWhere, Record, type RecordId } from "#lib/server/surreal.ts"
+import { db, Record, type RecordId } from "#lib/server/surreal.ts"
 import { dev } from "$app/env"
 
 export async function createSession(user: RecordId<"user">): Promise<string> {
@@ -59,22 +59,17 @@ export const cookieOptions = Object.freeze({
  * @example
  * const { session, user } = await authorise(locals)
  */
+// Kept async so its many call sites can continue to await it
+// oxlint-disable-next-line typescript/require-await, eslint/require-await
 export async function authorise(
-	{ session, user }: { session: string | null; user: User | null },
+	{ moderated, session, user }: App.Locals,
 	level?: number,
 	allowModerated = false
 ) {
 	if (!session || !user)
 		// TODO: get session and user from getRequestEvent() locals
 		redirect(302, "/login")
-	if (!allowModerated) {
-		const moderated = await findWhere(
-			"moderation",
-			"out = $user AND active = true",
-			{ user: Record("user", user.id) }
-		)
-		if (moderated) redirect(302, "/moderation")
-	}
+	if (moderated && !allowModerated) redirect(302, "/moderation")
 	if (level && user.permissionLevel < level)
 		error(403, "You do not have permission to access this page.")
 

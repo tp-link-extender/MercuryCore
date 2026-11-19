@@ -115,6 +115,7 @@ export async function handle(e: Parameters<Handle>[0]) {
 
 	const token = event.cookies.get(cookieName)
 	if (!token) {
+		event.locals.moderated = false
 		event.locals.session = null
 		event.locals.user = null
 		event.cookies.delete(cookieName, { path: "/" })
@@ -125,6 +126,7 @@ export async function handle(e: Parameters<Handle>[0]) {
 	const { session, user } = await validateSessionToken(token)
 	if (!session || !user) {
 		// Stop the browser sending a token that can never work again, and keep locals matching their declared types
+		event.locals.moderated = false
 		event.locals.session = null
 		event.locals.user = null
 		event.cookies.delete(cookieName, { path: "/" })
@@ -136,9 +138,10 @@ export async function handle(e: Parameters<Handle>[0]) {
 	event.locals.user = user
 	event.cookies.set(cookieName, session, cookieOptions)
 
-	const [, moderated] = await db.query<boolean[][]>(moderatedQuery, {
+	const [, moderated] = await db.query<boolean[]>(moderatedQuery, {
 		user: Record("user", user.id),
 	})
+	event.locals.moderated = moderated
 
 	const { pathname } = event.url
 	if (

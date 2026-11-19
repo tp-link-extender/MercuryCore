@@ -44,6 +44,8 @@ declare global {
 
 	namespace App {
 		interface Locals {
+			// Whether the user has an active moderation, checked once per request in hooks.server.ts
+			moderated: boolean
 			session: string | null
 			user: User | null
 		}
