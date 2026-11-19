@@ -1,10 +1,7 @@
 import { error } from "@sveltejs/kit"
 import config from "#lib/server/config.ts"
-import { usesDedicated } from "#lib/server/dedicated.ts"
-import idToPort, { proxyOffset } from "#lib/server/idToPort.ts"
 import { SignData } from "#lib/server/sign.ts"
-import { db, findWhere, Record } from "#lib/server/surreal.ts"
-import joinQuery from "../join.surql"
+import { claimSession } from "../session.ts"
 import type { RequestEvent } from "./$types"
 
 interface Config {
@@ -53,35 +50,8 @@ const makeConfig = (c: Config) => ({
 	WaitingForCharacterGuid: "16be1dd8-5462-4ca5-a997-0725d997708b",
 })
 
-interface ServerAddress {
-	serverAddress: string
-	serverPort: number
-}
-
-interface Session {
-	place: {
-		id: number
-		dedicated: boolean
-	} & ServerAddress
-	user: {
-		permissionLevel: number
-		username: string
-	}
-}
-
-function serverInfo(place: Session["place"]): ServerAddress {
-	if (!usesDedicated(place.dedicated)) return place
-
-	const url = new URL(config.Orbiter.PublicURL)
-	return {
-		serverAddress: url.hostname, // no scheme, the address doesn't usually have a path anyway
-		serverPort: idToPort(place.id) + proxyOffset, // select the proxy port rather than the port of the server itself
-	}
-}
-
 export async function GET({ url }: RequestEvent) {
 	const clientTicket = url.searchParams.get("ticket")
-	const privateServer = url.searchParams.get("privateServer")
 
 	if (!clientTicket) {
 		const joinconfig = makeConfig({
@@ -99,23 +69,9 @@ export async function GET({ url }: RequestEvent) {
 		return new Response(await SignData(JSON.stringify(joinconfig)))
 	}
 
-	const foundPrivatePlace = await findWhere(
-		"place",
-		"privateTicket = $privateServer",
-		{ privateServer }
-	)
-	if (privateServer && !foundPrivatePlace)
-		error(400, "Invalid Private Server")
-
-	const playing = Record("playing", clientTicket)
-	// claims the ticket: it works once, and only shortly after it's created
-	const [, gameSession] = await db.query<(Session | null)[]>(joinQuery, {
-		playing,
-	})
-	if (!gameSession) error(400, "Invalid Game Session")
-
-	const { place, user } = gameSession
-	const { serverAddress, serverPort } = serverInfo(place)
+	const session = await claimSession(clientTicket)
+	if (!session) error(400, "Invalid Game Session")
+	const { place, serverAddress, serverPort, user } = session
 
 	const charApp = `https://${config.Domain}/asset/characterfetch/${user.username}`
 	const pingUrl = `https://${config.Domain}/game/clientpresence?ticket=${clientTicket}`
@@ -131,8 +87,6 @@ export async function GET({ url }: RequestEvent) {
 		UserId: Math.floor(Math.random() * 1e9), // todo: tho not rly used 4 much atm
 		UserName: user.username,
 	})
-
-	console.log("machine address:", serverAddress)
 
 	return new Response(await SignData(JSON.stringify(joinconfig)))
 }

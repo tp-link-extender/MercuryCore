@@ -1,39 +1,10 @@
 import { error } from "@sveltejs/kit"
 import { membershipType } from "#lib/permissionLevels.ts"
 import config from "#lib/server/config.ts"
-import { usesDedicated } from "#lib/server/dedicated.ts"
-import idToPort, { proxyOffset } from "#lib/server/idToPort.ts"
 import { buildLoadscript, luaId, luaName } from "#lib/server/loadscript.ts"
 import { SignScript } from "#lib/server/sign.ts"
-import { db, findWhere, Record } from "#lib/server/surreal.ts"
 import type { RequestEvent } from "./$types"
-import joinQuery from "./join.surql"
-
-interface ServerAddress {
-	serverAddress: string
-	serverPort: number
-}
-
-interface Session {
-	place: {
-		id: number
-		dedicated: boolean
-	} & ServerAddress
-	user: {
-		permissionLevel: number
-		username: string
-	}
-}
-
-function serverInfo(place: Session["place"]): ServerAddress {
-	if (!usesDedicated(place.dedicated)) return place
-
-	const url = new URL(config.Orbiter.PublicURL)
-	return {
-		serverAddress: url.hostname, // no scheme, the address doesn't usually have a path anyway
-		serverPort: idToPort(place.id) + proxyOffset, // select the proxy port rather than the port of the server itself
-	}
-}
+import { claimSession } from "./session.ts"
 
 const scriptHeaders = {
 	"Cache-Control": "no-store",
@@ -43,7 +14,6 @@ const scriptHeaders = {
 
 export async function GET({ url }: RequestEvent) {
 	const clientTicket = url.searchParams.get("ticket")
-	const privateServer = url.searchParams.get("privateServer")
 
 	if (!clientTicket) {
 		const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
@@ -65,23 +35,9 @@ export async function GET({ url }: RequestEvent) {
 		})
 	}
 
-	const foundPrivatePlace = await findWhere(
-		"place",
-		"privateTicket = $privateServer",
-		{ privateServer }
-	)
-	if (privateServer && !foundPrivatePlace)
-		error(400, "Invalid Private Server")
-
-	const playing = Record("playing", clientTicket)
-	// claims the ticket: it works once, and only shortly after it's created
-	const [, gameSession] = await db.query<(Session | null)[]>(joinQuery, {
-		playing,
-	})
-	if (!gameSession) error(400, "Invalid Game Session")
-
-	const { place, user } = gameSession
-	const { serverAddress, serverPort } = serverInfo(place)
+	const session = await claimSession(clientTicket)
+	if (!session) error(400, "Invalid Game Session")
+	const { place, serverAddress, serverPort, user } = session
 
 	const charApp = `http://${config.DomainInsecure}/asset/characterfetch/${user.username}`
 	const pingUrl = `http://${config.DomainInsecure}/game/clientpresence?ticket=${clientTicket}`
