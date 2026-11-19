@@ -21,13 +21,18 @@ const isThumbnailResponse = (
 	)
 }
 
-export async function GET({ fetch: f, url }: RequestEvent) {
-	const width = Number(url.searchParams.get("wd"))
-	const height = Number(url.searchParams.get("ht"))
-	const assetId = Number(url.searchParams.get("aid"))
-	const stringAssetId = assetId.toString()
+// Positive whole numbers only, so junk values can't fill the cache with records or reach the thumbnails API
+function positiveInt(value: string | null): number | null {
+	const n = Number(value)
+	return Number.isSafeInteger(n) && n > 0 ? n : null
+}
 
+export async function GET({ fetch: f, url }: RequestEvent) {
+	const width = positiveInt(url.searchParams.get("wd"))
+	const height = positiveInt(url.searchParams.get("ht"))
+	const assetId = positiveInt(url.searchParams.get("aid"))
 	if (!assetId || !width || !height) error(404, "Asset not found")
+	const stringAssetId = assetId.toString()
 
 	const cachedAsset = Record("thumbnailCache", assetId)
 	const [[cache]] = await db.query<
