@@ -20,23 +20,23 @@ export default defineConfig({
 			sidebar: [
 				{
 					label: "Install",
-					autogenerate: { directory: "install" },
+					items: [{ autogenerate: { directory: "install" } }],
 				},
 				{
 					label: "Architecture",
-					autogenerate: { directory: "architecture" },
+					items: [{ autogenerate: { directory: "architecture" } }],
 				},
 				{
 					label: "Design",
-					autogenerate: { directory: "design" },
+					items: [{ autogenerate: { directory: "design" } }],
 				},
 				{
 					label: "Services",
-					autogenerate: { directory: "services" },
+					items: [{ autogenerate: { directory: "services" } }],
 				},
 				{
 					label: "Guides",
-					autogenerate: { directory: "guides" },
+					items: [{ autogenerate: { directory: "guides" } }],
 				},
 				"history",
 			],
