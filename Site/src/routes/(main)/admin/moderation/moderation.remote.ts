@@ -60,15 +60,14 @@ export const formData: ClientForm<typeof schema.inferIn> = form(
 			user: Record("user", user.id),
 		})
 
+		const moderated = await findWhere(
+			"moderation",
+			"out = $moderatee AND active = true",
+			qParams
+		)
+
 		if (action === "Unban") {
-			// Unban
-			const foundUnban = await findWhere(
-				"moderation",
-				`out = $moderatee
-				AND active = true`,
-				qParams
-			)
-			if (!foundUnban)
+			if (!moderated)
 				return issues.action(
 					"You cannot unban a user that has not been moderated yet"
 				)
@@ -81,13 +80,7 @@ export const formData: ClientForm<typeof schema.inferIn> = form(
 			return { success: `${username} has been unbanned` }
 		}
 
-		const foundModeration = await findWhere(
-			"moderation",
-			"out = $moderatee AND active = true",
-			qParams
-		)
-		if (foundModeration)
-			return issues.username("User has already been moderated")
+		if (moderated) return issues.username("User has already been moderated")
 
 		const actionLabels: { [_: string]: () => [string, string] } = {
 			Ban: () => [
