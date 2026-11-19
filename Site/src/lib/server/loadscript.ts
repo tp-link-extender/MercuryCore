@@ -91,6 +91,7 @@ function inString(value: LoadscriptValue): string {
 class LoadscriptBuilder {
 	out = ""
 	pos = 0
+	readonly used = new Set<string>()
 	constructor(
 		readonly template: string,
 		readonly values: LoadscriptValues
@@ -128,6 +129,7 @@ class LoadscriptBuilder {
 		const value = this.values[name]
 		if (value === undefined)
 			throw new Error(`Loadscript placeholder _${name} has no value`)
+		this.used.add(name)
 		return { name, value }
 	}
 
@@ -195,8 +197,16 @@ class LoadscriptBuilder {
  * In code, strings become quoted Lua literals, numbers stay as numbers and raw values stay as source. Inside a quoted string, every value is escaped as string content. Placeholders in comments are left alone.
  * Substituted values are never rescanned, and no value can end the string or comment it's in.
  * Throws if a placeholder in code or a string has no value, or a placeholder with a value is inside a long string, so a misspelt name fails instead of reaching the client.
+ * Also throws if a value is never used, as a value with no placeholder means the template and its caller have drifted apart.
  */
 export const buildLoadscript = (
 	template: string,
 	values: LoadscriptValues
-): string => new LoadscriptBuilder(template, values).build()
+): string => {
+	const builder = new LoadscriptBuilder(template, values)
+	const script = builder.build()
+	for (const name of Object.keys(values))
+		if (!builder.used.has(name))
+			throw new Error(`Loadscript value _${name} has no placeholder`)
+	return script
+}

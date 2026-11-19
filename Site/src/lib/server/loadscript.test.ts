@@ -153,6 +153,18 @@ describe("buildLoadscript", () => {
 		expect(script).not.toContain('"pwned"')
 	})
 
+	test("refuses a value with no placeholder", () => {
+		expect(() =>
+			buildLoadscript("print(_NAME)", { NAME: "x", OTHER: "y" })
+		).toThrow("Loadscript value _OTHER has no placeholder")
+	})
+
+	test("refuses a value whose placeholder is only in a comment", () => {
+		expect(() =>
+			buildLoadscript("-- _NAME\nprint(1)", { NAME: "x" })
+		).toThrow("Loadscript value _NAME has no placeholder")
+	})
+
 	test("escapes values inside single- and double-quoted strings", () => {
 		const template = "j.Name='_USER_NAME' print \"at _SERVER_ADDRESS\""
 		const script = buildLoadscript(template, {
@@ -201,9 +213,9 @@ describe("buildLoadscript", () => {
 		expect(() => buildLoadscript("print[[_NAME]]", { NAME: "x" })).toThrow(
 			"long string"
 		)
-		expect(buildLoadscript("print[==[_OTHER]==]", { NAME: "x" })).toBe(
-			"print[==[_OTHER]==]"
-		)
+		expect(
+			buildLoadscript("print[==[_OTHER]==] print(_NAME)", { NAME: "x" })
+		).toBe('print[==[_OTHER]==] print("x")')
 	})
 
 	test("refuses placeholders with no value", () => {

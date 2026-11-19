@@ -27,7 +27,6 @@ export async function GET({ url }: RequestEvent) {
 			SERVER_PORT: 53640,
 			USER_ID: 0,
 			USER_NAME: "Player1",
-			USERNAME: "Player1",
 		})
 
 		return new Response(await SignScript(script), {
@@ -52,7 +51,6 @@ export async function GET({ url }: RequestEvent) {
 		SERVER_PORT: serverPort,
 		USER_ID: Math.floor(Math.random() * 1e9), // todo: tho not rly used 4 much atm
 		USER_NAME: user.username, // join.lua compiled before 2013@5fe7aa8 uses _USER_NAME
-		USERNAME: user.username,
 	})
 
 	return new Response(await SignScript(script), { headers: scriptHeaders })
