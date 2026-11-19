@@ -1,27 +1,32 @@
 import type { RemoteForm } from "$app/server"
 
-export interface Scored {
+/** Anything that can be liked, with whichever counts it shows. */
+export interface Likeable {
 	dislikeCount?: number
 	dislikes: boolean
 	likeCount?: number
 	likes: boolean
+	score?: number
+}
+
+export interface Scored extends Likeable {
 	score: number
 }
 
-function undislike(t: Scored) {
+function undislike(t: Likeable) {
 	if (!t.dislikes) return
 	if (t.score != null) t.score++
 	if (t.dislikeCount != null) t.dislikeCount--
 	t.dislikes = false
 }
-function unlike(t: Scored) {
+function unlike(t: Likeable) {
 	if (!t.likes) return
 	if (t.score != null) t.score--
 	if (t.likeCount != null) t.likeCount--
 	t.likes = false
 }
 
-export const likeFns: { [_: string]: (t: Scored) => void } = Object.freeze({
+export const likeFns: { [_: string]: (t: Likeable) => void } = Object.freeze({
 	dislike: t => {
 		if (t.dislikes) return
 		unlike(t)

@@ -3,25 +3,14 @@ import { error } from "@sveltejs/kit"
 import { type } from "arktype"
 import { Place as EconPlace } from "economy/types"
 import { authorise } from "#lib/server/auth.ts"
-import constantTimeEqual from "#lib/server/constantTimeEqual.ts"
 import { usesDedicated } from "#lib/server/dedicated.ts"
 import { economyConnFailed, ownsItem } from "#lib/server/economy.ts"
 import { closeGameserver, startGameserver } from "#lib/server/orbiter.ts"
 import { ratelimit, ratelimitKey } from "#lib/server/ratelimit.ts"
 import { db, Record } from "#lib/server/surreal.ts"
 import { command, form, getRequestEvent } from "$app/server"
-import findPlaceQuery from "./findPlace.surql"
+import { findPlace, placeIdSchema } from "./findPlace.ts"
 import invalidatePlayingQuery from "./invalidatePlaying.surql"
-
-interface FoundPlace {
-	clientVersion: number
-	dedicated: boolean
-	privateServer: boolean
-	privateTicket: string
-}
-
-// Place ids are numbers
-const placeIdSchema = type("string | number").pipe(String)
 
 const playSchema = type({
 	id: placeIdSchema,
@@ -31,36 +20,6 @@ const playSchema = type({
 const closeSchema = type({
 	id: placeIdSchema,
 })
-
-/** Whether the ticket supplied by the client opens a private place. */
-const ticketMatches = (supplied: unknown, place: FoundPlace): boolean =>
-	typeof supplied === "string" &&
-	supplied !== "" &&
-	constantTimeEqual(supplied, place.privateTicket)
-
-async function findPlace(id: string, privateTicket: string) {
-	const { fetch: f, locals } = getRequestEvent()
-	const { user } = await authorise(locals)
-	const placeId = Number(id)
-
-	const placeR = Record("place", placeId)
-	const [[place]] = await db.query<FoundPlace[][]>(findPlaceQuery, {
-		place: placeR,
-	})
-	if (!place) error(404, "Place not found")
-
-	const owns = await ownsItem(f, user.id, new EconPlace(placeId))
-	if (!owns.ok) error(500, economyConnFailed)
-
-	if (
-		!owns.value &&
-		place.privateServer &&
-		!ticketMatches(privateTicket, place)
-	)
-		error(404, "Place not found")
-
-	return { isOwner: owns.value, place, placeId, placeR, user }
-}
 
 export const join = command(playSchema, async ({ id, privateTicket }) => {
 	const { placeR, user } = await findPlace(id, privateTicket)

@@ -1,5 +1,4 @@
 <script lang="ts">
-	
 	import Head from "#components/Head.svelte"
 	import ReportButton from "#components/ReportButton.svelte"
 	import Tab from "#components/Tab.svelte"
@@ -7,10 +6,10 @@
 	import TabNav from "#components/TabNav.svelte"
 	import User from "#components/User.svelte"
 	import fade from "#lib/fade.ts"
-	import { likeEnhance } from "#lib/like.ts"
-import { enhance } from "$app/forms"
+	import { likeFns } from "#lib/like2.ts"
 	import Autopilot from "./Autopilot.svelte"
 	import customProtocol from "./customprotocol"
+	import { likePlaceForm } from "./like.remote"
 	import { closeForm, join, start } from "./play.remote"
 	import Thumbnails from "./Thumbnails.svelte"
 
@@ -215,12 +214,18 @@ import { enhance } from "$app/forms"
 				</button>
 
 				<form
-					use:enhance={likeEnhance(place, p => {
-						place = p
+					{...likePlaceForm.enhance(instance => {
+						const { action } = instance.fields.value()
+						if (typeof action === "string" && action in likeFns)
+							likeFns[action](place)
+						instance.submit()
 					})}
-					method="post"
-					action="/api/like/place/{place.id}?privateTicket={place.privateTicket}"
 					class="w-full pt-4 px-0 pb-2">
+					<input type="hidden" name="id" value={place.id} />
+					<input
+						type="hidden"
+						name="privateTicket"
+						value={place.privateTicket} />
 					<div class="flex justify-between pb-2">
 						<button
 							name="action"
