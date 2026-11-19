@@ -1,10 +1,9 @@
 <script lang="ts">
-	
 	import { untrack } from "svelte"
 	import { slide } from "svelte/transition"
 	import Search from "#components/Search.svelte"
 	import User from "#components/User.svelte"
-import { logoutForm } from "#lib/session.remote.ts"
+	import { logoutForm } from "#lib/session.remote.ts"
 
 	const { data }: { data: import("../routes/$types").LayoutData } = $props()
 

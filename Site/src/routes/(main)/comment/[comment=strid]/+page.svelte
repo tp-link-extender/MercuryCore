@@ -1,5 +1,4 @@
 <script lang="ts">
-	
 	import Breadcrumbs from "#components/Breadcrumbs.svelte"
 	import Comment from "#components/Comment.svelte"
 	import Head from "#components/Head.svelte"

@@ -1,7 +1,6 @@
 <script lang="ts">
-	
 	import type { ClassValue } from "svelte/elements"
-import type TabData from "#components/TabData.ts"
+	import type TabData from "#components/TabData.ts"
 	import TabNav from "#components/TabNav.svelte"
 
 	let {

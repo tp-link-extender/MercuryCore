@@ -1,7 +1,6 @@
 <script lang="ts">
-	
 	import Head from "#components/Head.svelte"
-import { reactivateForm } from "./reactivate.remote"
+	import { reactivateForm } from "./reactivate.remote"
 
 	const { data } = $props()
 

@@ -1,7 +1,6 @@
 <script lang="ts">
-	
 	import fade from "#lib/fade.ts"
-import { successOf } from "#lib/validate.ts"
+	import { successOf } from "#lib/validate.ts"
 	import { privatelinkForm } from "./settings.remote.js"
 
 	const { data }: { data: import("./$types").PageData } = $props()
