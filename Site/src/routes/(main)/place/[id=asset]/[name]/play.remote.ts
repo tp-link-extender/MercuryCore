@@ -8,7 +8,7 @@ import { usesDedicated } from "#lib/server/dedicated.ts"
 import { economyConnFailed, ownsItem } from "#lib/server/economy.ts"
 import { closeGameserver, startGameserver } from "#lib/server/orbiter.ts"
 import { ratelimit, ratelimitKey } from "#lib/server/ratelimit.ts"
-import { db, findWhere, Record } from "#lib/server/surreal.ts"
+import { db, Record } from "#lib/server/surreal.ts"
 import { command, form, getRequestEvent } from "$app/server"
 import findPlaceQuery from "./findPlace.surql"
 import invalidatePlayingQuery from "./invalidatePlaying.surql"
@@ -62,22 +62,7 @@ async function findPlace(id: string, privateTicket: string) {
 	return { isOwner: owns.value, place, placeId, placeR, user }
 }
 
-async function checkUser() {
-	const { locals } = getRequestEvent()
-	const { user } = await authorise(locals)
-
-	const foundModerated = await findWhere(
-		"moderation",
-		"out = $user AND active = true",
-		{ user: Record("user", user.id) }
-	)
-	if (foundModerated) error(403, "You cannot currently play games")
-
-	return user
-}
-
 export const join = command(playSchema, async ({ id, privateTicket }) => {
-	await checkUser()
 	const { placeR, user } = await findPlace(id, privateTicket)
 
 	// Invalidate all game sessions and create valid playing
@@ -90,7 +75,6 @@ export const join = command(playSchema, async ({ id, privateTicket }) => {
 })
 
 export const start = command(playSchema, async ({ id, privateTicket }) => {
-	await checkUser()
 	const { fetch: f, getClientAddress } = getRequestEvent()
 	const { place, placeId, user } = await findPlace(id, privateTicket)
 
@@ -123,10 +107,13 @@ export const closeForm = form(closeSchema, async ({ id }) => {
 	const { user } = await authorise(locals)
 	const placeId = Number(id)
 
-	const { isOwner } = await findPlace(id, "")
-
-	if (!isOwner && user.permissionLevel < 4)
-		error(403, "You do not have permission to close this server.")
+	// Not findPlace, as its private ticket check would hide private places from moderators
+	if (user.permissionLevel < 4) {
+		const owns = await ownsItem(f, user.id, new EconPlace(placeId))
+		if (!owns.ok) error(500, economyConnFailed)
+		if (!owns.value)
+			error(403, "You do not have permission to close this server.")
+	}
 
 	const res = await closeGameserver(f, placeId)
 	if (res.ok) return

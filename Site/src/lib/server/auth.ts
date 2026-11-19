@@ -59,8 +59,6 @@ export const cookieOptions = Object.freeze({
  * @example
  * const { session, user } = await authorise(locals)
  */
-// Kept async so its many call sites can continue to await it
-// oxlint-disable-next-line typescript/require-await, eslint/require-await
 export async function authorise(
 	{ session, user }: { session: string | null; user: User | null },
 	level?: number,
