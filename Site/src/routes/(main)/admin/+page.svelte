@@ -74,9 +74,10 @@
 	]
 
 	const visibleCategories = panelCategories
-		.map(category => ({
-			...category,
-			links: category.links.filter(link => user.permissionLevel >= link.level)
+		.map(({ icon, links, name }) => ({
+			icon,
+			links: links.filter(link => user.permissionLevel >= link.level),
+			name
 		}))
 		.filter(category => category.links.length > 0)
 

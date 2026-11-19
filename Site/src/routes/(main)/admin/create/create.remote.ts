@@ -120,7 +120,7 @@ export const formData: ClientForm<typeof schema.inferIn> = form(
 
 		let stored = false
 		try {
-			const results = await db.query<unknown[]>(createQuery, {
+			const results = await db.query(createQuery, {
 				assetType,
 				description,
 				id,
@@ -249,7 +249,7 @@ async function createPackage(
 
 	let stored = false
 	try {
-		const results = await db.query<unknown[]>(createPackageQuery, {
+		const results = await db.query(createPackageQuery, {
 			childRows: validChildren.map(c => ({
 				description: [{ text: c.description }],
 				forSale: false, // package items are offsale by default

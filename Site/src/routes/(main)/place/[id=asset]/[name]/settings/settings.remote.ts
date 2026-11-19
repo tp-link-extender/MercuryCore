@@ -113,10 +113,10 @@ export const viewForm: ClientForm<typeof viewSchema.inferIn> = form(
 				.avif({ effort: 9 }) // not awaited, so this'll happen in the background (takes a sec or 2)
 				.toFile(`../data/icons/${placeId}.avif`)
 				// An unhandled rejection would end the process, and the icon can fail to decode
-				.catch(error =>
+				.catch(err =>
 					console.error(
 						`Failed to save icon for place ${placeId}`,
-						error
+						err
 					)
 				)
 		}

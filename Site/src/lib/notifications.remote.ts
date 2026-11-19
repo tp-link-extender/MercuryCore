@@ -23,5 +23,5 @@ export const dismissForm = form(schema, async ({ id }) => {
 	} catch {
 		error(400)
 	}
-	if (!updated.length) error(404, "Notification not found")
+	if (updated.length === 0) error(404, "Notification not found")
 })
