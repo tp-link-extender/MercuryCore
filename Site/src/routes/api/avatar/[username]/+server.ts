@@ -14,7 +14,7 @@ export async function GET({ params, url }: RequestEvent) {
 
 	let shotType = "-head"
 	if (username.endsWith("-body")) {
-		username = username.replace("-body", "")
+		username = username.slice(0, -"-body".length)
 		shotType = "-body"
 	}
 
