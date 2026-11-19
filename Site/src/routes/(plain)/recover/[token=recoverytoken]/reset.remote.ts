@@ -1,6 +1,7 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { cookieName, cookieOptions, createSession } from "#lib/server/auth.ts"
+import { hashPassword } from "#lib/server/password.ts"
 import { hashRecoveryToken } from "#lib/server/recoveryToken.ts"
 import { db, type RecordId } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
@@ -33,7 +34,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 			)
 
 		await db.query(resetQuery, {
-			hashedPassword: await Bun.password.hash(_npassword),
+			hashedPassword: await hashPassword(_npassword),
 			user,
 		})
 		cookies.set(cookieName, await createSession(user), cookieOptions)
