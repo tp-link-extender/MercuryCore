@@ -96,6 +96,15 @@ describe("substituteRobloxAssetUrls", () => {
 			expect(substituteRobloxAssetUrls(xml, replacement)).toBe(xml)
 	})
 
+	test("uses the replacement literally, without $ patterns", () => {
+		expect(
+			substituteRobloxAssetUrls(
+				"http://www.roblox.com/asset?id=1",
+				"$&.$1$$"
+			)
+		).toBe("http://$&.$1$$?id=1")
+	})
+
 	test("rewrites bare references the way full URLs are rewritten", () => {
 		const script =
 			'<string name="Source">print("http://www.roblox.com/asset?id=1")</string>'

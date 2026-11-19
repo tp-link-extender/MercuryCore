@@ -64,8 +64,9 @@ const robloxAssetUrl =
 /**
  * Points Roblox asset URLs in an XML asset at this Site, such as `http://www.roblox.com/asset?id=1`, keeping any scheme in front.
  * Other hostnames and paths are left alone, as is text with nothing URL-like around it.
+ * The replacement is used as-is: a function is passed so `$` sequences in it aren't read as replacement patterns.
  */
 export const substituteRobloxAssetUrls = (
 	xml: string,
 	replacement: string
-): string => xml.replaceAll(robloxAssetUrl, replacement)
+): string => xml.replaceAll(robloxAssetUrl, () => replacement)
