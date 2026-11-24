@@ -280,75 +280,12 @@ func (s Send) String() string {
 	return fmt.Sprintf("%s -> %v", s.Owner, s.Items)
 }
 
-// stringIDTooLong reports whether i carries a string ID the wire format cannot round-trip.
-// String IDs are length-prefixed with a single byte, so anything over 255 bytes would be truncated on write and corrupt every transfer after it.
-func stringIDTooLong(i Item) bool {
-	si, ok := i.(StringItem)
-
-	return ok && len(si.ID()) > MaxStringIDBytes
-}
-
-func (s Send) Valid() error {
-	if stringIDTooLong(s.Owner) {
-		return fmt.Errorf("owner string id is longer than %d bytes", MaxStringIDBytes)
-	}
-
-	for i := range s.Items.One {
-		if stringIDTooLong(i) {
-			return fmt.Errorf("CanOwnOne %v has a string id longer than %d bytes", i, MaxStringIDBytes)
-		}
-	}
-
-	for i := range s.Items.Many {
-		if stringIDTooLong(i) {
-			return fmt.Errorf("CanOwnMany %v has a string id longer than %d bytes", i, MaxStringIDBytes)
-		}
-	}
-
-	for i := range s.Items.One {
-		if s.Owner == nil && !IsMintable(i) {
-			return fmt.Errorf("CanOwnOne %v cannot be minted", i)
-		}
-	}
-
-	for i, qty := range s.Items.Many {
-		if qty == 0 {
-			return fmt.Errorf("CanOwnMany %v has zero quantity", i)
-		}
-
-		if s.Owner == nil && !IsMintable(i) {
-			return fmt.Errorf("CanOwnMany %v cannot be minted", i)
-		}
-	}
-
-	return nil
-}
-
 func (t Transfer) String() string {
 	return fmt.Sprintf("%s, %s", t[0], t[1])
 }
 
 func (t Transfer) Swap() Transfer {
 	return Transfer{t[1], t[0]}
-}
-
-func (t Transfer) Valid() error {
-	// Can't have a transfer of nothing or between nobody
-	if t[0].Owner == nil && t[1].Owner == nil {
-		return ErrNoSourceOrDestination
-	}
-
-	if t[0].Items.IsEmpty() && t[1].Items.IsEmpty() {
-		return ErrNoItems
-	}
-
-	for i, send := range t {
-		if err := send.Valid(); err != nil {
-			return fmt.Errorf("invalid Send[%d]: %w", i, err)
-		}
-	}
-
-	return nil
 }
 
 func (t Transfer) isSale() bool {
@@ -449,4 +386,67 @@ func (t TransferID) String() string {
 
 func (t TransferWithID) String() string {
 	return fmt.Sprintf("%s: %s", t.ID, t.Transfer)
+}
+
+// stringIDTooLong reports whether i carries a string ID the wire format cannot round-trip.
+// String IDs are length-prefixed with a single byte, so anything over 255 bytes would be truncated on write and corrupt every transfer after it.
+func stringIDTooLong(i Item) bool {
+	si, ok := i.(StringItem)
+
+	return ok && len(si.ID()) > MaxStringIDBytes
+}
+
+func (s Send) Valid() error {
+	if stringIDTooLong(s.Owner) {
+		return fmt.Errorf("owner string id is longer than %d bytes", MaxStringIDBytes)
+	}
+
+	for i := range s.Items.One {
+		if stringIDTooLong(i) {
+			return fmt.Errorf("CanOwnOne %v has a string id longer than %d bytes", i, MaxStringIDBytes)
+		}
+	}
+
+	for i := range s.Items.Many {
+		if stringIDTooLong(i) {
+			return fmt.Errorf("CanOwnMany %v has a string id longer than %d bytes", i, MaxStringIDBytes)
+		}
+	}
+
+	for i := range s.Items.One {
+		if s.Owner == nil && !IsMintable(i) {
+			return fmt.Errorf("CanOwnOne %v cannot be minted", i)
+		}
+	}
+
+	for i, qty := range s.Items.Many {
+		if qty == 0 {
+			return fmt.Errorf("CanOwnMany %v has zero quantity", i)
+		}
+
+		if s.Owner == nil && !IsMintable(i) {
+			return fmt.Errorf("CanOwnMany %v cannot be minted", i)
+		}
+	}
+
+	return nil
+}
+
+func (t Transfer) Valid() error {
+	// Can't have a transfer of nothing or between nobody
+	if t[0].Owner == nil && t[1].Owner == nil {
+		return ErrNoSourceOrDestination
+	}
+
+	if t[0].Items.IsEmpty() && t[1].Items.IsEmpty() {
+		return ErrNoItems
+	}
+
+	for i, send := range t {
+		if err := send.Valid(); err != nil {
+			return fmt.Errorf("invalid Send[%d]: %w", i, err)
+		}
+	}
+
+	return nil
 }

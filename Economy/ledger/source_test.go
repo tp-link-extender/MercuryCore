@@ -47,8 +47,8 @@ func TestCreatorCanBuyOwnUnlimitedAsset(t *testing.T) {
 	}
 
 	before := e.Balance(creator)
-
 	asset, _, err := e.BuyUnlimitedAsset(creator, src, 10)
+
 	if err != nil {
 		t.Fatalf("BuyUnlimitedAsset: %v", err)
 	}
@@ -114,8 +114,8 @@ func TestUnissuedPackageSourceCannotMint(t *testing.T) {
 	}
 
 	before := e.Balance(buyer)
-
 	beforeHistory, err := e.TransferHistory(10)
+
 	if err != nil {
 		t.Fatalf("TransferHistory: %v", err)
 	}
@@ -154,8 +154,8 @@ func TestUnissuedUnlimitedSourceCannotMint(t *testing.T) {
 	fund(t, e, buyer)
 
 	before := e.Balance(buyer)
-
 	beforeHistory, err := e.TransferHistory(10)
+
 	if err != nil {
 		t.Fatalf("TransferHistory: %v", err)
 	}
@@ -164,8 +164,8 @@ func TestUnissuedUnlimitedSourceCannotMint(t *testing.T) {
 	src := UnlimitedSource{
 		Id: 987654321,
 	}
-
 	asset, _, err := e.BuyUnlimitedAsset(buyer, src, 10)
+
 	if err == nil {
 		t.Fatalf("expected an unissued source to be rejected")
 	}

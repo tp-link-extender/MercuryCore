@@ -338,42 +338,6 @@ func (e *Economy) CreatePlace(u User) (p Place, tid TransferID, err error) {
 	return p, tid, nil
 }
 
-// createUnlimitedSourceWithPrice mints an unlimited source and charges price for it. A zero price is free, since currencyItems returns no currency entry at zero.
-func (e *Economy) createUnlimitedSourceWithPrice(u User, price Quantity) (src UnlimitedSource, tid TransferID, err error) {
-	src = RandUnlimitedSource()
-	tf := Transfer{
-		{
-			Owner: u,
-			Items: Items{
-				Many: currencyItems(e.defaultCurrency, price),
-			},
-		},
-		{
-			Items: Items{
-				One: ItemsOne{
-					src: {},
-				},
-			},
-		},
-	}
-	tid = MakeTransferID()
-
-	if err := e.ledger.Transfer(tid, tf); err != nil {
-		return src, tid, fmt.Errorf("create unlimited source transfer %v: %w", tid, err)
-	}
-
-	return src, tid, nil
-}
-
-func (e *Economy) CreateUnlimitedSource(u User) (src UnlimitedSource, tid TransferID, err error) {
-	return e.createUnlimitedSourceWithPrice(u, e.UnlimitedSourcePrice)
-}
-
-// CreateUnlimitedSourceFree mints an unlimited source without charging the user. The caller must have authorised a staff member (permission level 3+), since the Economy has no permission model.
-func (e *Economy) CreateUnlimitedSourceFree(u User) (src UnlimitedSource, tid TransferID, err error) {
-	return e.createUnlimitedSourceWithPrice(u, 0)
-}
-
 func (e *Economy) MintCurrency(u User, qty Quantity) (tid TransferID, err error) {
 	tf := Transfer{
 		{
@@ -449,6 +413,42 @@ func (e *Economy) Stipend(user User) (tid TransferID, err error) {
 	}
 
 	return tid, nil
+}
+
+// createUnlimitedSourceWithPrice mints an unlimited source and charges price for it. A zero price is free, since currencyItems returns no currency entry at zero.
+func (e *Economy) createUnlimitedSourceWithPrice(u User, price Quantity) (src UnlimitedSource, tid TransferID, err error) {
+	src = RandUnlimitedSource()
+	tf := Transfer{
+		{
+			Owner: u,
+			Items: Items{
+				Many: currencyItems(e.defaultCurrency, price),
+			},
+		},
+		{
+			Items: Items{
+				One: ItemsOne{
+					src: {},
+				},
+			},
+		},
+	}
+	tid = MakeTransferID()
+
+	if err := e.ledger.Transfer(tid, tf); err != nil {
+		return src, tid, fmt.Errorf("create unlimited source transfer %v: %w", tid, err)
+	}
+
+	return src, tid, nil
+}
+
+func (e *Economy) CreateUnlimitedSource(u User) (src UnlimitedSource, tid TransferID, err error) {
+	return e.createUnlimitedSourceWithPrice(u, e.UnlimitedSourcePrice)
+}
+
+// CreateUnlimitedSourceFree mints an unlimited source without charging the user. The caller must have authorised a staff member (permission level 3+), since the Economy has no permission model.
+func (e *Economy) CreateUnlimitedSourceFree(u User) (src UnlimitedSource, tid TransferID, err error) {
+	return e.createUnlimitedSourceWithPrice(u, 0)
 }
 
 // validatePackageComponents rejects components the contents walk can't hand over. It runs before anything is written, so a rejected component never costs the caller anything.

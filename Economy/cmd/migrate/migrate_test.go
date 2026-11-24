@@ -62,8 +62,8 @@ func TestParseOldLedgerRejectsReturns(t *testing.T) {
 		DustMicro: make(map[string]uint64),
 		LastStipends: make(map[string]uint64),
 	}
-
 	err := parseOldLedger(path, s)
+
 	if err == nil || !strings.Contains(err.Error(), "returns") {
 		t.Fatalf("expected unsupported returns error, got %v", err)
 	}
@@ -213,8 +213,8 @@ func fixtureSnapshot() *legacySnapshot {
 
 func TestMigrationFixture(t *testing.T) {
 	s := fixtureSnapshot()
-
 	data := buildMigrationData(s, "", false)
+
 	if len(data.errors) > 0 {
 		t.Fatalf("unexpected validation errors: %v", data.errors)
 	}
@@ -244,8 +244,8 @@ func TestMigrationFixture(t *testing.T) {
 func TestMigrationRejectsMissingUser(t *testing.T) {
 	s := fixtureSnapshot()
 	s.Users = []string{"userA"}
-
 	data := buildMigrationData(s, "", false)
+
 	if len(data.errors) == 0 {
 		t.Fatalf("expected missing-user errors")
 	}
@@ -269,8 +269,8 @@ func TestMigrationRejectsMultiplePackageParents(t *testing.T) {
 		PackageID: 4,
 		ChildID: 3,
 	})
-
 	data := buildMigrationData(s, "", false)
+
 	if len(data.errors) == 0 {
 		t.Fatalf("expected a multiple-package-parent error")
 	}
@@ -335,8 +335,8 @@ func TestMigrationRejectsUnknownFallbackUser(t *testing.T) {
 func TestMigrationSkipsMissingUser(t *testing.T) {
 	s := fixtureSnapshot()
 	s.Users = []string{"userA"}
-
 	data := buildMigrationData(s, "", true)
+
 	if len(data.errors) > 0 {
 		t.Fatalf("unexpected validation errors: %v", data.errors)
 	}
@@ -359,8 +359,8 @@ func TestMigrationSkipsPackageOrphans(t *testing.T) {
 		PackageID: 2,
 		ChildID: 999,
 	})
-
 	data := buildMigrationData(s, "", true)
+
 	if len(data.errors) > 0 {
 		t.Fatalf("unexpected validation errors: %v", data.errors)
 	}

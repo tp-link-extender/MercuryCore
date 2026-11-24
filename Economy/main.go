@@ -447,50 +447,6 @@ func (e *EconomyServer) createLimitedSourceRoute(w http.ResponseWriter, r *http.
 	SerialiseNumeric(src, w)
 }
 
-func (e *EconomyServer) createPackageSourceRoute(w http.ResponseWriter, r *http.Request) {
-	u, ok := getItem[User](w, r)
-	if !ok {
-		return
-	}
-
-	count, err := DeserialiseUint32(r.Body)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("decode component count: %v", err.Error()), http.StatusBadRequest)
-		return
-	}
-
-	if count > MaxCollectionEntries {
-		http.Error(w, fmt.Sprintf("component count %d exceeds limit %d", count, MaxCollectionEntries), http.StatusBadRequest)
-		return
-	}
-
-	comps := make([]PackageComponent, 0, count)
-
-	for range count {
-		i, err := DeserialiseItem(r.Body)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("decode component %d: %v", i, err.Error()), http.StatusBadRequest)
-			return
-		}
-
-		c, ok := i.(PackageComponent)
-		if !ok {
-			http.Error(w, fmt.Sprintf("component %d is not a package component: %T", i, i), http.StatusBadRequest)
-			return
-		}
-
-		comps = append(comps, c)
-	}
-
-	src, _, err := e.CreatePackageSource(u, comps)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("create package source error: %v", err.Error()), http.StatusBadRequest)
-		return
-	}
-
-	SerialiseNumeric(src, w)
-}
-
 // createPackageSourceFreeRoute hands out a package source without charging. The caller must have authorised a staff member (permission level 3+), since the Economy has no permission model.
 func (e *EconomyServer) createPackageSourceFreeRoute(w http.ResponseWriter, r *http.Request) {
 	u, ok := getItem[User](w, r)
@@ -536,6 +492,50 @@ func (e *EconomyServer) createPackageSourceFreeRoute(w http.ResponseWriter, r *h
 	SerialiseNumeric(src, w)
 }
 
+func (e *EconomyServer) createPackageSourceRoute(w http.ResponseWriter, r *http.Request) {
+	u, ok := getItem[User](w, r)
+	if !ok {
+		return
+	}
+
+	count, err := DeserialiseUint32(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("decode component count: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	if count > MaxCollectionEntries {
+		http.Error(w, fmt.Sprintf("component count %d exceeds limit %d", count, MaxCollectionEntries), http.StatusBadRequest)
+		return
+	}
+
+	comps := make([]PackageComponent, 0, count)
+
+	for range count {
+		i, err := DeserialiseItem(r.Body)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("decode component %d: %v", i, err.Error()), http.StatusBadRequest)
+			return
+		}
+
+		c, ok := i.(PackageComponent)
+		if !ok {
+			http.Error(w, fmt.Sprintf("component %d is not a package component: %T", i, i), http.StatusBadRequest)
+			return
+		}
+
+		comps = append(comps, c)
+	}
+
+	src, _, err := e.CreatePackageSource(u, comps)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("create package source error: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	SerialiseNumeric(src, w)
+}
+
 func (e *EconomyServer) createPlaceRoute(w http.ResponseWriter, r *http.Request) {
 	u, ok := getItem[User](w, r)
 	if !ok {
@@ -551,21 +551,6 @@ func (e *EconomyServer) createPlaceRoute(w http.ResponseWriter, r *http.Request)
 	SerialiseNumeric(p, w)
 }
 
-func (e *EconomyServer) createUnlimitedSourceRoute(w http.ResponseWriter, r *http.Request) {
-	u, ok := getItem[User](w, r)
-	if !ok {
-		return
-	}
-
-	src, _, err := e.CreateUnlimitedSource(u)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("create unlimited source error: %v", err.Error()), http.StatusBadRequest)
-		return
-	}
-
-	SerialiseNumeric(src, w)
-}
-
 // createUnlimitedSourceFreeRoute hands out an unlimited source without charging. The caller must have authorised a staff member (permission level 3+), since the Economy has no permission model.
 func (e *EconomyServer) createUnlimitedSourceFreeRoute(w http.ResponseWriter, r *http.Request) {
 	u, ok := getItem[User](w, r)
@@ -574,6 +559,21 @@ func (e *EconomyServer) createUnlimitedSourceFreeRoute(w http.ResponseWriter, r 
 	}
 
 	src, _, err := e.CreateUnlimitedSourceFree(u)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("create unlimited source error: %v", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	SerialiseNumeric(src, w)
+}
+
+func (e *EconomyServer) createUnlimitedSourceRoute(w http.ResponseWriter, r *http.Request) {
+	u, ok := getItem[User](w, r)
+	if !ok {
+		return
+	}
+
+	src, _, err := e.CreateUnlimitedSource(u)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("create unlimited source error: %v", err.Error()), http.StatusBadRequest)
 		return

@@ -193,8 +193,8 @@ func TestCreatePackageSourceUnownedComponentIsClean(t *testing.T) {
 	}
 
 	before := e.Balance(creator)
-
 	beforeHistory, err := e.TransferHistory(100)
+
 	if err != nil {
 		t.Fatalf("TransferHistory: %v", err)
 	}

@@ -245,8 +245,8 @@ func parseOldLedger(path string, s *legacySnapshot) error {
 
 	for lineNo := 0; scanner.Scan(); {
 		lineNo++
-
 		line := strings.TrimSpace(scanner.Text())
+
 		if line == "" {
 			continue
 		}
@@ -322,8 +322,8 @@ func parseOldLedger(path string, s *legacySnapshot) error {
 
 	for user, micro := range raw {
 		dust := micro % microPerUnit
-
 		units := micro / microPerUnit
+
 		if units > 0 {
 			s.BalancesMicro[user] = micro // conversion happens in the planner
 		}

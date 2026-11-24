@@ -286,8 +286,8 @@ func TestEncTransferID(t *testing.T) {
 	const expLen = 28
 
 	tid := MakeTransferID()
-
 	b := tid.Serialise()
+
 	if len(b) != expLen {
 		t.Fatalf("expected serialised TransferID length %d, got %d", expLen, len(b))
 	}
@@ -393,6 +393,38 @@ func TestReopen(t *testing.T) {
 		}
 
 		l.Close()
+	}
+}
+
+// A stipend that would wrap the balance must be refused.
+func TestStipendOverflowRejected(t *testing.T) {
+	name := os.TempDir() + "/ledger_test.db"
+
+	os.Remove(name)
+
+	defer os.Remove(name)
+
+	l, err := NewLedger(name)
+	if err != nil {
+		t.Fatalf("create ledger: %v", err)
+	}
+
+	defer l.Close()
+
+	// no cooldown, so only the overflow check can reject the stipend
+	e := NewEconomy(l, 10, 10, 100, 10, 10, 10, 0)
+	user := User{"stipend-overflow-user"}
+
+	if _, err := e.MintCurrency(user, ^Quantity(0)-5); err != nil {
+		t.Fatalf("MintCurrency: %v", err)
+	}
+
+	if _, err := e.Stipend(user); !errors.Is(err, ErrBalanceOverflow) {
+		t.Fatalf("expected ErrBalanceOverflow, got %v", err)
+	}
+
+	if got, want := e.Balance(user), ^Quantity(0)-5; got != want {
+		t.Fatalf("expected the balance to be unchanged at %d, got %d", want, got)
 	}
 }
 
@@ -915,8 +947,8 @@ func TestStipend(t *testing.T) {
 	currency := Currency{0}
 	user1 := User{"user1"}
 	tid := mintTest(l, t, currency, user1)
-
 	tid2, ok := l.GetUserLastStipend(user1)
+
 	if !ok {
 		t.Fatalf("expected last stipend for user %v, got none", user1)
 	}
@@ -1433,6 +1465,70 @@ func TestCreatePackageSourceFailureKeepsComponents(t *testing.T) {
 	}
 }
 
+// A staff bundle costs nothing beyond the components: the free package source is handed over with the balance untouched, while the configured price still charges.
+func TestCreatePackageSourceFree(t *testing.T) {
+	_, e := newTestEconomy(t)
+	comps := make([]UnlimitedSource, 2)
+	sources := make([]PackageComponent, 2)
+	staff := User{"staff"}
+
+	for i := range comps {
+		c, _, err := e.CreateUnlimitedSourceFree(staff)
+		if err != nil {
+			t.Fatalf("CreateUnlimitedSourceFree for component %d: %v", i, err)
+		}
+
+		comps[i] = c
+		sources[i] = c
+	}
+
+	pkgSrc, _, err := e.CreatePackageSourceFree(staff, sources)
+	if err != nil {
+		t.Fatalf("CreatePackageSourceFree: %v", err)
+	}
+
+	if !e.OwnsOne(staff, pkgSrc) {
+		t.Fatalf("expected staff to own %v", pkgSrc)
+	}
+
+	for _, c := range comps {
+		if !e.OwnsOne(pkgSrc, c) {
+			t.Fatalf("expected %v to hold %v", pkgSrc, c)
+		}
+	}
+
+	if got := e.Balance(staff); got != 0 {
+		t.Fatalf("expected a free package to cost nothing, got balance %d", got)
+	}
+
+	// the configured price still charges
+	payer := User{"payer"}
+
+	fund(t, e, payer)
+
+	before := e.Balance(payer)
+	paidComps := make([]UnlimitedSource, 1)
+	paidSources := make([]PackageComponent, 1)
+
+	for i := range paidComps {
+		c, _, err := e.CreateUnlimitedSource(payer)
+		if err != nil {
+			t.Fatalf("CreateUnlimitedSource for component %d: %v", i, err)
+		}
+
+		paidComps[i] = c
+		paidSources[i] = c
+	}
+
+	if _, _, err := e.CreatePackageSource(payer, paidSources); err != nil {
+		t.Fatalf("CreatePackageSource: %v", err)
+	}
+
+	if got, want := e.Balance(payer), before-e.UnlimitedSourcePrice-e.PackageSourcePrice; got != want {
+		t.Fatalf("expected a paid package to charge %d, balance went %d -> %d", e.UnlimitedSourcePrice+e.PackageSourcePrice, before, got)
+	}
+}
+
 // a package with nothing in it isn't a package
 func TestCreatePackageSourceNeedsContents(t *testing.T) {
 	_, e := newTestEconomy(t)
@@ -1468,6 +1564,117 @@ func TestCreatePackageSourceRejectsLimitedSource(t *testing.T) {
 	// rejected before charging, since the component check runs ahead of the handover
 	if got := e.Balance(creator); got != before {
 		t.Fatalf("expected a rejected package to cost nothing, balance went %d -> %d", before, got)
+	}
+}
+
+// A staff creation costs nothing: the free unlimited source is handed over with the balance untouched, while the configured price still charges.
+func TestCreateUnlimitedSourceFree(t *testing.T) {
+	_, e := newTestEconomy(t)
+	staff := User{"staff"}
+
+	// no funding at all, so any charge would fail instead of going unnoticed
+	src, _, err := e.CreateUnlimitedSourceFree(staff)
+	if err != nil {
+		t.Fatalf("CreateUnlimitedSourceFree: %v", err)
+	}
+
+	if !e.OwnsOne(staff, src) {
+		t.Fatalf("expected staff to own %v", src)
+	}
+
+	if got := e.Balance(staff); got != 0 {
+		t.Fatalf("expected a free source to cost nothing, got balance %d", got)
+	}
+
+	// the configured price still charges
+	payer := User{"payer"}
+
+	fund(t, e, payer)
+
+	before := e.Balance(payer)
+
+	if _, _, err := e.CreateUnlimitedSource(payer); err != nil {
+		t.Fatalf("CreateUnlimitedSource: %v", err)
+	}
+
+	if got, want := e.Balance(payer), before-e.UnlimitedSourcePrice; got != want {
+		t.Fatalf("expected a paid source to charge %d, balance went %d -> %d", e.UnlimitedSourcePrice, before, got)
+	}
+}
+
+// Reimporting a batch must fail with nothing applied twice.
+func TestDuplicateTransferIDBatchRejected(t *testing.T) {
+	l, _ := newTestEconomy(t)
+	user := User{"batch-dup-user"}
+	tf := Transfer{
+		{
+			Owner: user,
+		},
+		{
+			Items: Items{
+				Many: ItemsMany{
+					Currency{0}: 10,
+				},
+			},
+		},
+	}
+	tids := []TransferID{MakeTransferID()}
+
+	if err := l.Import(tids, []Transfer{tf}); err != nil {
+		t.Fatalf("Import: %v", err)
+	}
+
+	if err := l.Import(tids, []Transfer{tf}); !errors.Is(err, ErrDuplicateTransferID) {
+		t.Fatalf("expected ErrDuplicateTransferID, got %v", err)
+	}
+
+	if got := l.OwnsMany(user, Currency{0}); got != 10 {
+		t.Fatalf("expected the balance to be unchanged at 10, got %d", got)
+	}
+}
+
+// Reapplying a transfer ID must fail rather than apply its effects twice.
+func TestDuplicateTransferIDRejected(t *testing.T) {
+	l, e := newTestEconomy(t)
+	user := User{"dup-user"}
+
+	if _, err := e.MintCurrency(user, 100); err != nil {
+		t.Fatalf("MintCurrency: %v", err)
+	}
+
+	tid := MakeTransferID()
+	tf := Transfer{
+		{
+			Owner: user,
+		},
+		{
+			Items: Items{
+				Many: ItemsMany{
+					Currency{0}: 10,
+				},
+			},
+		},
+	}
+
+	if err := l.Transfer(tid, tf); err != nil {
+		t.Fatalf("Transfer: %v", err)
+	}
+
+	if err := l.Transfer(tid, tf); !errors.Is(err, ErrDuplicateTransferID) {
+		t.Fatalf("expected ErrDuplicateTransferID, got %v", err)
+	}
+
+	if got := e.Balance(user); got != 110 {
+		t.Fatalf("expected a rejected replay to leave the balance at 110, got %d", got)
+	}
+
+	history, err := e.TransferHistory(10)
+	if err != nil {
+		t.Fatalf("TransferHistory: %v", err)
+	}
+
+	if len(history) != 2 {
+		t.Fatalf("expected 2 transfers, got %d", len(history))
 	}
 }
 
@@ -1508,6 +1715,24 @@ func TestLimitedStockSurvivesReopen(t *testing.T) {
 	}
 }
 
+// A mint that would wrap the balance must be refused.
+func TestMintCurrencyOverflowRejected(t *testing.T) {
+	_, e := newTestEconomy(t)
+	user := User{"overflow-user"}
+
+	if _, err := e.MintCurrency(user, ^Quantity(0)-5); err != nil {
+		t.Fatalf("MintCurrency: %v", err)
+	}
+
+	if _, err := e.MintCurrency(user, 10); !errors.Is(err, ErrBalanceOverflow) {
+		t.Fatalf("expected ErrBalanceOverflow, got %v", err)
+	}
+
+	if got, want := e.Balance(user), ^Quantity(0)-5; got != want {
+		t.Fatalf("expected the balance to be unchanged at %d, got %d", want, got)
+	}
+}
+
 // a package must not be able to contain itself
 func TestPackageCannotNestItself(t *testing.T) {
 	_, e := newTestEconomy(t)
@@ -1534,8 +1759,8 @@ func TestPackageContents(t *testing.T) {
 	fund(t, e, creator)
 
 	pkgSrc, comps := createPackageFixture(t, e, creator, 3)
-
 	contents := e.PackageContents(pkgSrc)
+
 	if !contents.Has(pkgSrc.Create()) {
 		t.Fatalf("expected contents to include the package itself")
 	}
@@ -1881,103 +2106,6 @@ func TestSourceReissuesOwnAsset(t *testing.T) {
 	}
 }
 
-// ownerOf returns the single package source the user owns, for tests that don't capture the id
-func ownerOf(t *testing.T, e *Economy, u User) PackageSource {
-	t.Helper()
-
-	inv := e.Inventory(u)
-
-	var found []PackageSource
-
-	for item := range inv.One {
-		if ps, ok := item.(PackageSource); ok {
-			found = append(found, ps)
-		}
-	}
-
-	if len(found) != 1 {
-		t.Fatalf("expected %v to own exactly 1 package source, got %d", u, len(found))
-	}
-
-	return found[0]
-}
-
-// Reapplying a transfer ID must fail rather than apply its effects twice.
-func TestDuplicateTransferIDRejected(t *testing.T) {
-	l, e := newTestEconomy(t)
-	user := User{"dup-user"}
-
-	if _, err := e.MintCurrency(user, 100); err != nil {
-		t.Fatalf("MintCurrency: %v", err)
-	}
-
-	tid := MakeTransferID()
-	tf := Transfer{
-		{
-			Owner: user,
-		},
-		{
-			Items: Items{
-				Many: ItemsMany{
-					Currency{0}: 10,
-				},
-			},
-		},
-	}
-
-	if err := l.Transfer(tid, tf); err != nil {
-		t.Fatalf("Transfer: %v", err)
-	}
-
-	if err := l.Transfer(tid, tf); !errors.Is(err, ErrDuplicateTransferID) {
-		t.Fatalf("expected ErrDuplicateTransferID, got %v", err)
-	}
-
-	if got := e.Balance(user); got != 110 {
-		t.Fatalf("expected a rejected replay to leave the balance at 110, got %d", got)
-	}
-
-	history, err := e.TransferHistory(10)
-	if err != nil {
-		t.Fatalf("TransferHistory: %v", err)
-	}
-
-	if len(history) != 2 {
-		t.Fatalf("expected 2 transfers, got %d", len(history))
-	}
-}
-
-// Reimporting a batch must fail with nothing applied twice.
-func TestDuplicateTransferIDBatchRejected(t *testing.T) {
-	l, _ := newTestEconomy(t)
-	user := User{"batch-dup-user"}
-	tf := Transfer{
-		{
-			Owner: user,
-		},
-		{
-			Items: Items{
-				Many: ItemsMany{
-					Currency{0}: 10,
-				},
-			},
-		},
-	}
-	tids := []TransferID{MakeTransferID()}
-
-	if err := l.Import(tids, []Transfer{tf}); err != nil {
-		t.Fatalf("Import: %v", err)
-	}
-
-	if err := l.Import(tids, []Transfer{tf}); !errors.Is(err, ErrDuplicateTransferID) {
-		t.Fatalf("expected ErrDuplicateTransferID, got %v", err)
-	}
-
-	if got := l.OwnsMany(user, Currency{0}); got != 10 {
-		t.Fatalf("expected the balance to be unchanged at 10, got %d", got)
-	}
-}
-
 // String IDs longer than a length byte must be rejected before they can corrupt the transfer stream.
 func TestTransferRejectsLongStringID(t *testing.T) {
 	l, _ := newTestEconomy(t)
@@ -2023,153 +2151,23 @@ func TestTransferRejectsLongStringID(t *testing.T) {
 	}
 }
 
-// A mint that would wrap the balance must be refused.
-func TestMintCurrencyOverflowRejected(t *testing.T) {
-	_, e := newTestEconomy(t)
-	user := User{"overflow-user"}
+// ownerOf returns the single package source the user owns, for tests that don't capture the id
+func ownerOf(t *testing.T, e *Economy, u User) PackageSource {
+	t.Helper()
 
-	if _, err := e.MintCurrency(user, ^Quantity(0)-5); err != nil {
-		t.Fatalf("MintCurrency: %v", err)
-	}
+	inv := e.Inventory(u)
 
-	if _, err := e.MintCurrency(user, 10); !errors.Is(err, ErrBalanceOverflow) {
-		t.Fatalf("expected ErrBalanceOverflow, got %v", err)
-	}
+	var found []PackageSource
 
-	if got, want := e.Balance(user), ^Quantity(0)-5; got != want {
-		t.Fatalf("expected the balance to be unchanged at %d, got %d", want, got)
-	}
-}
-
-// A stipend that would wrap the balance must be refused.
-func TestStipendOverflowRejected(t *testing.T) {
-	name := os.TempDir() + "/ledger_test.db"
-
-	os.Remove(name)
-
-	defer os.Remove(name)
-
-	l, err := NewLedger(name)
-	if err != nil {
-		t.Fatalf("create ledger: %v", err)
-	}
-
-	defer l.Close()
-
-	// no cooldown, so only the overflow check can reject the stipend
-	e := NewEconomy(l, 10, 10, 100, 10, 10, 10, 0)
-	user := User{"stipend-overflow-user"}
-
-	if _, err := e.MintCurrency(user, ^Quantity(0)-5); err != nil {
-		t.Fatalf("MintCurrency: %v", err)
-	}
-
-	if _, err := e.Stipend(user); !errors.Is(err, ErrBalanceOverflow) {
-		t.Fatalf("expected ErrBalanceOverflow, got %v", err)
-	}
-
-	if got, want := e.Balance(user), ^Quantity(0)-5; got != want {
-		t.Fatalf("expected the balance to be unchanged at %d, got %d", want, got)
-	}
-}
-
-// A staff creation costs nothing: the free unlimited source is handed over with the balance untouched, while the configured price still charges.
-func TestCreateUnlimitedSourceFree(t *testing.T) {
-	_, e := newTestEconomy(t)
-	staff := User{"staff"}
-
-	// no funding at all, so any charge would fail instead of going unnoticed
-	src, _, err := e.CreateUnlimitedSourceFree(staff)
-	if err != nil {
-		t.Fatalf("CreateUnlimitedSourceFree: %v", err)
-	}
-
-	if !e.OwnsOne(staff, src) {
-		t.Fatalf("expected staff to own %v", src)
-	}
-
-	if got := e.Balance(staff); got != 0 {
-		t.Fatalf("expected a free source to cost nothing, got balance %d", got)
-	}
-
-	// the configured price still charges
-	payer := User{"payer"}
-
-	fund(t, e, payer)
-
-	before := e.Balance(payer)
-
-	if _, _, err := e.CreateUnlimitedSource(payer); err != nil {
-		t.Fatalf("CreateUnlimitedSource: %v", err)
-	}
-
-	if got, want := e.Balance(payer), before-e.UnlimitedSourcePrice; got != want {
-		t.Fatalf("expected a paid source to charge %d, balance went %d -> %d", e.UnlimitedSourcePrice, before, got)
-	}
-}
-
-// A staff bundle costs nothing beyond the components: the free package source is handed over with the balance untouched, while the configured price still charges.
-func TestCreatePackageSourceFree(t *testing.T) {
-	_, e := newTestEconomy(t)
-	staff := User{"staff"}
-
-	comps := make([]UnlimitedSource, 2)
-	sources := make([]PackageComponent, 2)
-
-	for i := range comps {
-		c, _, err := e.CreateUnlimitedSourceFree(staff)
-		if err != nil {
-			t.Fatalf("CreateUnlimitedSourceFree for component %d: %v", i, err)
-		}
-
-		comps[i] = c
-		sources[i] = c
-	}
-
-	pkgSrc, _, err := e.CreatePackageSourceFree(staff, sources)
-	if err != nil {
-		t.Fatalf("CreatePackageSourceFree: %v", err)
-	}
-
-	if !e.OwnsOne(staff, pkgSrc) {
-		t.Fatalf("expected staff to own %v", pkgSrc)
-	}
-
-	for _, c := range comps {
-		if !e.OwnsOne(pkgSrc, c) {
-			t.Fatalf("expected %v to hold %v", pkgSrc, c)
+	for item := range inv.One {
+		if ps, ok := item.(PackageSource); ok {
+			found = append(found, ps)
 		}
 	}
 
-	if got := e.Balance(staff); got != 0 {
-		t.Fatalf("expected a free package to cost nothing, got balance %d", got)
+	if len(found) != 1 {
+		t.Fatalf("expected %v to own exactly 1 package source, got %d", u, len(found))
 	}
 
-	// the configured price still charges
-	payer := User{"payer"}
-
-	fund(t, e, payer)
-
-	before := e.Balance(payer)
-
-	paidComps := make([]UnlimitedSource, 1)
-	paidSources := make([]PackageComponent, 1)
-
-	for i := range paidComps {
-		c, _, err := e.CreateUnlimitedSource(payer)
-		if err != nil {
-			t.Fatalf("CreateUnlimitedSource for component %d: %v", i, err)
-		}
-
-		paidComps[i] = c
-		paidSources[i] = c
-	}
-
-	if _, _, err := e.CreatePackageSource(payer, paidSources); err != nil {
-		t.Fatalf("CreatePackageSource: %v", err)
-	}
-
-	if got, want := e.Balance(payer), before-e.UnlimitedSourcePrice-e.PackageSourcePrice; got != want {
-		t.Fatalf("expected a paid package to charge %d, balance went %d -> %d", e.UnlimitedSourcePrice+e.PackageSourcePrice, before, got)
-	}
+	return found[0]
 }

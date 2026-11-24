@@ -484,6 +484,60 @@ func TestConcurrentBuyLimitedAssetOverHTTP(t *testing.T) {
 	}
 }
 
+// a staff bundle over HTTP costs nothing: the free package source takes ownership of its components without charging
+func TestCreatePackageSourceFreeOverHTTP(t *testing.T) {
+	srv, e := testServer(t)
+
+	defer srv.Close()
+
+	staff := User{
+		Id: "staff",
+	}
+
+	var comps []UnlimitedSource
+
+	for range 2 {
+		c, _, err := e.CreateUnlimitedSourceFree(staff)
+		if err != nil {
+			t.Fatalf("CreateUnlimitedSourceFree: %v", err)
+		}
+
+		comps = append(comps, c)
+	}
+
+	body := &bytes.Buffer{}
+
+	serialiseItem(staff, body)
+	putUint32(body, uint32(len(comps)))
+
+	for _, c := range comps {
+		serialiseItem(c, body)
+	}
+
+	res := post(t, srv, "createPackageSourceFree", body)
+
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		t.Fatalf("expected 200 from createPackageSourceFree, got %d", res.StatusCode)
+	}
+
+	pkgSrc := createdSrc(t, res.Body)
+	if !e.OwnsOne(staff, pkgSrc) {
+		t.Fatalf("expected staff to own %v", pkgSrc)
+	}
+
+	for _, c := range comps {
+		if !e.OwnsOne(pkgSrc, c) {
+			t.Fatalf("expected %v to hold %v", pkgSrc, c)
+		}
+	}
+
+	if got := e.Balance(staff); got != 0 {
+		t.Fatalf("expected a free package to cost nothing, got balance %d", got)
+	}
+}
+
 // a limited source can't be a package component, and the HTTP response has to say so
 func TestCreatePackageSourceRejectsLimitedOverHTTP(t *testing.T) {
 	srv, e := testServer(t)
@@ -526,6 +580,48 @@ func TestCreatePackageSourceRejectsLimitedOverHTTP(t *testing.T) {
 	}
 }
 
+// a staff creation over HTTP costs nothing: the free unlimited source is handed over even with no currency
+func TestCreateUnlimitedSourceFreeOverHTTP(t *testing.T) {
+	srv, e := testServer(t)
+
+	defer srv.Close()
+
+	body := &bytes.Buffer{}
+	staff := User{
+		Id: "staff",
+	}
+
+	serialiseItem(staff, body)
+
+	res := post(t, srv, "createUnlimitedSourceFree", body)
+
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		t.Fatalf("expected 200 from createUnlimitedSourceFree, got %d", res.StatusCode)
+	}
+
+	buf := &bytes.Buffer{}
+
+	buf.ReadFrom(res.Body)
+
+	srcBytes := buf.Bytes()
+	if len(srcBytes) != 5 {
+		t.Fatalf("expected a 5 byte source id, got %d bytes", len(srcBytes))
+	}
+
+	src := UnlimitedSource{
+		Id: binary.BigEndian.Uint32(srcBytes[1:]),
+	}
+	if !e.OwnsOne(staff, src) {
+		t.Fatalf("expected staff to own %v", src)
+	}
+
+	if got := e.Balance(staff); got != 0 {
+		t.Fatalf("expected a free source to cost nothing, got balance %d", got)
+	}
+}
+
 func TestEconomyKeyRequired(t *testing.T) {
 	srv, _ := testServer(t)
 
@@ -558,6 +654,44 @@ func TestEconomyKeyRequired(t *testing.T) {
 				t.Fatalf("expected 401, got %d", res.StatusCode)
 			}
 		})
+	}
+}
+
+// the free routes carry no permission check of their own, so a missing or wrong key must still be refused
+func TestFreeRoutesRequireKey(t *testing.T) {
+	srv, _ := testServer(t)
+
+	defer srv.Close()
+
+	for _, route := range []string{"createUnlimitedSourceFree", "createPackageSourceFree"} {
+		for name, authorization := range map[string]string{
+			"empty-bear": bearerPrefix,
+			"malformed": "Basic dGVzdA==",
+			"missing": "",
+			"wrong": "Bearer wrong-key",
+		} {
+			t.Run(route+"/"+name, func(t *testing.T) {
+				req, err := newPostRequest(srv, route, bytes.NewBuffer(nil), "")
+				if err != nil {
+					t.Fatalf("build request: %v", err)
+				}
+
+				if authorization != "" {
+					req.Header.Set("Authorization", authorization)
+				}
+
+				res, err := srv.Client().Do(req)
+				if err != nil {
+					t.Fatalf("POST %s: %v", route, err)
+				}
+
+				defer res.Body.Close()
+
+				if res.StatusCode != http.StatusUnauthorized {
+					t.Fatalf("expected 401, got %d", res.StatusCode)
+				}
+			})
+		}
 	}
 }
 
@@ -840,142 +974,5 @@ func TestRegisterRoutesDispatchesIndependently(t *testing.T) {
 
 	if buf.Len() == 0 {
 		t.Fatalf("expected balance to write a value")
-	}
-}
-
-// a staff creation over HTTP costs nothing: the free unlimited source is handed over even with no currency
-func TestCreateUnlimitedSourceFreeOverHTTP(t *testing.T) {
-	srv, e := testServer(t)
-
-	defer srv.Close()
-
-	staff := User{
-		Id: "staff",
-	}
-
-	body := &bytes.Buffer{}
-
-	serialiseItem(staff, body)
-
-	res := post(t, srv, "createUnlimitedSourceFree", body)
-
-	defer res.Body.Close()
-
-	if res.StatusCode != http.StatusOK {
-		t.Fatalf("expected 200 from createUnlimitedSourceFree, got %d", res.StatusCode)
-	}
-
-	buf := &bytes.Buffer{}
-
-	buf.ReadFrom(res.Body)
-
-	srcBytes := buf.Bytes()
-	if len(srcBytes) != 5 {
-		t.Fatalf("expected a 5 byte source id, got %d bytes", len(srcBytes))
-	}
-
-	src := UnlimitedSource{
-		Id: binary.BigEndian.Uint32(srcBytes[1:]),
-	}
-
-	if !e.OwnsOne(staff, src) {
-		t.Fatalf("expected staff to own %v", src)
-	}
-
-	if got := e.Balance(staff); got != 0 {
-		t.Fatalf("expected a free source to cost nothing, got balance %d", got)
-	}
-}
-
-// a staff bundle over HTTP costs nothing: the free package source takes ownership of its components without charging
-func TestCreatePackageSourceFreeOverHTTP(t *testing.T) {
-	srv, e := testServer(t)
-
-	defer srv.Close()
-
-	staff := User{
-		Id: "staff",
-	}
-
-	var comps []UnlimitedSource
-
-	for range 2 {
-		c, _, err := e.CreateUnlimitedSourceFree(staff)
-		if err != nil {
-			t.Fatalf("CreateUnlimitedSourceFree: %v", err)
-		}
-
-		comps = append(comps, c)
-	}
-
-	body := &bytes.Buffer{}
-
-	serialiseItem(staff, body)
-	putUint32(body, uint32(len(comps)))
-
-	for _, c := range comps {
-		serialiseItem(c, body)
-	}
-
-	res := post(t, srv, "createPackageSourceFree", body)
-
-	defer res.Body.Close()
-
-	if res.StatusCode != http.StatusOK {
-		t.Fatalf("expected 200 from createPackageSourceFree, got %d", res.StatusCode)
-	}
-
-	pkgSrc := createdSrc(t, res.Body)
-
-	if !e.OwnsOne(staff, pkgSrc) {
-		t.Fatalf("expected staff to own %v", pkgSrc)
-	}
-
-	for _, c := range comps {
-		if !e.OwnsOne(pkgSrc, c) {
-			t.Fatalf("expected %v to hold %v", pkgSrc, c)
-		}
-	}
-
-	if got := e.Balance(staff); got != 0 {
-		t.Fatalf("expected a free package to cost nothing, got balance %d", got)
-	}
-}
-
-// the free routes carry no permission check of their own, so a missing or wrong key must still be refused
-func TestFreeRoutesRequireKey(t *testing.T) {
-	srv, _ := testServer(t)
-
-	defer srv.Close()
-
-	for _, route := range []string{"createUnlimitedSourceFree", "createPackageSourceFree"} {
-		for name, authorization := range map[string]string{
-			"empty-bear": bearerPrefix,
-			"malformed": "Basic dGVzdA==",
-			"missing": "",
-			"wrong": "Bearer wrong-key",
-		} {
-			t.Run(route+"/"+name, func(t *testing.T) {
-				req, err := newPostRequest(srv, route, bytes.NewBuffer(nil), "")
-				if err != nil {
-					t.Fatalf("build request: %v", err)
-				}
-
-				if authorization != "" {
-					req.Header.Set("Authorization", authorization)
-				}
-
-				res, err := srv.Client().Do(req)
-				if err != nil {
-					t.Fatalf("POST %s: %v", route, err)
-				}
-
-				defer res.Body.Close()
-
-				if res.StatusCode != http.StatusUnauthorized {
-					t.Fatalf("expected 401, got %d", res.StatusCode)
-				}
-			})
-		}
 	}
 }

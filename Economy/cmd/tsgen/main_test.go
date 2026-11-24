@@ -48,6 +48,7 @@ func (i Thing) Create() Thing { return i }
 `
 
 	path := filepath.Join(t.TempDir(), "types.go")
+
 	if err := os.WriteFile(path, []byte(src), 0o644); err != nil {
 		t.Fatal(err)
 	}
