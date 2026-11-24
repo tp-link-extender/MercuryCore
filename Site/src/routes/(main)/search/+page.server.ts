@@ -1,8 +1,8 @@
 import { error } from "@sveltejs/kit"
 import { packageItems } from "economy/api"
 import { UnlimitedAsset } from "economy/types"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { economyConnFailed } from "#lib/server/economy.ts"
-import { db } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import searchAssetsQuery from "./searchAssets.surql"
 import searchGroupsQuery from "./searchGroups.surql"
@@ -59,25 +59,25 @@ export async function load({ fetch: f, url }: PageServerLoadEvent) {
 			// )
 			// if (foundUser) redirect(302, `/user/${query}`)
 
-			const [users] = await db.query<BasicUser[][]>(
+			const [users] = await dbQuery<BasicUser[][]>(
 				searchUsersQuery,
 				param
 			)
 			return { category, query, users }
 		}
 		case "places": {
-			const [places] = await db.query<Place[][]>(searchPlacesQuery, param)
+			const [places] = await dbQuery<Place[][]>(searchPlacesQuery, param)
 			return { category, places, query }
 		}
 		case "assets": {
-			const [assets] = await db.query<Asset[][]>(searchAssetsQuery, {
+			const [assets] = await dbQuery<Asset[][]>(searchAssetsQuery, {
 				...param,
 				packageItems: await packageItemIds(f),
 			})
 			return { assets, category, query }
 		}
 		case "groups": {
-			const [groups] = await db.query<Group[][]>(searchGroupsQuery, param)
+			const [groups] = await dbQuery<Group[][]>(searchGroupsQuery, param)
 			return { category, groups, query }
 		}
 	}

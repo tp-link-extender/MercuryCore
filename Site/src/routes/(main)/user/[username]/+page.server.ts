@@ -2,8 +2,9 @@ import { error } from "@sveltejs/kit"
 import { inventory } from "economy/api"
 import { Group as EconGroup, User as EconUser, Place } from "economy/types"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { economyConnFailed } from "#lib/server/economy.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import type { Group } from "../../groups/+page.server"
 import type { PageServerLoadEvent } from "./$types"
 import ownedGroupsQuery from "./ownedGroups.surql"
@@ -43,7 +44,7 @@ interface User extends BasicUser {
 
 export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
-	const [[userExists]] = await db.query<User[][]>(userQuery, {
+	const [[userExists]] = await dbQuery<User[][]>(userQuery, {
 		...params,
 		user: Record("user", user.id),
 	})
@@ -56,10 +57,10 @@ export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	const placeIds = owned.filter(i => i instanceof Place).map(i => i.ID)
 	const groupIds = owned.filter(i => i instanceof EconGroup).map(i => i.ID)
 
-	const [places] = await db.query<OwnedPlace[][]>(ownedPlacesQuery, {
+	const [places] = await dbQuery<OwnedPlace[][]>(ownedPlacesQuery, {
 		ids: placeIds.map(id => Record("place", id)),
 	})
-	const [groupsOwned] = await db.query<Group[][]>(ownedGroupsQuery, {
+	const [groupsOwned] = await dbQuery<Group[][]>(ownedGroupsQuery, {
 		ids: groupIds.map(id => Record("group", id)),
 	})
 

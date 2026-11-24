@@ -1,15 +1,16 @@
 // we've come full circle, from lucia-sveltekit 0.3 to 0.1 to Lucia 0.3 to 1.0 to 2.0 to 3.2 to now.
 
 import { error, redirect } from "@sveltejs/kit"
+import { dbQuery } from "#lib/server/db/query.ts"
 import deleteSessionsQuery from "#lib/server/deleteSessions.surql"
 import deleteUserSessionsQuery from "#lib/server/deleteUserSessions.surql"
 import getSessionAndUserQuery from "#lib/server/getSessionAndUser.surql"
 import setSessionQuery from "#lib/server/setSession.surql"
-import { db, Record, type RecordId } from "#lib/server/surreal.ts"
+import { Record, type RecordId } from "#lib/server/surreal.ts"
 import { dev } from "$app/env"
 
 export async function createSession(user: RecordId<"user">): Promise<string> {
-	const [, session] = await db.query<string[]>(setSessionQuery, { user })
+	const [, session] = await dbQuery<string[]>(setSessionQuery, { user })
 	return session
 }
 
@@ -21,7 +22,7 @@ export async function validateSessionToken(
 	token: string
 ): Promise<SessionValidationResult> {
 	// The last statement's result is the session and user
-	const results = await db.query<SessionValidationResult[]>(
+	const results = await dbQuery<SessionValidationResult[]>(
 		getSessionAndUserQuery,
 		{ sess: Record("session", token) }
 	)
@@ -31,13 +32,13 @@ export async function validateSessionToken(
 }
 
 export async function invalidateSession(sessionId: string): Promise<void> {
-	await db.query(deleteSessionsQuery, {
+	await dbQuery(deleteSessionsQuery, {
 		sess: Record("session", sessionId),
 	})
 }
 
 export async function invalidateAllSessions(user: string): Promise<void> {
-	await db.query(deleteUserSessionsQuery, {
+	await dbQuery(deleteUserSessionsQuery, {
 		user: Record("user", user),
 	})
 }

@@ -1,5 +1,5 @@
 import { type } from "arktype"
-import { db } from "#lib/server/surreal.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { query } from "$app/server"
 import type { Asset } from "./+page.server"
 import catalogQuery from "./catalog.surql"
@@ -10,7 +10,7 @@ export const getAssets = query(
 		type: type.enumerated(2, 8, 11, 12, 13, 18, 19, 32),
 	}),
 	async args => {
-		const [assets, pages] = await db.query<[Asset[], number]>(
+		const [assets, pages] = await dbQuery<[Asset[], number]>(
 			catalogQuery,
 			args
 		)

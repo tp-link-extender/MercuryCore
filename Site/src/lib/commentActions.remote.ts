@@ -3,10 +3,11 @@ import { type } from "arktype"
 import { authorise } from "#lib/server/auth.ts"
 import commentType from "#lib/server/commentType.ts"
 import createCommentQuery from "#lib/server/createComment.surql"
+import { dbQuery } from "#lib/server/db/query.ts"
 import filter from "#lib/server/filter.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
 import removeCommentQuery from "#lib/server/removeComment.surql"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
 
@@ -30,7 +31,7 @@ export const replyForm: ClientForm<typeof replySchema.infer> = form(
 		if (limit) return limit
 
 		const comment = Record("comment", id)
-		const [getComment] = await db.query<
+		const [getComment] = await dbQuery<
 			{ creatorId: string; type: string[] }[]
 		>(
 			`
@@ -45,7 +46,7 @@ export const replyForm: ClientForm<typeof replySchema.infer> = form(
 		const { creatorId, type: commentTypes } = getComment
 		const filtered = filter(content)
 
-		const [, newCommentId] = await db.query<string[]>(createCommentQuery, {
+		const [, newCommentId] = await dbQuery<string[]>(createCommentQuery, {
 			comment,
 			content: filtered,
 			type: commentType(commentTypes, id),
@@ -53,7 +54,7 @@ export const replyForm: ClientForm<typeof replySchema.infer> = form(
 		})
 
 		if (user.id !== creatorId)
-			await db.query(
+			await dbQuery(
 				`fn::notify($sender, $receiver, "CommentReply", $note, $relativeId)`,
 				{
 					note: `${user.username} replied to your comment: ${filtered}`,
@@ -77,7 +78,7 @@ export const pinForm = form(pinSchema, async ({ id, set }, issues) => {
 	const limit = ratelimitRemote(issues, "pin", getClientAddress, 1)
 	if (limit) return limit
 
-	const [[ok]] = await db.query<1[][]>(
+	const [[ok]] = await dbQuery<1[][]>(
 		`
 			UPDATE $comment SET pinned = $pinned
 				WHERE type != ["status"] RETURN VALUE 1`,
@@ -103,7 +104,7 @@ export const deleteForm = form(deleteSchema, async ({ action, id }, issues) => {
 	const limit = ratelimitRemote(issues, "delete", getClientAddress, 5)
 	if (limit) return limit
 
-	const deleted = await db.query<1[][]>(removeCommentQuery, {
+	const deleted = await dbQuery<1[][]>(removeCommentQuery, {
 		comment: Record("comment", id),
 		moderate,
 		user: Record("user", user.id),

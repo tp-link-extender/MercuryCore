@@ -1,6 +1,7 @@
 import { redirect } from "@sveltejs/kit"
 import { authorise } from "#lib/server/auth.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
+import { Record } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import getModerationQuery from "./getModeration.surql"
 
@@ -12,7 +13,7 @@ interface Moderation {
 }
 
 async function getModeration(id: string) {
-	const [[moderation]] = await db.query<Moderation[][]>(getModerationQuery, {
+	const [[moderation]] = await dbQuery<Moderation[][]>(getModerationQuery, {
 		user: Record("user", id),
 	})
 	if (!moderation) redirect(302, "/home")

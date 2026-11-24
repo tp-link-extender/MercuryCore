@@ -1,12 +1,13 @@
 import { error, redirect } from "@sveltejs/kit"
-import { db, Record } from "#lib/server/surreal.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
+import { Record } from "#lib/server/surreal.ts"
 import { encode } from "#lib/urlName.ts"
 import type { PageServerLoadEvent } from "./$types"
 import assetQuery from "./asset.surql"
 
 export async function load({ params }: PageServerLoadEvent) {
 	const { id } = params
-	const [[asset]] = await db.query<{ name: string }[][]>(assetQuery, {
+	const [[asset]] = await dbQuery<{ name: string }[][]>(assetQuery, {
 		asset: Record("asset", Number(id)),
 	})
 	if (!asset) error(404, "Not Found")

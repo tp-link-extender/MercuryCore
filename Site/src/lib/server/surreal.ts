@@ -1,5 +1,6 @@
 import { Surreal, RecordId as SurrealRecordId, Table } from "surrealdb"
 import config from "#lib/server/config.ts"
+import { retryOnConflict } from "#lib/server/db/retry.ts"
 import {
 	type DatabaseCredentials,
 	databaseCredentials,
@@ -72,29 +73,6 @@ export const db = new Surreal({
 	},
 })
 
-// Retry queries
-const ogq = db.query.bind(db)
-const retriable = "This transaction can be retried"
-
-// oof
-// also bad types but who cares
-const retryQuery = async <R extends unknown[]>(
-	query: string,
-	bindings?: { [_: string]: unknown }
-) => {
-	try {
-		return await ogq<R>(query, bindings)
-	} catch (err) {
-		if (!(err instanceof Error) || !err.message.endsWith(retriable))
-			throw err
-		console.log("Retrying query:", err.message)
-	}
-	return ogq<R>(query, bindings)
-}
-
-// oxlint-disable-next-line typescript/no-unsafe-type-assertion
-db.query = retryQuery as unknown as typeof db.query
-
 export const version = db.version.bind(db)
 
 async function reconnect(creds: DatabaseCredentials) {
@@ -130,11 +108,11 @@ async function reconnect(creds: DatabaseCredentials) {
 
 if (site) {
 	await reconnect(site)
-	await db.query(initQuery)
+	await retryOnConflict(() => db.query(initQuery))
 	logo()
 }
 
-interface RecordIdTypes {
+export interface RecordIdTypes {
 	asset: number
 	auditLog: string
 	banner: string
@@ -213,41 +191,3 @@ export const Record = <T extends keyof RecordIdTypes>(
 	table: T,
 	id: RecordIdTypes[T]
 ) => new SurrealRecordId(table, id)
-
-/**
- * Finds whether a record exists in the database.
- * @param id The id of the record to find.
- * @returns Whether the record exists.
- * @example
- * await find("user", id)
- */
-export async function find<T extends keyof RecordIdTypes>(
-	table: T,
-	id: RecordIdTypes[T]
-) {
-	const [result] = await db.query<boolean[]>("!!SELECT 1 FROM $thing", {
-		thing: Record(table, id),
-	})
-	return result
-}
-
-/**
- * Finds whether a record exists in the database matching a given condition.
- * @param table The table to search in.
- * @param where The condition to match.
- * @param params An object of parameters to pass to SurrealDB.
- * @returns Whether the record exists.
- * @example
- * await findWhere("user", "username = $username", { username: "Heliodex" })
- */
-export async function findWhere(
-	table: keyof RecordIdTypes,
-	where: string,
-	params?: { [_: string]: unknown }
-) {
-	const [res] = await db.query<boolean[]>(
-		`!!SELECT 1 FROM type::table($table) WHERE ${where}`,
-		{ ...params, table }
-	)
-	return res
-}

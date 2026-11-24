@@ -1,9 +1,9 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import exclude from "#lib/server/exclude.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
-import { db } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
 import createQuery from "./create.surql"
@@ -24,7 +24,7 @@ export const formData = form(schema, async ({ description, name }, issues) => {
 	const limit = ratelimitRemote(issues, "forumCategory", getClientAddress, 30)
 	if (limit) return limit
 
-	await db.query(createQuery, { description, name })
+	await dbQuery(createQuery, { description, name })
 
 	redirect(302, `/forum/${name}`)
 }) as ClientForm<typeof schema.infer>

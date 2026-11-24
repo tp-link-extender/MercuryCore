@@ -1,13 +1,14 @@
 import { error } from "@sveltejs/kit"
 import { Group as EconGroup } from "economy/types"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import {
 	economyConnFailed,
 	itemOwner,
 	type OwnedUser,
 } from "#lib/server/economy.ts"
 import exclude from "#lib/server/exclude.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import groupQuery from "./group.surql"
 
@@ -22,7 +23,7 @@ interface Group {
 export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	exclude("Groups")
 	const { user } = await authorise(locals)
-	const [[group]] = await db.query<Group[][]>(groupQuery, {
+	const [[group]] = await dbQuery<Group[][]>(groupQuery, {
 		// ...params,
 		group: Record("group", params.group),
 		user: Record("user", user.id),

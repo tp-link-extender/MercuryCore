@@ -1,5 +1,5 @@
+import { dbQuery } from "#lib/server/db/query.ts"
 import pageQuery from "#lib/server/pageQuery.ts"
-import { db } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import gamesQuery from "./games.surql"
 
@@ -16,7 +16,7 @@ interface Place {
 export async function load({ url }: PageServerLoadEvent) {
 	const { page, checkPages } = pageQuery(url)
 
-	const [places, pages] = await db.query<[Place[], number]>(gamesQuery, {
+	const [places, pages] = await dbQuery<[Place[], number]>(gamesQuery, {
 		page,
 	})
 	checkPages(pages)

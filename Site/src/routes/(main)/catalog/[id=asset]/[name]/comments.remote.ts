@@ -4,11 +4,13 @@ import { buyPackage, buyUnlimitedAsset } from "economy/api"
 import { PackageSource, UnlimitedSource, User } from "economy/types"
 import { authorise } from "#lib/server/auth.ts"
 import createCommentQuery from "#lib/server/createComment.surql"
+import { dbQuery } from "#lib/server/db/query.ts"
+import { find } from "#lib/server/db/records.ts"
 import { assetOwner, economyConnFailed } from "#lib/server/economy.ts"
 import filter from "#lib/server/filter.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
 import requestRender, { type RenderType } from "#lib/server/requestRender.ts"
-import { db, find, Record } from "#lib/server/surreal.ts"
+import { db, Record } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
 import buyQuery from "./buy.surql"
@@ -32,7 +34,7 @@ export const commentForm: ClientForm<typeof commentSchema.infer> = form(
 		if (limit) return limit
 
 		const id = Number(assetId)
-		const [getAsset] = await db.query<{ type: number }[]>(
+		const [getAsset] = await dbQuery<{ type: number }[]>(
 			"SELECT type FROM ONLY $asset",
 			{ asset: Record("asset", id) }
 		)
@@ -45,7 +47,7 @@ export const commentForm: ClientForm<typeof commentSchema.infer> = form(
 
 		const filtered = filter(content)
 
-		const [, newCommentId] = await db.query<string[]>(createCommentQuery, {
+		const [, newCommentId] = await dbQuery<string[]>(createCommentQuery, {
 			content: filtered,
 			type: ["asset", id],
 			user: Record("user", user.id),
@@ -84,7 +86,7 @@ export const buyForm: ClientForm<typeof buySchema.infer> = form(
 			type: number
 			visibility: string
 		}
-		const [[asset]] = await db.query<FoundAsset[][]>(buyQuery, {
+		const [[asset]] = await dbQuery<FoundAsset[][]>(buyQuery, {
 			asset: Record("asset", id),
 		})
 		if (!asset) error(404, "Not Found")
@@ -114,7 +116,7 @@ export const buyForm: ClientForm<typeof buySchema.infer> = form(
 		if (!ok) return issues("Purchase failed")
 
 		if (owner.value && user.id !== owner.value.id)
-			await db.query(
+			await dbQuery(
 				'fn::notify($user, $owner, "ItemPurchase", $note, $relativeId)',
 				{
 					note: `${user.username} just purchased your item ${asset.name}`,
@@ -140,7 +142,7 @@ export const rerenderForm = form(rerenderSchema, async ({ id: assetId }) => {
 		type: number
 		visibility: string
 	}
-	const [[asset]] = await db.query<FoundAsset[][]>(findAssetQuery, {
+	const [[asset]] = await dbQuery<FoundAsset[][]>(findAssetQuery, {
 		asset: Record("asset", id),
 	})
 	if (!asset) error(404, "Not Found")

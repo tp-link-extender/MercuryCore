@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit"
 import config from "#lib/server/config.ts"
-import { find } from "#lib/server/surreal.ts"
+import { find } from "#lib/server/db/records.ts"
 import type { RequestEvent } from "./$types"
 
 const icons = config.Images.DefaultPlaceIcons

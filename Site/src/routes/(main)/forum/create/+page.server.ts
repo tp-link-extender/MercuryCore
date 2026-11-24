@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit"
+import { dbQuery } from "#lib/server/db/query.ts"
 import exclude from "#lib/server/exclude.ts"
-import { db } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 
 export async function load({ url }: PageServerLoadEvent) {
@@ -8,7 +8,7 @@ export async function load({ url }: PageServerLoadEvent) {
 	const categoryParam = url.searchParams.get("category")
 	if (!categoryParam) error(400, "Missing category")
 
-	const [[category]] = await db.query<{ name: string }[][]>(
+	const [[category]] = await dbQuery<{ name: string }[][]>(
 		`
 			SELECT name FROM forumCategory
 			WHERE string::lowercase(name) = string::lowercase($categoryParam)`,

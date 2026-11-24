@@ -3,8 +3,9 @@ import { type } from "arktype"
 import { AlreadyExistsError } from "surrealdb"
 import { authorise } from "#lib/server/auth.ts"
 import config from "#lib/server/config.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
 import createQuery from "./create.surql"
@@ -58,7 +59,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 		if (limit) return limit
 
 		try {
-			await db.query(createQuery, {
+			await dbQuery(createQuery, {
 				creator: Record("user", user.id),
 				expiry,
 				regKeyCustom,
@@ -87,7 +88,7 @@ export const disableForm = form(disableSchema, async ({ id }, issues) => {
 	const { user } = await authorise(locals, 5)
 
 	const regKey = Record("regKey", id)
-	const [[key]] = await db.query<{ disabled: boolean }[][]>(disabledQuery, {
+	const [[key]] = await dbQuery<{ disabled: boolean }[][]>(disabledQuery, {
 		regKey,
 	})
 	if (!key) return issues("Registration key not found")
@@ -96,7 +97,7 @@ export const disableForm = form(disableSchema, async ({ id }, issues) => {
 			"Registration key is already disabled or has already ran out of uses"
 		)
 
-	await db.query(
+	await dbQuery(
 		`
 			UPDATE $regKey SET usesLeft = 0;
 			fn::auditLog("Administration", $msg, $user)`,

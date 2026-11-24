@@ -3,9 +3,10 @@ import { rename, statfs } from "node:fs/promises"
 import { error } from "@sveltejs/kit"
 import { intRegex } from "#lib/paramTests.ts"
 import config from "#lib/server/config.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { FixedWindow } from "#lib/server/fixedWindow.ts"
 import { readLimited, TooLargeError } from "#lib/server/readLimited.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import { isXML } from "#lib/server/xml.ts"
 import { substituteRobloxAssetUrls } from "#lib/server/xmlTemplate.ts"
 import { OPEN_CLOUD_KEY } from "$app/env/private"
@@ -57,7 +58,7 @@ async function loadUserAsset(id: number) {
 	const file = Bun.file(`../data/assets/${id}`)
 	if (!(await file.exists())) return
 
-	const [[asset]] = await db.query<FoundAsset[][]>(assetQuery, {
+	const [[asset]] = await dbQuery<FoundAsset[][]>(assetQuery, {
 		asset: Record("asset", id),
 	})
 	if (!asset || asset.visibility === "Moderated") return

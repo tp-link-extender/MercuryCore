@@ -1,8 +1,8 @@
-import { db } from "#lib/server/surreal.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import accountRegisteredQuery from "./accountRegistered.surql"
 
 const accountRegistered = async () => {
-	const [registered] = await db.query<boolean[]>(accountRegisteredQuery)
+	const [registered] = await dbQuery<boolean[]>(accountRegisteredQuery)
 	return registered
 }
 

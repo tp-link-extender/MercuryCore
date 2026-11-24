@@ -3,11 +3,12 @@ import { error } from "@sveltejs/kit"
 import { type } from "arktype"
 import { Place as EconPlace } from "economy/types"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { usesDedicated } from "#lib/server/dedicated.ts"
 import { economyConnFailed, ownsItem } from "#lib/server/economy.ts"
 import { closeGameserver, startGameserver } from "#lib/server/orbiter.ts"
 import { ratelimit, ratelimitKey } from "#lib/server/ratelimit.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import { command, form, getRequestEvent } from "$app/server"
 import { findPlace, placeIdSchema } from "./findPlace.ts"
 import invalidatePlayingQuery from "./invalidatePlaying.surql"
@@ -25,7 +26,7 @@ export const join = command(playSchema, async ({ id, privateTicket }) => {
 	const { placeR, user } = await findPlace(id, privateTicket)
 
 	// Invalidate all game sessions and create valid playing
-	const [, [ticket]] = await db.query<string[][]>(invalidatePlayingQuery, {
+	const [, [ticket]] = await dbQuery<string[][]>(invalidatePlayingQuery, {
 		place: placeR,
 		user: Record("user", user.id),
 	})

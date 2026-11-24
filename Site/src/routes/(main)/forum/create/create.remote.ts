@@ -2,10 +2,11 @@ import { error, redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { authorise } from "#lib/server/auth.ts"
 import createCommentQuery from "#lib/server/createComment.surql"
+import { dbQuery } from "#lib/server/db/query.ts"
 import exclude from "#lib/server/exclude.ts"
 import filter from "#lib/server/filter.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
 
@@ -31,7 +32,7 @@ export const formData = form(schema, async ({ content }, issues) => {
 	const limit = ratelimitRemote(issues, "comment", getClientAddress, 5)
 	if (limit) return limit
 
-	const [[getCategory]] = await db.query<{ id: string }[][]>(
+	const [[getCategory]] = await dbQuery<{ id: string }[][]>(
 		`
 			SELECT record::id(id) AS id FROM forumCategory
 			WHERE string::lowercase(name) = string::lowercase($category)`,
@@ -39,7 +40,7 @@ export const formData = form(schema, async ({ content }, issues) => {
 	)
 	if (!getCategory) error(404, "Category not found")
 
-	const [, newCommentId] = await db.query<string[]>(createCommentQuery, {
+	const [, newCommentId] = await dbQuery<string[]>(createCommentQuery, {
 		content: filter(unfiltered),
 		type: ["forum", getCategory.id],
 		user: Record("user", user.id),

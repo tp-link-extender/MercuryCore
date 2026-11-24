@@ -1,7 +1,8 @@
 import { error } from "@sveltejs/kit"
 import { assetRegex } from "#lib/paramTests.ts"
 import config from "#lib/server/config.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
+import { Record } from "#lib/server/surreal.ts"
 import type { RequestEvent } from "./$types"
 import typeQuery from "./type.surql"
 
@@ -23,7 +24,7 @@ export async function GET({ url }: RequestEvent) {
 	const id = url.searchParams.get("id")
 	if (!id || !assetRegex.test(id)) error(400, "Missing id parameter")
 
-	const [[asset]] = await db.query<{ type: number }[][]>(typeQuery, {
+	const [[asset]] = await dbQuery<{ type: number }[][]>(typeQuery, {
 		asset: Record("asset", Number(id)),
 	})
 	if (!asset) error(404, "Not Found")

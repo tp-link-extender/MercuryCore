@@ -2,8 +2,9 @@ import { error } from "@sveltejs/kit"
 import { Place } from "economy/types"
 import { bearerMatches } from "#lib/server/bearer.ts"
 import constantTimeEqual from "#lib/server/constantTimeEqual.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { economyConnFailed, ownsItem } from "#lib/server/economy.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import { GAMESERVER_KEY } from "$app/env/private"
 import type { RequestEvent } from "./$types"
 
@@ -24,7 +25,7 @@ export async function GET({
 }: RequestEvent) {
 	const id = Number(params.id)
 
-	const [[place]] = await db.query<
+	const [[place]] = await dbQuery<
 		{
 			privateServer: boolean
 			privateTicket: string

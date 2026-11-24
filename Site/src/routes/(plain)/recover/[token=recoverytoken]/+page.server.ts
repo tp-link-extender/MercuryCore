@@ -1,5 +1,5 @@
+import { dbQuery } from "#lib/server/db/query.ts"
 import { hashRecoveryToken } from "#lib/server/recoveryToken.ts"
-import { db } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import checkQuery from "./check.surql"
 
@@ -13,7 +13,7 @@ const headers = Object.freeze({
 export async function load({ params, setHeaders }: PageServerLoadEvent) {
 	setHeaders(headers)
 
-	const [valid] = await db.query<boolean[]>(checkQuery, {
+	const [valid] = await dbQuery<boolean[]>(checkQuery, {
 		hash: hashRecoveryToken(params.token),
 	})
 

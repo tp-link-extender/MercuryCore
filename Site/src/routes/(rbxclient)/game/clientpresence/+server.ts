@@ -1,5 +1,7 @@
 import { error } from "@sveltejs/kit"
-import { db, find, Record } from "#lib/server/surreal.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
+import { find } from "#lib/server/db/records.ts"
+import { Record } from "#lib/server/surreal.ts"
 import type { RequestEvent } from "./$types"
 import pingQuery from "./ping.surql"
 
@@ -11,7 +13,7 @@ export async function GET({ request, url }: RequestEvent) {
 	if (!ticket) error(400, "Invalid Request")
 	if (!(await find("playing", ticket))) error(400, "Ticket not found")
 
-	await db.query(pingQuery, { playing: Record("playing", ticket) })
+	await dbQuery(pingQuery, { playing: Record("playing", ticket) })
 
 	return new Response("OK", {
 		headers: {

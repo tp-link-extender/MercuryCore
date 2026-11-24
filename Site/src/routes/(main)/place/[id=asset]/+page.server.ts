@@ -1,8 +1,9 @@
 import { error, redirect } from "@sveltejs/kit"
 import { Place as EconPlace } from "economy/types"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { economyConnFailed, ownsItem } from "#lib/server/economy.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import { encode } from "#lib/urlName.ts"
 import type { PageServerLoadEvent } from "./$types"
 import placeIdQuery from "./placeId.surql"
@@ -16,7 +17,7 @@ interface Place {
 
 export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
-	const [[place]] = await db.query<Place[][]>(placeIdQuery, {
+	const [[place]] = await dbQuery<Place[][]>(placeIdQuery, {
 		place: Record("place", Number(params.id)),
 	})
 

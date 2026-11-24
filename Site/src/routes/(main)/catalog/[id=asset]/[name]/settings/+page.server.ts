@@ -1,7 +1,8 @@
 import { error } from "@sveltejs/kit"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { assetOwner, economyConnFailed } from "#lib/server/economy.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import { encode } from "#lib/urlName.ts"
 import type { PageServerLoadEvent } from "./$types"
 import assetQuery from "./asset.surql"
@@ -28,7 +29,7 @@ interface AssetCheck {
 export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 	const id = Number(params.id)
-	const [[check]] = await db.query<AssetCheck[][]>(assetCheckQuery, {
+	const [[check]] = await dbQuery<AssetCheck[][]>(assetCheckQuery, {
 		asset: Record("asset", id),
 	})
 	if (!check) error(404, "Not Found")
@@ -39,7 +40,7 @@ export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
 	if (!isOwner && user.permissionLevel < 3)
 		error(403, "You do not have permission to view this page")
 
-	const [[asset]] = await db.query<Asset[][]>(assetQuery, {
+	const [[asset]] = await dbQuery<Asset[][]>(assetQuery, {
 		asset: Record("asset", id),
 	})
 	if (!asset) error(404, "Not Found")

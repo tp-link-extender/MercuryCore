@@ -1,5 +1,6 @@
 import { type } from "arktype"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { hashPassword } from "#lib/server/password.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
 import { db, Record } from "#lib/server/surreal.ts"
@@ -29,7 +30,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 
 		try {
 			// oxlint-disable-next-line unicorn/no-unreadable-array-destructuring -- the query returns [result, loop result, ok]
-			const [, , ok] = await db.query<boolean[]>(updatePasswordQuery, {
+			const [, , ok] = await dbQuery<boolean[]>(updatePasswordQuery, {
 				npassword: await hashPassword(_password),
 				username,
 			})

@@ -1,7 +1,8 @@
 // The friends, followers, and following pages for a user.
 
 import { error } from "@sveltejs/kit"
-import { db, type RecordId } from "#lib/server/surreal.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
+import type { RecordId } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import followersQuery from "./followers.surql"
 import followingQuery from "./following.surql"
@@ -22,13 +23,13 @@ const isQueryType = (type: string): type is keyof typeof queries =>
 export async function load({ params }: PageServerLoadEvent) {
 	const type = params.f
 	if (!isQueryType(type)) error(404, "Not Found")
-	const [[user]] = await db.query<{ id: RecordId<"user"> }[][]>(
+	const [[user]] = await dbQuery<{ id: RecordId<"user"> }[][]>(
 		userQuery,
 		params
 	)
 	if (!user) error(404, "Not Found")
 
-	const [users, count] = await db.query<BasicUser[][]>(queries[type], user)
+	const [users, count] = await dbQuery<BasicUser[][]>(queries[type], user)
 
 	return {
 		...params,

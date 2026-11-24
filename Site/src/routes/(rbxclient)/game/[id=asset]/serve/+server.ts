@@ -1,10 +1,11 @@
 import { error } from "@sveltejs/kit"
 import { bearerMatches } from "#lib/server/bearer.ts"
 import config from "#lib/server/config.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import idToPort from "#lib/server/idToPort.ts"
 import { buildLoadscript } from "#lib/server/loadscript.ts"
 import { SignScript } from "#lib/server/sign.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import { GAMESERVER_KEY } from "$app/env/private"
 import type { RequestEvent } from "./$types"
 import placeQuery from "./place.surql"
@@ -24,7 +25,7 @@ export async function GET({ params, request }: RequestEvent) {
 
 	const id = Number(params.id)
 
-	const [[place]] = await db.query<Place[][]>(placeQuery, {
+	const [[place]] = await dbQuery<Place[][]>(placeQuery, {
 		place: Record("place", id),
 	})
 	if (!place) error(404, "Place not found")

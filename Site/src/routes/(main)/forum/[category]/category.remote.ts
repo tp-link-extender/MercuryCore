@@ -2,8 +2,9 @@ import { error, redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import type { Scored } from "#lib/like2.ts"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import exclude from "#lib/server/exclude.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import { getRequestEvent, query } from "$app/server"
 import type { PreviewPost } from "../+page.server"
 import categoryQuery from "./category.surql"
@@ -30,14 +31,11 @@ export const getCategory = query(schema, async name => {
 	const page = Number.isNaN(Number(pageQ)) ? 1 : Math.round(Number(pageQ))
 	if (page < 1) redirect(303, `/forum/${name}?p=1`)
 
-	const [category, pages] = await db.query<[Category, number]>(
-		categoryQuery,
-		{
-			category: name,
-			page,
-			user: Record("user", user.id),
-		}
-	)
+	const [category, pages] = await dbQuery<[Category, number]>(categoryQuery, {
+		category: name,
+		page,
+		user: Record("user", user.id),
+	})
 	if (!category) error(404, "Not Found")
 	if (page > pages) redirect(303, `/forum/${name}?p=${pages}`)
 

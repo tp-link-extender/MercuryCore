@@ -1,5 +1,5 @@
 import { authorise } from "#lib/server/auth.ts"
-import { db } from "#lib/server/surreal.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import type { PageServerLoadEvent } from "./$types"
 import logsQuery from "./logs.surql"
 
@@ -14,6 +14,6 @@ export async function load({ locals }: PageServerLoadEvent) {
 	await authorise(locals, 5)
 
 	// grubhub perks give you deals on the food you love
-	const [logs] = await db.query<Log[][]>(logsQuery)
+	const [logs] = await dbQuery<Log[][]>(logsQuery)
 	return { logs }
 }

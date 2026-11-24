@@ -3,8 +3,10 @@ import { type } from "arktype"
 import { createGroup } from "economy/api"
 import { User } from "economy/types"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
+import { findWhere } from "#lib/server/db/records.ts"
 import exclude from "#lib/server/exclude.ts"
-import { db, findWhere, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
 import createQuery from "./create.surql"
@@ -44,7 +46,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 		// uses it as its own ID so ownership can be resolved from the ledger.
 		const groupId = created.value.ID
 
-		await db.query(createQuery, {
+		await dbQuery(createQuery, {
 			economyId: groupId,
 			name,
 			user: Record("user", user.id),

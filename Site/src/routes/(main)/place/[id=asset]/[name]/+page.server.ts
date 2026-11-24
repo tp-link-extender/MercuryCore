@@ -3,12 +3,13 @@ import { Place as EconPlace } from "economy/types"
 import { authorise } from "#lib/server/auth.ts"
 import config from "#lib/server/config.ts"
 import constantTimeEqual from "#lib/server/constantTimeEqual.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import {
 	economyConnFailed,
 	itemOwner,
 	type OwnedUser,
 } from "#lib/server/economy.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import { couldMatch, encode } from "#lib/urlName.ts"
 import type { PageServerLoadEvent } from "./$types"
 import placeQuery from "./place.surql"
@@ -58,7 +59,7 @@ export async function load({
 	const { user } = await authorise(locals)
 	const privateTicket = url.searchParams.get("privateServer")
 	const id = Number(params.id)
-	const [[place]] = await db.query<Place[][]>(placeQuery, {
+	const [[place]] = await dbQuery<Place[][]>(placeQuery, {
 		place: Record("place", id),
 		user: Record("user", user.id),
 	})

@@ -12,9 +12,10 @@ import {
 	validateSessionToken,
 } from "#lib/server/auth.ts"
 import config from "#lib/server/config.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { redactSearch } from "#lib/server/redact.ts"
 import { styleText } from "#lib/server/styleText.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import moderatedQuery from "./moderated.surql"
 
 const { magenta, red, yellow, green, blue, gray } = pc
@@ -138,7 +139,7 @@ export async function handle(e: Parameters<Handle>[0]) {
 	event.locals.user = user
 	event.cookies.set(cookieName, session, cookieOptions)
 
-	const [, moderated] = await db.query<boolean[]>(moderatedQuery, {
+	const [, moderated] = await dbQuery<boolean[]>(moderatedQuery, {
 		user: Record("user", user.id),
 	})
 	event.locals.moderated = moderated

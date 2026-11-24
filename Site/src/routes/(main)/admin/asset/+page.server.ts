@@ -1,11 +1,11 @@
 import { error } from "@sveltejs/kit"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import {
 	assetOwner,
 	economyConnFailed,
 	type OwnedUser,
 } from "#lib/server/economy.ts"
-import { db } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import assetsQuery from "./asset.surql"
 
@@ -24,7 +24,7 @@ interface Asset {
 export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 	await authorise(locals, 3)
 
-	const [assets] = await db.query<Asset[][]>(assetsQuery)
+	const [assets] = await dbQuery<Asset[][]>(assetsQuery)
 
 	const withOwners = await Promise.all(
 		assets.map(async asset => {

@@ -1,8 +1,10 @@
 import { type } from "arktype"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
+import { findWhere } from "#lib/server/db/records.ts"
 import { sendModerationDiscordWebhook } from "#lib/server/discordModerationWebhook.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
-import { db, findWhere, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
 import moderateQuery from "./moderate.surql"
@@ -38,7 +40,7 @@ export const formData: ClientForm<typeof schema.inferIn> = form(
 			id: string
 			permissionLevel: number
 		}
-		const [[getModeratee]] = await db.query<Moderatee[][]>(moderateeQuery, {
+		const [[getModeratee]] = await dbQuery<Moderatee[][]>(moderateeQuery, {
 			username,
 		})
 		if (!getModeratee) return issues.username("User does not exist")
@@ -72,7 +74,7 @@ export const formData: ClientForm<typeof schema.inferIn> = form(
 					"You cannot unban a user that has not been moderated yet"
 				)
 
-			await db.query(unbanQuery, {
+			await dbQuery(unbanQuery, {
 				...qParams,
 				note: `Unban ${username}`,
 			})
@@ -93,7 +95,7 @@ export const formData: ClientForm<typeof schema.inferIn> = form(
 
 		const [note, actioned] = actionLabels[action]()
 
-		await db.query(moderateQuery, {
+		await dbQuery(moderateQuery, {
 			...qParams,
 			moderationAction: action,
 			note: `${note}: ${reason}`,

@@ -1,8 +1,9 @@
 import { error } from "@sveltejs/kit"
 import { Place as EconPlace } from "economy/types"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { economyConnFailed, ownsItem } from "#lib/server/economy.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import { encode } from "#lib/urlName.ts"
 import clientVersions from "../../../../games/create/clientVersions"
 import type { PageServerLoadEvent } from "./$types"
@@ -26,7 +27,7 @@ interface Place {
 }
 
 async function placeQuery(id: number) {
-	const [[place]] = await db.query<Place[][]>(settingsQuery, {
+	const [[place]] = await dbQuery<Place[][]>(settingsQuery, {
 		place: Record("place", id),
 	})
 	return place

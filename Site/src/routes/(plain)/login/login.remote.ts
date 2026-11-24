@@ -1,9 +1,10 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { cookieName, cookieOptions, createSession } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { verifyPassword } from "#lib/server/password.ts"
 import { ratelimitRemote, ratelimitRemoteKey } from "#lib/server/ratelimit.ts"
-import { db, type RecordId } from "#lib/server/surreal.ts"
+import type { RecordId } from "#lib/server/surreal.ts"
 import { usernameTest } from "#lib/typeTests.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
@@ -32,7 +33,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 			)
 		if (limit) return limit
 
-		const [[user]] = await db.query<
+		const [[user]] = await dbQuery<
 			{
 				id: RecordId<"user">
 				hashedPassword: string

@@ -2,11 +2,13 @@ import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { cookieName, cookieOptions, createSession } from "#lib/server/auth.ts"
 import config from "#lib/server/config.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
+import { findWhere } from "#lib/server/db/records.ts"
 import { hashPassword } from "#lib/server/password.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
 import { toRawId } from "#lib/server/recordId.ts"
 import requestRender from "#lib/server/requestRender.ts"
-import { db, findWhere, Record, type RecordId } from "#lib/server/surreal.ts"
+import { Record, type RecordId } from "#lib/server/surreal.ts"
 import { usernameTest } from "#lib/typeTests.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
@@ -86,7 +88,7 @@ export const register: ClientForm<typeof schema.infer> = form(
 
 			key = Record("regKey", keyId)
 
-			const [[regkeyCheck]] = await db.query<{ usesLeft: number }[][]>(
+			const [[regkeyCheck]] = await dbQuery<{ usesLeft: number }[][]>(
 				regkeyCheckQuery,
 				{ key }
 			)
@@ -102,7 +104,7 @@ export const register: ClientForm<typeof schema.infer> = form(
 
 		let results: RecordId<"user">[]
 		try {
-			results = await db.query<RecordId<"user">[]>(createUserQuery, {
+			results = await dbQuery<RecordId<"user">[]>(createUserQuery, {
 				bodyColours: config.DefaultBodyColors,
 				email: email || "",
 				// I still love scrypt, though argon2 is better supported
@@ -151,7 +153,7 @@ export const initialAccount: ClientForm<typeof schemaInitial.infer> = form(
 		const hashedPassword = await hashPassword(_password)
 		let user: RecordId<"user"> | undefined
 		try {
-			const results = await db.query<RecordId<"user">[]>(
+			const results = await dbQuery<RecordId<"user">[]>(
 				initialAccountQuery,
 				{
 					bodyColours: config.DefaultBodyColors,

@@ -1,9 +1,10 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { cookieName, cookieOptions, createSession } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { hashPassword } from "#lib/server/password.ts"
 import { hashRecoveryToken } from "#lib/server/recoveryToken.ts"
-import { db, type RecordId } from "#lib/server/surreal.ts"
+import type { RecordId } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
 import consumeQuery from "./consume.surql"
@@ -24,7 +25,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 			return issues._cnpassword("Passwords do not match")
 
 		// Use up the token before hashing the password, so requests without a valid token can't make the server do expensive work
-		const [user] = await db.query<(RecordId<"user"> | undefined)[]>(
+		const [user] = await dbQuery<(RecordId<"user"> | undefined)[]>(
 			consumeQuery,
 			{ hash: hashRecoveryToken(token) }
 		)
@@ -33,7 +34,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 				"This recovery link is invalid or has expired. Request a new one to try again."
 			)
 
-		await db.query(resetQuery, {
+		await dbQuery(resetQuery, {
 			hashedPassword: await hashPassword(_npassword),
 			user,
 		})

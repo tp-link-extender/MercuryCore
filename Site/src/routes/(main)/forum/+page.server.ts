@@ -1,5 +1,5 @@
+import { dbQuery } from "#lib/server/db/query.ts"
 import exclude from "#lib/server/exclude.ts"
-import { db } from "#lib/server/surreal.ts"
 import forumQuery from "./forum.surql"
 
 export interface PreviewPost {
@@ -18,6 +18,6 @@ interface Category {
 
 export async function load() {
 	exclude("Forum")
-	const [categories] = await db.query<Category[][]>(forumQuery)
+	const [categories] = await dbQuery<Category[][]>(forumQuery)
 	return { categories }
 }

@@ -5,6 +5,7 @@ import { createUnlimitedSource, createUnlimitedSourceFree } from "economy/api"
 import { User } from "economy/types"
 import { typeToNumber } from "#lib/assetTypes.ts"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { formFile } from "#lib/server/formFile.ts"
 import {
 	clothingAsset,
@@ -15,7 +16,6 @@ import {
 } from "#lib/server/imageAsset.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
 import requestRender from "#lib/server/requestRender.ts"
-import { db } from "#lib/server/surreal.ts"
 import { graphicAsset } from "#lib/server/xmlAsset.ts"
 import { encode } from "#lib/urlName.ts"
 import type { ClientForm } from "#lib/validate.ts"
@@ -133,7 +133,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 
 		let stored = false
 		try {
-			const results = await db.query<boolean[]>(createAssetQuery, {
+			const results = await dbQuery<boolean[]>(createAssetQuery, {
 				assetType: typeToNumber[assetType],
 				description,
 				id,

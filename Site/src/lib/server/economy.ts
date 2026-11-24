@@ -15,9 +15,10 @@ import type {
 	SourceData,
 	UserData,
 } from "#lib/economy.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import ownersQuery from "#lib/server/owners.surql"
 import ownerUserQuery from "#lib/server/ownerUser.surql"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 
 export const economyConnFailed = "Cannot connect to Economy service"
 
@@ -27,7 +28,7 @@ export type ReturnErr = { ok: true } | { ok: false; msg: string }
 export type OwnedUser = BasicUser & { id: string }
 
 async function ownerUser(id: string): Promise<OwnedUser | null> {
-	const [[user]] = await db.query<OwnedUser[][]>(ownerUserQuery, {
+	const [[user]] = await dbQuery<OwnedUser[][]>(ownerUserQuery, {
 		user: Record("user", id),
 	})
 	return user ?? null
@@ -107,7 +108,7 @@ export async function ownerData(list: TransferWithID[]): Promise<OwnerData> {
 		...list.map(tf => tf.Transfer.Send1.Owner),
 	].filter(o => o !== null)
 
-	const [users, groups, sources] = await db.query<
+	const [users, groups, sources] = await dbQuery<
 		[UserData[], GroupData[], SourceData[]]
 	>(ownersQuery, {
 		assetsList: owners.filter(IsSource).map(s => Record("asset", s.ID)),

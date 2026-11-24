@@ -1,6 +1,7 @@
 // This should be moved to asset thumbnails for every asset on Mercury, but for now we'll use it for the stamper tool (and other games which require it)
 
 import { error, redirect } from "@sveltejs/kit"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { db, Record } from "#lib/server/surreal.ts"
 import type { RequestEvent } from "./$types"
 import cachedAssetQuery from "./cache.surql"
@@ -35,7 +36,7 @@ export async function GET({ fetch: f, url }: RequestEvent) {
 	const stringAssetId = assetId.toString()
 
 	const cachedAsset = Record("thumbnailCache", assetId)
-	const [[cache]] = await db.query<
+	const [[cache]] = await dbQuery<
 		{ height?: number; url: string; width?: number }[][]
 	>(cachedAssetQuery, { cachedAsset })
 	// The cached URL is for one size, so it can only answer a request for the same size

@@ -1,5 +1,6 @@
 import { type } from "arktype"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
 import { Banner, db, Record } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
@@ -33,7 +34,7 @@ const textLightSchema = type({
 })
 
 async function bannerActiveCount() {
-	const [banners] = await db.query<number[]>(activeCountQuery)
+	const [banners] = await dbQuery<number[]>(activeCountQuery)
 	return banners
 }
 
@@ -44,7 +45,7 @@ async function updateBanner(
 	changes: { [_: string]: unknown },
 	detail = ""
 ): Promise<boolean> {
-	const results = await db.query<[null, null, boolean]>(updateQuery, {
+	const results = await dbQuery<[null, null, boolean]>(updateQuery, {
 		action,
 		banner: Record("banner", id),
 		changes,

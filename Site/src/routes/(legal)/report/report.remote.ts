@@ -1,8 +1,9 @@
 import { type } from "arktype"
 import { reportPath } from "#lib/reportUrl.ts"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
-import { db, Record, type RecordId } from "#lib/server/surreal.ts"
+import { Record, type RecordId } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
 import getReporteeQuery from "./getReportee.surql"
@@ -15,7 +16,7 @@ const schema = type({
 })
 
 async function getReportee(username: string) {
-	const [[reportee]] = await db.query<{ id: RecordId<"user"> }[][]>(
+	const [[reportee]] = await dbQuery<{ id: RecordId<"user"> }[][]>(
 		getReporteeQuery,
 		{ username }
 	)
@@ -41,7 +42,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 		const limit = ratelimitRemote(issues, "report", getClientAddress, 120)
 		if (limit) return limit
 
-		await db.query(reportQuery, {
+		await dbQuery(reportQuery, {
 			category,
 			note: note?.trim(),
 			reportee,

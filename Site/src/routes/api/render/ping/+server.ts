@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit"
 import { bearerMatches } from "#lib/server/bearer.ts"
-import { db } from "#lib/server/surreal.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { RCC_KEY } from "$app/env/private"
 import type { RequestEvent } from "./$types"
 import pingQuery from "./ping.surql"
@@ -9,6 +9,6 @@ import pingQuery from "./ping.surql"
 export async function POST({ request }: RequestEvent) {
 	if (!bearerMatches(request, RCC_KEY, "RCC_KEY")) error(403, "Nerd")
 
-	await db.query(pingQuery)
+	await dbQuery(pingQuery)
 	return new Response()
 }

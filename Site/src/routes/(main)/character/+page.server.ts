@@ -8,9 +8,10 @@ import {
 } from "economy/types"
 import { allowedTypes, packageWearable } from "#lib/character.ts"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { economyConnFailed } from "#lib/server/economy.ts"
 import { packageItems } from "#lib/server/packageItems.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import assetsQuery from "./assets.surql"
 import wornQuery from "./worn.surql"
@@ -48,7 +49,7 @@ export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 
 	if (ids.length === 0) return { assets: [] }
 
-	const [assets] = await db.query<Asset[][]>(assetsQuery, {
+	const [assets] = await dbQuery<Asset[][]>(assetsQuery, {
 		allowedTypes,
 		assets: ids.map(id => Record("asset", id)),
 		user: Record("user", user.id),
@@ -75,7 +76,7 @@ export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 	}
 
 	if (wearables.length > 0) {
-		const [worn] = await db.query<WornAsset[][]>(wornQuery, {
+		const [worn] = await dbQuery<WornAsset[][]>(wornQuery, {
 			ids: wearables,
 			user: Record("user", user.id),
 		})

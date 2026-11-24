@@ -3,8 +3,8 @@ import { type } from "arktype"
 import { createPlace } from "economy/api"
 import { User } from "economy/types"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import filter from "#lib/server/filter.ts"
-import { db } from "#lib/server/surreal.ts"
 import {
 	maxPlayersTest,
 	serverAddressTest,
@@ -58,7 +58,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 
 		const id = created.value.ID
 
-		await db.query(createQuery, {
+		await dbQuery(createQuery, {
 			clientVersion: Number(clientVersion),
 			description: filter(description),
 			id,

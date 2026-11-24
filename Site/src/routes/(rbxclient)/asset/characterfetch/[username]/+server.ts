@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit"
 import config from "#lib/server/config.ts"
-import { db } from "#lib/server/surreal.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import type { RequestEvent } from "./$types"
 import userQuery from "./user.surql"
 
@@ -18,7 +18,7 @@ interface User {
 
 export async function GET({ params }: RequestEvent) {
 	const { username } = params
-	const [[user]] = await db.query<User[][]>(userQuery, { username })
+	const [[user]] = await dbQuery<User[][]>(userQuery, { username })
 	if (!user) error(404, "User not found")
 
 	let charApp = `http://${config.DomainInsecure}/asset/bodycolors.ashx?username=${username}`

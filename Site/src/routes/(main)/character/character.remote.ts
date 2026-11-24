@@ -16,6 +16,7 @@ import {
 } from "#lib/character.ts"
 import { assetRegex } from "#lib/paramTests.ts"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { economyConnFailed } from "#lib/server/economy.ts"
 import { packageItems } from "#lib/server/packageItems.ts"
 import { ratelimited, tooManyRequests } from "#lib/server/ratelimit.ts"
@@ -54,7 +55,7 @@ async function getEquipData(id: string, requireVisible = true) {
 	if (!assetRegex.test(id)) error(400, `Invalid asset ID: ${id}`)
 	const assetId = Number(id)
 
-	const [[asset]] = await db.query<AssetData[][]>(equipDataQuery, {
+	const [[asset]] = await dbQuery<AssetData[][]>(equipDataQuery, {
 		asset: Record("asset", assetId),
 	})
 	if (!asset) error(404, "Item not found")
@@ -106,7 +107,7 @@ export const equipForm = form(equipSchema, async ({ id }, issues) => {
 		if (children.length === 0)
 			return issues("This package has no items to equip")
 
-		await db.query(equipPackageQuery, {
+		await dbQuery(equipPackageQuery, {
 			children: children.map(item => Record("asset", item.id)),
 			conflicting: [
 				...new Set(
@@ -126,13 +127,13 @@ export const equipForm = form(equipSchema, async ({ id }, issues) => {
 
 	// Find if there's more than 3 hats equipped, throw an error if there is
 	if (asset.type === 8) {
-		const [hatsEquipped] = await db.query<number[]>(hatsEquippedQuery, {
+		const [hatsEquipped] = await dbQuery<number[]>(hatsEquippedQuery, {
 			user: Record("user", user.id),
 		})
 		if (hatsEquipped >= 3) return issues("You can only wear 3 hats")
 	}
 
-	await db.query(equipQuery, {
+	await dbQuery(equipQuery, {
 		asset: Record("asset", assetId),
 		user: Record("user", user.id),
 		...(oneEquippable.includes(asset.type) ? asset : {}),
@@ -158,7 +159,7 @@ export const unequipForm = form(equipSchema, async ({ id }) => {
 			)
 			.map(item => Record("asset", item.id))
 
-		await db.query(unequipPackageQuery, {
+		await dbQuery(unequipPackageQuery, {
 			children,
 			user: Record("user", user.id),
 		})
@@ -166,7 +167,7 @@ export const unequipForm = form(equipSchema, async ({ id }) => {
 		return rerender(user)
 	}
 
-	await db.query(unequipQuery, {
+	await dbQuery(unequipQuery, {
 		asset: Record("asset", assetId),
 		user: Record("user", user.id),
 	})

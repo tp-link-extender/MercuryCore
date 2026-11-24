@@ -1,5 +1,6 @@
 import { authorise } from "#lib/server/auth.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
+import { Record } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import homeQuery from "./home.surql"
 
@@ -32,7 +33,7 @@ export async function load({ locals }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 	// (main)/+layout.server.ts will handle most redirects for logged-out users, but sometimes errors for this page.
 
-	const [places, friends, feed] = await db.query<
+	const [places, friends, feed] = await dbQuery<
 		[Place[], BasicUser[], Status[]]
 	>(homeQuery, { user: Record("user", user.id) })
 

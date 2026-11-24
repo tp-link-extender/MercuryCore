@@ -1,7 +1,8 @@
 import config from "#lib/server/config.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { usesDedicated } from "#lib/server/dedicated.ts"
 import idToPort, { proxyOffset } from "#lib/server/idToPort.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import joinQuery from "./join.surql"
 
 interface ServerAddress {
@@ -34,7 +35,7 @@ function serverInfo(place: Session["place"]): ServerAddress {
 export async function claimSession(
 	clientTicket: string
 ): Promise<(Session & ServerAddress) | null> {
-	const [, session] = await db.query<(Session | null)[]>(joinQuery, {
+	const [, session] = await dbQuery<(Session | null)[]>(joinQuery, {
 		playing: Record("playing", clientTicket),
 	})
 	if (!session) return null

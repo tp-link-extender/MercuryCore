@@ -1,4 +1,5 @@
-import { db, Record } from "#lib/server/surreal.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
+import { Record } from "#lib/server/surreal.ts"
 import notificationsQuery from "./notifications.surql"
 
 interface Notification {
@@ -14,7 +15,7 @@ interface Notification {
 
 export default async function getNotifications(user: User | null) {
 	if (!user) return []
-	const [notifications] = await db.query<Notification[][]>(
+	const [notifications] = await dbQuery<Notification[][]>(
 		notificationsQuery,
 		{ user: Record("user", user.id) }
 	)

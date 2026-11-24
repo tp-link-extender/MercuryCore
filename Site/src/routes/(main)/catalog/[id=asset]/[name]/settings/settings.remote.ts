@@ -2,6 +2,7 @@ import fs from "node:fs"
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { assetOwner, economyConnFailed } from "#lib/server/economy.ts"
 import {
 	isAudio,
@@ -20,7 +21,7 @@ import {
 } from "#lib/server/imageAsset.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
 import requestRender from "#lib/server/requestRender.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
 import assetCheckQuery from "./assetCheck.surql"
@@ -84,7 +85,7 @@ export const settingsForm: ClientForm<typeof schema.infer> = form(
 		const { user } = await authorise(locals)
 
 		const assetId = Number(id)
-		const [[asset]] = await db.query<AssetCheck[][]>(assetCheckQuery, {
+		const [[asset]] = await dbQuery<AssetCheck[][]>(assetCheckQuery, {
 			asset: Record("asset", assetId),
 		})
 		if (!asset) error(404, "Not Found")
@@ -95,7 +96,7 @@ export const settingsForm: ClientForm<typeof schema.infer> = form(
 			error(403, "You do not have permission to edit this asset")
 
 		const review = user.permissionLevel < 3
-		const results = await db.query(updateAssetQuery, {
+		const results = await dbQuery(updateAssetQuery, {
 			asset: Record("asset", assetId),
 			description: filter(description || ""),
 			forSale: Boolean(forSale),
@@ -127,7 +128,7 @@ export const reuploadForm: ClientForm<typeof reuploadSchema.infer> = form(
 			return issues.asset("Asset must be less than 20MB in size")
 
 		const assetId = Number(id)
-		const [[asset]] = await db.query<AssetCheck[][]>(assetCheckQuery, {
+		const [[asset]] = await dbQuery<AssetCheck[][]>(assetCheckQuery, {
 			asset: Record("asset", assetId),
 		})
 		if (!asset) error(404, "Not Found")
@@ -218,7 +219,7 @@ export const reuploadForm: ClientForm<typeof reuploadSchema.infer> = form(
 		}
 
 		const visibility = user.permissionLevel >= 3 ? "Visible" : "Pending"
-		await db.query(reuploadQuery, {
+		await dbQuery(reuploadQuery, {
 			asset: Record("asset", assetId),
 			note: `Reupload asset ${asset.name} (id ${assetId})`,
 			user: Record("user", user.id),

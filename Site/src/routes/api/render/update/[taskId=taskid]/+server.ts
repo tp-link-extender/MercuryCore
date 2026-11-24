@@ -1,5 +1,6 @@
 import { error } from "@sveltejs/kit"
 import { bearerMatches } from "#lib/server/bearer.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { parseRenderUpdate } from "#lib/server/renderUpdate.ts"
 import { db, Record } from "#lib/server/surreal.ts"
 import { RCC_KEY } from "$app/env/private"
@@ -25,7 +26,7 @@ export async function POST({ params, request }: RequestEvent) {
 	if (!bearerMatches(request, RCC_KEY, "RCC_KEY")) error(403, "Stfu")
 
 	const render = Record("render", params.taskId)
-	const [[task]] = await db.query<Render[][]>(renderQuery, { render })
+	const [[task]] = await dbQuery<Render[][]>(renderQuery, { render })
 	if (!task) error(404, "Task not found")
 
 	// More stuff is done with the proxy now, so we don't need to gunzip it
@@ -56,6 +57,6 @@ export async function POST({ params, request }: RequestEvent) {
 		await Promise.all([write(clickHead, "head"), write(clickBody, "body")])
 	else if (clickBody) await write(clickBody)
 
-	await db.query(completeQuery, { render })
+	await dbQuery(completeQuery, { render })
 	return new Response()
 }

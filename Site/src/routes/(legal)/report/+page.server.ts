@@ -1,14 +1,15 @@
 import { error } from "@sveltejs/kit"
 import { reportPath } from "#lib/reportUrl.ts"
 import { authorise } from "#lib/server/auth.ts"
-import { db, type RecordId } from "#lib/server/surreal.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
+import type { RecordId } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import getReporteeQuery from "./getReportee.surql"
 
 async function getReportee(
 	username: string
 ): Promise<RecordId<"user"> | undefined> {
-	const [[reportee]] = await db.query<{ id: RecordId<"user"> }[][]>(
+	const [[reportee]] = await dbQuery<{ id: RecordId<"user"> }[][]>(
 		getReporteeQuery,
 		{ username }
 	)

@@ -1,5 +1,5 @@
 import { authorise } from "#lib/server/auth.ts"
-import { db } from "#lib/server/surreal.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import type { PageServerLoadEvent } from "./$types"
 import bannersQuery from "./banners.surql"
 
@@ -16,6 +16,6 @@ interface BannerType {
 export async function load({ locals }: PageServerLoadEvent) {
 	await authorise(locals, 5)
 
-	const [banners] = await db.query<BannerType[][]>(bannersQuery)
+	const [banners] = await dbQuery<BannerType[][]>(bannersQuery)
 	return { banners }
 }

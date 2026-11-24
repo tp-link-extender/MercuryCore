@@ -1,5 +1,5 @@
 import { error } from "@sveltejs/kit"
-import { db } from "#lib/server/surreal.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import type { RequestEvent } from "./$types"
 import pingQuery from "./ping.surql"
 
@@ -10,7 +10,7 @@ export async function GET({ request, url }: RequestEvent) {
 	const ticket = url.searchParams.get("ticket")
 	if (!ticket) error(400, "Invalid Request")
 
-	await db.query(pingQuery, { ticket })
+	await dbQuery(pingQuery, { ticket })
 
 	return new Response("OK", {
 		headers: {

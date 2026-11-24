@@ -4,6 +4,7 @@ import { type } from "arktype"
 import { Place as EconPlace } from "economy/types"
 import sharp from "sharp"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { economyConnFailed, ownsItem } from "#lib/server/economy.ts"
 import filter from "#lib/server/filter.ts"
 import { formFile } from "#lib/server/formFile.ts"
@@ -73,7 +74,7 @@ const dataSchema = type({
 })
 
 async function placeQuery(id: number) {
-	const [[place]] = await db.query<Place[][]>(settingsQuery, {
+	const [[place]] = await dbQuery<Place[][]>(settingsQuery, {
 		place: Record("place", id),
 	})
 	return place
@@ -121,7 +122,7 @@ export const viewForm: ClientForm<typeof viewSchema.inferIn> = form(
 				)
 		}
 
-		await db.query(updateSettingsQuery, {
+		await dbQuery(updateSettingsQuery, {
 			description: filter(description || ""),
 			name: filter(nname),
 			place: Record("place", placeId),
@@ -135,7 +136,7 @@ export const ticketForm: ClientForm<typeof ticketSchema.inferIn> = form(
 	async ({ id }) => {
 		const ticketPlaceId = await getData(id)
 
-		await db.query(serverTicketQuery, {
+		await dbQuery(serverTicketQuery, {
 			place: Record("place", ticketPlaceId),
 		})
 		return { success: "Regenerated!" }
@@ -183,7 +184,7 @@ export const privacyForm: ClientForm<typeof privacySchema.inferIn> = form(
 	async ({ id, privateServer }) => {
 		const placeId = await getData(id)
 
-		await db.query(privacyQuery, {
+		await dbQuery(privacyQuery, {
 			place: Record("place", placeId),
 			privateServer: Boolean(privateServer),
 		})
@@ -196,7 +197,7 @@ export const privatelinkForm: ClientForm<typeof ticketSchema.inferIn> = form(
 	async ({ id }) => {
 		const linkPlaceId = await getData(id)
 
-		await db.query(privateTicketQuery, {
+		await dbQuery(privateTicketQuery, {
 			place: Record("place", linkPlaceId),
 		})
 		return { success: "Regenerated!" }

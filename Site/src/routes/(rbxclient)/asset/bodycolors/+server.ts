@@ -1,5 +1,5 @@
 import { error } from "@sveltejs/kit"
-import { db } from "#lib/server/surreal.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { fillXmlTemplate } from "#lib/server/xmlTemplate.ts"
 import type { RequestEvent } from "./$types"
 import bodyColoursQuery from "./bodyColours.surql"
@@ -38,7 +38,7 @@ export async function GET({ url }: RequestEvent) {
 			{ headers: xmlHeaders }
 		)
 
-	const [[user]] = await db.query<User[][]>(bodyColoursQuery, { username })
+	const [[user]] = await dbQuery<User[][]>(bodyColoursQuery, { username })
 	if (!user) error(404, "User not found")
 
 	const colours = user.bodyColours

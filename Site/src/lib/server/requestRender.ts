@@ -1,5 +1,6 @@
 import fs from "node:fs"
 import config from "#lib/server/config.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { buildLoadscript } from "#lib/server/loadscript.ts"
 import { db, Record } from "#lib/server/surreal.ts"
 import { waitForChange } from "#lib/server/waitForChange.ts"
@@ -47,7 +48,7 @@ export default async function requestRender(
 
 	const params = Object.freeze({ relativeId, renderType })
 	// oxlint-disable-next-line unicorn/no-unreadable-array-destructuring -- query returns [result, error, value]
-	const [, , render] = await db.query<Render[]>(renderQuery, params)
+	const [, , render] = await dbQuery<Render[]>(renderQuery, params)
 	if (render && render.status !== "Error") return
 
 	// Check the script exists before creating a render record, otherwise a
@@ -57,7 +58,7 @@ export default async function requestRender(
 		throw new Error(`Script file for ${renderType} does not exist`)
 
 	const scriptText = await scriptFile.text()
-	const [, renderId] = await db.query<string[]>(createRenderQuery, params)
+	const [, renderId] = await dbQuery<string[]>(createRenderQuery, params)
 
 	// console.log(`Created new render with ID ${renderId}`)
 

@@ -8,6 +8,7 @@ import {
 	invalidateAllSessions,
 } from "#lib/server/auth.ts"
 import config from "#lib/server/config.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { hashPassword, verifyPassword } from "#lib/server/password.ts"
 import { ratelimitRemoteKey } from "#lib/server/ratelimit.ts"
 import { db, Record } from "#lib/server/surreal.ts"
@@ -46,7 +47,7 @@ export const profileForm: ClientForm<typeof profileSchema.inferIn> = form(
 		const { locals } = getRequestEvent()
 		const { user } = await authorise(locals)
 
-		await db.query(updateProfileQuery, {
+		await dbQuery(updateProfileQuery, {
 			description,
 			theme,
 			user: Record("user", user.id),
@@ -80,13 +81,13 @@ export const passwordForm: ClientForm<typeof passwordSchema.infer> = form(
 		if (limit) return limit
 
 		const userR = Record("user", user.id)
-		const [[{ hashedPassword }]] = await db.query<
+		const [[{ hashedPassword }]] = await dbQuery<
 			{ hashedPassword: string }[][]
 		>(passwordQuery, { user: userR })
 		if (!(await verifyPassword(_cpassword, hashedPassword)))
 			return issues._cpassword("Incorrect password")
 
-		await db.query(changePasswordQuery, {
+		await dbQuery(changePasswordQuery, {
 			hashedPassword: await hashPassword(_npassword),
 			user: userR,
 		})
@@ -112,7 +113,7 @@ export const sessionForm: ClientForm<typeof sessionSchema.infer> = form(
 		)
 		if (limit) return limit
 
-		const [[{ hashedPassword }]] = await db.query<
+		const [[{ hashedPassword }]] = await dbQuery<
 			{ hashedPassword: string }[][]
 		>(passwordQuery, { user: Record("user", user.id) })
 		if (!(await verifyPassword(_password, hashedPassword)))

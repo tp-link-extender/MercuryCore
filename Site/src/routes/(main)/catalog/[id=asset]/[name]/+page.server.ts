@@ -3,9 +3,10 @@ import { balance, countOwnersOne, ownsOne } from "economy/api"
 import { Package as EconPackage, UnlimitedAsset, User } from "economy/types"
 import type { Comment } from "#lib/comment.ts"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { assetOwner, economyConnFailed } from "#lib/server/economy.ts"
 import { type PackageItem, packageItems } from "#lib/server/packageItems.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import { couldMatch, encode } from "#lib/urlName.ts"
 import type { RequestEvent } from "./$types"
 import assetQuery from "./asset.surql"
@@ -37,7 +38,7 @@ const failTexts = Object.freeze(["Bruh", "Okay", "Aight", "Rip", "Aw man..."])
 export async function load({ fetch: f, locals, params }: RequestEvent) {
 	const { user } = await authorise(locals)
 	const id = Number(params.id)
-	const [[asset]] = await db.query<Asset[][]>(assetQuery, {
+	const [[asset]] = await dbQuery<Asset[][]>(assetQuery, {
 		asset: Record("asset", id),
 		user: Record("user", user.id),
 	})

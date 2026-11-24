@@ -3,8 +3,9 @@ import { type } from "arktype"
 import { Place as EconPlace } from "economy/types"
 import { authorise } from "#lib/server/auth.ts"
 import constantTimeEqual from "#lib/server/constantTimeEqual.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { economyConnFailed, ownsItem } from "#lib/server/economy.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import { getRequestEvent } from "$app/server"
 import findPlaceQuery from "./findPlace.surql"
 
@@ -32,7 +33,7 @@ export async function findPlace(id: string, privateTicket: string) {
 	if (!Number.isSafeInteger(placeId)) error(404, "Place not found")
 
 	const placeR = Record("place", placeId)
-	const [[place]] = await db.query<FoundPlace[][]>(findPlaceQuery, {
+	const [[place]] = await dbQuery<FoundPlace[][]>(findPlaceQuery, {
 		place: placeR,
 	})
 	if (!place) error(404, "Place not found")

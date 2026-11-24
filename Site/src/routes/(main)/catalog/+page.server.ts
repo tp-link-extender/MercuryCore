@@ -1,9 +1,9 @@
 import { error } from "@sveltejs/kit"
 import { packageItems as ledgerPackageItems } from "economy/api"
 import { UnlimitedAsset } from "economy/types"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { economyConnFailed } from "#lib/server/economy.ts"
 import pageQuery from "#lib/server/pageQuery.ts"
-import { db } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import catalogQuery from "./catalog.surql"
 
@@ -28,7 +28,7 @@ export async function load({ fetch: f, url }: PageServerLoadEvent) {
 	// const type = url.searchParams.get("type") || ""
 	// if (!intRegex.test(type)) error(400, "Invalid type parameter")
 
-	const [, pages] = await db.query<[Asset[], number]>(catalogQuery, {
+	const [, pages] = await dbQuery<[Asset[], number]>(catalogQuery, {
 		packageItems: await packageItemIds(f),
 		page,
 		// type: +type,

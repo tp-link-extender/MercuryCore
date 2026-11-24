@@ -1,6 +1,7 @@
 import { error } from "@sveltejs/kit"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { toRawId } from "#lib/server/recordId.ts"
-import { db, type RecordId } from "#lib/server/surreal.ts"
+import type { RecordId } from "#lib/server/surreal.ts"
 import { waitForChange } from "#lib/server/waitForChange.ts"
 import type { RequestEvent } from "./$types"
 
@@ -18,7 +19,7 @@ export async function GET({ params, url }: RequestEvent) {
 		shotType = "-body"
 	}
 
-	const [[user]] = await db.query<{ id: RecordId<"user"> }[][]>(
+	const [[user]] = await dbQuery<{ id: RecordId<"user"> }[][]>(
 		"SELECT id FROM user WHERE username = $username",
 		{ username }
 	)

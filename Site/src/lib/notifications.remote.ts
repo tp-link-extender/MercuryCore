@@ -1,8 +1,9 @@
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import readQuery from "#lib/server/readNotification.surql"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import { form, getRequestEvent } from "$app/server"
 
 const schema = type({
@@ -15,7 +16,7 @@ export const dismissForm = form(schema, async ({ id }) => {
 
 	let updated: unknown[]
 	try {
-		const [rows] = await db.query<unknown[][]>(readQuery, {
+		const [rows] = await dbQuery<unknown[][]>(readQuery, {
 			notification: Record("notification", id),
 			user: Record("user", user.id),
 		})

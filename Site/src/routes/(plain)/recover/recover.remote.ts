@@ -1,12 +1,12 @@
 import { type } from "arktype"
 import config from "#lib/server/config.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { sendEmail } from "#lib/server/email.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
 import {
 	createRecoveryToken,
 	hashRecoveryToken,
 } from "#lib/server/recoveryToken.ts"
-import { db } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
 import recoveryQuery from "./recovery.surql"
@@ -54,7 +54,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 		const token = createRecoveryToken()
 
 		// oxlint-disable-next-line unicorn/no-unreadable-array-destructuring -- query returns [let, if, exists]
-		const [, , exists] = await db.query<boolean[]>(recoveryQuery, {
+		const [, , exists] = await dbQuery<boolean[]>(recoveryQuery, {
 			email,
 			hash: hashRecoveryToken(token),
 		})

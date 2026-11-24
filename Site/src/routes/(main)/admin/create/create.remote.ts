@@ -5,9 +5,9 @@ import { createPackageSourceFree, createUnlimitedSourceFree } from "economy/api"
 import { User as EconUser, type UnlimitedSource } from "economy/types"
 import types, { typeToNumber } from "#lib/assetTypes.ts"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { formFile } from "#lib/server/formFile.ts"
 import requestRender, { type RenderType } from "#lib/server/requestRender.ts"
-import { db } from "#lib/server/surreal.ts"
 import { isXML } from "#lib/server/xml.ts"
 import { encode } from "#lib/urlName.ts"
 import type { ClientForm } from "#lib/validate.ts"
@@ -120,7 +120,7 @@ export const formData: ClientForm<typeof schema.inferIn> = form(
 
 		let stored = false
 		try {
-			const results = await db.query(createQuery, {
+			const results = await dbQuery(createQuery, {
 				assetType,
 				description,
 				id,
@@ -249,7 +249,7 @@ async function createPackage(
 
 	let stored = false
 	try {
-		const results = await db.query(createPackageQuery, {
+		const results = await dbQuery(createPackageQuery, {
 			childRows: validChildren.map(c => ({
 				description: [{ text: c.description }],
 				forSale: false, // package items are offsale by default

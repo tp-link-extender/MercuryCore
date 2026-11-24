@@ -2,9 +2,10 @@ import fs from "node:fs/promises"
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
 import requestRender from "#lib/server/requestRender.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import { form, getRequestEvent } from "$app/server"
 import iaidQuery from "./iaid.surql"
 import purgeQuery from "./purge.surql"
@@ -31,7 +32,7 @@ async function getData(id: string) {
 		asset: Record("asset", assetId),
 		user: Record("user", user.id),
 	})
-	const [[asset]] = await db.query<
+	const [[asset]] = await dbQuery<
 		{ name: string; type: number; visibility: string }[][]
 	>("SELECT name, type, visibility FROM $asset", params)
 	if (!asset) error(404, "Asset not found")
@@ -46,7 +47,7 @@ async function getData(id: string) {
 
 export const approveForm = form(schema, async ({ id }) => {
 	const { assetName, id: assetId, params } = await getData(id)
-	await db.query(visibilityQuery, {
+	await dbQuery(visibilityQuery, {
 		...params,
 		note: `Approve asset ${assetName} (id ${assetId})`,
 		visibility: "Visible",
@@ -55,7 +56,7 @@ export const approveForm = form(schema, async ({ id }) => {
 
 export const denyForm = form(schema, async ({ id }) => {
 	const { assetName, id: assetId, params } = await getData(id)
-	await db.query(visibilityQuery, {
+	await dbQuery(visibilityQuery, {
 		...params,
 		note: `Moderate asset ${assetName} (id ${assetId})`,
 		visibility: "Moderated",
@@ -85,7 +86,7 @@ export const rerenderForm = form(schema, async ({ id }, issues) => {
 export const purgeForm = form(schema, async ({ id }) => {
 	// Nuclear option
 	const { assetName, id: assetId, params } = await getData(id)
-	const [[{ iaid }]] = await db.query<{ iaid: number }[][]>(iaidQuery, {
+	const [[{ iaid }]] = await dbQuery<{ iaid: number }[][]>(iaidQuery, {
 		asset: Record("asset", assetId),
 	})
 
@@ -94,7 +95,7 @@ export const purgeForm = form(schema, async ({ id }) => {
 	const imageAsset = Record("asset", iaid ?? 0)
 
 	// The records go first, so a missing file can't fail the purge after the asset is already gone
-	await db.query(purgeQuery, {
+	await dbQuery(purgeQuery, {
 		...params,
 		imageAsset,
 		note: `Purge asset ${assetName} (id ${assetId})`,

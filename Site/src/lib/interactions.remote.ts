@@ -1,6 +1,7 @@
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import acceptExistingQuery from "#lib/server/interactions/acceptExisting.surql"
 import alreadyFriendsQuery from "#lib/server/interactions/alreadyFriends.surql"
 import cancelQuery from "#lib/server/interactions/cancel.surql"
@@ -13,7 +14,7 @@ import unfollowQuery from "#lib/server/interactions/unfollow.surql"
 import unfriendQuery from "#lib/server/interactions/unfriend.surql"
 import { ratelimitRemoteKey } from "#lib/server/ratelimit.ts"
 import requestRender from "#lib/server/requestRender.ts"
-import { db, Record, type RecordId } from "#lib/server/surreal.ts"
+import { Record, type RecordId } from "#lib/server/surreal.ts"
 import { form, getRequestEvent } from "$app/server"
 
 // Friend and follow buttons are repeated per profile, so each is a `.for(username)` instance; the key arrives as `id`
@@ -33,7 +34,7 @@ async function getInteractData(username: string) {
 	const { locals } = getRequestEvent()
 	const { user } = await authorise(locals)
 
-	const [[user2]] = await db.query<{ id: string }[][]>(findUserQuery, {
+	const [[user2]] = await dbQuery<{ id: string }[][]>(findUserQuery, {
 		username,
 	})
 	if (!user2) error(404, "User not found")
@@ -55,7 +56,7 @@ type ActionFunction = (
 ) => Promise<unknown>
 
 const acceptExisting: ActionFunction = (params, user) =>
-	db.query(
+	dbQuery(
 		// The direction of the ->friends relationship matches the direction of the previous ->request relationship.
 		acceptExistingQuery,
 		{
@@ -72,7 +73,7 @@ export const followForm = form(schema, async ({ id: username }, issues) => {
 	const limit = ratelimitRemoteKey(issues, "follow", user.id, 600, 30)
 	if (limit) return limit
 
-	await db.query(followQuery, {
+	await dbQuery(followQuery, {
 		...params,
 		note: `${user.username} is now following you!`,
 		relativeId: user.id,
@@ -81,12 +82,12 @@ export const followForm = form(schema, async ({ id: username }, issues) => {
 
 export const unfollowForm = form(schema, async ({ id: username }) => {
 	const { params } = await getInteractData(username)
-	await db.query(unfollowQuery, params)
+	await dbQuery(unfollowQuery, params)
 })
 
 export const unfriendForm = form(schema, async ({ id: username }) => {
 	const { params } = await getInteractData(username)
-	await db.query(unfriendQuery, params)
+	await dbQuery(unfriendQuery, params)
 })
 
 export const requestForm = form(schema, async ({ id: username }, issues) => {
@@ -96,19 +97,19 @@ export const requestForm = form(schema, async ({ id: username }, issues) => {
 	if (limit) return limit
 
 	// Make sure users are not already friends
-	const [alreadyFriends] = await db.query<boolean[]>(
+	const [alreadyFriends] = await dbQuery<boolean[]>(
 		alreadyFriendsQuery,
 		params
 	)
 	if (alreadyFriends) error(400, "Already friends")
 
-	const [incoming] = await db.query<boolean[]>(incomingQuery, params)
+	const [incoming] = await dbQuery<boolean[]>(incomingQuery, params)
 	if (incoming) {
 		await acceptExisting(params, user)
 		return
 	}
 
-	await db.query(requestQuery, {
+	await dbQuery(requestQuery, {
 		...params,
 		note: `${user.username} has sent you a friend request.`,
 		relativeId: user.id,
@@ -117,19 +118,19 @@ export const requestForm = form(schema, async ({ id: username }, issues) => {
 
 export const cancelForm = form(schema, async ({ id: username }) => {
 	const { params } = await getInteractData(username)
-	await db.query(cancelQuery, params)
+	await dbQuery(cancelQuery, params)
 })
 
 export const declineForm = form(schema, async ({ id: username }) => {
 	const { params } = await getInteractData(username)
-	await db.query(declineQuery, params)
+	await dbQuery(declineQuery, params)
 })
 
 export const acceptForm = form(schema, async ({ id: username }) => {
 	const { user, params } = await getInteractData(username)
 
 	// Make sure an incoming request exists before accepting
-	const [incoming] = await db.query<boolean[]>(incomingQuery, params)
+	const [incoming] = await dbQuery<boolean[]>(incomingQuery, params)
 	if (!incoming) error(400, "No friend request to accept")
 
 	await acceptExisting(params, user)
@@ -139,7 +140,7 @@ export const rerenderForm = form(schema, async ({ id: username }) => {
 	const { fetch: f, locals } = getRequestEvent()
 	await authorise(locals, 5)
 
-	const [[user2]] = await db.query<{ id: string }[][]>(findUserQuery, {
+	const [[user2]] = await dbQuery<{ id: string }[][]>(findUserQuery, {
 		username,
 	})
 	if (!user2) error(404, "User not found")

@@ -1,6 +1,6 @@
 import { authorise } from "#lib/server/auth.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import type { RenderType, Status } from "#lib/server/requestRender.ts"
-import { db } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import renderQueueQuery from "./renderqueue.surql"
 
@@ -22,8 +22,8 @@ export async function load({ locals }: PageServerLoadEvent) {
 	await authorise(locals, 3)
 
 	const [[status], [queue]] = await Promise.all([
-		db.query<string[]>("stuff:ping.render"),
-		db.query<Render[][]>(renderQueueQuery),
+		dbQuery<string[]>("stuff:ping.render"),
+		dbQuery<Render[][]>(renderQueueQuery),
 	])
 
 	return { queue, status }

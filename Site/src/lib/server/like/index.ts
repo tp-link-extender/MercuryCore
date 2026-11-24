@@ -1,4 +1,5 @@
-import { db, type RecordId } from "#lib/server/surreal.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
+import type { RecordId } from "#lib/server/surreal.ts"
 import dislikeQuery from "./dislike.surql"
 import likeQuery from "./like.surql"
 import undislikeQuery from "./undislike.surql"
@@ -22,6 +23,6 @@ const like = (
 	user: RecordId<"user">,
 	thing: RecordId<(typeof things)[number]>,
 	action: (typeof actions)[number]
-) => db.query(queries[action], { thing, user })
+) => dbQuery(queries[action], { thing, user })
 
 export default like

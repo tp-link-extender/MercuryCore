@@ -1,6 +1,6 @@
+import { dbQuery } from "#lib/server/db/query.ts"
 import exclude from "#lib/server/exclude.ts"
 import pageQuery from "#lib/server/pageQuery.ts"
-import { db } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
 import groupsQuery from "./groups.surql"
 
@@ -14,7 +14,7 @@ export async function load({ url }: PageServerLoadEvent) {
 	exclude("Groups")
 	const { page, checkPages } = pageQuery(url)
 
-	const [groups, pages] = await db.query<[Group[], number]>(groupsQuery, {
+	const [groups, pages] = await dbQuery<[Group[], number]>(groupsQuery, {
 		page,
 	})
 	checkPages(pages)

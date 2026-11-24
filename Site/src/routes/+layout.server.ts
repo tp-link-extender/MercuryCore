@@ -1,5 +1,5 @@
 import config from "#lib/server/config.ts"
-import { db } from "#lib/server/surreal.ts"
+import { dbQuery } from "#lib/server/db/query.ts"
 import type { LayoutServerLoadEvent } from "./$types"
 import bannersQuery from "./banners.surql"
 import getNotifications from "./notifications"
@@ -16,7 +16,7 @@ export async function load({ locals, url }: LayoutServerLoadEvent) {
 	const { user } = locals
 	// No authorise() function call, as we don't want to redirect to login page if not logged in
 
-	const [banners] = await db.query<Banner[][]>(bannersQuery)
+	const [banners] = await dbQuery<Banner[][]>(bannersQuery)
 	return {
 		banners,
 		currencySymbol: config.CurrencySymbol,
