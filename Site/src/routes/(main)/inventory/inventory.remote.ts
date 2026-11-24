@@ -12,12 +12,13 @@ import {
 	User,
 } from "economy/types"
 import { authorise } from "#lib/server/auth.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import {
+	inventoryAssetsOf,
+	inventoryGroupsOf,
+	inventoryPlacesOf,
+} from "#lib/server/db/inventory.ts"
 import { Record } from "#lib/server/surreal.ts"
 import { getRequestEvent, query } from "$app/server"
-import queryGroups from "./groups.surql"
-import queryPlaces from "./places.surql"
-import queryUnlimitedAssets from "./unlimitedAssets.surql"
 
 const getAssetSchema = type("number")
 
@@ -72,7 +73,7 @@ async function getOwnedAssets(): Promise<AssetBigInt[]> {
 		.filter(i => i instanceof UnlimitedAsset || i instanceof Package)
 		.map(i => Record("asset", i.ID))
 
-	const [assets] = await dbQuery<[Asset[]]>(queryUnlimitedAssets, { ids })
+	const assets = await inventoryAssetsOf(ids)
 	return assets.map(assetToBigInt)
 }
 
@@ -85,7 +86,7 @@ export const getSources = query(async (): Promise<AssetBigInt[]> => {
 		.filter(i => i instanceof LimitedSource || i instanceof UnlimitedSource)
 		.map(i => Record("asset", i.ID))
 
-	const [sources] = await dbQuery<[Asset[]]>(queryUnlimitedAssets, { ids })
+	const sources = await inventoryAssetsOf(ids)
 	return sources.map(assetToBigInt)
 })
 
@@ -94,14 +95,12 @@ export const getGroups = query(async (): Promise<Group[]> => {
 		.filter(i => i instanceof EconGroup)
 		.map(i => Record("group", i.ID))
 
-	const [groups] = await dbQuery<[Group[]]>(queryGroups, { ids })
-	return groups
+	return inventoryGroupsOf(ids)
 })
 export const getPlaces = query(async (): Promise<Place[]> => {
 	const ids = (await getInventory())
 		.filter(i => i instanceof EconPlace)
 		.map(i => Record("place", i.ID))
 
-	const [places] = await dbQuery<[Place[]]>(queryPlaces, { ids })
-	return places
+	return inventoryPlacesOf(ids)
 })

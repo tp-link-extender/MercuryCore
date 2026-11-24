@@ -10,10 +10,9 @@ import {
 	UnlimitedAsset,
 	User,
 } from "economy/types"
-import { dbQuery } from "#lib/server/db/query.ts"
+import { packageRowsOf } from "#lib/server/db/catalog.ts"
 import { economyConnFailed } from "#lib/server/economy.ts"
 import { Record } from "#lib/server/surreal.ts"
-import query from "./packageItems.surql"
 
 export interface PackageItem {
 	id: number
@@ -71,9 +70,7 @@ export async function packageItems(
 	if (ids.length === 0) return []
 
 	// the ledger knows which assets exist, the database knows their name, type and visibility
-	const [rows] = await dbQuery<Omit<PackageItem, "owned">[][]>(query, {
-		ids: ids.map(itemId => Record("asset", itemId)),
-	})
+	const rows = await packageRowsOf(ids.map(itemId => Record("asset", itemId)))
 
 	return rows.map(row =>
 		Object.assign(row, { owned: owned?.has(row.id) ?? false })

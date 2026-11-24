@@ -7,6 +7,7 @@ import findQuery from "./catalog/find.surql"
 import iconQuery from "./catalog/icon.surql"
 import listQuery from "./catalog/list.surql"
 import nameQuery from "./catalog/name.surql"
+import packageItemsQuery from "./catalog/packageItems.surql"
 import pageQuery from "./catalog/page.surql"
 import reuploadQuery from "./catalog/reupload.surql"
 import settingsQuery from "./catalog/settings.surql"
@@ -204,4 +205,23 @@ export async function recordReupload(args: {
 	visibility: string
 }): Promise<void> {
 	await dbQuery(reuploadQuery, args)
+}
+
+/** The database details of an item inside a package. */
+export interface PackageRow {
+	id: number
+	name: string
+	type: number
+	visibility: string
+}
+
+/**
+ * Finds the database details of a package's contents, given their ids from the Economy service.
+ * Ownership isn't read here, as the Economy service knows it.
+ */
+export async function packageRowsOf(
+	ids: RecordId<"asset">[]
+): Promise<PackageRow[]> {
+	const [rows] = await dbQuery<PackageRow[][]>(packageItemsQuery, { ids })
+	return rows
 }

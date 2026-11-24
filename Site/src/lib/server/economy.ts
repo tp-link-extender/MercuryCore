@@ -9,15 +9,8 @@ import {
 	UnlimitedSource,
 	User,
 } from "economy/types"
-import type {
-	GroupData,
-	OwnerData,
-	SourceData,
-	UserData,
-} from "#lib/economy.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
-import ownersQuery from "#lib/server/owners.surql"
-import ownerUserQuery from "#lib/server/ownerUser.surql"
+import type { OwnerData } from "#lib/economy.ts"
+import { ownerRecordsOf, ownerUserOf } from "#lib/server/db/owners.ts"
 import { Record } from "#lib/server/surreal.ts"
 
 export const economyConnFailed = "Cannot connect to Economy service"
@@ -27,12 +20,7 @@ export type ReturnErr = { ok: true } | { ok: false; msg: string }
 
 export type OwnedUser = BasicUser & { id: string }
 
-async function ownerUser(id: string): Promise<OwnedUser | null> {
-	const [[user]] = await dbQuery<OwnedUser[][]>(ownerUserQuery, {
-		user: Record("user", id),
-	})
-	return user ?? null
-}
+const ownerUser = (id: string): Promise<OwnedUser | null> => ownerUserOf(id)
 
 async function itemOwnerSeen(
 	f: typeof globalThis.fetch,
@@ -108,14 +96,12 @@ export async function ownerData(list: TransferWithID[]): Promise<OwnerData> {
 		...list.map(tf => tf.Transfer.Send1.Owner),
 	].filter(o => o !== null)
 
-	const [users, groups, sources] = await dbQuery<
-		[UserData[], GroupData[], SourceData[]]
-	>(ownersQuery, {
-		assetsList: owners.filter(IsSource).map(s => Record("asset", s.ID)),
-		groupsList: owners
+	const [users, groups, sources] = await ownerRecordsOf({
+		assets: owners.filter(IsSource).map(s => Record("asset", s.ID)),
+		groups: owners
 			.filter(o => o instanceof Group)
 			.map(g => Record("group", g.ID)),
-		usersList: owners
+		users: owners
 			.filter(o => o instanceof User)
 			.map(u => Record("user", u.ID)),
 	})
