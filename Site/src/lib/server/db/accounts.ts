@@ -1,5 +1,7 @@
 import { dbQuery } from "#lib/server/db/query.ts"
 import { db, Record, type RecordId } from "#lib/server/surreal.ts"
+import adminPasswordQuery from "./accounts/adminPassword.surql"
+import adminUsersQuery from "./accounts/adminUsers.surql"
 import changePasswordQuery from "./accounts/changePassword.surql"
 import createInitialQuery from "./accounts/createInitial.surql"
 import createUserQuery from "./accounts/createUser.surql"
@@ -185,4 +187,26 @@ export async function updateProfile(
 
 export async function setCss(id: string, css?: string): Promise<void> {
 	await db.update(Record("user", id)).merge({ css })
+}
+
+/** Lists every user who isn't moderated, for an administrator choosing whose password to change. */
+export async function unmoderatedUsers(): Promise<BasicUser[]> {
+	const [users] = await dbQuery<BasicUser[][]>(adminUsersQuery)
+	return users
+}
+
+/**
+ * Sets the password of the user with this username, and logs them out everywhere.
+ * @returns Whether a user with this username was found.
+ */
+export async function setPasswordOf(
+	username: string,
+	hashedPassword: string
+): Promise<boolean> {
+	// oxlint-disable-next-line unicorn/no-unreadable-array-destructuring -- the query returns [result, loop result, ok]
+	const [, , ok] = await dbQuery<boolean[]>(adminPasswordQuery, {
+		npassword: hashedPassword,
+		username,
+	})
+	return ok
 }

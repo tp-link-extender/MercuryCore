@@ -7,7 +7,6 @@ import { assetType } from "#lib/server/db/assets.ts"
 import { assetFind, assetForSale } from "#lib/server/db/catalog.ts"
 import { createComment } from "#lib/server/db/comments.ts"
 import { notify } from "#lib/server/db/notifications.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
 import { find } from "#lib/server/db/records.ts"
 import { assetOwner, economyConnFailed } from "#lib/server/economy.ts"
 import filter from "#lib/server/filter.ts"
@@ -105,14 +104,12 @@ export const buyForm: ClientForm<typeof buySchema.infer> = form(
 		if (!ok) return issues("Purchase failed")
 
 		if (owner.value && user.id !== owner.value.id)
-			await dbQuery(
-				'fn::notify($user, $owner, "ItemPurchase", $note, $relativeId)',
-				{
-					note: `${user.username} just purchased your item ${asset.name}`,
-					owner: Record("user", owner.value.id),
-					relativeId: String(id),
-					user: Record("user", user.id),
-				}
+			await notify(
+				Record("user", user.id),
+				Record("user", owner.value.id),
+				"ItemPurchase",
+				`${user.username} just purchased your item ${asset.name}`,
+				String(id)
 			)
 	}
 )

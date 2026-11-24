@@ -1,12 +1,14 @@
 import { type } from "arktype"
 import { authorise } from "#lib/server/auth.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import {
+	activeBannerCount,
+	createBanner,
+	updateBanner as updateBannerRecord,
+} from "#lib/server/db/banners.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
-import { Banner, db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
-import activeCountQuery from "./activeCount.surql"
-import updateQuery from "./update.surql"
 
 const createSchema = type({
 	bannerColour: "string",
@@ -33,27 +35,20 @@ const textLightSchema = type({
 	id: "string",
 })
 
-async function bannerActiveCount() {
-	const [banners] = await dbQuery<number[]>(activeCountQuery)
-	return banners
-}
-
-async function updateBanner(
+function updateBanner(
 	user: { id: string },
 	id: string,
 	action: string,
 	changes: { [_: string]: unknown },
 	detail = ""
 ): Promise<boolean> {
-	const results = await dbQuery<[null, null, boolean]>(updateQuery, {
+	return updateBannerRecord({
 		action,
-		banner: Record("banner", id),
+		banner: id,
 		changes,
 		detail,
 		user: Record("user", user.id),
 	})
-	// The last statement returns whether the banner was found
-	return results[2]
 }
 
 export const formData: ClientForm<typeof createSchema.infer> = form(
@@ -63,7 +58,7 @@ export const formData: ClientForm<typeof createSchema.infer> = form(
 		const { user } = await authorise(locals, 5)
 
 		if (!bannerText || !bannerColour) return issues("Missing fields")
-		if ((await bannerActiveCount()) >= 3)
+		if ((await activeBannerCount()) >= 3)
 			return issues("Too many active banners")
 
 		const limit = ratelimitRemote(
@@ -74,11 +69,10 @@ export const formData: ClientForm<typeof createSchema.infer> = form(
 		)
 		if (limit) return limit
 
-		await db.insert(Banner, {
+		await createBanner({
 			bgColour: bannerColour,
 			body: bannerText,
 			creator: Record("user", user.id),
-			deleted: false,
 			textLight: Boolean(bannerTextLight),
 		})
 
@@ -101,7 +95,7 @@ export const visibilityForm = form(
 		const { user } = await authorise(locals, 5)
 
 		const active = action === "show"
-		if (active && (await bannerActiveCount()) >= 3)
+		if (active && (await activeBannerCount()) >= 3)
 			return issues("Too many active banners")
 
 		const name = active ? "Show" : "Hide"

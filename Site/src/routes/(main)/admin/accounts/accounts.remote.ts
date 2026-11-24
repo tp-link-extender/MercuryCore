@@ -1,13 +1,13 @@
 import { type } from "arktype"
 import { authorise } from "#lib/server/auth.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import { setPasswordOf } from "#lib/server/db/accounts.ts"
+import { writeAuditLog } from "#lib/server/db/audit.ts"
 import { hashPassword } from "#lib/server/password.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import { usernameTest } from "#lib/typeTests.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
-import updatePasswordQuery from "./updatePassword.surql"
 
 const schema = type({
 	_password: "16 <= string <= 6969",
@@ -29,22 +29,21 @@ export const formData: ClientForm<typeof schema.infer> = form(
 		if (limit) return limit
 
 		try {
-			// oxlint-disable-next-line unicorn/no-unreadable-array-destructuring -- the query returns [result, loop result, ok]
-			const [, , ok] = await dbQuery<boolean[]>(updatePasswordQuery, {
-				npassword: await hashPassword(_password),
+			const ok = await setPasswordOf(
 				username,
-			})
+				await hashPassword(_password)
+			)
 			if (!ok) return issues("No user found with given username")
 		} catch (e) {
 			console.error(e)
 			return issues("An error occurred")
 		}
 
-		await db.run("fn::auditLog", [
+		await writeAuditLog(
 			"Account",
 			`Change account password for ${username}`,
-			Record("user", user.id),
-		])
+			Record("user", user.id)
+		)
 
 		return { success: "Password changed successfully!" }
 	}
