@@ -2,7 +2,7 @@ import { error, redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { authorise } from "#lib/server/auth.ts"
 import { createComment } from "#lib/server/db/comments.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import { categoryIdOf } from "#lib/server/db/forums.ts"
 import exclude from "#lib/server/exclude.ts"
 import filter from "#lib/server/filter.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
@@ -32,17 +32,12 @@ export const formData = form(schema, async ({ content }, issues) => {
 	const limit = ratelimitRemote(issues, "comment", getClientAddress, 5)
 	if (limit) return limit
 
-	const [[getCategory]] = await dbQuery<{ id: string }[][]>(
-		`
-			SELECT record::id(id) AS id FROM forumCategory
-			WHERE string::lowercase(name) = string::lowercase($category)`,
-		{ category }
-	)
-	if (!getCategory) error(404, "Category not found")
+	const categoryId = await categoryIdOf(category)
+	if (!categoryId) error(404, "Category not found")
 
 	const newCommentId = await createComment({
 		content: filter(unfiltered),
-		type: ["forum", getCategory.id],
+		type: ["forum", categoryId],
 		user: Record("user", user.id),
 	})
 

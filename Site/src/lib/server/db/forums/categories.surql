@@ -1,9 +1,9 @@
+# The latest post, without the time it was created, which the list doesn't show
 SELECT
 	description,
 	(SELECT
 		record::id(id) AS id,
 		author,
-		created,
 		fn::currentContent($this.content) AS currentContent
 	FROM comment
 	WHERE type = ["forum", record::id($parent.id)]
