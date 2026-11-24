@@ -1,6 +1,7 @@
 import { dbQuery } from "#lib/server/db/query.ts"
 import { Record, type RecordId } from "#lib/server/surreal.ts"
 import listQuery from "./notifications/list.surql"
+import notifyQuery from "./notifications/notify.surql"
 import readQuery from "./notifications/read.surql"
 import readAllQuery from "./notifications/readAll.surql"
 
@@ -24,6 +25,21 @@ export async function notificationsOf(
 ): Promise<Notification[]> {
 	const [notifications] = await dbQuery<Notification[][]>(listQuery, { user })
 	return notifications
+}
+
+/**
+ * Sends a notification from one user to another.
+ * @param type The kind of notification, such as "Follower" or "AssetComment", which decides its link.
+ * @param relativeId The id of what the notification is about.
+ */
+export async function notify(
+	sender: RecordId<"user">,
+	receiver: RecordId<"user">,
+	type: string,
+	note: string,
+	relativeId: string
+): Promise<void> {
+	await dbQuery(notifyQuery, { note, receiver, relativeId, sender, type })
 }
 
 /**

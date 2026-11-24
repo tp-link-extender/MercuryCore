@@ -3,14 +3,16 @@ import { type } from "arktype"
 import { buyPackage, buyUnlimitedAsset } from "economy/api"
 import { PackageSource, UnlimitedSource, User } from "economy/types"
 import { authorise } from "#lib/server/auth.ts"
-import createCommentQuery from "#lib/server/createComment.surql"
+import { assetType } from "#lib/server/db/assets.ts"
+import { createComment } from "#lib/server/db/comments.ts"
+import { notify } from "#lib/server/db/notifications.ts"
 import { dbQuery } from "#lib/server/db/query.ts"
 import { find } from "#lib/server/db/records.ts"
 import { assetOwner, economyConnFailed } from "#lib/server/economy.ts"
 import filter from "#lib/server/filter.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
 import requestRender, { type RenderType } from "#lib/server/requestRender.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
 import buyQuery from "./buy.surql"
@@ -34,33 +36,30 @@ export const commentForm: ClientForm<typeof commentSchema.infer> = form(
 		if (limit) return limit
 
 		const id = Number(assetId)
-		const [getAsset] = await dbQuery<{ type: number }[]>(
-			"SELECT type FROM ONLY $asset",
-			{ asset: Record("asset", id) }
-		)
-		if (!getAsset) error(404)
+		const assetKind = await assetType(id)
+		if (assetKind === undefined) error(404)
 
 		let ownerId: string | null = null
-		const owner = await assetOwner(f, id, getAsset.type)
+		const owner = await assetOwner(f, id, assetKind)
 		if (!owner.ok) console.error("asset owner lookup failed")
 		else ownerId = owner.value?.id ?? null
 
 		const filtered = filter(content)
 
-		const [, newCommentId] = await dbQuery<string[]>(createCommentQuery, {
+		const newCommentId = await createComment({
 			content: filtered,
 			type: ["asset", id],
 			user: Record("user", user.id),
 		})
 
 		if (ownerId && user.id !== ownerId)
-			await db.run("fn::notify", [
+			await notify(
 				Record("user", user.id),
 				Record("user", ownerId),
 				"AssetComment",
 				`${user.username} commented on your asset: ${filtered}`,
-				newCommentId,
-			])
+				newCommentId
+			)
 	}
 )
 

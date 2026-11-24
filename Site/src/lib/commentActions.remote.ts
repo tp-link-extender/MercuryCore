@@ -2,11 +2,15 @@ import { error } from "@sveltejs/kit"
 import { type } from "arktype"
 import { authorise } from "#lib/server/auth.ts"
 import commentType from "#lib/server/commentType.ts"
-import createCommentQuery from "#lib/server/createComment.surql"
-import { dbQuery } from "#lib/server/db/query.ts"
+import {
+	createComment,
+	removeComment,
+	replyTargetOf,
+	setPinned,
+} from "#lib/server/db/comments.ts"
+import { notify } from "#lib/server/db/notifications.ts"
 import filter from "#lib/server/filter.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
-import removeCommentQuery from "#lib/server/removeComment.surql"
 import { Record } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
@@ -30,38 +34,26 @@ export const replyForm: ClientForm<typeof replySchema.infer> = form(
 		const limit = ratelimitRemote(issues, "comment", getClientAddress, 5)
 		if (limit) return limit
 
-		const comment = Record("comment", id)
-		const [getComment] = await dbQuery<
-			{ creatorId: string; type: string[] }[]
-		>(
-			`
-			SELECT
-				record::id(<-createdComment[0]<-user[0].id) AS creatorId,
-				type
-			FROM ONLY $comment WHERE visibility = "Visible"`,
-			{ comment }
-		)
-		if (!getComment) error(404, "Comment not found")
+		const target = await replyTargetOf(id)
+		if (!target) error(404, "Comment not found")
 
-		const { creatorId, type: commentTypes } = getComment
+		const { creatorId, type: commentTypes } = target
 		const filtered = filter(content)
 
-		const [, newCommentId] = await dbQuery<string[]>(createCommentQuery, {
-			comment,
+		const newCommentId = await createComment({
+			comment: Record("comment", id),
 			content: filtered,
 			type: commentType(commentTypes, id),
 			user: Record("user", user.id),
 		})
 
 		if (user.id !== creatorId)
-			await dbQuery(
-				`fn::notify($sender, $receiver, "CommentReply", $note, $relativeId)`,
-				{
-					note: `${user.username} replied to your comment: ${filtered}`,
-					receiver: Record("user", creatorId),
-					relativeId: newCommentId,
-					sender: Record("user", user.id),
-				}
+			await notify(
+				Record("user", user.id),
+				Record("user", creatorId),
+				"CommentReply",
+				`${user.username} replied to your comment: ${filtered}`,
+				newCommentId
 			)
 	}
 )
@@ -78,15 +70,7 @@ export const pinForm = form(pinSchema, async ({ id, set }, issues) => {
 	const limit = ratelimitRemote(issues, "pin", getClientAddress, 1)
 	if (limit) return limit
 
-	const [[ok]] = await dbQuery<1[][]>(
-		`
-			UPDATE $comment SET pinned = $pinned
-				WHERE type != ["status"] RETURN VALUE 1`,
-		{
-			comment: Record("comment", id),
-			pinned: set === "true",
-		}
-	)
+	const ok = await setPinned(id, set === "true")
 	if (!ok) error(404, "Comment not found")
 })
 
@@ -104,10 +88,6 @@ export const deleteForm = form(deleteSchema, async ({ action, id }, issues) => {
 	const limit = ratelimitRemote(issues, "delete", getClientAddress, 5)
 	if (limit) return limit
 
-	const deleted = await dbQuery<1[][]>(removeCommentQuery, {
-		comment: Record("comment", id),
-		moderate,
-		user: Record("user", user.id),
-	})
-	if (!deleted[2]?.[0]) error(404, "Comment not found or already deleted")
+	const removed = await removeComment(id, Record("user", user.id), moderate)
+	if (!removed) error(404, "Comment not found or already deleted")
 })

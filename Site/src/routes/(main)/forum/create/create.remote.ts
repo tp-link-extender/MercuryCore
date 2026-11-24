@@ -1,7 +1,7 @@
 import { error, redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { authorise } from "#lib/server/auth.ts"
-import createCommentQuery from "#lib/server/createComment.surql"
+import { createComment } from "#lib/server/db/comments.ts"
 import { dbQuery } from "#lib/server/db/query.ts"
 import exclude from "#lib/server/exclude.ts"
 import filter from "#lib/server/filter.ts"
@@ -40,7 +40,7 @@ export const formData = form(schema, async ({ content }, issues) => {
 	)
 	if (!getCategory) error(404, "Category not found")
 
-	const [, newCommentId] = await dbQuery<string[]>(createCommentQuery, {
+	const newCommentId = await createComment({
 		content: filter(unfiltered),
 		type: ["forum", getCategory.id],
 		user: Record("user", user.id),
