@@ -1,14 +1,12 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import {
-	authorise,
-	cookieName,
-	cookieOptions,
-	createSession,
-	invalidateAllSessions,
-} from "#lib/server/auth.ts"
+import { authorise, cookieName, cookieOptions } from "#lib/server/auth.ts"
 import config from "#lib/server/config.ts"
 import { dbQuery } from "#lib/server/db/query.ts"
+import {
+	createSession,
+	invalidateAllSessions,
+} from "#lib/server/db/sessions.ts"
 import { hashPassword, verifyPassword } from "#lib/server/password.ts"
 import { ratelimitRemoteKey } from "#lib/server/ratelimit.ts"
 import { db, Record } from "#lib/server/surreal.ts"

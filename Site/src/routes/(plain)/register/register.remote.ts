@@ -1,6 +1,7 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
-import { cookieName, cookieOptions, createSession } from "#lib/server/auth.ts"
+import { cookieName, cookieOptions } from "#lib/server/auth.ts"
+import { createSession } from "#lib/server/db/sessions.ts"
 import config from "#lib/server/config.ts"
 import { dbQuery } from "#lib/server/db/query.ts"
 import { findWhere } from "#lib/server/db/records.ts"

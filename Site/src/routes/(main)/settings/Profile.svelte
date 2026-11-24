@@ -22,7 +22,7 @@
 	<Textarea
 		formData={profileForm}
 		name="description"
-		defaultValue={user.description || ""}
+		defaultValue={data.profile.description || ""}
 		label="Description"
 		placeholder="Maximum 1000 characters"
 		help="Your description will appear on your profile and allow other users to know who you are.<br />Don't put any personally identifiable information here. It's the internet, and the ORC no less. You know the deal."

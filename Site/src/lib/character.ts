@@ -17,8 +17,8 @@ export const bodyParts = Object.freeze([
 	"RightArm",
 	"RightLeg",
 	"Torso",
-])
+] as const)
 
-export type BodyPart = keyof User["bodyColours"]
+export type BodyPart = (typeof bodyParts)[number]
 export const isBodyPart = (part: string): part is BodyPart =>
 	bodyParts.some(bodyPart => bodyPart === part)

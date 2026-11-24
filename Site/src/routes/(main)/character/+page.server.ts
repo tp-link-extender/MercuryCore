@@ -8,6 +8,7 @@ import {
 } from "economy/types"
 import { allowedTypes, packageWearable } from "#lib/character.ts"
 import { authorise } from "#lib/server/auth.ts"
+import { bodyColoursOf } from "#lib/server/db/appearance.ts"
 import { dbQuery } from "#lib/server/db/query.ts"
 import { economyConnFailed } from "#lib/server/economy.ts"
 import { packageItems } from "#lib/server/packageItems.ts"
@@ -45,9 +46,12 @@ interface WornAsset {
 
 export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
+	const bodyColours = await bodyColoursOf(user.username)
+	if (!bodyColours) error(404, "User not found")
+
 	const ids = await getOwnedAssetIds(f, user.id)
 
-	if (ids.length === 0) return { assets: [] }
+	if (ids.length === 0) return { assets: [], bodyColours }
 
 	const [assets] = await dbQuery<Asset[][]>(assetsQuery, {
 		allowedTypes,
@@ -87,5 +91,5 @@ export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 		}
 	}
 
-	return { assets }
+	return { assets, bodyColours }
 }

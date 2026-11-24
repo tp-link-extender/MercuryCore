@@ -12,12 +12,12 @@
 	</div>
 </div>
 
-{#if user.email}
+{#if data.profile.email}
 	<hr class="grey-text" />
 	<div class="form-group flex flex-wrap pb-6">
 		<label for="name" class="w-full md:w-1/3">Email Address</label>
 		<div class="w-full md:w-2/3">
-			<input type="text" readonly id="email" value={user.email} />
+			<input type="text" readonly id="email" value={data.profile.email} />
 		</div>
 	</div>
 {/if}

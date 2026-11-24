@@ -47,12 +47,12 @@
 	)
 
 	const bodyParts: { [_: string]: number } = $state({
-		Head: user.bodyColours.Head,
-		LeftArm: user.bodyColours.LeftArm,
-		LeftLeg: user.bodyColours.LeftLeg,
-		RightArm: user.bodyColours.RightArm,
-		RightLeg: user.bodyColours.RightLeg, 
-		Torso: user.bodyColours.Torso
+		Head: data.bodyColours.Head,
+		LeftArm: data.bodyColours.LeftArm,
+		LeftLeg: data.bodyColours.LeftLeg,
+		RightArm: data.bodyColours.RightArm,
+		RightLeg: data.bodyColours.RightLeg, 
+		Torso: data.bodyColours.Torso
 	})
 	const bodyPartPopovers: { [_: string]: HTMLDivElement } = $state({})
 	const styles: { [_: string]: string } = Object.freeze({

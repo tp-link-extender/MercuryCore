@@ -13,7 +13,7 @@ interface Notification {
 	type: string
 }
 
-export default async function getNotifications(user: User | null) {
+export default async function getNotifications(user: SessionUser | null) {
 	if (!user) return []
 	const [notifications] = await dbQuery<Notification[][]>(
 		notificationsQuery,

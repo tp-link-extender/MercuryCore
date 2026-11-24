@@ -18,22 +18,12 @@ declare global {
 		username: string
 	}
 
-	interface User extends BasicUser {
-		bodyColours: {
-			Head: number
-			LeftArm: number
-			LeftLeg: number
-			RightArm: number
-			RightLeg: number
-			Torso: number
-		}
-		created: string
+	/**
+	 * The user of the current session, as loaded on every request. Pages that need more about the user load it themselves.
+	 */
+	interface SessionUser extends BasicUser {
 		css: string
-		// The current text of the description, or null if there isn't one
-		description: string | null
-		email: string
 		id: string
-		lastOnline: Date
 		permissionLevel: number
 		theme: number
 	}
@@ -47,7 +37,7 @@ declare global {
 			// Whether the user has an active moderation, checked once per request in hooks.server.ts
 			moderated: boolean
 			session: string | null
-			user: User | null
+			user: SessionUser | null
 		}
 	}
 }

@@ -6,17 +6,14 @@ import type { Handle, HandleServerError } from "@sveltejs/kit/hooks"
 import { stipend } from "economy/api"
 import { User as EconUser } from "economy/types"
 import pc from "picocolors"
-import {
-	cookieName,
-	cookieOptions,
-	validateSessionToken,
-} from "#lib/server/auth.ts"
+import { cookieName, cookieOptions } from "#lib/server/auth.ts"
 import config from "#lib/server/config.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import {
+	recordSeenAndCheckModeration,
+	validateSession,
+} from "#lib/server/db/sessions.ts"
 import { redactSearch } from "#lib/server/redact.ts"
 import { styleText } from "#lib/server/styleText.ts"
-import { Record } from "#lib/server/surreal.ts"
-import moderatedQuery from "./moderated.surql"
 
 const { magenta, red, yellow, green, blue, gray } = pc
 const methodColours: { [_: string]: string } = Object.freeze({
@@ -58,7 +55,7 @@ function readablePath(pathname: string) {
 const time = () =>
 	config.Logging.Time ? gray(new Date().toLocaleString()) : ""
 
-const userLog = (user: User | null) =>
+const userLog = (user: SessionUser | null) =>
 	user
 		? blue(user.username) + " ".repeat(21 - user.username.length)
 		: yellow("Logged-out user      ")
@@ -124,7 +121,7 @@ export async function handle(e: Parameters<Handle>[0]) {
 		return finish(e)
 	}
 
-	const { session, user } = await validateSessionToken(token)
+	const { session, user } = await validateSession(token)
 	if (!session || !user) {
 		// Stop the browser sending a token that can never work again, and keep locals matching their declared types
 		event.locals.moderated = false
@@ -139,9 +136,7 @@ export async function handle(e: Parameters<Handle>[0]) {
 	event.locals.user = user
 	event.cookies.set(cookieName, session, cookieOptions)
 
-	const [, moderated] = await dbQuery<boolean[]>(moderatedQuery, {
-		user: Record("user", user.id),
-	})
+	const moderated = await recordSeenAndCheckModeration(user.id)
 	event.locals.moderated = moderated
 
 	const { pathname } = event.url

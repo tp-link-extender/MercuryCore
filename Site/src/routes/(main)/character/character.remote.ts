@@ -16,6 +16,7 @@ import {
 } from "#lib/character.ts"
 import { assetRegex } from "#lib/paramTests.ts"
 import { authorise } from "#lib/server/auth.ts"
+import { bodyColoursOf } from "#lib/server/db/appearance.ts"
 import { dbQuery } from "#lib/server/db/query.ts"
 import { economyConnFailed } from "#lib/server/economy.ts"
 import { packageItems } from "#lib/server/packageItems.ts"
@@ -81,7 +82,7 @@ async function getEquipData(id: string, requireVisible = true) {
 	return { asset, id: assetId, user }
 }
 
-async function rerender(user: User) {
+async function rerender(user: SessionUser) {
 	const { fetch: f } = getRequestEvent()
 	try {
 		await requestRender(f, "Avatar", user.id, user.username, true)
@@ -186,7 +187,8 @@ export const paintForm = form(paintSchema, async ({ c, p }, issues) => {
 	)
 		return issues("Invalid body colour")
 
-	const currentColours = user.bodyColours
+	const currentColours = await bodyColoursOf(user.username)
+	if (!currentColours) error(404, "User not found")
 	currentColours[p] = bodyColour
 
 	await db

@@ -12,21 +12,14 @@ IF $s AND $s.expires < $now + 15d {
 	UPDATE $sess SET expires = $now + 30d;
 };
 
+# Only what every request needs: the hooks read the theme and CSS, and the layout shows the rest.
+# Anything else a page needs is loaded by that page.
 LET $u = (SELECT
-    record::id(id) AS id,
-	fn::currentContent($this.description) AS description,
-    bodyColours,
-    # created,
-    IF email {
-		string::concat("*******@", parse::email::host(email)) 
-	} ELSE {
-		""
-	} AS email,
-    lastOnline,
-    permissionLevel,
-    css,
-    theme,
+	record::id(id) AS id,
+	css,
+	permissionLevel,
 	status,
+	theme,
 	username
 FROM $sess<-hasSession<-user WHERE $s)[0];
 
