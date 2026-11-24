@@ -4,6 +4,7 @@ import { buyPackage, buyUnlimitedAsset } from "economy/api"
 import { PackageSource, UnlimitedSource, User } from "economy/types"
 import { authorise } from "#lib/server/auth.ts"
 import { assetType } from "#lib/server/db/assets.ts"
+import { assetFind, assetForSale } from "#lib/server/db/catalog.ts"
 import { createComment } from "#lib/server/db/comments.ts"
 import { notify } from "#lib/server/db/notifications.ts"
 import { dbQuery } from "#lib/server/db/query.ts"
@@ -15,8 +16,6 @@ import requestRender, { type RenderType } from "#lib/server/requestRender.ts"
 import { Record } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
-import buyQuery from "./buy.surql"
-import findAssetQuery from "./findAsset.surql"
 
 const commentSchema = type({
 	content: "string",
@@ -78,16 +77,7 @@ export const buyForm: ClientForm<typeof buySchema.infer> = form(
 		const assetExists = await find("asset", id)
 		if (!assetExists) error(404)
 
-		interface FoundAsset {
-			forSale: boolean
-			name: string
-			price: number
-			type: number
-			visibility: string
-		}
-		const [[asset]] = await dbQuery<FoundAsset[][]>(buyQuery, {
-			asset: Record("asset", id),
-		})
+		const asset = await assetForSale(id)
 		if (!asset) error(404, "Not Found")
 		if (asset.visibility !== "Visible")
 			error(400, "This item hasn't been approved yet")
@@ -136,14 +126,7 @@ export const rerenderForm = form(rerenderSchema, async ({ id: assetId }) => {
 	await authorise(locals, 5)
 
 	const id = Number(assetId)
-	interface FoundAsset {
-		name: string
-		type: number
-		visibility: string
-	}
-	const [[asset]] = await dbQuery<FoundAsset[][]>(findAssetQuery, {
-		asset: Record("asset", id),
-	})
+	const asset = await assetFind(id)
 	if (!asset) error(404, "Not Found")
 	if (asset.visibility === "Moderated")
 		error(400, "Can't rerender a moderated asset")

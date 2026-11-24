@@ -2,7 +2,12 @@ import fs from "node:fs"
 import { error } from "@sveltejs/kit"
 import { type } from "arktype"
 import { authorise } from "#lib/server/auth.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import {
+	type AssetCheck,
+	assetCheckOf,
+	recordReupload,
+	updateAsset,
+} from "#lib/server/db/catalog.ts"
 import { assetOwner, economyConnFailed } from "#lib/server/economy.ts"
 import {
 	isAudio,
@@ -24,15 +29,6 @@ import requestRender from "#lib/server/requestRender.ts"
 import { Record } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
-import assetCheckQuery from "./assetCheck.surql"
-import reuploadQuery from "./reupload.surql"
-import updateAssetQuery from "./updateAsset.surql"
-
-interface AssetCheck {
-	imageAssetId: number | null
-	name: string
-	type: number
-}
 
 const schema = type({
 	"description?": "0 <= string <= 1000",
@@ -85,9 +81,7 @@ export const settingsForm: ClientForm<typeof schema.infer> = form(
 		const { user } = await authorise(locals)
 
 		const assetId = Number(id)
-		const [[asset]] = await dbQuery<AssetCheck[][]>(assetCheckQuery, {
-			asset: Record("asset", assetId),
-		})
+		const asset = await assetCheckOf(assetId)
 		if (!asset) error(404, "Not Found")
 
 		const owner = await assetOwner(f, assetId, asset.type)
@@ -96,7 +90,7 @@ export const settingsForm: ClientForm<typeof schema.infer> = form(
 			error(403, "You do not have permission to edit this asset")
 
 		const review = user.permissionLevel < 3
-		const results = await dbQuery(updateAssetQuery, {
+		const changed = await updateAsset({
 			asset: Record("asset", assetId),
 			description: filter(description || ""),
 			forSale: Boolean(forSale),
@@ -104,7 +98,6 @@ export const settingsForm: ClientForm<typeof schema.infer> = form(
 			price,
 			review,
 		})
-		const changed = results.at(-1) === true
 
 		return {
 			success:
@@ -128,9 +121,7 @@ export const reuploadForm: ClientForm<typeof reuploadSchema.infer> = form(
 			return issues.asset("Asset must be less than 20MB in size")
 
 		const assetId = Number(id)
-		const [[asset]] = await dbQuery<AssetCheck[][]>(assetCheckQuery, {
-			asset: Record("asset", assetId),
-		})
+		const asset = await assetCheckOf(assetId)
 		if (!asset) error(404, "Not Found")
 
 		const owner = await assetOwner(f, assetId, asset.type)
@@ -219,7 +210,7 @@ export const reuploadForm: ClientForm<typeof reuploadSchema.infer> = form(
 		}
 
 		const visibility = user.permissionLevel >= 3 ? "Visible" : "Pending"
-		await dbQuery(reuploadQuery, {
+		await recordReupload({
 			asset: Record("asset", assetId),
 			note: `Reupload asset ${asset.name} (id ${assetId})`,
 			user: Record("user", user.id),

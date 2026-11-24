@@ -1,6 +1,4 @@
-import { dbQuery } from "#lib/server/db/query.ts"
-import type { Asset } from "../+page.server"
-import catalogQuery from "../catalog.surql"
+import { catalogSearch } from "#lib/server/db/catalog.ts"
 import type { RequestEvent } from "./$types"
 
 export async function GET({ url }: RequestEvent) {
@@ -10,6 +8,6 @@ export async function GET({ url }: RequestEvent) {
 		? 1
 		: Math.max(1, Math.round(Number(pageQ)))
 
-	const [assets] = await dbQuery<Asset[][]>(catalogQuery, { page, query })
+	const assets = await catalogSearch(page, query)
 	return Response.json(assets)
 }

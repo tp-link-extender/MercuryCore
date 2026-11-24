@@ -1,6 +1,10 @@
 SELECT
-	*,
 	record::id(id) AS id,
+	name,
+	price,
+	forSale,
+	type,
+	visibility,
 
 	# package contents are not selected here: the Economy service knows what's inside a package, so the load function adds them as items (the page reads that unconditionally)
 

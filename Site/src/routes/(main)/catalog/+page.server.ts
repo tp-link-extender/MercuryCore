@@ -1,17 +1,10 @@
 import { error } from "@sveltejs/kit"
 import { packageItems as ledgerPackageItems } from "economy/api"
 import { UnlimitedAsset } from "economy/types"
-import { dbQuery } from "#lib/server/db/query.ts"
+import { catalogPage } from "#lib/server/db/catalog.ts"
 import { economyConnFailed } from "#lib/server/economy.ts"
 import pageQuery from "#lib/server/pageQuery.ts"
 import type { PageServerLoadEvent } from "./$types"
-import catalogQuery from "./catalog.surql"
-
-export interface Asset {
-	id: number
-	name: string
-	price: number
-}
 
 // bundle contents are owned in the Economy service, so the ids to hide come from there
 async function packageItemIds(f: typeof globalThis.fetch): Promise<number[]> {
@@ -28,7 +21,7 @@ export async function load({ fetch: f, url }: PageServerLoadEvent) {
 	// const type = url.searchParams.get("type") || ""
 	// if (!intRegex.test(type)) error(400, "Invalid type parameter")
 
-	const [, pages] = await dbQuery<[Asset[], number]>(catalogQuery, {
+	const { pages } = await catalogPage({
 		packageItems: await packageItemIds(f),
 		page,
 		// type: +type,

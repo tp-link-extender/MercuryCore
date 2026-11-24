@@ -1,26 +1,15 @@
 import { error, redirect } from "@sveltejs/kit"
 import { authorise } from "#lib/server/auth.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import { assetIconOf } from "#lib/server/db/catalog.ts"
 import { thumbnail, tShirtThumbnail } from "#lib/server/imageAsset.ts"
-import { Record } from "#lib/server/surreal.ts"
 import type { RequestEvent } from "./$types"
-import assetQuery from "./asset.surql"
-
-interface Asset {
-	imageAssetId: number
-	name: string
-	type: number
-	visibility: string
-}
 
 const noRenderTypes = Object.freeze([1])
 
 export async function GET({ locals, params }: RequestEvent) {
 	const { user } = await authorise(locals)
 	const id = Number(params.id)
-	const [[asset]] = await dbQuery<Asset[][]>(assetQuery, {
-		asset: Record("asset", id),
-	})
+	const asset = await assetIconOf(id)
 	if (!asset) error(404, "Not Found")
 
 	if (asset.visibility === "Moderated") redirect(302, "/moderated.svg")

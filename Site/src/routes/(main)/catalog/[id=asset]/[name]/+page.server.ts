@@ -1,30 +1,13 @@
 import { error, redirect } from "@sveltejs/kit"
 import { balance, countOwnersOne, ownsOne } from "economy/api"
 import { Package as EconPackage, UnlimitedAsset, User } from "economy/types"
-import type { Comment } from "#lib/comment.ts"
 import { authorise } from "#lib/server/auth.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import { assetPageOf } from "#lib/server/db/catalog.ts"
 import { assetOwner, economyConnFailed } from "#lib/server/economy.ts"
-import { type PackageItem, packageItems } from "#lib/server/packageItems.ts"
+import { packageItems } from "#lib/server/packageItems.ts"
 import { Record } from "#lib/server/surreal.ts"
 import { couldMatch, encode } from "#lib/urlName.ts"
 import type { RequestEvent } from "./$types"
-import assetQuery from "./asset.surql"
-
-interface Asset {
-	comments: Comment[]
-	created: Date
-	description: string
-	forSale: boolean
-	id: string
-	items: PackageItem[]
-	name: string
-	owned: boolean
-	price: number
-	sold: number
-	type: number
-	visibility: string
-}
 
 const noTexts = Object.freeze([
 	"Cancel",
@@ -38,10 +21,7 @@ const failTexts = Object.freeze(["Bruh", "Okay", "Aight", "Rip", "Aw man..."])
 export async function load({ fetch: f, locals, params }: RequestEvent) {
 	const { user } = await authorise(locals)
 	const id = Number(params.id)
-	const [[asset]] = await dbQuery<Asset[][]>(assetQuery, {
-		asset: Record("asset", id),
-		user: Record("user", user.id),
-	})
+	const asset = await assetPageOf(id, Record("user", user.id))
 	if (!asset) error(404, "Not Found")
 
 	// resolve the source's owner to the profile data the page uses
