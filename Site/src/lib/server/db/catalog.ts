@@ -4,15 +4,21 @@ import { Record, type RecordId } from "#lib/server/surreal.ts"
 import buyQuery from "./catalog/buy.surql"
 import checkQuery from "./catalog/check.surql"
 import createAssetQuery from "./catalog/createAsset.surql"
+import createPackageQuery from "./catalog/createPackage.surql"
+import createStaffQuery from "./catalog/createStaff.surql"
 import findQuery from "./catalog/find.surql"
+import iaidQuery from "./catalog/iaid.surql"
 import iconQuery from "./catalog/icon.surql"
 import listQuery from "./catalog/list.surql"
 import nameQuery from "./catalog/name.surql"
 import packageItemsQuery from "./catalog/packageItems.surql"
 import pageQuery from "./catalog/page.surql"
+import pendingQuery from "./catalog/pending.surql"
+import purgeQuery from "./catalog/purge.surql"
 import reuploadQuery from "./catalog/reupload.surql"
 import settingsQuery from "./catalog/settings.surql"
 import updateQuery from "./catalog/update.surql"
+import setVisibilityQuery from "./catalog/visibility.surql"
 
 /** An asset as the catalog lists it. */
 export interface CatalogAsset {
@@ -242,4 +248,84 @@ export async function createAsset(args: {
 }): Promise<boolean> {
 	const results = await dbQuery<boolean[]>(createAssetQuery, args)
 	return results.at(-1) === true
+}
+
+/** An asset waiting for approval, with the image it's textured with. */
+export interface PendingAsset {
+	id: number
+	imageAsset?: { id: number; name: string }
+	name: string
+	type: number
+}
+
+/** Lists the assets waiting for approval. */
+export async function pendingAssets(): Promise<PendingAsset[]> {
+	const [assets] = await dbQuery<PendingAsset[][]>(pendingQuery)
+	return assets
+}
+
+/** Finds the id of an asset's image asset, which is only set for items with textures. */
+export async function imageAssetIdOf(id: number): Promise<number | undefined> {
+	const [[{ iaid }]] = await dbQuery<{ iaid: number }[][]>(iaidQuery, {
+		asset: Record("asset", id),
+	})
+	return iaid
+}
+
+/** Sets an asset's visibility, and its image asset's, logged by the moderator who did it. */
+export async function setAssetVisibility(args: {
+	asset: RecordId<"asset">
+	note: string
+	user: RecordId<"user">
+	visibility: string
+}): Promise<void> {
+	await dbQuery(setVisibilityQuery, args)
+}
+
+/** Deletes an asset and its image asset's records, which is logged by the moderator who did it. */
+export async function purgeAsset(args: {
+	asset: RecordId<"asset">
+	imageAsset: RecordId<"asset">
+	note: string
+	user: RecordId<"user">
+}): Promise<void> {
+	await dbQuery(purgeQuery, args)
+}
+
+/**
+ * Creates an asset as a staff member, visible at once.
+ * @returns The last statement's result, which is truthy if the asset was created.
+ */
+export async function createStaffAsset(args: {
+	assetType: number
+	description?: string
+	id: number
+	name: string
+	price: number
+}): Promise<unknown> {
+	const results = await dbQuery(createStaffQuery, args)
+	return results.at(-1)
+}
+
+/**
+ * Creates a package and the records of everything inside it, visible at once.
+ * @returns The last statement's result, which is true if the package was created.
+ */
+export async function createPackageRecords(args: {
+	childRows: {
+		description: { text: string }[]
+		forSale: boolean
+		id: number
+		name: string
+		price: number
+		type: number
+		visibility: string
+	}[]
+	description?: string
+	id: number
+	name: string
+	price: number
+}): Promise<unknown> {
+	const results = await dbQuery(createPackageQuery, args)
+	return results.at(-1)
 }

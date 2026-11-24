@@ -1,30 +1,13 @@
 import { error } from "@sveltejs/kit"
 import { authorise } from "#lib/server/auth.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
-import {
-	assetOwner,
-	economyConnFailed,
-	type OwnedUser,
-} from "#lib/server/economy.ts"
+import { pendingAssets } from "#lib/server/db/catalog.ts"
+import { assetOwner, economyConnFailed } from "#lib/server/economy.ts"
 import type { PageServerLoadEvent } from "./$types"
-import assetsQuery from "./asset.surql"
-
-interface Asset {
-	id: number
-	imageAsset?: {
-		id: number
-		name: string
-	}
-	name: string
-	owner: OwnedUser | null
-	price: number
-	type: number
-}
 
 export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 	await authorise(locals, 3)
 
-	const [assets] = await dbQuery<Asset[][]>(assetsQuery)
+	const assets = await pendingAssets()
 
 	const withOwners = await Promise.all(
 		assets.map(async asset => {

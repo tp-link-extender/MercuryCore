@@ -1,7 +1,7 @@
+# Only what the approval queue shows
 SELECT
 	record::id(id) AS id,
 	name,
-	price,
 	type,
 	(SELECT record::id(id) AS id, name
 	FROM $parent->imageAsset->asset)[0] AS imageAsset

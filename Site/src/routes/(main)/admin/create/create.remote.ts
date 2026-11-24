@@ -5,15 +5,16 @@ import { createPackageSourceFree, createUnlimitedSourceFree } from "economy/api"
 import { User as EconUser, type UnlimitedSource } from "economy/types"
 import types, { typeToNumber } from "#lib/assetTypes.ts"
 import { authorise } from "#lib/server/auth.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import {
+	createPackageRecords,
+	createStaffAsset,
+} from "#lib/server/db/catalog.ts"
 import { formFile } from "#lib/server/formFile.ts"
 import requestRender, { type RenderType } from "#lib/server/requestRender.ts"
 import { isXML } from "#lib/server/xml.ts"
 import { encode } from "#lib/urlName.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent, type RemoteFormInvalidField } from "$app/server"
-import createQuery from "./create.surql"
-import createPackageQuery from "./createPackage.surql"
 
 const packageChildSchema = type({
 	"asset?": formFile,
@@ -120,14 +121,15 @@ export const formData: ClientForm<typeof schema.inferIn> = form(
 
 		let stored = false
 		try {
-			const results = await dbQuery(createQuery, {
-				assetType,
-				description,
-				id,
-				name,
-				price,
-			})
-			stored = Boolean(results.at(-1))
+			stored = Boolean(
+				await createStaffAsset({
+					assetType,
+					description,
+					id,
+					name,
+					price,
+				})
+			)
 		} catch (e) {
 			console.error(e)
 		}
@@ -249,22 +251,22 @@ async function createPackage(
 
 	let stored = false
 	try {
-		const results = await dbQuery(createPackageQuery, {
-			childRows: validChildren.map(c => ({
-				description: [{ text: c.description }],
-				forSale: false, // package items are offsale by default
-				id: c.id,
-				name: c.name,
-				price: 0,
-				type: c.type,
-				visibility: "Visible", // created by catalog managers, immediately visible
-			})),
-			description,
-			id,
-			name,
-			price,
-		})
-		stored = results.at(-1) === true
+		stored =
+			(await createPackageRecords({
+				childRows: validChildren.map(c => ({
+					description: [{ text: c.description }],
+					forSale: false, // package items are offsale by default
+					id: c.id,
+					name: c.name,
+					price: 0,
+					type: c.type,
+					visibility: "Visible", // created by catalog managers, immediately visible
+				})),
+				description,
+				id,
+				name,
+				price,
+			})) === true
 	} catch (e) {
 		console.error(e)
 	}
