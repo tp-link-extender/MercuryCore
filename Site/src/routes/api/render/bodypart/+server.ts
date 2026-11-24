@@ -1,10 +1,8 @@
 import { error } from "@sveltejs/kit"
 import { assetRegex } from "#lib/paramTests.ts"
 import config from "#lib/server/config.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
-import { Record } from "#lib/server/surreal.ts"
+import { assetType } from "#lib/server/db/assets.ts"
 import type { RequestEvent } from "./$types"
-import typeQuery from "./type.surql"
 
 // the clothing worn by the render rig depends on which body part is rendered
 // (hardcoded for prod)
@@ -24,12 +22,10 @@ export async function GET({ url }: RequestEvent) {
 	const id = url.searchParams.get("id")
 	if (!id || !assetRegex.test(id)) error(400, "Missing id parameter")
 
-	const [[asset]] = await dbQuery<{ type: number }[][]>(typeQuery, {
-		asset: Record("asset", Number(id)),
-	})
-	if (!asset) error(404, "Not Found")
+	const type = await assetType(Number(id))
+	if (type === undefined) error(404, "Not Found")
 
-	const clothing = bodyPartClothing[asset.type]
+	const clothing = bodyPartClothing[type]
 	if (!clothing) error(400, "Not a body part asset")
 
 	const charApp = [

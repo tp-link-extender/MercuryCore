@@ -3,15 +3,13 @@ import { rename, statfs } from "node:fs/promises"
 import { error } from "@sveltejs/kit"
 import { intRegex } from "#lib/paramTests.ts"
 import config from "#lib/server/config.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import { assetVisibility } from "#lib/server/db/assets.ts"
 import { FixedWindow } from "#lib/server/fixedWindow.ts"
 import { readLimited, TooLargeError } from "#lib/server/readLimited.ts"
-import { Record } from "#lib/server/surreal.ts"
 import { isXML } from "#lib/server/xml.ts"
 import { substituteRobloxAssetUrls } from "#lib/server/xmlTemplate.ts"
 import { OPEN_CLOUD_KEY } from "$app/env/private"
 import type { RequestEvent } from "./$types"
-import assetQuery from "./asset.surql"
 
 const headers = (file: string | Uint8Array) => ({
 	"Content-Disposition": `attachment; filename="${createHash("md5")
@@ -28,12 +26,6 @@ const isAssetDelivery = (value: unknown): value is { location: string } =>
 	value !== null &&
 	"location" in value &&
 	typeof value.location === "string"
-
-interface FoundAsset {
-	id: number
-	name: string
-	visibility: string
-}
 
 // Only substitute if it's an XML file (re-encoding image files tends to corrupt them)
 async function substituteURLs(file: Bun.BunFile | Response) {
@@ -58,10 +50,8 @@ async function loadUserAsset(id: number) {
 	const file = Bun.file(`../data/assets/${id}`)
 	if (!(await file.exists())) return
 
-	const [[asset]] = await dbQuery<FoundAsset[][]>(assetQuery, {
-		asset: Record("asset", id),
-	})
-	if (!asset || asset.visibility === "Moderated") return
+	const visibility = await assetVisibility(id)
+	if (visibility === undefined || visibility === "Moderated") return
 
 	// The asset is visible or pending
 	// (allow pending assets to be shown through the api)

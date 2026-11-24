@@ -1,10 +1,8 @@
 // This should be moved to asset thumbnails for every asset on Mercury, but for now we'll use it for the stamper tool (and other games which require it)
 
 import { error, redirect } from "@sveltejs/kit"
-import { dbQuery } from "#lib/server/db/query.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { cachedThumbnail, cacheThumbnail } from "#lib/server/db/assets.ts"
 import type { RequestEvent } from "./$types"
-import cachedAssetQuery from "./cache.surql"
 
 const isThumbnailResponse = (
 	value: unknown
@@ -35,10 +33,7 @@ export async function GET({ fetch: f, url }: RequestEvent) {
 	if (!assetId || !width || !height) error(404, "Asset not found")
 	const stringAssetId = assetId.toString()
 
-	const cachedAsset = Record("thumbnailCache", assetId)
-	const [[cache]] = await dbQuery<
-		{ height?: number; url: string; width?: number }[][]
-	>(cachedAssetQuery, { cachedAsset })
+	const cache = await cachedThumbnail(assetId)
 	// The cached URL is for one size, so it can only answer a request for the same size
 	if (cache && cache.width === width && cache.height === height)
 		redirect(302, cache.url, { external: true })
@@ -58,8 +53,7 @@ export async function GET({ fetch: f, url }: RequestEvent) {
 	if (!isThumbnailResponse(body)) error(400, "Invalid asset")
 	const [{ imageUrl }] = body.data
 	// Stored with the size, so a later request for another size doesn't get this URL
-	// UPSERT, since the cache record is new on the first fetch
-	await db.upsert(cachedAsset).merge({ height, url: imageUrl, width })
+	await cacheThumbnail(assetId, { height, url: imageUrl, width })
 
 	redirect(302, imageUrl, { external: true })
 }
