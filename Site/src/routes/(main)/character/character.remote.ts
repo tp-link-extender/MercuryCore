@@ -16,20 +16,21 @@ import {
 } from "#lib/character.ts"
 import { assetRegex } from "#lib/paramTests.ts"
 import { authorise } from "#lib/server/auth.ts"
-import { bodyColoursOf } from "#lib/server/db/appearance.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import { bodyColoursOf, setBodyColours } from "#lib/server/db/appearance.ts"
+import {
+	equipAsset,
+	equipDataOf,
+	equipPackage,
+	hatsWorn,
+	unequipAsset,
+	unequipPackage,
+} from "#lib/server/db/character.ts"
 import { economyConnFailed } from "#lib/server/economy.ts"
 import { packageItems } from "#lib/server/packageItems.ts"
 import { ratelimited, tooManyRequests } from "#lib/server/ratelimit.ts"
 import requestRender from "#lib/server/requestRender.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import { form, getRequestEvent } from "$app/server"
-import equipQuery from "./equip.surql"
-import equipDataQuery from "./equipData.surql"
-import equipPackageQuery from "./equipPackage.surql"
-import hatsEquippedQuery from "./hatsEquipped.surql"
-import unequipQuery from "./unequip.surql"
-import unequipPackageQuery from "./unequipPackage.surql"
 
 // Asset ids are numbers, so `.for()` instances send a number
 const assetIdSchema = type("string | number").pipe(String)
@@ -43,12 +44,6 @@ const paintSchema = type({
 	p: "string",
 })
 
-interface AssetData {
-	id: number
-	type: number
-	visibility: string
-}
-
 async function getEquipData(id: string, requireVisible = true) {
 	const { fetch: f, locals } = getRequestEvent()
 	const { user } = await authorise(locals)
@@ -56,9 +51,7 @@ async function getEquipData(id: string, requireVisible = true) {
 	if (!assetRegex.test(id)) error(400, `Invalid asset ID: ${id}`)
 	const assetId = Number(id)
 
-	const [[asset]] = await dbQuery<AssetData[][]>(equipDataQuery, {
-		asset: Record("asset", assetId),
-	})
+	const asset = await equipDataOf(assetId)
 	if (!asset) error(404, "Item not found")
 
 	// packages are their own item type in the ledger, so ownership has to be checked against Package rather than UnlimitedAsset
@@ -108,7 +101,7 @@ export const equipForm = form(equipSchema, async ({ id }, issues) => {
 		if (children.length === 0)
 			return issues("This package has no items to equip")
 
-		await dbQuery(equipPackageQuery, {
+		await equipPackage({
 			children: children.map(item => Record("asset", item.id)),
 			conflicting: [
 				...new Set(
@@ -128,17 +121,15 @@ export const equipForm = form(equipSchema, async ({ id }, issues) => {
 
 	// Find if there's more than 3 hats equipped, throw an error if there is
 	if (asset.type === 8) {
-		const [hatsEquipped] = await dbQuery<number[]>(hatsEquippedQuery, {
-			user: Record("user", user.id),
-		})
+		const hatsEquipped = await hatsWorn(Record("user", user.id))
 		if (hatsEquipped >= 3) return issues("You can only wear 3 hats")
 	}
 
-	await dbQuery(equipQuery, {
-		asset: Record("asset", assetId),
-		user: Record("user", user.id),
-		...(oneEquippable.includes(asset.type) ? asset : {}),
-	})
+	await equipAsset(
+		Record("asset", assetId),
+		Record("user", user.id),
+		oneEquippable.includes(asset.type) ? asset.type : undefined
+	)
 
 	return rerender(user)
 })
@@ -160,7 +151,7 @@ export const unequipForm = form(equipSchema, async ({ id }) => {
 			)
 			.map(item => Record("asset", item.id))
 
-		await dbQuery(unequipPackageQuery, {
+		await unequipPackage({
 			children,
 			user: Record("user", user.id),
 		})
@@ -168,10 +159,7 @@ export const unequipForm = form(equipSchema, async ({ id }) => {
 		return rerender(user)
 	}
 
-	await dbQuery(unequipQuery, {
-		asset: Record("asset", assetId),
-		user: Record("user", user.id),
-	})
+	await unequipAsset(Record("asset", assetId), Record("user", user.id))
 
 	return rerender(user)
 })
@@ -191,9 +179,7 @@ export const paintForm = form(paintSchema, async ({ c, p }, issues) => {
 	if (!currentColours) error(404, "User not found")
 	currentColours[p] = bodyColour
 
-	await db
-		.update(Record("user", user.id))
-		.merge({ bodyColours: currentColours })
+	await setBodyColours(user.id, currentColours)
 
 	return rerender(user)
 })

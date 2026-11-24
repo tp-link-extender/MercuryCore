@@ -9,21 +9,17 @@ import {
 import { allowedTypes, packageWearable } from "#lib/character.ts"
 import { authorise } from "#lib/server/auth.ts"
 import { bodyColoursOf } from "#lib/server/db/appearance.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import {
+	type WardrobeAsset,
+	wardrobeOf,
+	wornStatesOf,
+} from "#lib/server/db/character.ts"
 import { economyConnFailed } from "#lib/server/economy.ts"
 import { packageItems } from "#lib/server/packageItems.ts"
 import { Record } from "#lib/server/surreal.ts"
 import type { PageServerLoadEvent } from "./$types"
-import assetsQuery from "./assets.surql"
-import wornQuery from "./worn.surql"
 
-export interface Asset {
-	id: number
-	name: string
-	price: number
-	type: number
-	wearing: boolean
-}
+export type Asset = WardrobeAsset
 
 const ownedAssetIds = (items: ItemsOne) =>
 	[...items.set]
@@ -39,11 +35,6 @@ async function getOwnedAssetIds(f: typeof globalThis.fetch, userId: string) {
 	return ownedAssetIds(inv.value.One)
 }
 
-interface WornAsset {
-	id: number
-	worn: boolean
-}
-
 export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 	const { user } = await authorise(locals)
 	const bodyColours = await bodyColoursOf(user.username)
@@ -53,7 +44,7 @@ export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 
 	if (ids.length === 0) return { assets: [], bodyColours }
 
-	const [assets] = await dbQuery<Asset[][]>(assetsQuery, {
+	const assets = await wardrobeOf({
 		allowedTypes,
 		assets: ids.map(id => Record("asset", id)),
 		user: Record("user", user.id),
@@ -80,10 +71,7 @@ export async function load({ fetch: f, locals }: PageServerLoadEvent) {
 	}
 
 	if (wearables.length > 0) {
-		const [worn] = await dbQuery<WornAsset[][]>(wornQuery, {
-			ids: wearables,
-			user: Record("user", user.id),
-		})
+		const worn = await wornStatesOf(wearables, Record("user", user.id))
 		const wornIds = new Set(worn.filter(w => w.worn).map(w => w.id))
 		for (const [pkgId, items] of contents) {
 			const pkg = assets.find(a => a.id === pkgId)

@@ -1,5 +1,5 @@
 import { dbQuery } from "#lib/server/db/query.ts"
-import type { RecordId } from "#lib/server/surreal.ts"
+import { db, Record, type RecordId } from "#lib/server/surreal.ts"
 import bodyColoursQuery from "./appearance/bodyColours.surql"
 import userIdQuery from "./appearance/userId.surql"
 import wornAssetsQuery from "./appearance/wornAssets.surql"
@@ -51,4 +51,12 @@ export async function wornAssetsOf(
 		username,
 	})
 	return user?.wearing
+}
+
+/** Sets a user's body colours. */
+export async function setBodyColours(
+	id: string,
+	bodyColours: BodyColours
+): Promise<void> {
+	await db.update(Record("user", id)).merge({ bodyColours })
 }
