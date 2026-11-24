@@ -1,20 +1,8 @@
 import { error } from "@sveltejs/kit"
 import { reportPath } from "#lib/reportUrl.ts"
 import { authorise } from "#lib/server/auth.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
-import type { RecordId } from "#lib/server/surreal.ts"
+import { reporteeOf } from "#lib/server/db/moderation.ts"
 import type { PageServerLoadEvent } from "./$types"
-import getReporteeQuery from "./getReportee.surql"
-
-async function getReportee(
-	username: string
-): Promise<RecordId<"user"> | undefined> {
-	const [[reportee]] = await dbQuery<{ id: RecordId<"user"> }[][]>(
-		getReporteeQuery,
-		{ username }
-	)
-	return reportee?.id
-}
 
 export async function load({ locals, url }: PageServerLoadEvent) {
 	await authorise(locals)
@@ -26,7 +14,7 @@ export async function load({ locals, url }: PageServerLoadEvent) {
 	const reportedUrl = reportPath(rawReportUrl)
 	if (!reportedUrl) error(400, "Invalid report URL")
 
-	const reporteeUser = await getReportee(reportee)
+	const reporteeUser = await reporteeOf(reportee)
 	if (!reporteeUser) error(400, "Invalid user")
 
 	return {

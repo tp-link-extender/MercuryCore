@@ -1,22 +1,10 @@
 import { error, redirect } from "@sveltejs/kit"
 import { authorise } from "#lib/server/auth.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
-import { Record } from "#lib/server/surreal.ts"
+import { activeModerationOf, unmoderate } from "#lib/server/db/moderation.ts"
 import { form, getRequestEvent } from "$app/server"
-import getModerationQuery from "./getModeration.surql"
-import unmoderateQuery from "./unmoderate.surql"
-
-interface Moderation {
-	note: string
-	time: string
-	timeEnds: string
-	type: string
-}
 
 async function getModeration(id: string) {
-	const [[moderation]] = await dbQuery<Moderation[][]>(getModerationQuery, {
-		user: Record("user", id),
-	})
+	const moderation = await activeModerationOf(id)
 	if (!moderation) redirect(302, "/home")
 
 	return moderation
@@ -31,7 +19,7 @@ export const reactivateForm = form(async () => {
 	if (userModeration.type === "Termination")
 		error(400, "You cannot reactivate your account")
 
-	await dbQuery(unmoderateQuery, { user: Record("user", user.id) })
+	await unmoderate(user.id)
 
 	redirect(302, "/home")
 })

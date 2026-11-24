@@ -1,27 +1,16 @@
 import { type } from "arktype"
 import { reportPath } from "#lib/reportUrl.ts"
 import { authorise } from "#lib/server/auth.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import { reporteeOf, submitReport } from "#lib/server/db/moderation.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
-import { Record, type RecordId } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
-import getReporteeQuery from "./getReportee.surql"
-import reportQuery from "./report.surql"
 import reports from "./reports"
 
 const schema = type({
 	category: type.enumerated(...reports).describe("a valid report category"),
 	"note?": "string <= 1000",
 })
-
-async function getReportee(username: string) {
-	const [[reportee]] = await dbQuery<{ id: RecordId<"user"> }[][]>(
-		getReporteeQuery,
-		{ username }
-	)
-	return reportee?.id
-}
 
 export const formData: ClientForm<typeof schema.infer> = form(
 	schema,
@@ -36,18 +25,18 @@ export const formData: ClientForm<typeof schema.infer> = form(
 		const reportUrl = reportPath(rawReportUrl)
 		if (!reportUrl) return issues("Invalid report URL")
 
-		const reportee = await getReportee(username)
+		const reportee = await reporteeOf(username)
 		if (!reportee) return issues("Invalid user")
 
 		const limit = ratelimitRemote(issues, "report", getClientAddress, 120)
 		if (limit) return limit
 
-		await dbQuery(reportQuery, {
+		await submitReport({
 			category,
 			note: note?.trim(),
 			reportee,
 			reportUrl,
-			user: Record("user", user.id),
+			user: user.id,
 		})
 
 		return { success: "Report sent successfully." }

@@ -1,21 +1,10 @@
 import { redirect } from "@sveltejs/kit"
 import { authorise } from "#lib/server/auth.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
-import { Record } from "#lib/server/surreal.ts"
+import { activeModerationOf } from "#lib/server/db/moderation.ts"
 import type { PageServerLoadEvent } from "./$types"
-import getModerationQuery from "./getModeration.surql"
-
-interface Moderation {
-	note: string
-	time: string
-	timeEnds: string
-	type: string
-}
 
 async function getModeration(id: string) {
-	const [[moderation]] = await dbQuery<Moderation[][]>(getModerationQuery, {
-		user: Record("user", id),
-	})
+	const moderation = await activeModerationOf(id)
 	if (!moderation) redirect(302, "/home")
 
 	return moderation
