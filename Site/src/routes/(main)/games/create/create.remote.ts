@@ -3,7 +3,7 @@ import { type } from "arktype"
 import { createPlace } from "economy/api"
 import { User } from "economy/types"
 import { authorise } from "#lib/server/auth.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import { createPlaceRecord } from "#lib/server/db/places.ts"
 import filter from "#lib/server/filter.ts"
 import {
 	maxPlayersTest,
@@ -14,7 +14,6 @@ import { encode } from "#lib/urlName.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
 import clientVersions from "./clientVersions"
-import createQuery from "./create.surql"
 
 const schema = type({
 	clientVersion: type.enumerated(...clientVersions).configure({
@@ -58,13 +57,13 @@ export const formData: ClientForm<typeof schema.infer> = form(
 
 		const id = created.value.ID
 
-		await dbQuery(createQuery, {
+		await createPlaceRecord({
 			clientVersion: Number(clientVersion),
 			description: filter(description),
 			id,
 			maxPlayers,
 			name: filter(nname),
-			privateServer,
+			privateServer: Boolean(privateServer),
 			serverAddress,
 			serverPort,
 		})

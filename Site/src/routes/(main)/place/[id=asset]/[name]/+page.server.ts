@@ -3,49 +3,19 @@ import { Place as EconPlace } from "economy/types"
 import { authorise } from "#lib/server/auth.ts"
 import config from "#lib/server/config.ts"
 import constantTimeEqual from "#lib/server/constantTimeEqual.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
-import {
-	economyConnFailed,
-	itemOwner,
-	type OwnedUser,
-} from "#lib/server/economy.ts"
+import { placePageOf } from "#lib/server/db/places.ts"
+import { economyConnFailed, itemOwner } from "#lib/server/economy.ts"
 import { Record } from "#lib/server/surreal.ts"
 import { couldMatch, encode } from "#lib/urlName.ts"
 import type { PageServerLoadEvent } from "./$types"
-import placeQuery from "./place.surql"
-
-interface FoundPlace {
-	clientVersion: number
-	dedicated: boolean
-	privateServer: boolean
-	privateTicket: string
-}
-
-interface Place extends FoundPlace {
-	clientVersion: number
-	created: string
-	description: string
-	dislikeCount: number
-	dislikes: boolean
-	id: number
-	likeCount: number
-	likes: boolean
-	maxPlayers: number
-	name: string
-	ownerUser: OwnedUser | null
-	players: {
-		status: "Playing"
-		username: string
-	}[]
-	serverPing: number
-	serverTicket: string
-	updated: Date
-}
 
 const thumbnails = config.Images.DefaultPlaceThumbnails
 
 /** Whether the ticket supplied by the client opens a private place. */
-const ticketMatches = (supplied: unknown, place: FoundPlace): boolean =>
+const ticketMatches = (
+	supplied: unknown,
+	place: { privateTicket: string }
+): boolean =>
 	typeof supplied === "string" &&
 	supplied !== "" &&
 	constantTimeEqual(supplied, place.privateTicket)
@@ -59,15 +29,12 @@ export async function load({
 	const { user } = await authorise(locals)
 	const privateTicket = url.searchParams.get("privateServer")
 	const id = Number(params.id)
-	const [[place]] = await dbQuery<Place[][]>(placeQuery, {
-		place: Record("place", id),
-		user: Record("user", user.id),
-	})
-	if (!place) error(404, "Place not found")
+	const found = await placePageOf(id, Record("user", user.id))
+	if (!found) error(404, "Place not found")
 
 	const owner = await itemOwner(f, new EconPlace(id))
 	if (!owner.ok) error(500, economyConnFailed)
-	place.ownerUser = owner.value
+	const place = { ...found, ownerUser: owner.value }
 
 	const isOwner = place.ownerUser?.id === user.id
 	const hasTicket = ticketMatches(privateTicket, place)

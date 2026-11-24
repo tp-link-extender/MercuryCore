@@ -1,40 +1,14 @@
 import { error } from "@sveltejs/kit"
 import { Place as EconPlace } from "economy/types"
 import { authorise } from "#lib/server/auth.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import { placeSettingsOf } from "#lib/server/db/places.ts"
 import { economyConnFailed, ownsItem } from "#lib/server/economy.ts"
-import { Record } from "#lib/server/surreal.ts"
 import { encode } from "#lib/urlName.ts"
 import clientVersions from "../../../../games/create/clientVersions"
 import type { PageServerLoadEvent } from "./$types"
-import settingsQuery from "./settings.surql"
-
-interface Place {
-	clientVersion: number
-	created: string
-	dedicated: boolean
-	description: string
-	id: string // graah
-	maxPlayers: number
-	name: string
-	privateServer: boolean
-	privateTicket: string
-	serverAddress: string
-	serverPing: number
-	serverPort: number
-	serverTicket: string
-	updated: Date
-}
-
-async function placeQuery(id: number) {
-	const [[place]] = await dbQuery<Place[][]>(settingsQuery, {
-		place: Record("place", id),
-	})
-	return place
-}
 
 export async function load({ fetch: f, locals, params }: PageServerLoadEvent) {
-	const getPlace = await placeQuery(Number(params.id))
+	const getPlace = await placeSettingsOf(Number(params.id))
 	if (!getPlace) error(404, "Place not found")
 
 	const { user } = await authorise(locals)

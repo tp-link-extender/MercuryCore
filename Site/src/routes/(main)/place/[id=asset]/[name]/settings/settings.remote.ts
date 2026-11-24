@@ -4,12 +4,18 @@ import { type } from "arktype"
 import { Place as EconPlace } from "economy/types"
 import sharp from "sharp"
 import { authorise } from "#lib/server/auth.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import {
+	placeSettingsOf,
+	regeneratePrivateTicket,
+	regenerateServerTicket,
+	setPlacePrivacy,
+	updatePlaceNetwork,
+	updatePlaceText,
+} from "#lib/server/db/places.ts"
 import { economyConnFailed, ownsItem } from "#lib/server/economy.ts"
 import filter from "#lib/server/filter.ts"
 import { formFile } from "#lib/server/formFile.ts"
 import { closeGameserver } from "#lib/server/orbiter.ts"
-import { db, Record } from "#lib/server/surreal.ts"
 import {
 	maxPlayersTest,
 	serverAddressTest,
@@ -18,28 +24,6 @@ import {
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
 import clientVersions from "../../../../games/create/clientVersions"
-import privacyQuery from "./privacy.surql"
-import privateTicketQuery from "./privateTicket.surql"
-import serverTicketQuery from "./serverTicket.surql"
-import settingsQuery from "./settings.surql"
-import updateSettingsQuery from "./updateSettings.surql"
-
-interface Place {
-	clientVersion: number
-	created: string
-	dedicated: boolean
-	description: string
-	id: string // graah
-	maxPlayers: number
-	name: string
-	privateServer: boolean
-	privateTicket: string
-	serverAddress: string
-	serverPing: number
-	serverPort: number
-	serverTicket: string
-	updated: Date
-}
 
 // Place ids are numbers, so `.for()` instances send a number and the form data has to take it as one
 const placeIdSchema = type("string | number").pipe(String)
@@ -73,18 +57,11 @@ const dataSchema = type({
 	id: placeIdSchema,
 })
 
-async function placeQuery(id: number) {
-	const [[place]] = await dbQuery<Place[][]>(settingsQuery, {
-		place: Record("place", id),
-	})
-	return place
-}
-
 async function getData(id: string) {
 	const { fetch: f, locals } = getRequestEvent()
 	const { user } = await authorise(locals)
 	const placeId = Number(id)
-	const getPlace = await placeQuery(placeId)
+	const getPlace = await placeSettingsOf(placeId)
 	if (!getPlace) error(404, "Place not found")
 
 	const owns = await ownsItem(f, user.id, new EconPlace(placeId))
@@ -122,11 +99,7 @@ export const viewForm: ClientForm<typeof viewSchema.inferIn> = form(
 				)
 		}
 
-		await dbQuery(updateSettingsQuery, {
-			description: filter(description || ""),
-			name: filter(nname),
-			place: Record("place", placeId),
-		})
+		await updatePlaceText(placeId, filter(nname), filter(description || ""))
 		return { success: "View settings updated successfully!" }
 	}
 )
@@ -136,9 +109,7 @@ export const ticketForm: ClientForm<typeof ticketSchema.inferIn> = form(
 	async ({ id }) => {
 		const ticketPlaceId = await getData(id)
 
-		await dbQuery(serverTicketQuery, {
-			place: Record("place", ticketPlaceId),
-		})
+		await regenerateServerTicket(ticketPlaceId)
 		return { success: "Regenerated!" }
 	}
 )
@@ -155,7 +126,7 @@ export const networkForm: ClientForm<typeof networkSchema.inferIn> = form(
 	}) => {
 		const placeId = await getData(id)
 
-		await db.update(Record("place", placeId)).merge({
+		await updatePlaceNetwork(placeId, {
 			clientVersion,
 			dedicated: Boolean(dedicated),
 			maxPlayers,
@@ -184,10 +155,7 @@ export const privacyForm: ClientForm<typeof privacySchema.inferIn> = form(
 	async ({ id, privateServer }) => {
 		const placeId = await getData(id)
 
-		await dbQuery(privacyQuery, {
-			place: Record("place", placeId),
-			privateServer: Boolean(privateServer),
-		})
+		await setPlacePrivacy(placeId, Boolean(privateServer))
 		return { success: "Privacy settings updated successfully!" }
 	}
 )
@@ -197,9 +165,7 @@ export const privatelinkForm: ClientForm<typeof ticketSchema.inferIn> = form(
 	async ({ id }) => {
 		const linkPlaceId = await getData(id)
 
-		await dbQuery(privateTicketQuery, {
-			place: Record("place", linkPlaceId),
-		})
+		await regeneratePrivateTicket(linkPlaceId)
 		return { success: "Regenerated!" }
 	}
 )
