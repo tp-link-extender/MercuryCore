@@ -1,29 +1,16 @@
 import fs from "node:fs"
 import config from "#lib/server/config.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import {
+	activeRenderStatus,
+	createRender,
+	failRender,
+	type RenderType,
+} from "#lib/server/db/renders.ts"
 import { buildLoadscript } from "#lib/server/loadscript.ts"
-import { db, Record } from "#lib/server/surreal.ts"
 import { waitForChange } from "#lib/server/waitForChange.ts"
-import createRenderQuery from "./createRender.surql"
-import renderQuery from "./render.surql"
 import { renderFileMatcher } from "./renderFileMatch.ts"
 
-export type RenderType =
-	| "Clothing"
-	| "Avatar"
-	| "Model"
-	| "Mesh"
-	| "Package"
-	| "Torso"
-	| "LeftArm"
-	| "RightArm"
-	| "LeftLeg"
-	| "RightLeg"
-export type Status = "Pending" | "Rendering" | "Completed" | "Error"
-
-interface Render {
-	status: Status
-}
+export type { RenderType, Status } from "#lib/server/db/renders.ts"
 
 // How long a caller waits for a render to finish
 const renderTimeout = 60_000
@@ -46,10 +33,8 @@ export default async function requestRender(
 	// 	`Requesting render of type ${renderType} for ${relativeId} (${relativeName})`
 	// )
 
-	const params = Object.freeze({ relativeId, renderType })
-	// oxlint-disable-next-line unicorn/no-unreadable-array-destructuring -- query returns [result, error, value]
-	const [, , render] = await dbQuery<Render[]>(renderQuery, params)
-	if (render && render.status !== "Error") return
+	const status = await activeRenderStatus(relativeId, renderType)
+	if (status && status !== "Error") return
 
 	// Check the script exists before creating a render record, otherwise a
 	// pending render would be created that blocks all future retries
@@ -58,7 +43,7 @@ export default async function requestRender(
 		throw new Error(`Script file for ${renderType} does not exist`)
 
 	const scriptText = await scriptFile.text()
-	const [, renderId] = await dbQuery<string[]>(createRenderQuery, params)
+	const renderId = await createRender(relativeId, renderType)
 
 	// console.log(`Created new render with ID ${renderId}`)
 
@@ -101,7 +86,7 @@ export default async function requestRender(
 	} catch (e) {
 		// Mark the render as errored so that a retry can try again, rather
 		// than early-returning forever
-		await db.update(Record("render", renderId)).merge({ status: "Error" })
+		await failRender(renderId)
 		throw e
 	}
 }

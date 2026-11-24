@@ -1,32 +1,19 @@
 import { error } from "@sveltejs/kit"
 import { bearerMatches } from "#lib/server/bearer.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import {
+	completeRender,
+	markRendering,
+	renderTask,
+} from "#lib/server/db/renders.ts"
 import { parseRenderUpdate } from "#lib/server/renderUpdate.ts"
-import { db, Record } from "#lib/server/surreal.ts"
 import { RCC_KEY } from "$app/env/private"
 import type { RequestEvent } from "./$types"
-import completeQuery from "./complete.surql"
-import renderQuery from "./render.surql"
-
-interface Render {
-	relativeId: number
-	type:
-		| "Clothing"
-		| "Avatar"
-		| "Package"
-		| "Torso"
-		| "LeftArm"
-		| "RightArm"
-		| "LeftLeg"
-		| "RightLeg"
-}
 
 export async function POST({ params, request }: RequestEvent) {
 	// get bearer token from header instead of insecure url
 	if (!bearerMatches(request, RCC_KEY, "RCC_KEY")) error(403, "Stfu")
 
-	const render = Record("render", params.taskId)
-	const [[task]] = await dbQuery<Render[][]>(renderQuery, { render })
+	const task = await renderTask(params.taskId)
 	if (!task) error(404, "Task not found")
 
 	// More stuff is done with the proxy now, so we don't need to gunzip it
@@ -40,7 +27,7 @@ export async function POST({ params, request }: RequestEvent) {
 	} = parseRenderUpdate(new Uint8Array(await request.bytes()))
 
 	if (status === "Rendering") {
-		await db.update(render).merge({ status: "Rendering" })
+		await markRendering(params.taskId)
 		return new Response()
 	}
 	if (status !== "Completed") return new Response()
@@ -57,6 +44,6 @@ export async function POST({ params, request }: RequestEvent) {
 		await Promise.all([write(clickHead, "head"), write(clickBody, "body")])
 	else if (clickBody) await write(clickBody)
 
-	await dbQuery(completeQuery, { render })
+	await completeRender(params.taskId)
 	return new Response()
 }

@@ -5,5 +5,5 @@ LET $render = (SELECT status, created, id FROM render
 IF $render AND $render.created + 1s < time::now() {
 	UPDATE $render.id SET status = "Error"
 };
-# need the updated one
-SELECT status, created, id FROM ONLY $render.id;
+# need the updated one. Only the status is read back
+SELECT status FROM ONLY $render.id;
