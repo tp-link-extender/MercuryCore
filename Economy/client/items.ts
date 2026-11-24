@@ -57,7 +57,8 @@ export class Buf {
 			if (v === undefined) throw errReadOutOfRange
 			value = (value << 8) | v
 		}
-		return value
+		// the shifts work on signed 32-bit values, so IDs of 2^31 and above come out negative until this
+		return value >>> 0
 	}
 
 	readBigUInt64BE(offset: number): bigint {
