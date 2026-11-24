@@ -1,8 +1,10 @@
 import { dbQuery } from "#lib/server/db/query.ts"
-import { Record, type RecordId } from "#lib/server/surreal.ts"
+import { db, Record, type RecordId } from "#lib/server/surreal.ts"
+import changePasswordQuery from "./accounts/changePassword.surql"
 import createInitialQuery from "./accounts/createInitial.surql"
 import createUserQuery from "./accounts/createUser.surql"
 import loginQuery from "./accounts/login.surql"
+import passwordQuery from "./accounts/password.surql"
 import profileQuery from "./accounts/profile.surql"
 import recoveryQuery from "./accounts/recovery.surql"
 import recoveryCheckQuery from "./accounts/recoveryCheck.surql"
@@ -10,6 +12,7 @@ import recoveryConsumeQuery from "./accounts/recoveryConsume.surql"
 import registeredQuery from "./accounts/registered.surql"
 import regKeyCheckQuery from "./accounts/regKeyCheck.surql"
 import resetQuery from "./accounts/reset.surql"
+import updateProfileQuery from "./accounts/updateProfile.surql"
 
 export interface Profile {
 	description: string | null
@@ -146,4 +149,40 @@ export async function resetPassword(
 	hashedPassword: string
 ): Promise<void> {
 	await dbQuery(resetQuery, { hashedPassword, user })
+}
+
+/**
+ * Finds a user's password hash, to check the password they enter against.
+ * Throws if there is no such user, which can't happen for a signed-in user.
+ */
+export async function passwordHashOf(id: string): Promise<string> {
+	const [[{ hashedPassword }]] = await dbQuery<
+		{ hashedPassword: string }[][]
+	>(passwordQuery, { user: Record("user", id) })
+	return hashedPassword
+}
+
+export async function changePassword(
+	id: string,
+	hashedPassword: string
+): Promise<void> {
+	await dbQuery(changePasswordQuery, {
+		hashedPassword,
+		user: Record("user", id),
+	})
+}
+
+export async function updateProfile(
+	id: string,
+	profile: { description?: string; theme: number }
+): Promise<void> {
+	await dbQuery(updateProfileQuery, {
+		description: profile.description,
+		theme: profile.theme,
+		user: Record("user", id),
+	})
+}
+
+export async function setCss(id: string, css?: string): Promise<void> {
+	await db.update(Record("user", id)).merge({ css })
 }

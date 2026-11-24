@@ -2,19 +2,21 @@ import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { authorise, cookieName, cookieOptions } from "#lib/server/auth.ts"
 import config from "#lib/server/config.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import {
+	changePassword,
+	passwordHashOf,
+	setCss,
+	updateProfile,
+} from "#lib/server/db/accounts.ts"
 import {
 	createSession,
 	invalidateAllSessions,
 } from "#lib/server/db/sessions.ts"
 import { hashPassword, verifyPassword } from "#lib/server/password.ts"
 import { ratelimitRemoteKey } from "#lib/server/ratelimit.ts"
-import { db, Record } from "#lib/server/surreal.ts"
+import { Record } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
-import changePasswordQuery from "./changePassword.surql"
-import passwordQuery from "./password.surql"
-import updateProfileQuery from "./updateProfile.surql"
 
 const themeNames = config.Themes.map(t => t.Name)
 
@@ -45,11 +47,7 @@ export const profileForm: ClientForm<typeof profileSchema.inferIn> = form(
 		const { locals } = getRequestEvent()
 		const { user } = await authorise(locals)
 
-		await dbQuery(updateProfileQuery, {
-			description,
-			theme,
-			user: Record("user", user.id),
-		})
+		await updateProfile(user.id, { description, theme })
 
 		return { success: "Profile updated successfully!" }
 	}
@@ -79,16 +77,11 @@ export const passwordForm: ClientForm<typeof passwordSchema.infer> = form(
 		if (limit) return limit
 
 		const userR = Record("user", user.id)
-		const [[{ hashedPassword }]] = await dbQuery<
-			{ hashedPassword: string }[][]
-		>(passwordQuery, { user: userR })
+		const hashedPassword = await passwordHashOf(user.id)
 		if (!(await verifyPassword(_cpassword, hashedPassword)))
 			return issues._cpassword("Incorrect password")
 
-		await dbQuery(changePasswordQuery, {
-			hashedPassword: await hashPassword(_npassword),
-			user: userR,
-		})
+		await changePassword(user.id, await hashPassword(_npassword))
 		// All sessions, including this one, were just ended
 		cookies.set(cookieName, await createSession(userR), cookieOptions)
 
@@ -111,9 +104,7 @@ export const sessionForm: ClientForm<typeof sessionSchema.infer> = form(
 		)
 		if (limit) return limit
 
-		const [[{ hashedPassword }]] = await dbQuery<
-			{ hashedPassword: string }[][]
-		>(passwordQuery, { user: Record("user", user.id) })
+		const hashedPassword = await passwordHashOf(user.id)
 		if (!(await verifyPassword(_password, hashedPassword)))
 			return issues._password("Incorrect password")
 
@@ -132,7 +123,7 @@ export const stylingForm: ClientForm<typeof stylingSchema.infer> = form(
 
 		if (css === "undefined") return { success: "Styling already saved!" }
 
-		await db.update(Record("user", user.id)).merge({ css })
+		await setCss(user.id, css)
 
 		return { success: "Styling updated successfully!" }
 	}

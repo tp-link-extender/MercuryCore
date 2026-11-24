@@ -1,13 +1,14 @@
 import { error } from "@sveltejs/kit"
 import { packageItems } from "economy/api"
 import { UnlimitedAsset } from "economy/types"
-import { dbQuery } from "#lib/server/db/query.ts"
+import {
+	searchAssets,
+	searchGroups,
+	searchPlaces,
+	searchUsers,
+} from "#lib/server/db/search.ts"
 import { economyConnFailed } from "#lib/server/economy.ts"
 import type { PageServerLoadEvent } from "./$types"
-import searchAssetsQuery from "./searchAssets.surql"
-import searchGroupsQuery from "./searchGroups.surql"
-import searchPlacesQuery from "./searchPlaces.surql"
-import searchUsersQuery from "./searchUsers.surql"
 
 // bundle contents are owned in the Economy service, so the ids to hide come from there
 async function packageItemIds(f: typeof globalThis.fetch): Promise<number[]> {
@@ -19,34 +20,10 @@ async function packageItemIds(f: typeof globalThis.fetch): Promise<number[]> {
 		.map(i => i.ID)
 }
 
-interface Place {
-	dislikeCount: number
-	id: number
-	likeCount: number
-	name: string
-	playerCount: number
-	serverPing: number
-}
-
-interface Asset {
-	id: number
-	name: string
-	price: number
-}
-
-interface Group {
-	id: string
-	memberCount: number
-	name: string
-}
-
 export async function load({ fetch: f, url }: PageServerLoadEvent) {
 	const query = url.searchParams.get("q") || ""
 	const category = url.searchParams.get("c")?.toLowerCase() || ""
 	if (!query) error(400, "Missing search query")
-
-	// just freeze it bruh
-	const param = Object.freeze({ query })
 
 	// TODO: make this full-text search because that would be much nicer
 	switch (category) {
@@ -59,25 +36,19 @@ export async function load({ fetch: f, url }: PageServerLoadEvent) {
 			// )
 			// if (foundUser) redirect(302, `/user/${query}`)
 
-			const [users] = await dbQuery<BasicUser[][]>(
-				searchUsersQuery,
-				param
-			)
+			const users = await searchUsers(query)
 			return { category, query, users }
 		}
 		case "places": {
-			const [places] = await dbQuery<Place[][]>(searchPlacesQuery, param)
+			const places = await searchPlaces(query)
 			return { category, places, query }
 		}
 		case "assets": {
-			const [assets] = await dbQuery<Asset[][]>(searchAssetsQuery, {
-				...param,
-				packageItems: await packageItemIds(f),
-			})
+			const assets = await searchAssets(query, await packageItemIds(f))
 			return { assets, category, query }
 		}
 		case "groups": {
-			const [groups] = await dbQuery<Group[][]>(searchGroupsQuery, param)
+			const groups = await searchGroups(query)
 			return { category, groups, query }
 		}
 	}

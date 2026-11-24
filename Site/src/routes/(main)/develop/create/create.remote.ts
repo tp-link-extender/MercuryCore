@@ -5,7 +5,7 @@ import { createUnlimitedSource, createUnlimitedSourceFree } from "economy/api"
 import { User } from "economy/types"
 import { typeToNumber } from "#lib/assetTypes.ts"
 import { authorise } from "#lib/server/auth.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import { createAsset } from "#lib/server/db/catalog.ts"
 import { formFile } from "#lib/server/formFile.ts"
 import {
 	clothingAsset,
@@ -21,7 +21,6 @@ import { encode } from "#lib/urlName.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
 import assetTypes from "./assetTypes"
-import createAssetQuery from "./createAsset.surql"
 
 const schema = type({
 	asset: formFile,
@@ -133,7 +132,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 
 		let stored = false
 		try {
-			const results = await dbQuery<boolean[]>(createAssetQuery, {
+			stored = await createAsset({
 				assetType: typeToNumber[assetType],
 				description,
 				id,
@@ -142,7 +141,6 @@ export const formData: ClientForm<typeof schema.infer> = form(
 				price,
 				visibility: user.permissionLevel < 3 ? "Pending" : "Visible",
 			})
-			stored = results.at(-1) === true
 		} catch (e) {
 			console.error(e)
 		}

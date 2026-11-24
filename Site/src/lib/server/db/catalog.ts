@@ -3,6 +3,7 @@ import { dbQuery } from "#lib/server/db/query.ts"
 import { Record, type RecordId } from "#lib/server/surreal.ts"
 import buyQuery from "./catalog/buy.surql"
 import checkQuery from "./catalog/check.surql"
+import createAssetQuery from "./catalog/createAsset.surql"
 import findQuery from "./catalog/find.surql"
 import iconQuery from "./catalog/icon.surql"
 import listQuery from "./catalog/list.surql"
@@ -224,4 +225,21 @@ export async function packageRowsOf(
 ): Promise<PackageRow[]> {
 	const [rows] = await dbQuery<PackageRow[][]>(packageItemsQuery, { ids })
 	return rows
+}
+
+/**
+ * Creates an asset, and the image it's textured with where there is one.
+ * @returns Whether the asset was stored.
+ */
+export async function createAsset(args: {
+	assetType: number
+	description?: string
+	id: number
+	imageAssetId?: number
+	name: string
+	price: number
+	visibility: string
+}): Promise<boolean> {
+	const results = await dbQuery<boolean[]>(createAssetQuery, args)
+	return results.at(-1) === true
 }

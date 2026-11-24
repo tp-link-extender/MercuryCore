@@ -1,22 +1,13 @@
 import config from "#lib/server/config.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import { activeBanners } from "#lib/server/db/banners.ts"
 import type { LayoutServerLoadEvent } from "./$types"
-import bannersQuery from "./banners.surql"
 import getNotifications from "./notifications"
-
-interface Banner {
-	bgColour: string
-	body: string
-	// bruce, it's- I'm not doing this again
-	id: string
-	textLight: boolean
-}
 
 export async function load({ locals, url }: LayoutServerLoadEvent) {
 	const { user } = locals
 	// No authorise() function call, as we don't want to redirect to login page if not logged in
 
-	const [banners] = await dbQuery<Banner[][]>(bannersQuery)
+	const banners = await activeBanners()
 	return {
 		banners,
 		currencySymbol: config.CurrencySymbol,

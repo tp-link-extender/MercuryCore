@@ -1,7 +1,6 @@
 import { type } from "arktype"
 import { authorise } from "#lib/server/auth.ts"
-import createCommentQuery from "#lib/server/createComment.surql"
-import { dbQuery } from "#lib/server/db/query.ts"
+import { createComment } from "#lib/server/db/comments.ts"
 import filter from "#lib/server/filter.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
 import { Record } from "#lib/server/surreal.ts"
@@ -24,7 +23,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 		const limit = ratelimitRemote(issues, "comment", getClientAddress, 5)
 		if (limit) return limit
 
-		await dbQuery(createCommentQuery, {
+		await createComment({
 			content: filter(unfiltered),
 			type: ["status"],
 			user: Record("user", user.id),

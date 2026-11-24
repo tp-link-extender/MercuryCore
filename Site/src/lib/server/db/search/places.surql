@@ -1,7 +1,7 @@
+# Only what the place card shows
 SELECT
 	record::id(id) AS id,
 	name,
-	serverPing,
 	count(
 		SELECT 1 FROM $parent<-playing WHERE valid AND ping > time::now() - 35s
 	) AS playerCount,
