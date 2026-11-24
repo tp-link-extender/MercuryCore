@@ -1,5 +1,7 @@
 package ledger
 
+//go:generate go run ../cmd/tsgen -src types.go -out ../client/types.gen.ts
+
 import (
 	"encoding/binary"
 	"fmt"
@@ -57,6 +59,7 @@ type (
 		Id uint32
 	}
 
+	// A LimitedAsset is only issued by its source, so the source's opening stock has to be minted alongside it.
 	LimitedAsset struct {
 		Id uint32
 	}

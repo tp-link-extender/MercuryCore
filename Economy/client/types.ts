@@ -1,25 +1,31 @@
 import type { BufReader } from "./items"
+import {
+	Currency,
+	Group,
+	LimitedAsset,
+	LimitedSource,
+	Package,
+	PackageSource,
+	Place,
+	type Type,
+	TypeCurrency,
+	TypeGroup,
+	TypeLimitedAsset,
+	TypeLimitedSource,
+	TypeNil,
+	TypePackage,
+	TypePackageSource,
+	TypePlace,
+	TypeUnlimitedAsset,
+	TypeUnlimitedSource,
+	TypeUser,
+	UnlimitedAsset,
+	UnlimitedSource,
+	User,
+} from "./types.gen"
 
-export type Type = number
-
-// number ID types
-
-export const TypeNil: Type = 0
-export const TypeCurrency: Type = 1
-export const TypeLimitedAsset: Type = 2
-export const TypeUnlimitedAsset: Type = 3
-export const TypeLimitedSource: Type = 4
-export const TypeUnlimitedSource: Type = 5
-export const TypePlace: Type = 6
-
-// string ID types
-
-export const TypeUser: Type = 7
-export const TypeGroup: Type = 8
-
-// appended after the originals, because these byte values are persisted in every transfer in the ledger and shifting them would corrupt existing data
-export const TypePackage: Type = 9
-export const TypePackageSource: Type = 10
+// The concrete item classes and their Type values are generated from ledger/types.go. Only the interfaces and helpers that work across them are written here.
+export * from "./types.gen"
 
 // Abstract base classes to allow `instanceof` checks
 export interface Item {
@@ -117,161 +123,3 @@ export interface Source extends NumericItem, Owner {
 }
 export const IsSource = (i: Item): i is Source =>
 	IsOwner(i) && (i as Source).Source !== undefined
-
-// Concrete classes extend the abstract bases so we can use `instanceof`
-export class Currency implements NumericItem, CanOwnMany, Mintable {
-	Type = TypeCurrency
-
-	CanOwnMany() {}
-	Mintable() {}
-
-	constructor(public ID: number) {}
-
-	String(): string {
-		return `currency(${this.ID})`
-	}
-}
-
-// Mintable mirrors the Go side: a limited asset can only come from its source, so the source's opening stock has to be minted alongside it.
-export class LimitedAsset implements NumericItem, CanOwnMany, Mintable {
-	Type = TypeLimitedAsset
-
-	CanOwnMany() {}
-	Mintable() {}
-
-	constructor(public ID: number) {}
-
-	String(): string {
-		return `limited-asset(${this.ID})`
-	}
-}
-
-export class UnlimitedAsset implements NumericItem, CanOwnOne {
-	Type = TypeUnlimitedAsset
-
-	CanOwnOne() {}
-
-	constructor(public ID: number) {}
-
-	String(): string {
-		return `unlimited-asset(${this.ID})`
-	}
-}
-
-export class LimitedSource
-	implements NumericItem, CanOwnOne, Mintable, Owner, Source
-{
-	Type = TypeLimitedSource
-
-	CanOwnOne() {}
-	Mintable() {}
-	Owner() {}
-	Source() {}
-
-	constructor(public ID: number) {}
-
-	String(): string {
-		return `limited-source(${this.ID})`
-	}
-
-	Create(): LimitedAsset {
-		return new LimitedAsset(this.ID)
-	}
-}
-
-export class UnlimitedSource
-	implements NumericItem, CanOwnOne, Mintable, Owner, Source
-{
-	Type = TypeUnlimitedSource
-
-	CanOwnOne() {}
-	Mintable() {}
-	Owner() {}
-	Source() {}
-
-	constructor(public ID: number) {}
-
-	String(): string {
-		return `unlimited-source(${this.ID})`
-	}
-
-	Create(): UnlimitedAsset {
-		return new UnlimitedAsset(this.ID)
-	}
-}
-
-export class Group implements StringItem, CanOwnOne, Mintable, Owner {
-	Type = TypeGroup
-
-	CanOwnOne() {}
-	Mintable() {}
-	Owner() {}
-
-	constructor(public ID: string) {}
-
-	String(): string {
-		return `group(${this.ID})`
-	}
-}
-
-export class Place implements NumericItem, CanOwnOne, Mintable {
-	Type = TypePlace
-
-	CanOwnOne() {}
-	Mintable() {}
-
-	constructor(public ID: number) {}
-
-	String(): string {
-		return `place(${this.ID})`
-	}
-}
-
-/** The bundle asset itself, issued by a PackageSource alongside everything inside it. */
-export class Package implements NumericItem, CanOwnOne {
-	Type = TypePackage
-
-	CanOwnOne() {}
-
-	constructor(public ID: number) {}
-
-	String(): string {
-		return `package(${this.ID})`
-	}
-}
-
-/**
- * Creates a Package and holds the sources for everything inside it, so it can reissue the whole bundle indefinitely. An ordinary source to the ledger: what makes it a package source is that its inventory contains other sources.
- */
-export class PackageSource
-	implements NumericItem, CanOwnOne, Mintable, Owner, Source
-{
-	Type = TypePackageSource
-
-	CanOwnOne() {}
-	Mintable() {}
-	Owner() {}
-	Source() {}
-
-	constructor(public ID: number) {}
-
-	String(): string {
-		return `package-source(${this.ID})`
-	}
-
-	Create(): Package {
-		return new Package(this.ID)
-	}
-}
-
-export class User implements StringItem, Owner {
-	Type = TypeUser
-
-	Owner() {}
-
-	constructor(public ID: string) {}
-
-	String(): string {
-		return `user(${this.ID})`
-	}
-}
