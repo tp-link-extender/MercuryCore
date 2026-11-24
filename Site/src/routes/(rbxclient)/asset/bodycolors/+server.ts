@@ -1,19 +1,7 @@
 import { error } from "@sveltejs/kit"
-import { dbQuery } from "#lib/server/db/query.ts"
+import { bodyColoursOf } from "#lib/server/db/appearance.ts"
 import { fillXmlTemplate } from "#lib/server/xmlTemplate.ts"
 import type { RequestEvent } from "./$types"
-import bodyColoursQuery from "./bodyColours.surql"
-
-interface User {
-	bodyColours: {
-		Head: number
-		LeftArm: number
-		LeftLeg: number
-		RightArm: number
-		RightLeg: number
-		Torso: number
-	}
-}
 
 const xmlHeaders = {
 	"Cache-Control": "no-cache",
@@ -38,10 +26,9 @@ export async function GET({ url }: RequestEvent) {
 			{ headers: xmlHeaders }
 		)
 
-	const [[user]] = await dbQuery<User[][]>(bodyColoursQuery, { username })
-	if (!user) error(404, "User not found")
+	const colours = await bodyColoursOf(username)
+	if (!colours) error(404, "User not found")
 
-	const colours = user.bodyColours
 	const res = fillXmlTemplate(bodyColoursXml, {
 		HEAD: colours.Head,
 		LEFT_ARM: colours.LeftArm,
