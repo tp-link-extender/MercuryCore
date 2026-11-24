@@ -2,19 +2,10 @@ import { error } from "@sveltejs/kit"
 import { Place } from "economy/types"
 import { bearerMatches } from "#lib/server/bearer.ts"
 import constantTimeEqual from "#lib/server/constantTimeEqual.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import { placeAccess } from "#lib/server/db/places.ts"
 import { economyConnFailed, ownsItem } from "#lib/server/economy.ts"
-import { Record } from "#lib/server/surreal.ts"
 import { GAMESERVER_KEY } from "$app/env/private"
 import type { RequestEvent } from "./$types"
-
-const placeAccessQuery = `
-	SELECT
-		privateServer,
-		privateTicket,
-		serverTicket
-	FROM $place;
-`
 
 export async function GET({
 	fetch: f,
@@ -25,13 +16,7 @@ export async function GET({
 }: RequestEvent) {
 	const id = Number(params.id)
 
-	const [[place]] = await dbQuery<
-		{
-			privateServer: boolean
-			privateTicket: string
-			serverTicket: string
-		}[][]
-	>(placeAccessQuery, { place: Record("place", id) })
+	const place = await placeAccess(id)
 	if (!place) error(404, "Not Found")
 
 	const ticket = url.searchParams.get("serverTicket")

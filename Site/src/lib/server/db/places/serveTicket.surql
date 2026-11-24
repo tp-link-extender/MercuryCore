@@ -1,0 +1,1 @@
+SELECT serverTicket FROM $place;

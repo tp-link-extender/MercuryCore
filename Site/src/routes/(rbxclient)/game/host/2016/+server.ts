@@ -1,9 +1,8 @@
 import { error } from "@sveltejs/kit"
 import config from "#lib/server/config.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import { hostPlace } from "#lib/server/db/places.ts"
 import { buildLoadscript, luaId } from "#lib/server/loadscript.ts"
 import { SignScript } from "#lib/server/sign.ts"
-import placeQuery from "../place.surql"
 import type { RequestEvent } from "./$types"
 
 export async function GET({ url }: RequestEvent) {
@@ -13,10 +12,7 @@ export async function GET({ url }: RequestEvent) {
 	const ticket = url.searchParams.get("ticket")
 	if (!ticket) error(400, "Invalid Request")
 
-	const [[place]] = await dbQuery<{ serverPort: number; id: number }[][]>(
-		placeQuery,
-		{ ticket }
-	)
+	const place = await hostPlace(ticket)
 	if (!place) error(400, "Invalid Server ticket")
 
 	const port = place.serverPort
