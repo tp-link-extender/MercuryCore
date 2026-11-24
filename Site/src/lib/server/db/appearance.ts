@@ -1,5 +1,7 @@
 import { dbQuery } from "#lib/server/db/query.ts"
+import type { RecordId } from "#lib/server/surreal.ts"
 import bodyColoursQuery from "./appearance/bodyColours.surql"
+import userIdQuery from "./appearance/userId.surql"
 import wornAssetsQuery from "./appearance/wornAssets.surql"
 
 export interface BodyColours {
@@ -9,6 +11,19 @@ export interface BodyColours {
 	RightArm: number
 	RightLeg: number
 	Torso: number
+}
+
+/**
+ * Finds the record id of a user from their username.
+ * @returns The id, or undefined if there is no such user.
+ */
+export async function userIdOf(
+	username: string
+): Promise<RecordId<"user"> | undefined> {
+	const [[user]] = await dbQuery<{ id: RecordId<"user"> }[][]>(userIdQuery, {
+		username,
+	})
+	return user?.id
 }
 
 /**
