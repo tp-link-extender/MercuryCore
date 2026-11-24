@@ -1,8 +1,12 @@
 import { dbQuery } from "#lib/server/db/query.ts"
 import { Record, type RecordId } from "#lib/server/surreal.ts"
 import activeQuery from "./moderation/active.surql"
+import assocReportQuery from "./moderation/assocReport.surql"
+import moderateQuery from "./moderation/moderate.surql"
+import moderateeQuery from "./moderation/moderatee.surql"
 import reportQuery from "./moderation/report.surql"
 import reporteeQuery from "./moderation/reportee.surql"
+import unbanQuery from "./moderation/unban.surql"
 import unmoderateQuery from "./moderation/unmoderate.surql"
 
 export interface Moderation {
@@ -59,4 +63,51 @@ export async function submitReport(args: {
 		reportUrl: args.reportUrl,
 		user: Record("user", args.user),
 	})
+}
+
+/**
+ * Finds the note and reportee of a report, for showing it while moderating.
+ * @returns The report, or undefined if there is no such report.
+ */
+export async function reportOf(
+	id: string
+): Promise<{ note: string; reportee: string } | undefined> {
+	const [report] = await dbQuery<
+		({ note: string; reportee: string } | undefined)[]
+	>(assocReportQuery, { report: Record("report", id) })
+	return report
+}
+
+/**
+ * Finds a user by username, for moderating them.
+ * @returns The user's id and permission level, or undefined if there is no such user.
+ */
+export async function moderateeOf(
+	username: string
+): Promise<{ id: string; permissionLevel: number } | undefined> {
+	const [[moderatee]] = await dbQuery<
+		{ id: string; permissionLevel: number }[][]
+	>(moderateeQuery, { username })
+	return moderatee
+}
+
+/** Starts a moderation of a user, which is logged by the moderator who made it. */
+export async function moderate(args: {
+	moderatee: RecordId<"user">
+	moderationAction: string
+	note: string
+	reason: string
+	timeEnds: Date
+	user: RecordId<"user">
+}): Promise<void> {
+	await dbQuery(moderateQuery, args)
+}
+
+/** Ends a user's moderations, which is logged by the moderator who did it. */
+export async function unban(args: {
+	moderatee: RecordId<"user">
+	note: string
+	user: RecordId<"user">
+}): Promise<void> {
+	await dbQuery(unbanQuery, args)
 }

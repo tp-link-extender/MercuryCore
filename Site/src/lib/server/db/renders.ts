@@ -2,7 +2,9 @@ import { dbQuery } from "#lib/server/db/query.ts"
 import { db, Record } from "#lib/server/surreal.ts"
 import completeQuery from "./renders/complete.surql"
 import createQuery from "./renders/create.surql"
+import lastPingQuery from "./renders/lastPing.surql"
 import pingQuery from "./renders/ping.surql"
+import queueQuery from "./renders/queue.surql"
 import statusQuery from "./renders/status.surql"
 import taskQuery from "./renders/task.surql"
 
@@ -87,4 +89,27 @@ export async function renderTask(id: string): Promise<RenderTask | undefined> {
 
 export async function pingRenderer(): Promise<void> {
 	await dbQuery(pingQuery)
+}
+
+export interface QueuedRender {
+	asset?: { id: number; name: string }
+	completed: string | null
+	created: string
+	id: number
+	relativeId: number
+	status: Status
+	type: RenderType
+	user?: BasicUser
+}
+
+/** Lists the renders, newest first, for the render queue. */
+export async function renderQueueOf(): Promise<QueuedRender[]> {
+	const [queue] = await dbQuery<QueuedRender[][]>(queueQuery)
+	return queue
+}
+
+/** Finds when the render service last checked in. */
+export async function lastRenderPing(): Promise<string> {
+	const [ping] = await dbQuery<string[]>(lastPingQuery)
+	return ping
 }

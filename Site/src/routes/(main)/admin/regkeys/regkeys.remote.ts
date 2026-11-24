@@ -3,13 +3,15 @@ import { type } from "arktype"
 import { AlreadyExistsError } from "surrealdb"
 import { authorise } from "#lib/server/auth.ts"
 import config from "#lib/server/config.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import {
+	createRegKey,
+	disableRegKey,
+	regKeyDisabledOf,
+} from "#lib/server/db/regkeys.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
 import { Record } from "#lib/server/surreal.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
-import createQuery from "./create.surql"
-import disabledQuery from "./disabled.surql"
 
 const schema = type({
 	"enableRegKeyCustom?": "boolean",
@@ -59,7 +61,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 		if (limit) return limit
 
 		try {
-			await dbQuery(createQuery, {
+			await createRegKey({
 				creator: Record("user", user.id),
 				expiry,
 				regKeyCustom,
@@ -87,26 +89,14 @@ export const disableForm = form(disableSchema, async ({ id }, issues) => {
 	const { locals } = getRequestEvent()
 	const { user } = await authorise(locals, 5)
 
-	const regKey = Record("regKey", id)
-	const [[key]] = await dbQuery<{ disabled: boolean }[][]>(disabledQuery, {
-		regKey,
-	})
-	if (!key) return issues("Registration key not found")
-	if (key.disabled)
+	const disabled = await regKeyDisabledOf(id)
+	if (disabled === undefined) return issues("Registration key not found")
+	if (disabled)
 		return issues(
 			"Registration key is already disabled or has already ran out of uses"
 		)
 
-	await dbQuery(
-		`
-			UPDATE $regKey SET usesLeft = 0;
-			fn::auditLog("Administration", $msg, $user)`,
-		{
-			msg: `Disable registration key ${id}`,
-			regKey,
-			user: Record("user", user.id),
-		}
-	)
+	await disableRegKey(id, Record("user", user.id))
 
 	return { success: "Registration key disabled successfully" }
 })
