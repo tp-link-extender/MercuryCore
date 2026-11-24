@@ -1,7 +1,8 @@
 import { error } from "@sveltejs/kit"
 import config from "#lib/server/config.ts"
 import { hostPlace } from "#lib/server/db/places.ts"
-import { buildLoadscript, luaId } from "#lib/server/loadscript.ts"
+import { luaId } from "#lib/server/loadscript.ts"
+import { buildNamedLoadscript } from "#lib/server/loadscriptFile.ts"
 import { SignScript } from "#lib/server/sign.ts"
 import type { RequestEvent } from "./$types"
 
@@ -21,8 +22,7 @@ export async function GET({ url }: RequestEvent) {
 	console.log(`Hosting 2016 server ${serverId} on port ${port}`)
 
 	// Autopilot map substitution is disabled for now. If it is re-enabled, pass parseMapLocation(url.searchParams.get("autopilot")) as MAP_LOCATION.
-	const scriptFile = Bun.file("../data/server/loadscripts/host2016.lua")
-	const script = buildLoadscript(await scriptFile.text(), {
+	const script = await buildNamedLoadscript("host2016", {
 		BASE_URL: config.Domain,
 		MAP_LOCATION: "rbxasset://mbdtf.rbxl", // TODO: remove hardcoded map
 		PLACE_ID: luaId(serverId),

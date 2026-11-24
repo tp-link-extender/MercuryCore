@@ -1,7 +1,8 @@
 import { error } from "@sveltejs/kit"
 import config from "#lib/server/config.ts"
 import { hostPort } from "#lib/server/db/places.ts"
-import { buildLoadscript, parseMapLocation } from "#lib/server/loadscript.ts"
+import { parseMapLocation } from "#lib/server/loadscript.ts"
+import { buildNamedLoadscript } from "#lib/server/loadscriptFile.ts"
 import { SignScript } from "#lib/server/sign.ts"
 import type { RequestEvent } from "./$types"
 
@@ -21,8 +22,7 @@ export async function GET({ url }: RequestEvent) {
 	// const serverId = placeData.id.toString()
 	const serverPresenceUrl = `http://${config.DomainInsecure}/game/serverpresence?ticket=${ticket}`
 
-	const scriptFile = Bun.file("../data/server/loadscripts/host.lua")
-	const script = buildLoadscript(await scriptFile.text(), {
+	const script = await buildNamedLoadscript("host", {
 		BASE_URL: config.DomainInsecure,
 		MAP_LOCATION: mapLocation,
 		SERVER_PORT: port,

@@ -3,7 +3,7 @@ import { bearerMatches } from "#lib/server/bearer.ts"
 import config from "#lib/server/config.ts"
 import { serveTicket } from "#lib/server/db/places.ts"
 import idToPort from "#lib/server/idToPort.ts"
-import { buildLoadscript } from "#lib/server/loadscript.ts"
+import { buildNamedLoadscript } from "#lib/server/loadscriptFile.ts"
 import { SignScript } from "#lib/server/sign.ts"
 import { GAMESERVER_KEY } from "$app/env/private"
 import type { RequestEvent } from "./$types"
@@ -23,8 +23,7 @@ export async function GET({ params, request }: RequestEvent) {
 	// TODO: move to url without param
 	const serverPresenceUrl = `http://${config.DomainInsecure}/game/serverpresence?ticket=${serverTicket}`
 
-	const scriptFile = Bun.file("../data/server/loadscripts/host.lua")
-	const script = buildLoadscript(await scriptFile.text(), {
+	const script = await buildNamedLoadscript("host", {
 		BASE_URL: config.DomainInsecure,
 		MAP_LOCATION: `http://${config.DomainInsecure}/game/${id}?serverTicket=${encodeURIComponent(serverTicket)}`,
 		SERVER_PORT: idToPort(id),

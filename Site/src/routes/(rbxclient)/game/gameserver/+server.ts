@@ -1,12 +1,11 @@
 import config from "#lib/server/config.ts"
-import { buildLoadscript } from "#lib/server/loadscript.ts"
+import { buildNamedLoadscript } from "#lib/server/loadscriptFile.ts"
 import { SignScript } from "#lib/server/sign.ts"
 
 const port = 53640
 
 export async function GET() {
-	const scriptFile = Bun.file("../data/server/loadscripts/host.lua")
-	const script = buildLoadscript(await scriptFile.text(), {
+	const script = await buildNamedLoadscript("host", {
 		BASE_URL: config.DomainInsecure,
 		MAP_LOCATION: "",
 		SERVER_PORT: port,

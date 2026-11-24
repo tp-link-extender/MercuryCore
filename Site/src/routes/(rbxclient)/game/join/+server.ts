@@ -1,7 +1,8 @@
 import { error } from "@sveltejs/kit"
 import { membershipType } from "#lib/permissionLevels.ts"
 import config from "#lib/server/config.ts"
-import { buildLoadscript, luaId, luaName } from "#lib/server/loadscript.ts"
+import { luaId, luaName } from "#lib/server/loadscript.ts"
+import { buildNamedLoadscript } from "#lib/server/loadscriptFile.ts"
 import { SignScript } from "#lib/server/sign.ts"
 import type { RequestEvent } from "./$types"
 import { claimSession } from "./session.ts"
@@ -16,8 +17,7 @@ export async function GET({ url }: RequestEvent) {
 	const clientTicket = url.searchParams.get("ticket")
 
 	if (!clientTicket) {
-		const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
-		const script = buildLoadscript(await scriptFile.text(), {
+		const script = await buildNamedLoadscript("join", {
 			CHAR_APPEARANCE: "",
 			CREATOR_ID: 0,
 			MEMBERSHIP_TYPE: luaName(membershipType(0)),
@@ -26,7 +26,7 @@ export async function GET({ url }: RequestEvent) {
 			SERVER_ADDRESS: "localhost",
 			SERVER_PORT: 53640,
 			USER_ID: 0,
-			USER_NAME: "Player1",
+			USERNAME: "Player1",
 		})
 
 		return new Response(await SignScript(script), {
@@ -40,8 +40,7 @@ export async function GET({ url }: RequestEvent) {
 
 	const charApp = `http://${config.DomainInsecure}/asset/characterfetch/${user.username}`
 	const pingUrl = `http://${config.DomainInsecure}/game/clientpresence?ticket=${clientTicket}`
-	const scriptFile = Bun.file("../data/server/loadscripts/join.lua")
-	const script = buildLoadscript(await scriptFile.text(), {
+	const script = await buildNamedLoadscript("join", {
 		CHAR_APPEARANCE: charApp,
 		CREATOR_ID: 0, // todo: the place's creator
 		MEMBERSHIP_TYPE: luaName(membershipType(user.permissionLevel)),
@@ -50,7 +49,7 @@ export async function GET({ url }: RequestEvent) {
 		SERVER_ADDRESS: serverAddress,
 		SERVER_PORT: serverPort,
 		USER_ID: Math.floor(Math.random() * 1e9), // todo: tho not rly used 4 much atm
-		USER_NAME: user.username, // join.lua compiled before 2013@5fe7aa8 uses _USER_NAME
+		USERNAME: user.username,
 	})
 
 	return new Response(await SignScript(script), { headers: scriptHeaders })

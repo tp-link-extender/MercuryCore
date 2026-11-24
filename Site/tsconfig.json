@@ -14,5 +14,5 @@
 	},
 	"exclude": ["node_modules", "build"],
 	"extends": "$app/tsconfig",
-	"include": ["src", "*.ts"]
+	"include": ["src", "scripts", "*.ts"]
 }

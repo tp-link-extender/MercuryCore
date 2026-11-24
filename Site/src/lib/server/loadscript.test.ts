@@ -320,7 +320,7 @@ describe("buildLoadscript", () => {
 
 			expect(script).not.toContain("_MAP_LOCATION")
 			expect(script).toContain(
-				'local k,l="www.example.com","rbxasset://maps/CoolMap.rbxl"'
+				`local k,l='http://'.."www.example.com","rbxasset://maps/CoolMap.rbxl"`
 			)
 		}
 	)

@@ -1,0 +1,17 @@
+{
+	"host": ["BASE_URL", "MAP_LOCATION", "SERVER_PORT", "SERVER_PRESENCE_URL"],
+	"host2016": ["BASE_URL", "MAP_LOCATION", "PLACE_ID", "SERVER_PORT"],
+	"join": [
+		"CHAR_APPEARANCE",
+		"CREATOR_ID",
+		"MEMBERSHIP_TYPE",
+		"PING_URL",
+		"PLACE_ID",
+		"SERVER_ADDRESS",
+		"SERVER_PORT",
+		"USERNAME",
+		"USER_ID"
+	],
+	"studio": [],
+	"visit": ["PLACE_ID"]
+}
