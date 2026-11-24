@@ -7,4 +7,4 @@ SELECT
 	type,
 	(SELECT status, username FROM $parent<-user)[0] AS sender
 FROM notification WHERE out = $user
-ORDER BY time DESC;
+ORDER BY created DESC;
