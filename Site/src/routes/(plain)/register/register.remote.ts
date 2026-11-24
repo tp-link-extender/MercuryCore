@@ -1,10 +1,15 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { cookieName, cookieOptions } from "#lib/server/auth.ts"
-import { createSession } from "#lib/server/db/sessions.ts"
 import config from "#lib/server/config.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import {
+	accountRegistered,
+	createInitialAccount,
+	createUser,
+	regKeyUsesLeft,
+} from "#lib/server/db/accounts.ts"
 import { findWhere } from "#lib/server/db/records.ts"
+import { createSession } from "#lib/server/db/sessions.ts"
 import { hashPassword } from "#lib/server/password.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
 import { toRawId } from "#lib/server/recordId.ts"
@@ -13,10 +18,6 @@ import { Record, type RecordId } from "#lib/server/surreal.ts"
 import { usernameTest } from "#lib/typeTests.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
-import accountRegistered from "../accountRegistered"
-import createUserQuery from "./createUser.surql"
-import initialAccountQuery from "./initialAccount.surql"
-import regkeyCheckQuery from "./regkeyCheck.surql"
 
 const schemaInitial = type({
 	_cpassword: "16 <= string <= 6969",
@@ -89,10 +90,7 @@ export const register: ClientForm<typeof schema.infer> = form(
 
 			key = Record("regKey", keyId)
 
-			const [[regkeyCheck]] = await dbQuery<{ usesLeft: number }[][]>(
-				regkeyCheckQuery,
-				{ key }
-			)
+			const regkeyCheck = await regKeyUsesLeft(key)
 			if (!regkeyCheck)
 				return issues.regkey(
 					"Registration key is invalid or has expired"
@@ -103,15 +101,14 @@ export const register: ClientForm<typeof schema.infer> = form(
 				)
 		}
 
-		let results: RecordId<"user">[]
+		let user: RecordId<"user"> | undefined
 		try {
-			results = await dbQuery<RecordId<"user">[]>(createUserQuery, {
+			user = await createUser({
 				bodyColours: config.DefaultBodyColors,
-				email: email || "",
+				email,
 				// I still love scrypt, though argon2 is better supported
 				hashedPassword: await hashPassword(_password),
 				key,
-				permissionLevel: 1,
 				username,
 			})
 		} catch (err) {
@@ -120,7 +117,6 @@ export const register: ClientForm<typeof schema.infer> = form(
 				return issues.email("This email is already in use")
 			throw err
 		}
-		const user = results.at(-1)
 		if (!user) {
 			if (key)
 				return issues.regkey(
@@ -154,16 +150,11 @@ export const initialAccount: ClientForm<typeof schemaInitial.infer> = form(
 		const hashedPassword = await hashPassword(_password)
 		let user: RecordId<"user"> | undefined
 		try {
-			const results = await dbQuery<RecordId<"user">[]>(
-				initialAccountQuery,
-				{
-					bodyColours: config.DefaultBodyColors,
-					hashedPassword,
-					username,
-				}
-			)
-			// The last result is COMMIT's, so the user is the one before it
-			user = results.at(-2)
+			user = await createInitialAccount({
+				bodyColours: config.DefaultBodyColors,
+				hashedPassword,
+				username,
+			})
 		} catch (err) {
 			// Another request created the initial account first
 			if (await accountRegistered())

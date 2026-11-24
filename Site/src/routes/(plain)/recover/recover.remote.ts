@@ -1,6 +1,6 @@
 import { type } from "arktype"
 import config from "#lib/server/config.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
+import { issueRecoveryToken } from "#lib/server/db/accounts.ts"
 import { sendEmail } from "#lib/server/email.ts"
 import { ratelimitRemote } from "#lib/server/ratelimit.ts"
 import {
@@ -9,7 +9,6 @@ import {
 } from "#lib/server/recoveryToken.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
-import recoveryQuery from "./recovery.surql"
 
 const schema = type({
 	// TODO: work when emails are turned off
@@ -53,11 +52,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 
 		const token = createRecoveryToken()
 
-		// oxlint-disable-next-line unicorn/no-unreadable-array-destructuring -- query returns [let, if, exists]
-		const [, , exists] = await dbQuery<boolean[]>(recoveryQuery, {
-			email,
-			hash: hashRecoveryToken(token),
-		})
+		const exists = await issueRecoveryToken(email, hashRecoveryToken(token))
 
 		// Not awaited, so the response time doesn't reveal whether an email address is registered
 		if (exists) sendRecoveryEmail(email, token).catch(logSendError)

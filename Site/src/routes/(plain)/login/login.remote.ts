@@ -1,15 +1,13 @@
 import { redirect } from "@sveltejs/kit"
 import { type } from "arktype"
 import { cookieName, cookieOptions } from "#lib/server/auth.ts"
+import { findLoginUser } from "#lib/server/db/accounts.ts"
 import { createSession } from "#lib/server/db/sessions.ts"
-import { dbQuery } from "#lib/server/db/query.ts"
 import { verifyPassword } from "#lib/server/password.ts"
 import { ratelimitRemote, ratelimitRemoteKey } from "#lib/server/ratelimit.ts"
-import type { RecordId } from "#lib/server/surreal.ts"
 import { usernameTest } from "#lib/typeTests.ts"
 import type { ClientForm } from "#lib/validate.ts"
 import { form, getRequestEvent } from "$app/server"
-import userQuery from "./user.surql"
 
 const schema = type({
 	_password: "1 <= string <= 6969",
@@ -34,12 +32,7 @@ export const formData: ClientForm<typeof schema.infer> = form(
 			)
 		if (limit) return limit
 
-		const [[user]] = await dbQuery<
-			{
-				id: RecordId<"user">
-				hashedPassword: string
-			}[][]
-		>(userQuery, { username })
+		const user = await findLoginUser(username)
 
 		// Checked even when the user doesn't exist, so the response time doesn't reveal which usernames are registered
 		const valid = await verifyPassword(_password, user?.hashedPassword)

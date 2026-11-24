@@ -1,7 +1,6 @@
-import { dbQuery } from "#lib/server/db/query.ts"
+import { recoveryTokenValid } from "#lib/server/db/accounts.ts"
 import { hashRecoveryToken } from "#lib/server/recoveryToken.ts"
 import type { PageServerLoadEvent } from "./$types"
-import checkQuery from "./check.surql"
 
 // The token is in the URL, so keep it out of caches and Referer headers
 const headers = Object.freeze({
@@ -13,9 +12,7 @@ const headers = Object.freeze({
 export async function load({ params, setHeaders }: PageServerLoadEvent) {
 	setHeaders(headers)
 
-	const [valid] = await dbQuery<boolean[]>(checkQuery, {
-		hash: hashRecoveryToken(params.token),
-	})
+	const valid = await recoveryTokenValid(hashRecoveryToken(params.token))
 
 	return { token: params.token, valid }
 }

@@ -1,5 +1,5 @@
 import config from "#lib/server/config.ts"
-import accountRegistered from "../accountRegistered"
+import { accountRegistered } from "#lib/server/db/accounts.ts"
 
 export const load = async () => ({
 	descriptions: Object.entries(config.Branding.Descriptions),
