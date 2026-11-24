@@ -1,15 +1,14 @@
 # You could start with five or six queries, or ~just one~
 
+# Only the fields the profile page shows, which its template reads
 SELECT
 	record::id(id) AS id,
 	username,
-	number,
 	permissionLevel,
 	status,
 	fn::currentContent($this.description) AS description,
 	(SELECT
-		*,
-		record::id(id) AS id,
+		created,
 		fn::currentContent($this.content) AS content
 	FROM $parent->createdComment->comment
 	ORDER BY created DESC, id DESC

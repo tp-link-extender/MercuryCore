@@ -1,24 +1,12 @@
-import { dbQuery } from "#lib/server/db/query.ts"
+import {
+	type Notification,
+	notificationsOf,
+} from "#lib/server/db/notifications.ts"
 import { Record } from "#lib/server/surreal.ts"
-import notificationsQuery from "./notifications.surql"
-
-interface Notification {
-	created: Date
-	id: string
-	link?: string
-	note: string
-	read: boolean
-	relativeId?: string
-	sender: BasicUser
-	type: string
-}
 
 export default async function getNotifications(user: SessionUser | null) {
 	if (!user) return []
-	const [notifications] = await dbQuery<Notification[][]>(
-		notificationsQuery,
-		{ user: Record("user", user.id) }
-	)
+	const notifications = await notificationsOf(Record("user", user.id))
 
 	for (const i of notifications)
 		switch (i.type) {
@@ -42,7 +30,7 @@ export default async function getNotifications(user: SessionUser | null) {
 				i.link = ""
 		}
 
-	return notifications.map(n => {
+	return notifications.map((n: Notification) => {
 		n.relativeId = undefined
 		return n
 	})

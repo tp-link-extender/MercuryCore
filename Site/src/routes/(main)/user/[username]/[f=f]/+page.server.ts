@@ -1,35 +1,25 @@
 // The friends, followers, and following pages for a user.
 
 import { error } from "@sveltejs/kit"
-import { dbQuery } from "#lib/server/db/query.ts"
-import type { RecordId } from "#lib/server/surreal.ts"
+import {
+	type Relation,
+	relationOf,
+	userRecordOf,
+} from "#lib/server/db/social.ts"
 import type { PageServerLoadEvent } from "./$types"
-import followersQuery from "./followers.surql"
-import followingQuery from "./following.surql"
-import friendsQuery from "./friends.surql"
-import userQuery from "./user.surql"
 
-// "$id->friends->user OR $id<-friends<-user" doesn't work
-// "$id<->friends<->user" shows yourself in the list (twice)
-const queries = Object.freeze({
-	followers: followersQuery,
-	following: followingQuery,
-	friends: friendsQuery,
-})
+const relations = new Set<string>(["followers", "following", "friends"])
 
-const isQueryType = (type: string): type is keyof typeof queries =>
-	type in queries
+// Checked against a list, as an object's own keys would also match inherited ones such as constructor
+const isRelation = (type: string): type is Relation => relations.has(type)
 
 export async function load({ params }: PageServerLoadEvent) {
 	const type = params.f
-	if (!isQueryType(type)) error(404, "Not Found")
-	const [[user]] = await dbQuery<{ id: RecordId<"user"> }[][]>(
-		userQuery,
-		params
-	)
+	if (!isRelation(type)) error(404, "Not Found")
+	const user = await userRecordOf(params.username)
 	if (!user) error(404, "Not Found")
 
-	const [users, count] = await dbQuery<BasicUser[][]>(queries[type], user)
+	const { count, users } = await relationOf(type, user)
 
 	return {
 		...params,

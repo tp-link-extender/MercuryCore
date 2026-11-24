@@ -3,6 +3,7 @@ import { Record } from "#lib/server/surreal.ts"
 import accessQuery from "./places/access.surql"
 import hostPlaceQuery from "./places/hostPlace.surql"
 import hostPortQuery from "./places/hostPort.surql"
+import ownedPlacesQuery from "./places/owned.surql"
 import pingServerQuery from "./places/pingServer.surql"
 import serveTicketQuery from "./places/serveTicket.surql"
 
@@ -65,4 +66,23 @@ export async function placeAccess(
 /** Records that the gameserver with this ticket is still running. */
 export async function pingServer(ticket: string): Promise<void> {
 	await dbQuery(pingServerQuery, { ticket })
+}
+
+export interface OwnedPlace {
+	dislikeCount: number
+	id: number
+	likeCount: number
+	name: string
+	playerCount: number
+}
+
+/**
+ * Finds the places with these ids, with their players and likes.
+ * @returns The places that exist.
+ */
+export async function ownedPlacesOf(ids: number[]): Promise<OwnedPlace[]> {
+	const [places] = await dbQuery<OwnedPlace[][]>(ownedPlacesQuery, {
+		ids: ids.map(id => Record("place", id)),
+	})
+	return places
 }
