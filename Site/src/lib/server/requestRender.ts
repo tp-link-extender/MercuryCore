@@ -7,6 +7,7 @@ import {
 	type RenderType,
 } from "#lib/server/db/renders.ts"
 import { buildLoadscript } from "#lib/server/loadscript.ts"
+import { submitRender } from "#lib/server/orbiter.ts"
 import { waitForChange } from "#lib/server/waitForChange.ts"
 import { renderFileMatcher } from "./renderFileMatch.ts"
 
@@ -16,7 +17,7 @@ export type { RenderType, Status } from "#lib/server/db/renders.ts"
 const renderTimeout = 60_000
 
 /**
- * Requests a render from RCCService
+ * Requests a render from the Orbiter
  * @param renderType The type of render to request: "Clothing", "Avatar", "Model", "Mesh", "Package", "Torso", "LeftArm", "RightArm", "LeftLeg", or "RightLeg".
  * @param relativeId If "Avatar", the id of the user to render their avatar, otherwise the id of the asset to render.
  * @param relativeName If "Avatar", the name of the user to render their avatar.
@@ -61,8 +62,8 @@ export default async function requestRender(
 			renderFileMatcher(renderType, relativeId)
 		)
 
-	// Send the script to the RCCService proxy
-	const pingUrl = `http://localhost:64990/ping/${renderId}` // the proxy will handle sending to /api/render/update
+	// The Orbiter's loopback callback, which RCC posts render progress to (see the Orbiter contract)
+	const pingUrl = `http://127.0.0.1:64990/ping/${renderId}`
 
 	const script = buildLoadscript(scriptText, {
 		ASSET_ID: relativeName.toString(), // TODO: make not string
@@ -72,17 +73,11 @@ export default async function requestRender(
 	})
 
 	// console.log(
-	// 	`Sending render request to RCCService for render ID ${renderId}`
+	// 	`Sending render request to the Orbiter for render ID ${renderId}`
 	// )
 	try {
-		await Promise.all([
-			waiter,
-			// Uhh carrot just got the
-			f(`${config.RCCServiceProxyURL}/${renderId}`, {
-				body: script,
-				method: "post",
-			}),
-		])
+		// Uhh carrot just got the
+		await Promise.all([waiter, submitRender(f, renderId, script)])
 	} catch (e) {
 		// Mark the render as errored so that a retry can try again, rather
 		// than early-returning forever

@@ -16,10 +16,6 @@ export type Config = {
 	 */
 	DomainInsecure: string
 	/**
-	 * The URL of your RCC proxy server. Requires a URL scheme.
-	 */
-	RCCServiceProxyURL: string
-	/**
 	 * The URI scheme to pass to the launcher when joining a game.
 	 */
 	LauncherURI: string

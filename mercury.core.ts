@@ -5,7 +5,6 @@ export default {
 	Name: "Mercury",
 	Domain: "mercs.dev",
 	DomainInsecure: "www.mercs.dev",
-	RCCServiceProxyURL: "http://localhost:64990",
 	LauncherURI: "mercury-launcher:",
 	CurrencySymbol: "屌",
 	Pages: ["Statistics", "Forum", "Groups"],

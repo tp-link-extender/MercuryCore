@@ -89,7 +89,6 @@ const schema = type({
 		PublicURL: "string >= 1",
 	}),
 	Pages: type.enumerated(...optionalPages).array(),
-	RCCServiceProxyURL: "string >= 1",
 
 	Registration: type({
 		Emails: "boolean",
