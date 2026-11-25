@@ -24,7 +24,7 @@ jobs:
                 working-directory: Site
         env:
             # `.env` is gitignored, so these are supplied as placeholders. SvelteKit needs them when generating types and building, because the Site reads them through `$app/env/private`. Nothing here ever uses them to reach a real service.
-            RCC_KEY: ci-placeholder
+            ORBITER_KEY: ci-placeholder
             OPEN_CLOUD_KEY: ci-placeholder
         steps:
             - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5

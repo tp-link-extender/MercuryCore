@@ -4,7 +4,7 @@ import { bearerMatches } from "#lib/server/bearer.ts"
 import constantTimeEqual from "#lib/server/constantTimeEqual.ts"
 import { placeAccess } from "#lib/server/db/places.ts"
 import { economyConnFailed, ownsItem } from "#lib/server/economy.ts"
-import { GAMESERVER_KEY } from "$app/env/private"
+import { ORBITER_KEY } from "$app/env/private"
 import type { RequestEvent } from "./$types"
 
 export async function GET({
@@ -23,7 +23,7 @@ export async function GET({
 	const privateTicket = url.searchParams.get("privateTicket")
 
 	let authorised =
-		bearerMatches(request, GAMESERVER_KEY, "GAMESERVER_KEY") ||
+		bearerMatches(request, ORBITER_KEY, "ORBITER_KEY") ||
 		(ticket != null && constantTimeEqual(ticket, place.serverTicket))
 
 	if (!authorised && locals.user)

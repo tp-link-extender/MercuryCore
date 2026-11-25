@@ -5,14 +5,14 @@ import { serveTicket } from "#lib/server/db/places.ts"
 import idToPort from "#lib/server/idToPort.ts"
 import { buildNamedLoadscript } from "#lib/server/loadscriptFile.ts"
 import { SignScript } from "#lib/server/sign.ts"
-import { GAMESERVER_KEY } from "$app/env/private"
+import { ORBITER_KEY } from "$app/env/private"
 import type { RequestEvent } from "./$types"
 
 export async function GET({ params, request }: RequestEvent) {
 	if (config.Gameservers.Hosting === "Selfhosted")
 		error(400, "Dedicated servers are not supported")
 
-	if (!bearerMatches(request, GAMESERVER_KEY, "GAMESERVER_KEY"))
+	if (!bearerMatches(request, ORBITER_KEY, "ORBITER_KEY"))
 		error(403, "Unauthorised")
 
 	const id = Number(params.id)

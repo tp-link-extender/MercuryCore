@@ -9,7 +9,6 @@ export const variables = defineEnvVars({
 	DATABASE_PASSWORD: optional,
 	DATABASE_ROOT_PASSWORD: optional,
 	DATABASE_USER: optional,
-	GAMESERVER_KEY: optional,
 	OPEN_CLOUD_KEY: {},
-	RCC_KEY: {},
+	ORBITER_KEY: {},
 })

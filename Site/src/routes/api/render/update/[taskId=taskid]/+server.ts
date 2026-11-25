@@ -6,12 +6,12 @@ import {
 	renderTask,
 } from "#lib/server/db/renders.ts"
 import { parseRenderUpdate } from "#lib/server/renderUpdate.ts"
-import { RCC_KEY } from "$app/env/private"
+import { ORBITER_KEY } from "$app/env/private"
 import type { RequestEvent } from "./$types"
 
 export async function POST({ params, request }: RequestEvent) {
 	// get bearer token from header instead of insecure url
-	if (!bearerMatches(request, RCC_KEY, "RCC_KEY")) error(403, "Stfu")
+	if (!bearerMatches(request, ORBITER_KEY, "ORBITER_KEY")) error(403, "Stfu")
 
 	const task = await renderTask(params.taskId)
 	if (!task) error(404, "Task not found")
