@@ -33,27 +33,17 @@ This domain should not be used to access the Site. More information is given in 
 
 The URL of the RCCService proxy server, including an appropriate scheme. This is used when requesting any rendering operations from RCC. See the [RCCService](/services/rcc/#proxying) section for more information on proxying.
 
-#### OrbiterPrivateURL
-
-The URL of the Orbiter gameserver hoster, exposing the private API for use by the Site and other trusted components, used for starting and managing gameservers.
-
-#### OrbiterPublicURL
-
-The URL of the Orbiter gameserver hoster, exposing the public API for use by a user's browser, used for fetching server lists and joining gameservers, and also for gameserver hosting.
-
-By default this is automatically served with HTTP in development and HTTPS in production, so make sure to use the correct scheme and port if this is set to a custom URL. These are necessary for the information API to be accessible from the browser, though they are both stripped out when used for constructing the URI scheme for joining gameservers.
-
 #### LauncherURI
 
 The URI scheme to start the correct Launcher when joining a game. This is used for constructing the URI that is opened when a user clicks the "Join" button for a game. It's recommended to set this to "{name}-launcher", where {name} is a lowercased version of the Name property, as this is consistent with how the [Mercury Launcher](https://github.com/tp-link-extender/MercuryLauncher) works.
 
 #### CurrencySymbol
 
-The symbol to use when displaying currency values across the site. This is used on pages such as the Catalog, Asset, Economy, Admin Transactions, etc. At the moment, the symbol appears before the quantity.
+The symbol to use when displaying currency values across the site. This is used on pages such as the Catalog, Asset, Economy, Admin Transactions, etc. The symbol is placed before the amount.
 
 #### Pages
 
-An array that contains the optional pages for the site, with a string value for each name: Statistics, Groups, and Forum. If a page is removed from this array, it will not be accessible on the site, returning a 404 Not Found error, and any links to it will be removed from the UI.
+An array that contains the optional pages for the site, with a string value for each name: `"Statistics"`, `"Groups"`, and `"Forum"`. If a page is removed from this array, it will not be accessible on the site, returning a 404 Not Found error, and any links to it will be removed from the UI.
 
 ### Database
 
@@ -71,6 +61,190 @@ The domain name of the database server, without the URL scheme. This is used whe
 
 #### Economy &ndash; AutoStart
 
-Whether to automatically start the Economy service when starting the Site. This is recommended to be enabled in all cases except when debugging Economy service issues, or when managing the Economy service separately from the Site, such as when using a container manager.
+Whether to automatically start the Economy service when starting the Site. If the Economy service executable cannot be found, it will attempt to build the service from source with Go.
 
-### todo
+This is recommended to be enabled in all cases except when debugging Economy service issues, or when managing the Economy service separately from the Site, such as when using a container manager.
+
+### Orbiter
+
+Configuration for the Orbiter gameserver hoster.
+
+#### Orbiter &ndash; PrivateURL
+
+The URL of the Orbiter gameserver hoster, exposing the private API for use by the Site and other trusted components, used for starting and managing gameservers. Requires a URL scheme.
+
+#### Orbiter &ndash; PublicURL
+
+The URL of the Orbiter gameserver hoster, exposing the public API for use by a user's browser, used for fetching server lists and joining gameservers, and also for gameserver hosting. Requires a URL scheme.
+
+By default this is automatically served with HTTP in development and HTTPS in production, so make sure to use the correct scheme and port if this is set to a custom URL. These are necessary for the information API to be accessible from the browser, though they are both stripped out when used for constructing the URI scheme for joining gameservers.
+
+### DefaultBodyColors
+
+The default body colours for avatar creation, given to each new user on registration. Each colour is a BrickColor ID, which can be looked up in the [brick colours list](https://github.com/tp-link-extender/MercuryCore/blob/main/Site/src/lib/brickColours.ts).
+
+#### DefaultBodyColors &ndash; Head
+
+The default head colour.
+
+#### DefaultBodyColors &ndash; LeftArm
+
+The default left arm colour.
+
+#### DefaultBodyColors &ndash; LeftLeg
+
+The default left leg colour.
+
+#### DefaultBodyColors &ndash; RightArm
+
+The default right arm colour.
+
+#### DefaultBodyColors &ndash; RightLeg
+
+The default right leg colour.
+
+#### DefaultBodyColors &ndash; Torso
+
+The default torso colour.
+
+### Logging
+
+Configuration for logging done by Mercury Core.
+
+#### Logging &ndash; Requests
+
+Whether to log all incoming requests to dynamic pages.
+
+#### Logging &ndash; FormattedErrors
+
+Whether to format errors in a more readable way. This does not provide a full stack trace.
+
+#### Logging &ndash; Time
+
+Whether to log the time of each request.
+
+#### Logging &ndash; DiscordModerationWebhook
+
+The Discord webhook URL to send moderation logs to a specific channel. This is used for logging moderation actions. Anyone with this URL can post to the channel, so keep it private.
+
+### Branding
+
+Configuration for custom branding and icon file paths in the Assets directory.
+
+#### Branding &ndash; Favicon
+
+Path to your revival's favicon in the Assets directory. May be in any browser-supported format.
+
+#### Branding &ndash; Icon
+
+Path to your revival's logo icon in the Assets directory. May be in any browser-supported format.
+
+#### Branding &ndash; Tagline
+
+A very short tagline for your revival. This is displayed in the footer as well as on the login, register, and about pages.
+
+If set to an empty string, this does not display.
+
+#### Branding &ndash; LongTagline
+
+A longer tagline for your revival. This is displayed on the landing and about pages.
+
+If set to an empty string, this does not display.
+
+#### Branding &ndash; Descriptions
+
+Descriptions for your revival's features. These are displayed on the register page.
+
+Each description is a key-value pair, where the key is a feature's title and the value is its description.
+
+### Images
+
+Configuration for image file paths in the Assets directory.
+
+#### Images &ndash; DefaultPlaceIcons
+
+An array of paths for default place icons in the Assets directory. May be in any browser-supported format.
+
+#### Images &ndash; DefaultPlaceThumbnails
+
+An array of paths for default place thumbnails in the Assets directory. May be in any browser-supported format.
+
+### Themes
+
+Configuration for the revival's available themes. The first theme in the array will be the default theme.
+
+Each theme is an object with the following properties:
+
+#### Themes &ndash; Name
+
+The name of the theme.
+
+#### Themes &ndash; Path
+
+Path to the theme's CSS file in the Assets directory.
+
+### Filtering
+
+Configuration for basic text filtering for profanity.
+
+#### Filtering &ndash; FilteredWords
+
+An array of words to naively filter out of text (where surrounded by whitespace). You may wish to pass this in from a package or JSON file.
+
+Set to a blank array to disable filtering.
+
+#### Filtering &ndash; ReplaceWith
+
+The character or word to replace filtered words with.
+
+#### Filtering &ndash; ReplaceType
+
+How to replace filtered words, either by replacing each character or replacing the entire word with ReplaceWith. Accepts `"Character"` or `"Word"`.
+
+### Registration
+
+Configuration for user registration.
+
+#### Registration &ndash; Keys &ndash; Enabled
+
+Whether registration keys are enabled.
+
+#### Registration &ndash; Keys &ndash; Prefix
+
+Prefix for registration keys. This is used to identify keys generated by your revival.
+
+#### Registration &ndash; Emails
+
+Whether to ask for and require email addresses for registration.
+
+### Email
+
+Configuration for sending emails.
+
+#### Email &ndash; Host
+
+The SMTP server host to use for sending emails.
+
+#### Email &ndash; Port
+
+The SMTP server port to use for sending emails.
+
+#### Email &ndash; Secure
+
+Whether to use a secure connection (TLS) when connecting to the SMTP server. This should usually be `true` for port 465 and `false` for ports 587 and 25.
+
+#### Email &ndash; Username
+
+The username to use for authentication with the SMTP server. The corresponding password should be configured in your environment variables.
+
+### Gameservers
+
+Configuration for gameserver hosting.
+
+#### Gameservers &ndash; Hosting
+
+The type of gameserver hosting to use. Accepts one of the following values:
+
+- `"Selfhosted"`: Players host gameservers on their own machines. Dedicated servers are not available.
+- `"Dedicated"`: Gameservers are hosted by Orbiter. Selfhosted servers are not available.
+- `"Both"`: Both selfhosted and dedicated gameservers are available.
