@@ -1,2 +1,3 @@
-export const GET = () =>
-	Response.json({ data: ["f9d40bd8e567ae0865e2ae9d54557506"] }) // TODO: make configurable from mercury.core.ts
+import config from "#lib/server/config.ts"
+
+export const GET = () => Response.json({ data: config.AllowedMD5Hashes })
