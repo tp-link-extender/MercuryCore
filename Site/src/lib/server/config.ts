@@ -25,6 +25,8 @@ const optionalPages = Object.freeze(["Statistics", "Groups", "Forum"] as const)
 export type OptionalPage = (typeof optionalPages)[number]
 
 const schema = type({
+	AllowedMD5Hashes: type("/^[0-9a-f]{32}$/").array(),
+
 	Branding: type({
 		Favicon: "string >= 1",
 		Icon: "string >= 1",

@@ -8,6 +8,7 @@ export default {
 	LauncherURI: "mercury-launcher:",
 	CurrencySymbol: "屌",
 	Pages: ["Statistics", "Forum", "Groups"],
+	AllowedMD5Hashes: ["abcdefghijklmnopqrstuvwxyz"],
 
 	Database: {
 		AutoStart: true,
