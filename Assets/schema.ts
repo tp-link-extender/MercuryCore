@@ -27,6 +27,10 @@ export type Config = {
 	 * Controls which optional pages on the site are enabled. This allows you to turn off unnecessary features for your revival.
 	 */
 	Pages: ("Statistics" | "Groups" | "Forum")[]
+	/**
+	 * MD5 hashes of the client files allowed to join your revival.
+	 */
+	AllowedMD5Hashes: string[]
 
 	/**
 	 * Configuration for the database server, run with SurrealDB.
