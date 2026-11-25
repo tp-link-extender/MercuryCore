@@ -81,3 +81,47 @@ None of this should conflict with the formatting or linting rules of Biome.
 
 - Do not hard-wrap. Never split a sentence over multiple lines
 	- If the new line is after a semicolon or is a new sentence, OK
+
+## Prose
+
+Use these guidelines in documentation or doc-comments. Regular code comments and commit messages need not abide by these.
+
+- Use Standard Scottish English for all spelling and grammar
+	- colour > color, flavour > flavor
+	- centre > center, metre > meter
+	- fulfil > fulfill
+	- travelled > traveled, cancelled > canceled
+	- organise > organize, standardise > standardize
+	- Only use other spellings where required by specification (such as CSS `color`, HTTP `Authorization`)
+- Use the serial comma in lists of 3 or more items
+- Avoid grammatical contractions
+	- Do not > don't, cannot > can't, will not > won't
+- Capitalise references to specific services as part of Mercury
+	- The Site, the Orbiter, the Studio & Client
+	- Leave references uncapitalised when referring to generic terms
+- Use bold text rather than code formatting for file paths, unless used in code such as a shell command
+	- **/dev/null** > `/dev/null`
+- Use double quotes for referencing text, use single quotes for introducing a term where necessary
+- Use incidental relative clauses over restrictive relative clauses when referring to items that there are only 1 instance of that item
+	- Always use relative pronouns in relative clauses
+		- "the script that this runs"/"the script which this runs" > "the script this runs"
+- Always use correlative adverbs
+- Prefer "though", "however", and "yet" over "but"
+- Prefer digits over words for all numbers
+	- 1, 2, 3... > one, two, three...
+	- 1st, 2nd, 3rd... > first, second, third...
+	- 'one' can be used as a pronoun or for specifying rather than counting, such as "one script" or "one of the scripts"
+- Prefer comparative over negative contrast constructions
+	- "this happens rather than that"/"this happens instead of that" > "this happens, not that"
+- Prefer passive over active voice
+	- "once the script is run" > "once someone runs the script"
+- If using a list and having nested logical connectives, use '&' and '/' instead of 'and' and 'or' in nested list items to avoid ambiguity
+	- The symbol forms bind closer than their word forms
+	- Separate '&' with spaces on either side,  '/' should not have spaces on either side
+	- "Builtins & Hardcoded assets, Corescripts/Loadscripts, and render scripts"
+	- "Builtins/Hardcoded assets, Corescripts/Loadscripts, or render scripts"
+- If using a list and having nested lists, use ';' instead of ',' to separate the top-level list items
+	- The nested logical connectives rule should also be used for clarity
+	- "Builtins, Hardcoded assets, & other assets; Corescripts, Loadscripts, & Render scripts; and Plugins, Dependencies, & Libraries.
+
+Ignore all of these rules when quoting direct output.
