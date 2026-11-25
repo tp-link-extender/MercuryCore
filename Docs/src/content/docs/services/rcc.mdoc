@@ -27,25 +27,30 @@ If using a Lua script over SOAP, the script will instruct the service what to do
 
 It's also possible to use these Lua scripts to log to the console, which can then be parsed by the requester to obtain the results of the operation, such as a rendered image (usually in Base64 format) or a status update. However, as this requires parsing the standard output of the RCC process and can be inconsistent or difficult to manage with a parent process, it's recommended to use a system to send HTTP requests to the requester from a Lua script instead.
 
-## Proxying
+## The Orbiter
 
-Mercury Core communicates with RCC via a proxy server. This helps to ensure security, while also improving ease of communication with the service. In some cases, an RCC instance will produce invalid responses or gzip compress outputs based on their size, which a proxy server helps to prevent, as well as being able to downsize & de-alias images and compress responses into a more efficient binary format (as opposed to the standard Base64 encoding) to reduce network traffic and improve response speeds.
+Mercury Core communicates with RCC through the Orbiter, a single service that runs RCC and the gameservers on the same machine. This helps to ensure security, while also improving ease of communication with the service. In some cases, an RCC instance will produce invalid responses or gzip compress outputs based on their size, which a proxy server helps to prevent, as well as being able to downsize & de-alias images and compress responses into a more efficient binary format (as opposed to the standard Base64 encoding) to reduce network traffic and improve response speeds.
 
 {% aside type="tip" title="Available implementations" %}
-	An implementation of the proxy server is available at [tp-link-extender/RCCService/Proxy](https://github.com/tp-link-extender/RCCService/tree/main/Proxy). An older version, using the outdated Base64 communication format, can be found at [gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff](https://gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff).
+	An implementation of the Orbiter is available at [tp-link-extender/RCCService](https://github.com/tp-link-extender/RCCService). An older proxy, using the outdated Base64 communication format, can be found at [gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff](https://gist.github.com/Heliodex/639fea9aa7808a7d9cf9c1ed4cfc4eff).
 {% /aside %}
 
-The proxy server should run on port 64990. A **.env** file should be created in the same directory as the proxy server executable, with contents similar to the following:
+The Orbiter's private API listens on port 64991, and its loopback callback listens on 127.0.0.1 port 64990, where RCC posts render progress. The full set of routes and how they authenticate is described in the [Orbiter contract](/design/orbiter-contract). A **.env** file should be created in the same directory as the Orbiter executable, with contents similar to the following:
 
 ```
-IP=::1
-ENDPOINT=http://mercs.dev/api/render/update
-RCC_KEY=change-me
+ENV=dev
+DOMAIN=mercs.dev
+SITE_URL=https://mercs.dev
+SETUPDOMAIN=setup.mercs.dev
+ORBITER_KEY=change-me
+MAX_JOBS_PER_RCC=8
+RCC_BASE_PORT=64989
+HOST_EXPIRATION=0
 ```
 
-`IP` should be set to the IP address of the RCC server, `ENDPOINT` should be set to the URL of the render status update API path on your Mercury Core instance (by default, this is **/api/render/update**), and `RCC_KEY` should be set to a long, random string of characters (at least 16, for example from `openssl rand -hex 32`), identical to that specified in the **Site/.env** file of your Mercury Core instance. 
+`SITE_URL` should be the address of your Mercury Core instance, including its scheme, and `ORBITER_KEY` should be a long, random string of characters (at least 16, for example from `openssl rand -hex 32`), identical to that specified in the **Site/.env** file of your Mercury Core instance.
 
-Running the proxy server will start and manage the RCCService process automatically, provided that it is located as **RCCService/RCCService.exe** relative to the proxy server executable. If the host OS is Linux, it will use [Wine](https://www.winehq.org) to run the RCCService executable. As such, make sure it is installed, configured correctly to run 32-bit Windows applications, allows access to a virtual desktop if needed, and that it is accessible from the command line as `wine`. Attempting to run the proxy server with a version of wine configured for an incorrect architecture will result in the RCCService process repeatedly failing to start.
+Running the Orbiter will start and manage the RCCService process automatically, provided that it is located as **RCCService/RCCService.exe** relative to the Orbiter executable. If the host OS is Linux, it will use [Wine](https://www.winehq.org) to run the RCCService executable. As such, make sure it is installed, configured correctly to run 32-bit Windows applications, allows access to a virtual desktop if needed, and that it is accessible from the command line as `wine`. Attempting to run the Orbiter with a version of wine configured for an incorrect architecture will result in the RCCService process repeatedly failing to start.
 
 ## Render scripts
 

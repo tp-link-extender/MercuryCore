@@ -3,21 +3,20 @@ title: Orbiter
 description: Details on the Orbiter service, Mercury's gameserver management system.
 ---
 
-This page provides information about Mercury's Orbiter service, responsible for managing, starting, and stopping gameserver instances for the revival platform. An implementation of the Orbiter is available at the [tp-link-extender/RCCService](https://github.com/tp-link-extender/RCCService) repository.
+This page provides information about Mercury's Orbiter service, responsible for managing, starting, and stopping gameserver instances for the revival platform, and for running the RCCService jobs that render images. The Orbiter combines the gameserver manager and the RCCService proxy into one service. An implementation of the Orbiter is available at the [tp-link-extender/RCCService](https://github.com/tp-link-extender/RCCService) repository.
 
 ## Starting
 
-Upon starting the Orbiter, it will attempt to download the latest version of the Setup package, as distributed on the Setup domain configured in the **.env** file. If this is successful, or if the latest version is already downloaded, the Orbiter will start accepting connections on 2 ports: a private management port for communication with the Site and only accepting connections from IP addresses configured in the **.env** file (by default on port 64991), and a public status port for accepting connections from browsers to report the status of gameserver instances (on port 64992 in dev, and on normal HTTP/HTTPS ports of 80 and 443 in production).
+Upon starting the Orbiter, it will attempt to download the latest version of the Setup package, as distributed on the Setup domain configured in the **.env** file. If this is successful, or if the latest version is already downloaded, the Orbiter will start accepting connections on 3 listeners: a private API for communication with the Site (by default on port 64991), which requires the shared `ORBITER_KEY` as a bearer token; a loopback listener on 127.0.0.1 port 64990, where RCC and Studio report back to the Orbiter; and a public status port for accepting connections from browsers to report the status of gameserver instances (on port 64992 in dev, and on normal HTTP/HTTPS ports of 80 and 443 in production). The routes on each listener are described in the [Orbiter contract](/design/orbiter-contract).
 
 The Orbiter's **.env** file, placed in the same directory as its running executable, should have contents similar to the following:
 
 ```
 ENV=dev
 DOMAIN=localhost:5173
+SITE_URL=http://localhost:5173
 SETUPDOMAIN=setup.mercs.dev
-IPV4=127.0.0.1
-IPV6=::1
-GAMESERVER_KEY=change-me
+ORBITER_KEY=change-me
 ```
 
 ## Gameservers

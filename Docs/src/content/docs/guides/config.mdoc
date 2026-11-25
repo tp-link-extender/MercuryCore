@@ -29,10 +29,6 @@ The domain that the Site will be hosted on when accessed insecurely, without the
 
 This domain should not be used to access the Site. More information is given in the [Client TLS](/design/client-tls) section of the documentation.
 
-#### RCCServiceProxyURL
-
-The URL of the RCCService proxy server, including an appropriate scheme. This is used when requesting any rendering operations from RCC. See the [RCCService](/services/rcc/#proxying) section for more information on proxying.
-
 #### LauncherURI
 
 The URI scheme to start the correct Launcher when joining a game. This is used for constructing the URI that is opened when a user clicks the "Join" button for a game. It's recommended to set this to "{name}-launcher", where {name} is a lowercased version of the Name property, as this is consistent with how the [Mercury Launcher](https://github.com/tp-link-extender/MercuryLauncher) works.
