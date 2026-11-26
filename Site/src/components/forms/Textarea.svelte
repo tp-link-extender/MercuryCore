@@ -33,14 +33,12 @@
 		</label>
 	{/if}
 	<div class={["w-full", { "md:w-3/4": label }]}>
-		<!-- TODO: prevent tabs in textarea caused by... the formatter.... -->
 		<textarea
 			{...formData.fields[name].as("text", defaultValue)}
 			{...rest}
 			id={name}
 			{rows}
-			placeholder={placeholder || null}>
-		</textarea>
+			placeholder={placeholder || null}></textarea>
 
 		{#if help}
 			<small class="formhelp">
